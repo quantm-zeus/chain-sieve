@@ -1,0 +1,76 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main, bootstrap/agent-harness-and-codebase]
+permissions:
+  contents: read
+jobs:
+  tier0:
+    name: Tier 0 · static and unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:unit
+  tier1:
+    name: Tier 1 · task contracts
+    needs: tier0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm spec:verify
+      - run: pnpm prd:drift-check
+      - run: pnpm requirements:coverage
+      - run: pnpm harness:verify
+  tier2:
+    name: Tier 2 · cluster integration
+    needs: tier1
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: ciag, POSTGRES_PASSWORD: ciag_test, POSTGRES_DB: ciag }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ciag" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:integration
+      - run: pnpm test:system
+      - run: pnpm migration:verify
+      - run: pnpm architecture:verify
+      - run: pnpm prohibited-capabilities:scan
+  tier3:
+    name: Tier 3 · pre-main
+    needs: tier2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm placeholders:scan
+      - run: pnpm tests:skeleton-integrity
+      - run: pnpm test:mutation
