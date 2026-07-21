@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "repositoryBranch": "bootstrap/agent-harness-and-codebase",
+  "verifiedHeadCommit": "a46ac4fd46df35ab73cc07314258addb392a1428",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "requirementCount": 397,
+  "acceptanceCount": 204,
+  "invariantCount": 44,
+  "adrCount": 58,
+  "taskContractCount": 70,
+  "clusterCount": 8,
+  "coverage": { "requirements": "397/397", "acceptanceCriteria": "204/204" },
+  "compilerDeterminism": { "status": "PASS", "generatedFiles": 977, "aggregateHash": "f8df660f8668884b166164a09dae2a2104dd50dab440a28a54b2d4d681ae929e" },
+  "walkingSkeletonResult": "PASS",
+  "mutationResult": "10/10 PASS",
+  "architectureResult": "PASS_8_RULES",
+  "securityResult": "PASS",
+  "gitLifecycleSimulationResult": { "readyThroughMerged": "PASS", "staleLease": "REJECTED", "pathLockConflict": "REJECTED", "atomicTaskCommit": "PASS", "postMergeFailureAutomaticRevert": "PASS" },
+  "unresolvedFindings": [
+    "Docker daemon unavailable; live PostgreSQL/MinIO startup was not executed locally.",
+    "Remote main/default branch does not exist.",
+    "GitHub CLI is not authenticated; pull-request creation is blocked."
+  ],
+  "recommendedFirstZCodeCluster": "C-G0-IMPLEMENTATION",
+  "exactFirstZCodeCommand": "zcode \"$(cat clusters/G0/C-G0-IMPLEMENTATION.zcode-goal.md)\""
+}
