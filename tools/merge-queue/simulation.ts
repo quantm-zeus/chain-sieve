@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const git = (directory: string, args: string[]): string => { const result = spawnSync('git', args, { cwd: directory, encoding: 'utf8' }); if (result.status !== 0) throw new Error(`SIMULATION_GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`); return result.stdout.trim(); };
 
-export const simulateGitLifecycle = async (): Promise<{ states: string[]; atomicCommits: number; staleLeaseRejected: true; pathLockRejected: true; failureCommitReverted: true }> => {
+export const simulateGitLifecycle = async (): Promise<{ states: string[]; atomicCommits: number; staleLeaseRejected: boolean; pathLockRejected: boolean; failureCommitReverted: boolean }> => {
   const directory = await mkdtemp(join(tmpdir(), 'ciag-git-lifecycle-'));
   git(directory, ['init', '-b', 'cluster/g0']); git(directory, ['config', 'user.email', 'ciag-test@example.invalid']); git(directory, ['config', 'user.name', 'CIAG Test']);
   await writeFile(join(directory, 'baseline.txt'), 'baseline\n'); git(directory, ['add', 'baseline.txt']); git(directory, ['commit', '-m', 'chore: baseline']);
