@@ -1,0 +1,17 @@
+import type { CostPolicyAdapter } from '@ciag/provider-contracts';
+import type { RuntimeCacheAdapter } from '@ciag/provider-contracts';
+
+export class ToolCore {
+  constructor(private readonly cache: RuntimeCacheAdapter, private readonly costPolicy: CostPolicyAdapter) {}
+  async execute<T>(input: { key: string; operation: string; costClass: 'FREE' | 'METERED' | 'UNKNOWN'; expiresAt: string }, load: () => Promise<T>): Promise<{ value: T; cached: boolean }> {
+    const cached = await this.cache.get<T>(input.key);
+    if (cached !== undefined) {
+      const authorization = await this.costPolicy.authorize({ operation: input.operation, costClass: input.costClass, cacheHit: true });
+      if (authorization.status !== 'AVAILABLE' || authorization.value?.quotaCharged !== 0) throw new Error('CACHE_HIT_QUOTA_INVARIANT');
+      return { value: cached, cached: true };
+    }
+    const authorization = await this.costPolicy.authorize({ operation: input.operation, costClass: input.costClass, cacheHit: false });
+    if (authorization.status !== 'AVAILABLE') throw new Error(authorization.reason ?? 'COST_POLICY_DENIED');
+    const value = await load(); await this.cache.set(input.key, value, input.expiresAt); return { value, cached: false };
+  }
+}

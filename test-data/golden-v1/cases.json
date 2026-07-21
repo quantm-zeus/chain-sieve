@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "capabilityMode": "SYNTHETIC_SHADOW",
+  "cases": [
+    { "id": "normal-asset", "expected": "OBSERVE_ONLY", "facts": ["consistent free sources", "bounded liquidity"] },
+    { "id": "rug", "expected": "CRITICAL_RISK", "facts": ["synthetic liquidity removal", "creator concentration"] },
+    { "id": "honeypot", "expected": "UNTRADABLE", "facts": ["synthetic exit failure"] },
+    { "id": "liquidity-spoof", "expected": "CONFLICTED", "facts": ["short-lived synthetic liquidity"] },
+    { "id": "bundled-wallets", "expected": "MANIPULATION_RISK", "facts": ["coordinated synthetic funding"] },
+    { "id": "shared-funder", "expected": "ENTITY_LINK", "facts": ["shared synthetic source wallet"] },
+    { "id": "migration", "expected": "LINEAGE_PRESERVED", "facts": ["old and new representation"] },
+    { "id": "multi-hop-route", "expected": "NORMALIZED_TRADE", "facts": ["three synthetic legs", "one economic trade"] },
+    { "id": "partial-fill", "expected": "PARTIAL_EXECUTION", "facts": ["40 percent filled"] },
+    { "id": "transfer-fee", "expected": "FEE_APPLIED", "facts": ["synthetic 2 percent transfer fee"] },
+    { "id": "missing-provider", "expected": "INSUFFICIENT_DATA", "facts": ["optional source unavailable"] },
+    { "id": "provider-conflict", "expected": "CONFLICTED", "facts": ["incompatible synthetic values"] },
+    { "id": "late-observation", "expected": "LATE_PRESERVED", "facts": ["available_at follows fetch time"] },
+    { "id": "untradable-winner", "expected": "SIGNAL_SUCCESS_ONLY", "facts": ["price rose", "exit unavailable"] },
+    { "id": "tradable-winner", "expected": "TRADABLE_SUCCESS", "facts": ["mature simulated entry and exit"] },
+    { "id": "duplicate-trigger", "expected": "IDEMPOTENT", "facts": ["same idempotency key"] },
+    { "id": "stale-lease", "expected": "REJECTED", "facts": ["older fencing version"] },
+    { "id": "schema-drift", "expected": "FAIL_CLOSED", "facts": ["unknown synthetic field contract"] },
+    { "id": "quota-exhaustion", "expected": "NOT_AVAILABLE", "facts": ["bounded quota consumed"] },
+    { "id": "object-store-failure", "expected": "RETRYABLE_FAILURE", "facts": ["injected immutable-store outage"] }
+  ]
+}
