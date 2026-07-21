@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/discovery-universe"
+  ],
+  "allowedPaths": [
+    "packages/discovery-universe/**",
+    "packages/cheap-monitor/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-DISC-01/**"
+  ],
+  "writeSet": [
+    "packages/discovery-universe/**",
+    "packages/cheap-monitor/**"
+  ]
+}

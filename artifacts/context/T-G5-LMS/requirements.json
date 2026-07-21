@@ -1,0 +1,447 @@
+[
+  {
+    "id": "FR-LMS-001",
+    "text": "Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure.",
+    "textSha256": "d61fab06474c2dc067bbe45cef2fb1a53370ff27e08558f6f6916db46c73e8e0",
+    "line": 6259,
+    "family": "FR-LMS",
+    "dependencyGroup": "G5",
+    "owner": "packages/launch-state-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/launch-state-intelligence/** @requirement FR-LMS-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lms.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lms_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lms-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lms/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lms.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.24 Launch and Migration State Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LMS-002",
+    "text": "State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.",
+    "textSha256": "62368b05ba72becbc233f9a49b7b6dbcdf258111caec389fc62df6eb5d85ae44",
+    "line": 6260,
+    "family": "FR-LMS",
+    "dependencyGroup": "G5",
+    "owner": "packages/launch-state-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/launch-state-intelligence/** @requirement FR-LMS-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lms.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lms_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lms-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lms/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lms.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.24 Launch and Migration State Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LMS-003",
+    "text": "Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.",
+    "textSha256": "9e887b23496a13bf1a56a213249366421f521732100724ce84c25b9c9a718802",
+    "line": 6261,
+    "family": "FR-LMS",
+    "dependencyGroup": "G5",
+    "owner": "packages/launch-state-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/launch-state-intelligence/** @requirement FR-LMS-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lms.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lms_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lms-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lms/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lms.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.24 Launch and Migration State Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LMS-004",
+    "text": "Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion.",
+    "textSha256": "e4877e9a6ae683bf58fd05aaaf026f59f588a7a06d62692a354cd6275785d5f0",
+    "line": 6262,
+    "family": "FR-LMS",
+    "dependencyGroup": "G5",
+    "owner": "packages/launch-state-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/launch-state-intelligence/** @requirement FR-LMS-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lms.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lms_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lms-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lms/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lms.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.24 Launch and Migration State Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LMS-005",
+    "text": "Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims.",
+    "textSha256": "6d9236401bfac08793d3ef818739390cce0b5baf3aeb35d26dff539cb3ff37c6",
+    "line": 6263,
+    "family": "FR-LMS",
+    "dependencyGroup": "G5",
+    "owner": "packages/launch-state-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/launch-state-intelligence/** @requirement FR-LMS-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lms.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lms_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lms-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lms/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lms.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.24 Launch and Migration State Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

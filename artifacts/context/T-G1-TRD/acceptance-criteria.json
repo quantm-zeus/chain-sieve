@@ -1,0 +1,56 @@
+[
+  {
+    "id": "AC-132",
+    "text": "Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.",
+    "textSha256": "da10ace021f9f86905ef73fe2612d1de7259f10c910c885a47f60e217c37a5f8",
+    "line": 6633,
+    "requirementRefs": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006",
+      "FR-SUP-001",
+      "FR-SUP-002",
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-132.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-132.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.12 Solana security and economic events",
+    "testClass": "execution-solana"
+  },
+  {
+    "id": "AC-135",
+    "text": "Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.",
+    "textSha256": "bf04f986a93c324b3e2424f0746100778fdf1aad461041a2c0bb022ec0633bf2",
+    "line": 6636,
+    "requirementRefs": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006",
+      "FR-SUP-001",
+      "FR-SUP-002",
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-135.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-135.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.12 Solana security and economic events",
+    "testClass": "execution-solana"
+  }
+]

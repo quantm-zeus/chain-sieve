@@ -1,0 +1,537 @@
+[
+  {
+    "id": "FR-AMS-001",
+    "text": "A versioned adversarial scenario library covers address splitting, sybil buyer breadth, routed/wash volume, liquidity spoofing/removal, creator-control obfuscation, social coordination, fake independent wallets, pattern mimicry, threshold gaming, and smart-wallet seeding.",
+    "textSha256": "9ced806478593fa11b77f2f43608119ec56176fe1ce51f7671efe4a02c349210",
+    "line": 6334,
+    "family": "FR-AMS",
+    "dependencyGroup": "G7",
+    "owner": "packages/adversarial-simulator",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/adversarial-simulator/** @requirement FR-AMS-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ams.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_ams_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ams-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ams/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ams.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.33 Adversarial Manipulation Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AMS-002",
+    "text": "Synthetic or transformed scenarios preserve explicit lineage and cannot contaminate real outcome training/evaluation datasets.",
+    "textSha256": "fa8dba72a7eb80a80c360f5974ce57b611f9e3b3ecd81b06d39741279bf2de9a",
+    "line": 6335,
+    "family": "FR-AMS",
+    "dependencyGroup": "G7",
+    "owner": "packages/adversarial-simulator",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/adversarial-simulator/** @requirement FR-AMS-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ams.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_ams_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ams-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ams/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ams.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.33 Adversarial Manipulation Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AMS-003",
+    "text": "Every active detector/pattern/policy declares applicable adversarial tests and minimum pass criteria.",
+    "textSha256": "29b71775c30d4ca181c96bc4e393356f8304b6f1abf565598dc0b2966eef4662",
+    "line": 6336,
+    "family": "FR-AMS",
+    "dependencyGroup": "G7",
+    "owner": "packages/adversarial-simulator",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/adversarial-simulator/** @requirement FR-AMS-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ams.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_ams_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ams-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ams/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ams.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.33 Adversarial Manipulation Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AMS-004",
+    "text": "A newly failed critical adversarial test pauses affected opportunity influence until reviewed and corrected.",
+    "textSha256": "9441f5ba8ee48ebfdf5b45daf479474b4bba67fd1b5e253c2a069361dda249ca",
+    "line": 6337,
+    "family": "FR-AMS",
+    "dependencyGroup": "G7",
+    "owner": "packages/adversarial-simulator",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/adversarial-simulator/** @requirement FR-AMS-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ams.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_ams_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ams-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ams/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ams.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.33 Adversarial Manipulation Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AMS-005",
+    "text": "Tests measure detection, abstention, false confidence, alert escape, and quota-amplification risk.",
+    "textSha256": "08c750e81c4a7b15d7280a02f29ce2f75e4a71078cb72a91fd0b8537ca9314ea",
+    "line": 6338,
+    "family": "FR-AMS",
+    "dependencyGroup": "G7",
+    "owner": "packages/adversarial-simulator",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/adversarial-simulator/** @requirement FR-AMS-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ams.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_ams_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ams-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ams/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ams.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.33 Adversarial Manipulation Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

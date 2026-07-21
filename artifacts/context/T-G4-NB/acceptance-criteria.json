@@ -1,0 +1,31 @@
+[
+  {
+    "id": "AC-085",
+    "text": "Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.",
+    "textSha256": "741af736a08e3dac050a67e2b4362880445bee31ab111838f58caef046c0b5ae",
+    "line": 6594,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-085.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-085.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  }
+]

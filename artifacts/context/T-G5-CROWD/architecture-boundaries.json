@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/crowding"
+  ],
+  "allowedPaths": [
+    "packages/crowding/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-CROWD/**"
+  ],
+  "writeSet": [
+    "packages/crowding/**"
+  ]
+}

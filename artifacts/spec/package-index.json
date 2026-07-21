@@ -1,0 +1,669 @@
+[
+  {
+    "owner": "apps/api/src/mcp",
+    "requirements": [
+      "FR-MCP-001",
+      "FR-MCP-002",
+      "FR-MCP-003",
+      "FR-MCP-004",
+      "FR-MCP-005",
+      "FR-MCP-006",
+      "FR-MCP-007",
+      "FR-MCP-008",
+      "FR-MCP-009",
+      "FR-MCP-010",
+      "FR-MCP-011",
+      "FR-MCP-012"
+    ]
+  },
+  {
+    "owner": "apps/collector",
+    "requirements": [
+      "FR-COL-001",
+      "FR-COL-002",
+      "FR-COL-003",
+      "FR-COL-004",
+      "FR-COL-005",
+      "FR-COL-006",
+      "FR-COL-007",
+      "FR-COL-008",
+      "FR-COL-009",
+      "FR-COL-010",
+      "FR-COL-011",
+      "FR-COL-012"
+    ]
+  },
+  {
+    "owner": "apps/dashboard",
+    "requirements": [
+      "FR-ADM-001",
+      "FR-ADM-002",
+      "FR-ADM-003",
+      "FR-ADM-004",
+      "FR-ADM-005",
+      "FR-ADM-006",
+      "FR-ADM-007",
+      "FR-ADM-008"
+    ]
+  },
+  {
+    "owner": "packages/active-learning",
+    "requirements": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "owner": "packages/adversarial-simulator",
+    "requirements": [
+      "FR-AMS-001",
+      "FR-AMS-002",
+      "FR-AMS-003",
+      "FR-AMS-004",
+      "FR-AMS-005"
+    ]
+  },
+  {
+    "owner": "packages/agent-runtime",
+    "requirements": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AEP-001",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "owner": "packages/alerts",
+    "requirements": [
+      "FR-ALERT-001",
+      "FR-ALERT-002",
+      "FR-ALERT-003",
+      "FR-ALERT-004",
+      "FR-ALERT-005"
+    ]
+  },
+  {
+    "owner": "packages/alpha-governance",
+    "requirements": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "owner": "packages/analog-finder",
+    "requirements": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "owner": "packages/attention-diffusion",
+    "requirements": [
+      "FR-ADQ-001",
+      "FR-ADQ-002",
+      "FR-ADQ-003",
+      "FR-ADQ-004",
+      "FR-ADQ-005"
+    ]
+  },
+  {
+    "owner": "packages/capability-registry",
+    "requirements": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "owner": "packages/capital-flow",
+    "requirements": [
+      "FR-XCF-001",
+      "FR-XCF-002"
+    ]
+  },
+  {
+    "owner": "packages/cost-router",
+    "requirements": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008",
+      "FR-COST-009",
+      "FR-COST-010",
+      "FR-COST-011",
+      "FR-COST-012",
+      "FR-COST-013",
+      "FR-COST-014",
+      "FR-COST-015",
+      "FR-COST-016",
+      "FR-COST-017"
+    ]
+  },
+  {
+    "owner": "packages/counterfactual-lab",
+    "requirements": [
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003"
+    ]
+  },
+  {
+    "owner": "packages/crowding",
+    "requirements": [
+      "FR-CROWD-001",
+      "FR-CROWD-002",
+      "FR-CROWD-003",
+      "FR-CROWD-004",
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "owner": "packages/deployer-funder-dna",
+    "requirements": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "owner": "packages/discovery-universe",
+    "requirements": [
+      "FR-DISC-001",
+      "FR-DISC-002",
+      "FR-DISC-003",
+      "FR-DISC-004",
+      "FR-DISC-005",
+      "FR-DISC-006",
+      "FR-DISC-007",
+      "FR-DISC-008",
+      "FR-DISC-009",
+      "FR-DISC-010",
+      "FR-DISC-011",
+      "FR-DISC-012",
+      "FR-DISC-013",
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "owner": "packages/domain",
+    "requirements": [
+      "FR-CORE-001",
+      "FR-CORE-002",
+      "FR-CORE-003",
+      "FR-CORE-004",
+      "FR-CORE-005",
+      "FR-CORE-006",
+      "FR-CORE-007",
+      "FR-CORE-008"
+    ]
+  },
+  {
+    "owner": "packages/economic-trade-normalizer",
+    "requirements": [
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ]
+  },
+  {
+    "owner": "packages/evaluation",
+    "requirements": [
+      "FR-EVAL-001",
+      "FR-EVAL-002",
+      "FR-EVAL-003",
+      "FR-EVAL-004",
+      "FR-EVAL-005",
+      "FR-EVAL-006",
+      "FR-EVAL-007",
+      "FR-EVAL-008",
+      "FR-EVAL-009",
+      "FR-EVAL-010",
+      "FR-EVAL-011",
+      "FR-EVAL-012",
+      "FR-EVAL-013",
+      "FR-EVAL-014",
+      "FR-EVAL-015",
+      "FR-EVAL-016",
+      "FR-EVAL-017",
+      "FR-EVAL-018",
+      "FR-EVAL-019",
+      "FR-EVAL-020"
+    ]
+  },
+  {
+    "owner": "packages/execution-simulator",
+    "requirements": [
+      "FR-EXEC-001",
+      "FR-EXEC-002",
+      "FR-EXEC-003",
+      "FR-EXEC-004",
+      "FR-EXEC-005",
+      "FR-EXEC-006",
+      "FR-EXEC-007",
+      "FR-EXEC-008",
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016",
+      "FR-EXEC-017",
+      "FR-EXEC-018",
+      "FR-EXEC-019",
+      "FR-EXEC-020",
+      "FR-EXEC-021",
+      "FR-EXEC-022"
+    ]
+  },
+  {
+    "owner": "packages/exploration-bandit",
+    "requirements": [
+      "FR-EXP-001",
+      "FR-EXP-002",
+      "FR-EXP-003",
+      "FR-EXP-004",
+      "FR-EXP-005",
+      "FR-EXP-006"
+    ]
+  },
+  {
+    "owner": "packages/failure-hazard",
+    "requirements": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "owner": "packages/fallback-runtime",
+    "requirements": [
+      "FR-FB-001",
+      "FR-FB-002"
+    ]
+  },
+  {
+    "owner": "packages/information-gain-scheduler",
+    "requirements": [
+      "FR-AIG-001",
+      "FR-AIG-002",
+      "FR-AIG-003",
+      "FR-AIG-004",
+      "FR-AIG-005"
+    ]
+  },
+  {
+    "owner": "packages/latency-profiler",
+    "requirements": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "owner": "packages/launch-state-intelligence",
+    "requirements": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "owner": "packages/leader-laggard",
+    "requirements": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "owner": "packages/liquidity-resilience",
+    "requirements": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "owner": "packages/multi-view-disagreement",
+    "requirements": [
+      "FR-MVD-001",
+      "FR-MVD-002",
+      "FR-MVD-003",
+      "FR-MVD-004",
+      "FR-MVD-005"
+    ]
+  },
+  {
+    "owner": "packages/narrative-intelligence",
+    "requirements": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "owner": "packages/novelty-detector",
+    "requirements": [
+      "FR-OOD-001",
+      "FR-OOD-002",
+      "FR-OOD-003",
+      "FR-OOD-004",
+      "FR-OOD-005"
+    ]
+  },
+  {
+    "owner": "packages/objective-governance",
+    "requirements": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008",
+      "FR-OBJ-009",
+      "FR-OBJ-010"
+    ]
+  },
+  {
+    "owner": "packages/offline-alpha-lab",
+    "requirements": [
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ]
+  },
+  {
+    "owner": "packages/opportunity-frontier",
+    "requirements": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "owner": "packages/outcome-maturity",
+    "requirements": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008",
+      "FR-MAT-009",
+      "FR-MAT-010",
+      "FR-MAT-011",
+      "FR-MAT-012"
+    ]
+  },
+  {
+    "owner": "packages/persistence",
+    "requirements": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006",
+      "FR-DATA-007",
+      "FR-DATA-008",
+      "FR-DATA-009",
+      "FR-DATA-010",
+      "FR-DATA-011",
+      "FR-DATA-012",
+      "FR-DATA-013",
+      "FR-DATA-014",
+      "FR-DATA-015",
+      "FR-DATA-016",
+      "FR-DR-001",
+      "FR-DR-002",
+      "FR-DR-003",
+      "FR-DR-004",
+      "FR-DR-005",
+      "FR-DR-006"
+    ]
+  },
+  {
+    "owner": "packages/policy-compiler",
+    "requirements": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "owner": "packages/provider-lifecycle",
+    "requirements": [
+      "FR-PROV-001",
+      "FR-PROV-002",
+      "FR-PROV-003",
+      "FR-PROV-004",
+      "FR-PROV-005",
+      "FR-PROV-006",
+      "FR-PROV-007",
+      "FR-PROV-008",
+      "FR-PROV-009",
+      "FR-PROV-010"
+    ]
+  },
+  {
+    "owner": "packages/public-claims-policy",
+    "requirements": [
+      "FR-LEGAL-001",
+      "FR-LEGAL-002",
+      "FR-LEGAL-003",
+      "FR-LEGAL-004",
+      "FR-LEGAL-005",
+      "FR-LEGAL-006"
+    ]
+  },
+  {
+    "owner": "packages/regime-router",
+    "requirements": [
+      "FR-REG-001",
+      "FR-REG-002"
+    ]
+  },
+  {
+    "owner": "packages/release-conformance",
+    "requirements": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006",
+      "FR-PROD-007",
+      "FR-PROD-008",
+      "FR-PROD-009",
+      "FR-PROD-010",
+      "FR-PROD-011",
+      "FR-PROD-012"
+    ]
+  },
+  {
+    "owner": "packages/requirement-manifest",
+    "requirements": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "owner": "packages/research-notebook",
+    "requirements": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "owner": "packages/security",
+    "requirements": [
+      "FR-SEC-001",
+      "FR-SEC-002",
+      "FR-SEC-003",
+      "FR-SEC-004",
+      "FR-SEC-005",
+      "FR-SEC-006",
+      "FR-SEC-007",
+      "FR-SEC-008",
+      "FR-SEC-009",
+      "FR-SEC-010",
+      "FR-SEC-011",
+      "FR-SEC-012"
+    ]
+  },
+  {
+    "owner": "packages/shadow-portfolio",
+    "requirements": [
+      "FR-SPF-001",
+      "FR-SPF-002",
+      "FR-SPF-003",
+      "FR-SPF-004",
+      "FR-SPF-005",
+      "FR-SPF-006",
+      "FR-SPF-007",
+      "FR-SPF-008"
+    ]
+  },
+  {
+    "owner": "packages/signal-intelligence",
+    "requirements": [
+      "FR-SIG-001",
+      "FR-SIG-002",
+      "FR-SIG-003",
+      "FR-SIG-004",
+      "FR-SIG-005",
+      "FR-SIG-006",
+      "FR-SIG-007",
+      "FR-SIG-008",
+      "FR-SIG-009",
+      "FR-SIG-010"
+    ]
+  },
+  {
+    "owner": "packages/social-capability",
+    "requirements": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "owner": "packages/solana-security",
+    "requirements": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "owner": "packages/supply-confidence",
+    "requirements": [
+      "FR-SUP-001",
+      "FR-SUP-002"
+    ]
+  },
+  {
+    "owner": "packages/thesis",
+    "requirements": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003",
+      "FR-WHY-001",
+      "FR-WHY-002",
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "owner": "packages/wallet-alpha-lineage",
+    "requirements": [
+      "FR-WAL-001",
+      "FR-WAL-002",
+      "FR-WAL-003",
+      "FR-WAL-004",
+      "FR-WAL-005",
+      "FR-WAL-006",
+      "FR-WAL-007"
+    ]
+  },
+  {
+    "owner": "packages/winning-pattern-intelligence",
+    "requirements": [
+      "FR-WPI-001",
+      "FR-WPI-002",
+      "FR-WPI-003",
+      "FR-WPI-004",
+      "FR-WPI-005",
+      "FR-WPI-006",
+      "FR-WPI-007",
+      "FR-WPI-008",
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "owner": "packages/workflow-runtime",
+    "requirements": [
+      "FR-WF-001",
+      "FR-WF-002",
+      "FR-WF-003",
+      "FR-WF-004",
+      "FR-WF-005",
+      "FR-WF-006",
+      "FR-WF-007",
+      "FR-WF-008"
+    ]
+  }
+]

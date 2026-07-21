@@ -1,0 +1,174 @@
+[
+  {
+    "id": "FR-SUP-001",
+    "text": "Circulating supply and market cap expose source, method, excluded supply, and confidence.",
+    "textSha256": "2915e660449bb4a5ed7736a9ebed02b0598e9d879b44d1414a21fc11c6a29469",
+    "line": 6187,
+    "family": "FR-SUP",
+    "dependencyGroup": "G1",
+    "owner": "packages/supply-confidence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136"
+    ],
+    "implementationRefs": [
+      "packages/supply-confidence/** @requirement FR-SUP-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sup.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sup_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sup-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sup/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sup.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SUP-002",
+    "text": "Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist.",
+    "textSha256": "2275d5dac52885921c92b8ba82cb64ddfb87e5634ba061b2cfab74e887af1cc4",
+    "line": 6188,
+    "family": "FR-SUP",
+    "dependencyGroup": "G1",
+    "owner": "packages/supply-confidence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136"
+    ],
+    "implementationRefs": [
+      "packages/supply-confidence/** @requirement FR-SUP-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sup.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sup_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sup-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sup/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sup.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G1-MAT-01",
+  "title": "FR-MAT implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G1",
+  "cluster": "C-G1-IMPLEMENTATION",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE"
+  ],
+  "requirements": [
+    "FR-MAT-001",
+    "FR-MAT-002",
+    "FR-MAT-003",
+    "FR-MAT-004",
+    "FR-MAT-005",
+    "FR-MAT-006",
+    "FR-MAT-007",
+    "FR-MAT-008"
+  ],
+  "acceptanceCriteria": [
+    "AC-042",
+    "AC-126"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/outcome-maturity"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-MAT-01/**"
+  ],
+  "writeSet": [
+    "packages/outcome-maturity/**"
+  ],
+  "allowedPaths": [
+    "packages/outcome-maturity/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "exclusiveLocks": [
+    "packages/outcome-maturity/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/outcome-maturity:contract": "16a132155301be3c0f80ddba406b539e15a41cb78d7f62c44ff4eaf70ef97bf5"
+  },
+  "deliverables": [
+    "packages/outcome-maturity/** @requirement FR-MAT-001",
+    "packages/outcome-maturity/** @requirement FR-MAT-002",
+    "packages/outcome-maturity/** @requirement FR-MAT-003",
+    "packages/outcome-maturity/** @requirement FR-MAT-004",
+    "packages/outcome-maturity/** @requirement FR-MAT-005",
+    "packages/outcome-maturity/** @requirement FR-MAT-006",
+    "packages/outcome-maturity/** @requirement FR-MAT-007",
+    "packages/outcome-maturity/** @requirement FR-MAT-008",
+    "packages/outcome-maturity implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-042.spec.ts",
+    "tests/negative/AC-042.negative.spec.ts",
+    "tests/acceptance/AC-126.spec.ts",
+    "tests/negative/AC-126.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm exec vitest run tests/acceptance/AC-042.spec.ts tests/negative/AC-042.negative.spec.ts tests/acceptance/AC-126.spec.ts tests/negative/AC-126.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6171,
+      "id": "FR-MAT-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6172,
+      "id": "FR-MAT-002"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6173,
+      "id": "FR-MAT-003"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6174,
+      "id": "FR-MAT-004"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6175,
+      "id": "FR-MAT-005"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6176,
+      "id": "FR-MAT-006"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6177,
+      "id": "FR-MAT-007"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6455,
+      "id": "FR-MAT-008"
+    }
+  ]
+}

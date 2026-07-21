@@ -1,0 +1,233 @@
+[
+  {
+    "id": "FR-THS-001",
+    "text": "Versioned thesis lifecycle with deterministic transition rules.",
+    "textSha256": "3b338562930fb8db80b5da36038fb3c9a4b3ec6f2e2ba592c97bcca9eb989b7f",
+    "line": 6073,
+    "family": "FR-THS",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-THS-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ths.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_ths_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ths-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ths/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ths.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-THS-002",
+    "text": "Explicit strengthening, weakening, invalidation, expected-evidence, and expiry conditions.",
+    "textSha256": "256f2e1ad7a37d05573c568bdfba42ee2c4e26fe145dca774dbcecd8af6a65cf",
+    "line": 6074,
+    "family": "FR-THS",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-THS-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ths.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_ths_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ths-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ths/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ths.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-THS-003",
+    "text": "Thesis events preserve point-in-time evidence and state history.",
+    "textSha256": "101f34b2eacabadd5579833d46fa732c3231bc0a240fce557a43a898a37c2ce8",
+    "line": 6075,
+    "family": "FR-THS",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-THS-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ths.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_ths_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ths-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ths/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ths.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

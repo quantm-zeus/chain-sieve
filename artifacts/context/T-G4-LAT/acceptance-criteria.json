@@ -1,0 +1,19 @@
+[
+  {
+    "id": "AC-080",
+    "text": "Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly.",
+    "textSha256": "7d8a0a852aa1561a0716d20105ce35ad9553d92f895d9ef47833b0079af05bd9",
+    "line": 6586,
+    "requirementRefs": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-080.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-080.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  }
+]

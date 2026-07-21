@@ -1,0 +1,27 @@
+name: Tier 4 scheduled verification
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mutation-replay-extended:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prd:compile
+      - run: pnpm prd:drift-check
+      - run: pnpm test:mutation
+      - run: pnpm test:harness
+      - run: pnpm architecture:verify
+      - run: pnpm placeholders:scan
+      - run: pnpm prohibited-capabilities:scan
+      - run: pnpm harness:lifecycle
+      - run: pnpm tests:skeleton-integrity
+      - run: pnpm harness:verify

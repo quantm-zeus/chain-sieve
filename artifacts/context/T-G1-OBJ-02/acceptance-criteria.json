@@ -1,0 +1,52 @@
+[
+  {
+    "id": "AC-221",
+    "text": "Changing a candidate denominator, execution scenario, horizon, or delay policy after outcomes are visible invalidates the promotion comparison and creates an objective-integrity incident.",
+    "textSha256": "d34728cae539ad0f960cbf1a9afba6ae414753c306aaf01c1f1885d0cc6c6c29",
+    "line": 6736,
+    "requirementRefs": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008",
+      "FR-OBJ-009",
+      "FR-OBJ-010"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-221.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-221.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.21 Objective, collector, and sustainable capacity",
+    "testClass": "objective-collector-execution"
+  },
+  {
+    "id": "AC-223",
+    "text": "Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.",
+    "textSha256": "5249790ee236fc02a6512d251aaaed92f00ceaaf0dcd63d346fa436d90561170",
+    "line": 6738,
+    "requirementRefs": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008",
+      "FR-OBJ-009",
+      "FR-OBJ-010"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-223.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-223.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.21 Objective, collector, and sustainable capacity",
+    "testClass": "objective-collector-execution"
+  }
+]

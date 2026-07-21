@@ -153,6 +153,9 @@ importers:
       '@ciag/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@ciag/mcp-adapter':
+        specifier: workspace:*
+        version: link:../../packages/mcp-adapter
       '@ciag/object-store':
         specifier: workspace:*
         version: link:../../packages/object-store
@@ -162,12 +165,18 @@ importers:
       '@ciag/persistence':
         specifier: workspace:*
         version: link:../../packages/persistence
+      '@ciag/runtime-cache':
+        specifier: workspace:*
+        version: link:../../packages/runtime-cache
       '@ciag/security':
         specifier: workspace:*
         version: link:../../packages/security
       '@ciag/shared-schemas':
         specifier: workspace:*
         version: link:../../packages/shared-schemas
+      '@ciag/tool-core':
+        specifier: workspace:*
+        version: link:../../packages/tool-core
 
   apps/dashboard: {}
 

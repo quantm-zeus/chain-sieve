@@ -1,0 +1,28 @@
+{
+  "ownerPackages": [
+    "packages/persistence"
+  ],
+  "allowedPaths": [
+    "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-DR/**"
+  ],
+  "writeSet": [
+    "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**"
+  ]
+}

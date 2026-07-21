@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/multi-view-disagreement"
+  ],
+  "allowedPaths": [
+    "packages/multi-view-disagreement/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-MVD/**"
+  ],
+  "writeSet": [
+    "packages/multi-view-disagreement/**"
+  ]
+}

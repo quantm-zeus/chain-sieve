@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/public-claims-policy"
+  ],
+  "allowedPaths": [
+    "packages/public-claims-policy/**",
+    "packages/tenant-isolation/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-LEGAL/**"
+  ],
+  "writeSet": [
+    "packages/public-claims-policy/**",
+    "packages/tenant-isolation/**"
+  ]
+}

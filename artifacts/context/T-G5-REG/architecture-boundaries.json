@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/regime-router"
+  ],
+  "allowedPaths": [
+    "packages/regime-router/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-REG/**"
+  ],
+  "writeSet": [
+    "packages/regime-router/**"
+  ]
+}

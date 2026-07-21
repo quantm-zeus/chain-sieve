@@ -1,0 +1,174 @@
+[
+  {
+    "id": "FR-FB-001",
+    "text": "Deterministic fallback supports safe operation without model services.",
+    "textSha256": "5bb1f924bf0ecd1cfccfe956cdfcc4c97a7d559c4a29591c48e599b1c6ee7751",
+    "line": 6122,
+    "family": "FR-FB",
+    "dependencyGroup": "G4",
+    "owner": "packages/fallback-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/fallback-runtime/** @requirement FR-FB-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fb.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_fb_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fb-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fb/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fb.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-FB-002",
+    "text": "Fallback opportunity-alert permissions are separately approved and default disabled.",
+    "textSha256": "09b3680bc151ac3f00c3703f285ea3dbe59a223a074c72f66501a07c43fa36c7",
+    "line": 6123,
+    "family": "FR-FB",
+    "dependencyGroup": "G4",
+    "owner": "packages/fallback-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/fallback-runtime/** @requirement FR-FB-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fb.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_fb_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fb-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fb/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fb.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

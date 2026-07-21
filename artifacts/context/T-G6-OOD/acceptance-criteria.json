@@ -1,0 +1,62 @@
+[
+  {
+    "id": "AC-182",
+    "text": "A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views.",
+    "textSha256": "e0be466baedd7cb689e52ecd83fea8c7d8ddc87e3c236f305832c9bd750f6317",
+    "line": 6685,
+    "requirementRefs": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005",
+      "FR-MVD-001",
+      "FR-MVD-002",
+      "FR-MVD-003",
+      "FR-MVD-004",
+      "FR-MVD-005",
+      "FR-OOD-001",
+      "FR-OOD-002",
+      "FR-OOD-003",
+      "FR-OOD-004",
+      "FR-OOD-005"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-182.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-182.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.17 Novelty, disagreement, and hazards",
+    "testClass": "novelty-disagreement-hazard"
+  },
+  {
+    "id": "AC-185",
+    "text": "A rising liquidity/creator-exit hazard shortens alert validity and produces an idempotent deterioration/risk update under policy.",
+    "textSha256": "c4c7b00e9d9c8e9d914bea3ae1a477813a0e585404fad87dd6bcbd3a6dc6a78a",
+    "line": 6688,
+    "requirementRefs": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005",
+      "FR-MVD-001",
+      "FR-MVD-002",
+      "FR-MVD-003",
+      "FR-MVD-004",
+      "FR-MVD-005",
+      "FR-OOD-001",
+      "FR-OOD-002",
+      "FR-OOD-003",
+      "FR-OOD-004",
+      "FR-OOD-005"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-185.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-185.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.17 Novelty, disagreement, and hazards",
+    "testClass": "novelty-disagreement-hazard"
+  }
+]

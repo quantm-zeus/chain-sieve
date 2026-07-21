@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/agent-runtime"
+  ],
+  "allowedPaths": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G3-AGT-02/**"
+  ],
+  "writeSet": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**"
+  ]
+}

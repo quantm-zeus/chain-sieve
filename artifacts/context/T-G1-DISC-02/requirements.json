@@ -1,0 +1,98 @@
+[
+  {
+    "id": "FR-DISC-014",
+    "text": "Full-market, all-Solana, or universal-recall language is prohibited unless the exact coverage and sampling contract establishes it.",
+    "textSha256": "c9ca96b5a0c812c0141a02025cfd608d1cf02c2ef06a09ba810a2dbf75acff67",
+    "line": 6444,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-014",
+      "packages/cheap-monitor/** @requirement FR-DISC-014"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

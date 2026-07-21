@@ -1,0 +1,24 @@
+[
+  {
+    "id": "AC-078",
+    "text": "A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.",
+    "textSha256": "e911fdca061ace6a72d5c2fbc1097bca4c4aa1b44f0853d711562685b1b1dd25",
+    "line": 6584,
+    "requirementRefs": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005",
+      "FR-REG-001",
+      "FR-REG-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-078.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-078.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "thesis-policy"
+  }
+]

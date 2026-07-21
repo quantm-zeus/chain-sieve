@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/analog-finder"
+  ],
+  "allowedPaths": [
+    "packages/analog-finder/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-ANA/**"
+  ],
+  "writeSet": [
+    "packages/analog-finder/**"
+  ]
+}

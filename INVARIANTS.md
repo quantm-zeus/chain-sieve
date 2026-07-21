@@ -1,0 +1,3 @@
+# Bootstrap invariants
+
+All 44 authoritative invariants are indexed in `artifacts/spec/invariant-index.json`; this file does not replace them. The bootstrap enforces the highest-risk cross-cutting subset: permanent read-only behavior, no transaction construction or submission, no automatic activation, no backdated `available_at`, immutable evidence, idempotent synthetic stages, fenced leases, zero quota charge on cache hits, explicit provider schema-drift failure, STRICT_FREE fail-closed behavior, distinct signal and tradable outcomes, deterministic-not-model notification authority, and dashboard isolation.

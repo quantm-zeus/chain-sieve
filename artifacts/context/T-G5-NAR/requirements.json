@@ -1,0 +1,162 @@
+[
+  {
+    "id": "FR-NAR-001",
+    "text": "Versioned narrative entities, memberships, graph edges, evidence confidence, rights, temporal validity, and contradiction state are implemented.",
+    "textSha256": "a04959521e53f861620d81e6033dae9088380bc83172cfcc170d44b01a95ae56",
+    "line": 6084,
+    "family": "FR-NAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/narrative-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/narrative-intelligence/** @requirement FR-NAR-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-NAR-002",
+    "text": "Narrative rotation assessment combines available breadth, on-chain flow, social confirmation, price extension, and crowding while preserving missing capability and source dependence.",
+    "textSha256": "c3ad341d67dc185fb610d1e40654206d10aa8f63a50357bd0ab189930e14949a",
+    "line": 6085,
+    "family": "FR-NAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/narrative-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/narrative-intelligence/** @requirement FR-NAR-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "status": "PASS_WITH_ENVIRONMENT_LIMITATION",
+  "repositoryBranch": "bootstrap/agent-harness-and-codebase",
+  "baseCommit": null,
+  "baseDescription": "Repository was unborn; no local or remote main commit existed.",
+  "verifiedHeadCommit": "a46ac4fd46df35ab73cc07314258addb392a1428",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "versions": { "node": "v24.14.0", "pnpm": "10.13.1" },
+  "workspaceProjects": 22,
+  "apiBuildResult": "PASS",
+  "apiLiveResult": { "health": 200, "readinessWithoutPostgres": 503, "gracefulShutdown": "PASS" },
+  "dashboardBuildResult": "PASS",
+  "dashboardPlaywrightResult": "1/1 PASS",
+  "dockerLocalInfrastructureResult": { "composeConfig": "PASS", "containerStartup": "BLOCKED_DOCKER_DAEMON_UNAVAILABLE" },
+  "migrationResult": { "hermeticEmptyToLatest": "PASS", "rerunSafety": "PASS", "noBackdating": "PASS", "serviceBacked": "BLOCKED_DOCKER_DAEMON_UNAVAILABLE" },
+  "testResult": { "files": 9, "tests": 29, "status": "PASS" },
+  "walkingSkeletonResult": "PASS_SYNTHETIC_SHADOW",
+  "architectureResult": "PASS_8_RULES",
+  "securityResult": "PASS",
+  "unresolvedFindings": [
+    "Docker daemon unavailable at unix:///Users/quantm/.docker/run/docker.sock.",
+    "Remote repository has no main/default base branch.",
+    "GitHub CLI is not authenticated, so PR creation is unavailable."
+  ]
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "AC-141",
+    "text": "A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.",
+    "textSha256": "d9927386ebb717f596be5ff49be1a42f39b74e2b0a706344373fe7f91ff7f6c8",
+    "line": 6642,
+    "requirementRefs": [
+      "FR-ALERT-001",
+      "FR-ALERT-002",
+      "FR-ALERT-003",
+      "FR-ALERT-004",
+      "FR-ALERT-005",
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-141.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-141.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.13 Alerts, social, and protocol compatibility",
+    "testClass": "alert-social"
+  },
+  {
+    "id": "AC-143",
+    "text": "Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.",
+    "textSha256": "32ec8e1b46ceaddfa1f0d414b869f168cdc64b42a12df3bc7ed7c5220efb64bd",
+    "line": 6644,
+    "requirementRefs": [
+      "FR-ALERT-001",
+      "FR-ALERT-002",
+      "FR-ALERT-003",
+      "FR-ALERT-004",
+      "FR-ALERT-005",
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-143.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-143.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.13 Alerts, social, and protocol compatibility",
+    "testClass": "alert-social"
+  }
+]

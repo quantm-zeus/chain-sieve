@@ -1,0 +1,8 @@
+{
+  "name": "@ciag/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "tsx watch src/main.ts", "start": "tsx src/main.ts", "typecheck": "tsc -p tsconfig.json --noEmit" },
+  "dependencies": { "@ciag/config": "workspace:*", "@ciag/mcp-adapter": "workspace:*", "@ciag/observability": "workspace:*", "@ciag/persistence": "workspace:*", "@ciag/object-store": "workspace:*", "@ciag/runtime-cache": "workspace:*", "@ciag/security": "workspace:*", "@ciag/shared-schemas": "workspace:*", "@ciag/tool-core": "workspace:*" }
+}

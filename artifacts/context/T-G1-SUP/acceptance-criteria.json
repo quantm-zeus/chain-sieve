@@ -1,0 +1,56 @@
+[
+  {
+    "id": "AC-131",
+    "text": "External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.",
+    "textSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10",
+    "line": 6632,
+    "requirementRefs": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006",
+      "FR-SUP-001",
+      "FR-SUP-002",
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-131.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-131.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.12 Solana security and economic events",
+    "testClass": "execution-solana"
+  },
+  {
+    "id": "AC-134",
+    "text": "Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.",
+    "textSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18",
+    "line": 6635,
+    "requirementRefs": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006",
+      "FR-SUP-001",
+      "FR-SUP-002",
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-134.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-134.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.12 Solana security and economic events",
+    "testClass": "execution-solana"
+  }
+]

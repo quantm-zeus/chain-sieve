@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/information-gain-scheduler"
+  ],
+  "allowedPaths": [
+    "packages/information-gain-scheduler/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G7-AIG/**"
+  ],
+  "writeSet": [
+    "packages/information-gain-scheduler/**"
+  ]
+}

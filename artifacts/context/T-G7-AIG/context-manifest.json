@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AIG",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "files": [
+    {
+      "path": "task-contract.json",
+      "sha256": "7a0df14691907d9e1fa75f07206425338c5cfdd0dca8225d449f5890f11678b2",
+      "bytes": 6569
+    },
+    {
+      "path": "requirements.json",
+      "sha256": "492174185699e2d25bfff8f666c3fde7e71305e05ebc80e6a0120f2d67963b7f",
+      "bytes": 12890
+    },
+    {
+      "path": "acceptance-criteria.json",
+      "sha256": "40e9aaa2d3bc99cf7b38365c9bd1ee977e2018d0d96bbced076dae8bfaf4dfd3",
+      "bytes": 3359
+    },
+    {
+      "path": "invariants.json",
+      "sha256": "df6149df9a2b0f1a9025c52652138be5ec08b98f5468c5f0e50edca3309bf526",
+      "bytes": 4019
+    },
+    {
+      "path": "adrs.json",
+      "sha256": "2a8c4d2c0edcc0bdf64aa2e44b9e396f6a5885f67c52c470ca668ed90686ce68",
+      "bytes": 669
+    },
+    {
+      "path": "architecture-boundaries.json",
+      "sha256": "58baed70f711c28a9ed1c24b2a88ebe4b58a7231b9566c495a66ed16e353af3a",
+      "bytes": 481
+    },
+    {
+      "path": "dependency-outputs.json",
+      "sha256": "f3a2dc88517bba21c5917be8f5cc4aaceb955ee4e9e5acc5d082dce009e6a470",
+      "bytes": 1500
+    },
+    {
+      "path": "public-schemas.json",
+      "sha256": "76540b616a4758b51eb5ed9baa3ae6878abbe2d9739658c843749fd8d4616595",
+      "bytes": 203
+    },
+    {
+      "path": "semantic-fields.json",
+      "sha256": "54b67c0102778ddecfc62e969751e98ec17d8953596b148f6c080647b707981e",
+      "bytes": 426
+    },
+    {
+      "path": "pre-mortem.json",
+      "sha256": "e72a565d750ab0204767159fbbb82ece99afdc117c064fc74d710cf6e7f5b9cb",
+      "bytes": 260
+    },
+    {
+      "path": "source-references.json",
+      "sha256": "4fcb0ea414e1b72e5fe71aebeff532178ffa94413c9ec1df7f7b43eea1f554a7",
+      "bytes": 638
+    }
+  ],
+  "generatedAt": "2026-07-20T00:00:00Z"
+}

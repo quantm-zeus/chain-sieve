@@ -1,0 +1,432 @@
+[
+  {
+    "id": "FR-FHZ-001",
+    "text": "The service estimates horizon-specific hazards for liquidity failure, creator exit, distribution, manipulation, attention collapse, migration failure, and regime reversal when data supports them.",
+    "textSha256": "6aa7b27d9f6cbf4582dece7a2fc2c217d0b9f64bbda72009f18b607c05ee55da",
+    "line": 6298,
+    "family": "FR-FHZ",
+    "dependencyGroup": "G6",
+    "owner": "packages/failure-hazard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/failure-hazard/** @requirement FR-FHZ-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fhz.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_fhz_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fhz-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fhz/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fhz.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.29 Conditional Failure Hazard",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-FHZ-002",
+    "text": "Hazard outputs are calibrated survival/risk estimates or ordinal states with explicit applicability; unsupported probability claims are prohibited.",
+    "textSha256": "59e124cd003184fb66d0d391880dcb74fa47e0b08d22e8595e69c9f0fd8b1143",
+    "line": 6299,
+    "family": "FR-FHZ",
+    "dependencyGroup": "G6",
+    "owner": "packages/failure-hazard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/failure-hazard/** @requirement FR-FHZ-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fhz.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_fhz_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fhz-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fhz/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fhz.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.29 Conditional Failure Hazard",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-FHZ-003",
+    "text": "Time-varying hazard drivers use only point-in-time covariates and account for censoring, competing risks, and event-definition versions.",
+    "textSha256": "6b2ec2ccfe79eb14646a034759e65523f9b1a29d4fdf585f61fd2a1ffb92d397",
+    "line": 6300,
+    "family": "FR-FHZ",
+    "dependencyGroup": "G6",
+    "owner": "packages/failure-hazard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/failure-hazard/** @requirement FR-FHZ-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fhz.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_fhz_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fhz-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fhz/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fhz.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.29 Conditional Failure Hazard",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-FHZ-004",
+    "text": "Rising critical hazard shortens validity, increases risk monitoring, can suppress confirmed opportunity alerts, and can create deterioration/risk updates.",
+    "textSha256": "96699f7f72bf81a8b45648b7c9270017618bb0c874944e2b8d6afb01374dbbc0",
+    "line": 6301,
+    "family": "FR-FHZ",
+    "dependencyGroup": "G6",
+    "owner": "packages/failure-hazard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/failure-hazard/** @requirement FR-FHZ-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fhz.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_fhz_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fhz-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fhz/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fhz.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.29 Conditional Failure Hazard",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-FHZ-005",
+    "text": "Hazard value is evaluated by calibration, early-warning lead time, false-alarm cost, and incremental portfolio loss reduction.",
+    "textSha256": "ae94f924cf2fe25f6d15e3c4fcc5aa740536976ce5c3baa12eb1097eda966774",
+    "line": 6302,
+    "family": "FR-FHZ",
+    "dependencyGroup": "G6",
+    "owner": "packages/failure-hazard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/failure-hazard/** @requirement FR-FHZ-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/fhz.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_fhz_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/fhz-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/fhz/"
+    ],
+    "telemetryRefs": [
+      "telemetry/fhz.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.29 Conditional Failure Hazard",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

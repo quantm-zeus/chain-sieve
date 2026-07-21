@@ -1,0 +1,39 @@
+[
+  {
+    "id": "AC-136",
+    "text": "Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.",
+    "textSha256": "936b29a101783b3a42140c65ed0828b27d88ed21b43287643c5213d7aed2fe26",
+    "line": 6637,
+    "requirementRefs": [
+      "FR-SIG-001",
+      "FR-SIG-002",
+      "FR-SIG-003",
+      "FR-SIG-004",
+      "FR-SIG-005",
+      "FR-SIG-006",
+      "FR-SIG-007",
+      "FR-SIG-008",
+      "FR-SIG-009",
+      "FR-SIG-010",
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006",
+      "FR-SUP-001",
+      "FR-SUP-002",
+      "FR-TRD-001",
+      "FR-TRD-002",
+      "FR-TRD-003",
+      "FR-TRD-004"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-136.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-136.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.12 Solana security and economic events",
+    "testClass": "execution-solana"
+  }
+]

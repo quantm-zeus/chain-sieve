@@ -1,0 +1,26 @@
+[
+  {
+    "id": "AC-075",
+    "text": "Cross-chain fixtures do not double count bridge lock/mint/release or router hops.",
+    "textSha256": "1b91cf64e412a3491155e78fff83b45ffd1be95fe85e4af079f97d9634d74f9a",
+    "line": 6581,
+    "requirementRefs": [
+      "FR-CROWD-001",
+      "FR-CROWD-002",
+      "FR-CROWD-003",
+      "FR-CROWD-004",
+      "FR-CROWD-005",
+      "FR-NAR-001",
+      "FR-NAR-002",
+      "FR-XCF-001",
+      "FR-XCF-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-075.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-075.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "thesis-policy"
+  }
+]

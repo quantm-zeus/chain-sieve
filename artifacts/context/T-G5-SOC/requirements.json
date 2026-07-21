@@ -1,0 +1,310 @@
+[
+  {
+    "id": "FR-SOC-001",
+    "text": "Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.",
+    "textSha256": "0e4ea9457a91fe5b85f0ef97bff095edde27ec828ed59856528cf1dacb607e25",
+    "line": 6201,
+    "family": "FR-SOC",
+    "dependencyGroup": "G5",
+    "owner": "packages/social-capability",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143"
+    ],
+    "implementationRefs": [
+      "packages/social-capability/** @requirement FR-SOC-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/soc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_soc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/soc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/soc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/soc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOC-002",
+    "text": "Missing paid social data cannot be interpreted as negative sentiment or low organic demand.",
+    "textSha256": "2386766cd73d9a7294baf1bd710d468cdd8b586c4b5ba9e54d955fff83e6dbaf",
+    "line": 6202,
+    "family": "FR-SOC",
+    "dependencyGroup": "G5",
+    "owner": "packages/social-capability",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143"
+    ],
+    "implementationRefs": [
+      "packages/social-capability/** @requirement FR-SOC-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/soc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_soc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/soc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/soc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/soc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOC-003",
+    "text": "Unauthorized scraping or private-endpoint reverse engineering is prohibited.",
+    "textSha256": "a46ec70d684b95796b279f1e64e8116f254668c1741dbf45682ff60a847dd9e6",
+    "line": 6203,
+    "family": "FR-SOC",
+    "dependencyGroup": "G5",
+    "owner": "packages/social-capability",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143"
+    ],
+    "implementationRefs": [
+      "packages/social-capability/** @requirement FR-SOC-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/soc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_soc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/soc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/soc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/soc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOC-004",
+    "text": "The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty.",
+    "textSha256": "e01d471f1b94f2149377ad758691a034d9774d705b7c97619b6e20696c195b96",
+    "line": 6204,
+    "family": "FR-SOC",
+    "dependencyGroup": "G5",
+    "owner": "packages/social-capability",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143"
+    ],
+    "implementationRefs": [
+      "packages/social-capability/** @requirement FR-SOC-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/soc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_soc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/soc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/soc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/soc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

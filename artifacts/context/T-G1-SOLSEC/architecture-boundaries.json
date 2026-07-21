@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/solana-security"
+  ],
+  "allowedPaths": [
+    "packages/solana-security/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-SOLSEC/**"
+  ],
+  "writeSet": [
+    "packages/solana-security/**"
+  ]
+}

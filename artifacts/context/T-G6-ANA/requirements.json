@@ -1,0 +1,224 @@
+[
+  {
+    "id": "FR-ANA-001",
+    "text": "Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.",
+    "textSha256": "1ce839d2ebbc57cdd50f7bdb9d16c240642cc7d1fb9da661391cbe9a2d4b6713",
+    "line": 6108,
+    "family": "FR-ANA",
+    "dependencyGroup": "G6",
+    "owner": "packages/analog-finder",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-081",
+      "AC-082",
+      "AC-090"
+    ],
+    "implementationRefs": [
+      "packages/analog-finder/** @requirement FR-ANA-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ana.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ana_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ana-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-081.spec.ts",
+      "tests/negative/AC-081.negative.spec.ts",
+      "tests/acceptance/AC-082.spec.ts",
+      "tests/negative/AC-082.negative.spec.ts",
+      "tests/acceptance/AC-090.spec.ts",
+      "tests/negative/AC-090.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ana/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ana.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ANA-002",
+    "text": "Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.",
+    "textSha256": "97c0c454add3ab4371dd9c12ffa5ddfe0a5be2f269fbb78861cd087ee0f11eb3",
+    "line": 6109,
+    "family": "FR-ANA",
+    "dependencyGroup": "G6",
+    "owner": "packages/analog-finder",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-081",
+      "AC-082",
+      "AC-090"
+    ],
+    "implementationRefs": [
+      "packages/analog-finder/** @requirement FR-ANA-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ana.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ana_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ana-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-081.spec.ts",
+      "tests/negative/AC-081.negative.spec.ts",
+      "tests/acceptance/AC-082.spec.ts",
+      "tests/negative/AC-082.negative.spec.ts",
+      "tests/acceptance/AC-090.spec.ts",
+      "tests/negative/AC-090.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ana/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ana.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ANA-003",
+    "text": "Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests.",
+    "textSha256": "04615cfbe8b5b80302136dc70f7ff141c62b71336131f04da1471d35122e62d1",
+    "line": 6110,
+    "family": "FR-ANA",
+    "dependencyGroup": "G6",
+    "owner": "packages/analog-finder",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-081",
+      "AC-082",
+      "AC-090"
+    ],
+    "implementationRefs": [
+      "packages/analog-finder/** @requirement FR-ANA-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ana.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ana_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ana-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-081.spec.ts",
+      "tests/negative/AC-081.negative.spec.ts",
+      "tests/acceptance/AC-082.spec.ts",
+      "tests/negative/AC-082.negative.spec.ts",
+      "tests/acceptance/AC-090.spec.ts",
+      "tests/negative/AC-090.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ana/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ana.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

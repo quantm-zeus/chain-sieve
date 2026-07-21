@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "clusterId": {
+      "type": "string"
+    },
+    "taskResults": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidenceHash": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "clusterId",
+    "taskResults",
+    "evidenceHash",
+    "status"
+  ],
+  "additionalProperties": false
+}

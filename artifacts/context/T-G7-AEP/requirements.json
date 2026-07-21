@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-AEP-001",
+    "text": "A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields.",
+    "textSha256": "5d0d8a2e12b9e75f2524863b7a7f4b6c0d2cfb36903148d3ca621b27a03dffa0",
+    "line": 6367,
+    "family": "FR-AEP",
+    "dependencyGroup": "G7",
+    "owner": "packages/agent-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/agent-runtime/** @requirement FR-AEP-001",
+      "packages/alpha-artifact-store/** @requirement FR-AEP-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aep.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aep_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aep-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aep/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aep.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

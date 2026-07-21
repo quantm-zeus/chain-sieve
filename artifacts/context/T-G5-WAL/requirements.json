@@ -1,0 +1,667 @@
+[
+  {
+    "id": "FR-WAL-001",
+    "text": "Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization.",
+    "textSha256": "1ee5475c1185617ae57e38a19e5b86a7e4c3fb0979c278547e465b9b8e66ce65",
+    "line": 6233,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-002",
+    "text": "Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.",
+    "textSha256": "a978ec8d2830c8cfefa5e91eb8f01cee0f083636500e9c8266f92b5038048c6a",
+    "line": 6234,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-003",
+    "text": "Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.",
+    "textSha256": "f0ce3714c715fc784b587c2ff85d85aad93c5a1536bd3c155f138a99a9427d83",
+    "line": 6235,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-004",
+    "text": "Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.",
+    "textSha256": "b872852fae46833e762ae513cab657487ec04f5592555c827727e53224dc5806",
+    "line": 6236,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-005",
+    "text": "Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.",
+    "textSha256": "d39af043cdfc5de65d5f6d796d8da47c6598c38beacced608bdd370da76d7521",
+    "line": 6237,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-006",
+    "text": "Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure.",
+    "textSha256": "6cc32027f9b884698a638b87cec7421f94f3c495ea8eab0dba84e398496b0553",
+    "line": 6238,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WAL-007",
+    "text": "Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature.",
+    "textSha256": "e0c337cdc2ea192c0db7e747c24fa36b74f9da35dad5d152eb0cac4e64a42106",
+    "line": 6239,
+    "family": "FR-WAL",
+    "dependencyGroup": "G5",
+    "owner": "packages/wallet-alpha-lineage",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/wallet-alpha-lineage/** @requirement FR-WAL-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wal.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_wal_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wal-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wal/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wal.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.21 Wallet Alpha Lineage",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

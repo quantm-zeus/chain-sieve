@@ -1,0 +1,751 @@
+[
+  {
+    "id": "FR-ADG-001",
+    "text": "Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target.",
+    "textSha256": "e207ce85ac0c6e174480e70d0fdb79ba7edf60b10c61d8c1a2aa3ad973db89df",
+    "line": 6350,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-002",
+    "text": "Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.",
+    "textSha256": "5c057424070e50e6cb854b3f602b99b27e81c653b1bbda07568948ff8b529a9d",
+    "line": 6351,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-003",
+    "text": "Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.",
+    "textSha256": "d3184dcd24b05df9dd55db8dd437798b89015a36742845ef0be063a13dee6fde",
+    "line": 6352,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-004",
+    "text": "Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.",
+    "textSha256": "2e0afa8c50ad401c20f58bdf719923e4841483348762313f7e80b5e39cb0f3fd",
+    "line": 6353,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-005",
+    "text": "Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.",
+    "textSha256": "78ea33c70a89c30562f324647f9eca4dcc8d2a41f67bdd451fa28299792b4f45",
+    "line": 6354,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-006",
+    "text": "Revalidation uses forward or untouched data and records reactivation false-positive risk.",
+    "textSha256": "e12aa01f06344f11f39c088c42dcfa21d5837416c9f73588949954d84f11ffaa",
+    "line": 6355,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADG-007",
+    "text": "A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence.",
+    "textSha256": "0ab75cec833a4af7774bd7567b5930352a2d57a34ff4a034077c22c81e9807ba",
+    "line": 6356,
+    "family": "FR-ADG",
+    "dependencyGroup": "G7",
+    "owner": "packages/alpha-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/alpha-governance/** @requirement FR-ADG-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_adg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.35 Alpha Decay and Pattern Governance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

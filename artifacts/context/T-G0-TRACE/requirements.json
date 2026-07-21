@@ -1,0 +1,488 @@
+[
+  {
+    "id": "FR-TRACE-001",
+    "text": "A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.",
+    "textSha256": "70ed69312044dd82404119ed56df297e3575db4bd66a17747eefde3892eeddf4",
+    "line": 6506,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-001",
+      "packages/release-conformance/** @requirement FR-TRACE-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRACE-002",
+    "text": "Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.",
+    "textSha256": "0c1a96b5c59ba06dc3d5b4e4b30d0b3854f16130160ad5f1ac67f69e3f5f6c8a",
+    "line": 6507,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-002",
+      "packages/release-conformance/** @requirement FR-TRACE-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRACE-003",
+    "text": "CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.",
+    "textSha256": "d0eb11f38180ed53fdf9217c542fc34eed2d4ed052f5d99656f58d5ee2580619",
+    "line": 6508,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-003",
+      "packages/release-conformance/** @requirement FR-TRACE-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRACE-004",
+    "text": "Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.",
+    "textSha256": "4463b56fa7552c29035c902ab400461b46bfa2667c0b5a267e9ea5da1943bc30",
+    "line": 6509,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-004",
+      "packages/release-conformance/** @requirement FR-TRACE-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRACE-005",
+    "text": "Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.",
+    "textSha256": "2fda5324d5b98c02becfcf6dde73b705f3d1fa2d6cd6167ba5a0390090a64547",
+    "line": 6510,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-005",
+      "packages/release-conformance/** @requirement FR-TRACE-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRACE-006",
+    "text": "Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target.",
+    "textSha256": "8ff8d244cce361e21a45e6810130da4484371301820347e908dc27fc6888eb24",
+    "line": 6511,
+    "family": "FR-TRACE",
+    "dependencyGroup": "G0",
+    "owner": "packages/requirement-manifest",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-265",
+      "AC-266",
+      "AC-267",
+      "AC-268",
+      "AC-269"
+    ],
+    "implementationRefs": [
+      "packages/requirement-manifest/** @requirement FR-TRACE-006",
+      "packages/release-conformance/** @requirement FR-TRACE-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trace.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_trace_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trace-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-265.spec.ts",
+      "tests/negative/AC-265.negative.spec.ts",
+      "tests/acceptance/AC-266.spec.ts",
+      "tests/negative/AC-266.negative.spec.ts",
+      "tests/acceptance/AC-267.spec.ts",
+      "tests/negative/AC-267.negative.spec.ts",
+      "tests/acceptance/AC-268.spec.ts",
+      "tests/negative/AC-268.negative.spec.ts",
+      "tests/acceptance/AC-269.spec.ts",
+      "tests/negative/AC-269.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trace/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trace.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

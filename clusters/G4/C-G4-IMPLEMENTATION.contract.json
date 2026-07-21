@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "C-G4-IMPLEMENTATION",
+  "group": "G4",
+  "title": "Thesis, Decay, Capability-Aware Context and Diagnostics",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencies": [
+    "C-G0-IMPLEMENTATION",
+    "C-G1-IMPLEMENTATION",
+    "C-G2-IMPLEMENTATION",
+    "C-G3-IMPLEMENTATION"
+  ],
+  "tasks": [
+    "T-G4-ADM",
+    "T-G4-CAP",
+    "T-G4-CROWD",
+    "T-G4-DECAY",
+    "T-G4-FB",
+    "T-G4-LAT",
+    "T-G4-NB",
+    "T-G4-THS",
+    "T-G4-WHY"
+  ],
+  "requirements": [
+    "FR-ADM-006",
+    "FR-CAP-001",
+    "FR-CAP-002",
+    "FR-CAP-003",
+    "FR-CAP-004",
+    "FR-CROWD-001",
+    "FR-CROWD-002",
+    "FR-CROWD-003",
+    "FR-CROWD-004",
+    "FR-DECAY-001",
+    "FR-DECAY-002",
+    "FR-DECAY-003",
+    "FR-FB-001",
+    "FR-FB-002",
+    "FR-LAT-001",
+    "FR-LAT-002",
+    "FR-NB-001",
+    "FR-NB-002",
+    "FR-THS-001",
+    "FR-THS-002",
+    "FR-THS-003",
+    "FR-WHY-001",
+    "FR-WHY-002"
+  ],
+  "acceptanceCriteria": [
+    "AC-013",
+    "AC-262",
+    "AC-083",
+    "AC-088",
+    "AC-074",
+    "AC-092",
+    "AC-070",
+    "AC-073",
+    "AC-084",
+    "AC-089",
+    "AC-080",
+    "AC-085",
+    "AC-071",
+    "AC-072"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "entryCriteria": [
+    "All dependency clusters have independent PASS reviews.",
+    "Source hashes match and task ready queue is current."
+  ],
+  "exitCriteria": [
+    "Every task is independently verified and atomically committed.",
+    "Cluster integration, architecture, security, migration, and replay checks pass.",
+    "Codex independent cluster review records PASS."
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm cluster:verify C-G4-IMPLEMENTATION",
+      "expected": "exit 0"
+    },
+    {
+      "command": "pnpm harness:verify",
+      "expected": "exit 0"
+    }
+  ],
+  "rollback": "Revert cluster task commits in reverse dependency order; capability state remains disabled or shadow."
+}

@@ -1,0 +1,97 @@
+[
+  {
+    "id": "FR-SIG-010",
+    "text": "A calibrated expected-net-utility challenger is implemented, but it may rank research priority only after mature tradable-outcome, calibration, regime, uncertainty, source-dependence, and drift gates pass; otherwise deterministic vectors remain authoritative.",
+    "textSha256": "cc6881f78753034c72417699c6b99ec56ee5ccf2cb6583d98931dd5b55ec6357",
+    "line": 6013,
+    "family": "FR-SIG",
+    "dependencyGroup": "G6",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

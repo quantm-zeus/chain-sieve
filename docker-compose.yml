@@ -1,0 +1,42 @@
+name: ciag-local
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ciag}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ciag_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-ciag}
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ciag} -d ${POSTGRES_DB:-ciag}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+  minio:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ciag}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-ciag_dev_only}
+    ports: ["9000:9000", "9001:9001"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes: ["minio-data:/data"]
+  minio-init:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} && mc mb --ignore-existing local/$${S3_BUCKET}"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ciag}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-ciag_dev_only}
+      S3_BUCKET: ${S3_BUCKET:-ciag-artifacts}
+    depends_on:
+      minio:
+        condition: service_healthy
+volumes:
+  postgres-data:
+  minio-data:

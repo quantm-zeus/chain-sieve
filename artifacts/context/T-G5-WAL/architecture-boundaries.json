@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/wallet-alpha-lineage"
+  ],
+  "allowedPaths": [
+    "packages/wallet-alpha-lineage/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-WAL/**"
+  ],
+  "writeSet": [
+    "packages/wallet-alpha-lineage/**"
+  ]
+}

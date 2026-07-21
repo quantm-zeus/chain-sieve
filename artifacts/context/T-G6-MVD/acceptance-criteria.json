@@ -1,0 +1,62 @@
+[
+  {
+    "id": "AC-181",
+    "text": "Novel candidates remain eligible for bounded exploration and are not rejected merely for OOD status.",
+    "textSha256": "ca107cd3ed525fdf3c9610a9d049bb9649b26d0d2ee280e213610dfc52f1f6c8",
+    "line": 6684,
+    "requirementRefs": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005",
+      "FR-MVD-001",
+      "FR-MVD-002",
+      "FR-MVD-003",
+      "FR-MVD-004",
+      "FR-MVD-005",
+      "FR-OOD-001",
+      "FR-OOD-002",
+      "FR-OOD-003",
+      "FR-OOD-004",
+      "FR-OOD-005"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-181.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-181.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.17 Novelty, disagreement, and hazards",
+    "testClass": "novelty-disagreement-hazard"
+  },
+  {
+    "id": "AC-184",
+    "text": "Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly.",
+    "textSha256": "4dff27d8e3e1b154eb4a50840950bf56a4f553a26fdbcac9d7fdb24becd68cc5",
+    "line": 6687,
+    "requirementRefs": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005",
+      "FR-MVD-001",
+      "FR-MVD-002",
+      "FR-MVD-003",
+      "FR-MVD-004",
+      "FR-MVD-005",
+      "FR-OOD-001",
+      "FR-OOD-002",
+      "FR-OOD-003",
+      "FR-OOD-004",
+      "FR-OOD-005"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-184.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-184.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.17 Novelty, disagreement, and hazards",
+    "testClass": "novelty-disagreement-hazard"
+  }
+]

@@ -1,0 +1,554 @@
+[
+  {
+    "id": "FR-EXP-001",
+    "text": "Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads.",
+    "textSha256": "0d4bd0e6a69a66810506b79afb8be9815e97588d0debaacf6c9de2d4c33ab088",
+    "line": 6314,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-EXP-002",
+    "text": "Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.",
+    "textSha256": "a5cf956fb950da49ffe8bbf43ebde00f7c1d4174611e05d81e2b016df64b8cb9",
+    "line": 6315,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-EXP-003",
+    "text": "Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.",
+    "textSha256": "2cb5bea59a3936e589497b791802218996456b4b3617483dd85feab4bbf6dc7c",
+    "line": 6316,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-EXP-004",
+    "text": "Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.",
+    "textSha256": "dead7afe078bbce8a5be154adebc810674c8a7eb6f66cbea957c1673c845965c",
+    "line": 6317,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-EXP-005",
+    "text": "Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias.",
+    "textSha256": "ffd7aef92d852f2ed5ea3e2c0f76f734400040e4d67ad4fa0f731e63812063cb",
+    "line": 6318,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-EXP-006",
+    "text": "Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy.",
+    "textSha256": "fe481b36ae821acffbed904337f3cc2ecf4305124e3e478fa974df79d74fcf1a",
+    "line": 6319,
+    "family": "FR-EXP",
+    "dependencyGroup": "G7",
+    "owner": "packages/exploration-bandit",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/exploration-bandit/** @requirement FR-EXP-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/exp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_exp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/exp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/exp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/exp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.31 Exploration and Discovery Bandit",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

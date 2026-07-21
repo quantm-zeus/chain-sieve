@@ -1,0 +1,506 @@
+[
+  {
+    "id": "FR-ALAB-001",
+    "text": "Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths.",
+    "textSha256": "ace7e26525d1c38d789395bb0fca25f1bd4cd89835d41d59fbc8b3c77b14f409",
+    "line": 6361,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-001",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALAB-002",
+    "text": "Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.",
+    "textSha256": "6453702643381f8883e3ff9ca400980bd01168daf8581063a2f261eecf8a4c76",
+    "line": 6362,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-002",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALAB-003",
+    "text": "Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.",
+    "textSha256": "2a9286eb80c00f66775ea649025b27bd832c43876ee4c460da1f3d16792cb9fe",
+    "line": 6363,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-003",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALAB-004",
+    "text": "Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.",
+    "textSha256": "e620adc43c68956f417e38fa8e6580e87cfd66c379bc29cc9fa7afdedf99e3b8",
+    "line": 6364,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-004",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALAB-005",
+    "text": "Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.",
+    "textSha256": "8bd37bbad97a8d06d63b51bf0a50c44b345620bf5a69b7bbea0c0968ddaa4ad7",
+    "line": 6365,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-005",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALAB-006",
+    "text": "Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine.",
+    "textSha256": "81793794decd11e3828c3378e2eae26e9da5268bc17fcead2887680b80718a6d",
+    "line": 6366,
+    "family": "FR-ALAB",
+    "dependencyGroup": "G7",
+    "owner": "packages/offline-alpha-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-214",
+      "AC-215",
+      "AC-216",
+      "AC-217",
+      "AC-218",
+      "AC-219"
+    ],
+    "implementationRefs": [
+      "packages/offline-alpha-lab/** @requirement FR-ALAB-006",
+      "packages/alpha-artifact-store/** @requirement FR-ALAB-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alab.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_alab_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alab-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-214.spec.ts",
+      "tests/negative/AC-214.negative.spec.ts",
+      "tests/acceptance/AC-215.spec.ts",
+      "tests/negative/AC-215.negative.spec.ts",
+      "tests/acceptance/AC-216.spec.ts",
+      "tests/negative/AC-216.negative.spec.ts",
+      "tests/acceptance/AC-217.spec.ts",
+      "tests/negative/AC-217.negative.spec.ts",
+      "tests/acceptance/AC-218.spec.ts",
+      "tests/negative/AC-218.negative.spec.ts",
+      "tests/acceptance/AC-219.spec.ts",
+      "tests/negative/AC-219.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alab/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alab.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.36 Offline Alpha Lab and artifact import",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

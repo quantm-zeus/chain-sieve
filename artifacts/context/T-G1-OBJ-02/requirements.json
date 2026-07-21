@@ -1,0 +1,188 @@
+[
+  {
+    "id": "FR-OBJ-009",
+    "text": "The system supports utility sensitivity to capital, notional, concurrency, route capacity, alert latency, exit policy, and risk-aversion coefficients without rewriting the frozen primary experiment.",
+    "textSha256": "52b9ea26f53d9b6e79811f2b6e6add3738c6d2d6d8273ceb3c8bd891a7b9db45",
+    "line": 6382,
+    "family": "FR-OBJ",
+    "dependencyGroup": "G1",
+    "owner": "packages/objective-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-220",
+      "AC-221",
+      "AC-222",
+      "AC-223",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/objective-governance/** @requirement FR-OBJ-009",
+      "packages/shadow-portfolio/** @requirement FR-OBJ-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/obj.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_obj_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/obj-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-220.spec.ts",
+      "tests/negative/AC-220.negative.spec.ts",
+      "tests/acceptance/AC-221.spec.ts",
+      "tests/negative/AC-221.negative.spec.ts",
+      "tests/acceptance/AC-222.spec.ts",
+      "tests/negative/AC-222.negative.spec.ts",
+      "tests/acceptance/AC-223.spec.ts",
+      "tests/negative/AC-223.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/obj/"
+    ],
+    "telemetryRefs": [
+      "telemetry/obj.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.37 Objective, portfolio utility, and claim scope",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OBJ-010",
+    "text": "The product, agent, UI, API, exports, and notifications prohibit guaranteed-profit language and must state that opportunity outputs are evidence-backed research signals whose realized outcome remains uncertain.",
+    "textSha256": "ff867f5b97ee9c812a68dd6d5dcc59d9af0100b9248e0502ea9c47a7084a5c66",
+    "line": 6383,
+    "family": "FR-OBJ",
+    "dependencyGroup": "G1",
+    "owner": "packages/objective-governance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-220",
+      "AC-221",
+      "AC-222",
+      "AC-223",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/objective-governance/** @requirement FR-OBJ-010",
+      "packages/shadow-portfolio/** @requirement FR-OBJ-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/obj.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_obj_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/obj-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-220.spec.ts",
+      "tests/negative/AC-220.negative.spec.ts",
+      "tests/acceptance/AC-221.spec.ts",
+      "tests/negative/AC-221.negative.spec.ts",
+      "tests/acceptance/AC-222.spec.ts",
+      "tests/negative/AC-222.negative.spec.ts",
+      "tests/acceptance/AC-223.spec.ts",
+      "tests/negative/AC-223.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/obj/"
+    ],
+    "telemetryRefs": [
+      "telemetry/obj.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.37 Objective, portfolio utility, and claim scope",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

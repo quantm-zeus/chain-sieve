@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/exploration-bandit"
+  ],
+  "allowedPaths": [
+    "packages/exploration-bandit/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G7-EXP/**"
+  ],
+  "writeSet": [
+    "packages/exploration-bandit/**"
+  ]
+}

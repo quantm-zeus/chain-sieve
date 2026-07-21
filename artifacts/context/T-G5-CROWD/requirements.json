@@ -1,0 +1,82 @@
+[
+  {
+    "id": "FR-CROWD-005",
+    "text": "Liquidity Stress Lite is independent of full wallet/cost-basis capability; Full Crowding is separately capability- and evaluation-gated.",
+    "textSha256": "a3f11877cd2437441c20ea3dbd8e0109206691ee84190c1d384778efd7bc4533",
+    "line": 6092,
+    "family": "FR-CROWD",
+    "dependencyGroup": "G5",
+    "owner": "packages/crowding",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/crowding/** @requirement FR-CROWD-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/crowd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_crowd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/crowd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/crowd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/crowd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

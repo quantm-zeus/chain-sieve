@@ -1,0 +1,21 @@
+{
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/discovery-universe:contract": "1ebc2d0a5ea0bcf731d27991d41e5822daf01b42095219f96e28da7e2b96c82f"
+  }
+}

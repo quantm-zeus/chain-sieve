@@ -1,0 +1,366 @@
+[
+  {
+    "id": "FR-DR-003",
+    "text": "Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO.",
+    "textSha256": "dff4f4bd7beabf00e22a1f6cd18e0fe5cc2fdaad050e2047478947f30aed9df2",
+    "line": 6496,
+    "family": "FR-DR",
+    "dependencyGroup": "G2",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-003",
+      "packages/workflow-runtime/** @requirement FR-DR-003",
+      "packages/release-conformance/** @requirement FR-DR-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DR-004",
+    "text": "After recovery, the system reconciles provider calls, quota reservations, workflows, inbox/outbox, alerts, collector gaps, artifacts, and audit checkpoints before active automation resumes.",
+    "textSha256": "fcacdb3710226d5452a48e3178d2818cc33ff5115fd65b0d95051fa984eb669c",
+    "line": 6497,
+    "family": "FR-DR",
+    "dependencyGroup": "G2",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-004",
+      "packages/workflow-runtime/** @requirement FR-DR-004",
+      "packages/release-conformance/** @requirement FR-DR-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DR-005",
+    "text": "If a tier cannot meet its declared recovery objective, affected capability automatically degrades and confirmed opportunity alerts are disabled until continuity is re-established.",
+    "textSha256": "f3e7b58bb7db39f4697587125d504e71778bbe6c814857e5ebb6f03352e0298f",
+    "line": 6498,
+    "family": "FR-DR",
+    "dependencyGroup": "G2",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-005",
+      "packages/workflow-runtime/** @requirement FR-DR-005",
+      "packages/release-conformance/** @requirement FR-DR-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DR-006",
+    "text": "Backup retention, deletion, legal hold, geographic location, encryption, rights constraints, and restore access are versioned and audited.",
+    "textSha256": "14fa833f41a5f6f49171d40e9dd3ff9dd8248beb6ce374beb667e6b1d3e5ceb4",
+    "line": 6499,
+    "family": "FR-DR",
+    "dependencyGroup": "G2",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-006",
+      "packages/workflow-runtime/** @requirement FR-DR-006",
+      "packages/release-conformance/** @requirement FR-DR-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

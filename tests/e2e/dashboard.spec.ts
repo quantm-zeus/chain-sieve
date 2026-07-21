@@ -1,0 +1,2 @@
+import { expect, test } from '@playwright/test';
+test('renders API-backed readiness with bootstrap capability disclaimer', async ({ page }) => { await page.goto('/'); await expect(page.getByText('NO LIVE CAPABILITIES')).toBeVisible(); await expect(page.getByText('Truth before intelligence.')).toBeVisible(); await expect(page.getByText('not_ready', { exact: true })).toBeVisible(); await expect(page.getByText(/postgresql:unavailable/)).toBeVisible(); });

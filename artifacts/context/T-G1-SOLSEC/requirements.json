@@ -1,0 +1,698 @@
+[
+  {
+    "id": "FR-SOLSEC-001",
+    "text": "Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers.",
+    "textSha256": "0875734002532bbeeb0f3c68cabc2ca309ed45b5bfb141b25887aa73b425ac4e",
+    "line": 6181,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOLSEC-002",
+    "text": "Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.",
+    "textSha256": "756783670fb02af55159aa4ac2fa50c5e2d26cb799fe7767b3475d317363ad82",
+    "line": 6182,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOLSEC-003",
+    "text": "Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.",
+    "textSha256": "5c4b96d98c82c69a6bb8cf6c8c0ec85b8a230309bac3557e5cf7c6255766112e",
+    "line": 6183,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOLSEC-004",
+    "text": "Unknown transfer semantics block profiles requiring complete execution modeling.",
+    "textSha256": "e4b9e1f758db5b591c729e689cba4e905bf8d8d1a3c1831221e0e5e7bc4e3716",
+    "line": 6184,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOLSEC-005",
+    "text": "External security providers are independent evidence and cannot override deterministic known risk.",
+    "textSha256": "b86f0f2d8ca9d60a57a8beb50112ca77495553017446bd4848a6a32d4d778e7c",
+    "line": 6185,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SOLSEC-006",
+    "text": "A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence.",
+    "textSha256": "e29af67bb99d31e652dd661bed2f92fae996f9566c60e049ffda79c2bd5fd9d2",
+    "line": 6186,
+    "family": "FR-SOLSEC",
+    "dependencyGroup": "G1",
+    "owner": "packages/solana-security",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-230",
+      "AC-231",
+      "AC-232",
+      "AC-233",
+      "AC-234",
+      "AC-235",
+      "AC-236",
+      "AC-237",
+      "AC-238",
+      "AC-239"
+    ],
+    "implementationRefs": [
+      "packages/solana-security/** @requirement FR-SOLSEC-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/solsec.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_solsec_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/solsec-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-230.spec.ts",
+      "tests/negative/AC-230.negative.spec.ts",
+      "tests/acceptance/AC-231.spec.ts",
+      "tests/negative/AC-231.negative.spec.ts",
+      "tests/acceptance/AC-232.spec.ts",
+      "tests/negative/AC-232.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts",
+      "tests/acceptance/AC-234.spec.ts",
+      "tests/negative/AC-234.negative.spec.ts",
+      "tests/acceptance/AC-235.spec.ts",
+      "tests/negative/AC-235.negative.spec.ts",
+      "tests/acceptance/AC-236.spec.ts",
+      "tests/negative/AC-236.negative.spec.ts",
+      "tests/acceptance/AC-237.spec.ts",
+      "tests/negative/AC-237.negative.spec.ts",
+      "tests/acceptance/AC-238.spec.ts",
+      "tests/negative/AC-238.negative.spec.ts",
+      "tests/acceptance/AC-239.spec.ts",
+      "tests/negative/AC-239.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/solsec/"
+    ],
+    "telemetryRefs": [
+      "telemetry/solsec.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

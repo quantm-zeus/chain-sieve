@@ -1,0 +1,48 @@
+[
+  {
+    "id": "AC-070",
+    "text": "A thesis moves only through allowed transitions and every change has point-in-time evidence and matched condition IDs.",
+    "textSha256": "093eddad1bec2c0b1d5ba883659abe2f87b9075bf7107e2701b26121ed559931",
+    "line": 6576,
+    "requirementRefs": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003",
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003",
+      "FR-WHY-001",
+      "FR-WHY-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-070.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-070.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "thesis-policy"
+  },
+  {
+    "id": "AC-073",
+    "text": "Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.",
+    "textSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db",
+    "line": 6579,
+    "requirementRefs": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003",
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003",
+      "FR-WHY-001",
+      "FR-WHY-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-073.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-073.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "thesis-policy"
+  }
+]

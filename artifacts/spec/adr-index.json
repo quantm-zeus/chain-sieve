@@ -1,0 +1,582 @@
+[
+  {
+    "id": "ADR-001",
+    "title": "Production database and transaction semantics",
+    "decision": "PostgreSQL is authoritative for operational state. SQL migrations are the schema source of truth; Drizzle mirrors them for typed access. Unique constraints, transactions, row/advisory locks, leases with fencing tokens, transactional outbox/inbox, and isolation levels appropriate to each invariant enforce correctness. SQLite/libSQL is never normative for production state.",
+    "textSha256": "b8994fb2afad821294fc88398bd3f271b371a7163ae0509ce795a3daf5b0eb36",
+    "line": 10745,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-002",
+    "title": "Durable workflow provider and local adapter",
+    "decision": "`DurableWorkflowAdapter` is mandatory. Vercel Workflows/WorkflowAgent is the production baseline; a deterministic local adapter supports development and recovery tests. Business/domain logic cannot depend on provider-specific workflow APIs.",
+    "textSha256": "bc17484fb27883d30f4a661ce38033027e6da5b1ffb1ef20de9bf4745e151dd1",
+    "line": 10750,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-003",
+    "title": "Object-store provider",
+    "decision": "Use an S3-compatible `ObjectStoreAdapter`; Cloudflare R2 or Vercel Blob are permitted implementations. Objects are content-addressed, rights-aware, encrypted, versioned where required, and committed through the cross-store staged protocol in Section 14.",
+    "textSha256": "6e4758d85f95b724be358554680f4ea027b82c5b4b282ccfebb9fc21552ff6e0",
+    "line": 10755,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-004",
+    "title": "MCP protocol revision and authorization mode",
+    "decision": "Use Streamable HTTP over HTTPS with the official TypeScript MCP SDK, baseline revision `2025-11-25`, exact Origin validation, private bearer credentials for personal mode, and OAuth 2.1/resource-bound authorization before workspace/public distribution. Later revisions are opt-in until conformance passes.",
+    "textSha256": "5a04df998fcad8f832976adf437e417c34008255809e7651a2403a5152f4d73f",
+    "line": 10760,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-005",
+    "title": "Agent and model framework",
+    "decision": "Use the provider-agnostic Vercel AI SDK behind `ModelProviderAdapter`; use WorkflowAgent only through `AgentRuntime`/`DurableWorkflowAdapter`. Model IDs are configuration, structured outputs are mandatory, and deterministic services retain authority over arithmetic, safety, execution, capability, cost, and side effects.",
+    "textSha256": "3db8974885286b4d88a5b5820e6510ad9442e4dbff0ce3b79bd4132ae6a79066",
+    "line": 10765,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-006",
+    "title": "Initial outcome-profile thresholds",
+    "decision": "The versioned defaults in Section 8 and Appendix G are implementation defaults. They are not universal claims and cannot activate confirmed alerts without a profile-specific registered power/precision plan, fully matured tradable outcomes, stress stability, and explicit approval.",
+    "textSha256": "730a677c8c88e0d2446a0b5449e3039ba0bd0d0869b6d36351ef03a1a26da650",
+    "line": 10770,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-007",
+    "title": "Provider data-rights approval",
+    "decision": "Rights are operation- and use-specific, versioned, expiring, and enforced in retrieval, cache, retention, model context, export, training, alerts, and public rendering. Unknown or expired rights fail closed.",
+    "textSha256": "3580188c4478178fe7317b2035a9124c9455619b82448eb3244fecc0621ee28f",
+    "line": 10775,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-008",
+    "title": "Canonical-pool algorithm",
+    "decision": "Retain all relevant pools and select canonical/eligible routes deterministically using verified identity, supported program/version, quote quality, executable liquidity/depth, economic volume, age, migration lineage, manipulation risk, provider/source agreement, adapter completeness, and parity state. A provider “best pair” is never authoritative by itself.",
+    "textSha256": "5f44b7710b6c23e498ad73368b0f2185dd72a486fd4910f15d4ee7b787da0dd4",
+    "line": 10780,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-009",
+    "title": "Evaluation dataset split and embargo",
+    "decision": "Use rolling-origin/time-block splits with outcome-window embargo, asset/entity/deployer/funder lineage grouping, cross-fitting for learned upstream features, and an immutable holdout-exposure registry. Repeatedly inspected holdouts are exhausted.",
+    "textSha256": "692c6319f79f92259d74a02341a5f277a64f62fc3e88107970d5bec0dc28eaa1",
+    "line": 10785,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-010",
+    "title": "Automatic-alert activation gate",
+    "decision": "Operational readiness and opportunity-alpha authorization are separate. `CONFIRMED_OPPORTUNITY` requires every gate in Sections 7 and 69, positive lower-bound portfolio utility versus the strongest eligible baseline, explicit owner activation, and an automatic rollback target.",
+    "textSha256": "668dbf980ac4f238d88fe692854b0075dbd6b470cd2a83fd45ff628e60605e33",
+    "line": 10790,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-011",
+    "title": "Thesis-condition DSL and transition semantics",
+    "decision": "Thesis conditions use a constrained typed expression DSL over registered features/events, units, windows, evidence states, and deterministic operators. No arbitrary code, SQL, URL, or model-defined transition is executable. Terminal material changes create a new thesis version.",
+    "textSha256": "b206a5ad17b411085001d43205e57b166aa005c53f57eb1c8f40ee9c1a065225",
+    "line": 10795,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-012",
+    "title": "Narrative ontology and graph-confidence model",
+    "decision": "Narratives, memberships, catalysts, token/wallet/social edges, and rotations are versioned probabilistic research entities with temporal validity, source rights, confidence, counter-evidence, and bounded scope. Narrative evidence cannot override security or execution.",
+    "textSha256": "5fece321543a4de057dd6800634ea71688db6ff40079ccb7b69294ee77e48aaf",
+    "line": 10800,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-013",
+    "title": "Cross-chain flow reconciliation model",
+    "decision": "Cross-chain intelligence is aggregate and read-only. Bridge legs, router hops, wrapped/bridged assets, stablecoin conversions, and duplicate provider views are reconciled before net flows; unreconciled flow remains uncertain and cannot be counted twice.",
+    "textSha256": "168a9d939f89537a4fa8574caa83dce4017f67d5294755d40707fa82f9ff94d0",
+    "line": 10805,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-014",
+    "title": "Crowding and exit-liquidity assumptions",
+    "decision": "Crowding is assessed from executable sell depth, profitable/overhang supply, cost-basis uncertainty, entity concentration, synchronized behavior, KOL/social concentration, and shared-liquidity stress. Unknown cost basis is not assumed favorable; positive wallet/social evidence cannot hide crowding risk.",
+    "textSha256": "dca53e8266d419444106cac21c6795b19699bb6dc844fef0d440b2d41d9a89f2",
+    "line": 10810,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-015",
+    "title": "Policy Compiler AST and approval boundary",
+    "decision": "Natural language compiles only to a constrained, schema-validated policy AST. Compilation, validation, evaluation, approval, and activation are separate audited stages; generated text never executes directly and cannot express prohibited actions.",
+    "textSha256": "606171cd385e46472806c0242394c3892d0cd89d812b672697194640c3be5e71",
+    "line": 10815,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-016",
+    "title": "Historical-analog distance and leakage exclusions",
+    "decision": "Analog retrieval uses point-in-time normalized features, explicit distance contributions, cohort/applicability filters, lineage and overlapping-window exclusions, effective sample size, and low-similarity abstention. Outcome-derived/future features are forbidden.",
+    "textSha256": "997616be07bfd195c072c914889ac16122695f9bc9e31b2d52c0a6d4d7a2c6b3",
+    "line": 10820,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-017",
+    "title": "Human-label governance and adjudication",
+    "decision": "Human labels record reviewer, schema, timestamp, rationale, evidence, uncertainty, and adjudication. `UNKNOWN`/`INSUFFICIENT_EVIDENCE` are first-class. Labels do not rewrite frozen output or activate production policy automatically.",
+    "textSha256": "75d5d63a0b4d501e54c8d975e6b6db32125088605a5480511197c2142984ed81",
+    "line": 10825,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-018",
+    "title": "Capability verification and expiry policy",
+    "decision": "Capability is verified per provider operation, chain/program/version, plan, rights, schema, cost, freshness, and test scope with a TTL. Expiry/degradation immediately removes unsupported decision influence and limits claims.",
+    "textSha256": "771711728aeed2967dcf3ee9cfe39b8f4bbe5761220e2f824865a98e7a03e063",
+    "line": 10830,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-019",
+    "title": "Free-first cost classes and protected reserves",
+    "decision": "External operations use `FREE_UNMETERED`, `FREE_QUOTA`, `PAID_EXPLICIT`, `UNKNOWN_COST`, or `DISABLED`. `STRICT_FREE` blocks paid, unknown, overage, auto-upgrade, and paid fallback. Atomic reservations and protected workload reserves are mandatory.",
+    "textSha256": "47e702f4f9e6acf4d272e98d18ff1c6055e1ed20180177662794281bf21ffb65",
+    "line": 10835,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-020",
+    "title": "Discovery universe denominator and retrospective enumeration",
+    "decision": "Discovery claims use explicit universe labels and inclusion mechanisms. Market-wide recall is prohibited without independent prospective observation or valid probability sampling. Retrospective sources cannot backdate production availability.",
+    "textSha256": "36d4a4f3c803f6747b33694aec68b8c23f5947f850f7de70f3d961f507c93ab2",
+    "line": 10840,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-021",
+    "title": "Execution scenarios, fees, target duration, and exit policies",
+    "decision": "Scenarios pre-register notional, action-delay distribution, entry/exit policy, route, fees, token semantics, impact, fill, duration, network/priority cost, failed attempts, residual inventory, adverse selection, liquidity drawdown, and conservative stress. Hindsight scenario selection is forbidden.",
+    "textSha256": "d855c5a9780d59a18ba671026b370e26b4c2327853b0eadb68109f3b8f2fe639",
+    "line": 10845,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-022",
+    "title": "Outcome maturity and statistical integrity",
+    "decision": "Outcomes are independently matured per profile/horizon/scenario; pending/censored/invalid/low-resolution outcomes are separate. Promotion requires negative controls, multiple-testing control, clustered/block uncertainty, registered stopping, and symmetric action-time semantics.",
+    "textSha256": "ac562e18460c93858c601590a5aa6771a2265ee6ab3eebbce57fe15ef446a9b6",
+    "line": 10850,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-023",
+    "title": "Solana SPL/Token-2022 security and system-address registry",
+    "decision": "Deterministically decode supported token programs/extensions, authorities, supply, holder roles, LP/pool control, transfer semantics, and system addresses as of time. Unknown required behavior blocks confirmed opportunity claims.",
+    "textSha256": "21231dfef188d9fbcbe9293303574353b6f58942f7e87e7e0992330f7f49df6d",
+    "line": 10855,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-024",
+    "title": "Economic-trade actor and route normalization",
+    "decision": "Normalize routes, inner instructions, transfers, aggregator hops, arbitrage, round trips, token fees, and net actor deltas into economic events before volume, buyer, wallet, manipulation, and demand features. Raw legs are never counted as independent trades.",
+    "textSha256": "364391fc6afc1f1835a38b5330b23ea19ce33c3933b3b20f45772c4f464b53e4",
+    "line": 10860,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-025",
+    "title": "Social source rights, capability, and missingness",
+    "decision": "Social features run only on authorized sources with identity, bot/repetition, sponsorship, source-dependence, temporal, and coverage metadata. Unavailable paid/social coverage remains unknown, never negative sentiment or weak demand.",
+    "textSha256": "a2fdb0fb295310485dd37549621f50d31377860d420a76267f21afb8d3f1c38c",
+    "line": 10865,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-026",
+    "title": "Implementation, availability, proof, and activation semantics",
+    "decision": "`IMPLEMENTED`, `AVAILABLE`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`, and `DISABLED` are independent governed states as defined in Section 46. Code deployment never implies data availability, alpha proof, active influence, or public authorization.",
+    "textSha256": "0ea3b3ebfef6dc7aa7fa399edf3c11e722fbec774e9e09ee4d66adbf6c7f950d",
+    "line": 10870,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-027",
+    "title": "MCP stable revision and client compatibility",
+    "decision": "Support only mutually tested stable protocol/client combinations in the compatibility matrix. Draft/release-candidate revisions and untested scheduled/background behavior remain unavailable. Provider operation changes cannot silently alter domain-tool semantics.",
+    "textSha256": "2fa060ed30a79b40da5d3e8a45fd500ae896074243be3f68828b1355b50071da",
+    "line": 10875,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-028",
+    "title": "Winning cohort and pattern validation",
+    "decision": "Winning cohorts use fully matured execution-aware outcomes and matched losers, rugs, untradable winners, random controls, and market-beta controls. Patterns require rolling-origin/forward validation, multiple-testing control, actionability, explanation, applicability, and decay governance.",
+    "textSha256": "5741f616a41dfa4a9addb9299c9abd50efb8ed26d132dbc344be0feebcc4a1c5",
+    "line": 10880,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-029",
+    "title": "Wallet entity resolution and alpha reputation",
+    "decision": "Wallet reputation is point-in-time, entity-resolution-aware, realized-outcome-aware, survivorship-adjusted, insider-separated, funding-lineage-aware, shrunk for small samples, and cross-fitted. Relationship confidence is not proof of ownership.",
+    "textSha256": "f6da481e427287de29b900b1197ca98bd993ccdd377f3594ae1801b063419703",
+    "line": 10885,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-030",
+    "title": "Deployer–funder DNA and historical abuse",
+    "decision": "Build bounded point-in-time deployer/creator/funder/controller histories with infrastructure exclusions, indirect-control confidence, launch outcomes, rug/security/liquidity behavior, and unknown-history state. Critical verified abuse can veto; missing history cannot imply safety.",
+    "textSha256": "93b1344150cd32618636f2a6eb56e87d9399b984f70017de6b53c2dd754a4c92",
+    "line": 10890,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-031",
+    "title": "Liquidity resilience stress and persistence",
+    "decision": "Resilience requires program-specific executable depth, controlled stress events, independent buyer recovery, liquidity replenishment, persistence across windows, and false-resilience controls. Price rebound alone is insufficient.",
+    "textSha256": "090c3a7a8ec071079396b676304b9fc24c2ad72e457da42d87eced20ef0bbecf",
+    "line": 10895,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-032",
+    "title": "Launch and migration state machines",
+    "decision": "Each supported launchpad/pool route has a versioned deterministic state machine and decoder for creation, bonding/progress, completion, migration, liquidity changes, authority changes, ambiguity, and terminal failure. Unsupported versions abstain.",
+    "textSha256": "63a56ade9eee0d5d595938f341ba3e9506a26c8ab744e69f654698bc3742625c",
+    "line": 10900,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-033",
+    "title": "Attention diffusion identity and independence",
+    "decision": "Attention diffusion distinguishes unique authors/communities, wallets/buyers, paid/sponsored/bot/repeated activity, source lineage, lead/lag, and on-chain conversion. Raw mention count cannot establish organic breadth.",
+    "textSha256": "a90b0de161f19841546f3565d203de20cd1d57ff2ad93b7548804a761e91d1d9",
+    "line": 10905,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-034",
+    "title": "Narrative leader–laggard and remaining actionability",
+    "decision": "Leader–laggard state requires versioned narrative membership, leader confirmation, candidate-level flow/attention confirmation, extension/crowding/expiry controls, and remaining executable actionability. Inactivity alone is not laggard evidence.",
+    "textSha256": "31975e2522b3b0a540765b54ff3be5ab64e5fc227566d1c8374e21e4d66db235",
+    "line": 10910,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-035",
+    "title": "Novelty/OOD reference sets and applicability",
+    "decision": "OOD detection uses point-in-time reference sets, robust distance/density or registered model, missingness/capability awareness, scope, and drift. High novelty removes calibrated confidence and routes to exploration; it is neither automatic quality nor automatic rejection.",
+    "textSha256": "788721c3966d6dc191c0001c422d23c3601b75f45af25d04034968101a5469b2",
+    "line": 10915,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-036",
+    "title": "Multi-view independence, veto, and disagreement",
+    "decision": "Security, execution, market, liquidity, wallet, deployer, pattern, analog, narrative, regime, novelty, and hazard views remain separately inspectable. Shared lineage reduces effective evidence; critical security/execution contradictions veto rather than average away.",
+    "textSha256": "e2b3ae99282d11fe81dc9131f3a6d62c55e314c8a0494a60193acc32a099fddd",
+    "line": 10920,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-037",
+    "title": "Failure hazards, censoring, and competing risks",
+    "decision": "Start with deterministic ordinal hazards; calibrated time-to-event probabilities require matured interval data, censoring, competing-risk event families, calibration, OOD/applicability, and forward validation. Hazard output cannot claim probability before those gates.",
+    "textSha256": "ae62ae20e42ba14d240be6938240ee87f7ef44c0f1dc6a0ed41fdc8c45afb4dc",
+    "line": 10925,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-038",
+    "title": "Information-gain scheduling and reserve policy",
+    "decision": "Monitoring/research cadence is chosen by deterministic expected information value, boundary proximity, risk urgency, evidence expiry, batchability, cost/capacity, and starvation constraints. Protected reserves and critical deadlines override low-priority value estimates.",
+    "textSha256": "49e3457e09a4cf48552a9b43f1805f7de7e6892d122b4cdbbdd357e84e38f6e5",
+    "line": 10930,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-039",
+    "title": "Exploration assignment and propensity",
+    "decision": "Reserve stratified randomized exploration and evidence-probe floors after safety gates. Store eligibility, seed, assignment probability, stratum, request decision, and observation probability before outcomes. Use capped propensity corrections where valid.",
+    "textSha256": "088c12d7b3594a916a8a953d7727c365008fc84cdca9af5e62b94f16b522934f",
+    "line": 10935,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-040",
+    "title": "Shadow-portfolio semantics",
+    "decision": "Simulate finite cash, concurrency, exposure, position sizing, entry/exit latency, all costs, partial/failed fills, shared-liquidity competition, path ambiguity, invalidation, turnover, and opportunity cost. The same semantics apply to champion and baselines.",
+    "textSha256": "6df88499e2f65a9af940c2055c65b70e555ded1724ee4ff53fc83a035bab2b73",
+    "line": 10940,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-041",
+    "title": "Adversarial scenario library and response",
+    "decision": "Maintain versioned manipulation/security scenarios for address splitting, shared funding, route inflation, fake breadth, wash loops, liquidity spoofing, social coordination, pattern mimicry, indirect creator control, source duplication, and quota amplification. Critical escape pauses affected influence.",
+    "textSha256": "586c27262c6e601a23a778c63b763be7f84f704e0cec709041060a7e07fd8626",
+    "line": 10945,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-042",
+    "title": "Opportunity frontier and conservative dominance",
+    "decision": "Frontier dimensions preserve opportunity, risk, quality, urgency, novelty, execution, capacity, and uncertainty. Dominance is conservative under confidence bounds and missing data; unknown dimensions are not treated as favorable.",
+    "textSha256": "df2363d785281e4d354cef4183e83f4ed33752c85c878143286a57c9f872d08e",
+    "line": 10950,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-043",
+    "title": "Alpha lifecycle, decay, attribution, and reactivation",
+    "decision": "Alpha artifacts have immutable scope, lineage, holdout exposure, applicability, evaluation, half-life/drift, rollback, and retirement. They may auto-degrade/pause on safety evidence but never auto-activate or auto-reactivate; attribution controls correlated evidence.",
+    "textSha256": "7ca5d983cdc0965a2a0d733f0be1afff0a99b4dbd22c77f154bda639b6796afc",
+    "line": 10955,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-044",
+    "title": "Offline Alpha Lab execution and trust",
+    "decision": "Heavy analytics run in an isolated bounded CLI/runner over immutable exports. The runner has no production write/secret access; outputs are signed/hashed data artifacts with deterministic resource, code, dependency, cutoff, and seed manifests.",
+    "textSha256": "7975a8f28272f8b87ecf20781df17406c03fb992a0fe35ab01d2b9ac0eff5505",
+    "line": 10960,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-045",
+    "title": "Cold-start/history bootstrap and population claims",
+    "decision": "Historical backfill is retrospective research only unless an independently persisted receipt proves availability. Cold-start modules remain rule-based, unavailable, or shadow until prospective data matures. Claims are restricted to the observed/sampled population.",
+    "textSha256": "2073a23db56aa2999d55c934157cf075324ac423e67885565a55b422e60ad7b3",
+    "line": 10965,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-046",
+    "title": "Alpha Lab import security",
+    "decision": "Accept only allowlisted data formats through sandboxed, size/decompression/path-limited parsing and asymmetric signature/hash/schema verification. Executable formats, unsafe deserialization, scripts, macros, dynamic modules, and direct activation are prohibited.",
+    "textSha256": "de90e3df1ded65b2f2694b621263978efd8f4f123b94f59529d4798ac18cb408",
+    "line": 10970,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-047",
+    "title": "Alpha Evidence Pack and context preservation",
+    "decision": "Build a deterministic bounded evidence pack containing only material current, applicable results with versions, lifecycle, coverage, source dependence, counter-evidence, and evidence IDs. Critical veto/risk fields are out-of-band structured fields and cannot be compressed away.",
+    "textSha256": "49b9da6a7147e39774978cc1db190082430dc51ecc5a45a391e266c9327be455",
+    "line": 10975,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-048",
+    "title": "Bounded first-party collector topology",
+    "decision": "Run a separate long-lived, allowlisted Solana program-event collector with immutable scope versions, shard leases/fencing, slot/finality checkpoints, gap detection, bounded backfill, reorg correction, raw receipts, rights/capacity limits, and no model or financial credentials.",
+    "textSha256": "19ed7a40e2d63bc367a83867e717d4d0576ccce8e2ad01a3013e1616efc2729a",
+    "line": 10980,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-049",
+    "title": "No-backdating and universal decision/action time",
+    "decision": "Preserve chain `event_at` while setting `available_at` to actual live receipt/commit or recovery time. All policy arms use `decision_ready_at`, `policy_decided_at`, actual/counterfactual delivery, action delay, and required state availability symmetrically; no arm receives an earlier executable entry.",
+    "textSha256": "89e33d511aad9a6c937028078cec4b5458f6916a62efc448d4c0c1738a187653",
+    "line": 10985,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-050",
+    "title": "Portfolio utility objective and anti-gaming",
+    "decision": "Optimize the one-sided 95% lower confidence bound of net shadow-portfolio utility per fixed capital-day under pre-registered capital, horizon, execution, latency, tail-risk, attention, and cost assumptions plus hard safety/correctness constraints. Alert-win rate is diagnostic only.",
+    "textSha256": "621204429df01734195617f292a5b868388daaf93d29652d0b81ff1f7a33401b",
+    "line": 10990,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-051",
+    "title": "Pool math, transfer semantics, and parity",
+    "decision": "Use pure program/version-specific `PoolMathAdapter` and `TransferSemanticsAdapter` implementations over exact historical state bundles. Base and conservative stress cases plus live/observed-trade parity are mandatory; unsupported/incomplete/drifted state blocks confirmed tradability.",
+    "textSha256": "b40b8de3c0cbbbe153db14f786318b6df65de6fb6f0b35daf99956331c8214fe",
+    "line": 10995,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-052",
+    "title": "Empirical source dependence and evidence selection",
+    "decision": "Combine declared upstream lineage with point-in-time empirical dependence from values/errors/timing/outages/fingerprints. Store acquisition policy state and randomized assignment before retrieval. Neither unrequested evidence nor correlated providers count as independent favorable evidence.",
+    "textSha256": "e52c59b15da44b6000b22bc76b2bbccdef4cfb14cda7851ddd3affe6dcaa2dd7",
+    "line": 11000,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-053",
+    "title": "Split budgets and Sustainable Capacity Contract",
+    "decision": "Budget data providers, models, compute/workflows, database/storage/egress, and notifications separately. Every active configuration passes a 30-day expected and worst-case capacity simulation with retry allowance, headroom, protected reserves, and deterministic degradation order.",
+    "textSha256": "b1ce7838983e83b4fc98e2390626e71216b7d54eb3d4f5ba4947116ab03c0188",
+    "line": 11005,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-054",
+    "title": "Provider lifecycle and negative capability",
+    "decision": "Provider operations carry expiring plan/rights/schema/cost/deprecation verification and replacements. Deprecated/unknown operations fail closed. Provider bundles exposing trading, signing, transaction construction, private keys, custody, or exchange execution are decomposed; only allowlisted read-only adapters exist.",
+    "textSha256": "88f5c4f8c3265e09c910808f63b5d166c87d52a9096d4f760554c5a42e162b17",
+    "line": 11010,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-055",
+    "title": "MCP Origin, session, resource, and OAuth security",
+    "decision": "Validate present Origin exactly before processing, enforce protocol/content/body/JSON-RPC limits, bind optional sessions to actor/profile/origin/revision, authorize every resource access, and require resource-bound OAuth 2.1 with PKCE before public/workspace use.",
+    "textSha256": "4fe4b0529c592f791f0d388369bef2559c893d72a7cb51b70bbf90da63269d2f",
+    "line": 11015,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-056",
+    "title": "Tiered recovery and tamper-evident audit",
+    "decision": "Apply the tiered RPO/RTO in Section 34 with PostgreSQL PITR, object versioning/replication where required, clean-environment destructive restore drills, cross-store verification, collector replay/gap integrity, and chained/signed audit checkpoints.",
+    "textSha256": "2b53a225f0ccf48ca063cb71052f0ff3082489ef57a87c3fada6626dec1157bc",
+    "line": 11020,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-057",
+    "title": "Workspace/public authorization",
+    "decision": "Public/workspace release is separately authorized per exact version, surface, tenant model, rights, jurisdiction, privacy/deletion, disclosures, claims, abuse response, support, and rollback evidence. Technical deployment alone cannot authorize distribution.",
+    "textSha256": "33adc512c7ca3ee59bfe0b9a31eb8d0c4317de3a1ab006418de69e27ed42ca51",
+    "line": 11025,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  },
+  {
+    "id": "ADR-058",
+    "title": "Requirement manifest and release conformance",
+    "decision": "Generate and release a canonical machine-readable manifest linking every FR, AC, ADR, invariant, dependency group, package, schema, surface, test/evidence owner, telemetry, activation, and rollback target. Hash drift, orphan items, prohibited capabilities, or unresolved release-blocking deviations fail CI/release.",
+    "textSha256": "530889b71fe9092e10cd479b26c5c8f9a174cc162f0ed034618d0102a69261bd",
+    "line": 11030,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  }
+]

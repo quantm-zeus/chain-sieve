@@ -1,0 +1,60 @@
+[
+  {
+    "id": "AC-084",
+    "text": "Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.",
+    "textSha256": "f6222e31807887ff82b8803fd997ba052bbda1a9dfc500bd6ee38e5a28b2ac49",
+    "line": 6593,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-084.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-084.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  },
+  {
+    "id": "AC-089",
+    "text": "User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked.",
+    "textSha256": "ede7b6a7583f89f1c5994213fc90105e89bda337f94aadada099e7a69d2f4625",
+    "line": 6598,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-089.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-089.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  }
+]

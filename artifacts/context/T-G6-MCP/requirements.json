@@ -1,0 +1,494 @@
+[
+  {
+    "id": "FR-MCP-006",
+    "text": "OAuth 2.1 before public/workspace distribution.",
+    "textSha256": "c17664a117f05e191781f4a095e9a9e11ccf9db6fe30874b053303c8713ea9b8",
+    "line": 6044,
+    "family": "FR-MCP",
+    "dependencyGroup": "G6",
+    "owner": "apps/api/src/mcp",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-050",
+      "AC-051",
+      "AC-052",
+      "AC-053",
+      "AC-144",
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259"
+    ],
+    "implementationRefs": [
+      "apps/api/src/mcp/** @requirement FR-MCP-006",
+      "packages/tool-core/** @requirement FR-MCP-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mcp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mcp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mcp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-001.spec.ts",
+      "tests/negative/AC-001.negative.spec.ts",
+      "tests/acceptance/AC-002.spec.ts",
+      "tests/negative/AC-002.negative.spec.ts",
+      "tests/acceptance/AC-003.spec.ts",
+      "tests/negative/AC-003.negative.spec.ts",
+      "tests/acceptance/AC-004.spec.ts",
+      "tests/negative/AC-004.negative.spec.ts",
+      "tests/acceptance/AC-050.spec.ts",
+      "tests/negative/AC-050.negative.spec.ts",
+      "tests/acceptance/AC-051.spec.ts",
+      "tests/negative/AC-051.negative.spec.ts",
+      "tests/acceptance/AC-052.spec.ts",
+      "tests/negative/AC-052.negative.spec.ts",
+      "tests/acceptance/AC-053.spec.ts",
+      "tests/negative/AC-053.negative.spec.ts",
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mcp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mcp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.5 MCP",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MCP-007",
+    "text": "ChatGPT Scheduled integration remains unavailable until a versioned readiness test proves background MCP access, scope, delivery, and failure isolation for the claimed account/workspace.",
+    "textSha256": "e95d35c11363016ec0e2045b7f382a615de4cc9f7963ab01cc4a32540f594b4e",
+    "line": 6045,
+    "family": "FR-MCP",
+    "dependencyGroup": "G6",
+    "owner": "apps/api/src/mcp",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-050",
+      "AC-051",
+      "AC-052",
+      "AC-053",
+      "AC-144",
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259"
+    ],
+    "implementationRefs": [
+      "apps/api/src/mcp/** @requirement FR-MCP-007",
+      "packages/tool-core/** @requirement FR-MCP-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mcp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mcp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mcp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-001.spec.ts",
+      "tests/negative/AC-001.negative.spec.ts",
+      "tests/acceptance/AC-002.spec.ts",
+      "tests/negative/AC-002.negative.spec.ts",
+      "tests/acceptance/AC-003.spec.ts",
+      "tests/negative/AC-003.negative.spec.ts",
+      "tests/acceptance/AC-004.spec.ts",
+      "tests/negative/AC-004.negative.spec.ts",
+      "tests/acceptance/AC-050.spec.ts",
+      "tests/negative/AC-050.negative.spec.ts",
+      "tests/acceptance/AC-051.spec.ts",
+      "tests/negative/AC-051.negative.spec.ts",
+      "tests/acceptance/AC-052.spec.ts",
+      "tests/negative/AC-052.negative.spec.ts",
+      "tests/acceptance/AC-053.spec.ts",
+      "tests/negative/AC-053.negative.spec.ts",
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mcp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mcp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.5 MCP",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MCP-011",
+    "text": "OAuth access tokens are audience/resource bound, short-lived, validated locally or by an approved introspection path, and never passed through to upstream providers; PKCE and exact redirect URI validation are mandatory for public/workspace authorization.",
+    "textSha256": "576373aa4ca5fb6c024782fa9bf85efd3136d7206286f950556e6cf850fa4416",
+    "line": 6480,
+    "family": "FR-MCP",
+    "dependencyGroup": "G6",
+    "owner": "apps/api/src/mcp",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-050",
+      "AC-051",
+      "AC-052",
+      "AC-053",
+      "AC-144",
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259"
+    ],
+    "implementationRefs": [
+      "apps/api/src/mcp/** @requirement FR-MCP-011",
+      "packages/tool-core/** @requirement FR-MCP-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mcp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mcp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mcp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-001.spec.ts",
+      "tests/negative/AC-001.negative.spec.ts",
+      "tests/acceptance/AC-002.spec.ts",
+      "tests/negative/AC-002.negative.spec.ts",
+      "tests/acceptance/AC-003.spec.ts",
+      "tests/negative/AC-003.negative.spec.ts",
+      "tests/acceptance/AC-004.spec.ts",
+      "tests/negative/AC-004.negative.spec.ts",
+      "tests/acceptance/AC-050.spec.ts",
+      "tests/negative/AC-050.negative.spec.ts",
+      "tests/acceptance/AC-051.spec.ts",
+      "tests/negative/AC-051.negative.spec.ts",
+      "tests/acceptance/AC-052.spec.ts",
+      "tests/negative/AC-052.negative.spec.ts",
+      "tests/acceptance/AC-053.spec.ts",
+      "tests/negative/AC-053.negative.spec.ts",
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mcp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mcp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MCP-012",
+    "text": "Large resources use bounded streaming or short-lived audience-bound signed URLs, enforce byte/record limits and rights, and prevent range, redirect, path, or content-type confusion.",
+    "textSha256": "fef84b0b55832f5f355629b647ed37066542443f21ce8c902220962ec4c7ad5f",
+    "line": 6481,
+    "family": "FR-MCP",
+    "dependencyGroup": "G6",
+    "owner": "apps/api/src/mcp",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-050",
+      "AC-051",
+      "AC-052",
+      "AC-053",
+      "AC-144",
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259"
+    ],
+    "implementationRefs": [
+      "apps/api/src/mcp/** @requirement FR-MCP-012",
+      "packages/tool-core/** @requirement FR-MCP-012"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mcp.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mcp_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mcp-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-001.spec.ts",
+      "tests/negative/AC-001.negative.spec.ts",
+      "tests/acceptance/AC-002.spec.ts",
+      "tests/negative/AC-002.negative.spec.ts",
+      "tests/acceptance/AC-003.spec.ts",
+      "tests/negative/AC-003.negative.spec.ts",
+      "tests/acceptance/AC-004.spec.ts",
+      "tests/negative/AC-004.negative.spec.ts",
+      "tests/acceptance/AC-050.spec.ts",
+      "tests/negative/AC-050.negative.spec.ts",
+      "tests/acceptance/AC-051.spec.ts",
+      "tests/negative/AC-051.negative.spec.ts",
+      "tests/acceptance/AC-052.spec.ts",
+      "tests/negative/AC-052.negative.spec.ts",
+      "tests/acceptance/AC-053.spec.ts",
+      "tests/negative/AC-053.negative.spec.ts",
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mcp/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mcp.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

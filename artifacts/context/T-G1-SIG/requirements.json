@@ -1,0 +1,667 @@
+[
+  {
+    "id": "FR-SIG-001",
+    "text": "Versioned Feature Registry.",
+    "textSha256": "0bae85961126ae47d90bbf4328e3bb92661f9ce2e46027eb1c31351b66a3f380",
+    "line": 6004,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-002",
+    "text": "Candidate funnel and independent vectors.",
+    "textSha256": "3fe7840993c807076c8820cbf00d766505e0d879a6d20c048791d158df2683d8",
+    "line": 6005,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-003",
+    "text": "Reproducible research-priority ranking.",
+    "textSha256": "949a85483db7a0d209e5ea61cee02dbf005b8c0d4472d48dc16c85cd00eb3f55",
+    "line": 6006,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-004",
+    "text": "Diversity and exploration sample.",
+    "textSha256": "c4577f630c2555e3d16b831f2023a595ed00a55ce1c7d911d539962b9ec713d9",
+    "line": 6007,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-005",
+    "text": "Candidate lifecycle/risk separation.",
+    "textSha256": "77595742f1770a1077fe941b720e81757e5d4b77c16e66c572aba01647fae4a0",
+    "line": 6008,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-006",
+    "text": "Adaptive rechecks operate with finite budget, information-value selection, starvation limits, and explicit expiry.",
+    "textSha256": "4b73f6c71689dadbca6844ac0e0cb0f440afdb69591e2e994e4c4221f871428b",
+    "line": 6009,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SIG-009",
+    "text": "Every numeric feature defines minimum denominator/sample, stability transform, outlier/null policy, shrinkage, capped contribution, and cohort fallback.",
+    "textSha256": "e7b09fa065a336a3c457f04b72cfd3f2fb4a9d7383613823f9b865c51149719f",
+    "line": 6012,
+    "family": "FR-SIG",
+    "dependencyGroup": "G1",
+    "owner": "packages/signal-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-136",
+      "AC-154",
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193"
+    ],
+    "implementationRefs": [
+      "packages/signal-intelligence/** @requirement FR-SIG-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/sig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_sig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/sig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/sig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/sig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

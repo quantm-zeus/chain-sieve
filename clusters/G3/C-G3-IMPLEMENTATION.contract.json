@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "C-G3-IMPLEMENTATION",
+  "group": "G3",
+  "title": "Agent Runtime and Workbench",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencies": [
+    "C-G0-IMPLEMENTATION",
+    "C-G1-IMPLEMENTATION",
+    "C-G2-IMPLEMENTATION"
+  ],
+  "tasks": [
+    "T-G3-ADM",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02"
+  ],
+  "requirements": [
+    "FR-ADM-002",
+    "FR-ADM-004",
+    "FR-ADM-005",
+    "FR-ADM-008",
+    "FR-AGT-001",
+    "FR-AGT-002",
+    "FR-AGT-003",
+    "FR-AGT-004",
+    "FR-AGT-005",
+    "FR-AGT-006",
+    "FR-AGT-007",
+    "FR-AGT-008",
+    "FR-AGT-009",
+    "FR-AGT-010",
+    "FR-AGT-011",
+    "FR-AGT-012"
+  ],
+  "acceptanceCriteria": [
+    "AC-012",
+    "AC-261",
+    "AC-030",
+    "AC-032",
+    "AC-034",
+    "AC-031",
+    "AC-033"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "entryCriteria": [
+    "All dependency clusters have independent PASS reviews.",
+    "Source hashes match and task ready queue is current."
+  ],
+  "exitCriteria": [
+    "Every task is independently verified and atomically committed.",
+    "Cluster integration, architecture, security, migration, and replay checks pass.",
+    "Codex independent cluster review records PASS."
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm cluster:verify C-G3-IMPLEMENTATION",
+      "expected": "exit 0"
+    },
+    {
+      "command": "pnpm harness:verify",
+      "expected": "exit 0"
+    }
+  ],
+  "rollback": "Revert cluster task commits in reverse dependency order; capability state remains disabled or shadow."
+}

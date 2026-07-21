@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/failure-hazard"
+  ],
+  "allowedPaths": [
+    "packages/failure-hazard/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-FHZ/**"
+  ],
+  "writeSet": [
+    "packages/failure-hazard/**"
+  ]
+}

@@ -1,0 +1,738 @@
+[
+  {
+    "id": "FR-SPF-001",
+    "text": "The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost.",
+    "textSha256": "8ce6005ee3373c50344fd86c21c988bcd42ee73a3bce6650956241f89fb3761f",
+    "line": 6323,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-002",
+    "text": "Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.",
+    "textSha256": "bac18030e257ab9533b3dc2d15ed95b0b446994d9a9de42cf3f142a75df8ed6b",
+    "line": 6324,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-003",
+    "text": "The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.",
+    "textSha256": "ee381810cea3cf16f227dc216eb3addef24058f534461d1858c5f81b93c49aac",
+    "line": 6325,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-004",
+    "text": "Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.",
+    "textSha256": "7d19856d8fb734308b80be0c51378b78ec85b5201781019c3615b74d40d039d6",
+    "line": 6326,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-005",
+    "text": "Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.",
+    "textSha256": "da859601b7f7afaebbb7f85b015d622c44975ea45fc4ee3821de3a23d5a1034d",
+    "line": 6327,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-006",
+    "text": "Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.",
+    "textSha256": "c0150df43ec095542cebd2a7c3123ec01f3c2737f6feef367462bbfb9040b410",
+    "line": 6328,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-007",
+    "text": "Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills.",
+    "textSha256": "6150b778772157d63de588f3012527b1eb072d6d7186a8af56ed54400f1a51fe",
+    "line": 6329,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-SPF-008",
+    "text": "When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity.",
+    "textSha256": "5f9b5ded25ee3185cec60bed28200ffe84c512b1ec8f7160c99a8245136c3141",
+    "line": 6330,
+    "family": "FR-SPF",
+    "dependencyGroup": "G7",
+    "owner": "packages/shadow-portfolio",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/shadow-portfolio/** @requirement FR-SPF-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/spf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_spf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/spf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/spf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/spf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.32 Shadow Portfolio and Decision Simulation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

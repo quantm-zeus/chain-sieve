@@ -1,0 +1,7 @@
+[
+  "Source hash drift or normative ID loss.",
+  "Point-in-time leakage through backdated available_at.",
+  "Provider failure converted into fabricated success.",
+  "Capability influence activated by deployed code.",
+  "Budget or package boundary exceeded."
+]

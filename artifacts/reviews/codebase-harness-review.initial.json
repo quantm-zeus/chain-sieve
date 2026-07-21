@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0.0",
+  "reviewType": "independent-bootstrap-codebase-harness-audit",
+  "reviewedAt": "2026-07-21T15:42:00.000Z",
+  "branch": "review/harness-codebase-independent-audit",
+  "initialVerdict": "FAIL",
+  "authority": {
+    "prd": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+    "manifest": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json",
+    "auditEvidence": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.audit.json",
+    "bootstrapPrompt": "NOT_FOUND_IN_REPOSITORY"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "git": {
+    "main": null,
+    "mainState": "ABSENT_LOCAL_AND_REMOTE",
+    "bootstrapCommit": "ae26ac134e118c6ca5bf08db6f3a2acda5c91e69",
+    "bootstrapReleaseCandidateTag": "harness-v1.0.0-rc1",
+    "bootstrapReleaseCandidateCommit": "ae26ac134e118c6ca5bf08db6f3a2acda5c91e69",
+    "remote": "git@github.com:quantm-zeus/chain-sieve.git",
+    "gitUser": "QuanTM <quantm.zeus@gmail.com>",
+    "sshAuthentication": "AVAILABLE",
+    "githubCliAuthentication": "UNAVAILABLE",
+    "workingTreeBeforeReport": "CLEAN"
+  },
+  "independentCounts": {
+    "requirements": 397,
+    "acceptanceCriteria": 204,
+    "invariants": 44,
+    "adrs": 58,
+    "apiRoutes": 181,
+    "persistenceEntities": 286,
+    "dependencyGroups": 8,
+    "taskContracts": 70,
+    "clusterContracts": 8,
+    "generatedFiles": 977,
+    "acceptanceCriteriaAssignedToMultipleTasks": 184,
+    "declaredAcceptanceTestFilesPresent": 0
+  },
+  "baseline": {
+    "install": "PASS",
+    "build": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "test": "PASS_29_TESTS_BUT_INSUFFICIENT",
+    "apiHealth": "PASS_200",
+    "apiReadinessWithUnavailableDatabase": "PASS_503",
+    "apiReadinessWithEmptyDatabase": "FAIL_FALSE_READY_200",
+    "dashboardBuild": "PASS",
+    "dashboardE2e": "PASS_STATIC_ONLY",
+    "composeServices": "PASS_POSTGRESQL_17_AND_MINIO_HEALTHY",
+    "liveEmptyDatabaseMigration": "PASS_9_TABLES",
+    "liveMigrationRerun": "PASS",
+    "manualS3AdapterSmoke": "PASS_AFTER_MANUAL_BUCKET_CREATION",
+    "compilerDoubleGeneration": "PASS_BYTE_IDENTICAL",
+    "compilerAggregateHash": "f8df660f8668884b166164a09dae2a2104dd50dab440a28a54b2d4d681ae929e",
+    "generatedManifestListHash": "78474eb3b6b5038b2c10f50c413875f3a91bbfd08af1ffc2e508331387d854e7",
+    "walkingSkeleton": "PASS_HERMETIC_ONLY_WITH_GAPS",
+    "architectureMutation": "PASS_DETECTED_DOMAIN_TO_POSTGRES_IMPORT",
+    "prohibitedCapabilityMutation": "FAIL_NOT_DETECTED",
+    "skippedTestMutation": "FAIL_NOT_DETECTED"
+  },
+  "findings": [
+    {
+      "id": "INITIAL-P0-001",
+      "severity": "P0",
+      "title": "Task and cluster verifiers fabricate completion",
+      "status": "OPEN",
+      "evidence": "pnpm task:verify T-G0-CORE and pnpm cluster:verify C-G0-IMPLEMENTATION exit 0 although no declared acceptance/negative test file, task result, independent review, lease, task commit, or cluster integration result exists. verifyTaskContract validates only generated contract metadata; cluster verification repeats that metadata check."
+    },
+    {
+      "id": "INITIAL-P0-002",
+      "severity": "P0",
+      "title": "Merge queue and lifecycle controls do not prove safe Git execution",
+      "status": "OPEN",
+      "evidence": "Task completion trusts --verified true; lifecycle omits IMPLEMENTING, SELF_REVIEWING, VERIFYING and MERGE_QUEUED; simulation hard-codes stale-lease/path-lock success; merge processing rebases the task branch in a way that can leave the cluster branch unadvanced; no real cluster result/review gate is consumed."
+    },
+    {
+      "id": "INITIAL-P0-003",
+      "severity": "P0",
+      "title": "Filesystem object store permits symlink escape and false immutable evidence hashes",
+      "status": "OPEN",
+      "evidence": "A controlled root/escape symlink allowed put('escape/payload') to write outside the configured root. Re-putting different bytes at an existing key swallowed EEXIST and returned the new-byte hash while the old bytes remained persisted."
+    },
+    {
+      "id": "INITIAL-P1-004",
+      "severity": "P1",
+      "title": "PostgreSQL transaction and readiness semantics are incorrect",
+      "status": "OPEN",
+      "evidence": "A live transaction callback insert survived an injected rollback because work(this) uses the pool instead of the transaction-scoped Sql. /readiness returned 200 ready against a live but empty database with zero application tables; partial or missing migration state is invisible."
+    },
+    {
+      "id": "INITIAL-P1-005",
+      "severity": "P1",
+      "title": "Mutation, placeholder and prohibited-capability scans are bypassable",
+      "status": "OPEN",
+      "evidence": "A controlled executable broadcastSignedPayload implementation passed prohibited-capabilities:scan. A controlled it.skip test passed placeholders:scan and pnpm test exited 0 with one skipped test. Scans cover only apps/packages and use narrow lexical patterns."
+    },
+    {
+      "id": "INITIAL-P1-006",
+      "severity": "P1",
+      "title": "Generated task contracts are not executable or correctly scoped",
+      "status": "OPEN",
+      "evidence": "All 70 contracts allow infra/migrations/** although only four have migration budget; representative write sets include paths outside allowed paths; read sets point to nonexistent schema files; 44 declared owner paths do not yet exist; verificationCommands recursively invoke task:verify; 184 acceptance IDs are assigned to multiple tasks without evidence ownership."
+    },
+    {
+      "id": "INITIAL-P1-007",
+      "severity": "P1",
+      "title": "Dashboard does not obtain readiness data through the API",
+      "status": "OPEN",
+      "evidence": "The SvelteKit load function returns a static generatedAt and static section list; it never calls PUBLIC_API_BASE_URL or an API route. The browser test proves only disclaimer text."
+    },
+    {
+      "id": "INITIAL-P1-008",
+      "severity": "P1",
+      "title": "Configured S3 object storage is ignored and local stack lacks bucket provisioning",
+      "status": "OPEN",
+      "evidence": "Config accepts OBJECT_STORE_DRIVER=s3 but does not parse S3 settings, while API main always constructs FilesystemObjectStore and labels it with the configured driver. MinIO required manual alias/bucket creation before the S3 adapter smoke passed."
+    },
+    {
+      "id": "INITIAL-P1-009",
+      "severity": "P1",
+      "title": "Production configuration fails open to development defaults",
+      "status": "OPEN",
+      "evidence": "loadConfig({NODE_ENV:'production'}) accepts default local database credentials, filesystem storage and default origin; required production fields are not conditionally enforced."
+    },
+    {
+      "id": "INITIAL-P1-010",
+      "severity": "P1",
+      "title": "Fake adapters can report generic AVAILABLE state",
+      "status": "OPEN",
+      "evidence": "ShadowNotificationAdapter and multiple Fake* adapters return status AVAILABLE without a typed synthetic/non-production capability marker. Naming or delivery-id prefixes are not an enforceable capability contract."
+    },
+    {
+      "id": "INITIAL-P1-011",
+      "severity": "P1",
+      "title": "Walking skeleton and deterministic simulation coverage are incomplete",
+      "status": "OPEN",
+      "evidence": "The sole walking-skeleton test uses pg-mem and an in-memory object store. It does not prove live PostgreSQL/MinIO integration, historical as-of replay selection, workflow crash/resume, lost lease, quota reset, model unavailability, notification terminal failure, or late-observation replay. Trace continuity is not persisted and artifact byte metadata is hard-coded to 1."
+    },
+    {
+      "id": "INITIAL-P1-012",
+      "severity": "P1",
+      "title": "Compiler lacks the required frozen semantic-stage artifact and complete drift closure",
+      "status": "OPEN",
+      "evidence": "Two generations are byte-identical, but no versioned content-addressed semantic artifact exists. Drift checking compares expected files only and does not reject unexpected files under generated roots. Generated integrity reports self-assert independent validation."
+    },
+    {
+      "id": "INITIAL-P1-013",
+      "severity": "P1",
+      "title": "CI does not exercise all claimed release gates",
+      "status": "OPEN",
+      "evidence": "CI lacks real task-result verification, cluster-result/review verification, worktree lifecycle, merge queue/revert execution, MinIO/S3 integration, API start/readiness smoke, compiler clean double-generation, and meaningful mutation checks for deleted/weakened/skipped tests."
+    },
+    {
+      "id": "INITIAL-P1-014",
+      "severity": "P1",
+      "title": "Bootstrap authority and release base are incomplete",
+      "status": "OPEN",
+      "evidence": "No bootstrap prompt was found in the repository or repository history. Neither local nor remote main exists. SSH authentication works, but GitHub API authentication and hosting controls cannot be inspected."
+    },
+    {
+      "id": "INITIAL-P1-015",
+      "severity": "P1",
+      "title": "MCP bootstrap transport lacks bounded resource controls",
+      "status": "OPEN",
+      "evidence": "The endpoint checks origin/content type/protocol but has no message-size, rate, concurrency or request-time bound. Missing Origin is accepted. These are explicit transport concerns even for a read-only synthetic bootstrap tool."
+    },
+    {
+      "id": "INITIAL-P2-016",
+      "severity": "P2",
+      "title": "Readiness and shutdown error handling are weak",
+      "status": "OPEN",
+      "evidence": "A rejected or hanging dependency check produces an unbounded Promise.all/500 path rather than a bounded not-ready result. Shutdown is not awaited by signal handlers before process lifecycle completion."
+    },
+    {
+      "id": "INITIAL-P2-017",
+      "severity": "P2",
+      "title": "Premature contracts and ineffective helpers reduce maintainability",
+      "status": "OPEN",
+      "evidence": "Provider contracts expose numerous future advanced-alpha interfaces without implementations; assertOutcomeLabelsDistinct is tautological for boolean inputs; the bootstrap contains abstractions not exercised by current runnable behavior."
+    }
+  ],
+  "externalControls": [
+    {
+      "control": "GitHub branch protection, required reviews, tag protection and repository rulesets",
+      "status": "REQUIRES_REPOSITORY_CONFIGURATION",
+      "reason": "GitHub CLI/API authentication unavailable in this environment"
+    }
+  ]
+}

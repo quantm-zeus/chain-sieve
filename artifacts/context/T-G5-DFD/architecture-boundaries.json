@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/deployer-funder-dna"
+  ],
+  "allowedPaths": [
+    "packages/deployer-funder-dna/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-DFD/**"
+  ],
+  "writeSet": [
+    "packages/deployer-funder-dna/**"
+  ]
+}

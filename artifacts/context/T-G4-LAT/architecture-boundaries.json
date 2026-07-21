@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/latency-profiler"
+  ],
+  "allowedPaths": [
+    "packages/latency-profiler/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-LAT/**"
+  ],
+  "writeSet": [
+    "packages/latency-profiler/**"
+  ]
+}

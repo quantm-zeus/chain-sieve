@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G6-OOD",
+  "title": "FR-OOD implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G6",
+  "cluster": "C-G6-IMPLEMENTATION",
+  "riskLevel": "MEDIUM",
+  "autonomyLevel": "AUTONOMOUS",
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD",
+    "T-G2-ADM",
+    "T-G2-ALERT",
+    "T-G2-DR",
+    "T-G2-PROD",
+    "T-G2-WF",
+    "T-G3-ADM",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02",
+    "T-G4-ADM",
+    "T-G4-CAP",
+    "T-G4-CROWD",
+    "T-G4-DECAY",
+    "T-G4-FB",
+    "T-G4-LAT",
+    "T-G4-NB",
+    "T-G4-THS",
+    "T-G4-WHY",
+    "T-G5-ADQ",
+    "T-G5-CROWD",
+    "T-G5-DFD",
+    "T-G5-LAR",
+    "T-G5-LMS",
+    "T-G5-NAR",
+    "T-G5-NLL",
+    "T-G5-POL",
+    "T-G5-REG",
+    "T-G5-SIG",
+    "T-G5-SOC",
+    "T-G5-WAL",
+    "T-G5-XCF"
+  ],
+  "requirements": [
+    "FR-OOD-001",
+    "FR-OOD-002",
+    "FR-OOD-003",
+    "FR-OOD-004",
+    "FR-OOD-005"
+  ],
+  "acceptanceCriteria": [
+    "AC-182",
+    "AC-185"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/novelty-detector"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-OOD/**"
+  ],
+  "writeSet": [
+    "packages/novelty-detector/**"
+  ],
+  "allowedPaths": [
+    "packages/novelty-detector/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "exclusiveLocks": [
+    "packages/novelty-detector/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/novelty-detector:contract": "1bc19eff27385db193c02ba8ce0fb5b40b778d614c67e4eb29b551f7cabb39bc"
+  },
+  "deliverables": [
+    "packages/novelty-detector/** @requirement FR-OOD-001",
+    "packages/novelty-detector/** @requirement FR-OOD-002",
+    "packages/novelty-detector/** @requirement FR-OOD-003",
+    "packages/novelty-detector/** @requirement FR-OOD-004",
+    "packages/novelty-detector/** @requirement FR-OOD-005",
+    "packages/novelty-detector implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-182.spec.ts",
+    "tests/negative/AC-182.negative.spec.ts",
+    "tests/acceptance/AC-185.spec.ts",
+    "tests/negative/AC-185.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm exec vitest run tests/acceptance/AC-182.spec.ts tests/negative/AC-182.negative.spec.ts tests/acceptance/AC-185.spec.ts tests/negative/AC-185.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6282,
+      "id": "FR-OOD-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6283,
+      "id": "FR-OOD-002"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6284,
+      "id": "FR-OOD-003"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6285,
+      "id": "FR-OOD-004"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6286,
+      "id": "FR-OOD-005"
+    }
+  ]
+}

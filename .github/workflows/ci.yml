@@ -1,0 +1,104 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main, bootstrap/agent-harness-and-codebase]
+permissions:
+  contents: read
+jobs:
+  tier0:
+    name: Tier 0 · static and unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:unit
+  tier1:
+    name: Tier 1 · task contracts
+    needs: tier0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm spec:verify
+      - run: pnpm prd:drift-check
+      - run: pnpm requirements:coverage
+      - run: pnpm harness:verify
+  tier2:
+    name: Tier 2 · cluster integration
+    needs: tier1
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: ciag, POSTGRES_PASSWORD: ciag_test, POSTGRES_DB: ciag }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ciag" --health-interval 5s --health-timeout 5s --health-retries 20
+      minio:
+        image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+        env: { MINIO_ROOT_USER: ciag, MINIO_ROOT_PASSWORD: ciag_test_only }
+        ports: ['9000:9000']
+        options: >-
+          --health-cmd "mc ready local" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: docker run --rm --network host --entrypoint /bin/sh minio/minio:RELEASE.2025-07-23T15-54-02Z -c "mc alias set local http://127.0.0.1:9000 ciag ciag_test_only && mc mb --ignore-existing local/ciag-artifacts"
+      - run: pnpm test:integration
+      - run: pnpm test:system
+      - run: pnpm test:service
+        env:
+          CIAG_TEST_DATABASE_URL: postgres://ciag:ciag_test@127.0.0.1:5432/ciag
+          CIAG_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+          CIAG_TEST_S3_BUCKET: ciag-artifacts
+          CIAG_TEST_S3_ACCESS_KEY_ID: ciag
+          CIAG_TEST_S3_SECRET_ACCESS_KEY: ciag_test_only
+      - run: pnpm migration:verify
+      - run: pnpm architecture:verify
+      - run: pnpm placeholders:scan
+      - run: pnpm prohibited-capabilities:scan
+      - run: pnpm harness:lifecycle
+      - name: Reject unimplemented task and cluster completion
+        run: |
+          if pnpm task:verify T-G0-CORE --holder forged --lease-version 1; then exit 1; fi
+          if pnpm cluster:verify C-G0-IMPLEMENTATION; then exit 1; fi
+  tier3:
+    name: Tier 3 · pre-main
+    needs: tier2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.13.1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.14.0, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm prd:compile
+      - run: pnpm prd:drift-check
+      - run: pnpm requirements:coverage
+      - run: pnpm architecture:verify
+      - run: pnpm migration:verify
+      - run: pnpm harness:verify
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - run: pnpm placeholders:scan
+      - run: pnpm tests:skeleton-integrity
+      - run: pnpm test:mutation

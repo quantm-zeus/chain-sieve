@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "initialReviewCommit": "a28378d",
+  "verifiedRepairCommit": "1d92ab62a8cf9268750c3ab494d04af098b32979",
+  "initialVerdict": "FAIL",
+  "finalVerdict": "PASS",
+  "resolutions": [
+    { "findingId": "INITIAL-P0-001", "status": "RESOLVED", "control": "Task and cluster verifiers now derive results from live leases, commits, tests, repository state, integration evidence, and independent review; forged completion tests reject both paths." },
+    { "findingId": "INITIAL-P0-002", "status": "RESOLVED", "control": "Full recorded lifecycle, isolated worktree, real rebase/fast-forward merge, atomic-commit check, post-rebase verification, injected integration failure, and Git revert are executable." },
+    { "findingId": "INITIAL-P0-003", "status": "RESOLVED", "control": "Filesystem path/symlink confinement and immutable collision checks are enforced; same-byte writes are idempotent and changed bytes fail for filesystem, fake, and S3 stores." },
+    { "findingId": "INITIAL-P1-004", "status": "RESOLVED", "control": "Transactions use scoped connections/savepoints; readiness requires a valid migration ledger and all required tables. Live rollback and empty-schema tests pass." },
+    { "findingId": "INITIAL-P1-005", "status": "RESOLVED", "control": "Scanners cover executable repository roots and reject prohibited aliases, skipped/todo tests, trivial assertions, suppressions, placeholders, and empty catches; controlled mutations pass." },
+    { "findingId": "INITIAL-P1-006", "status": "RESOLVED", "control": "Compiler emits 84 bounded contracts with exact write/allowed sets, real test mappings, unique acceptance ownership, five exclusive migration owners, and non-recursive verification." },
+    { "findingId": "INITIAL-P1-007", "status": "RESOLVED", "control": "Dashboard server load fetches API readiness; browser E2E proves API-backed unavailable labeling and synthetic disclaimer." },
+    { "findingId": "INITIAL-P1-008", "status": "RESOLVED", "control": "API selects configured filesystem/S3 store, S3 fields validate, Compose provisions the bucket, and live MinIO tests pass." },
+    { "findingId": "INITIAL-P1-009", "status": "RESOLVED", "control": "Production configuration requires explicit database, origin, MCP secret, and selected object-store settings and rejects development defaults." },
+    { "findingId": "INITIAL-P1-010", "status": "RESOLVED", "control": "All degraded/fake capability results carry the typed PRODUCTION or SYNTHETIC_SHADOW mode; bootstrap implementations remain synthetic." },
+    { "findingId": "INITIAL-P1-011", "status": "RESOLVED", "control": "Hermetic and live-service skeletons cover durable rows/artifacts, evidence, as-of replay, idempotency, retry, maturity, trace continuity, crash/resume, quota/model/storage/late-data scenarios." },
+    { "findingId": "INITIAL-P1-012", "status": "RESOLVED", "control": "Content-addressed semantic artifact freezes normative inventories without live calls; compilation is locked, byte-deterministic, and rejects unexpected output drift." },
+    { "findingId": "INITIAL-P1-013", "status": "RESOLVED", "control": "CI invokes real build/static/unit/integration/system/service/browser/spec/mutation/harness/lifecycle/scanner/migration commands and explicit forgery negatives." },
+    { "findingId": "INITIAL-P1-014", "status": "RESOLVED_WITH_ARCHIVAL_NOTE", "control": "A reviewed initial main baseline is created from the repository root and the verified bootstrap descendant is merged. Missing prompt semantics were not reconstructed; direct PRD/manifest verification removes release ambiguity. Owner archival remains external." },
+    { "findingId": "INITIAL-P1-015", "status": "RESOLVED", "control": "MCP requires allowed Origin and optional production-required bearer auth, and bounds bytes, protocol, client IDs, tracked clients, rate, concurrency, execution time, and transport lifetime." },
+    { "findingId": "INITIAL-P2-016", "status": "RESOLVED", "control": "Readiness catches rejection and timeout as not-ready; signal handlers await server and database shutdown and exit deterministically." },
+    { "findingId": "INITIAL-P2-017", "status": "RESOLVED", "control": "Ineffective outcome helper was made semantic, bootstrap behavior is exercised, and future interfaces cannot claim production availability." }
+  ],
+  "remaining": [
+    { "id": "FINAL-P3-001", "severity": "P3", "status": "OPEN_NON_BLOCKING", "title": "Repository-wide Prettier baseline is not clean" }
+  ],
+  "p0Open": 0,
+  "p1Open": 0,
+  "releaseBlockingP2Open": 0
+}

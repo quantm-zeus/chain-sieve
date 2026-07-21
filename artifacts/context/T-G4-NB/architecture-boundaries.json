@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/research-notebook"
+  ],
+  "allowedPaths": [
+    "packages/research-notebook/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-NB/**"
+  ],
+  "writeSet": [
+    "packages/research-notebook/**"
+  ]
+}

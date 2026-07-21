@@ -1,0 +1,358 @@
+[
+  {
+    "id": "FR-TRD-001",
+    "text": "Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.",
+    "textSha256": "6aedbca1fcd20caa13abeac130fc169d4c95d8741aab38c5b7bea75ee9c14aa3",
+    "line": 6189,
+    "family": "FR-TRD",
+    "dependencyGroup": "G1",
+    "owner": "packages/economic-trade-normalizer",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-233"
+    ],
+    "implementationRefs": [
+      "packages/economic-trade-normalizer/** @requirement FR-TRD-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_trd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRD-002",
+    "text": "Economic trades use net actor deltas and avoid route/hop double counting.",
+    "textSha256": "4758d6ece27eefe87f60af64885f57f293856f54f6fb8ad237dd44f5f450583e",
+    "line": 6190,
+    "family": "FR-TRD",
+    "dependencyGroup": "G1",
+    "owner": "packages/economic-trade-normalizer",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-233"
+    ],
+    "implementationRefs": [
+      "packages/economic-trade-normalizer/** @requirement FR-TRD-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_trd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRD-003",
+    "text": "Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand.",
+    "textSha256": "fcbdb5f43b64eafc096cd2fd03e511382d27b890644fb461c85cadf8b3c06453",
+    "line": 6191,
+    "family": "FR-TRD",
+    "dependencyGroup": "G1",
+    "owner": "packages/economic-trade-normalizer",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-233"
+    ],
+    "implementationRefs": [
+      "packages/economic-trade-normalizer/** @requirement FR-TRD-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_trd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-TRD-004",
+    "text": "Economic-actor uncertainty reduces feature quality and ranking contribution.",
+    "textSha256": "ec595c089bea2f89b834fbfe6350d18de6a9d5729878b32a8201bc33c8f95e8a",
+    "line": 6192,
+    "family": "FR-TRD",
+    "dependencyGroup": "G1",
+    "owner": "packages/economic-trade-normalizer",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-130",
+      "AC-131",
+      "AC-132",
+      "AC-133",
+      "AC-134",
+      "AC-135",
+      "AC-136",
+      "AC-233"
+    ],
+    "implementationRefs": [
+      "packages/economic-trade-normalizer/** @requirement FR-TRD-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/trd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_trd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/trd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-130.spec.ts",
+      "tests/negative/AC-130.negative.spec.ts",
+      "tests/acceptance/AC-131.spec.ts",
+      "tests/negative/AC-131.negative.spec.ts",
+      "tests/acceptance/AC-132.spec.ts",
+      "tests/negative/AC-132.negative.spec.ts",
+      "tests/acceptance/AC-133.spec.ts",
+      "tests/negative/AC-133.negative.spec.ts",
+      "tests/acceptance/AC-134.spec.ts",
+      "tests/negative/AC-134.negative.spec.ts",
+      "tests/acceptance/AC-135.spec.ts",
+      "tests/negative/AC-135.negative.spec.ts",
+      "tests/acceptance/AC-136.spec.ts",
+      "tests/negative/AC-136.negative.spec.ts",
+      "tests/acceptance/AC-233.spec.ts",
+      "tests/negative/AC-233.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/trd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/trd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.17 Solana deterministic security, supply, and economic trades",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

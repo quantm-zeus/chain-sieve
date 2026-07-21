@@ -1,0 +1,31 @@
+[
+  {
+    "id": "AC-087",
+    "text": "Default fallback cannot send a high-conviction opportunity alert.",
+    "textSha256": "f11af6f87b180160a2ac9b80122c30e01074dfc2c4e9a7b01753b14c74cec325",
+    "line": 6596,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-087.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-087.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  }
+]

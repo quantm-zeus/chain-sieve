@@ -1,0 +1,39 @@
+{
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD"
+  ],
+  "interfaceHashes": {
+    "packages/alerts:contract": "64f8c7af89cc3e87dd6041c9182e4c7f03ba3325928406f3e253d6c269e99434"
+  }
+}

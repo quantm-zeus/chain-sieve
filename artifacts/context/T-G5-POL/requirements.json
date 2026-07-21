@@ -1,0 +1,372 @@
+[
+  {
+    "id": "FR-POL-001",
+    "text": "Natural language compiles only to a constrained typed policy AST.",
+    "textSha256": "72094c321550e4928f8a1593f955b54f39593ba99ade907bf3c3dc07d4ca9d32",
+    "line": 6098,
+    "family": "FR-POL",
+    "dependencyGroup": "G5",
+    "owner": "packages/policy-compiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/policy-compiler/** @requirement FR-POL-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/pol.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_pol_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/pol-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/pol/"
+    ],
+    "telemetryRefs": [
+      "telemetry/pol.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-POL-002",
+    "text": "Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.",
+    "textSha256": "8341476aa5b491259bcff6c302618a4b37e39cf4478a2b14aea3c7510187130e",
+    "line": 6099,
+    "family": "FR-POL",
+    "dependencyGroup": "G5",
+    "owner": "packages/policy-compiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/policy-compiler/** @requirement FR-POL-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/pol.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_pol_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/pol-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/pol/"
+    ],
+    "telemetryRefs": [
+      "telemetry/pol.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-POL-003",
+    "text": "Compiler output remains a draft until backtest/shadow review and explicit approval.",
+    "textSha256": "74e8994d135a3e5c17c40c13dd7bb084fa3305f98f10d89890b0e7e183a1de09",
+    "line": 6100,
+    "family": "FR-POL",
+    "dependencyGroup": "G5",
+    "owner": "packages/policy-compiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/policy-compiler/** @requirement FR-POL-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/pol.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_pol_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/pol-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/pol/"
+    ],
+    "telemetryRefs": [
+      "telemetry/pol.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-POL-004",
+    "text": "Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints.",
+    "textSha256": "003d8044890d3ef7e44dd9d441a1a31041c16ce52c2514b8648477eaec6e2093",
+    "line": 6101,
+    "family": "FR-POL",
+    "dependencyGroup": "G5",
+    "owner": "packages/policy-compiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/policy-compiler/** @requirement FR-POL-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/pol.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_pol_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/pol-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/pol/"
+    ],
+    "telemetryRefs": [
+      "telemetry/pol.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-POL-005",
+    "text": "Approval and activation are separate audited actions; activation requires re-authentication.",
+    "textSha256": "42d8f4165b3bfab97c5f35569b58fd20ab2684e33ab793bc3158dc25fc715abb",
+    "line": 6102,
+    "family": "FR-POL",
+    "dependencyGroup": "G5",
+    "owner": "packages/policy-compiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/policy-compiler/** @requirement FR-POL-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/pol.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_pol_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/pol-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/pol/"
+    ],
+    "telemetryRefs": [
+      "telemetry/pol.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

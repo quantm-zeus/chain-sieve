@@ -1,0 +1,1178 @@
+{
+  "T-G0-COL-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-COL-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-CORE": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-COST-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-COST-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-DATA": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 3,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-DISC": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-DR": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 3,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-MCP": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-PROV-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-PROV-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-SEC-01": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-SEC-02": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G0-TRACE": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-COST": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-DATA-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 3,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-DATA-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 3,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-DISC-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-DISC-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-EVAL-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-EVAL-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-EXEC-01": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-EXEC-02": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-EXEC-03": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-MAT-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-MAT-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-OBJ-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-OBJ-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-SIG": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-SOLSEC": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-SUP": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G1-TRD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G2-ADM": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G2-ALERT": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G2-DR": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 3,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G2-PROD": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G2-WF": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G3-ADM": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G3-AGT-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G3-AGT-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-ADM": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-CAP": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-CROWD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-DECAY": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-FB": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-LAT": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-NB": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-THS": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G4-WHY": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-ADQ": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-CROWD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-DFD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-LAR": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-LMS": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-NAR": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-NLL": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-POL": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-REG": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-SIG": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-SOC": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-WAL": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G5-XCF": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-AL": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-ANA": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-CF": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-EVAL-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-EVAL-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-FHZ": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-LEGAL": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-MCP": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-MVD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-OOD": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-PROD": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-SIG": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-WPI-01": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G6-WPI-02": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-ADG": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-AEP": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-AIG": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-ALAB": {
+    "riskLevel": "CRITICAL",
+    "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-AMS": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-EXP": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-OF": {
+    "riskLevel": "MEDIUM",
+    "autonomyLevel": "AUTONOMOUS",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  },
+  "T-G7-SPF": {
+    "riskLevel": "HIGH",
+    "autonomyLevel": "REVIEW_REQUIRED",
+    "complexityBudget": {
+      "maxFiles": 24,
+      "maxChangedLines": 1800,
+      "maxCyclomaticComplexity": 12
+    },
+    "changeBudget": {
+      "maxMigrations": 0,
+      "maxPublicInterfaces": 4,
+      "requiresSplitAboveBudget": true
+    }
+  }
+}

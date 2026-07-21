@@ -1,0 +1,28 @@
+{
+  "ownerPackages": [
+    "packages/cost-router"
+  ],
+  "allowedPaths": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-COST/**"
+  ],
+  "writeSet": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ]
+}

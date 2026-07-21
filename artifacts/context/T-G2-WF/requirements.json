@@ -1,0 +1,866 @@
+[
+  {
+    "id": "FR-WF-001",
+    "text": "Durable resumable workflow.",
+    "textSha256": "096fe9963c6abd9829090241422d9b603eddcfa78f2657b8ea64bbe0bbf99b65",
+    "line": 6017,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-001",
+      "apps/api/src/internal/** @requirement FR-WF-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-002",
+    "text": "Trigger inbox and at-least-once idempotency.",
+    "textSha256": "887aaa67940a8a3e63b48058b6a966503514fcf76e3bc4504db8ae6ac236a670",
+    "line": 6018,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-002",
+      "apps/api/src/internal/** @requirement FR-WF-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-003",
+    "text": "Step checkpoint, lease, fencing, and retries.",
+    "textSha256": "cec431fe945e77df4881127be6daf46201932a62fd0fb4845925c53b585995d6",
+    "line": 6019,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-003",
+      "apps/api/src/internal/** @requirement FR-WF-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-004",
+    "text": "Schedule CRUD, validation, pause/resume, dry-run, run-now.",
+    "textSha256": "7240ad73f3ed994e42fcbc92dd00960821c892602c3fa6ffffdf7636c77ea5db",
+    "line": 6020,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-004",
+      "apps/api/src/internal/** @requirement FR-WF-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-005",
+    "text": "Schedule reconciliation.",
+    "textSha256": "2b0c8d44ef5ee306b1e1fc1f657a4fa30afe71cf9617c2b64946b113006b77df",
+    "line": 6021,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-005",
+      "apps/api/src/internal/** @requirement FR-WF-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-006",
+    "text": "Transactional notification outbox.",
+    "textSha256": "0452cf7aa5316a2e6367e6e4f908edaca2e88257e33c27d3d21ba6ea47bcb476",
+    "line": 6022,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-006",
+      "apps/api/src/internal/** @requirement FR-WF-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-007",
+    "text": "Dead-letter management.",
+    "textSha256": "2b72417846f3174f21f8d69cc64edf2590b8ca74544ee3f5245f62ef37daf7f6",
+    "line": 6023,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-007",
+      "apps/api/src/internal/** @requirement FR-WF-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WF-008",
+    "text": "Shadow mode.",
+    "textSha256": "44a785db2bfbd26c8106ad72d7140495a0f17c33e40628c4262c067a3bba9e59",
+    "line": 6024,
+    "family": "FR-WF",
+    "dependencyGroup": "G2",
+    "owner": "packages/workflow-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-063",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/workflow-runtime/** @requirement FR-WF-008",
+      "apps/api/src/internal/** @requirement FR-WF-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_wf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-010.spec.ts",
+      "tests/negative/AC-010.negative.spec.ts",
+      "tests/acceptance/AC-011.spec.ts",
+      "tests/negative/AC-011.negative.spec.ts",
+      "tests/acceptance/AC-012.spec.ts",
+      "tests/negative/AC-012.negative.spec.ts",
+      "tests/acceptance/AC-013.spec.ts",
+      "tests/negative/AC-013.negative.spec.ts",
+      "tests/acceptance/AC-014.spec.ts",
+      "tests/negative/AC-014.negative.spec.ts",
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-063.spec.ts",
+      "tests/negative/AC-063.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.3 Workflow and automation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

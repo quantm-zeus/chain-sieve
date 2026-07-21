@@ -1,0 +1,60 @@
+[
+  {
+    "id": "AC-083",
+    "text": "Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.",
+    "textSha256": "bb961a75b9120c85b232de2666ae4c823ef7d994188024af23e3d7c48863df73",
+    "line": 6592,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-083.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-083.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  },
+  {
+    "id": "AC-088",
+    "text": "A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.",
+    "textSha256": "33c4851152920aa93b5082449120d0d127b0b3f172334c14affd23371df17999",
+    "line": 6597,
+    "requirementRefs": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003",
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004",
+      "FR-CF-001",
+      "FR-CF-002",
+      "FR-CF-003",
+      "FR-FB-001",
+      "FR-FB-002",
+      "FR-NB-001",
+      "FR-NB-002"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-088.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-088.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.8 Advanced intelligence",
+    "testClass": "advanced-analysis"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/economic-trade-normalizer"
+  ],
+  "allowedPaths": [
+    "packages/economic-trade-normalizer/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-TRD/**"
+  ],
+  "writeSet": [
+    "packages/economic-trade-normalizer/**"
+  ]
+}

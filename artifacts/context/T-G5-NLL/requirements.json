@@ -1,0 +1,358 @@
+[
+  {
+    "id": "FR-NLL-001",
+    "text": "Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings.",
+    "textSha256": "91d152054ac74c0dd32fd9718ab2ea506db09cd0be94140d700d4efa0c555068",
+    "line": 6275,
+    "family": "FR-NLL",
+    "dependencyGroup": "G5",
+    "owner": "packages/leader-laggard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/leader-laggard/** @requirement FR-NLL-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nll.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nll_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nll-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nll/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nll.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.26 Narrative Leader–Laggard Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-NLL-002",
+    "text": "Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.",
+    "textSha256": "8a9f34e1e28d63325272b7e85f56b3bdb7658e2e1f66f3c14b54cf23fe8e4584",
+    "line": 6276,
+    "family": "FR-NLL",
+    "dependencyGroup": "G5",
+    "owner": "packages/leader-laggard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/leader-laggard/** @requirement FR-NLL-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nll.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nll_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nll-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nll/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nll.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.26 Narrative Leader–Laggard Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-NLL-003",
+    "text": "Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding.",
+    "textSha256": "067150dbb6764d177fcb0d37bb4fceaddf016b98075d30a433ce3ccef0941079",
+    "line": 6277,
+    "family": "FR-NLL",
+    "dependencyGroup": "G5",
+    "owner": "packages/leader-laggard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/leader-laggard/** @requirement FR-NLL-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nll.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nll_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nll-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nll/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nll.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.26 Narrative Leader–Laggard Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-NLL-004",
+    "text": "Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates.",
+    "textSha256": "980da1560321c70f18e3af491e26989b5a1a50925cc072c07f48bdbdc6fbd897",
+    "line": 6278,
+    "family": "FR-NLL",
+    "dependencyGroup": "G5",
+    "owner": "packages/leader-laggard",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/leader-laggard/** @requirement FR-NLL-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nll.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_nll_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nll-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nll/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nll.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.26 Narrative Leader–Laggard Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

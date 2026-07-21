@@ -1,0 +1,218 @@
+[
+  {
+    "id": "FR-PROV-009",
+    "text": "Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy.",
+    "textSha256": "42f2fa3aec618b95e15441bea59b7a95311fb3cf3359119341ed1c348db3297e",
+    "line": 6410,
+    "family": "FR-PROV",
+    "dependencyGroup": "G0",
+    "owner": "packages/provider-lifecycle",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259",
+      "AC-270",
+      "AC-271",
+      "AC-272",
+      "AC-273"
+    ],
+    "implementationRefs": [
+      "packages/provider-lifecycle/** @requirement FR-PROV-009",
+      "packages/providers/** @requirement FR-PROV-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prov.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_prov_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prov-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts",
+      "tests/acceptance/AC-270.spec.ts",
+      "tests/negative/AC-270.negative.spec.ts",
+      "tests/acceptance/AC-271.spec.ts",
+      "tests/negative/AC-271.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prov/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prov.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.39 Provider lifecycle, deprecation, and negative capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROV-010",
+    "text": "Provider source fingerprints capture upstream lineage, field/value fingerprints, timing behavior, outage correlation, schema characteristics, and first-seen behavior for empirical dependence analysis.",
+    "textSha256": "512119cfdbbb77da5114cfed8ac7369a979a166c2708c9adb92c2f046a42289c",
+    "line": 6411,
+    "family": "FR-PROV",
+    "dependencyGroup": "G0",
+    "owner": "packages/provider-lifecycle",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-250",
+      "AC-251",
+      "AC-252",
+      "AC-253",
+      "AC-254",
+      "AC-255",
+      "AC-256",
+      "AC-257",
+      "AC-258",
+      "AC-259",
+      "AC-270",
+      "AC-271",
+      "AC-272",
+      "AC-273"
+    ],
+    "implementationRefs": [
+      "packages/provider-lifecycle/** @requirement FR-PROV-010",
+      "packages/providers/** @requirement FR-PROV-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prov.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_prov_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prov-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-250.spec.ts",
+      "tests/negative/AC-250.negative.spec.ts",
+      "tests/acceptance/AC-251.spec.ts",
+      "tests/negative/AC-251.negative.spec.ts",
+      "tests/acceptance/AC-252.spec.ts",
+      "tests/negative/AC-252.negative.spec.ts",
+      "tests/acceptance/AC-253.spec.ts",
+      "tests/negative/AC-253.negative.spec.ts",
+      "tests/acceptance/AC-254.spec.ts",
+      "tests/negative/AC-254.negative.spec.ts",
+      "tests/acceptance/AC-255.spec.ts",
+      "tests/negative/AC-255.negative.spec.ts",
+      "tests/acceptance/AC-256.spec.ts",
+      "tests/negative/AC-256.negative.spec.ts",
+      "tests/acceptance/AC-257.spec.ts",
+      "tests/negative/AC-257.negative.spec.ts",
+      "tests/acceptance/AC-258.spec.ts",
+      "tests/negative/AC-258.negative.spec.ts",
+      "tests/acceptance/AC-259.spec.ts",
+      "tests/negative/AC-259.negative.spec.ts",
+      "tests/acceptance/AC-270.spec.ts",
+      "tests/negative/AC-270.negative.spec.ts",
+      "tests/acceptance/AC-271.spec.ts",
+      "tests/negative/AC-271.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prov/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prov.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.39 Provider lifecycle, deprecation, and negative capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]
