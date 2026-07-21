@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "HARNESS-V1.0.1-REPAIR",
+  "contractPath": "tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml",
+  "contractSha256": "9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a",
+  "approvedBranch": "fix/harness-v1.0.1-attestation",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencies": [],
+  "exclusiveLocks": [
+    "harness/task-result-verification-policy",
+    "harness/cluster-result-verification-policy",
+    "harness/task-lifecycle-state",
+    "harness/compiler-goal-generation",
+    "runtime/node-baseline",
+    "deployment/production-containers",
+    "api/mcp-response-envelope",
+    "repository/formatting-policy",
+    "repository/release-evidence"
+  ]
+}
