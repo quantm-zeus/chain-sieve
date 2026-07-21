@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/evaluation"
+  ],
+  "allowedPaths": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-EVAL-02/**"
+  ],
+  "writeSet": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ]
+}

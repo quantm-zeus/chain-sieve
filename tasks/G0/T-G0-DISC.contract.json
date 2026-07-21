@@ -20,16 +20,8 @@
     "FR-DISC-005"
   ],
   "acceptanceCriteria": [
-    "AC-110",
-    "AC-111",
     "AC-112",
-    "AC-113",
-    "AC-224",
-    "AC-225",
-    "AC-226",
-    "AC-227",
-    "AC-228",
-    "AC-229"
+    "AC-227"
   ],
   "invariants": [
     "INV-001",
@@ -51,8 +43,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DISC/**",
-    "packages/shared-schemas/src/disc.ts"
+    "artifacts/context/T-G0-DISC/**"
   ],
   "writeSet": [
     "packages/discovery-universe/**",
@@ -60,15 +51,16 @@
   ],
   "allowedPaths": [
     "packages/discovery-universe/**",
+    "packages/cheap-monitor/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/discovery-universe/public-api"
@@ -102,35 +94,23 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-110.spec.ts",
-    "tests/negative/AC-110.negative.spec.ts",
-    "tests/acceptance/AC-111.spec.ts",
-    "tests/negative/AC-111.negative.spec.ts",
     "tests/acceptance/AC-112.spec.ts",
     "tests/negative/AC-112.negative.spec.ts",
-    "tests/acceptance/AC-113.spec.ts",
-    "tests/negative/AC-113.negative.spec.ts",
-    "tests/acceptance/AC-224.spec.ts",
-    "tests/negative/AC-224.negative.spec.ts",
-    "tests/acceptance/AC-225.spec.ts",
-    "tests/negative/AC-225.negative.spec.ts",
-    "tests/acceptance/AC-226.spec.ts",
-    "tests/negative/AC-226.negative.spec.ts",
     "tests/acceptance/AC-227.spec.ts",
-    "tests/negative/AC-227.negative.spec.ts",
-    "tests/acceptance/AC-228.spec.ts",
-    "tests/negative/AC-228.negative.spec.ts",
-    "tests/acceptance/AC-229.spec.ts",
-    "tests/negative/AC-229.negative.spec.ts"
+    "tests/negative/AC-227.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G0-DISC",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-112.spec.ts tests/negative/AC-112.negative.spec.ts tests/acceptance/AC-227.spec.ts tests/negative/AC-227.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

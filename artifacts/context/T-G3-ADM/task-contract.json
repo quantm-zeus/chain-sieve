@@ -12,23 +12,34 @@
   "riskLevel": "MEDIUM",
   "autonomyLevel": "AUTONOMOUS",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -46,20 +57,8 @@
     "FR-ADM-008"
   ],
   "acceptanceCriteria": [
-    "AC-010",
-    "AC-011",
     "AC-012",
-    "AC-013",
-    "AC-014",
-    "AC-060",
-    "AC-061",
-    "AC-062",
-    "AC-063",
-    "AC-260",
-    "AC-261",
-    "AC-262",
-    "AC-263",
-    "AC-264"
+    "AC-261"
   ],
   "invariants": [
     "INV-001",
@@ -81,8 +80,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G3-ADM/**",
-    "packages/shared-schemas/src/adm.ts"
+    "artifacts/context/T-G3-ADM/**"
   ],
   "writeSet": [
     "apps/dashboard/**",
@@ -90,15 +88,16 @@
   ],
   "allowedPaths": [
     "apps/dashboard/**",
+    "apps/api/src/routes/admin/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "apps/dashboard/public-api"
@@ -130,43 +129,23 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-010.spec.ts",
-    "tests/negative/AC-010.negative.spec.ts",
-    "tests/acceptance/AC-011.spec.ts",
-    "tests/negative/AC-011.negative.spec.ts",
     "tests/acceptance/AC-012.spec.ts",
     "tests/negative/AC-012.negative.spec.ts",
-    "tests/acceptance/AC-013.spec.ts",
-    "tests/negative/AC-013.negative.spec.ts",
-    "tests/acceptance/AC-014.spec.ts",
-    "tests/negative/AC-014.negative.spec.ts",
-    "tests/acceptance/AC-060.spec.ts",
-    "tests/negative/AC-060.negative.spec.ts",
-    "tests/acceptance/AC-061.spec.ts",
-    "tests/negative/AC-061.negative.spec.ts",
-    "tests/acceptance/AC-062.spec.ts",
-    "tests/negative/AC-062.negative.spec.ts",
-    "tests/acceptance/AC-063.spec.ts",
-    "tests/negative/AC-063.negative.spec.ts",
-    "tests/acceptance/AC-260.spec.ts",
-    "tests/negative/AC-260.negative.spec.ts",
     "tests/acceptance/AC-261.spec.ts",
-    "tests/negative/AC-261.negative.spec.ts",
-    "tests/acceptance/AC-262.spec.ts",
-    "tests/negative/AC-262.negative.spec.ts",
-    "tests/acceptance/AC-263.spec.ts",
-    "tests/negative/AC-263.negative.spec.ts",
-    "tests/acceptance/AC-264.spec.ts",
-    "tests/negative/AC-264.negative.spec.ts"
+    "tests/negative/AC-261.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G3-ADM",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-012.spec.ts tests/negative/AC-012.negative.spec.ts tests/acceptance/AC-261.spec.ts tests/negative/AC-261.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

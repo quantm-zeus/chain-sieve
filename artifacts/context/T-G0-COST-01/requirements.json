@@ -1,0 +1,826 @@
+[
+  {
+    "id": "FR-COST-001",
+    "text": "Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission.",
+    "textSha256": "d92057f4b57ea4130e2922446f754b3e8c9e8c8e9aa77b89ac7a957972ecab99",
+    "line": 6132,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-001",
+      "packages/capacity-planner/** @requirement FR-COST-001",
+      "packages/quota-forecast/** @requirement FR-COST-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-002",
+    "text": "`STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.",
+    "textSha256": "73e06c40137963c360e1041bd55f6b33c5723f1b8549a2d8c2b5378f7bd28387",
+    "line": 6133,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-002",
+      "packages/capacity-planner/** @requirement FR-COST-002",
+      "packages/quota-forecast/** @requirement FR-COST-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-003",
+    "text": "Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.",
+    "textSha256": "a47eb50d04ea44781c00bfe4b4732c62abab69b1deca47200395a412f02e46a4",
+    "line": 6134,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-003",
+      "packages/capacity-planner/** @requirement FR-COST-003",
+      "packages/quota-forecast/** @requirement FR-COST-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-004",
+    "text": "Broad scans degrade breadth/depth before consuming protected quota.",
+    "textSha256": "50d378e0893077dac6e8a1b8bd562681c432c2a772981b5a2386517bb1e386df",
+    "line": 6135,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-004",
+      "packages/capacity-planner/** @requirement FR-COST-004",
+      "packages/quota-forecast/** @requirement FR-COST-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-005",
+    "text": "Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.",
+    "textSha256": "892318dd1d7458f21f0853ad83ca6138d0d0aee60b17d856d6f67ad59742ba34",
+    "line": 6136,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-005",
+      "packages/capacity-planner/** @requirement FR-COST-005",
+      "packages/quota-forecast/** @requirement FR-COST-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-006",
+    "text": "Cost forecasts use current verified provider plan metadata and observed usage.",
+    "textSha256": "54e9e194f6e4ee67e772faf10cd37c7fef70b4874c71d99983330ba8737e7216",
+    "line": 6137,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-006",
+      "packages/capacity-planner/** @requirement FR-COST-006",
+      "packages/quota-forecast/** @requirement FR-COST-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-007",
+    "text": "Blocked cost operations are audited with candidate, caller, reason, and alternative behavior.",
+    "textSha256": "c0ac4b9d1a11019e7c07d09393371a3e5fa14fffbe661049643316966bf3d881",
+    "line": 6138,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-007",
+      "packages/capacity-planner/** @requirement FR-COST-007",
+      "packages/quota-forecast/** @requirement FR-COST-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-COST-008",
+    "text": "Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication.",
+    "textSha256": "cdf199e9624fc50c760526fb8ac9cd56edd1a207cd16829eb56998756cfb1a15",
+    "line": 6139,
+    "family": "FR-COST",
+    "dependencyGroup": "G0",
+    "owner": "packages/cost-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-100",
+      "AC-101",
+      "AC-102",
+      "AC-103",
+      "AC-104",
+      "AC-105",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/cost-router/** @requirement FR-COST-008",
+      "packages/capacity-planner/** @requirement FR-COST-008",
+      "packages/quota-forecast/** @requirement FR-COST-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cost.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_cost_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cost-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-100.spec.ts",
+      "tests/negative/AC-100.negative.spec.ts",
+      "tests/acceptance/AC-101.spec.ts",
+      "tests/negative/AC-101.negative.spec.ts",
+      "tests/acceptance/AC-102.spec.ts",
+      "tests/negative/AC-102.negative.spec.ts",
+      "tests/acceptance/AC-103.spec.ts",
+      "tests/negative/AC-103.negative.spec.ts",
+      "tests/acceptance/AC-104.spec.ts",
+      "tests/negative/AC-104.negative.spec.ts",
+      "tests/acceptance/AC-105.spec.ts",
+      "tests/negative/AC-105.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cost/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cost.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.13 Free-first cost and quota",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

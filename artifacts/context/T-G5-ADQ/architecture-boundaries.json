@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/attention-diffusion/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-ADQ/**",
-    "packages/shared-schemas/src/adq.ts"
+    "artifacts/context/T-G5-ADQ/**"
   ],
   "writeSet": [
     "packages/attention-diffusion/**"

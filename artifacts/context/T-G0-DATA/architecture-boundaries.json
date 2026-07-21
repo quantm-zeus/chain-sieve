@@ -4,6 +4,7 @@
   ],
   "allowedPaths": [
     "packages/persistence/**",
+    "packages/evidence/**",
     "tests/**",
     "docs/implementation/**",
     "infra/migrations/**"
@@ -16,8 +17,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DATA/**",
-    "packages/shared-schemas/src/data.ts"
+    "artifacts/context/T-G0-DATA/**"
   ],
   "writeSet": [
     "packages/persistence/**",

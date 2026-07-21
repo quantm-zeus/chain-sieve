@@ -1,3 +1,8 @@
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  version text PRIMARY KEY,
+  applied_at timestamptz NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS specification_metadata (
   id text PRIMARY KEY,
   version text NOT NULL,
@@ -16,7 +21,7 @@ CREATE TABLE IF NOT EXISTS harness_state (
 
 CREATE TABLE IF NOT EXISTS task_state (
   task_id text PRIMARY KEY,
-  state text NOT NULL CHECK (state IN ('PLANNED','READY','LEASED','VERIFIED','MERGED','BLOCKED')),
+  state text NOT NULL CHECK (state IN ('PLANNED','READY','LEASED','IMPLEMENTING','SELF_REVIEWING','VERIFYING','VERIFIED','MERGE_QUEUED','MERGED','BLOCKED')),
   lease_version bigint NOT NULL DEFAULT 0,
   lease_holder text,
   lease_expires_at timestamptz,
@@ -40,6 +45,7 @@ CREATE TABLE IF NOT EXISTS synthetic_observations (
   available_at timestamptz NOT NULL,
   idempotency_key text NOT NULL UNIQUE,
   capability_mode text NOT NULL CHECK (capability_mode = 'SYNTHETIC_SHADOW'),
+  trace_id text NOT NULL,
   CHECK (available_at >= event_time)
 );
 
@@ -51,7 +57,8 @@ CREATE TABLE IF NOT EXISTS artifact_metadata (
   media_type text NOT NULL,
   bytes bigint NOT NULL CHECK (bytes >= 0),
   created_at timestamptz NOT NULL,
-  frozen boolean NOT NULL DEFAULT true
+  frozen boolean NOT NULL DEFAULT true,
+  trace_id text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS outbox (
@@ -61,7 +68,8 @@ CREATE TABLE IF NOT EXISTS outbox (
   state text NOT NULL CHECK (state IN ('PENDING','DELIVERED','RETRY','EXPIRED')),
   attempt_count integer NOT NULL DEFAULT 0,
   available_at timestamptz NOT NULL,
-  delivered_at timestamptz
+  delivered_at timestamptz,
+  trace_id text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS evaluation_records (
@@ -71,7 +79,8 @@ CREATE TABLE IF NOT EXISTS evaluation_records (
   signal_success boolean,
   tradable_success boolean,
   evaluated_at timestamptz NOT NULL,
-  evidence_key text NOT NULL REFERENCES artifact_metadata(artifact_key)
+  evidence_key text NOT NULL REFERENCES artifact_metadata(artifact_key),
+  trace_id text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS audit_records (
@@ -83,3 +92,7 @@ CREATE TABLE IF NOT EXISTS audit_records (
   record_hash text NOT NULL,
   recorded_at timestamptz NOT NULL
 );
+
+INSERT INTO schema_migrations (version, applied_at)
+VALUES ('0001_bootstrap_foundation', now())
+ON CONFLICT (version) DO NOTHING;

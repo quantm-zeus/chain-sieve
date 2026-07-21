@@ -1,0 +1,7 @@
+{
+  "availableAt": "Earliest time the running system could obtain a value; never backdated.",
+  "engineeringState": "Code existence; independent from availability or influence.",
+  "capabilityState": "Governed availability/influence state.",
+  "signalSuccess": "Price/profile outcome; distinct from execution-aware tradable success.",
+  "tradableSuccess": "Mature execution-aware outcome for configured notional and delay."
+}

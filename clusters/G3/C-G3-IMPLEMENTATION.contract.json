@@ -15,7 +15,8 @@
   ],
   "tasks": [
     "T-G3-ADM",
-    "T-G3-AGT"
+    "T-G3-AGT-01",
+    "T-G3-AGT-02"
   ],
   "requirements": [
     "FR-ADM-002",
@@ -36,28 +37,13 @@
     "FR-AGT-012"
   ],
   "acceptanceCriteria": [
-    "AC-010",
-    "AC-011",
     "AC-012",
-    "AC-013",
-    "AC-014",
-    "AC-060",
-    "AC-061",
-    "AC-062",
-    "AC-063",
-    "AC-260",
     "AC-261",
-    "AC-262",
-    "AC-263",
-    "AC-264",
     "AC-030",
-    "AC-031",
     "AC-032",
-    "AC-033",
     "AC-034",
-    "AC-242",
-    "AC-243",
-    "AC-244"
+    "AC-031",
+    "AC-033"
   ],
   "invariants": [
     "INV-001",

@@ -12,23 +12,34 @@
   "riskLevel": "MEDIUM",
   "autonomyLevel": "AUTONOMOUS",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -39,7 +50,8 @@
     "T-G2-PROD",
     "T-G2-WF",
     "T-G3-ADM",
-    "T-G3-AGT",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02",
     "T-G4-ADM",
     "T-G4-CAP",
     "T-G4-CROWD",
@@ -70,25 +82,8 @@
     "FR-MCP-012"
   ],
   "acceptanceCriteria": [
-    "AC-001",
-    "AC-002",
     "AC-003",
-    "AC-004",
-    "AC-050",
-    "AC-051",
-    "AC-052",
-    "AC-053",
-    "AC-144",
-    "AC-250",
-    "AC-251",
-    "AC-252",
-    "AC-253",
-    "AC-254",
-    "AC-255",
-    "AC-256",
-    "AC-257",
-    "AC-258",
-    "AC-259"
+    "AC-255"
   ],
   "invariants": [
     "INV-001",
@@ -110,8 +105,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-MCP/**",
-    "packages/shared-schemas/src/mcp.ts"
+    "artifacts/context/T-G6-MCP/**"
   ],
   "writeSet": [
     "apps/api/src/mcp/**",
@@ -119,15 +113,16 @@
   ],
   "allowedPaths": [
     "apps/api/src/mcp/**",
+    "packages/tool-core/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "apps/api/src/mcp/public-api"
@@ -159,53 +154,23 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-001.spec.ts",
-    "tests/negative/AC-001.negative.spec.ts",
-    "tests/acceptance/AC-002.spec.ts",
-    "tests/negative/AC-002.negative.spec.ts",
     "tests/acceptance/AC-003.spec.ts",
     "tests/negative/AC-003.negative.spec.ts",
-    "tests/acceptance/AC-004.spec.ts",
-    "tests/negative/AC-004.negative.spec.ts",
-    "tests/acceptance/AC-050.spec.ts",
-    "tests/negative/AC-050.negative.spec.ts",
-    "tests/acceptance/AC-051.spec.ts",
-    "tests/negative/AC-051.negative.spec.ts",
-    "tests/acceptance/AC-052.spec.ts",
-    "tests/negative/AC-052.negative.spec.ts",
-    "tests/acceptance/AC-053.spec.ts",
-    "tests/negative/AC-053.negative.spec.ts",
-    "tests/acceptance/AC-144.spec.ts",
-    "tests/negative/AC-144.negative.spec.ts",
-    "tests/acceptance/AC-250.spec.ts",
-    "tests/negative/AC-250.negative.spec.ts",
-    "tests/acceptance/AC-251.spec.ts",
-    "tests/negative/AC-251.negative.spec.ts",
-    "tests/acceptance/AC-252.spec.ts",
-    "tests/negative/AC-252.negative.spec.ts",
-    "tests/acceptance/AC-253.spec.ts",
-    "tests/negative/AC-253.negative.spec.ts",
-    "tests/acceptance/AC-254.spec.ts",
-    "tests/negative/AC-254.negative.spec.ts",
     "tests/acceptance/AC-255.spec.ts",
-    "tests/negative/AC-255.negative.spec.ts",
-    "tests/acceptance/AC-256.spec.ts",
-    "tests/negative/AC-256.negative.spec.ts",
-    "tests/acceptance/AC-257.spec.ts",
-    "tests/negative/AC-257.negative.spec.ts",
-    "tests/acceptance/AC-258.spec.ts",
-    "tests/negative/AC-258.negative.spec.ts",
-    "tests/acceptance/AC-259.spec.ts",
-    "tests/negative/AC-259.negative.spec.ts"
+    "tests/negative/AC-255.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G6-MCP",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-003.spec.ts tests/negative/AC-003.negative.spec.ts tests/acceptance/AC-255.spec.ts tests/negative/AC-255.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/objective-governance"
+  ],
+  "allowedPaths": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-OBJ-01/**"
+  ],
+  "writeSet": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**"
+  ]
+}

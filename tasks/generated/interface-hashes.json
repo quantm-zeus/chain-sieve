@@ -1,12 +1,18 @@
 {
-  "T-G0-COL": {
-    "apps/collector:contract": "34e88e4f81cbe048873098dbe91248a54a2861931f96e3e921ffe55c3a60169d"
+  "T-G0-COL-01": {
+    "apps/collector:contract": "02bf7b358dd821db4dfce908be0945e8bc5ef6b00c3abe793cb06b4e2dc7ad3f"
+  },
+  "T-G0-COL-02": {
+    "apps/collector:contract": "49bb9aa4350d7fc861003fa1c33932e7814936c2c65e13028df83fbb31007e57"
   },
   "T-G0-CORE": {
     "packages/domain:contract": "1e8b0290c7630bedeae95b4b2dcce471cdf29e2e66f9e7a35567a398f322e755"
   },
-  "T-G0-COST": {
-    "packages/cost-router:contract": "d5394c21e284c7c206dd540cad9183d87be2b3617f1084bebf47d9dbf5a0b405"
+  "T-G0-COST-01": {
+    "packages/cost-router:contract": "d6542bd9c9b7160745c09df2e3cb4949d089c3af60b5d7a5b7477e814918f311"
+  },
+  "T-G0-COST-02": {
+    "packages/cost-router:contract": "7c4ff7cfead71844d319d7e9aa342d1c7cdfcc4c59ddff6d23be64804cfd28bb"
   },
   "T-G0-DATA": {
     "packages/persistence:contract": "e71fcfcbdde3de538a9f762d9fd5630fb7e8dac599f109a6d94843bfb1e9644d"
@@ -20,11 +26,17 @@
   "T-G0-MCP": {
     "apps/api/src/mcp:contract": "f0febc55c6c37f665ae66c3f235bb584d633a2022528a8f0f098dca92679768b"
   },
-  "T-G0-PROV": {
-    "packages/provider-lifecycle:contract": "bc96d618f70634c8722c4d09ecbf8a3646f6db8c8a89f060a930dc476fb733c1"
+  "T-G0-PROV-01": {
+    "packages/provider-lifecycle:contract": "338909b05a2d07962def6694e9f7a0d15550839cbc8e3a0420ef360ddc8b8962"
   },
-  "T-G0-SEC": {
-    "packages/security:contract": "bb0760b1b49f88daed88e0cb5756b0c4cbe9dbba1a3d0cfbd4f78240b4581822"
+  "T-G0-PROV-02": {
+    "packages/provider-lifecycle:contract": "58da31fdba7816816a2758a2c78c6501a9d19894f92f01f2337bcc3654cf0f62"
+  },
+  "T-G0-SEC-01": {
+    "packages/security:contract": "dcdcb6a3ef92ed3f12193d2bd056ab9b5cf729b696eb1b2e9b028a096c2e1f77"
+  },
+  "T-G0-SEC-02": {
+    "packages/security:contract": "da7f4d27c81f0d3090b9f16fb8bb4042dc562bc302450004fa52b7eac90e5c62"
   },
   "T-G0-TRACE": {
     "packages/requirement-manifest:contract": "acb234c8f6f0fe49a0fffa3b3ed753f38f96d8a75369b7a2df38c9b8447e9aa5"
@@ -32,23 +44,44 @@
   "T-G1-COST": {
     "packages/cost-router:contract": "8e5c0d842b1e8356191b725562857968784fb1cb2815788c92a575d5a4f62c81"
   },
-  "T-G1-DATA": {
-    "packages/persistence:contract": "e5d4684149eede4db31ff7248b39e98e61a04f588de2b07343c5b355443327c2"
+  "T-G1-DATA-01": {
+    "packages/persistence:contract": "28494e32d19bb53ac43e6820e78649eb5031bfeab73b21f63dea6a6f631f79f1"
   },
-  "T-G1-DISC": {
-    "packages/discovery-universe:contract": "a4837d9c27378593fdabd9a77bccfd0399793015a6478a8c79b0d752b75691a5"
+  "T-G1-DATA-02": {
+    "packages/persistence:contract": "36a4c0d72c84de6b2b90ae1d526b4b826ab8c4219697f06a983497af4fdeb2b7"
   },
-  "T-G1-EVAL": {
-    "packages/evaluation:contract": "ce22585d030ea6cc1de1cc6266221c0e684cb646aa56a4633ea44a9a1b25ff49"
+  "T-G1-DISC-01": {
+    "packages/discovery-universe:contract": "1ebc2d0a5ea0bcf731d27991d41e5822daf01b42095219f96e28da7e2b96c82f"
   },
-  "T-G1-EXEC": {
-    "packages/execution-simulator:contract": "899698950eef0cc87f847338a6d645f1ddad2ffd2d1fc2d0236eae987d27153b"
+  "T-G1-DISC-02": {
+    "packages/discovery-universe:contract": "678fcdaa75c08e0384b5a75af8c0217547df021d7d80787e366f03978ce50ae1"
   },
-  "T-G1-MAT": {
-    "packages/outcome-maturity:contract": "f48ef9a9d9af92587c3ab8207f31f729e08848b3cb7a0f03bb8033a54efb0814"
+  "T-G1-EVAL-01": {
+    "packages/evaluation:contract": "58d0837008af5b8c7fff5c6e0bf849004324b7a4cb52bbbe2632294bbfad9204"
   },
-  "T-G1-OBJ": {
-    "packages/objective-governance:contract": "f8fadc0e77f733ca010e4884014ce295289db5e996d5abbd3976aec506834d01"
+  "T-G1-EVAL-02": {
+    "packages/evaluation:contract": "53adde08876e66bf33f96533bf5cbf553b4b4f9f974f93d1c76cdb09feb7a9e4"
+  },
+  "T-G1-EXEC-01": {
+    "packages/execution-simulator:contract": "8b413fc55054489fe02e2377e4c3f6a0657c0e91dd0a1ab3063d4b793e0076cf"
+  },
+  "T-G1-EXEC-02": {
+    "packages/execution-simulator:contract": "1217343427b517c6572e849a96d3c938bf1ec522a5202c4b272c0ba030213757"
+  },
+  "T-G1-EXEC-03": {
+    "packages/execution-simulator:contract": "50b211f63f40d9532869591c4492aa67e3f49cb915ca3da23eea93bc23668715"
+  },
+  "T-G1-MAT-01": {
+    "packages/outcome-maturity:contract": "16a132155301be3c0f80ddba406b539e15a41cb78d7f62c44ff4eaf70ef97bf5"
+  },
+  "T-G1-MAT-02": {
+    "packages/outcome-maturity:contract": "816d93ea335920617c874ed9739eab1c9512eaa2206e91687a4ba464ec03aa3b"
+  },
+  "T-G1-OBJ-01": {
+    "packages/objective-governance:contract": "a4d751caa53581cd0aca4be8971744e08f7eee0b25894a25df6e6a8bf039c4ff"
+  },
+  "T-G1-OBJ-02": {
+    "packages/objective-governance:contract": "d42731eeee96c96d1e39c6522bd7919888f4b4f1f5ffbe13904b3157d1e84082"
   },
   "T-G1-SIG": {
     "packages/signal-intelligence:contract": "b76deb17d03ad8e11a7ba95f78a6ea2a3b20a741a260b304e3868ec150b98b66"
@@ -80,8 +113,11 @@
   "T-G3-ADM": {
     "apps/dashboard:contract": "c34b088b903180c4240a73af8e46890be668b8f0af2d646b162e971587c572c5"
   },
-  "T-G3-AGT": {
-    "packages/agent-runtime:contract": "6dd935c2907f7e879f9c31743ee9756318c201a650d14a89567d27da4ae87d94"
+  "T-G3-AGT-01": {
+    "packages/agent-runtime:contract": "2e668044f55045eb1fb9a51222d8baf4bb25fa0795acc8843661762426203d88"
+  },
+  "T-G3-AGT-02": {
+    "packages/agent-runtime:contract": "4d55587f650ed8da025d3c8e99bf08d20e8bb1ba7989311ee78b9febe74b1d73"
   },
   "T-G4-ADM": {
     "apps/dashboard:contract": "17a059b990e86bad6bc15f4fe29888d784cc4c40cc92e79ea146d1ffc5c8ab9f"
@@ -158,8 +194,11 @@
   "T-G6-CF": {
     "packages/counterfactual-lab:contract": "31b51fa8fd5ae13d757cd03f5b3760c731bd2672018e8ead0cce641c7bc8e994"
   },
-  "T-G6-EVAL": {
-    "packages/evaluation:contract": "8f0bd522fd901ce0235f73ee22676d2c686e5ae107193858402ff9534c3c578f"
+  "T-G6-EVAL-01": {
+    "packages/evaluation:contract": "026767315ea97389f2a85b26d10ed28819a2c28202d7c5cff16bd926a70cfcc2"
+  },
+  "T-G6-EVAL-02": {
+    "packages/evaluation:contract": "892957d17ee8898a1990d93cf46b4c9a3c381648bc2d665083bde9a43195e205"
   },
   "T-G6-FHZ": {
     "packages/failure-hazard:contract": "cd8fd0e7693c2e8637d7cd8eca420068cf3fc3434021d33f52a8421760fb4bb2"
@@ -182,8 +221,11 @@
   "T-G6-SIG": {
     "packages/signal-intelligence:contract": "39a53b7827eb85965c89009193aa32f71f0bbe5c90549b23702fc983083a782d"
   },
-  "T-G6-WPI": {
-    "packages/winning-pattern-intelligence:contract": "023b49786f269863166628f7d2de46dc9d65f04c24a5cc475eb46ca8539b0749"
+  "T-G6-WPI-01": {
+    "packages/winning-pattern-intelligence:contract": "c2c0be4fcc82ba27743e301fa335e54a6c940954f559ee8d1850276871b04d7e"
+  },
+  "T-G6-WPI-02": {
+    "packages/winning-pattern-intelligence:contract": "ac81a8284f21a810d8d2d5f693ad9cb755ab1658c15b0ee3138377fbe9c67ce1"
   },
   "T-G7-ADG": {
     "packages/alpha-governance:contract": "d8d7fd773b7c446f0107aafec0734c472461df8c79b4f4813bafe3e31a17b1c2"

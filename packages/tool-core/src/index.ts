@@ -3,6 +3,7 @@ import type { RuntimeCacheAdapter } from '@ciag/provider-contracts';
 
 export class ToolCore {
   constructor(private readonly cache: RuntimeCacheAdapter, private readonly costPolicy: CostPolicyAdapter) {}
+  systemReadiness(): { capabilityMode: 'SYNTHETIC_SHADOW'; productCapabilitiesActive: false } { return { capabilityMode: 'SYNTHETIC_SHADOW', productCapabilitiesActive: false }; }
   async execute<T>(input: { key: string; operation: string; costClass: 'FREE' | 'METERED' | 'UNKNOWN'; expiresAt: string }, load: () => Promise<T>): Promise<{ value: T; cached: boolean }> {
     const cached = await this.cache.get<T>(input.key);
     if (cached !== undefined) {

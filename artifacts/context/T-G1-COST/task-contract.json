@@ -9,18 +9,22 @@
   },
   "dependencyGroup": "G1",
   "cluster": "C-G1-IMPLEMENTATION",
-  "riskLevel": "MEDIUM",
-  "autonomyLevel": "AUTONOMOUS",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE"
   ],
   "requirements": [
@@ -33,18 +37,8 @@
     "FR-COST-017"
   ],
   "acceptanceCriteria": [
-    "AC-100",
-    "AC-101",
     "AC-102",
-    "AC-103",
-    "AC-104",
-    "AC-105",
-    "AC-224",
-    "AC-225",
-    "AC-226",
-    "AC-227",
-    "AC-228",
-    "AC-229"
+    "AC-105"
   ],
   "invariants": [
     "INV-001",
@@ -66,8 +60,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-COST/**",
-    "packages/shared-schemas/src/cost.ts"
+    "artifacts/context/T-G1-COST/**"
   ],
   "writeSet": [
     "packages/cost-router/**",
@@ -76,15 +69,17 @@
   ],
   "allowedPaths": [
     "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/cost-router/public-api"
@@ -129,39 +124,23 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-100.spec.ts",
-    "tests/negative/AC-100.negative.spec.ts",
-    "tests/acceptance/AC-101.spec.ts",
-    "tests/negative/AC-101.negative.spec.ts",
     "tests/acceptance/AC-102.spec.ts",
     "tests/negative/AC-102.negative.spec.ts",
-    "tests/acceptance/AC-103.spec.ts",
-    "tests/negative/AC-103.negative.spec.ts",
-    "tests/acceptance/AC-104.spec.ts",
-    "tests/negative/AC-104.negative.spec.ts",
     "tests/acceptance/AC-105.spec.ts",
-    "tests/negative/AC-105.negative.spec.ts",
-    "tests/acceptance/AC-224.spec.ts",
-    "tests/negative/AC-224.negative.spec.ts",
-    "tests/acceptance/AC-225.spec.ts",
-    "tests/negative/AC-225.negative.spec.ts",
-    "tests/acceptance/AC-226.spec.ts",
-    "tests/negative/AC-226.negative.spec.ts",
-    "tests/acceptance/AC-227.spec.ts",
-    "tests/negative/AC-227.negative.spec.ts",
-    "tests/acceptance/AC-228.spec.ts",
-    "tests/negative/AC-228.negative.spec.ts",
-    "tests/acceptance/AC-229.spec.ts",
-    "tests/negative/AC-229.negative.spec.ts"
+    "tests/negative/AC-105.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G1-COST",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-102.spec.ts tests/negative/AC-102.negative.spec.ts tests/acceptance/AC-105.spec.ts tests/negative/AC-105.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

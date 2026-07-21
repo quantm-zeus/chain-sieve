@@ -9,26 +9,37 @@
   },
   "dependencyGroup": "G5",
   "cluster": "C-G5-IMPLEMENTATION",
-  "riskLevel": "MEDIUM",
-  "autonomyLevel": "AUTONOMOUS",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -39,7 +50,8 @@
     "T-G2-PROD",
     "T-G2-WF",
     "T-G3-ADM",
-    "T-G3-AGT",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02",
     "T-G4-ADM",
     "T-G4-CAP",
     "T-G4-CROWD",
@@ -60,15 +72,8 @@
     "FR-WAL-007"
   ],
   "acceptanceCriteria": [
-    "AC-160",
     "AC-161",
-    "AC-162",
-    "AC-163",
-    "AC-164",
     "AC-165",
-    "AC-166",
-    "AC-167",
-    "AC-168",
     "AC-169"
   ],
   "invariants": [
@@ -91,8 +96,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-WAL/**",
-    "packages/shared-schemas/src/wal.ts"
+    "artifacts/context/T-G5-WAL/**"
   ],
   "writeSet": [
     "packages/wallet-alpha-lineage/**"
@@ -100,14 +104,14 @@
   "allowedPaths": [
     "packages/wallet-alpha-lineage/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/wallet-alpha-lineage/public-api"
@@ -138,35 +142,25 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-160.spec.ts",
-    "tests/negative/AC-160.negative.spec.ts",
     "tests/acceptance/AC-161.spec.ts",
     "tests/negative/AC-161.negative.spec.ts",
-    "tests/acceptance/AC-162.spec.ts",
-    "tests/negative/AC-162.negative.spec.ts",
-    "tests/acceptance/AC-163.spec.ts",
-    "tests/negative/AC-163.negative.spec.ts",
-    "tests/acceptance/AC-164.spec.ts",
-    "tests/negative/AC-164.negative.spec.ts",
     "tests/acceptance/AC-165.spec.ts",
     "tests/negative/AC-165.negative.spec.ts",
-    "tests/acceptance/AC-166.spec.ts",
-    "tests/negative/AC-166.negative.spec.ts",
-    "tests/acceptance/AC-167.spec.ts",
-    "tests/negative/AC-167.negative.spec.ts",
-    "tests/acceptance/AC-168.spec.ts",
-    "tests/negative/AC-168.negative.spec.ts",
     "tests/acceptance/AC-169.spec.ts",
     "tests/negative/AC-169.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G5-WAL",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-161.spec.ts tests/negative/AC-161.negative.spec.ts tests/acceptance/AC-165.spec.ts tests/negative/AC-165.negative.spec.ts tests/acceptance/AC-169.spec.ts tests/negative/AC-169.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

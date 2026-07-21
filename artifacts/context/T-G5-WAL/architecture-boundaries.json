@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/wallet-alpha-lineage/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-WAL/**",
-    "packages/shared-schemas/src/wal.ts"
+    "artifacts/context/T-G5-WAL/**"
   ],
   "writeSet": [
     "packages/wallet-alpha-lineage/**"

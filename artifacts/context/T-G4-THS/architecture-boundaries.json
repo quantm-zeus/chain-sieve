@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/thesis/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-THS/**",
-    "packages/shared-schemas/src/ths.ts"
+    "artifacts/context/T-G4-THS/**"
   ],
   "writeSet": [
     "packages/thesis/**"

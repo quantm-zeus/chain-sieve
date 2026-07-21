@@ -12,23 +12,34 @@
   "riskLevel": "MEDIUM",
   "autonomyLevel": "AUTONOMOUS",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -39,7 +50,8 @@
     "T-G2-PROD",
     "T-G2-WF",
     "T-G3-ADM",
-    "T-G3-AGT"
+    "T-G3-AGT-01",
+    "T-G3-AGT-02"
   ],
   "requirements": [
     "FR-CAP-001",
@@ -49,12 +61,7 @@
   ],
   "acceptanceCriteria": [
     "AC-083",
-    "AC-084",
-    "AC-085",
-    "AC-086",
-    "AC-087",
-    "AC-088",
-    "AC-089"
+    "AC-088"
   ],
   "invariants": [
     "INV-001",
@@ -76,8 +83,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-CAP/**",
-    "packages/shared-schemas/src/cap.ts"
+    "artifacts/context/T-G4-CAP/**"
   ],
   "writeSet": [
     "packages/capability-registry/**"
@@ -85,14 +91,14 @@
   "allowedPaths": [
     "packages/capability-registry/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/capability-registry/public-api"
@@ -122,27 +128,21 @@
   "requiredTests": [
     "tests/acceptance/AC-083.spec.ts",
     "tests/negative/AC-083.negative.spec.ts",
-    "tests/acceptance/AC-084.spec.ts",
-    "tests/negative/AC-084.negative.spec.ts",
-    "tests/acceptance/AC-085.spec.ts",
-    "tests/negative/AC-085.negative.spec.ts",
-    "tests/acceptance/AC-086.spec.ts",
-    "tests/negative/AC-086.negative.spec.ts",
-    "tests/acceptance/AC-087.spec.ts",
-    "tests/negative/AC-087.negative.spec.ts",
     "tests/acceptance/AC-088.spec.ts",
-    "tests/negative/AC-088.negative.spec.ts",
-    "tests/acceptance/AC-089.spec.ts",
-    "tests/negative/AC-089.negative.spec.ts"
+    "tests/negative/AC-088.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G4-CAP",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-083.spec.ts tests/negative/AC-083.negative.spec.ts tests/acceptance/AC-088.spec.ts tests/negative/AC-088.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

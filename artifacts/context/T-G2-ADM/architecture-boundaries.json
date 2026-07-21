@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "apps/dashboard/**",
+    "apps/api/src/routes/admin/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-ADM/**",
-    "packages/shared-schemas/src/adm.ts"
+    "artifacts/context/T-G2-ADM/**"
   ],
   "writeSet": [
     "apps/dashboard/**",

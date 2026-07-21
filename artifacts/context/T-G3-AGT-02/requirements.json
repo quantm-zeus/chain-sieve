@@ -1,0 +1,362 @@
+[
+  {
+    "id": "FR-AGT-009",
+    "text": "The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable.",
+    "textSha256": "8980be7ab7102efac2e211e06ce1d3c3d95679633fb83cab6cecc532e3239451",
+    "line": 6425,
+    "family": "FR-AGT",
+    "dependencyGroup": "G3",
+    "owner": "packages/agent-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-030",
+      "AC-031",
+      "AC-032",
+      "AC-033",
+      "AC-034",
+      "AC-242",
+      "AC-243",
+      "AC-244"
+    ],
+    "implementationRefs": [
+      "packages/agent-runtime/** @requirement FR-AGT-009",
+      "packages/evidence/** @requirement FR-AGT-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/agt.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g3_agt_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/agt-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-030.spec.ts",
+      "tests/negative/AC-030.negative.spec.ts",
+      "tests/acceptance/AC-031.spec.ts",
+      "tests/negative/AC-031.negative.spec.ts",
+      "tests/acceptance/AC-032.spec.ts",
+      "tests/negative/AC-032.negative.spec.ts",
+      "tests/acceptance/AC-033.spec.ts",
+      "tests/negative/AC-033.negative.spec.ts",
+      "tests/acceptance/AC-034.spec.ts",
+      "tests/negative/AC-034.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/agt/"
+    ],
+    "telemetryRefs": [
+      "telemetry/agt.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AGT-010",
+    "text": "A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.",
+    "textSha256": "a2cf8d2362b9833c17a233c1ee92233833f75a80a0fd2cf896240056f3c2dad4",
+    "line": 6426,
+    "family": "FR-AGT",
+    "dependencyGroup": "G3",
+    "owner": "packages/agent-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-030",
+      "AC-031",
+      "AC-032",
+      "AC-033",
+      "AC-034",
+      "AC-242",
+      "AC-243",
+      "AC-244"
+    ],
+    "implementationRefs": [
+      "packages/agent-runtime/** @requirement FR-AGT-010",
+      "packages/evidence/** @requirement FR-AGT-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/agt.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g3_agt_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/agt-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-030.spec.ts",
+      "tests/negative/AC-030.negative.spec.ts",
+      "tests/acceptance/AC-031.spec.ts",
+      "tests/negative/AC-031.negative.spec.ts",
+      "tests/acceptance/AC-032.spec.ts",
+      "tests/negative/AC-032.negative.spec.ts",
+      "tests/acceptance/AC-033.spec.ts",
+      "tests/negative/AC-033.negative.spec.ts",
+      "tests/acceptance/AC-034.spec.ts",
+      "tests/negative/AC-034.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/agt/"
+    ],
+    "telemetryRefs": [
+      "telemetry/agt.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AGT-011",
+    "text": "Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes.",
+    "textSha256": "b7b040ca888643fe708a00d4046b4b3ed39d9befc31f52b6c4fbb476bb3f5b50",
+    "line": 6427,
+    "family": "FR-AGT",
+    "dependencyGroup": "G3",
+    "owner": "packages/agent-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-030",
+      "AC-031",
+      "AC-032",
+      "AC-033",
+      "AC-034",
+      "AC-242",
+      "AC-243",
+      "AC-244"
+    ],
+    "implementationRefs": [
+      "packages/agent-runtime/** @requirement FR-AGT-011",
+      "packages/evidence/** @requirement FR-AGT-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/agt.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g3_agt_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/agt-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-030.spec.ts",
+      "tests/negative/AC-030.negative.spec.ts",
+      "tests/acceptance/AC-031.spec.ts",
+      "tests/negative/AC-031.negative.spec.ts",
+      "tests/acceptance/AC-032.spec.ts",
+      "tests/negative/AC-032.negative.spec.ts",
+      "tests/acceptance/AC-033.spec.ts",
+      "tests/negative/AC-033.negative.spec.ts",
+      "tests/acceptance/AC-034.spec.ts",
+      "tests/negative/AC-034.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/agt/"
+    ],
+    "telemetryRefs": [
+      "telemetry/agt.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AGT-012",
+    "text": "Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope.",
+    "textSha256": "d9cce5e909f11e1fb75ac0d83d72114e24b9daca2fcd8d162071a9fc3fd2e8d7",
+    "line": 6428,
+    "family": "FR-AGT",
+    "dependencyGroup": "G3",
+    "owner": "packages/agent-runtime",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-030",
+      "AC-031",
+      "AC-032",
+      "AC-033",
+      "AC-034",
+      "AC-242",
+      "AC-243",
+      "AC-244"
+    ],
+    "implementationRefs": [
+      "packages/agent-runtime/** @requirement FR-AGT-012",
+      "packages/evidence/** @requirement FR-AGT-012"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/agt.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g3_agt_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/agt-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-030.spec.ts",
+      "tests/negative/AC-030.negative.spec.ts",
+      "tests/acceptance/AC-031.spec.ts",
+      "tests/negative/AC-031.negative.spec.ts",
+      "tests/acceptance/AC-032.spec.ts",
+      "tests/negative/AC-032.negative.spec.ts",
+      "tests/acceptance/AC-033.spec.ts",
+      "tests/negative/AC-033.negative.spec.ts",
+      "tests/acceptance/AC-034.spec.ts",
+      "tests/negative/AC-034.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/agt/"
+    ],
+    "telemetryRefs": [
+      "telemetry/agt.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

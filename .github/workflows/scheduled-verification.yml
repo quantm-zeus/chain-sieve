@@ -18,5 +18,10 @@ jobs:
       - run: pnpm prd:compile
       - run: pnpm prd:drift-check
       - run: pnpm test:mutation
+      - run: pnpm test:harness
+      - run: pnpm architecture:verify
+      - run: pnpm placeholders:scan
+      - run: pnpm prohibited-capabilities:scan
+      - run: pnpm harness:lifecycle
       - run: pnpm tests:skeleton-integrity
       - run: pnpm harness:verify

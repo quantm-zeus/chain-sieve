@@ -12,23 +12,34 @@
   "riskLevel": "CRITICAL",
   "autonomyLevel": "OWNER_APPROVAL_REQUIRED",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -39,7 +50,8 @@
     "T-G2-PROD",
     "T-G2-WF",
     "T-G3-ADM",
-    "T-G3-AGT",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02",
     "T-G4-ADM",
     "T-G4-CAP",
     "T-G4-CROWD",
@@ -72,19 +84,8 @@
     "FR-PROD-012"
   ],
   "acceptanceCriteria": [
-    "AC-144",
-    "AC-150",
     "AC-151",
-    "AC-152",
-    "AC-153",
-    "AC-154",
-    "AC-272",
-    "AC-273",
-    "AC-274",
     "AC-275",
-    "AC-276",
-    "AC-277",
-    "AC-278",
     "AC-279"
   ],
   "invariants": [
@@ -107,8 +108,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-PROD/**",
-    "packages/shared-schemas/src/prod.ts"
+    "artifacts/context/T-G6-PROD/**"
   ],
   "writeSet": [
     "packages/release-conformance/**",
@@ -116,15 +116,16 @@
   ],
   "allowedPaths": [
     "packages/release-conformance/**",
+    "packages/capability-registry/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/release-conformance/public-api"
@@ -160,43 +161,25 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-144.spec.ts",
-    "tests/negative/AC-144.negative.spec.ts",
-    "tests/acceptance/AC-150.spec.ts",
-    "tests/negative/AC-150.negative.spec.ts",
     "tests/acceptance/AC-151.spec.ts",
     "tests/negative/AC-151.negative.spec.ts",
-    "tests/acceptance/AC-152.spec.ts",
-    "tests/negative/AC-152.negative.spec.ts",
-    "tests/acceptance/AC-153.spec.ts",
-    "tests/negative/AC-153.negative.spec.ts",
-    "tests/acceptance/AC-154.spec.ts",
-    "tests/negative/AC-154.negative.spec.ts",
-    "tests/acceptance/AC-272.spec.ts",
-    "tests/negative/AC-272.negative.spec.ts",
-    "tests/acceptance/AC-273.spec.ts",
-    "tests/negative/AC-273.negative.spec.ts",
-    "tests/acceptance/AC-274.spec.ts",
-    "tests/negative/AC-274.negative.spec.ts",
     "tests/acceptance/AC-275.spec.ts",
     "tests/negative/AC-275.negative.spec.ts",
-    "tests/acceptance/AC-276.spec.ts",
-    "tests/negative/AC-276.negative.spec.ts",
-    "tests/acceptance/AC-277.spec.ts",
-    "tests/negative/AC-277.negative.spec.ts",
-    "tests/acceptance/AC-278.spec.ts",
-    "tests/negative/AC-278.negative.spec.ts",
     "tests/acceptance/AC-279.spec.ts",
     "tests/negative/AC-279.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G6-PROD",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-151.spec.ts tests/negative/AC-151.negative.spec.ts tests/acceptance/AC-275.spec.ts tests/negative/AC-275.negative.spec.ts tests/acceptance/AC-279.spec.ts tests/negative/AC-279.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

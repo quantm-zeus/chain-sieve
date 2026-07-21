@@ -1,0 +1,21 @@
+{
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/persistence:contract": "28494e32d19bb53ac43e6820e78649eb5031bfeab73b21f63dea6a6f631f79f1"
+  }
+}

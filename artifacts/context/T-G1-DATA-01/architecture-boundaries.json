@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/persistence"
+  ],
+  "allowedPaths": [
+    "packages/persistence/**",
+    "packages/evidence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-DATA-01/**"
+  ],
+  "writeSet": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ]
+}

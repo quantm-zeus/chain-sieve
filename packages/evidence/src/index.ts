@@ -9,5 +9,5 @@ export const sha256 = (value: string | Uint8Array): string => createHash('sha256
 export const freezeEvidence = async (store: ObjectStoreAdapter, key: string, value: unknown, frozenAt: string): Promise<EvidenceReference> => {
   const bytes = new TextEncoder().encode(canonicalJson(value));
   const result = await store.put(key, bytes, { frozenAt, mediaType: 'application/json' });
-  return { artifactKey: key, sha256: result.sha256, mediaType: 'application/json', frozenAt };
+  return { artifactKey: key, sha256: result.sha256, bytes: bytes.byteLength, mediaType: 'application/json', frozenAt };
 };

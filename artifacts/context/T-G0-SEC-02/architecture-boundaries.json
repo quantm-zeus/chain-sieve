@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/security"
+  ],
+  "allowedPaths": [
+    "packages/security/**",
+    "packages/tenant-isolation/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-SEC-02/**"
+  ],
+  "writeSet": [
+    "packages/security/**",
+    "packages/tenant-isolation/**"
+  ]
+}

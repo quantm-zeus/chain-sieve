@@ -1,5 +1,6 @@
 export const validateOrigin = (origin: string | undefined, allowedOrigins: readonly string[]): void => {
-  if (origin !== undefined && !allowedOrigins.includes(origin)) throw new Error('MCP_ORIGIN_FORBIDDEN');
+  if (origin === undefined) throw new Error('MCP_ORIGIN_REQUIRED');
+  if (!allowedOrigins.includes(origin)) throw new Error('MCP_ORIGIN_FORBIDDEN');
 };
 
 export const requireReadOnlyCapability = (capability: string): void => {

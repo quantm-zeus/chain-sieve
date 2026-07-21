@@ -9,26 +9,37 @@
   },
   "dependencyGroup": "G7",
   "cluster": "C-G7-IMPLEMENTATION",
-  "riskLevel": "MEDIUM",
-  "autonomyLevel": "AUTONOMOUS",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
   "dependencies": [
-    "T-G0-COL",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
     "T-G0-CORE",
-    "T-G0-COST",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
     "T-G0-DATA",
     "T-G0-DISC",
     "T-G0-DR",
     "T-G0-MCP",
-    "T-G0-PROV",
-    "T-G0-SEC",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
     "T-G0-TRACE",
     "T-G1-COST",
-    "T-G1-DATA",
-    "T-G1-DISC",
-    "T-G1-EVAL",
-    "T-G1-EXEC",
-    "T-G1-MAT",
-    "T-G1-OBJ",
+    "T-G1-DATA-01",
+    "T-G1-DATA-02",
+    "T-G1-DISC-01",
+    "T-G1-DISC-02",
+    "T-G1-EVAL-01",
+    "T-G1-EVAL-02",
+    "T-G1-EXEC-01",
+    "T-G1-EXEC-02",
+    "T-G1-EXEC-03",
+    "T-G1-MAT-01",
+    "T-G1-MAT-02",
+    "T-G1-OBJ-01",
+    "T-G1-OBJ-02",
     "T-G1-SIG",
     "T-G1-SOLSEC",
     "T-G1-SUP",
@@ -39,7 +50,8 @@
     "T-G2-PROD",
     "T-G2-WF",
     "T-G3-ADM",
-    "T-G3-AGT",
+    "T-G3-AGT-01",
+    "T-G3-AGT-02",
     "T-G4-ADM",
     "T-G4-CAP",
     "T-G4-CROWD",
@@ -65,7 +77,8 @@
     "T-G6-AL",
     "T-G6-ANA",
     "T-G6-CF",
-    "T-G6-EVAL",
+    "T-G6-EVAL-01",
+    "T-G6-EVAL-02",
     "T-G6-FHZ",
     "T-G6-LEGAL",
     "T-G6-MCP",
@@ -73,7 +86,8 @@
     "T-G6-OOD",
     "T-G6-PROD",
     "T-G6-SIG",
-    "T-G6-WPI"
+    "T-G6-WPI-01",
+    "T-G6-WPI-02"
   ],
   "requirements": [
     "FR-SPF-001",
@@ -86,15 +100,8 @@
     "FR-SPF-008"
   ],
   "acceptanceCriteria": [
-    "AC-190",
-    "AC-191",
     "AC-192",
-    "AC-193",
-    "AC-194",
-    "AC-195",
-    "AC-196",
-    "AC-197",
-    "AC-198"
+    "AC-196"
   ],
   "invariants": [
     "INV-001",
@@ -116,8 +123,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-SPF/**",
-    "packages/shared-schemas/src/spf.ts"
+    "artifacts/context/T-G7-SPF/**"
   ],
   "writeSet": [
     "packages/shadow-portfolio/**"
@@ -125,14 +131,14 @@
   "allowedPaths": [
     "packages/shadow-portfolio/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/shadow-portfolio/public-api"
@@ -164,33 +170,23 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-190.spec.ts",
-    "tests/negative/AC-190.negative.spec.ts",
-    "tests/acceptance/AC-191.spec.ts",
-    "tests/negative/AC-191.negative.spec.ts",
     "tests/acceptance/AC-192.spec.ts",
     "tests/negative/AC-192.negative.spec.ts",
-    "tests/acceptance/AC-193.spec.ts",
-    "tests/negative/AC-193.negative.spec.ts",
-    "tests/acceptance/AC-194.spec.ts",
-    "tests/negative/AC-194.negative.spec.ts",
-    "tests/acceptance/AC-195.spec.ts",
-    "tests/negative/AC-195.negative.spec.ts",
     "tests/acceptance/AC-196.spec.ts",
-    "tests/negative/AC-196.negative.spec.ts",
-    "tests/acceptance/AC-197.spec.ts",
-    "tests/negative/AC-197.negative.spec.ts",
-    "tests/acceptance/AC-198.spec.ts",
-    "tests/negative/AC-198.negative.spec.ts"
+    "tests/negative/AC-196.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G7-SPF",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-192.spec.ts tests/negative/AC-192.negative.spec.ts tests/acceptance/AC-196.spec.ts tests/negative/AC-196.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

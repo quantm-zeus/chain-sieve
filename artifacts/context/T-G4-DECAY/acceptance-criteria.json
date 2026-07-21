@@ -23,52 +23,6 @@
     "testClass": "thesis-policy"
   },
   {
-    "id": "AC-071",
-    "text": "An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.",
-    "textSha256": "8b92ac935da656c03924426f05ec394cf5013375d141b0366fc80e3babddc34a",
-    "line": 6577,
-    "requirementRefs": [
-      "FR-DECAY-001",
-      "FR-DECAY-002",
-      "FR-DECAY-003",
-      "FR-THS-001",
-      "FR-THS-002",
-      "FR-THS-003",
-      "FR-WHY-001",
-      "FR-WHY-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-071.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-071.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  },
-  {
-    "id": "AC-072",
-    "text": "“Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.",
-    "textSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c",
-    "line": 6578,
-    "requirementRefs": [
-      "FR-DECAY-001",
-      "FR-DECAY-002",
-      "FR-DECAY-003",
-      "FR-THS-001",
-      "FR-THS-002",
-      "FR-THS-003",
-      "FR-WHY-001",
-      "FR-WHY-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-072.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-072.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  },
-  {
     "id": "AC-073",
     "text": "Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.",
     "textSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db",

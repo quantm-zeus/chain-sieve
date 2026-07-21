@@ -1,0 +1,128 @@
+[
+  {
+    "id": "FR-EVAL-009",
+    "text": "Multiple-testing control, experiment registry, and selection-bias diagnostics.",
+    "textSha256": "e59e7f95f723721041ec62f48b0658d04f33584eff7c8ad6ae88d83c222e5f93",
+    "line": 6068,
+    "family": "FR-EVAL",
+    "dependencyGroup": "G1",
+    "owner": "packages/evaluation",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-040",
+      "AC-041",
+      "AC-042",
+      "AC-043",
+      "AC-044",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/evaluation/** @requirement FR-EVAL-009",
+      "packages/eval-cli/** @requirement FR-EVAL-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/eval.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_eval_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/eval-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-040.spec.ts",
+      "tests/negative/AC-040.negative.spec.ts",
+      "tests/acceptance/AC-041.spec.ts",
+      "tests/negative/AC-041.negative.spec.ts",
+      "tests/acceptance/AC-042.spec.ts",
+      "tests/negative/AC-042.negative.spec.ts",
+      "tests/acceptance/AC-043.spec.ts",
+      "tests/negative/AC-043.negative.spec.ts",
+      "tests/acceptance/AC-044.spec.ts",
+      "tests/negative/AC-044.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/eval/"
+    ],
+    "telemetryRefs": [
+      "telemetry/eval.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.7 Evaluation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

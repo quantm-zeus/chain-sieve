@@ -1,0 +1,24 @@
+{
+  "ownerPackages": [
+    "packages/winning-pattern-intelligence"
+  ],
+  "allowedPaths": [
+    "packages/winning-pattern-intelligence/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-WPI-01/**"
+  ],
+  "writeSet": [
+    "packages/winning-pattern-intelligence/**"
+  ]
+}

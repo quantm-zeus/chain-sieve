@@ -1,0 +1,207 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G1-EVAL-01",
+  "title": "FR-EVAL implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G1",
+  "cluster": "C-G1-IMPLEMENTATION",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
+  "dependencies": [
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-CORE",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-TRACE"
+  ],
+  "requirements": [
+    "FR-EVAL-001",
+    "FR-EVAL-002",
+    "FR-EVAL-003",
+    "FR-EVAL-004",
+    "FR-EVAL-005",
+    "FR-EVAL-006",
+    "FR-EVAL-007",
+    "FR-EVAL-008"
+  ],
+  "acceptanceCriteria": [
+    "AC-040",
+    "AC-152",
+    "AC-249"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/evaluation"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-EVAL-01/**"
+  ],
+  "writeSet": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "allowedPaths": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**",
+    "tests/**",
+    "docs/implementation/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**",
+    "infra/migrations/**"
+  ],
+  "exclusiveLocks": [
+    "packages/evaluation/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/evaluation:contract": "58d0837008af5b8c7fff5c6e0bf849004324b7a4cb52bbbe2632294bbfad9204"
+  },
+  "deliverables": [
+    "packages/evaluation/** @requirement FR-EVAL-001",
+    "packages/eval-cli/** @requirement FR-EVAL-001",
+    "packages/evaluation/** @requirement FR-EVAL-002",
+    "packages/eval-cli/** @requirement FR-EVAL-002",
+    "packages/evaluation/** @requirement FR-EVAL-003",
+    "packages/eval-cli/** @requirement FR-EVAL-003",
+    "packages/evaluation/** @requirement FR-EVAL-004",
+    "packages/eval-cli/** @requirement FR-EVAL-004",
+    "packages/evaluation/** @requirement FR-EVAL-005",
+    "packages/eval-cli/** @requirement FR-EVAL-005",
+    "packages/evaluation/** @requirement FR-EVAL-006",
+    "packages/eval-cli/** @requirement FR-EVAL-006",
+    "packages/evaluation/** @requirement FR-EVAL-007",
+    "packages/eval-cli/** @requirement FR-EVAL-007",
+    "packages/evaluation/** @requirement FR-EVAL-008",
+    "packages/eval-cli/** @requirement FR-EVAL-008",
+    "packages/evaluation implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-040.spec.ts",
+    "tests/negative/AC-040.negative.spec.ts",
+    "tests/acceptance/AC-152.spec.ts",
+    "tests/negative/AC-152.negative.spec.ts",
+    "tests/acceptance/AC-249.spec.ts",
+    "tests/negative/AC-249.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm exec vitest run tests/acceptance/AC-040.spec.ts tests/negative/AC-040.negative.spec.ts tests/acceptance/AC-152.spec.ts tests/negative/AC-152.negative.spec.ts tests/acceptance/AC-249.spec.ts tests/negative/AC-249.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6060,
+      "id": "FR-EVAL-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6061,
+      "id": "FR-EVAL-002"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6062,
+      "id": "FR-EVAL-003"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6063,
+      "id": "FR-EVAL-004"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6064,
+      "id": "FR-EVAL-005"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6065,
+      "id": "FR-EVAL-006"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6066,
+      "id": "FR-EVAL-007"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6067,
+      "id": "FR-EVAL-008"
+    }
+  ]
+}

@@ -9,8 +9,8 @@
   },
   "dependencyGroup": "G0",
   "cluster": "C-G0-IMPLEMENTATION",
-  "riskLevel": "MEDIUM",
-  "autonomyLevel": "AUTONOMOUS",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
   "dependencies": [],
   "requirements": [
     "FR-DATA-001",
@@ -22,19 +22,8 @@
   ],
   "acceptanceCriteria": [
     "AC-020",
-    "AC-021",
-    "AC-022",
-    "AC-023",
     "AC-240",
-    "AC-241",
-    "AC-242",
-    "AC-243",
-    "AC-244",
-    "AC-245",
-    "AC-246",
-    "AC-247",
-    "AC-248",
-    "AC-249"
+    "AC-246"
   ],
   "invariants": [
     "INV-001",
@@ -56,8 +45,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DATA/**",
-    "packages/shared-schemas/src/data.ts"
+    "artifacts/context/T-G0-DATA/**"
   ],
   "writeSet": [
     "packages/persistence/**",
@@ -65,6 +53,7 @@
   ],
   "allowedPaths": [
     "packages/persistence/**",
+    "packages/evidence/**",
     "tests/**",
     "docs/implementation/**",
     "infra/migrations/**"
@@ -111,41 +100,23 @@
   "requiredTests": [
     "tests/acceptance/AC-020.spec.ts",
     "tests/negative/AC-020.negative.spec.ts",
-    "tests/acceptance/AC-021.spec.ts",
-    "tests/negative/AC-021.negative.spec.ts",
-    "tests/acceptance/AC-022.spec.ts",
-    "tests/negative/AC-022.negative.spec.ts",
-    "tests/acceptance/AC-023.spec.ts",
-    "tests/negative/AC-023.negative.spec.ts",
     "tests/acceptance/AC-240.spec.ts",
     "tests/negative/AC-240.negative.spec.ts",
-    "tests/acceptance/AC-241.spec.ts",
-    "tests/negative/AC-241.negative.spec.ts",
-    "tests/acceptance/AC-242.spec.ts",
-    "tests/negative/AC-242.negative.spec.ts",
-    "tests/acceptance/AC-243.spec.ts",
-    "tests/negative/AC-243.negative.spec.ts",
-    "tests/acceptance/AC-244.spec.ts",
-    "tests/negative/AC-244.negative.spec.ts",
-    "tests/acceptance/AC-245.spec.ts",
-    "tests/negative/AC-245.negative.spec.ts",
     "tests/acceptance/AC-246.spec.ts",
-    "tests/negative/AC-246.negative.spec.ts",
-    "tests/acceptance/AC-247.spec.ts",
-    "tests/negative/AC-247.negative.spec.ts",
-    "tests/acceptance/AC-248.spec.ts",
-    "tests/negative/AC-248.negative.spec.ts",
-    "tests/acceptance/AC-249.spec.ts",
-    "tests/negative/AC-249.negative.spec.ts"
+    "tests/negative/AC-246.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G0-DATA",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-020.spec.ts tests/negative/AC-020.negative.spec.ts tests/acceptance/AC-240.spec.ts tests/negative/AC-240.negative.spec.ts tests/acceptance/AC-246.spec.ts tests/negative/AC-246.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

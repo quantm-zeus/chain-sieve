@@ -1,0 +1,287 @@
+[
+  {
+    "id": "FR-WPI-009",
+    "text": "Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited.",
+    "textSha256": "c6c27c51f795fbfba9a0cc235b773d863ba356fbc23e79190e04a104942175be",
+    "line": 6227,
+    "family": "FR-WPI",
+    "dependencyGroup": "G6",
+    "owner": "packages/winning-pattern-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/winning-pattern-intelligence/** @requirement FR-WPI-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wpi.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_wpi_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wpi-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wpi/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wpi.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.20 Winning Pattern Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WPI-010",
+    "text": "During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims.",
+    "textSha256": "dcaa34b3d303ee289a6f34f0524ff86188012d281efcc7761fdafce22ff22ca3",
+    "line": 6228,
+    "family": "FR-WPI",
+    "dependencyGroup": "G6",
+    "owner": "packages/winning-pattern-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/winning-pattern-intelligence/** @requirement FR-WPI-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wpi.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_wpi_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wpi-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wpi/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wpi.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.20 Winning Pattern Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WPI-011",
+    "text": "Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling.",
+    "textSha256": "ee9d2960aa8983e4e01451d4ba7f8429ba0a8da8331202915e0981e43d2609c6",
+    "line": 6229,
+    "family": "FR-WPI",
+    "dependencyGroup": "G6",
+    "owner": "packages/winning-pattern-intelligence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/winning-pattern-intelligence/** @requirement FR-WPI-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/wpi.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_wpi_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/wpi-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/wpi/"
+    ],
+    "telemetryRefs": [
+      "telemetry/wpi.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.20 Winning Pattern Intelligence",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

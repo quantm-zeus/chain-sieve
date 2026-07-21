@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "packages/discovery-universe/**",
+    "packages/cheap-monitor/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DISC/**",
-    "packages/shared-schemas/src/disc.ts"
+    "artifacts/context/T-G0-DISC/**"
   ],
   "writeSet": [
     "packages/discovery-universe/**",

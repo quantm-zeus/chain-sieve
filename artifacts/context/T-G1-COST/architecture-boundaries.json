@@ -4,20 +4,21 @@
   ],
   "allowedPaths": [
     "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-COST/**",
-    "packages/shared-schemas/src/cost.ts"
+    "artifacts/context/T-G1-COST/**"
   ],
   "writeSet": [
     "packages/cost-router/**",

@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "packages/offline-alpha-lab/**",
+    "packages/alpha-artifact-store/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-ALAB/**",
-    "packages/shared-schemas/src/alab.ts"
+    "artifacts/context/T-G7-ALAB/**"
   ],
   "writeSet": [
     "packages/offline-alpha-lab/**",

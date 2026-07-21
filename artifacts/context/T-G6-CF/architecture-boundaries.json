@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/counterfactual-lab/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-CF/**",
-    "packages/shared-schemas/src/cf.ts"
+    "artifacts/context/T-G6-CF/**"
   ],
   "writeSet": [
     "packages/counterfactual-lab/**"

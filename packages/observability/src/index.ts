@@ -12,9 +12,10 @@ export class JsonLogger {
 
 export class InMemoryTracer {
   readonly spans: TraceSpan[] = [];
+  constructor(private readonly idGenerator: () => string = randomUUID, private readonly clock: () => string = () => new Date().toISOString()) {}
   start(name: string, attributes: Record<string, string> = {}): { end: () => void; span: TraceSpan } {
-    const span: TraceSpan = { id: randomUUID(), name, startedAt: new Date().toISOString(), attributes };
+    const span: TraceSpan = { id: this.idGenerator(), name, startedAt: this.clock(), attributes };
     this.spans.push(span);
-    return { span, end: () => { span.endedAt = new Date().toISOString(); } };
+    return { span, end: () => { span.endedAt = this.clock(); } };
   }
 }

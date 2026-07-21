@@ -9,8 +9,8 @@
   },
   "dependencyGroup": "G0",
   "cluster": "C-G0-IMPLEMENTATION",
-  "riskLevel": "MEDIUM",
-  "autonomyLevel": "AUTONOMOUS",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
   "dependencies": [],
   "requirements": [
     "FR-TRACE-001",
@@ -47,8 +47,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-TRACE/**",
-    "packages/shared-schemas/src/trace.ts"
+    "artifacts/context/T-G0-TRACE/**"
   ],
   "writeSet": [
     "packages/requirement-manifest/**",
@@ -56,15 +55,16 @@
   ],
   "allowedPaths": [
     "packages/requirement-manifest/**",
+    "packages/release-conformance/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "exclusiveLocks": [
     "packages/requirement-manifest/public-api"
@@ -113,12 +113,16 @@
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G0-TRACE",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-265.spec.ts tests/negative/AC-265.negative.spec.ts tests/acceptance/AC-266.spec.ts tests/negative/AC-266.negative.spec.ts tests/acceptance/AC-267.spec.ts tests/negative/AC-267.negative.spec.ts tests/acceptance/AC-268.spec.ts tests/negative/AC-268.negative.spec.ts tests/acceptance/AC-269.spec.ts tests/negative/AC-269.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

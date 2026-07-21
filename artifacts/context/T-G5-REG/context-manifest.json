@@ -9,8 +9,8 @@
   "files": [
     {
       "path": "task-contract.json",
-      "sha256": "f26344d47f5785397c83f6a7fdc904de1cfc859dac801746563c8b5e4d562b74",
-      "bytes": 4764
+      "sha256": "01678ffa40726c202dce8dcd44433598c7bbe095f46c72b95e985371a337637b",
+      "bytes": 5001
     },
     {
       "path": "requirements.json",
@@ -19,8 +19,8 @@
     },
     {
       "path": "acceptance-criteria.json",
-      "sha256": "ae0059055292d038b1c27cef81fb3a65ba0701cfa88e981c72899aa9b144d928",
-      "bytes": 2358
+      "sha256": "4c75e82a587540e8cbf3d4f6d57637ba323e0ae0339b076f2b2ecacdfd65d3ac",
+      "bytes": 794
     },
     {
       "path": "invariants.json",
@@ -34,13 +34,13 @@
     },
     {
       "path": "architecture-boundaries.json",
-      "sha256": "6a1ffe876c936194c6745016ef8417e9e81d905c868cd3e2293f3f66a5aff193",
-      "bytes": 484
+      "sha256": "db8a649def00d8b483f06905ca29a5ac75bb28fff6e22e9360db06f37efee9fc",
+      "bytes": 442
     },
     {
       "path": "dependency-outputs.json",
-      "sha256": "f6a66c37c64af0102543a38e7527b474cb28575ae09e5742d9ce0d0689207463",
-      "bytes": 770
+      "sha256": "93977eeb92f4729e87e5c72cd789664b962e735aa2ee201bf89daabc83725752",
+      "bytes": 1038
     },
     {
       "path": "public-schemas.json",

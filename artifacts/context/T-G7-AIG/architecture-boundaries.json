@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/information-gain-scheduler/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AIG/**",
-    "packages/shared-schemas/src/aig.ts"
+    "artifacts/context/T-G7-AIG/**"
   ],
   "writeSet": [
     "packages/information-gain-scheduler/**"

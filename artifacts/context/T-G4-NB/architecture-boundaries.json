@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/research-notebook/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-NB/**",
-    "packages/shared-schemas/src/nb.ts"
+    "artifacts/context/T-G4-NB/**"
   ],
   "writeSet": [
     "packages/research-notebook/**"

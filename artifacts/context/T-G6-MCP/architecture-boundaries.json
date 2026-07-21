@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "apps/api/src/mcp/**",
+    "packages/tool-core/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-MCP/**",
-    "packages/shared-schemas/src/mcp.ts"
+    "artifacts/context/T-G6-MCP/**"
   ],
   "writeSet": [
     "apps/api/src/mcp/**",

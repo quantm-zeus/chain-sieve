@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/alpha-governance/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-ADG/**",
-    "packages/shared-schemas/src/adg.ts"
+    "artifacts/context/T-G7-ADG/**"
   ],
   "writeSet": [
     "packages/alpha-governance/**"

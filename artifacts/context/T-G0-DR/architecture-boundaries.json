@@ -4,6 +4,8 @@
   ],
   "allowedPaths": [
     "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**",
     "tests/**",
     "docs/implementation/**",
     "infra/migrations/**"
@@ -16,8 +18,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DR/**",
-    "packages/shared-schemas/src/dr.ts"
+    "artifacts/context/T-G0-DR/**"
   ],
   "writeSet": [
     "packages/persistence/**",

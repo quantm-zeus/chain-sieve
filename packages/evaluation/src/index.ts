@@ -6,9 +6,4 @@ export const matureSyntheticOutcome = (observedAt: string, now: string, maturity
   return { state: 'MATURE', signalSuccess: true, tradableSuccess: false };
 };
 
-export const assertOutcomeLabelsDistinct = (signalSuccess: boolean, tradableSuccess: boolean): void => {
-  if (signalSuccess && tradableSuccess) return;
-  if (signalSuccess !== tradableSuccess) return;
-  if (!signalSuccess && !tradableSuccess) return;
-  throw new Error('OUTCOME_LABEL_INVALID');
-};
+export const assertOutcomeLabelsDistinct = (signalSuccess: boolean | undefined, tradableSuccess: boolean | undefined): void => { if (signalSuccess === undefined || tradableSuccess === undefined) throw new Error('OUTCOME_LABEL_REQUIRED'); };

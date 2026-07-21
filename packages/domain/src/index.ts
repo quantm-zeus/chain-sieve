@@ -30,12 +30,14 @@ export interface SyntheticAsset {
 export interface EvidenceReference {
   artifactKey: string;
   sha256: string;
+  bytes: number;
   mediaType: string;
   frozenAt: string;
 }
 
 export interface DegradedResult<T> {
   status: Availability;
+  capabilityMode: 'PRODUCTION' | 'SYNTHETIC_SHADOW';
   value?: T;
   reason?: string;
 }

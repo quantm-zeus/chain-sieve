@@ -1,0 +1,83 @@
+[
+  {
+    "id": "AC-030",
+    "text": "Invalid structured output receives at most one repair attempt and never causes an unsupported alert.",
+    "textSha256": "16a63a2e5ee3a48e7c6e757b6d18be8a31a9285a3bec696866f623cce1681a7b",
+    "line": 6545,
+    "requirementRefs": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-030.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-030.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.4 Agent quality",
+    "testClass": "agent-evidence"
+  },
+  {
+    "id": "AC-032",
+    "text": "Every important claim in an automated alert passes semantic evidence validation.",
+    "textSha256": "5bd0c4f6fdee418ba4cd3310614952c18a79af347be7e7cc742a536ccc7c7f9f",
+    "line": 6547,
+    "requirementRefs": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-032.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-032.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.4 Agent quality",
+    "testClass": "agent-evidence"
+  },
+  {
+    "id": "AC-034",
+    "text": "Explain-original uses frozen evidence; re-evaluate creates a separate current run.",
+    "textSha256": "0bd3ea4000d2699e1474e50f0a49492c911f08018978fba8eaf927ba9f6f26c5",
+    "line": 6549,
+    "requirementRefs": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-034.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-034.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.4 Agent quality",
+    "testClass": "agent-evidence"
+  }
+]

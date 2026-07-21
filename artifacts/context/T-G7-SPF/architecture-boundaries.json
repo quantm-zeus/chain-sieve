@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/shadow-portfolio/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-SPF/**",
-    "packages/shared-schemas/src/spf.ts"
+    "artifacts/context/T-G7-SPF/**"
   ],
   "writeSet": [
     "packages/shadow-portfolio/**"

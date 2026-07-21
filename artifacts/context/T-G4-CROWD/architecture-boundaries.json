@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/crowding/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-CROWD/**",
-    "packages/shared-schemas/src/crowd.ts"
+    "artifacts/context/T-G4-CROWD/**"
   ],
   "writeSet": [
     "packages/crowding/**"

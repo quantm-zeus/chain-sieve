@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/opportunity-frontier/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-OF/**",
-    "packages/shared-schemas/src/of.ts"
+    "artifacts/context/T-G7-OF/**"
   ],
   "writeSet": [
     "packages/opportunity-frontier/**"

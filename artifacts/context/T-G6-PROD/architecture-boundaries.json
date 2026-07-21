@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "packages/release-conformance/**",
+    "packages/capability-registry/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-PROD/**",
-    "packages/shared-schemas/src/prod.ts"
+    "artifacts/context/T-G6-PROD/**"
   ],
   "writeSet": [
     "packages/release-conformance/**",

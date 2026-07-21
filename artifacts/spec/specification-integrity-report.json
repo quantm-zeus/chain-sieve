@@ -1,6 +1,7 @@
 {
   "status": "PASS",
-  "independentlyValidated": true,
+  "deterministicValidation": true,
+  "independentReviewRequired": true,
   "suppliedAuditTrustedAsEvidenceOnly": true,
   "sourceHashes": {
     "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
@@ -25,7 +26,6 @@
     "activation-gates",
     "api-uniqueness",
     "persistence-uniqueness",
-    "placeholder-scan",
     "coverage"
   ]
 }

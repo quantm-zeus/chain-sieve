@@ -4,20 +4,20 @@
   ],
   "allowedPaths": [
     "packages/agent-runtime/**",
+    "packages/alpha-artifact-store/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AEP/**",
-    "packages/shared-schemas/src/aep.ts"
+    "artifacts/context/T-G7-AEP/**"
   ],
   "writeSet": [
     "packages/agent-runtime/**",

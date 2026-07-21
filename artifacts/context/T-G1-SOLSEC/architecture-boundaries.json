@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/solana-security/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-SOLSEC/**",
-    "packages/shared-schemas/src/solsec.ts"
+    "artifacts/context/T-G1-SOLSEC/**"
   ],
   "writeSet": [
     "packages/solana-security/**"

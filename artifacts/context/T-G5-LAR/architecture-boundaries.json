@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/liquidity-resilience/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-LAR/**",
-    "packages/shared-schemas/src/lar.ts"
+    "artifacts/context/T-G5-LAR/**"
   ],
   "writeSet": [
     "packages/liquidity-resilience/**"

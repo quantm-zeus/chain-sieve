@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/social-capability/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-SOC/**",
-    "packages/shared-schemas/src/soc.ts"
+    "artifacts/context/T-G5-SOC/**"
   ],
   "writeSet": [
     "packages/social-capability/**"

@@ -18,13 +18,8 @@
   ],
   "acceptanceCriteria": [
     "AC-060",
-    "AC-061",
     "AC-062",
-    "AC-260",
-    "AC-261",
-    "AC-262",
-    "AC-263",
-    "AC-264"
+    "AC-263"
   ],
   "invariants": [
     "INV-001",
@@ -46,8 +41,7 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DR/**",
-    "packages/shared-schemas/src/dr.ts"
+    "artifacts/context/T-G0-DR/**"
   ],
   "writeSet": [
     "packages/persistence/**",
@@ -56,6 +50,8 @@
   ],
   "allowedPaths": [
     "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**",
     "tests/**",
     "docs/implementation/**",
     "infra/migrations/**"
@@ -96,29 +92,23 @@
   "requiredTests": [
     "tests/acceptance/AC-060.spec.ts",
     "tests/negative/AC-060.negative.spec.ts",
-    "tests/acceptance/AC-061.spec.ts",
-    "tests/negative/AC-061.negative.spec.ts",
     "tests/acceptance/AC-062.spec.ts",
     "tests/negative/AC-062.negative.spec.ts",
-    "tests/acceptance/AC-260.spec.ts",
-    "tests/negative/AC-260.negative.spec.ts",
-    "tests/acceptance/AC-261.spec.ts",
-    "tests/negative/AC-261.negative.spec.ts",
-    "tests/acceptance/AC-262.spec.ts",
-    "tests/negative/AC-262.negative.spec.ts",
     "tests/acceptance/AC-263.spec.ts",
-    "tests/negative/AC-263.negative.spec.ts",
-    "tests/acceptance/AC-264.spec.ts",
-    "tests/negative/AC-264.negative.spec.ts"
+    "tests/negative/AC-263.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm task:verify T-G0-DR",
-      "expected": "exit 0 with independently derived evidence"
+      "command": "pnpm exec vitest run tests/acceptance/AC-060.spec.ts tests/negative/AC-060.negative.spec.ts tests/acceptance/AC-062.spec.ts tests/negative/AC-062.negative.spec.ts tests/acceptance/AC-263.spec.ts tests/negative/AC-263.negative.spec.ts",
+      "expected": "all mapped positive and negative tests execute with zero skips"
     },
     {
       "command": "pnpm architecture:verify",
       "expected": "all architecture fitness controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
     }
   ],
   "complexityBudget": {

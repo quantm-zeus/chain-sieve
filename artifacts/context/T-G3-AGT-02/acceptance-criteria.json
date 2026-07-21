@@ -1,0 +1,56 @@
+[
+  {
+    "id": "AC-031",
+    "text": "Critical security risk blocks opportunity alert.",
+    "textSha256": "fa5f00d7e442fba08a8ee0ea19ed2d44b8b4a9e9b01eaae082e97de3f296c4cb",
+    "line": 6546,
+    "requirementRefs": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-031.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-031.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.4 Agent quality",
+    "testClass": "agent-evidence"
+  },
+  {
+    "id": "AC-033",
+    "text": "The agent can return `INSUFFICIENT_DATA` without being forced to rank.",
+    "textSha256": "7b6e14cbeddd9c26e86a6f31b1ce6d79c1e5f23b5cc71b5153888902c7e577bf",
+    "line": 6548,
+    "requirementRefs": [
+      "FR-AGT-001",
+      "FR-AGT-002",
+      "FR-AGT-003",
+      "FR-AGT-004",
+      "FR-AGT-005",
+      "FR-AGT-006",
+      "FR-AGT-007",
+      "FR-AGT-008",
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-033.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-033.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.4 Agent quality",
+    "testClass": "agent-evidence"
+  }
+]

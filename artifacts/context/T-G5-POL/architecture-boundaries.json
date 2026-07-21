@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/policy-compiler/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-POL/**",
-    "packages/shared-schemas/src/pol.ts"
+    "artifacts/context/T-G5-POL/**"
   ],
   "writeSet": [
     "packages/policy-compiler/**"

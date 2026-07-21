@@ -5,19 +5,18 @@
   "allowedPaths": [
     "packages/signal-intelligence/**",
     "tests/**",
-    "docs/implementation/**",
-    "infra/migrations/**"
+    "docs/implementation/**"
   ],
   "forbiddenPaths": [
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-SIG/**",
-    "packages/shared-schemas/src/sig.ts"
+    "artifacts/context/T-G5-SIG/**"
   ],
   "writeSet": [
     "packages/signal-intelligence/**"

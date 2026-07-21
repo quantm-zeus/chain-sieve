@@ -1,29 +1,5 @@
 [
   {
-    "id": "AC-140",
-    "text": "`EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.",
-    "textSha256": "4f56f4b422d75cb64898b7f6f270ae68e1d5f23de67caa48c80d1fab5927928a",
-    "line": 6641,
-    "requirementRefs": [
-      "FR-ALERT-001",
-      "FR-ALERT-002",
-      "FR-ALERT-003",
-      "FR-ALERT-004",
-      "FR-ALERT-005",
-      "FR-SOC-001",
-      "FR-SOC-002",
-      "FR-SOC-003",
-      "FR-SOC-004"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-140.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-140.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.13 Alerts, social, and protocol compatibility",
-    "testClass": "alert-social"
-  },
-  {
     "id": "AC-141",
     "text": "A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.",
     "textSha256": "d9927386ebb717f596be5ff49be1a42f39b74e2b0a706344373fe7f91ff7f6c8",
@@ -41,30 +17,6 @@
     ],
     "positiveTestRef": "tests/acceptance/AC-141.spec.ts",
     "negativeOrFailureTestRef": "tests/negative/AC-141.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.13 Alerts, social, and protocol compatibility",
-    "testClass": "alert-social"
-  },
-  {
-    "id": "AC-142",
-    "text": "Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.",
-    "textSha256": "fb66d4411cc8edbc21eb8761c68eae3df86d3b8fb6c9fd81cce5a4ecb20b34fd",
-    "line": 6643,
-    "requirementRefs": [
-      "FR-ALERT-001",
-      "FR-ALERT-002",
-      "FR-ALERT-003",
-      "FR-ALERT-004",
-      "FR-ALERT-005",
-      "FR-SOC-001",
-      "FR-SOC-002",
-      "FR-SOC-003",
-      "FR-SOC-004"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-142.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-142.negative.spec.ts",
     "evidenceOwner": "packages/release-conformance",
     "section": "39. Acceptance criteria",
     "status": "PLANNED",
