@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": { "@ciag/*": ["packages/*/src/index.ts"] }
+  },
+  "include": ["apps/api/src/**/*.ts", "packages/*/src/**/*.ts", "tools/**/*.ts", "tests/**/*.ts", "vitest.config.ts"]
+}

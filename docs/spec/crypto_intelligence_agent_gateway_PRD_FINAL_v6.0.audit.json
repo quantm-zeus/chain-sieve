@@ -1,0 +1,122 @@
+{
+  "auditDate": "2026-07-20",
+  "checks": {
+    "allOriginalMainFeatureSectionsRetained": "PASS",
+    "duplicateApiMethodPathScan": "PASS",
+    "duplicatePersistenceEntityScan": "PASS",
+    "finalSemanticAudit": "PASS",
+    "finalStructuralAudit": "PASS",
+    "markdownFenceYamlJsonTableFormat": "PASS",
+    "mcpOriginOAuthResourceAuthorization": "PASS",
+    "negativeTradingCustodySigningCapability": "PASS",
+    "normativeIdUniquenessAndContinuity": "PASS",
+    "outcomeMaturityAndStatisticalPromotion": "PASS",
+    "placeholderAndOpenAdrScan": "PASS",
+    "pointInTimeAndNoBackdating": "PASS",
+    "programVersionPoolMathAndParity": "PASS",
+    "providerAndProtocolScope": "PASS",
+    "publicRightsClaimsPrivacyAbuseGate": "PASS",
+    "referenceAndRangeResolution": "PASS",
+    "repositoryAndManifestMapping": "PASS",
+    "sourceDependenceAndEvidenceSelection": "PASS",
+    "structureAndHeadingSequence": "PASS",
+    "sustainableCapacityContract": "PASS",
+    "symmetricDecisionAndActionTime": "PASS",
+    "tieredRecoveryAndAuditIntegrity": "PASS"
+  },
+  "documentId": "CIAG-PRD-FINAL",
+  "hashes": {
+    "documentArtifactSha256": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "documentNormalizedSha256": "1f9b6590c8331dd52ae63c51a93e8e6b631b3a70c37df3e619486e1779e2db8e",
+    "requirementManifestSha256": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff"
+  },
+  "inventory": {
+    "acceptanceCriteria": 204,
+    "acceptedADRs": 58,
+    "apiRoutes": 181,
+    "appendices": 22,
+    "architectureInvariants": 44,
+    "codeBlocks": 392,
+    "documentBytes": 594125,
+    "documentLines": 13388,
+    "functionalRequirements": 397,
+    "mainSections": 86,
+    "persistenceEntities": 286,
+    "repositoryRoots": 83
+  },
+  "issueCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "knownLimitations": [
+    "No PRD can prove future profitability or eliminate unknown market, protocol, provider, model, implementation, or adversarial risk.",
+    "Profit-related claims remain prohibited until forward, fully matured, execution-aware shadow evidence passes the exact statistical and activation gates.",
+    "Provider plans, protocol programs/layouts, rights, and platform specifications require current verification during implementation and continuously thereafter."
+  ],
+  "manifest": {
+    "acceptanceCriteria": 204,
+    "adrs": 58,
+    "implementationStatus": "CONTRACT_READY_NOT_IMPLEMENTED",
+    "invariants": 44,
+    "requirements": 397,
+    "schemaVersion": "1.0.0",
+    "unmappedAcceptanceCriteria": 0,
+    "unmappedRequirements": 0
+  },
+  "reviewCycles": [
+    {
+      "cycle": 1,
+      "focus": "architecture, metrics, first-party discovery, execution, statistical activation",
+      "result": "repaired"
+    },
+    {
+      "cycle": 2,
+      "focus": "security, provider lifecycle, recovery, capacity, public release, traceability",
+      "result": "repaired"
+    },
+    {
+      "cycle": 3,
+      "focus": "protocol scope, API semantics, repository mappings, persistence uniqueness, ADR closure",
+      "result": "repaired"
+    },
+    {
+      "cycle": 4,
+      "focus": "manifest generation, cross-reference, semantic regression, final hash/conformance",
+      "result": "pass"
+    }
+  ],
+  "scope": "PRD contract integrity and coding-agent readiness; not implementation validation or profit guarantee",
+  "semanticAudit": {
+    "checks": {
+      "api_routes": 181,
+      "document_normalized_sha256": "1f9b6590c8331dd52ae63c51a93e8e6b631b3a70c37df3e619486e1779e2db8e",
+      "manifest_sha256": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+      "persistence_entities": 286,
+      "placeholders": 0,
+      "repository_roots": 83,
+      "retained_main_sections": 86
+    },
+    "issueCounts": {},
+    "issues": []
+  },
+  "status": "PASS_NO_KNOWN_RELEASE_BLOCKING_P0_P1_DEFECT",
+  "structuralAudit": {
+    "checks": {
+      "ac_count": 204,
+      "adr_count": 58,
+      "appendices": 22,
+      "code_blocks": 392,
+      "document_bytes": 594125,
+      "document_lines": 13388,
+      "fr_count": 397,
+      "inv_count": 44,
+      "main_sections": 86,
+      "sha256": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+      "urls": 38
+    },
+    "issue_counts": {},
+    "issues": []
+  },
+  "version": "6.0.0"
+}
