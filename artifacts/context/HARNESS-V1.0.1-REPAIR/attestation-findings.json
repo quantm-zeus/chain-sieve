@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "release": "harness-v1.0.0",
+  "verdict": "FAIL_RELEASE",
+  "findingIds": [
+    "ATTEST-P0-001",
+    "ATTEST-P0-002",
+    "ATTEST-P1-003",
+    "ATTEST-P1-004",
+    "ATTEST-P1-005",
+    "ATTEST-P1-006",
+    "ATTEST-P2-007",
+    "ATTEST-P2-008",
+    "ATTEST-P2-009",
+    "ATTEST-P2-010",
+    "ATTEST-P2-011"
+  ],
+  "evidenceRoot": "artifacts/release-attestation/harness-v1.0.0",
+  "githubStatus": "BLOCKED_GITHUB_PERMISSION",
+  "githubEvidence": "gh auth status returned no authenticated GitHub hosts on 2026-07-22"
+}

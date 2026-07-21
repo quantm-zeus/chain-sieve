@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "HARNESS-V1.0.1-REPAIR",
+  "branch": "fix/harness-v1.0.1-attestation",
+  "baseCommit": "90027c40753d502d1893fd518382080b5302dd63",
+  "contractPath": "tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml",
+  "contractHashPath": "tasks/repairs/HARNESS-V1.0.1-REPAIR.sha256",
+  "sources": [
+    "source-integrity.json",
+    "attestation-findings.json",
+    "artifacts/release-attestation/harness-v1.0.0/SHA256SUMS"
+  ],
+  "constraints": [
+    "No Crypto Intelligence product cluster implementation",
+    "No architecture redesign",
+    "No real providers, trading, signing, custody, production alerts, or alpha features",
+    "Never mutate harness-v1.0.0"
+  ]
+}
