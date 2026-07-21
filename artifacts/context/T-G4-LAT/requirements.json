@@ -1,0 +1,144 @@
+[
+  {
+    "id": "FR-LAT-001",
+    "text": "End-to-end latency spans from event/provider availability to delivered alert.",
+    "textSha256": "3579a3a62ba80ef176b2f401f49e5a29ad4456b58079b905e1a7e43572b30ec1",
+    "line": 6106,
+    "family": "FR-LAT",
+    "dependencyGroup": "G4",
+    "owner": "packages/latency-profiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-080",
+      "AC-226"
+    ],
+    "implementationRefs": [
+      "packages/latency-profiler/** @requirement FR-LAT-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lat.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_lat_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lat-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-080.spec.ts",
+      "tests/negative/AC-080.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lat/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lat.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LAT-002",
+    "text": "Backtest applies historically measured or bounded latency assumptions.",
+    "textSha256": "90447f2397825081f1b4d8f6b2d1dc8698060cb51e60efc36ee8d85ab35d50d0",
+    "line": 6107,
+    "family": "FR-LAT",
+    "dependencyGroup": "G4",
+    "owner": "packages/latency-profiler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-080",
+      "AC-226"
+    ],
+    "implementationRefs": [
+      "packages/latency-profiler/** @requirement FR-LAT-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lat.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_lat_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lat-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-080.spec.ts",
+      "tests/negative/AC-080.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lat/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lat.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

@@ -1,0 +1,398 @@
+[
+  {
+    "id": "INV-001",
+    "text": "The system is permanently read-only with respect to financial execution, custody, signing, and transaction construction.",
+    "textSha256": "c0f17111104dc990c452a4c240e9145d49fb95540613e2b628ac812e9b8dd6dd",
+    "line": 7337,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-001.spec.ts"
+  },
+  {
+    "id": "INV-002",
+    "text": "Agent intelligence never replaces deterministic identity, evidence, time, execution, risk, capability, rights, cost, quota, capacity, or policy controls.",
+    "textSha256": "1c9f069b97a991c607d536f36697f7ffd176768c4fa85f27c2129635fb62cd8a",
+    "line": 7338,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-002.spec.ts"
+  },
+  {
+    "id": "INV-003",
+    "text": "No automated external side effect occurs directly from model output.",
+    "textSha256": "86f4d228eca81585ea2c3a36b12f81eb9ec99ff6449d288264199daa2a16eeaf",
+    "line": 7339,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-003.spec.ts"
+  },
+  {
+    "id": "INV-004",
+    "text": "Every retained decision is reconstructable from frozen evidence, availability, acquisition state, configuration, code, adapter, and artifact versions.",
+    "textSha256": "bfbf22708b1a51aeadb09a62af3e4b868563c2dacdc8846ecb56bbcb8bdf0720",
+    "line": 7340,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-004.spec.ts"
+  },
+  {
+    "id": "INV-005",
+    "text": "Historical replay uses only data and learned artifacts actually available to the system at the simulated time.",
+    "textSha256": "a4c6c3b2db75fcad331bb7e57be308985200ff34651d358474f33cd3d46da9cb",
+    "line": 7341,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-005.spec.ts"
+  },
+  {
+    "id": "INV-006",
+    "text": "Backfilled historical data is never backdated into production replay.",
+    "textSha256": "6d886e5372396022b3f410dcc5001f76032e7aee053c253a0600e5b7f53db213",
+    "line": 7342,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-006.spec.ts"
+  },
+  {
+    "id": "INV-007",
+    "text": "Evaluation includes alerts, watches, ignores, rejects, below-cutoff cases, exploration/control cases, and missed opportunities under symmetric action-time semantics.",
+    "textSha256": "5f97a9f974d4559db3f00c93687e6b901b7502d23ca95df9afbc5a97a520c56b",
+    "line": 7343,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-007.spec.ts"
+  },
+  {
+    "id": "INV-008",
+    "text": "Provider count is not source independence; declared lineage and empirical dependence both constrain effective confirmation.",
+    "textSha256": "814e55c48f2a267ff4a8d5b21bd807e9891c187d5260f38afab353e108f12d22",
+    "line": 7344,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-008.spec.ts"
+  },
+  {
+    "id": "INV-009",
+    "text": "A durable workflow or collector may retry; every state transition and external side effect remains idempotent and fenced.",
+    "textSha256": "3b5127dc245e3bc873ceeb79ab803ac58696fdc1dd97f7a1c2d36ac592d36a7f",
+    "line": 7345,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-009.spec.ts"
+  },
+  {
+    "id": "INV-010",
+    "text": "The primary policy objective is conservative net shadow-portfolio utility under finite capital and hard constraints, not isolated price appreciation or alert win rate.",
+    "textSha256": "952cc62a46842a917ab29d75a9dae264c5a0a25b0d99abd76ebf63b07e411120",
+    "line": 7346,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-010.spec.ts"
+  },
+  {
+    "id": "INV-011",
+    "text": "Signal success is not tradable success.",
+    "textSha256": "78eae485718e0ad25e9608fdf6297ad073be80ebd9e3e813476e6ffa7cc7e8e8",
+    "line": 7347,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-011.spec.ts"
+  },
+  {
+    "id": "INV-012",
+    "text": "Unmatured, censored, or invalid outcomes never enter final success/failure denominators without explicit, separate reporting.",
+    "textSha256": "49a4651502767dcc6aa45567c6c98d542b8de30de50daf70972f6448f456d514",
+    "line": 7348,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-012.spec.ts"
+  },
+  {
+    "id": "INV-013",
+    "text": "Economic events, not raw route legs or provider transaction counts, drive actor, volume, and demand features.",
+    "textSha256": "a37b6e784620532a8126a0264f8aeab06348f25b4245cf33623f6ad1a368ed6a",
+    "line": 7349,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-013.spec.ts"
+  },
+  {
+    "id": "INV-014",
+    "text": "Deterministic chain/token/pool security can veto external provider optimism.",
+    "textSha256": "67abca98c35a660659131c7c4e59b32c43329c37d90147dcfe60a8ae367e5db5",
+    "line": 7350,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-014.spec.ts"
+  },
+  {
+    "id": "INV-015",
+    "text": "Program/version-specific execution math or verified quote parity is required; unsupported pool structures cause abstention.",
+    "textSha256": "f286e960bb8e7aa5f38383adf51b753eff604a894d5878cce6e1fca51194b801",
+    "line": 7351,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-015.spec.ts"
+  },
+  {
+    "id": "INV-016",
+    "text": "Base and conservative execution stress cases are mandatory for confirmed opportunity decisions.",
+    "textSha256": "1566a94ef36e0848f7a9e2a161217c625ca825b6bb21baf1650e13d6e7bc00b0",
+    "line": 7352,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-016.spec.ts"
+  },
+  {
+    "id": "INV-017",
+    "text": "Broad discovery combines aggregate breadth with bounded first-party observation for the claimed supported-program universe.",
+    "textSha256": "ebc539854f56ccd5a00910ddf9ed74a025b9fefe88d3c8dec33eb2530bd1c30c",
+    "line": 7353,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-017.spec.ts"
+  },
+  {
+    "id": "INV-018",
+    "text": "Discovery and profitability claims never exceed the independently observed or validly sampled population.",
+    "textSha256": "516af129622ae92c30651b457de0652da34e3b05495b81a46b53c304298a228c",
+    "line": 7354,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-018.spec.ts"
+  },
+  {
+    "id": "INV-019",
+    "text": "Paid, unknown-cost, overage, automatic-upgrade, and paid-fallback data calls are impossible in data-provider `STRICT_FREE`.",
+    "textSha256": "b382f71ccb2e438f16673bb6596b6c234546114645225e598a8fd53923466814",
+    "line": 7355,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-019.spec.ts"
+  },
+  {
+    "id": "INV-020",
+    "text": "Data-provider, model, infrastructure, storage/egress, and notification budgets are independent and explicit.",
+    "textSha256": "9725069e882cbc9343ecb98a2c7900eda9d05a30acbe569f21221861a95c58d1",
+    "line": 7356,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-020.spec.ts"
+  },
+  {
+    "id": "INV-021",
+    "text": "Every active configuration passes a sustainable-capacity contract with protected reserves.",
+    "textSha256": "7e9bd48e35f0dd15391cdf945bcfd195a12d6799796c58cbf224c43cf205d98a",
+    "line": 7357,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-021.spec.ts"
+  },
+  {
+    "id": "INV-022",
+    "text": "Evidence not requested by policy is distinct from unavailable or negative evidence.",
+    "textSha256": "e0b84d3b01a7949c7863f63229dd147a1cd3714e15a624ca0c217e12c9039729",
+    "line": 7358,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-022.spec.ts"
+  },
+  {
+    "id": "INV-023",
+    "text": "Exploration, high-resolution outcome observation, and randomized evidence acquisition remain statistically auditable.",
+    "textSha256": "6c83b2d8e2be519d1085a60b0b4c88e76cc7b34118c0f3e5011cf518bcf87bd4",
+    "line": 7359,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-023.spec.ts"
+  },
+  {
+    "id": "INV-024",
+    "text": "A thesis is falsifiable, versioned, expiring, and separate from candidate identity.",
+    "textSha256": "3ba7c64db326e6425f0f27d96e46b3091d7576cc01335ccf3db637186fbc1e7c",
+    "line": 7360,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-024.spec.ts"
+  },
+  {
+    "id": "INV-025",
+    "text": "“Why now” is derived from stored deltas and decision-time evidence, never invented retrospectively.",
+    "textSha256": "fd6aee75e1fae0a262669ea7ddfdc5da21463940af936474e805ca11d93c39ad",
+    "line": 7361,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-025.spec.ts"
+  },
+  {
+    "id": "INV-026",
+    "text": "A compiled natural-language policy remains a draft until validated, evaluated, approved, and separately activated.",
+    "textSha256": "66a0fb5477bd127dfcf90628453c267674926386a28c63ed5653b3fe5b31a9d6",
+    "line": 7362,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-026.spec.ts"
+  },
+  {
+    "id": "INV-027",
+    "text": "Narrative, cross-chain, crowding, analog, wallet, pattern, hazard, and regime outputs never override critical asset-level security or execution evidence.",
+    "textSha256": "6b74174b458284df8e2b1a621e1ad0857520c79decf959cc6871d210b41e0a95",
+    "line": 7363,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-027.spec.ts"
+  },
+  {
+    "id": "INV-028",
+    "text": "Capability coverage is authoritative; the system never claims data, safety, execution, source independence, or alpha it cannot currently support.",
+    "textSha256": "31ee42e6aac4202aa09aef605dc271dbc41b12284acebb954ca852206cd30445",
+    "line": 7364,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-028.spec.ts"
+  },
+  {
+    "id": "INV-029",
+    "text": "Model unavailability degrades to deterministic operation rather than fabrication or silent failure.",
+    "textSha256": "e099d66af4a22ff85ee017d59780862f81b1478f414684cc3d9c44d1ebfc0752",
+    "line": 7365,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-029.spec.ts"
+  },
+  {
+    "id": "INV-030",
+    "text": "Historical alpha is learned only from fully matured point-in-time execution-aware outcomes and appropriate matched/control populations.",
+    "textSha256": "9d57262c4bc07aae50a228e72504138ec1eeb16bcb654e803c4274cc72bd1ff0",
+    "line": 7366,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-030.spec.ts"
+  },
+  {
+    "id": "INV-031",
+    "text": "No wallet, deployer, funder, pattern, narrative, provider, or multi-view confirmation is assumed independent without lineage analysis.",
+    "textSha256": "45653ab0df8d2bc7536ebb9209e64977110f7ce5ccfd5669999c78851d3f5a3c",
+    "line": 7367,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-031.spec.ts"
+  },
+  {
+    "id": "INV-032",
+    "text": "Novelty removes unsupported confidence but never automatically equals quality or rejection.",
+    "textSha256": "f08e90c1f8159e0244aac3cb4e4b0ca27dd244196fc52563c68746fff6ed577d",
+    "line": 7368,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-032.spec.ts"
+  },
+  {
+    "id": "INV-033",
+    "text": "Critical disagreement is preserved and cannot be averaged away.",
+    "textSha256": "3df68740f190a221a8fd51d665cc9691f313e2975384d16fb7fba91c164a8a9e",
+    "line": 7369,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-033.spec.ts"
+  },
+  {
+    "id": "INV-034",
+    "text": "Portfolio value is evaluated with finite capital, concurrency, exposure, shared-liquidity competition, conservative path ordering, and opportunity cost.",
+    "textSha256": "4c0d64a0af7540acd1a207000de8faab9af8b97e16a211bbb554829bfee5d331",
+    "line": 7370,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-034.spec.ts"
+  },
+  {
+    "id": "INV-035",
+    "text": "Alpha artifacts may auto-degrade or pause on safety/drift evidence but never auto-activate or auto-reactivate.",
+    "textSha256": "f5e55478016eea1f9e4b999e0c671e5fa538f4471a270e7625542738aa8704e7",
+    "line": 7371,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-035.spec.ts"
+  },
+  {
+    "id": "INV-036",
+    "text": "Adversarial and synthetic fixtures remain isolated from real training, reputation, calibration, and outcome populations.",
+    "textSha256": "2308f72624283984b168129893d43ca6b29f490d6ee85902163fe44e1223c836",
+    "line": 7372,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-036.spec.ts"
+  },
+  {
+    "id": "INV-037",
+    "text": "MCP Streamable HTTP validates Origin, protocol, authentication, resource scope, and request shape before execution.",
+    "textSha256": "3cd0cbfdd4d6f586dc32bbe8f6217193ff776e42bfda616a825cd658f5971a81",
+    "line": 7373,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-037.spec.ts"
+  },
+  {
+    "id": "INV-038",
+    "text": "Provider bundles containing trading/private-key capability are never exposed wholesale; only allowlisted read-only adapters exist.",
+    "textSha256": "81c53df3e183e0b9010527956efbb773fa8cb4e17fb94009e674ad0a496d2c33",
+    "line": 7374,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-038.spec.ts"
+  },
+  {
+    "id": "INV-039",
+    "text": "Critical decision/evidence/audit metadata uses tiered recovery objectives and tamper-evident audit checkpoints.",
+    "textSha256": "6769d8a28c919247f9776362360c7ce9a576334348a3c36dd1ad3514b31981dc",
+    "line": 7375,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-039.spec.ts"
+  },
+  {
+    "id": "INV-040",
+    "text": "Public/workspace activation requires technical, OAuth, rights, privacy, jurisdiction, disclosure, claims, abuse-response, and support gates.",
+    "textSha256": "5fc3b63d5822848409a518f3505b6ae5bd3558670c226e1eff24b402d5a313b5",
+    "line": 7376,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-040.spec.ts"
+  },
+  {
+    "id": "INV-041",
+    "text": "Requirement, acceptance, dependency, test, API/tool, persistence, and activation traceability is machine-checkable and release-blocking.",
+    "textSha256": "c7768dc0640a06c1f5fb1aa63cd4834e8d003d805bafdc36f67714e5c2cb63fd",
+    "line": 7377,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-041.spec.ts"
+  },
+  {
+    "id": "INV-042",
+    "text": "Deployed code is not equivalent to available data, proven alpha, active policy, or public authorization.",
+    "textSha256": "904d7bce864754d88db8856f9d3fa87e6883e9a01d1977640d5e8383fd8ed79b",
+    "line": 7378,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-042.spec.ts"
+  },
+  {
+    "id": "INV-043",
+    "text": "A confirmed opportunity must be current, within its profile window, independently evidenced, security-valid within coverage, manipulation-aware, executable under the active conservative scenario, not expired, capacity/cost-valid, semantically validated, statistically authorized, and idempotently deliverable.",
+    "textSha256": "7fc891fbdb4899433cef29f7586f5ef4099eb648f3960f18062a83d82e9d0e6c",
+    "line": 7379,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-043.spec.ts"
+  },
+  {
+    "id": "INV-044",
+    "text": "No result is a guaranteed-profit claim or transaction recommendation.",
+    "textSha256": "5e3aa57833281759f8815bc4ea437b6ec30e4185aafbdee4a2c751c0c0822037",
+    "line": 7380,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-044.spec.ts"
+  }
+]

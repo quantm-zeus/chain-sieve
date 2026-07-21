@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/fallback-runtime"
+  ],
+  "allowedPaths": [
+    "packages/fallback-runtime/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-FB/**",
+    "packages/shared-schemas/src/fb.ts"
+  ],
+  "writeSet": [
+    "packages/fallback-runtime/**"
+  ]
+}

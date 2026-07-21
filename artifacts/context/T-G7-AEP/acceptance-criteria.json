@@ -1,0 +1,134 @@
+[
+  {
+    "id": "AC-214",
+    "text": "Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.",
+    "textSha256": "fc05d9c1d46ecffdedfd2a0561ebf8cbf4f8f1277c091e57671b7ff029b0ee0f",
+    "line": 6723,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-214.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-214.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  },
+  {
+    "id": "AC-215",
+    "text": "Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.",
+    "textSha256": "3000b9a047762eca7407df26f520880350968d1377088c8b9d0b3b8dfe82bcaf",
+    "line": 6724,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-215.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-215.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  },
+  {
+    "id": "AC-216",
+    "text": "Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.",
+    "textSha256": "f8050ee5fef22721977bc12b52865db5186adec8a39e20c8838c75aca3d47f63",
+    "line": 6725,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-216.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-216.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  },
+  {
+    "id": "AC-217",
+    "text": "A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.",
+    "textSha256": "489cf5dca88e57c936a7e369c8d50be3c321a50c21db6b57e13cbae72719d8e6",
+    "line": 6726,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-217.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-217.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  },
+  {
+    "id": "AC-218",
+    "text": "Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.",
+    "textSha256": "82c510ff76fc5d810e516f989508fbae6dd4f0154c86bca10b8a37fce5062d51",
+    "line": 6727,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-218.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-218.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  },
+  {
+    "id": "AC-219",
+    "text": "Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls.",
+    "textSha256": "62ec151c986d18534b0da0c354b7911fcdc9fdb473552348a3e04e03847b0e98",
+    "line": 6728,
+    "requirementRefs": [
+      "FR-AEP-001",
+      "FR-ALAB-001",
+      "FR-ALAB-002",
+      "FR-ALAB-003",
+      "FR-ALAB-004",
+      "FR-ALAB-005",
+      "FR-ALAB-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-219.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-219.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.20 Offline Alpha Lab and agent context",
+    "testClass": "adversarial-alpha-lab"
+  }
+]

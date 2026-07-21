@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/workflow-runtime"
+  ],
+  "allowedPaths": [
+    "packages/workflow-runtime/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G2-WF/**",
+    "packages/shared-schemas/src/wf.ts"
+  ],
+  "writeSet": [
+    "packages/workflow-runtime/**",
+    "apps/api/src/internal/**"
+  ]
+}

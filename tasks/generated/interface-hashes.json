@@ -1,0 +1,212 @@
+{
+  "T-G0-COL": {
+    "apps/collector:contract": "34e88e4f81cbe048873098dbe91248a54a2861931f96e3e921ffe55c3a60169d"
+  },
+  "T-G0-CORE": {
+    "packages/domain:contract": "1e8b0290c7630bedeae95b4b2dcce471cdf29e2e66f9e7a35567a398f322e755"
+  },
+  "T-G0-COST": {
+    "packages/cost-router:contract": "d5394c21e284c7c206dd540cad9183d87be2b3617f1084bebf47d9dbf5a0b405"
+  },
+  "T-G0-DATA": {
+    "packages/persistence:contract": "e71fcfcbdde3de538a9f762d9fd5630fb7e8dac599f109a6d94843bfb1e9644d"
+  },
+  "T-G0-DISC": {
+    "packages/discovery-universe:contract": "99a4911b426226dad64bb80213593e454f47f2a7f05f47214f7eb130d67edafe"
+  },
+  "T-G0-DR": {
+    "packages/persistence:contract": "619ce3f8fb84d8b2d6450b5e57058b19afbe42df2edf86f7f470638a0fe4f6b1"
+  },
+  "T-G0-MCP": {
+    "apps/api/src/mcp:contract": "f0febc55c6c37f665ae66c3f235bb584d633a2022528a8f0f098dca92679768b"
+  },
+  "T-G0-PROV": {
+    "packages/provider-lifecycle:contract": "bc96d618f70634c8722c4d09ecbf8a3646f6db8c8a89f060a930dc476fb733c1"
+  },
+  "T-G0-SEC": {
+    "packages/security:contract": "bb0760b1b49f88daed88e0cb5756b0c4cbe9dbba1a3d0cfbd4f78240b4581822"
+  },
+  "T-G0-TRACE": {
+    "packages/requirement-manifest:contract": "acb234c8f6f0fe49a0fffa3b3ed753f38f96d8a75369b7a2df38c9b8447e9aa5"
+  },
+  "T-G1-COST": {
+    "packages/cost-router:contract": "8e5c0d842b1e8356191b725562857968784fb1cb2815788c92a575d5a4f62c81"
+  },
+  "T-G1-DATA": {
+    "packages/persistence:contract": "e5d4684149eede4db31ff7248b39e98e61a04f588de2b07343c5b355443327c2"
+  },
+  "T-G1-DISC": {
+    "packages/discovery-universe:contract": "a4837d9c27378593fdabd9a77bccfd0399793015a6478a8c79b0d752b75691a5"
+  },
+  "T-G1-EVAL": {
+    "packages/evaluation:contract": "ce22585d030ea6cc1de1cc6266221c0e684cb646aa56a4633ea44a9a1b25ff49"
+  },
+  "T-G1-EXEC": {
+    "packages/execution-simulator:contract": "899698950eef0cc87f847338a6d645f1ddad2ffd2d1fc2d0236eae987d27153b"
+  },
+  "T-G1-MAT": {
+    "packages/outcome-maturity:contract": "f48ef9a9d9af92587c3ab8207f31f729e08848b3cb7a0f03bb8033a54efb0814"
+  },
+  "T-G1-OBJ": {
+    "packages/objective-governance:contract": "f8fadc0e77f733ca010e4884014ce295289db5e996d5abbd3976aec506834d01"
+  },
+  "T-G1-SIG": {
+    "packages/signal-intelligence:contract": "b76deb17d03ad8e11a7ba95f78a6ea2a3b20a741a260b304e3868ec150b98b66"
+  },
+  "T-G1-SOLSEC": {
+    "packages/solana-security:contract": "c3734918573116d7b22abb1e4daa5168f6f4b6ec5e4e2e446b6093fbb14cef3e"
+  },
+  "T-G1-SUP": {
+    "packages/supply-confidence:contract": "c7324a9a738a4c1a36071ae73381e1ed43b61f855cb809a87e1fadcf7c614815"
+  },
+  "T-G1-TRD": {
+    "packages/economic-trade-normalizer:contract": "7f9eae6e7896ad3e761a00b16a6c11e4a7380218beb59349540fbdde755ceb43"
+  },
+  "T-G2-ADM": {
+    "apps/dashboard:contract": "f934ed0cc87d2b8e4744933a061f4c63119907769bf420ec56614c1d524ca700"
+  },
+  "T-G2-ALERT": {
+    "packages/alerts:contract": "64f8c7af89cc3e87dd6041c9182e4c7f03ba3325928406f3e253d6c269e99434"
+  },
+  "T-G2-DR": {
+    "packages/persistence:contract": "39024e7d96f53876be354e4d2bf50dfedecf4b73956be9ea248b9689006bd50b"
+  },
+  "T-G2-PROD": {
+    "packages/release-conformance:contract": "51dc6dc08ad15f6f1e7515e6b8c226b786c808bd5051e061c35a90f8e771bd06"
+  },
+  "T-G2-WF": {
+    "packages/workflow-runtime:contract": "1a977efac6d9780a9b3a41625c6f27cd0eb631d61556410c8803fb0312577027"
+  },
+  "T-G3-ADM": {
+    "apps/dashboard:contract": "c34b088b903180c4240a73af8e46890be668b8f0af2d646b162e971587c572c5"
+  },
+  "T-G3-AGT": {
+    "packages/agent-runtime:contract": "6dd935c2907f7e879f9c31743ee9756318c201a650d14a89567d27da4ae87d94"
+  },
+  "T-G4-ADM": {
+    "apps/dashboard:contract": "17a059b990e86bad6bc15f4fe29888d784cc4c40cc92e79ea146d1ffc5c8ab9f"
+  },
+  "T-G4-CAP": {
+    "packages/capability-registry:contract": "493511518fd0aaa0513e6eb0026d9f2db369a52bb4efac6f6f7f01ad0295843f"
+  },
+  "T-G4-CROWD": {
+    "packages/crowding:contract": "3b842328d0233ccf4f354c4b866bdf9f4bcc40a985a53ad6c2694f75db5b03b4"
+  },
+  "T-G4-DECAY": {
+    "packages/thesis:contract": "c0d2d121363876f8902f073d2e86272f496d3e12c9610286bce63c3c36985c73"
+  },
+  "T-G4-FB": {
+    "packages/fallback-runtime:contract": "f891f7f5203be6348d5c05d015fb279e543c11fb39efb7baefd1a6a80b32e201"
+  },
+  "T-G4-LAT": {
+    "packages/latency-profiler:contract": "ff7dd793c4dd28d5a13322e0e1ee758fe7a0a14fc175ab3654ce4c104b7df5ee"
+  },
+  "T-G4-NB": {
+    "packages/research-notebook:contract": "ebf45af7ffd0a298b514b547e3d575122d5ce964a647a1924b7ca289be004dc4"
+  },
+  "T-G4-THS": {
+    "packages/thesis:contract": "45493b736f1728f135c663f5809ee0a2c288eea55f1f61f3c378703e06b56a78"
+  },
+  "T-G4-WHY": {
+    "packages/thesis:contract": "5f104e56211b6bede5057d1621d462a9c479850917e7f5e3784312d121f85222"
+  },
+  "T-G5-ADQ": {
+    "packages/attention-diffusion:contract": "b4541741de28fc64f11dd07bbef4a922ffa81908cc86a5daff5be02da9d5093a"
+  },
+  "T-G5-CROWD": {
+    "packages/crowding:contract": "ef7de4591ad126c8a60f2b5679b9183aecdfabbb29c2f13c8d8091c3a5a726ea"
+  },
+  "T-G5-DFD": {
+    "packages/deployer-funder-dna:contract": "e0c0e6eafd21630d93c735a3ec1f1dd70526a08f32e5c8fe3db3b557c9c69c67"
+  },
+  "T-G5-LAR": {
+    "packages/liquidity-resilience:contract": "0ce280fba26c573bbdcc6cd26611ded5abd45f8ffa580428791a5e45050b0dc9"
+  },
+  "T-G5-LMS": {
+    "packages/launch-state-intelligence:contract": "5999a055cad033fc83287c7f27ca631409d3fef571c162d850aa42a326d2c1a4"
+  },
+  "T-G5-NAR": {
+    "packages/narrative-intelligence:contract": "a667432d671d1f9f9b5882d3904d9636c2c522b83fdfdb179de078afba275aa4"
+  },
+  "T-G5-NLL": {
+    "packages/leader-laggard:contract": "57d81b7f5bd1ca366a82839711860b04bd8a167ecfa819e1a24232e36a022e76"
+  },
+  "T-G5-POL": {
+    "packages/policy-compiler:contract": "312f289b1c883aa1a2185da8149269f9623b4928657f525b961aec31ed352614"
+  },
+  "T-G5-REG": {
+    "packages/regime-router:contract": "20bdeb963fc831cb2dbe5a42d87f4532e540636ed4a4cd6b1a2256d7e5b64ea3"
+  },
+  "T-G5-SIG": {
+    "packages/signal-intelligence:contract": "2c93fa27d98502c787cb4f367b6c28278077cbf522cb0dd8722a54a347dae426"
+  },
+  "T-G5-SOC": {
+    "packages/social-capability:contract": "60a70870f49265a54710349e3db1a95e7d8585c3c5e0194146ba3fb8d4c7f3e5"
+  },
+  "T-G5-WAL": {
+    "packages/wallet-alpha-lineage:contract": "28f1257d3bdf6e496e83affaa1b26d0149b3b764b322b47393c0032a62e4d38d"
+  },
+  "T-G5-XCF": {
+    "packages/capital-flow:contract": "73b2bf3bf5d700ed865f06b0cffd08df2b2320956295f1a4883a3a827cc87c65"
+  },
+  "T-G6-AL": {
+    "packages/active-learning:contract": "5ea20c77339d05ad8a6abf98624adb9f1b03483089f42bdff850550788b85baf"
+  },
+  "T-G6-ANA": {
+    "packages/analog-finder:contract": "1e777c28988610dbc8de62347c03c00d239e899b738347498afeb226912bbddb"
+  },
+  "T-G6-CF": {
+    "packages/counterfactual-lab:contract": "31b51fa8fd5ae13d757cd03f5b3760c731bd2672018e8ead0cce641c7bc8e994"
+  },
+  "T-G6-EVAL": {
+    "packages/evaluation:contract": "8f0bd522fd901ce0235f73ee22676d2c686e5ae107193858402ff9534c3c578f"
+  },
+  "T-G6-FHZ": {
+    "packages/failure-hazard:contract": "cd8fd0e7693c2e8637d7cd8eca420068cf3fc3434021d33f52a8421760fb4bb2"
+  },
+  "T-G6-LEGAL": {
+    "packages/public-claims-policy:contract": "18cc9e4897f4a3c8f281512e056ca7aedc7945a02f5bcc1fb408ef9d97fde06e"
+  },
+  "T-G6-MCP": {
+    "apps/api/src/mcp:contract": "b2a679dea6e34709804e5402b274b0d8f98ea60a9db1a9cf3001f2b656593d97"
+  },
+  "T-G6-MVD": {
+    "packages/multi-view-disagreement:contract": "e4f0ded89c778e9feb4d5a05ecbceab39764a85ccfcdca758d34b87b648a0421"
+  },
+  "T-G6-OOD": {
+    "packages/novelty-detector:contract": "1bc19eff27385db193c02ba8ce0fb5b40b778d614c67e4eb29b551f7cabb39bc"
+  },
+  "T-G6-PROD": {
+    "packages/release-conformance:contract": "b1c24b245c176127ff89958a8737c304227ec2dad96bd74b48ba31032fb60654"
+  },
+  "T-G6-SIG": {
+    "packages/signal-intelligence:contract": "39a53b7827eb85965c89009193aa32f71f0bbe5c90549b23702fc983083a782d"
+  },
+  "T-G6-WPI": {
+    "packages/winning-pattern-intelligence:contract": "023b49786f269863166628f7d2de46dc9d65f04c24a5cc475eb46ca8539b0749"
+  },
+  "T-G7-ADG": {
+    "packages/alpha-governance:contract": "d8d7fd773b7c446f0107aafec0734c472461df8c79b4f4813bafe3e31a17b1c2"
+  },
+  "T-G7-AEP": {
+    "packages/agent-runtime:contract": "f5f3a8543c6d33e8d2d1a6f14b624a803344a9ca16201d8cda1037123979fa7e"
+  },
+  "T-G7-AIG": {
+    "packages/information-gain-scheduler:contract": "dfd9dd4544f543e81e199971d48ba33880b128290d1c1ecd16449e0432b28693"
+  },
+  "T-G7-ALAB": {
+    "packages/offline-alpha-lab:contract": "e1b7fb71ec2f19212c89e776cca5e027dcb61560a40e776697a56493d20d24b4"
+  },
+  "T-G7-AMS": {
+    "packages/adversarial-simulator:contract": "e380caa46b0f81e4426b1c4ff6365b2ce1985584dff24897b49035d3c01c4f78"
+  },
+  "T-G7-EXP": {
+    "packages/exploration-bandit:contract": "6aaf6761ce3d28775c312a3dae7509baab9d99d7b57b8cf299232ad0613109f4"
+  },
+  "T-G7-OF": {
+    "packages/opportunity-frontier:contract": "e7923666828f05008d6fb71672f7d7ec5c54fef9976b1037725682edddf0c0a6"
+  },
+  "T-G7-SPF": {
+    "packages/shadow-portfolio:contract": "a78d10047c06af915a383fd73f196130ce60ea4ae4ba054f70207d018e5c93af"
+  }
+}

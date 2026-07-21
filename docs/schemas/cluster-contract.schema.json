@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string"
+    },
+    "group": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "sourceHashes": {
+      "type": "object",
+      "properties": {
+        "prd": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "requirements": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "audit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "prd",
+        "requirements",
+        "audit"
+      ],
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tasks": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requirements": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "entryCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "exitCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verificationCommands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "command",
+          "expected"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rollback": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "group",
+    "title",
+    "sourceHashes",
+    "dependencies",
+    "tasks",
+    "requirements",
+    "acceptanceCriteria",
+    "invariants",
+    "entryCriteria",
+    "exitCriteria",
+    "verificationCommands",
+    "rollback"
+  ],
+  "additionalProperties": false
+}

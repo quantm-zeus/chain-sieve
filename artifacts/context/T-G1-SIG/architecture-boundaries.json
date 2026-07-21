@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/signal-intelligence"
+  ],
+  "allowedPaths": [
+    "packages/signal-intelligence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-SIG/**",
+    "packages/shared-schemas/src/sig.ts"
+  ],
+  "writeSet": [
+    "packages/signal-intelligence/**"
+  ]
+}

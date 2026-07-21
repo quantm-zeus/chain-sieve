@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/economic-trade-normalizer:contract": "7f9eae6e7896ad3e761a00b16a6c11e4a7380218beb59349540fbdde755ceb43"
+  }
+}

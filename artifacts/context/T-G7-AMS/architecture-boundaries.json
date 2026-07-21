@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/adversarial-simulator"
+  ],
+  "allowedPaths": [
+    "packages/adversarial-simulator/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G7-AMS/**",
+    "packages/shared-schemas/src/ams.ts"
+  ],
+  "writeSet": [
+    "packages/adversarial-simulator/**"
+  ]
+}

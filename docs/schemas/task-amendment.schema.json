@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "changedFields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "approvedBy": {
+      "type": "string"
+    },
+    "sourceHashes": {
+      "type": "object",
+      "properties": {
+        "prd": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "requirements": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "audit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "prd",
+        "requirements",
+        "audit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "taskId",
+    "reason",
+    "changedFields",
+    "approvedBy",
+    "sourceHashes"
+  ],
+  "additionalProperties": false
+}

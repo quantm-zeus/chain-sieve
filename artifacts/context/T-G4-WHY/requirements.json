@@ -1,0 +1,156 @@
+[
+  {
+    "id": "FR-WHY-001",
+    "text": "Deterministic “why now” decomposition against the previous valid evaluation.",
+    "textSha256": "0c60691846b42cda4cdb51dd4cc84edf05fd44092c92f6fabf625b0f437a4b9c",
+    "line": 6076,
+    "family": "FR-WHY",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-WHY-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/why.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_why_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/why-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/why/"
+    ],
+    "telemetryRefs": [
+      "telemetry/why.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-WHY-002",
+    "text": "Material changes include threshold, rank, lifecycle, risk, thesis, expiry, conflict, and capability deltas.",
+    "textSha256": "d0235821b48895f1cdd9c55de7f99a62ed961fd79fc315bbfe87bb7aa797fa47",
+    "line": 6077,
+    "family": "FR-WHY",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-WHY-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/why.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_why_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/why-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/why/"
+    ],
+    "telemetryRefs": [
+      "telemetry/why.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "apps/dashboard"
+  ],
+  "allowedPaths": [
+    "apps/dashboard/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-ADM/**",
+    "packages/shared-schemas/src/adm.ts"
+  ],
+  "writeSet": [
+    "apps/dashboard/**",
+    "apps/api/src/routes/admin/**"
+  ]
+}

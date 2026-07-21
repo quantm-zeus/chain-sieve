@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "FR-DATA-007",
+    "text": "Backfilled or retrospectively fetched observations store `retrieved_as_backfill`, original event coordinates, actual `fetched_at`, actual earliest system `available_at`, and the reason the record was unavailable earlier; event time cannot substitute for availability time.",
+    "textSha256": "3925627a64f4a175a4599b77f580d9ddb43adbddeb947d33b7047b2bd640ff80",
+    "line": 6415,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-007",
+      "packages/evidence/** @requirement FR-DATA-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-008",
+    "text": "Historical simulations exclude retrospective-only data from decisions before its actual availability and separately label oracle, hindsight, cross-fitted research, and realizable replay modes.",
+    "textSha256": "f5a80a595b63aeb97189cf1837c9883fa361a94db178fb0108fb5daf3b4d17c9",
+    "line": 6416,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-008",
+      "packages/evidence/** @requirement FR-DATA-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-009",
+    "text": "Every candidate decision stores `decision_ready_at`, `policy_decided_at`, `workflow_completed_at`, `delivery_eligible_at`, `delivered_at` when applicable, and a versioned `counterfactual_delivery_at` for non-delivered comparison arms.",
+    "textSha256": "c5f22df0413a2e1c6836f125e7c8c70c274a90a1e07ca0ce8ccb3d2600e8c3b3",
+    "line": 6417,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-009",
+      "packages/evidence/** @requirement FR-DATA-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-010",
+    "text": "Field-level availability derives from the latest valid revision that was both authorized and obtainable at the decision time; current views and historical replay use separate explicit query semantics.",
+    "textSha256": "4137e06e398fadbc8543a259b90955f1c45cb5a3c8cd12f7278e49b72559553e",
+    "line": 6418,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-010",
+      "packages/evidence/** @requirement FR-DATA-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-011",
+    "text": "Evidence acquisition states are `NOT_REQUESTED_BY_POLICY`, `REQUESTED`, `COST_BLOCKED`, `QUOTA_BLOCKED`, `RIGHTS_BLOCKED`, `UNSUPPORTED`, `PROVIDER_UNAVAILABLE`, `FAILED`, `RETURNED_EMPTY`, or `RETURNED`, and remain distinct from substantive negative evidence.",
+    "textSha256": "fe0d71f896ecdf620201f2bcbb7bfaec0d97219c6e3b76e773ebfa21542a559b",
+    "line": 6419,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-011",
+      "packages/evidence/** @requirement FR-DATA-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-012",
+    "text": "Acquisition records store policy version, candidate state, requested fields, expected value of information, estimated/actual cost, randomized assignment probability and seed when applicable, timestamps, result state, evidence IDs, and whether the evidence changed the final decision.",
+    "textSha256": "79a59e437c0b5b84f456dce663a9cdc0b9043f67344a948663c9c95ee443294a",
+    "line": 6420,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-012",
+      "packages/evidence/** @requirement FR-DATA-012"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-013",
+    "text": "The system maintains declared and empirically estimated source-dependence edges with validity interval, method, evidence, confidence, and effect on effective independent-evidence count.",
+    "textSha256": "3f02f2bb53425127410e07b3005cc1effdb03021f5fa105da7cee494eb70e594",
+    "line": 6421,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-013",
+      "packages/evidence/** @requirement FR-DATA-013"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-014",
+    "text": "Empirical source dependence evaluates correlated values/errors, update timing, first-seen timing, outages, schema/rounding fingerprints, common missingness, and known upstream relationships; material dependence reduces independence credit automatically.",
+    "textSha256": "fa4328623ac6dffc843c112aae856abd0b816d00feff371b4287131804e4c999",
+    "line": 6422,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-014",
+      "packages/evidence/** @requirement FR-DATA-014"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-015",
+    "text": "Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic.",
+    "textSha256": "9de59782b0a22e24ad88b85221d45f4b9ccb8b57283244ac9337b162f6c3c042",
+    "line": 6423,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-015",
+      "packages/evidence/** @requirement FR-DATA-015"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-016",
+    "text": "Provider conflicts preserve all raw observations and distinguish benign latency/rounding variance, common-upstream duplication, material disagreement, and unresolved decision-critical conflict.",
+    "textSha256": "a1a96f52a6208839b625b354f19f2c36abcd83759f9b3b57711fa59160f4f7d6",
+    "line": 6424,
+    "family": "FR-DATA",
+    "dependencyGroup": "G1",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-016",
+      "packages/evidence/** @requirement FR-DATA-016"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.40 Temporal integrity, evidence acquisition, and source dependence",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

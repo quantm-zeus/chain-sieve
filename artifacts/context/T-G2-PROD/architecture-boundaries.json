@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/release-conformance"
+  ],
+  "allowedPaths": [
+    "packages/release-conformance/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G2-PROD/**",
+    "packages/shared-schemas/src/prod.ts"
+  ],
+  "writeSet": [
+    "packages/release-conformance/**",
+    "packages/capability-registry/**"
+  ]
+}

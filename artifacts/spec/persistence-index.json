@@ -1,0 +1,1146 @@
+[
+  {
+    "name": "chains",
+    "line": 4471
+  },
+  {
+    "name": "assets",
+    "line": 4472
+  },
+  {
+    "name": "asset_representations",
+    "line": 4473
+  },
+  {
+    "name": "contracts",
+    "line": 4474
+  },
+  {
+    "name": "pools",
+    "line": 4475
+  },
+  {
+    "name": "pairs",
+    "line": 4476
+  },
+  {
+    "name": "launches",
+    "line": 4477
+  },
+  {
+    "name": "migrations",
+    "line": 4478
+  },
+  {
+    "name": "wallets",
+    "line": 4479
+  },
+  {
+    "name": "wallet_entities",
+    "line": 4480
+  },
+  {
+    "name": "wallet_clusters",
+    "line": 4481
+  },
+  {
+    "name": "wallet_edges",
+    "line": 4482
+  },
+  {
+    "name": "developer_entities",
+    "line": 4483
+  },
+  {
+    "name": "social_accounts",
+    "line": 4484
+  },
+  {
+    "name": "narratives",
+    "line": 4485
+  },
+  {
+    "name": "system_addresses",
+    "line": 4486
+  },
+  {
+    "name": "system_address_versions",
+    "line": 4487
+  },
+  {
+    "name": "discovery_sources",
+    "line": 4488
+  },
+  {
+    "name": "discovery_universe_entries",
+    "line": 4489
+  },
+  {
+    "name": "providers",
+    "line": 4495
+  },
+  {
+    "name": "provider_operations",
+    "line": 4496
+  },
+  {
+    "name": "provider_capabilities",
+    "line": 4497
+  },
+  {
+    "name": "provider_credentials_metadata",
+    "line": 4498
+  },
+  {
+    "name": "provider_health",
+    "line": 4499
+  },
+  {
+    "name": "provider_contract_runs",
+    "line": 4500
+  },
+  {
+    "name": "provider_calls",
+    "line": 4501
+  },
+  {
+    "name": "provider_conflicts",
+    "line": 4502
+  },
+  {
+    "name": "license_policies",
+    "line": 4503
+  },
+  {
+    "name": "quota_budgets",
+    "line": 4504
+  },
+  {
+    "name": "quota_reservations",
+    "line": 4505
+  },
+  {
+    "name": "quota_usage",
+    "line": 4506
+  },
+  {
+    "name": "operation_cost_policies",
+    "line": 4507
+  },
+  {
+    "name": "quota_reserve_policies",
+    "line": 4508
+  },
+  {
+    "name": "quota_forecasts",
+    "line": 4509
+  },
+  {
+    "name": "blocked_cost_operations",
+    "line": 4510
+  },
+  {
+    "name": "observations",
+    "line": 4516
+  },
+  {
+    "name": "observation_revisions",
+    "line": 4517
+  },
+  {
+    "name": "snapshots",
+    "line": 4518
+  },
+  {
+    "name": "artifacts",
+    "line": 4519
+  },
+  {
+    "name": "evidence",
+    "line": 4520
+  },
+  {
+    "name": "claims",
+    "line": 4521
+  },
+  {
+    "name": "claim_evidence",
+    "line": 4522
+  },
+  {
+    "name": "feature_definitions",
+    "line": 4523
+  },
+  {
+    "name": "feature_sets",
+    "line": 4524
+  },
+  {
+    "name": "feature_set_memberships",
+    "line": 4525
+  },
+  {
+    "name": "feature_values",
+    "line": 4526
+  },
+  {
+    "name": "cohort_definitions",
+    "line": 4527
+  },
+  {
+    "name": "cohort_statistics",
+    "line": 4528
+  },
+  {
+    "name": "market_regimes",
+    "line": 4529
+  },
+  {
+    "name": "regime_route_definitions",
+    "line": 4530
+  },
+  {
+    "name": "regime_route_decisions",
+    "line": 4531
+  },
+  {
+    "name": "narrative_definitions",
+    "line": 4532
+  },
+  {
+    "name": "narrative_memberships",
+    "line": 4533
+  },
+  {
+    "name": "narrative_edges",
+    "line": 4534
+  },
+  {
+    "name": "narrative_flow_snapshots",
+    "line": 4535
+  },
+  {
+    "name": "chain_flow_snapshots",
+    "line": 4536
+  },
+  {
+    "name": "bridge_flow_events",
+    "line": 4537
+  },
+  {
+    "name": "crowding_assessments",
+    "line": 4538
+  },
+  {
+    "name": "exit_liquidity_assessments",
+    "line": 4539
+  },
+  {
+    "name": "latency_spans",
+    "line": 4540
+  },
+  {
+    "name": "latency_aggregates",
+    "line": 4541
+  },
+  {
+    "name": "system_capabilities",
+    "line": 4542
+  },
+  {
+    "name": "capability_assessments",
+    "line": 4543
+  },
+  {
+    "name": "economic_trade_events",
+    "line": 4544
+  },
+  {
+    "name": "economic_trade_legs",
+    "line": 4545
+  },
+  {
+    "name": "supply_assessments",
+    "line": 4546
+  },
+  {
+    "name": "solana_security_assessments",
+    "line": 4547
+  },
+  {
+    "name": "solana_token_extensions",
+    "line": 4548
+  },
+  {
+    "name": "tradability_assessments",
+    "line": 4549
+  },
+  {
+    "name": "execution_scenarios",
+    "line": 4550
+  },
+  {
+    "name": "winning_pattern_cohorts",
+    "line": 4551
+  },
+  {
+    "name": "winning_pattern_archetypes",
+    "line": 4552
+  },
+  {
+    "name": "winning_pattern_versions",
+    "line": 4553
+  },
+  {
+    "name": "winning_pattern_memberships",
+    "line": 4554
+  },
+  {
+    "name": "pattern_sequence_features",
+    "line": 4555
+  },
+  {
+    "name": "pattern_stage_definitions",
+    "line": 4556
+  },
+  {
+    "name": "pattern_match_assessments",
+    "line": 4557
+  },
+  {
+    "name": "wallet_alpha_profiles",
+    "line": 4558
+  },
+  {
+    "name": "wallet_alpha_observations",
+    "line": 4559
+  },
+  {
+    "name": "wallet_entity_resolution_versions",
+    "line": 4560
+  },
+  {
+    "name": "deployer_funder_profiles",
+    "line": 4561
+  },
+  {
+    "name": "deployer_launch_histories",
+    "line": 4562
+  },
+  {
+    "name": "deployer_funder_edges",
+    "line": 4563
+  },
+  {
+    "name": "liquidity_resilience_assessments",
+    "line": 4564
+  },
+  {
+    "name": "liquidity_stress_events",
+    "line": 4565
+  },
+  {
+    "name": "launch_state_definitions",
+    "line": 4566
+  },
+  {
+    "name": "launch_state_transitions",
+    "line": 4567
+  },
+  {
+    "name": "attention_diffusion_assessments",
+    "line": 4568
+  },
+  {
+    "name": "attention_cluster_edges",
+    "line": 4569
+  },
+  {
+    "name": "leader_laggard_assessments",
+    "line": 4570
+  },
+  {
+    "name": "novelty_assessments",
+    "line": 4571
+  },
+  {
+    "name": "multi_view_assessments",
+    "line": 4572
+  },
+  {
+    "name": "failure_hazard_assessments",
+    "line": 4573
+  },
+  {
+    "name": "opportunity_frontiers",
+    "line": 4574
+  },
+  {
+    "name": "opportunity_frontier_memberships",
+    "line": 4575
+  },
+  {
+    "name": "alpha_artifact_lifecycles",
+    "line": 4576
+  },
+  {
+    "name": "alpha_decay_assessments",
+    "line": 4577
+  },
+  {
+    "name": "learned_artifact_versions",
+    "line": 4578
+  },
+  {
+    "name": "learned_artifact_availability",
+    "line": 4579
+  },
+  {
+    "name": "cross_fit_assignments",
+    "line": 4580
+  },
+  {
+    "name": "holdout_registry",
+    "line": 4581
+  },
+  {
+    "name": "holdout_exposure_events",
+    "line": 4582
+  },
+  {
+    "name": "alpha_lab_runs",
+    "line": 4583
+  },
+  {
+    "name": "alpha_lab_checkpoints",
+    "line": 4584
+  },
+  {
+    "name": "alpha_export_manifests",
+    "line": 4585
+  },
+  {
+    "name": "alpha_artifact_imports",
+    "line": 4586
+  },
+  {
+    "name": "alpha_evidence_packs",
+    "line": 4587
+  },
+  {
+    "name": "alpha_evidence_pack_items",
+    "line": 4588
+  },
+  {
+    "name": "population_claims",
+    "line": 4589
+  },
+  {
+    "name": "population_coverage_assessments",
+    "line": 4590
+  },
+  {
+    "name": "candidates",
+    "line": 4596
+  },
+  {
+    "name": "candidate_profile_memberships",
+    "line": 4597
+  },
+  {
+    "name": "candidate_state_transitions",
+    "line": 4598
+  },
+  {
+    "name": "candidate_risk_transitions",
+    "line": 4599
+  },
+  {
+    "name": "candidate_rankings",
+    "line": 4600
+  },
+  {
+    "name": "candidate_rechecks",
+    "line": 4601
+  },
+  {
+    "name": "candidate_signal_decompositions",
+    "line": 4602
+  },
+  {
+    "name": "candidate_decay_assessments",
+    "line": 4603
+  },
+  {
+    "name": "theses",
+    "line": 4604
+  },
+  {
+    "name": "thesis_versions",
+    "line": 4605
+  },
+  {
+    "name": "thesis_events",
+    "line": 4606
+  },
+  {
+    "name": "watchlists",
+    "line": 4607
+  },
+  {
+    "name": "watchlist_items",
+    "line": 4608
+  },
+  {
+    "name": "agent_profiles",
+    "line": 4614
+  },
+  {
+    "name": "model_profiles",
+    "line": 4615
+  },
+  {
+    "name": "prompt_templates",
+    "line": 4616
+  },
+  {
+    "name": "prompt_versions",
+    "line": 4617
+  },
+  {
+    "name": "tool_profiles",
+    "line": 4618
+  },
+  {
+    "name": "workflow_definitions",
+    "line": 4619
+  },
+  {
+    "name": "workflow_versions",
+    "line": 4620
+  },
+  {
+    "name": "outcome_profiles",
+    "line": 4621
+  },
+  {
+    "name": "ranking_policies",
+    "line": 4622
+  },
+  {
+    "name": "alert_policies",
+    "line": 4623
+  },
+  {
+    "name": "resolved_run_configs",
+    "line": 4624
+  },
+  {
+    "name": "schedules",
+    "line": 4630
+  },
+  {
+    "name": "schedule_versions",
+    "line": 4631
+  },
+  {
+    "name": "trigger_inbox",
+    "line": 4632
+  },
+  {
+    "name": "workflow_runs",
+    "line": 4633
+  },
+  {
+    "name": "workflow_steps",
+    "line": 4634
+  },
+  {
+    "name": "step_attempts",
+    "line": 4635
+  },
+  {
+    "name": "workflow_leases",
+    "line": 4636
+  },
+  {
+    "name": "dead_letter_items",
+    "line": 4637
+  },
+  {
+    "name": "run_events",
+    "line": 4638
+  },
+  {
+    "name": "tool_calls",
+    "line": 4639
+  },
+  {
+    "name": "agent_decisions",
+    "line": 4640
+  },
+  {
+    "name": "alerts",
+    "line": 4646
+  },
+  {
+    "name": "alert_deliveries",
+    "line": 4647
+  },
+  {
+    "name": "notification_outbox",
+    "line": 4648
+  },
+  {
+    "name": "feedback",
+    "line": 4649
+  },
+  {
+    "name": "outcome_observations",
+    "line": 4650
+  },
+  {
+    "name": "outcome_labels",
+    "line": 4651
+  },
+  {
+    "name": "evaluation_datasets",
+    "line": 4652
+  },
+  {
+    "name": "evaluation_experiments",
+    "line": 4653
+  },
+  {
+    "name": "backtest_runs",
+    "line": 4654
+  },
+  {
+    "name": "baseline_results",
+    "line": 4655
+  },
+  {
+    "name": "missed_opportunities",
+    "line": 4656
+  },
+  {
+    "name": "drift_metrics",
+    "line": 4657
+  },
+  {
+    "name": "analog_indices",
+    "line": 4658
+  },
+  {
+    "name": "analog_queries",
+    "line": 4659
+  },
+  {
+    "name": "analog_results",
+    "line": 4660
+  },
+  {
+    "name": "counterfactual_experiments",
+    "line": 4661
+  },
+  {
+    "name": "sensitivity_runs",
+    "line": 4662
+  },
+  {
+    "name": "review_queue_items",
+    "line": 4663
+  },
+  {
+    "name": "human_labels",
+    "line": 4664
+  },
+  {
+    "name": "label_adjudications",
+    "line": 4665
+  },
+  {
+    "name": "policy_compile_runs",
+    "line": 4666
+  },
+  {
+    "name": "policy_drafts",
+    "line": 4667
+  },
+  {
+    "name": "policy_validation_results",
+    "line": 4668
+  },
+  {
+    "name": "outcome_maturity_states",
+    "line": 4669
+  },
+  {
+    "name": "outcome_observation_plans",
+    "line": 4670
+  },
+  {
+    "name": "outcome_observation_runs",
+    "line": 4671
+  },
+  {
+    "name": "outcome_sampling_strata",
+    "line": 4672
+  },
+  {
+    "name": "outcome_sampling_assignments",
+    "line": 4673
+  },
+  {
+    "name": "execution_outcomes",
+    "line": 4674
+  },
+  {
+    "name": "negative_control_runs",
+    "line": 4675
+  },
+  {
+    "name": "clustered_interval_runs",
+    "line": 4676
+  },
+  {
+    "name": "discovery_coverage_metrics",
+    "line": 4677
+  },
+  {
+    "name": "discovery_source_outcomes",
+    "line": 4678
+  },
+  {
+    "name": "information_gain_plans",
+    "line": 4679
+  },
+  {
+    "name": "information_gain_check_decisions",
+    "line": 4680
+  },
+  {
+    "name": "exploration_policies",
+    "line": 4681
+  },
+  {
+    "name": "exploration_allocations",
+    "line": 4682
+  },
+  {
+    "name": "exploration_assignments",
+    "line": 4683
+  },
+  {
+    "name": "shadow_portfolios",
+    "line": 4684
+  },
+  {
+    "name": "shadow_portfolio_versions",
+    "line": 4685
+  },
+  {
+    "name": "shadow_positions",
+    "line": 4686
+  },
+  {
+    "name": "shadow_orders",
+    "line": 4687
+  },
+  {
+    "name": "shadow_fills",
+    "line": 4688
+  },
+  {
+    "name": "shadow_portfolio_snapshots",
+    "line": 4689
+  },
+  {
+    "name": "shadow_portfolio_results",
+    "line": 4690
+  },
+  {
+    "name": "shadow_shared_liquidity_exposures",
+    "line": 4691
+  },
+  {
+    "name": "shadow_path_ambiguities",
+    "line": 4692
+  },
+  {
+    "name": "adversarial_scenarios",
+    "line": 4693
+  },
+  {
+    "name": "adversarial_simulation_runs",
+    "line": 4694
+  },
+  {
+    "name": "adversarial_simulation_results",
+    "line": 4695
+  },
+  {
+    "name": "pattern_validation_runs",
+    "line": 4696
+  },
+  {
+    "name": "pattern_multiple_testing_runs",
+    "line": 4697
+  },
+  {
+    "name": "alpha_artifact_evaluations",
+    "line": 4698
+  },
+  {
+    "name": "admin_users",
+    "line": 4704
+  },
+  {
+    "name": "sessions",
+    "line": 4705
+  },
+  {
+    "name": "mcp_clients",
+    "line": 4706
+  },
+  {
+    "name": "mcp_api_keys",
+    "line": 4707
+  },
+  {
+    "name": "audit_events",
+    "line": 4708
+  },
+  {
+    "name": "security_incidents",
+    "line": 4709
+  },
+  {
+    "name": "agent_sessions",
+    "line": 4710
+  },
+  {
+    "name": "agent_messages",
+    "line": 4711
+  },
+  {
+    "name": "session_summaries",
+    "line": 4712
+  },
+  {
+    "name": "session_entities",
+    "line": 4713
+  },
+  {
+    "name": "research_notebooks",
+    "line": 4714
+  },
+  {
+    "name": "notebook_entries",
+    "line": 4715
+  },
+  {
+    "name": "notebook_evidence_links",
+    "line": 4716
+  },
+  {
+    "name": "casebook_entity_links",
+    "line": 4717
+  },
+  {
+    "name": "fallback_decisions",
+    "line": 4718
+  },
+  {
+    "name": "programs",
+    "line": 4738
+  },
+  {
+    "name": "program_versions",
+    "line": 4739
+  },
+  {
+    "name": "program_support_manifests",
+    "line": 4740
+  },
+  {
+    "name": "program_support_manifest_references",
+    "line": 4741
+  },
+  {
+    "name": "account_layout_versions",
+    "line": 4742
+  },
+  {
+    "name": "instruction_decoder_versions",
+    "line": 4743
+  },
+  {
+    "name": "collector_scopes",
+    "line": 4744
+  },
+  {
+    "name": "collector_scope_programs",
+    "line": 4745
+  },
+  {
+    "name": "collector_partitions",
+    "line": 4746
+  },
+  {
+    "name": "collector_connections",
+    "line": 4747
+  },
+  {
+    "name": "collector_checkpoints",
+    "line": 4748
+  },
+  {
+    "name": "collector_gaps",
+    "line": 4749
+  },
+  {
+    "name": "collector_gap_ranges",
+    "line": 4750
+  },
+  {
+    "name": "collector_backfill_runs",
+    "line": 4751
+  },
+  {
+    "name": "raw_chain_event_indexes",
+    "line": 4752
+  },
+  {
+    "name": "collector_first_seen_events",
+    "line": 4753
+  },
+  {
+    "name": "collector_health_samples",
+    "line": 4754
+  },
+  {
+    "name": "provider_operation_verifications",
+    "line": 4760
+  },
+  {
+    "name": "provider_operation_lifecycle_events",
+    "line": 4761
+  },
+  {
+    "name": "provider_endpoint_allowlists",
+    "line": 4762
+  },
+  {
+    "name": "provider_negative_capability_scans",
+    "line": 4763
+  },
+  {
+    "name": "source_identities",
+    "line": 4764
+  },
+  {
+    "name": "source_fingerprints",
+    "line": 4765
+  },
+  {
+    "name": "source_dependence_edges",
+    "line": 4766
+  },
+  {
+    "name": "source_dependence_estimation_runs",
+    "line": 4767
+  },
+  {
+    "name": "evidence_acquisition_decisions",
+    "line": 4768
+  },
+  {
+    "name": "evidence_acquisition_attempts",
+    "line": 4769
+  },
+  {
+    "name": "evidence_probe_assignments",
+    "line": 4770
+  },
+  {
+    "name": "evidence_acquisition_impacts",
+    "line": 4771
+  },
+  {
+    "name": "capacity_contracts",
+    "line": 4777
+  },
+  {
+    "name": "capacity_contract_versions",
+    "line": 4778
+  },
+  {
+    "name": "capacity_scenarios",
+    "line": 4779
+  },
+  {
+    "name": "capacity_demand_items",
+    "line": 4780
+  },
+  {
+    "name": "capacity_limit_evidence",
+    "line": 4781
+  },
+  {
+    "name": "capacity_simulation_runs",
+    "line": 4782
+  },
+  {
+    "name": "capacity_admissions",
+    "line": 4783
+  },
+  {
+    "name": "capacity_forecasts",
+    "line": 4784
+  },
+  {
+    "name": "capacity_actuals",
+    "line": 4785
+  },
+  {
+    "name": "capacity_degradation_events",
+    "line": 4786
+  },
+  {
+    "name": "objective_definitions",
+    "line": 4787
+  },
+  {
+    "name": "objective_experiment_integrity_events",
+    "line": 4788
+  },
+  {
+    "name": "objective_population_claim_bindings",
+    "line": 4789
+  },
+  {
+    "name": "program_adapter_bindings",
+    "line": 4795
+  },
+  {
+    "name": "pool_math_adapter_versions",
+    "line": 4796
+  },
+  {
+    "name": "transfer_semantics_versions",
+    "line": 4797
+  },
+  {
+    "name": "adapter_parity_policies",
+    "line": 4798
+  },
+  {
+    "name": "adapter_parity_runs",
+    "line": 4799
+  },
+  {
+    "name": "adapter_parity_cases",
+    "line": 4800
+  },
+  {
+    "name": "execution_state_bundles",
+    "line": 4801
+  },
+  {
+    "name": "execution_state_inputs",
+    "line": 4802
+  },
+  {
+    "name": "execution_routes",
+    "line": 4803
+  },
+  {
+    "name": "execution_route_hops",
+    "line": 4804
+  },
+  {
+    "name": "action_delay_policies",
+    "line": 4805
+  },
+  {
+    "name": "delivery_latency_models",
+    "line": 4806
+  },
+  {
+    "name": "candidate_decision_times",
+    "line": 4807
+  },
+  {
+    "name": "counterfactual_delivery_draws",
+    "line": 4808
+  },
+  {
+    "name": "execution_stress_results",
+    "line": 4809
+  },
+  {
+    "name": "shared_liquidity_competition_runs",
+    "line": 4810
+  },
+  {
+    "name": "recovery_tier_policies",
+    "line": 4816
+  },
+  {
+    "name": "backup_manifests",
+    "line": 4817
+  },
+  {
+    "name": "restore_drills",
+    "line": 4818
+  },
+  {
+    "name": "restore_reconciliation_items",
+    "line": 4819
+  },
+  {
+    "name": "audit_checkpoints",
+    "line": 4820
+  },
+  {
+    "name": "approval_artifacts",
+    "line": 4821
+  },
+  {
+    "name": "data_rights_matrix_versions",
+    "line": 4822
+  },
+  {
+    "name": "public_claim_policy_versions",
+    "line": 4823
+  },
+  {
+    "name": "public_authorization_artifacts",
+    "line": 4824
+  },
+  {
+    "name": "public_authorization_events",
+    "line": 4825
+  },
+  {
+    "name": "requirement_manifests",
+    "line": 4826
+  },
+  {
+    "name": "requirement_manifest_items",
+    "line": 4827
+  },
+  {
+    "name": "release_conformance_runs",
+    "line": 4828
+  },
+  {
+    "name": "release_conformance_results",
+    "line": 4829
+  },
+  {
+    "name": "release_deviations",
+    "line": 4830
+  }
+]

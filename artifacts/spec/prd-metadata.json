@@ -1,0 +1,16 @@
+{
+  "document": {
+    "documentId": "CIAG-PRD-FINAL",
+    "version": "6.0.0",
+    "generatedAt": "2026-07-20T00:00:00Z",
+    "normalizedSha256": "1f9b6590c8331dd52ae63c51a93e8e6b631b3a70c37df3e619486e1779e2db8e",
+    "lineCount": 13388,
+    "normalizationContract": "Appendix V.2 generated-field normalization",
+    "sourcePath": "crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  }
+}

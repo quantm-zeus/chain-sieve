@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/signal-intelligence:contract": "b76deb17d03ad8e11a7ba95f78a6ea2a3b20a741a260b304e3868ec150b98b66"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G1-DATA",
+  "title": "FR-DATA implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G1",
+  "cluster": "C-G1-IMPLEMENTATION",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "requirements": [
+    "FR-DATA-007",
+    "FR-DATA-008",
+    "FR-DATA-009",
+    "FR-DATA-010",
+    "FR-DATA-011",
+    "FR-DATA-012",
+    "FR-DATA-013",
+    "FR-DATA-014",
+    "FR-DATA-015",
+    "FR-DATA-016"
+  ],
+  "acceptanceCriteria": [
+    "AC-020",
+    "AC-021",
+    "AC-022",
+    "AC-023",
+    "AC-240",
+    "AC-241",
+    "AC-242",
+    "AC-243",
+    "AC-244",
+    "AC-245",
+    "AC-246",
+    "AC-247",
+    "AC-248",
+    "AC-249"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/persistence"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-DATA/**",
+    "packages/shared-schemas/src/data.ts"
+  ],
+  "writeSet": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ],
+  "allowedPaths": [
+    "packages/persistence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "exclusiveLocks": [
+    "infra/migrations"
+  ],
+  "interfaceHashes": {
+    "packages/persistence:contract": "e5d4684149eede4db31ff7248b39e98e61a04f588de2b07343c5b355443327c2"
+  },
+  "deliverables": [
+    "packages/persistence/** @requirement FR-DATA-007",
+    "packages/evidence/** @requirement FR-DATA-007",
+    "packages/persistence/** @requirement FR-DATA-008",
+    "packages/evidence/** @requirement FR-DATA-008",
+    "packages/persistence/** @requirement FR-DATA-009",
+    "packages/evidence/** @requirement FR-DATA-009",
+    "packages/persistence/** @requirement FR-DATA-010",
+    "packages/evidence/** @requirement FR-DATA-010",
+    "packages/persistence/** @requirement FR-DATA-011",
+    "packages/evidence/** @requirement FR-DATA-011",
+    "packages/persistence/** @requirement FR-DATA-012",
+    "packages/evidence/** @requirement FR-DATA-012",
+    "packages/persistence/** @requirement FR-DATA-013",
+    "packages/evidence/** @requirement FR-DATA-013",
+    "packages/persistence/** @requirement FR-DATA-014",
+    "packages/evidence/** @requirement FR-DATA-014",
+    "packages/persistence/** @requirement FR-DATA-015",
+    "packages/evidence/** @requirement FR-DATA-015",
+    "packages/persistence/** @requirement FR-DATA-016",
+    "packages/evidence/** @requirement FR-DATA-016",
+    "packages/persistence implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-020.spec.ts",
+    "tests/negative/AC-020.negative.spec.ts",
+    "tests/acceptance/AC-021.spec.ts",
+    "tests/negative/AC-021.negative.spec.ts",
+    "tests/acceptance/AC-022.spec.ts",
+    "tests/negative/AC-022.negative.spec.ts",
+    "tests/acceptance/AC-023.spec.ts",
+    "tests/negative/AC-023.negative.spec.ts",
+    "tests/acceptance/AC-240.spec.ts",
+    "tests/negative/AC-240.negative.spec.ts",
+    "tests/acceptance/AC-241.spec.ts",
+    "tests/negative/AC-241.negative.spec.ts",
+    "tests/acceptance/AC-242.spec.ts",
+    "tests/negative/AC-242.negative.spec.ts",
+    "tests/acceptance/AC-243.spec.ts",
+    "tests/negative/AC-243.negative.spec.ts",
+    "tests/acceptance/AC-244.spec.ts",
+    "tests/negative/AC-244.negative.spec.ts",
+    "tests/acceptance/AC-245.spec.ts",
+    "tests/negative/AC-245.negative.spec.ts",
+    "tests/acceptance/AC-246.spec.ts",
+    "tests/negative/AC-246.negative.spec.ts",
+    "tests/acceptance/AC-247.spec.ts",
+    "tests/negative/AC-247.negative.spec.ts",
+    "tests/acceptance/AC-248.spec.ts",
+    "tests/negative/AC-248.negative.spec.ts",
+    "tests/acceptance/AC-249.spec.ts",
+    "tests/negative/AC-249.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm task:verify T-G1-DATA",
+      "expected": "exit 0 with independently derived evidence"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 3,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6415,
+      "id": "FR-DATA-007"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6416,
+      "id": "FR-DATA-008"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6417,
+      "id": "FR-DATA-009"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6418,
+      "id": "FR-DATA-010"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6419,
+      "id": "FR-DATA-011"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6420,
+      "id": "FR-DATA-012"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6421,
+      "id": "FR-DATA-013"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6422,
+      "id": "FR-DATA-014"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6423,
+      "id": "FR-DATA-015"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6424,
+      "id": "FR-DATA-016"
+    }
+  ]
+}

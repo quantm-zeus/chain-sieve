@@ -1,0 +1,150 @@
+{
+  "nodes": [
+    {
+      "id": "C-G0-IMPLEMENTATION",
+      "group": "G0"
+    },
+    {
+      "id": "C-G1-IMPLEMENTATION",
+      "group": "G1"
+    },
+    {
+      "id": "C-G2-IMPLEMENTATION",
+      "group": "G2"
+    },
+    {
+      "id": "C-G3-IMPLEMENTATION",
+      "group": "G3"
+    },
+    {
+      "id": "C-G4-IMPLEMENTATION",
+      "group": "G4"
+    },
+    {
+      "id": "C-G5-IMPLEMENTATION",
+      "group": "G5"
+    },
+    {
+      "id": "C-G6-IMPLEMENTATION",
+      "group": "G6"
+    },
+    {
+      "id": "C-G7-IMPLEMENTATION",
+      "group": "G7"
+    }
+  ],
+  "edges": [
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G1-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G2-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G2-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G3-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G3-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G2-IMPLEMENTATION",
+      "to": "C-G3-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G4-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G4-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G2-IMPLEMENTATION",
+      "to": "C-G4-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G3-IMPLEMENTATION",
+      "to": "C-G4-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G5-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G5-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G2-IMPLEMENTATION",
+      "to": "C-G5-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G3-IMPLEMENTATION",
+      "to": "C-G5-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G4-IMPLEMENTATION",
+      "to": "C-G5-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G2-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G3-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G4-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G5-IMPLEMENTATION",
+      "to": "C-G6-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G0-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G1-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G2-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G3-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G4-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G5-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    },
+    {
+      "from": "C-G6-IMPLEMENTATION",
+      "to": "C-G7-IMPLEMENTATION"
+    }
+  ]
+}

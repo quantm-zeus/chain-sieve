@@ -1,0 +1,28 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA",
+    "T-G1-DISC",
+    "T-G1-EVAL",
+    "T-G1-EXEC",
+    "T-G1-MAT",
+    "T-G1-OBJ",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD"
+  ],
+  "interfaceHashes": {
+    "packages/persistence:contract": "39024e7d96f53876be354e4d2bf50dfedecf4b73956be9ea248b9689006bd50b"
+  }
+}

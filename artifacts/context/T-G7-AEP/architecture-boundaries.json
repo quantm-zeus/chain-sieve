@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/agent-runtime"
+  ],
+  "allowedPaths": [
+    "packages/agent-runtime/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G7-AEP/**",
+    "packages/shared-schemas/src/aep.ts"
+  ],
+  "writeSet": [
+    "packages/agent-runtime/**",
+    "packages/alpha-artifact-store/**"
+  ]
+}

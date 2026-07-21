@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "apps/api/src/mcp"
+  ],
+  "allowedPaths": [
+    "apps/api/src/mcp/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-MCP/**",
+    "packages/shared-schemas/src/mcp.ts"
+  ],
+  "writeSet": [
+    "apps/api/src/mcp/**",
+    "packages/tool-core/**"
+  ]
+}

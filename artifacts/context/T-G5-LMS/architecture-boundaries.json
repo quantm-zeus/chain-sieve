@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/launch-state-intelligence"
+  ],
+  "allowedPaths": [
+    "packages/launch-state-intelligence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-LMS/**",
+    "packages/shared-schemas/src/lms.ts"
+  ],
+  "writeSet": [
+    "packages/launch-state-intelligence/**"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/narrative-intelligence"
+  ],
+  "allowedPaths": [
+    "packages/narrative-intelligence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-NAR/**",
+    "packages/shared-schemas/src/nar.ts"
+  ],
+  "writeSet": [
+    "packages/narrative-intelligence/**"
+  ]
+}

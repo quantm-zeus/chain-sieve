@@ -1,0 +1,447 @@
+[
+  {
+    "id": "FR-ADQ-001",
+    "text": "Attention diffusion models independent source/community breadth, propagation sequence, concentration, duplication similarity, account/source quality, paid-promotion evidence, and social-to-economic-buyer conversion.",
+    "textSha256": "b74c8f21d3c4d5c7e50e0cc65a1da7a54015c0d4b0d9b0d6e55db65b39b93513",
+    "line": 6267,
+    "family": "FR-ADQ",
+    "dependencyGroup": "G5",
+    "owner": "packages/attention-diffusion",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/attention-diffusion/** @requirement FR-ADQ-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adq.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_adq_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adq-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adq/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adq.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.25 Attention Diffusion Quality",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADQ-002",
+    "text": "Missing paid social capability is missingness, not negative attention; source rights and bot/scraping prohibitions are enforced.",
+    "textSha256": "21a3930b357908799ff5cad997b494ac49897bfbe05ab51c3b104dc09feb78c6",
+    "line": 6268,
+    "family": "FR-ADQ",
+    "dependencyGroup": "G5",
+    "owner": "packages/attention-diffusion",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/attention-diffusion/** @requirement FR-ADQ-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adq.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_adq_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adq-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adq/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adq.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.25 Attention Diffusion Quality",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADQ-003",
+    "text": "KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion.",
+    "textSha256": "1817d6c215505cedd989e8309bb90fc5a5342b01b43b144707ec46767cffc3fc",
+    "line": 6269,
+    "family": "FR-ADQ",
+    "dependencyGroup": "G5",
+    "owner": "packages/attention-diffusion",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/attention-diffusion/** @requirement FR-ADQ-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adq.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_adq_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adq-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adq/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adq.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.25 Attention Diffusion Quality",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADQ-004",
+    "text": "Attention evidence cannot override deterministic security, execution, creator, or liquidity risk.",
+    "textSha256": "20b87c18bedf54c46bab8a48c735b831184221c60f6590f7564e6fb60f0b1d88",
+    "line": 6270,
+    "family": "FR-ADQ",
+    "dependencyGroup": "G5",
+    "owner": "packages/attention-diffusion",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/attention-diffusion/** @requirement FR-ADQ-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adq.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_adq_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adq-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adq/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adq.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.25 Attention Diffusion Quality",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ADQ-005",
+    "text": "Free-tier operation supports aggregate/user-curated sources and exposes coverage sufficient to prevent overclaiming.",
+    "textSha256": "178e2513dddc20727c1b1b2efe499f8cc87ac583aa083b7d336b1625d5b6e022",
+    "line": 6271,
+    "family": "FR-ADQ",
+    "dependencyGroup": "G5",
+    "owner": "packages/attention-diffusion",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/attention-diffusion/** @requirement FR-ADQ-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/adq.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_adq_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/adq-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/adq/"
+    ],
+    "telemetryRefs": [
+      "telemetry/adq.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.25 Attention Diffusion Quality",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

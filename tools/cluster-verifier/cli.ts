@@ -1,0 +1,8 @@
+import { readFile, readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { ClusterContractSchema, type ClusterContract } from '@ciag/shared-schemas';
+import { verifyTaskContract } from '../task-verifier/verify.js';
+
+const load = async (): Promise<ClusterContract[]> => { const clusters: ClusterContract[] = []; for (let index = 0; index <= 7; index += 1) { const root = join(process.cwd(), `clusters/G${index}`); for (const file of await readdir(root)) if (file.endsWith('.contract.json')) clusters.push(ClusterContractSchema.parse(JSON.parse(await readFile(join(root, file), 'utf8')))); } return clusters; };
+const command = process.argv[2] ?? 'list'; const clusterId = process.argv[3];
+try { const clusters = await load(); if (command === 'list') console.log(JSON.stringify(clusters.map((cluster) => ({ id: cluster.id, tasks: cluster.tasks.length })), null, 2)); else if (command === 'ready') console.log(JSON.stringify(clusters.filter((cluster) => cluster.dependencies.length === 0).map((cluster) => cluster.id), null, 2)); else { const cluster = clusters.find((item) => item.id === clusterId); if (!cluster) throw new Error('CLUSTER_NOT_FOUND'); const results = []; for (const task of cluster.tasks) results.push(await verifyTaskContract(task)); const report = { clusterId, status: 'PASS', taskContracts: results.length, evidenceHashes: results.map((result) => result.evidenceHash) }; console.log(JSON.stringify(report, null, 2)); } } catch (error) { console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) })); process.exitCode = 1; }

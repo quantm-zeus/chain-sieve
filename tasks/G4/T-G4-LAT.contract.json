@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G4-LAT",
+  "title": "FR-LAT implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G4",
+  "cluster": "C-G4-IMPLEMENTATION",
+  "riskLevel": "MEDIUM",
+  "autonomyLevel": "AUTONOMOUS",
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA",
+    "T-G1-DISC",
+    "T-G1-EVAL",
+    "T-G1-EXEC",
+    "T-G1-MAT",
+    "T-G1-OBJ",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD",
+    "T-G2-ADM",
+    "T-G2-ALERT",
+    "T-G2-DR",
+    "T-G2-PROD",
+    "T-G2-WF",
+    "T-G3-ADM",
+    "T-G3-AGT"
+  ],
+  "requirements": [
+    "FR-LAT-001",
+    "FR-LAT-002"
+  ],
+  "acceptanceCriteria": [
+    "AC-080",
+    "AC-226"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/latency-profiler"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-LAT/**",
+    "packages/shared-schemas/src/lat.ts"
+  ],
+  "writeSet": [
+    "packages/latency-profiler/**"
+  ],
+  "allowedPaths": [
+    "packages/latency-profiler/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "exclusiveLocks": [
+    "packages/latency-profiler/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/latency-profiler:contract": "ff7dd793c4dd28d5a13322e0e1ee758fe7a0a14fc175ab3654ce4c104b7df5ee"
+  },
+  "deliverables": [
+    "packages/latency-profiler/** @requirement FR-LAT-001",
+    "packages/latency-profiler/** @requirement FR-LAT-002",
+    "packages/latency-profiler implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-080.spec.ts",
+    "tests/negative/AC-080.negative.spec.ts",
+    "tests/acceptance/AC-226.spec.ts",
+    "tests/negative/AC-226.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm task:verify T-G4-LAT",
+      "expected": "exit 0 with independently derived evidence"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6106,
+      "id": "FR-LAT-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6107,
+      "id": "FR-LAT-002"
+    }
+  ]
+}

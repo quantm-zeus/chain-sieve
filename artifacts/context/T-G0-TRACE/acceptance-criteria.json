@@ -1,0 +1,107 @@
+[
+  {
+    "id": "AC-265",
+    "text": "The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.",
+    "textSha256": "97180d2c0d35395e899074d588ec5226ca610ed316a212182e4c5cdbc043723f",
+    "line": 6792,
+    "requirementRefs": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-265.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-265.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.25 Recovery, traceability, and release conformance",
+    "testClass": "recovery-traceability"
+  },
+  {
+    "id": "AC-266",
+    "text": "Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI.",
+    "textSha256": "e9d289c3353b564a4d0e3590e612f5c42497c43d2dd910bcca2145e59c842dc4",
+    "line": 6793,
+    "requirementRefs": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-266.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-266.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.25 Recovery, traceability, and release conformance",
+    "testClass": "recovery-traceability"
+  },
+  {
+    "id": "AC-267",
+    "text": "Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions.",
+    "textSha256": "76ea010a099eef39fb8d1ae80edbdf647b1ca7058451ff8c7ac4b533578e6f2c",
+    "line": 6794,
+    "requirementRefs": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-267.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-267.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.25 Recovery, traceability, and release conformance",
+    "testClass": "recovery-traceability"
+  },
+  {
+    "id": "AC-268",
+    "text": "Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate.",
+    "textSha256": "fe271d550b887d8826d9b8a8f667d89c7a3d376571fcca492d3fc4b17fc72ff8",
+    "line": 6795,
+    "requirementRefs": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-268.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-268.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.25 Recovery, traceability, and release conformance",
+    "testClass": "recovery-traceability"
+  },
+  {
+    "id": "AC-269",
+    "text": "Release conformance reports document hash, manifest hash, SBOM/dependency hash, migration/schema hashes, all test results, deviations, current activation scope, and tested rollback target.",
+    "textSha256": "8764449d42211610b4c9f55f50916ecb2af4814ace3812f85c4141040cb8fb0d",
+    "line": 6796,
+    "requirementRefs": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ],
+    "positiveTestRef": "tests/acceptance/AC-269.spec.ts",
+    "negativeOrFailureTestRef": "tests/negative/AC-269.negative.spec.ts",
+    "evidenceOwner": "packages/release-conformance",
+    "section": "39. Acceptance criteria",
+    "status": "PLANNED",
+    "subsection": "39.25 Recovery, traceability, and release conformance",
+    "testClass": "recovery-traceability"
+  }
+]

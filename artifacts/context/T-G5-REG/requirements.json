@@ -1,0 +1,150 @@
+[
+  {
+    "id": "FR-REG-001",
+    "text": "Deterministic regime classification and approved route selection.",
+    "textSha256": "0df07fa020ec8f78231facaa0f86731ce3493a55ad1352ff3d09a0ef104d5f5d",
+    "line": 6096,
+    "family": "FR-REG",
+    "dependencyGroup": "G5",
+    "owner": "packages/regime-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/regime-router/** @requirement FR-REG-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/reg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_reg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/reg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/reg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/reg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-REG-002",
+    "text": "Route decision is frozen per run and has an approved fallback.",
+    "textSha256": "c6d933f5d7758a18c166dcb9245622a548c0ee14abaf842ba6416aed8caa82f1",
+    "line": 6097,
+    "family": "FR-REG",
+    "dependencyGroup": "G5",
+    "owner": "packages/regime-router",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-077",
+      "AC-078",
+      "AC-079"
+    ],
+    "implementationRefs": [
+      "packages/regime-router/** @requirement FR-REG-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/reg.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_reg_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/reg-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-077.spec.ts",
+      "tests/negative/AC-077.negative.spec.ts",
+      "tests/acceptance/AC-078.spec.ts",
+      "tests/negative/AC-078.negative.spec.ts",
+      "tests/acceptance/AC-079.spec.ts",
+      "tests/negative/AC-079.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/reg/"
+    ],
+    "telemetryRefs": [
+      "telemetry/reg.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.10 Regime and policy compilation",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

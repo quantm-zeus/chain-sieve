@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/provider-lifecycle"
+  ],
+  "allowedPaths": [
+    "packages/provider-lifecycle/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-PROV/**",
+    "packages/shared-schemas/src/prov.ts"
+  ],
+  "writeSet": [
+    "packages/provider-lifecycle/**",
+    "packages/providers/**"
+  ]
+}

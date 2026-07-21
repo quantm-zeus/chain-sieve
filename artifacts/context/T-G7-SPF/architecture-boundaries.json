@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/shadow-portfolio"
+  ],
+  "allowedPaths": [
+    "packages/shadow-portfolio/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G7-SPF/**",
+    "packages/shared-schemas/src/spf.ts"
+  ],
+  "writeSet": [
+    "packages/shadow-portfolio/**"
+  ]
+}

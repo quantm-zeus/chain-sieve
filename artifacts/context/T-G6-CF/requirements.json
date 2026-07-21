@@ -1,0 +1,260 @@
+[
+  {
+    "id": "FR-CF-001",
+    "text": "Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.",
+    "textSha256": "63efb9954bb0539efd0d161f08d19589c012a4c8c8e220e41d2e2915befcb4f8",
+    "line": 6111,
+    "family": "FR-CF",
+    "dependencyGroup": "G6",
+    "owner": "packages/counterfactual-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/counterfactual-lab/** @requirement FR-CF-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_cf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CF-002",
+    "text": "Counterfactual results cannot directly mutate active configuration.",
+    "textSha256": "9c5cfa33ea427f6c28cb145ac93ea03758a42da3258f9b940ce8248271e240c4",
+    "line": 6112,
+    "family": "FR-CF",
+    "dependencyGroup": "G6",
+    "owner": "packages/counterfactual-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/counterfactual-lab/** @requirement FR-CF-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_cf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CF-003",
+    "text": "Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score.",
+    "textSha256": "e66880ae73a48e2e17f05ea42e32eef73e562a55fe64327b69a6f6328ba7bde8",
+    "line": 6113,
+    "family": "FR-CF",
+    "dependencyGroup": "G6",
+    "owner": "packages/counterfactual-lab",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/counterfactual-lab/** @requirement FR-CF-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_cf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.11 Latency, analog, and robustness",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

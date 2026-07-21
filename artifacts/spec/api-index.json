@@ -1,0 +1,907 @@
+[
+  {
+    "method": "POST",
+    "path": "/mcp",
+    "line": 4106
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/health",
+    "line": 4108
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/readiness",
+    "line": 4109
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/internal/schedules/trigger",
+    "line": 4111
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/internal/notifications/process",
+    "line": 4112
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/overview",
+    "line": 4114
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/schedules",
+    "line": 4116
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules",
+    "line": 4117
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/schedules/:id",
+    "line": 4118
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/validate",
+    "line": 4119
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/enable",
+    "line": 4120
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/pause",
+    "line": 4121
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/resume",
+    "line": 4122
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/run-now",
+    "line": 4123
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/dry-run",
+    "line": 4124
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/schedules/:id/disable",
+    "line": 4125
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/schedules/:id",
+    "line": 4126
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/runs",
+    "line": 4128
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/runs/:id",
+    "line": 4129
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/runs/:id/cancel",
+    "line": 4130
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/runs/:id/retry",
+    "line": 4131
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/runs/:id/open-investigation",
+    "line": 4132
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/agent/sessions",
+    "line": 4134
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/agent/sessions/:id",
+    "line": 4135
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/agent/sessions/:id/messages",
+    "line": 4136
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/agent/sessions/:id/cancel",
+    "line": 4137
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/agent-profiles",
+    "line": 4139
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/agent-profiles",
+    "line": 4139
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/model-profiles",
+    "line": 4140
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/model-profiles",
+    "line": 4140
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/prompts",
+    "line": 4141
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/prompts",
+    "line": 4141
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/tool-profiles",
+    "line": 4142
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/tool-profiles",
+    "line": 4142
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/workflows",
+    "line": 4143
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/workflows",
+    "line": 4143
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/outcome-profiles",
+    "line": 4144
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/outcome-profiles",
+    "line": 4144
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/ranking-policies",
+    "line": 4145
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/ranking-policies",
+    "line": 4145
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/alert-policies",
+    "line": 4146
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alert-policies",
+    "line": 4146
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates",
+    "line": 4148
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id",
+    "line": 4149
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/timeline",
+    "line": 4150
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/why-not-alerted",
+    "line": 4151
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evidence/:id",
+    "line": 4153
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/resources/:id",
+    "line": 4154
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/conflicts",
+    "line": 4155
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evaluation/metrics",
+    "line": 4157
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/replays",
+    "line": 4158
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evaluation/missed-gems",
+    "line": 4159
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evaluation/drift",
+    "line": 4160
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/theses",
+    "line": 4163
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/theses/:id",
+    "line": 4164
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/theses/:id/re-evaluate",
+    "line": 4165
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/theses/:id/invalidate",
+    "line": 4166
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/why-now",
+    "line": 4167
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/decay",
+    "line": 4168
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/narratives",
+    "line": 4169
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/narratives/:id",
+    "line": 4170
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capital-flows/chains",
+    "line": 4171
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/crowding/:candidateId",
+    "line": 4172
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/regimes/current",
+    "line": 4173
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/regime-routes",
+    "line": 4174
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-compiler/compile",
+    "line": 4175
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-compiler/validate",
+    "line": 4176
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-compiler/backtest",
+    "line": 4177
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-drafts/:id/approve",
+    "line": 4178
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-drafts/:id/activate",
+    "line": 4179
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/policy-drafts/:id/retire",
+    "line": 4180
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/latency",
+    "line": 4181
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/analogs",
+    "line": 4182
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/counterfactuals",
+    "line": 4183
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/sensitivity",
+    "line": 4184
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/review-queue",
+    "line": 4185
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/review-queue/:id/label",
+    "line": 4186
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/review-queue/:id/adjudicate",
+    "line": 4187
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/notebooks",
+    "line": 4188
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/notebooks",
+    "line": 4188
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/notebooks/:id",
+    "line": 4189
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/notebooks/:id",
+    "line": 4189
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/notebooks/:id/entries",
+    "line": 4190
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capabilities",
+    "line": 4191
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/capabilities/verify",
+    "line": 4192
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/fallback/status",
+    "line": 4193
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/cost-router/status",
+    "line": 4194
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/cost-router/operations",
+    "line": 4195
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/cost-router/forecast",
+    "line": 4196
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/discovery/coverage",
+    "line": 4197
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/discovery/sources",
+    "line": 4198
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/tradability/:candidateId",
+    "line": 4199
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/tradability/simulate",
+    "line": 4200
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/security/solana/:assetId",
+    "line": 4201
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/economic-trades/:candidateId",
+    "line": 4202
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evaluation/outcome-maturity",
+    "line": 4203
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/negative-controls",
+    "line": 4204
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/evaluation/clustered-bootstrap",
+    "line": 4205
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/winning-patterns",
+    "line": 4206
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/winning-patterns/:id",
+    "line": 4207
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/winning-patterns/mine",
+    "line": 4208
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/winning-patterns/:id/validate",
+    "line": 4209
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/winning-patterns/:id/activate",
+    "line": 4210
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/winning-patterns/:id/retire",
+    "line": 4211
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/pattern-matches",
+    "line": 4212
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/wallet-alpha/:walletId",
+    "line": 4213
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/deployer-dna/:entityId",
+    "line": 4214
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/liquidity-resilience",
+    "line": 4215
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/launch-state",
+    "line": 4216
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/attention-diffusion",
+    "line": 4217
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/leader-laggard",
+    "line": 4218
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/novelty",
+    "line": 4219
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/multi-view",
+    "line": 4220
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/candidates/:id/failure-hazard",
+    "line": 4221
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/opportunity-frontier",
+    "line": 4222
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/scheduler/information-gain",
+    "line": 4223
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/exploration-policies",
+    "line": 4224
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/exploration-policies",
+    "line": 4224
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/shadow-portfolios",
+    "line": 4225
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/shadow-portfolios/replay",
+    "line": 4226
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/adversarial-simulations",
+    "line": 4227
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/alpha-governance",
+    "line": 4228
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-governance/:artifactId/pause",
+    "line": 4229
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-governance/:artifactId/retire",
+    "line": 4230
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-lab/exports",
+    "line": 4231
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/alpha-lab/runs",
+    "line": 4232
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/alpha-lab/artifacts",
+    "line": 4233
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-lab/artifacts/import",
+    "line": 4234
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-lab/artifacts/:id/validate",
+    "line": 4235
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/alpha-lab/artifacts/:id/promote-to-shadow",
+    "line": 4236
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/providers",
+    "line": 4238
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/providers/:id/test",
+    "line": 4239
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/providers/:id/enable",
+    "line": 4240
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/providers/:id/disable",
+    "line": 4241
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/incidents",
+    "line": 4243
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/incidents/:id/acknowledge",
+    "line": 4244
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/collectors",
+    "line": 4341
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/collectors/:id/status",
+    "line": 4342
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/collectors/:id/partitions",
+    "line": 4343
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/collectors/:id/gaps",
+    "line": 4344
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/collectors/:id/pause",
+    "line": 4345
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/collectors/:id/resume",
+    "line": 4346
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/collectors/:id/reconcile",
+    "line": 4347
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/collector-gaps/:id/backfill",
+    "line": 4348
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/collector-gaps/:id/resolve",
+    "line": 4349
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/source-dependence",
+    "line": 4351
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/source-dependence/:id",
+    "line": 4352
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/source-dependence/estimate",
+    "line": 4353
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/source-dependence/:id/approve",
+    "line": 4354
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capacity-contracts",
+    "line": 4360
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/capacity-contracts",
+    "line": 4360
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capacity-contracts/:id",
+    "line": 4361
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/capacity-contracts/:id/simulate",
+    "line": 4362
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/capacity-contracts/:id/admit",
+    "line": 4363
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capacity/admissions",
+    "line": 4364
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/capacity/forecast-vs-actual",
+    "line": 4365
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/provider-operations",
+    "line": 4367
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/provider-operations/:id",
+    "line": 4368
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/provider-operations/:id/verify",
+    "line": 4369
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/provider-operations/:id/deprecate",
+    "line": 4370
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/provider-operations/:id/block",
+    "line": 4371
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evidence-acquisition",
+    "line": 4373
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evidence-acquisition/:id",
+    "line": 4374
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/evidence-acquisition/probe-integrity",
+    "line": 4375
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/pool-adapters",
+    "line": 4381
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/pool-adapters/:id",
+    "line": 4382
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/pool-adapters/:id/run-parity",
+    "line": 4383
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/pool-adapters/:id/activate",
+    "line": 4384
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/pool-adapters/:id/degrade",
+    "line": 4385
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/recovery/readiness",
+    "line": 4387
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/recovery/drills",
+    "line": 4388
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/recovery/drills",
+    "line": 4389
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/audit/verify-chain",
+    "line": 4390
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/public-authorization",
+    "line": 4392
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/public-authorization/validate",
+    "line": 4393
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/public-authorization/authorize",
+    "line": 4394
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/public-authorization/revoke",
+    "line": 4395
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/conformance/requirements",
+    "line": 4397
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/conformance/releases",
+    "line": 4398
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/conformance/generate",
+    "line": 4399
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/conformance/verify",
+    "line": 4400
+  }
+]

@@ -1,0 +1,212 @@
+{
+  "T-G0-COL": [
+    "apps/collector/public-api"
+  ],
+  "T-G0-CORE": [
+    "packages/domain/public-api"
+  ],
+  "T-G0-COST": [
+    "packages/cost-router/public-api"
+  ],
+  "T-G0-DATA": [
+    "infra/migrations"
+  ],
+  "T-G0-DISC": [
+    "packages/discovery-universe/public-api"
+  ],
+  "T-G0-DR": [
+    "infra/migrations"
+  ],
+  "T-G0-MCP": [
+    "apps/api/src/mcp/public-api"
+  ],
+  "T-G0-PROV": [
+    "packages/provider-lifecycle/public-api"
+  ],
+  "T-G0-SEC": [
+    "packages/security/public-api"
+  ],
+  "T-G0-TRACE": [
+    "packages/requirement-manifest/public-api"
+  ],
+  "T-G1-COST": [
+    "packages/cost-router/public-api"
+  ],
+  "T-G1-DATA": [
+    "infra/migrations"
+  ],
+  "T-G1-DISC": [
+    "packages/discovery-universe/public-api"
+  ],
+  "T-G1-EVAL": [
+    "packages/evaluation/public-api"
+  ],
+  "T-G1-EXEC": [
+    "packages/execution-simulator/public-api"
+  ],
+  "T-G1-MAT": [
+    "packages/outcome-maturity/public-api"
+  ],
+  "T-G1-OBJ": [
+    "packages/objective-governance/public-api"
+  ],
+  "T-G1-SIG": [
+    "packages/signal-intelligence/public-api"
+  ],
+  "T-G1-SOLSEC": [
+    "packages/solana-security/public-api"
+  ],
+  "T-G1-SUP": [
+    "packages/supply-confidence/public-api"
+  ],
+  "T-G1-TRD": [
+    "packages/economic-trade-normalizer/public-api"
+  ],
+  "T-G2-ADM": [
+    "apps/dashboard/public-api"
+  ],
+  "T-G2-ALERT": [
+    "packages/alerts/public-api"
+  ],
+  "T-G2-DR": [
+    "infra/migrations"
+  ],
+  "T-G2-PROD": [
+    "packages/release-conformance/public-api"
+  ],
+  "T-G2-WF": [
+    "packages/workflow-runtime/public-api"
+  ],
+  "T-G3-ADM": [
+    "apps/dashboard/public-api"
+  ],
+  "T-G3-AGT": [
+    "packages/agent-runtime/public-api"
+  ],
+  "T-G4-ADM": [
+    "apps/dashboard/public-api"
+  ],
+  "T-G4-CAP": [
+    "packages/capability-registry/public-api"
+  ],
+  "T-G4-CROWD": [
+    "packages/crowding/public-api"
+  ],
+  "T-G4-DECAY": [
+    "packages/thesis/public-api"
+  ],
+  "T-G4-FB": [
+    "packages/fallback-runtime/public-api"
+  ],
+  "T-G4-LAT": [
+    "packages/latency-profiler/public-api"
+  ],
+  "T-G4-NB": [
+    "packages/research-notebook/public-api"
+  ],
+  "T-G4-THS": [
+    "packages/thesis/public-api"
+  ],
+  "T-G4-WHY": [
+    "packages/thesis/public-api"
+  ],
+  "T-G5-ADQ": [
+    "packages/attention-diffusion/public-api"
+  ],
+  "T-G5-CROWD": [
+    "packages/crowding/public-api"
+  ],
+  "T-G5-DFD": [
+    "packages/deployer-funder-dna/public-api"
+  ],
+  "T-G5-LAR": [
+    "packages/liquidity-resilience/public-api"
+  ],
+  "T-G5-LMS": [
+    "packages/launch-state-intelligence/public-api"
+  ],
+  "T-G5-NAR": [
+    "packages/narrative-intelligence/public-api"
+  ],
+  "T-G5-NLL": [
+    "packages/leader-laggard/public-api"
+  ],
+  "T-G5-POL": [
+    "packages/policy-compiler/public-api"
+  ],
+  "T-G5-REG": [
+    "packages/regime-router/public-api"
+  ],
+  "T-G5-SIG": [
+    "packages/signal-intelligence/public-api"
+  ],
+  "T-G5-SOC": [
+    "packages/social-capability/public-api"
+  ],
+  "T-G5-WAL": [
+    "packages/wallet-alpha-lineage/public-api"
+  ],
+  "T-G5-XCF": [
+    "packages/capital-flow/public-api"
+  ],
+  "T-G6-AL": [
+    "packages/active-learning/public-api"
+  ],
+  "T-G6-ANA": [
+    "packages/analog-finder/public-api"
+  ],
+  "T-G6-CF": [
+    "packages/counterfactual-lab/public-api"
+  ],
+  "T-G6-EVAL": [
+    "packages/evaluation/public-api"
+  ],
+  "T-G6-FHZ": [
+    "packages/failure-hazard/public-api"
+  ],
+  "T-G6-LEGAL": [
+    "packages/public-claims-policy/public-api"
+  ],
+  "T-G6-MCP": [
+    "apps/api/src/mcp/public-api"
+  ],
+  "T-G6-MVD": [
+    "packages/multi-view-disagreement/public-api"
+  ],
+  "T-G6-OOD": [
+    "packages/novelty-detector/public-api"
+  ],
+  "T-G6-PROD": [
+    "packages/release-conformance/public-api"
+  ],
+  "T-G6-SIG": [
+    "packages/signal-intelligence/public-api"
+  ],
+  "T-G6-WPI": [
+    "packages/winning-pattern-intelligence/public-api"
+  ],
+  "T-G7-ADG": [
+    "packages/alpha-governance/public-api"
+  ],
+  "T-G7-AEP": [
+    "packages/agent-runtime/public-api"
+  ],
+  "T-G7-AIG": [
+    "packages/information-gain-scheduler/public-api"
+  ],
+  "T-G7-ALAB": [
+    "packages/offline-alpha-lab/public-api"
+  ],
+  "T-G7-AMS": [
+    "packages/adversarial-simulator/public-api"
+  ],
+  "T-G7-EXP": [
+    "packages/exploration-bandit/public-api"
+  ],
+  "T-G7-OF": [
+    "packages/opportunity-frontier/public-api"
+  ],
+  "T-G7-SPF": [
+    "packages/shadow-portfolio/public-api"
+  ]
+}

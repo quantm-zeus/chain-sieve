@@ -1,0 +1,27 @@
+{
+  "ownerPackages": [
+    "packages/execution-simulator"
+  ],
+  "allowedPaths": [
+    "packages/execution-simulator/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-EXEC/**",
+    "packages/shared-schemas/src/exec.ts"
+  ],
+  "writeSet": [
+    "packages/execution-simulator/**",
+    "packages/pool-math/**",
+    "packages/transfer-semantics/**"
+  ]
+}

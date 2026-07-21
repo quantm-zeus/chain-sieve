@@ -1,0 +1,12 @@
+[
+  {
+    "id": "ADR-001",
+    "title": "Production database and transaction semantics",
+    "decision": "PostgreSQL is authoritative for operational state. SQL migrations are the schema source of truth; Drizzle mirrors them for typed access. Unique constraints, transactions, row/advisory locks, leases with fencing tokens, transactional outbox/inbox, and isolation levels appropriate to each invariant enforce correctness. SQLite/libSQL is never normative for production state.",
+    "textSha256": "b8994fb2afad821294fc88398bd3f271b371a7163ae0509ce795a3daf5b0eb36",
+    "line": 10745,
+    "section": "Appendix D",
+    "status": "ACCEPTED",
+    "supersedes": []
+  }
+]

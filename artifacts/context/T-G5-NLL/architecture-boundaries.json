@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/leader-laggard"
+  ],
+  "allowedPaths": [
+    "packages/leader-laggard/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-NLL/**",
+    "packages/shared-schemas/src/nll.ts"
+  ],
+  "writeSet": [
+    "packages/leader-laggard/**"
+  ]
+}

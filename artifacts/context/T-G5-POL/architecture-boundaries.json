@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/policy-compiler"
+  ],
+  "allowedPaths": [
+    "packages/policy-compiler/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-POL/**",
+    "packages/shared-schemas/src/pol.ts"
+  ],
+  "writeSet": [
+    "packages/policy-compiler/**"
+  ]
+}

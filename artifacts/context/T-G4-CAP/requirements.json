@@ -1,0 +1,346 @@
+[
+  {
+    "id": "FR-CAP-001",
+    "text": "Machine-readable capability map gates tools, workflows, modules, and claims.",
+    "textSha256": "fd5296b215ac5ce2523512aba878d8ef000692229c61b6283dc4e1e63b91e120",
+    "line": 6124,
+    "family": "FR-CAP",
+    "dependencyGroup": "G4",
+    "owner": "packages/capability-registry",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/capability-registry/** @requirement FR-CAP-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cap.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_cap_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cap-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cap/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cap.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CAP-002",
+    "text": "Partial/unavailable coverage is visible to users and agents.",
+    "textSha256": "4e61b7e7a40e8b4f68f23283f456a4f0d3debd441f2585e01334b84be26d8895",
+    "line": 6125,
+    "family": "FR-CAP",
+    "dependencyGroup": "G4",
+    "owner": "packages/capability-registry",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/capability-registry/** @requirement FR-CAP-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cap.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_cap_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cap-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cap/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cap.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CAP-003",
+    "text": "Stale capability verification transitions to `UNVERIFIED`.",
+    "textSha256": "3826c0db2544ef8a675bfbd11ecb743b9c5546645bce62134810b0b91bd0d449",
+    "line": 6126,
+    "family": "FR-CAP",
+    "dependencyGroup": "G4",
+    "owner": "packages/capability-registry",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/capability-registry/** @requirement FR-CAP-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cap.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_cap_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cap-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cap/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cap.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CAP-004",
+    "text": "Tools, routes, workflows, modules, and policy nodes declare typed capability requirements.",
+    "textSha256": "e867fe07121fff9cef66eaa8667d5966a8709771e4b52c1fc7a8623bb88e50bc",
+    "line": 6127,
+    "family": "FR-CAP",
+    "dependencyGroup": "G4",
+    "owner": "packages/capability-registry",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/capability-registry/** @requirement FR-CAP-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/cap.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_cap_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/cap-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/cap/"
+    ],
+    "telemetryRefs": [
+      "telemetry/cap.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "id": "G0",
+    "name": "Data Truth, Capability, Security, Collector, Cost and Traceability Foundation",
+    "dependsOn": []
+  },
+  {
+    "id": "G1",
+    "name": "Deterministic Signal, Execution, Outcome and Objective Foundation",
+    "dependsOn": [
+      "G0"
+    ]
+  },
+  {
+    "id": "G2",
+    "name": "Durable Operations, Alerts, Recovery and Admin Control",
+    "dependsOn": [
+      "G0",
+      "G1"
+    ]
+  },
+  {
+    "id": "G3",
+    "name": "Agent Runtime and Workbench",
+    "dependsOn": [
+      "G0",
+      "G1",
+      "G2"
+    ]
+  },
+  {
+    "id": "G4",
+    "name": "Thesis, Decay, Capability-Aware Context and Diagnostics",
+    "dependsOn": [
+      "G0",
+      "G1",
+      "G2",
+      "G3"
+    ]
+  },
+  {
+    "id": "G5",
+    "name": "Wallet, Social, Narrative, Flow, Regime and Liquidity Intelligence",
+    "dependsOn": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4"
+    ]
+  },
+  {
+    "id": "G6",
+    "name": "Advanced Evaluation, Patterns, Novelty, Hazards and Public Compatibility",
+    "dependsOn": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ]
+  },
+  {
+    "id": "G7",
+    "name": "Adaptive Allocation, Portfolio, Adversarial and Alpha Governance",
+    "dependsOn": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6"
+    ]
+  }
+]

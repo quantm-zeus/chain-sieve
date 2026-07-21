@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/deployer-funder-dna"
+  ],
+  "allowedPaths": [
+    "packages/deployer-funder-dna/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-DFD/**",
+    "packages/shared-schemas/src/dfd.ts"
+  ],
+  "writeSet": [
+    "packages/deployer-funder-dna/**"
+  ]
+}

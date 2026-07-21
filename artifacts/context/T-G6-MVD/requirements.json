@@ -1,0 +1,432 @@
+[
+  {
+    "id": "FR-MVD-001",
+    "text": "Security, execution, market microstructure, liquidity resilience, wallet, deployer, pattern, analog, narrative, regime, novelty, and failure-hazard views remain independently inspectable.",
+    "textSha256": "ea7eab3aa11387ca4ebede45f0c8d9268645b617e8108f6db2b73b2fd37aaeb2",
+    "line": 6290,
+    "family": "FR-MVD",
+    "dependencyGroup": "G6",
+    "owner": "packages/multi-view-disagreement",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/multi-view-disagreement/** @requirement FR-MVD-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mvd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mvd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mvd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mvd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mvd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.28 Multi-View Disagreement",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MVD-002",
+    "text": "The system emits consensus, disagreement, critical contradiction, and insufficient-independence states; it cannot conceal critical conflict inside a weighted average.",
+    "textSha256": "1990170d5e8143e1d714e1bdb1949619aff963cb27ca1cc9ac456fe8f778bd82",
+    "line": 6291,
+    "family": "FR-MVD",
+    "dependencyGroup": "G6",
+    "owner": "packages/multi-view-disagreement",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/multi-view-disagreement/** @requirement FR-MVD-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mvd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mvd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mvd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mvd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mvd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.28 Multi-View Disagreement",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MVD-003",
+    "text": "Critical security/execution contradictions block confirmed alerts; noncritical disagreement may trigger watch, skeptic, evidence acquisition, or higher monitoring cadence.",
+    "textSha256": "3145f5f600a4a2b03db82611e3ef437e55216e71d8c74692ca11eda95e5878c6",
+    "line": 6292,
+    "family": "FR-MVD",
+    "dependencyGroup": "G6",
+    "owner": "packages/multi-view-disagreement",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/multi-view-disagreement/** @requirement FR-MVD-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mvd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mvd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mvd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mvd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mvd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.28 Multi-View Disagreement",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MVD-004",
+    "text": "View independence and shared evidence lineage are measured so correlated provider-derived views are not counted as independent confirmation.",
+    "textSha256": "b7f7d016ba5cafd6adc0e70494bc29398ed1d1d9b0a4336a5d09fb34b0913dad",
+    "line": 6293,
+    "family": "FR-MVD",
+    "dependencyGroup": "G6",
+    "owner": "packages/multi-view-disagreement",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/multi-view-disagreement/** @requirement FR-MVD-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mvd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mvd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mvd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mvd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mvd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.28 Multi-View Disagreement",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-MVD-005",
+    "text": "Disagreement resolution records which new evidence changed each view and preserves the prior state.",
+    "textSha256": "bb8e4bfa0fae7bbc861512e08d53c66be7d44424b618490dee1f16fe3cb383e9",
+    "line": 6294,
+    "family": "FR-MVD",
+    "dependencyGroup": "G6",
+    "owner": "packages/multi-view-disagreement",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/multi-view-disagreement/** @requirement FR-MVD-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/mvd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_mvd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/mvd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/mvd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/mvd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.28 Multi-View Disagreement",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

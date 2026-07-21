@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/persistence:contract": "e5d4684149eede4db31ff7248b39e98e61a04f588de2b07343c5b355443327c2"
+  }
+}

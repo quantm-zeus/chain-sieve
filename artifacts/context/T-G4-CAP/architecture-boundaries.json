@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/capability-registry"
+  ],
+  "allowedPaths": [
+    "packages/capability-registry/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-CAP/**",
+    "packages/shared-schemas/src/cap.ts"
+  ],
+  "writeSet": [
+    "packages/capability-registry/**"
+  ]
+}

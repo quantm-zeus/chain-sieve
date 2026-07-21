@@ -1,0 +1,462 @@
+[
+  {
+    "id": "FR-ALERT-001",
+    "text": "Alerts distinguish `EARLY_WATCH`, `CONFIRMED_OPPORTUNITY`, thesis strengthening/weakening, expiry, and risk.",
+    "textSha256": "65c03600c8138ab5f02a4ca5312d51428d4012f74a1092ff63df6a2ffb11fa11",
+    "line": 6196,
+    "family": "FR-ALERT",
+    "dependencyGroup": "G2",
+    "owner": "packages/alerts",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/alerts/** @requirement FR-ALERT-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alert.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_alert_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alert-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alert/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alert.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALERT-002",
+    "text": "`EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language.",
+    "textSha256": "9b5b3a58baa97d02311ded01c525a3708137df21e8245f0ccc8e2f8e1661bee3",
+    "line": 6197,
+    "family": "FR-ALERT",
+    "dependencyGroup": "G2",
+    "owner": "packages/alerts",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/alerts/** @requirement FR-ALERT-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alert.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_alert_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alert-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alert/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alert.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALERT-003",
+    "text": "Confirmed alerts require current tradability, security, cost, freshness, and expiry checks.",
+    "textSha256": "596876dc6bfdc7e2de543b0be59e3ef8b7d641e0e4bcb55dacaec58603d85a3e",
+    "line": 6198,
+    "family": "FR-ALERT",
+    "dependencyGroup": "G2",
+    "owner": "packages/alerts",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/alerts/** @requirement FR-ALERT-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alert.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_alert_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alert-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alert/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alert.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALERT-004",
+    "text": "Prior actionable alerts receive material deterioration, cancellation, or expiry updates.",
+    "textSha256": "985a92cd35b765f16cab9c6c93346c20e8c596796e3b7c0d10fc2bf0ab5889d1",
+    "line": 6199,
+    "family": "FR-ALERT",
+    "dependencyGroup": "G2",
+    "owner": "packages/alerts",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/alerts/** @requirement FR-ALERT-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alert.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_alert_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alert-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alert/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alert.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-ALERT-005",
+    "text": "Alert metrics and denominators are separated by alert class.",
+    "textSha256": "7df859e0b61ec98e0961afdb6bec38d19c271ace97bc92863eb102a29e1bb22a",
+    "line": 6200,
+    "family": "FR-ALERT",
+    "dependencyGroup": "G2",
+    "owner": "packages/alerts",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-140",
+      "AC-141",
+      "AC-142",
+      "AC-143",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/alerts/** @requirement FR-ALERT-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/alert.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g2_alert_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/alert-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-140.spec.ts",
+      "tests/negative/AC-140.negative.spec.ts",
+      "tests/acceptance/AC-141.spec.ts",
+      "tests/negative/AC-141.negative.spec.ts",
+      "tests/acceptance/AC-142.spec.ts",
+      "tests/negative/AC-142.negative.spec.ts",
+      "tests/acceptance/AC-143.spec.ts",
+      "tests/negative/AC-143.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/alert/"
+    ],
+    "telemetryRefs": [
+      "telemetry/alert.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.18 Alerts and social capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

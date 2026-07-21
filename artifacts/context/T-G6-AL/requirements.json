@@ -1,0 +1,260 @@
+[
+  {
+    "id": "FR-AL-001",
+    "text": "Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls.",
+    "textSha256": "0ac75e00666cefcd4be8eef6754f600e93cb2de103e6d3a2d54bc43ea402bfce",
+    "line": 6117,
+    "family": "FR-AL",
+    "dependencyGroup": "G6",
+    "owner": "packages/active-learning",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/active-learning/** @requirement FR-AL-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/al.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_al_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/al-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/al/"
+    ],
+    "telemetryRefs": [
+      "telemetry/al.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AL-002",
+    "text": "Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required.",
+    "textSha256": "9eb32837877088424fcd33b13c61fca81ec6bf3f33ab67cdf8f5372c4954c0b5",
+    "line": 6118,
+    "family": "FR-AL",
+    "dependencyGroup": "G6",
+    "owner": "packages/active-learning",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/active-learning/** @requirement FR-AL-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/al.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_al_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/al-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/al/"
+    ],
+    "telemetryRefs": [
+      "telemetry/al.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AL-003",
+    "text": "Human labels do not automatically update production policy.",
+    "textSha256": "5183fb768d896d8297d5916980f31098d822ced06af5f61ea30ea85757905c73",
+    "line": 6119,
+    "family": "FR-AL",
+    "dependencyGroup": "G6",
+    "owner": "packages/active-learning",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/active-learning/** @requirement FR-AL-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/al.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_al_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/al-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/al/"
+    ],
+    "telemetryRefs": [
+      "telemetry/al.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

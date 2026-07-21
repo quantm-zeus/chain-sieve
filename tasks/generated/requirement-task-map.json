@@ -1,0 +1,1193 @@
+{
+  "FR-CORE-001": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-002": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-003": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-004": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-005": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-006": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-007": [
+    "T-G0-CORE"
+  ],
+  "FR-CORE-008": [
+    "T-G0-CORE"
+  ],
+  "FR-DATA-001": [
+    "T-G0-DATA"
+  ],
+  "FR-DATA-002": [
+    "T-G0-DATA"
+  ],
+  "FR-DATA-003": [
+    "T-G0-DATA"
+  ],
+  "FR-DATA-004": [
+    "T-G0-DATA"
+  ],
+  "FR-DATA-005": [
+    "T-G0-DATA"
+  ],
+  "FR-DATA-006": [
+    "T-G0-DATA"
+  ],
+  "FR-SIG-001": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-002": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-003": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-004": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-005": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-006": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-007": [
+    "T-G5-SIG"
+  ],
+  "FR-SIG-008": [
+    "T-G5-SIG"
+  ],
+  "FR-SIG-009": [
+    "T-G1-SIG"
+  ],
+  "FR-SIG-010": [
+    "T-G6-SIG"
+  ],
+  "FR-WF-001": [
+    "T-G2-WF"
+  ],
+  "FR-WF-002": [
+    "T-G2-WF"
+  ],
+  "FR-WF-003": [
+    "T-G2-WF"
+  ],
+  "FR-WF-004": [
+    "T-G2-WF"
+  ],
+  "FR-WF-005": [
+    "T-G2-WF"
+  ],
+  "FR-WF-006": [
+    "T-G2-WF"
+  ],
+  "FR-WF-007": [
+    "T-G2-WF"
+  ],
+  "FR-WF-008": [
+    "T-G2-WF"
+  ],
+  "FR-AGT-001": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-002": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-003": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-004": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-005": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-006": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-007": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-008": [
+    "T-G3-AGT"
+  ],
+  "FR-MCP-001": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-002": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-003": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-004": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-005": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-006": [
+    "T-G6-MCP"
+  ],
+  "FR-MCP-007": [
+    "T-G6-MCP"
+  ],
+  "FR-ADM-001": [
+    "T-G2-ADM"
+  ],
+  "FR-ADM-002": [
+    "T-G3-ADM"
+  ],
+  "FR-ADM-003": [
+    "T-G2-ADM"
+  ],
+  "FR-ADM-004": [
+    "T-G3-ADM"
+  ],
+  "FR-ADM-005": [
+    "T-G3-ADM"
+  ],
+  "FR-ADM-006": [
+    "T-G4-ADM"
+  ],
+  "FR-ADM-007": [
+    "T-G2-ADM"
+  ],
+  "FR-ADM-008": [
+    "T-G3-ADM"
+  ],
+  "FR-EVAL-001": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-002": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-003": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-004": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-005": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-006": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-007": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-008": [
+    "T-G1-EVAL"
+  ],
+  "FR-EVAL-009": [
+    "T-G1-EVAL"
+  ],
+  "FR-THS-001": [
+    "T-G4-THS"
+  ],
+  "FR-THS-002": [
+    "T-G4-THS"
+  ],
+  "FR-THS-003": [
+    "T-G4-THS"
+  ],
+  "FR-WHY-001": [
+    "T-G4-WHY"
+  ],
+  "FR-WHY-002": [
+    "T-G4-WHY"
+  ],
+  "FR-DECAY-001": [
+    "T-G4-DECAY"
+  ],
+  "FR-DECAY-002": [
+    "T-G4-DECAY"
+  ],
+  "FR-DECAY-003": [
+    "T-G4-DECAY"
+  ],
+  "FR-NAR-001": [
+    "T-G5-NAR"
+  ],
+  "FR-NAR-002": [
+    "T-G5-NAR"
+  ],
+  "FR-XCF-001": [
+    "T-G5-XCF"
+  ],
+  "FR-XCF-002": [
+    "T-G5-XCF"
+  ],
+  "FR-CROWD-001": [
+    "T-G4-CROWD"
+  ],
+  "FR-CROWD-002": [
+    "T-G4-CROWD"
+  ],
+  "FR-CROWD-003": [
+    "T-G4-CROWD"
+  ],
+  "FR-CROWD-004": [
+    "T-G4-CROWD"
+  ],
+  "FR-CROWD-005": [
+    "T-G5-CROWD"
+  ],
+  "FR-REG-001": [
+    "T-G5-REG"
+  ],
+  "FR-REG-002": [
+    "T-G5-REG"
+  ],
+  "FR-POL-001": [
+    "T-G5-POL"
+  ],
+  "FR-POL-002": [
+    "T-G5-POL"
+  ],
+  "FR-POL-003": [
+    "T-G5-POL"
+  ],
+  "FR-POL-004": [
+    "T-G5-POL"
+  ],
+  "FR-POL-005": [
+    "T-G5-POL"
+  ],
+  "FR-LAT-001": [
+    "T-G4-LAT"
+  ],
+  "FR-LAT-002": [
+    "T-G4-LAT"
+  ],
+  "FR-ANA-001": [
+    "T-G6-ANA"
+  ],
+  "FR-ANA-002": [
+    "T-G6-ANA"
+  ],
+  "FR-ANA-003": [
+    "T-G6-ANA"
+  ],
+  "FR-CF-001": [
+    "T-G6-CF"
+  ],
+  "FR-CF-002": [
+    "T-G6-CF"
+  ],
+  "FR-CF-003": [
+    "T-G6-CF"
+  ],
+  "FR-AL-001": [
+    "T-G6-AL"
+  ],
+  "FR-AL-002": [
+    "T-G6-AL"
+  ],
+  "FR-AL-003": [
+    "T-G6-AL"
+  ],
+  "FR-NB-001": [
+    "T-G4-NB"
+  ],
+  "FR-NB-002": [
+    "T-G4-NB"
+  ],
+  "FR-FB-001": [
+    "T-G4-FB"
+  ],
+  "FR-FB-002": [
+    "T-G4-FB"
+  ],
+  "FR-CAP-001": [
+    "T-G4-CAP"
+  ],
+  "FR-CAP-002": [
+    "T-G4-CAP"
+  ],
+  "FR-CAP-003": [
+    "T-G4-CAP"
+  ],
+  "FR-CAP-004": [
+    "T-G4-CAP"
+  ],
+  "FR-COST-001": [
+    "T-G0-COST"
+  ],
+  "FR-COST-002": [
+    "T-G0-COST"
+  ],
+  "FR-COST-003": [
+    "T-G0-COST"
+  ],
+  "FR-COST-004": [
+    "T-G0-COST"
+  ],
+  "FR-COST-005": [
+    "T-G0-COST"
+  ],
+  "FR-COST-006": [
+    "T-G0-COST"
+  ],
+  "FR-COST-007": [
+    "T-G0-COST"
+  ],
+  "FR-COST-008": [
+    "T-G0-COST"
+  ],
+  "FR-COST-009": [
+    "T-G0-COST"
+  ],
+  "FR-COST-010": [
+    "T-G0-COST"
+  ],
+  "FR-DISC-001": [
+    "T-G0-DISC"
+  ],
+  "FR-DISC-002": [
+    "T-G0-DISC"
+  ],
+  "FR-DISC-003": [
+    "T-G0-DISC"
+  ],
+  "FR-DISC-004": [
+    "T-G0-DISC"
+  ],
+  "FR-DISC-005": [
+    "T-G0-DISC"
+  ],
+  "FR-DISC-006": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-007": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-008": [
+    "T-G1-DISC"
+  ],
+  "FR-EXEC-001": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-002": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-003": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-004": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-005": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-006": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-007": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-008": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-009": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-010": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-011": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-012": [
+    "T-G1-EXEC"
+  ],
+  "FR-MAT-001": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-002": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-003": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-004": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-005": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-006": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-007": [
+    "T-G1-MAT"
+  ],
+  "FR-SOLSEC-001": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SOLSEC-002": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SOLSEC-003": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SOLSEC-004": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SOLSEC-005": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SOLSEC-006": [
+    "T-G1-SOLSEC"
+  ],
+  "FR-SUP-001": [
+    "T-G1-SUP"
+  ],
+  "FR-SUP-002": [
+    "T-G1-SUP"
+  ],
+  "FR-TRD-001": [
+    "T-G1-TRD"
+  ],
+  "FR-TRD-002": [
+    "T-G1-TRD"
+  ],
+  "FR-TRD-003": [
+    "T-G1-TRD"
+  ],
+  "FR-TRD-004": [
+    "T-G1-TRD"
+  ],
+  "FR-ALERT-001": [
+    "T-G2-ALERT"
+  ],
+  "FR-ALERT-002": [
+    "T-G2-ALERT"
+  ],
+  "FR-ALERT-003": [
+    "T-G2-ALERT"
+  ],
+  "FR-ALERT-004": [
+    "T-G2-ALERT"
+  ],
+  "FR-ALERT-005": [
+    "T-G2-ALERT"
+  ],
+  "FR-SOC-001": [
+    "T-G5-SOC"
+  ],
+  "FR-SOC-002": [
+    "T-G5-SOC"
+  ],
+  "FR-SOC-003": [
+    "T-G5-SOC"
+  ],
+  "FR-SOC-004": [
+    "T-G5-SOC"
+  ],
+  "FR-PROD-001": [
+    "T-G2-PROD"
+  ],
+  "FR-PROD-002": [
+    "T-G2-PROD"
+  ],
+  "FR-PROD-003": [
+    "T-G2-PROD"
+  ],
+  "FR-PROD-004": [
+    "T-G2-PROD"
+  ],
+  "FR-PROD-005": [
+    "T-G2-PROD"
+  ],
+  "FR-PROD-006": [
+    "T-G2-PROD"
+  ],
+  "FR-WPI-001": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-002": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-003": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-004": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-005": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-006": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-007": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-008": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-009": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-010": [
+    "T-G6-WPI"
+  ],
+  "FR-WPI-011": [
+    "T-G6-WPI"
+  ],
+  "FR-WAL-001": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-002": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-003": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-004": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-005": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-006": [
+    "T-G5-WAL"
+  ],
+  "FR-WAL-007": [
+    "T-G5-WAL"
+  ],
+  "FR-DFD-001": [
+    "T-G5-DFD"
+  ],
+  "FR-DFD-002": [
+    "T-G5-DFD"
+  ],
+  "FR-DFD-003": [
+    "T-G5-DFD"
+  ],
+  "FR-DFD-004": [
+    "T-G5-DFD"
+  ],
+  "FR-DFD-005": [
+    "T-G5-DFD"
+  ],
+  "FR-LAR-001": [
+    "T-G5-LAR"
+  ],
+  "FR-LAR-002": [
+    "T-G5-LAR"
+  ],
+  "FR-LAR-003": [
+    "T-G5-LAR"
+  ],
+  "FR-LAR-004": [
+    "T-G5-LAR"
+  ],
+  "FR-LAR-005": [
+    "T-G5-LAR"
+  ],
+  "FR-LMS-001": [
+    "T-G5-LMS"
+  ],
+  "FR-LMS-002": [
+    "T-G5-LMS"
+  ],
+  "FR-LMS-003": [
+    "T-G5-LMS"
+  ],
+  "FR-LMS-004": [
+    "T-G5-LMS"
+  ],
+  "FR-LMS-005": [
+    "T-G5-LMS"
+  ],
+  "FR-ADQ-001": [
+    "T-G5-ADQ"
+  ],
+  "FR-ADQ-002": [
+    "T-G5-ADQ"
+  ],
+  "FR-ADQ-003": [
+    "T-G5-ADQ"
+  ],
+  "FR-ADQ-004": [
+    "T-G5-ADQ"
+  ],
+  "FR-ADQ-005": [
+    "T-G5-ADQ"
+  ],
+  "FR-NLL-001": [
+    "T-G5-NLL"
+  ],
+  "FR-NLL-002": [
+    "T-G5-NLL"
+  ],
+  "FR-NLL-003": [
+    "T-G5-NLL"
+  ],
+  "FR-NLL-004": [
+    "T-G5-NLL"
+  ],
+  "FR-OOD-001": [
+    "T-G6-OOD"
+  ],
+  "FR-OOD-002": [
+    "T-G6-OOD"
+  ],
+  "FR-OOD-003": [
+    "T-G6-OOD"
+  ],
+  "FR-OOD-004": [
+    "T-G6-OOD"
+  ],
+  "FR-OOD-005": [
+    "T-G6-OOD"
+  ],
+  "FR-MVD-001": [
+    "T-G6-MVD"
+  ],
+  "FR-MVD-002": [
+    "T-G6-MVD"
+  ],
+  "FR-MVD-003": [
+    "T-G6-MVD"
+  ],
+  "FR-MVD-004": [
+    "T-G6-MVD"
+  ],
+  "FR-MVD-005": [
+    "T-G6-MVD"
+  ],
+  "FR-FHZ-001": [
+    "T-G6-FHZ"
+  ],
+  "FR-FHZ-002": [
+    "T-G6-FHZ"
+  ],
+  "FR-FHZ-003": [
+    "T-G6-FHZ"
+  ],
+  "FR-FHZ-004": [
+    "T-G6-FHZ"
+  ],
+  "FR-FHZ-005": [
+    "T-G6-FHZ"
+  ],
+  "FR-AIG-001": [
+    "T-G7-AIG"
+  ],
+  "FR-AIG-002": [
+    "T-G7-AIG"
+  ],
+  "FR-AIG-003": [
+    "T-G7-AIG"
+  ],
+  "FR-AIG-004": [
+    "T-G7-AIG"
+  ],
+  "FR-AIG-005": [
+    "T-G7-AIG"
+  ],
+  "FR-EXP-001": [
+    "T-G7-EXP"
+  ],
+  "FR-EXP-002": [
+    "T-G7-EXP"
+  ],
+  "FR-EXP-003": [
+    "T-G7-EXP"
+  ],
+  "FR-EXP-004": [
+    "T-G7-EXP"
+  ],
+  "FR-EXP-005": [
+    "T-G7-EXP"
+  ],
+  "FR-EXP-006": [
+    "T-G7-EXP"
+  ],
+  "FR-SPF-001": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-002": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-003": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-004": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-005": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-006": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-007": [
+    "T-G7-SPF"
+  ],
+  "FR-SPF-008": [
+    "T-G7-SPF"
+  ],
+  "FR-AMS-001": [
+    "T-G7-AMS"
+  ],
+  "FR-AMS-002": [
+    "T-G7-AMS"
+  ],
+  "FR-AMS-003": [
+    "T-G7-AMS"
+  ],
+  "FR-AMS-004": [
+    "T-G7-AMS"
+  ],
+  "FR-AMS-005": [
+    "T-G7-AMS"
+  ],
+  "FR-OF-001": [
+    "T-G7-OF"
+  ],
+  "FR-OF-002": [
+    "T-G7-OF"
+  ],
+  "FR-OF-003": [
+    "T-G7-OF"
+  ],
+  "FR-OF-004": [
+    "T-G7-OF"
+  ],
+  "FR-OF-005": [
+    "T-G7-OF"
+  ],
+  "FR-ADG-001": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-002": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-003": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-004": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-005": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-006": [
+    "T-G7-ADG"
+  ],
+  "FR-ADG-007": [
+    "T-G7-ADG"
+  ],
+  "FR-ALAB-001": [
+    "T-G7-ALAB"
+  ],
+  "FR-ALAB-002": [
+    "T-G7-ALAB"
+  ],
+  "FR-ALAB-003": [
+    "T-G7-ALAB"
+  ],
+  "FR-ALAB-004": [
+    "T-G7-ALAB"
+  ],
+  "FR-ALAB-005": [
+    "T-G7-ALAB"
+  ],
+  "FR-ALAB-006": [
+    "T-G7-ALAB"
+  ],
+  "FR-AEP-001": [
+    "T-G7-AEP"
+  ],
+  "FR-OBJ-001": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-002": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-003": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-004": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-005": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-006": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-007": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-008": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-009": [
+    "T-G1-OBJ"
+  ],
+  "FR-OBJ-010": [
+    "T-G1-OBJ"
+  ],
+  "FR-COL-001": [
+    "T-G0-COL"
+  ],
+  "FR-COL-002": [
+    "T-G0-COL"
+  ],
+  "FR-COL-003": [
+    "T-G0-COL"
+  ],
+  "FR-COL-004": [
+    "T-G0-COL"
+  ],
+  "FR-COL-005": [
+    "T-G0-COL"
+  ],
+  "FR-COL-006": [
+    "T-G0-COL"
+  ],
+  "FR-COL-007": [
+    "T-G0-COL"
+  ],
+  "FR-COL-008": [
+    "T-G0-COL"
+  ],
+  "FR-COL-009": [
+    "T-G0-COL"
+  ],
+  "FR-COL-010": [
+    "T-G0-COL"
+  ],
+  "FR-COL-011": [
+    "T-G0-COL"
+  ],
+  "FR-COL-012": [
+    "T-G0-COL"
+  ],
+  "FR-PROV-001": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-002": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-003": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-004": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-005": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-006": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-007": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-008": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-009": [
+    "T-G0-PROV"
+  ],
+  "FR-PROV-010": [
+    "T-G0-PROV"
+  ],
+  "FR-DATA-007": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-008": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-009": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-010": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-011": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-012": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-013": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-014": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-015": [
+    "T-G1-DATA"
+  ],
+  "FR-DATA-016": [
+    "T-G1-DATA"
+  ],
+  "FR-AGT-009": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-010": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-011": [
+    "T-G3-AGT"
+  ],
+  "FR-AGT-012": [
+    "T-G3-AGT"
+  ],
+  "FR-COST-011": [
+    "T-G1-COST"
+  ],
+  "FR-COST-012": [
+    "T-G1-COST"
+  ],
+  "FR-COST-013": [
+    "T-G1-COST"
+  ],
+  "FR-COST-014": [
+    "T-G1-COST"
+  ],
+  "FR-COST-015": [
+    "T-G1-COST"
+  ],
+  "FR-COST-016": [
+    "T-G1-COST"
+  ],
+  "FR-COST-017": [
+    "T-G1-COST"
+  ],
+  "FR-DISC-009": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-010": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-011": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-012": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-013": [
+    "T-G1-DISC"
+  ],
+  "FR-DISC-014": [
+    "T-G1-DISC"
+  ],
+  "FR-EXEC-013": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-014": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-015": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-016": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-017": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-018": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-019": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-020": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-021": [
+    "T-G1-EXEC"
+  ],
+  "FR-EXEC-022": [
+    "T-G1-EXEC"
+  ],
+  "FR-MAT-008": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-009": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-010": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-011": [
+    "T-G1-MAT"
+  ],
+  "FR-MAT-012": [
+    "T-G1-MAT"
+  ],
+  "FR-EVAL-010": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-011": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-012": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-013": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-014": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-015": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-016": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-017": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-018": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-019": [
+    "T-G6-EVAL"
+  ],
+  "FR-EVAL-020": [
+    "T-G6-EVAL"
+  ],
+  "FR-MCP-008": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-009": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-010": [
+    "T-G0-MCP"
+  ],
+  "FR-MCP-011": [
+    "T-G6-MCP"
+  ],
+  "FR-MCP-012": [
+    "T-G6-MCP"
+  ],
+  "FR-SEC-001": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-002": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-003": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-004": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-005": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-006": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-007": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-008": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-009": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-010": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-011": [
+    "T-G0-SEC"
+  ],
+  "FR-SEC-012": [
+    "T-G0-SEC"
+  ],
+  "FR-DR-001": [
+    "T-G0-DR"
+  ],
+  "FR-DR-002": [
+    "T-G0-DR"
+  ],
+  "FR-DR-003": [
+    "T-G2-DR"
+  ],
+  "FR-DR-004": [
+    "T-G2-DR"
+  ],
+  "FR-DR-005": [
+    "T-G2-DR"
+  ],
+  "FR-DR-006": [
+    "T-G2-DR"
+  ],
+  "FR-LEGAL-001": [
+    "T-G6-LEGAL"
+  ],
+  "FR-LEGAL-002": [
+    "T-G6-LEGAL"
+  ],
+  "FR-LEGAL-003": [
+    "T-G6-LEGAL"
+  ],
+  "FR-LEGAL-004": [
+    "T-G6-LEGAL"
+  ],
+  "FR-LEGAL-005": [
+    "T-G6-LEGAL"
+  ],
+  "FR-LEGAL-006": [
+    "T-G6-LEGAL"
+  ],
+  "FR-TRACE-001": [
+    "T-G0-TRACE"
+  ],
+  "FR-TRACE-002": [
+    "T-G0-TRACE"
+  ],
+  "FR-TRACE-003": [
+    "T-G0-TRACE"
+  ],
+  "FR-TRACE-004": [
+    "T-G0-TRACE"
+  ],
+  "FR-TRACE-005": [
+    "T-G0-TRACE"
+  ],
+  "FR-TRACE-006": [
+    "T-G0-TRACE"
+  ],
+  "FR-PROD-007": [
+    "T-G6-PROD"
+  ],
+  "FR-PROD-008": [
+    "T-G6-PROD"
+  ],
+  "FR-PROD-009": [
+    "T-G6-PROD"
+  ],
+  "FR-PROD-010": [
+    "T-G6-PROD"
+  ],
+  "FR-PROD-011": [
+    "T-G6-PROD"
+  ],
+  "FR-PROD-012": [
+    "T-G6-PROD"
+  ]
+}

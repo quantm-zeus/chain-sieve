@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/liquidity-resilience"
+  ],
+  "allowedPaths": [
+    "packages/liquidity-resilience/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-LAR/**",
+    "packages/shared-schemas/src/lar.ts"
+  ],
+  "writeSet": [
+    "packages/liquidity-resilience/**"
+  ]
+}

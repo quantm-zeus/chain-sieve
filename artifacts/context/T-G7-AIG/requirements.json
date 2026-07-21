@@ -1,0 +1,462 @@
+[
+  {
+    "id": "FR-AIG-001",
+    "text": "Every recheck decision records expected decision impact, boundary proximity, expected state change, information gap, risk urgency, candidate utility, quota cost, and expiry.",
+    "textSha256": "5b16537944b9f5dea394168624e1a497e98ef63907d9a0e79bcafb23f350ede4",
+    "line": 6306,
+    "family": "FR-AIG",
+    "dependencyGroup": "G7",
+    "owner": "packages/information-gain-scheduler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/information-gain-scheduler/** @requirement FR-AIG-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.30 Adaptive Information-Gain Scheduler",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AIG-002",
+    "text": "The scheduler chooses bounded provider operations/fields, not merely a cadence, and prefers cache/batch/free operations before metered free quota.",
+    "textSha256": "77ff08a67e7a43e4c783d37e7fa58871b17131b848c39157350409df6ad7d11b",
+    "line": 6307,
+    "family": "FR-AIG",
+    "dependencyGroup": "G7",
+    "owner": "packages/information-gain-scheduler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/information-gain-scheduler/** @requirement FR-AIG-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.30 Adaptive Information-Gain Scheduler",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AIG-003",
+    "text": "Risk monitoring, alert verification, and outcome observation reserves cannot be displaced by alpha exploration or broad scans.",
+    "textSha256": "c7a147eb8e8f327a647134a424bba6f6daf739f99a2c39cc3a4e5758796c2536",
+    "line": 6308,
+    "family": "FR-AIG",
+    "dependencyGroup": "G7",
+    "owner": "packages/information-gain-scheduler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/information-gain-scheduler/** @requirement FR-AIG-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.30 Adaptive Information-Gain Scheduler",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AIG-004",
+    "text": "Scheduler policies have starvation protection, maximum staleness, minimum critical cadence, backpressure, and deterministic fallback.",
+    "textSha256": "9a21c7103e8567dd43791ac0bc7e7b6817d6e9b8aab4e9af431e68b664c913db",
+    "line": 6309,
+    "family": "FR-AIG",
+    "dependencyGroup": "G7",
+    "owner": "packages/information-gain-scheduler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/information-gain-scheduler/** @requirement FR-AIG-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.30 Adaptive Information-Gain Scheduler",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-AIG-005",
+    "text": "Information-gain claims are evaluated against static-cadence baselines using useful state changes per quota unit and missed-critical-event rate.",
+    "textSha256": "c451ebde948f4baef1c63335ced55270b7447274cec6b40041788d68f548a502",
+    "line": 6310,
+    "family": "FR-AIG",
+    "dependencyGroup": "G7",
+    "owner": "packages/information-gain-scheduler",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-190",
+      "AC-191",
+      "AC-192",
+      "AC-193",
+      "AC-194",
+      "AC-195",
+      "AC-196",
+      "AC-197",
+      "AC-198"
+    ],
+    "implementationRefs": [
+      "packages/information-gain-scheduler/** @requirement FR-AIG-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/aig.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_aig_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/aig-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-190.spec.ts",
+      "tests/negative/AC-190.negative.spec.ts",
+      "tests/acceptance/AC-191.spec.ts",
+      "tests/negative/AC-191.negative.spec.ts",
+      "tests/acceptance/AC-192.spec.ts",
+      "tests/negative/AC-192.negative.spec.ts",
+      "tests/acceptance/AC-193.spec.ts",
+      "tests/negative/AC-193.negative.spec.ts",
+      "tests/acceptance/AC-194.spec.ts",
+      "tests/negative/AC-194.negative.spec.ts",
+      "tests/acceptance/AC-195.spec.ts",
+      "tests/negative/AC-195.negative.spec.ts",
+      "tests/acceptance/AC-196.spec.ts",
+      "tests/negative/AC-196.negative.spec.ts",
+      "tests/acceptance/AC-197.spec.ts",
+      "tests/negative/AC-197.negative.spec.ts",
+      "tests/acceptance/AC-198.spec.ts",
+      "tests/negative/AC-198.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/aig/"
+    ],
+    "telemetryRefs": [
+      "telemetry/aig.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.30 Adaptive Information-Gain Scheduler",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

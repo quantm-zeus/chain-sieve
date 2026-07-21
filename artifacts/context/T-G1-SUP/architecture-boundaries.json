@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/supply-confidence"
+  ],
+  "allowedPaths": [
+    "packages/supply-confidence/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-SUP/**",
+    "packages/shared-schemas/src/sup.ts"
+  ],
+  "writeSet": [
+    "packages/supply-confidence/**"
+  ]
+}

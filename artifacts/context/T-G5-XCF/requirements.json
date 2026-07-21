@@ -1,0 +1,162 @@
+[
+  {
+    "id": "FR-XCF-001",
+    "text": "Cross-chain aggregate bridge, stablecoin, DEX, and bounded wallet-flow assessment is implemented with reconciliation, source rights, temporal alignment, and uncertainty.",
+    "textSha256": "b46dfcb9a4358d283f880bc0a95c6dea845fa6a7172125492dbf5ef4a13bbbff",
+    "line": 6086,
+    "family": "FR-XCF",
+    "dependencyGroup": "G5",
+    "owner": "packages/capital-flow",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/capital-flow/** @requirement FR-XCF-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/xcf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_xcf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/xcf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/xcf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/xcf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-XCF-002",
+    "text": "Bridge-leg and router-hop reconciliation prevents double counting.",
+    "textSha256": "273b195dcd0842fcea926c9e4509fb38c995c030554e2f02865292bcc937d1ce",
+    "line": 6087,
+    "family": "FR-XCF",
+    "dependencyGroup": "G5",
+    "owner": "packages/capital-flow",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/capital-flow/** @requirement FR-XCF-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/xcf.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_xcf_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/xcf-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/xcf/"
+    ],
+    "telemetryRefs": [
+      "telemetry/xcf.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

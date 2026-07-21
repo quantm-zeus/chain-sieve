@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/attention-diffusion"
+  ],
+  "allowedPaths": [
+    "packages/attention-diffusion/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-ADQ/**",
+    "packages/shared-schemas/src/adq.ts"
+  ],
+  "writeSet": [
+    "packages/attention-diffusion/**"
+  ]
+}

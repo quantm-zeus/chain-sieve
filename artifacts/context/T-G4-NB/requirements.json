@@ -1,0 +1,174 @@
+[
+  {
+    "id": "FR-NB-001",
+    "text": "Persistent research notebooks/casebooks link notes, claims, evidence, runs, theses, outcomes, permissions, and provenance while remaining untrusted model context.",
+    "textSha256": "8155455e65e8ecfca84b77e4025c005052863a18d1474c24d2875bc8365efa4f",
+    "line": 6120,
+    "family": "FR-NB",
+    "dependencyGroup": "G4",
+    "owner": "packages/research-notebook",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/research-notebook/** @requirement FR-NB-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nb.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_nb_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nb-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nb/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nb.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-NB-002",
+    "text": "Notebook content cannot modify frozen evidence or grant tool authority.",
+    "textSha256": "29813f39a84884c709033f8882efd427b84f0f0fabd415ef260aee83794fbf40",
+    "line": 6121,
+    "family": "FR-NB",
+    "dependencyGroup": "G4",
+    "owner": "packages/research-notebook",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-083",
+      "AC-084",
+      "AC-085",
+      "AC-086",
+      "AC-087",
+      "AC-088",
+      "AC-089"
+    ],
+    "implementationRefs": [
+      "packages/research-notebook/** @requirement FR-NB-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/nb.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_nb_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/nb-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-083.spec.ts",
+      "tests/negative/AC-083.negative.spec.ts",
+      "tests/acceptance/AC-084.spec.ts",
+      "tests/negative/AC-084.negative.spec.ts",
+      "tests/acceptance/AC-085.spec.ts",
+      "tests/negative/AC-085.negative.spec.ts",
+      "tests/acceptance/AC-086.spec.ts",
+      "tests/negative/AC-086.negative.spec.ts",
+      "tests/acceptance/AC-087.spec.ts",
+      "tests/negative/AC-087.negative.spec.ts",
+      "tests/acceptance/AC-088.spec.ts",
+      "tests/negative/AC-088.negative.spec.ts",
+      "tests/acceptance/AC-089.spec.ts",
+      "tests/negative/AC-089.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/nb/"
+    ],
+    "telemetryRefs": [
+      "telemetry/nb.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.12 Learning, notebook, fallback, and capability",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

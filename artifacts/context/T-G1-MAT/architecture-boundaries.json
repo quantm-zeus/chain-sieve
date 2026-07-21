@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/outcome-maturity"
+  ],
+  "allowedPaths": [
+    "packages/outcome-maturity/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-MAT/**",
+    "packages/shared-schemas/src/mat.ts"
+  ],
+  "writeSet": [
+    "packages/outcome-maturity/**"
+  ]
+}

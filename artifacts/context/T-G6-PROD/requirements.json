@@ -1,0 +1,650 @@
+[
+  {
+    "id": "FR-PROD-007",
+    "text": "Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.",
+    "textSha256": "1f029702256c94236b05a8e99e8993fab380ad449523ed7b1ac5b3d1e3addcce",
+    "line": 6512,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-007",
+      "packages/capability-registry/** @requirement FR-PROD-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROD-008",
+    "text": "Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.",
+    "textSha256": "f2e0f707048f310364b28ac96557b542029e66151f48fb155e1aaf9bf6a768eb",
+    "line": 6513,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-008",
+      "packages/capability-registry/** @requirement FR-PROD-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROD-009",
+    "text": "Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.",
+    "textSha256": "79b1f5a751e4e381915c0c5abd40ac20a306e78a65228016474707510507c6fc",
+    "line": 6514,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-009",
+      "packages/capability-registry/** @requirement FR-PROD-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROD-010",
+    "text": "Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.",
+    "textSha256": "85667ae04265903e35e6f18abe3016c464751c565fde00750e168919c7bd5a6f",
+    "line": 6515,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-010",
+      "packages/capability-registry/** @requirement FR-PROD-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROD-011",
+    "text": "Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe.",
+    "textSha256": "80a1e12bfbf1e5a8f36aef613ff5584eb4eb79ac5d58063ad3573ebaa4bdb15b",
+    "line": 6516,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-011",
+      "packages/capability-registry/** @requirement FR-PROD-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-PROD-012",
+    "text": "Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates.",
+    "textSha256": "df3e052f2fd5b10d19d778db586d1c09ba0481d899e8563bc30290d201f9399d",
+    "line": 6517,
+    "family": "FR-PROD",
+    "dependencyGroup": "G6",
+    "owner": "packages/release-conformance",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-144",
+      "AC-150",
+      "AC-151",
+      "AC-152",
+      "AC-153",
+      "AC-154",
+      "AC-272",
+      "AC-273",
+      "AC-274",
+      "AC-275",
+      "AC-276",
+      "AC-277",
+      "AC-278",
+      "AC-279"
+    ],
+    "implementationRefs": [
+      "packages/release-conformance/** @requirement FR-PROD-012",
+      "packages/capability-registry/** @requirement FR-PROD-012"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/prod.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_prod_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/prod-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-144.spec.ts",
+      "tests/negative/AC-144.negative.spec.ts",
+      "tests/acceptance/AC-150.spec.ts",
+      "tests/negative/AC-150.negative.spec.ts",
+      "tests/acceptance/AC-151.spec.ts",
+      "tests/negative/AC-151.negative.spec.ts",
+      "tests/acceptance/AC-152.spec.ts",
+      "tests/negative/AC-152.negative.spec.ts",
+      "tests/acceptance/AC-153.spec.ts",
+      "tests/negative/AC-153.negative.spec.ts",
+      "tests/acceptance/AC-154.spec.ts",
+      "tests/negative/AC-154.negative.spec.ts",
+      "tests/acceptance/AC-272.spec.ts",
+      "tests/negative/AC-272.negative.spec.ts",
+      "tests/acceptance/AC-273.spec.ts",
+      "tests/negative/AC-273.negative.spec.ts",
+      "tests/acceptance/AC-274.spec.ts",
+      "tests/negative/AC-274.negative.spec.ts",
+      "tests/acceptance/AC-275.spec.ts",
+      "tests/negative/AC-275.negative.spec.ts",
+      "tests/acceptance/AC-276.spec.ts",
+      "tests/negative/AC-276.negative.spec.ts",
+      "tests/acceptance/AC-277.spec.ts",
+      "tests/negative/AC-277.negative.spec.ts",
+      "tests/acceptance/AC-278.spec.ts",
+      "tests/negative/AC-278.negative.spec.ts",
+      "tests/acceptance/AC-279.spec.ts",
+      "tests/negative/AC-279.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/prod/"
+    ],
+    "telemetryRefs": [
+      "telemetry/prod.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

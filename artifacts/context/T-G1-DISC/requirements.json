@@ -1,0 +1,866 @@
+[
+  {
+    "id": "FR-DISC-006",
+    "text": "Retrospective or prospective independent-universe enumeration estimates discovery recall without relying only on the same upstream lineage as live aggregate discovery.",
+    "textSha256": "f8644702bf5794ce7d4c003e46cc5a6030ccf2556243d2cb7aec3c633241fbcc",
+    "line": 6150,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-006",
+      "packages/cheap-monitor/** @requirement FR-DISC-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.14 Discovery universe and coverage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-007",
+    "text": "Provider lateness, source coverage loss, and extended-at-first-seen rates are measurable.",
+    "textSha256": "97f977923deea36b816343da09f98c3979e990d3df0f3ed9a77cc2afd2fc8ab8",
+    "line": 6151,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-007",
+      "packages/cheap-monitor/** @requirement FR-DISC-007"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.14 Discovery universe and coverage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-008",
+    "text": "Direct-chain/indexer access is selective verification/backfill by default and cannot silently become broad paid ingestion.",
+    "textSha256": "0d574effc6edd3c6cf3bac85383b095c169dbf5ad91bf3f56d6930aa13d84e2a",
+    "line": 6152,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-008",
+      "packages/cheap-monitor/** @requirement FR-DISC-008"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.14 Discovery universe and coverage",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-009",
+    "text": "Discovery coverage is reported only for a named population such as `SUPPORTED_PROGRAM_UNIVERSE`, `PROSPECTIVELY_OBSERVED_UNIVERSE`, `AGGREGATE_PROVIDER_UNIVERSE`, or a probability-sampled retrospective universe.",
+    "textSha256": "ce9d2736bf48c13601d78d13bdc10e0f910fc2bb48ebd01a9084306f2d13eee3",
+    "line": 6439,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-009",
+      "packages/cheap-monitor/** @requirement FR-DISC-009"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-010",
+    "text": "Recall or missed-gem claims require independent first-party observation, independent provider lineage, or valid known inclusion probabilities; a universe generated by the evaluated source cannot establish its own recall.",
+    "textSha256": "f1d640872df523692d3ae95a519eb32e7717fa939c557e122448699c0931ce51",
+    "line": 6440,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-010",
+      "packages/cheap-monitor/** @requirement FR-DISC-010"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-011",
+    "text": "Every discovery source stores source-specific first-seen, normalized identity, upstream dependence, query/filter version, coverage scope, rights, and reason an asset entered the universe.",
+    "textSha256": "a199f24b2ad13b35ac1831db78239b1a22c98d8c92c83e34f07f647a038c6c69",
+    "line": 6441,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-011",
+      "packages/cheap-monitor/** @requirement FR-DISC-011"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-012",
+    "text": "The system measures unique discovery yield, overlap, lead/lag, stale/late discovery, identity failures, unsupported-program exclusions, and price extension at first system availability for each source.",
+    "textSha256": "789ec73cf767b7fc3d6490d21227aa71534569bd47e83bc4db549381d37a2b81",
+    "line": 6442,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-012",
+      "packages/cheap-monitor/** @requirement FR-DISC-012"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-013",
+    "text": "Collector gaps, decoder outages, unverified program versions, and provider unavailability constrain population claims rather than being silently counted as negative outcomes.",
+    "textSha256": "00b36bba8e98de9a7d2e5de60a53d93dac73bd85ba64662efa3e5cf5d00604a4",
+    "line": 6443,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-013",
+      "packages/cheap-monitor/** @requirement FR-DISC-013"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DISC-014",
+    "text": "Full-market, all-Solana, or universal-recall language is prohibited unless the exact coverage and sampling contract establishes it.",
+    "textSha256": "c9ca96b5a0c812c0141a02025cfd608d1cf02c2ef06a09ba810a2dbf75acff67",
+    "line": 6444,
+    "family": "FR-DISC",
+    "dependencyGroup": "G1",
+    "owner": "packages/discovery-universe",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-110",
+      "AC-111",
+      "AC-112",
+      "AC-113",
+      "AC-224",
+      "AC-225",
+      "AC-226",
+      "AC-227",
+      "AC-228",
+      "AC-229"
+    ],
+    "implementationRefs": [
+      "packages/discovery-universe/** @requirement FR-DISC-014",
+      "packages/cheap-monitor/** @requirement FR-DISC-014"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/disc.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g1_disc_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/disc-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-110.spec.ts",
+      "tests/negative/AC-110.negative.spec.ts",
+      "tests/acceptance/AC-111.spec.ts",
+      "tests/negative/AC-111.negative.spec.ts",
+      "tests/acceptance/AC-112.spec.ts",
+      "tests/negative/AC-112.negative.spec.ts",
+      "tests/acceptance/AC-113.spec.ts",
+      "tests/negative/AC-113.negative.spec.ts",
+      "tests/acceptance/AC-224.spec.ts",
+      "tests/negative/AC-224.negative.spec.ts",
+      "tests/acceptance/AC-225.spec.ts",
+      "tests/negative/AC-225.negative.spec.ts",
+      "tests/acceptance/AC-226.spec.ts",
+      "tests/negative/AC-226.negative.spec.ts",
+      "tests/acceptance/AC-227.spec.ts",
+      "tests/negative/AC-227.negative.spec.ts",
+      "tests/acceptance/AC-228.spec.ts",
+      "tests/negative/AC-228.negative.spec.ts",
+      "tests/acceptance/AC-229.spec.ts",
+      "tests/negative/AC-229.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/disc/"
+    ],
+    "telemetryRefs": [
+      "telemetry/disc.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.41 Capacity, discovery, execution, and maturity extensions",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

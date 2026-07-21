@@ -1,0 +1,236 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G0-MCP",
+  "title": "FR-MCP implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G0",
+  "cluster": "C-G0-IMPLEMENTATION",
+  "riskLevel": "MEDIUM",
+  "autonomyLevel": "AUTONOMOUS",
+  "dependencies": [],
+  "requirements": [
+    "FR-MCP-001",
+    "FR-MCP-002",
+    "FR-MCP-003",
+    "FR-MCP-004",
+    "FR-MCP-005",
+    "FR-MCP-008",
+    "FR-MCP-009",
+    "FR-MCP-010"
+  ],
+  "acceptanceCriteria": [
+    "AC-001",
+    "AC-002",
+    "AC-003",
+    "AC-004",
+    "AC-050",
+    "AC-051",
+    "AC-052",
+    "AC-053",
+    "AC-144",
+    "AC-250",
+    "AC-251",
+    "AC-252",
+    "AC-253",
+    "AC-254",
+    "AC-255",
+    "AC-256",
+    "AC-257",
+    "AC-258",
+    "AC-259"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "apps/api/src/mcp"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-MCP/**",
+    "packages/shared-schemas/src/mcp.ts"
+  ],
+  "writeSet": [
+    "apps/api/src/mcp/**",
+    "packages/tool-core/**"
+  ],
+  "allowedPaths": [
+    "apps/api/src/mcp/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "exclusiveLocks": [
+    "apps/api/src/mcp/public-api"
+  ],
+  "interfaceHashes": {
+    "apps/api/src/mcp:contract": "f0febc55c6c37f665ae66c3f235bb584d633a2022528a8f0f098dca92679768b"
+  },
+  "deliverables": [
+    "apps/api/src/mcp/** @requirement FR-MCP-001",
+    "packages/tool-core/** @requirement FR-MCP-001",
+    "apps/api/src/mcp/** @requirement FR-MCP-002",
+    "packages/tool-core/** @requirement FR-MCP-002",
+    "apps/api/src/mcp/** @requirement FR-MCP-003",
+    "packages/tool-core/** @requirement FR-MCP-003",
+    "apps/api/src/mcp/** @requirement FR-MCP-004",
+    "packages/tool-core/** @requirement FR-MCP-004",
+    "apps/api/src/mcp/** @requirement FR-MCP-005",
+    "packages/tool-core/** @requirement FR-MCP-005",
+    "apps/api/src/mcp/** @requirement FR-MCP-008",
+    "packages/tool-core/** @requirement FR-MCP-008",
+    "apps/api/src/mcp/** @requirement FR-MCP-009",
+    "packages/tool-core/** @requirement FR-MCP-009",
+    "apps/api/src/mcp/** @requirement FR-MCP-010",
+    "packages/tool-core/** @requirement FR-MCP-010",
+    "apps/api/src/mcp implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-001.spec.ts",
+    "tests/negative/AC-001.negative.spec.ts",
+    "tests/acceptance/AC-002.spec.ts",
+    "tests/negative/AC-002.negative.spec.ts",
+    "tests/acceptance/AC-003.spec.ts",
+    "tests/negative/AC-003.negative.spec.ts",
+    "tests/acceptance/AC-004.spec.ts",
+    "tests/negative/AC-004.negative.spec.ts",
+    "tests/acceptance/AC-050.spec.ts",
+    "tests/negative/AC-050.negative.spec.ts",
+    "tests/acceptance/AC-051.spec.ts",
+    "tests/negative/AC-051.negative.spec.ts",
+    "tests/acceptance/AC-052.spec.ts",
+    "tests/negative/AC-052.negative.spec.ts",
+    "tests/acceptance/AC-053.spec.ts",
+    "tests/negative/AC-053.negative.spec.ts",
+    "tests/acceptance/AC-144.spec.ts",
+    "tests/negative/AC-144.negative.spec.ts",
+    "tests/acceptance/AC-250.spec.ts",
+    "tests/negative/AC-250.negative.spec.ts",
+    "tests/acceptance/AC-251.spec.ts",
+    "tests/negative/AC-251.negative.spec.ts",
+    "tests/acceptance/AC-252.spec.ts",
+    "tests/negative/AC-252.negative.spec.ts",
+    "tests/acceptance/AC-253.spec.ts",
+    "tests/negative/AC-253.negative.spec.ts",
+    "tests/acceptance/AC-254.spec.ts",
+    "tests/negative/AC-254.negative.spec.ts",
+    "tests/acceptance/AC-255.spec.ts",
+    "tests/negative/AC-255.negative.spec.ts",
+    "tests/acceptance/AC-256.spec.ts",
+    "tests/negative/AC-256.negative.spec.ts",
+    "tests/acceptance/AC-257.spec.ts",
+    "tests/negative/AC-257.negative.spec.ts",
+    "tests/acceptance/AC-258.spec.ts",
+    "tests/negative/AC-258.negative.spec.ts",
+    "tests/acceptance/AC-259.spec.ts",
+    "tests/negative/AC-259.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm task:verify T-G0-MCP",
+      "expected": "exit 0 with independently derived evidence"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6039,
+      "id": "FR-MCP-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6040,
+      "id": "FR-MCP-002"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6041,
+      "id": "FR-MCP-003"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6042,
+      "id": "FR-MCP-004"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6043,
+      "id": "FR-MCP-005"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6477,
+      "id": "FR-MCP-008"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6478,
+      "id": "FR-MCP-009"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6479,
+      "id": "FR-MCP-010"
+    }
+  ]
+}

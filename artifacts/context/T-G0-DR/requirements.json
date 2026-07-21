@@ -1,0 +1,184 @@
+[
+  {
+    "id": "FR-DR-001",
+    "text": "Recovery objectives are tiered: critical configuration/decision/alert/audit/evidence-index metadata target RPO at most 15 minutes; critical observations/checkpoints target at most 60 minutes; replayable raw payloads may target at most 24 hours when rights permit reconstruction.",
+    "textSha256": "cd9c6032633001e7d586c636a33949a8230e2f9701e9584e6c6451db7b415f4c",
+    "line": 6494,
+    "family": "FR-DR",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-001",
+      "packages/workflow-runtime/** @requirement FR-DR-001",
+      "packages/release-conformance/** @requirement FR-DR-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DR-002",
+    "text": "PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested.",
+    "textSha256": "7614cff366088c3b9916dda4164da7c54290094700a0101940747674882162ff",
+    "line": 6495,
+    "family": "FR-DR",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-060",
+      "AC-061",
+      "AC-062",
+      "AC-260",
+      "AC-261",
+      "AC-262",
+      "AC-263",
+      "AC-264"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DR-002",
+      "packages/workflow-runtime/** @requirement FR-DR-002",
+      "packages/release-conformance/** @requirement FR-DR-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dr.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_dr_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dr-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-060.spec.ts",
+      "tests/negative/AC-060.negative.spec.ts",
+      "tests/acceptance/AC-061.spec.ts",
+      "tests/negative/AC-061.negative.spec.ts",
+      "tests/acceptance/AC-062.spec.ts",
+      "tests/negative/AC-062.negative.spec.ts",
+      "tests/acceptance/AC-260.spec.ts",
+      "tests/negative/AC-260.negative.spec.ts",
+      "tests/acceptance/AC-261.spec.ts",
+      "tests/negative/AC-261.negative.spec.ts",
+      "tests/acceptance/AC-262.spec.ts",
+      "tests/negative/AC-262.negative.spec.ts",
+      "tests/acceptance/AC-263.spec.ts",
+      "tests/negative/AC-263.negative.spec.ts",
+      "tests/acceptance/AC-264.spec.ts",
+      "tests/negative/AC-264.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dr/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dr.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.43 MCP, security, recovery, public release, and conformance",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

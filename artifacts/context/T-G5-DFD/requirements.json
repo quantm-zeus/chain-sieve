@@ -1,0 +1,477 @@
+[
+  {
+    "id": "FR-DFD-001",
+    "text": "The system builds point-in-time deployer, creator, mint-authority, metadata-authority, initial-funder, LP-controller, and migration-controller profiles.",
+    "textSha256": "a32082245119c9c889fa58082890e56b6d9fdbf632dcb1363816c8bacdc27ae0",
+    "line": 6243,
+    "family": "FR-DFD",
+    "dependencyGroup": "G5",
+    "owner": "packages/deployer-funder-dna",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/deployer-funder-dna/** @requirement FR-DFD-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dfd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_dfd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dfd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dfd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dfd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.22 Deployer–Funder DNA",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DFD-002",
+    "text": "Launch histories include security failures, liquidity removals, creator sales, token lifetime, peak and tradable outcomes, supply distribution, migration behavior, and entity-confidence limits.",
+    "textSha256": "5d107471ff346401f12843b6ae9f04e8dccc2a0e09b835069c2a3873bb31bfa1",
+    "line": 6244,
+    "family": "FR-DFD",
+    "dependencyGroup": "G5",
+    "owner": "packages/deployer-funder-dna",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/deployer-funder-dna/** @requirement FR-DFD-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dfd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_dfd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dfd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dfd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dfd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.22 Deployer–Funder DNA",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DFD-003",
+    "text": "Address splitting and indirect funding paths are analyzed through bounded graph traversal with system-address exclusions and uncertainty labels.",
+    "textSha256": "5cb5d4e103240e67b0d49234cd2c1c91ab1ba968c7f2293fb10a43858ade5916",
+    "line": 6245,
+    "family": "FR-DFD",
+    "dependencyGroup": "G5",
+    "owner": "packages/deployer-funder-dna",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/deployer-funder-dna/** @requirement FR-DFD-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dfd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_dfd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dfd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dfd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dfd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.22 Deployer–Funder DNA",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DFD-004",
+    "text": "Deployer archetypes are descriptive evidence, never proof; critical historical abuse may suppress alerts, while repeat success may only increase research priority after independent current-token validation.",
+    "textSha256": "5248e2e3c2e7b7d573ceafc4574a77571e81f6b7d76724fb16d1140326d6eeee",
+    "line": 6246,
+    "family": "FR-DFD",
+    "dependencyGroup": "G5",
+    "owner": "packages/deployer-funder-dna",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/deployer-funder-dna/** @requirement FR-DFD-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dfd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_dfd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dfd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dfd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dfd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.22 Deployer–Funder DNA",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DFD-005",
+    "text": "Unknown or low-coverage creator history is represented as unknown, not safe.",
+    "textSha256": "dd652a828b32ca849de2d743c8e675ba7fd0d0e4df430c8cad4253e37b2946fe",
+    "line": 6247,
+    "family": "FR-DFD",
+    "dependencyGroup": "G5",
+    "owner": "packages/deployer-funder-dna",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-160",
+      "AC-161",
+      "AC-162",
+      "AC-163",
+      "AC-164",
+      "AC-165",
+      "AC-166",
+      "AC-167",
+      "AC-168",
+      "AC-169"
+    ],
+    "implementationRefs": [
+      "packages/deployer-funder-dna/** @requirement FR-DFD-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/dfd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_dfd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/dfd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-160.spec.ts",
+      "tests/negative/AC-160.negative.spec.ts",
+      "tests/acceptance/AC-161.spec.ts",
+      "tests/negative/AC-161.negative.spec.ts",
+      "tests/acceptance/AC-162.spec.ts",
+      "tests/negative/AC-162.negative.spec.ts",
+      "tests/acceptance/AC-163.spec.ts",
+      "tests/negative/AC-163.negative.spec.ts",
+      "tests/acceptance/AC-164.spec.ts",
+      "tests/negative/AC-164.negative.spec.ts",
+      "tests/acceptance/AC-165.spec.ts",
+      "tests/negative/AC-165.negative.spec.ts",
+      "tests/acceptance/AC-166.spec.ts",
+      "tests/negative/AC-166.negative.spec.ts",
+      "tests/acceptance/AC-167.spec.ts",
+      "tests/negative/AC-167.negative.spec.ts",
+      "tests/acceptance/AC-168.spec.ts",
+      "tests/negative/AC-168.negative.spec.ts",
+      "tests/acceptance/AC-169.spec.ts",
+      "tests/negative/AC-169.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/dfd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/dfd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.22 Deployer–Funder DNA",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

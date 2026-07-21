@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/counterfactual-lab"
+  ],
+  "allowedPaths": [
+    "packages/counterfactual-lab/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-CF/**",
+    "packages/shared-schemas/src/cf.ts"
+  ],
+  "writeSet": [
+    "packages/counterfactual-lab/**"
+  ]
+}

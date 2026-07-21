@@ -1,0 +1,537 @@
+[
+  {
+    "id": "FR-OF-001",
+    "text": "Candidate selection supports versioned Pareto/frontier analysis across upside, tradability, security, lead time, evidence confidence, liquidity, crowding, novelty, and failure hazard.",
+    "textSha256": "60a5aae3756e046382e44650574a03ddc7822ef6d12232dbca3517b6990fc278",
+    "line": 6342,
+    "family": "FR-OF",
+    "dependencyGroup": "G7",
+    "owner": "packages/opportunity-frontier",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/opportunity-frontier/** @requirement FR-OF-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/of.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_of_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/of-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/of/"
+    ],
+    "telemetryRefs": [
+      "telemetry/of.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.34 Opportunity Frontier",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OF-002",
+    "text": "Dominance handles missing/uncertain dimensions conservatively; unknown values cannot be treated as favorable.",
+    "textSha256": "afbf4b90d72da910d905b948448316f63aa4df157522d96c143af05bf6ffa242",
+    "line": 6343,
+    "family": "FR-OF",
+    "dependencyGroup": "G7",
+    "owner": "packages/opportunity-frontier",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/opportunity-frontier/** @requirement FR-OF-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/of.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_of_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/of-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/of/"
+    ],
+    "telemetryRefs": [
+      "telemetry/of.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.34 Opportunity Frontier",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OF-003",
+    "text": "Frontier classes remain descriptive and profile-specific; critical risk gates apply before frontier membership.",
+    "textSha256": "73ea78ad1018dd3fed049c50f0ae4a4b90518f357a77b502ee99d58b61dbf433",
+    "line": 6344,
+    "family": "FR-OF",
+    "dependencyGroup": "G7",
+    "owner": "packages/opportunity-frontier",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/opportunity-frontier/** @requirement FR-OF-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/of.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_of_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/of-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/of/"
+    ],
+    "telemetryRefs": [
+      "telemetry/of.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.34 Opportunity Frontier",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OF-004",
+    "text": "Dominated candidates may receive lower research quota only when diversity, exploration, coverage, and risk-monitoring constraints remain satisfied.",
+    "textSha256": "1420634546841772fc7a8088ae4681f7fe86335961386aacb7ebea097813c274",
+    "line": 6345,
+    "family": "FR-OF",
+    "dependencyGroup": "G7",
+    "owner": "packages/opportunity-frontier",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/opportunity-frontier/** @requirement FR-OF-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/of.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_of_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/of-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/of/"
+    ],
+    "telemetryRefs": [
+      "telemetry/of.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.34 Opportunity Frontier",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OF-005",
+    "text": "Frontier contribution is evaluated against scalar/Pareto baselines for tradable utility, hidden-gem recall, diversity, and quota efficiency.",
+    "textSha256": "e8146cfb56c043c7830394834c9bd39ff5bb716cb181f5c6aac6a516403541f8",
+    "line": 6346,
+    "family": "FR-OF",
+    "dependencyGroup": "G7",
+    "owner": "packages/opportunity-frontier",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-200",
+      "AC-201",
+      "AC-202",
+      "AC-203",
+      "AC-204",
+      "AC-205",
+      "AC-206",
+      "AC-207",
+      "AC-208",
+      "AC-209",
+      "AC-210",
+      "AC-211",
+      "AC-212",
+      "AC-213"
+    ],
+    "implementationRefs": [
+      "packages/opportunity-frontier/** @requirement FR-OF-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/of.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g7_of_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/of-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-200.spec.ts",
+      "tests/negative/AC-200.negative.spec.ts",
+      "tests/acceptance/AC-201.spec.ts",
+      "tests/negative/AC-201.negative.spec.ts",
+      "tests/acceptance/AC-202.spec.ts",
+      "tests/negative/AC-202.negative.spec.ts",
+      "tests/acceptance/AC-203.spec.ts",
+      "tests/negative/AC-203.negative.spec.ts",
+      "tests/acceptance/AC-204.spec.ts",
+      "tests/negative/AC-204.negative.spec.ts",
+      "tests/acceptance/AC-205.spec.ts",
+      "tests/negative/AC-205.negative.spec.ts",
+      "tests/acceptance/AC-206.spec.ts",
+      "tests/negative/AC-206.negative.spec.ts",
+      "tests/acceptance/AC-207.spec.ts",
+      "tests/negative/AC-207.negative.spec.ts",
+      "tests/acceptance/AC-208.spec.ts",
+      "tests/negative/AC-208.negative.spec.ts",
+      "tests/acceptance/AC-209.spec.ts",
+      "tests/negative/AC-209.negative.spec.ts",
+      "tests/acceptance/AC-210.spec.ts",
+      "tests/negative/AC-210.negative.spec.ts",
+      "tests/acceptance/AC-211.spec.ts",
+      "tests/negative/AC-211.negative.spec.ts",
+      "tests/acceptance/AC-212.spec.ts",
+      "tests/negative/AC-212.negative.spec.ts",
+      "tests/acceptance/AC-213.spec.ts",
+      "tests/negative/AC-213.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/of/"
+    ],
+    "telemetryRefs": [
+      "telemetry/of.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.34 Opportunity Frontier",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

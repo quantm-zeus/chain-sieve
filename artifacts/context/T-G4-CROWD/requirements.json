@@ -1,0 +1,322 @@
+[
+  {
+    "id": "FR-CROWD-001",
+    "text": "Crowding and exit-liquidity assessment for researched opportunity candidates.",
+    "textSha256": "d57c29bdcfbd0344ac45e5864e1ae6bb5d87058bbc213043a0a9424f9ac5fdec",
+    "line": 6088,
+    "family": "FR-CROWD",
+    "dependencyGroup": "G4",
+    "owner": "packages/crowding",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/crowding/** @requirement FR-CROWD-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/crowd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_crowd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/crowd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/crowd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/crowd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CROWD-002",
+    "text": "Read-only sell-depth and modeled-exit scenarios expose assumptions.",
+    "textSha256": "44ed7ec2b336898a289897f4d0e2ee60f7f33367e0338235b07c4d18af037002",
+    "line": 6089,
+    "family": "FR-CROWD",
+    "dependencyGroup": "G4",
+    "owner": "packages/crowding",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/crowding/** @requirement FR-CROWD-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/crowd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_crowd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/crowd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/crowd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/crowd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CROWD-003",
+    "text": "High crowding cannot be hidden by positive wallet or social signals.",
+    "textSha256": "e13cb5861ce241825a5cfcc821e20009063b210d8fe9edee5f8b8f2ea1d7606e",
+    "line": 6090,
+    "family": "FR-CROWD",
+    "dependencyGroup": "G4",
+    "owner": "packages/crowding",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/crowding/** @requirement FR-CROWD-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/crowd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_crowd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/crowd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/crowd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/crowd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-CROWD-004",
+    "text": "Estimated cost basis/profitable supply exposes method, coverage, uncertainty, and excluded supply.",
+    "textSha256": "41be1e73e9543770c14f4e73dd3652063ee8be1f17b4bfc8f20179c711cd06d5",
+    "line": 6091,
+    "family": "FR-CROWD",
+    "dependencyGroup": "G4",
+    "owner": "packages/crowding",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-074",
+      "AC-075",
+      "AC-076",
+      "AC-091",
+      "AC-092"
+    ],
+    "implementationRefs": [
+      "packages/crowding/** @requirement FR-CROWD-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/crowd.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_crowd_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/crowd-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-074.spec.ts",
+      "tests/negative/AC-074.negative.spec.ts",
+      "tests/acceptance/AC-075.spec.ts",
+      "tests/negative/AC-075.negative.spec.ts",
+      "tests/acceptance/AC-076.spec.ts",
+      "tests/negative/AC-076.negative.spec.ts",
+      "tests/acceptance/AC-091.spec.ts",
+      "tests/negative/AC-091.negative.spec.ts",
+      "tests/acceptance/AC-092.spec.ts",
+      "tests/negative/AC-092.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/crowd/"
+    ],
+    "telemetryRefs": [
+      "telemetry/crowd.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.9 Narrative, capital flow, and crowding",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

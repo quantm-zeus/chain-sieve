@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/requirement-manifest"
+  ],
+  "allowedPaths": [
+    "packages/requirement-manifest/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-TRACE/**",
+    "packages/shared-schemas/src/trace.ts"
+  ],
+  "writeSet": [
+    "packages/requirement-manifest/**",
+    "packages/release-conformance/**"
+  ]
+}

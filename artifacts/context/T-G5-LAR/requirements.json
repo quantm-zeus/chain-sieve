@@ -1,0 +1,447 @@
+[
+  {
+    "id": "FR-LAR-001",
+    "text": "Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events.",
+    "textSha256": "8ab5a4dc646ba414c3539952337e6fd39514755b761bab47d6602c2eed188130",
+    "line": 6251,
+    "family": "FR-LAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/liquidity-resilience",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/liquidity-resilience/** @requirement FR-LAR-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.23 Liquidity Absorption and Resilience",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LAR-002",
+    "text": "The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.",
+    "textSha256": "22640face5a29c090c15ccad3e8f3c5ba3583ee1ea50cc6b6510ca77b886e676",
+    "line": 6252,
+    "family": "FR-LAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/liquidity-resilience",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/liquidity-resilience/** @requirement FR-LAR-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.23 Liquidity Absorption and Resilience",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LAR-003",
+    "text": "A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.",
+    "textSha256": "590bdec0378be149f6ec31ab639c0e20d54efa0d705397e5400590837afb1f77",
+    "line": 6253,
+    "family": "FR-LAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/liquidity-resilience",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/liquidity-resilience/** @requirement FR-LAR-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.23 Liquidity Absorption and Resilience",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LAR-004",
+    "text": "Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress.",
+    "textSha256": "640d314bc180c672b08055cbb49677cd9ca2a8327291176abd0d528232384cba",
+    "line": 6254,
+    "family": "FR-LAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/liquidity-resilience",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/liquidity-resilience/** @requirement FR-LAR-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.23 Liquidity Absorption and Resilience",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-LAR-005",
+    "text": "Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience.",
+    "textSha256": "bdee1fd606f8922dbb0e116a0c6998673e956047e0b64f9839a8f243e5fb2525",
+    "line": 6255,
+    "family": "FR-LAR",
+    "dependencyGroup": "G5",
+    "owner": "packages/liquidity-resilience",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-170",
+      "AC-171",
+      "AC-172",
+      "AC-173",
+      "AC-174",
+      "AC-175",
+      "AC-176",
+      "AC-177"
+    ],
+    "implementationRefs": [
+      "packages/liquidity-resilience/** @requirement FR-LAR-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/lar.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g5_lar_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/lar-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-170.spec.ts",
+      "tests/negative/AC-170.negative.spec.ts",
+      "tests/acceptance/AC-171.spec.ts",
+      "tests/negative/AC-171.negative.spec.ts",
+      "tests/acceptance/AC-172.spec.ts",
+      "tests/negative/AC-172.negative.spec.ts",
+      "tests/acceptance/AC-173.spec.ts",
+      "tests/negative/AC-173.negative.spec.ts",
+      "tests/acceptance/AC-174.spec.ts",
+      "tests/negative/AC-174.negative.spec.ts",
+      "tests/acceptance/AC-175.spec.ts",
+      "tests/negative/AC-175.negative.spec.ts",
+      "tests/acceptance/AC-176.spec.ts",
+      "tests/negative/AC-176.negative.spec.ts",
+      "tests/acceptance/AC-177.spec.ts",
+      "tests/negative/AC-177.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/lar/"
+    ],
+    "telemetryRefs": [
+      "telemetry/lar.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.23 Liquidity Absorption and Resilience",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

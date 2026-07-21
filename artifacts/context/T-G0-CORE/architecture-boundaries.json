@@ -1,0 +1,26 @@
+{
+  "ownerPackages": [
+    "packages/domain"
+  ],
+  "allowedPaths": [
+    "packages/domain/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G0-CORE/**",
+    "packages/shared-schemas/src/core.ts"
+  ],
+  "writeSet": [
+    "packages/domain/**",
+    "packages/shared-schemas/**"
+  ]
+}

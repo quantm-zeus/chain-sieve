@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/social-capability"
+  ],
+  "allowedPaths": [
+    "packages/social-capability/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-SOC/**",
+    "packages/shared-schemas/src/soc.ts"
+  ],
+  "writeSet": [
+    "packages/social-capability/**"
+  ]
+}

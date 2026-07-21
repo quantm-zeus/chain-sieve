@@ -1,0 +1,432 @@
+[
+  {
+    "id": "FR-OOD-001",
+    "text": "Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment.",
+    "textSha256": "8b1d2b8544d7f016d259651458e57a16caafcaf48a7809e77a0db5cde8ce0c41",
+    "line": 6282,
+    "family": "FR-OOD",
+    "dependencyGroup": "G6",
+    "owner": "packages/novelty-detector",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/novelty-detector/** @requirement FR-OOD-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ood.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ood_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ood-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ood/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ood.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.27 Out-of-Distribution and Novelty",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OOD-002",
+    "text": "Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.",
+    "textSha256": "52ca4127a6268ead1075584cfe9833e9bde6895a017fc5a1d0b065e367438706",
+    "line": 6283,
+    "family": "FR-OOD",
+    "dependencyGroup": "G6",
+    "owner": "packages/novelty-detector",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/novelty-detector/** @requirement FR-OOD-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ood.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ood_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ood-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ood/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ood.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.27 Out-of-Distribution and Novelty",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OOD-003",
+    "text": "`HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.",
+    "textSha256": "8bfbabc1c7f1cd5b1d6e75f52042971b6caa734c1a96f8a3882beb89c42d1950",
+    "line": 6284,
+    "family": "FR-OOD",
+    "dependencyGroup": "G6",
+    "owner": "packages/novelty-detector",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/novelty-detector/** @requirement FR-OOD-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ood.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ood_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ood-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ood/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ood.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.27 Out-of-Distribution and Novelty",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OOD-004",
+    "text": "Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately.",
+    "textSha256": "c9b9e80245b0c80c37c941d07ec1d01ebd9512ba4c762d1ad9e1f9723e8065aa",
+    "line": 6285,
+    "family": "FR-OOD",
+    "dependencyGroup": "G6",
+    "owner": "packages/novelty-detector",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/novelty-detector/** @requirement FR-OOD-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ood.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ood_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ood-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ood/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ood.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.27 Out-of-Distribution and Novelty",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-OOD-005",
+    "text": "OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware.",
+    "textSha256": "977b2f140dd8aed1677d3355bd752dc1555df6d53f3830771a3959cee7da6921",
+    "line": 6286,
+    "family": "FR-OOD",
+    "dependencyGroup": "G6",
+    "owner": "packages/novelty-detector",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-180",
+      "AC-181",
+      "AC-182",
+      "AC-183",
+      "AC-184",
+      "AC-185",
+      "AC-186"
+    ],
+    "implementationRefs": [
+      "packages/novelty-detector/** @requirement FR-OOD-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/ood.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g6_ood_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/ood-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-180.spec.ts",
+      "tests/negative/AC-180.negative.spec.ts",
+      "tests/acceptance/AC-181.spec.ts",
+      "tests/negative/AC-181.negative.spec.ts",
+      "tests/acceptance/AC-182.spec.ts",
+      "tests/negative/AC-182.negative.spec.ts",
+      "tests/acceptance/AC-183.spec.ts",
+      "tests/negative/AC-183.negative.spec.ts",
+      "tests/acceptance/AC-184.spec.ts",
+      "tests/negative/AC-184.negative.spec.ts",
+      "tests/acceptance/AC-185.spec.ts",
+      "tests/negative/AC-185.negative.spec.ts",
+      "tests/acceptance/AC-186.spec.ts",
+      "tests/negative/AC-186.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/ood/"
+    ],
+    "telemetryRefs": [
+      "telemetry/ood.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.27 Out-of-Distribution and Novelty",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

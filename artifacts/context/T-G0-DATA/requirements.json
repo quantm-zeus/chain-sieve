@@ -1,0 +1,650 @@
+[
+  {
+    "id": "FR-DATA-001",
+    "text": "Canonical asset/pool/migration identity.",
+    "textSha256": "712fa8d7fb9e7d14b6fe01c57c44caa2bea2f0879980e1e58a9e6af9538cd19c",
+    "line": 5998,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-001",
+      "packages/evidence/** @requirement FR-DATA-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-002",
+    "text": "Immutable observations and revisions.",
+    "textSha256": "ca1a503fe5a2230b724a34883169f16990a4516519daeca62fba60f521d2f9c2",
+    "line": 5999,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-002",
+      "packages/evidence/** @requirement FR-DATA-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-003",
+    "text": "Point-in-time `available_at` replay.",
+    "textSha256": "b141925dd6e20fc6654f4c709cd2beeeab22c91d2d8dd343e6574fec0c8d884b",
+    "line": 6000,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-003",
+      "packages/evidence/** @requirement FR-DATA-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-004",
+    "text": "Online/offline feature consistency.",
+    "textSha256": "eb8e2a0c2300433a1aeaa8be05bbc356b5431c2f9d09704537070189b3081c28",
+    "line": 6001,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-004",
+      "packages/evidence/** @requirement FR-DATA-004"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-005",
+    "text": "Field-level data-quality codes.",
+    "textSha256": "5ed69fe70cfb586b7eae7f4527ef1317cb4c01664ddd00fdbd5a71e8dfd21e7a",
+    "line": 6002,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-005",
+      "packages/evidence/** @requirement FR-DATA-005"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DATA-006",
+    "text": "Source lineage and independence groups.",
+    "textSha256": "68cbd1acccf8a8c121302ca22d9c7bb2c3be4a888751b45a8665da414743767f",
+    "line": 6003,
+    "family": "FR-DATA",
+    "dependencyGroup": "G0",
+    "owner": "packages/persistence",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-240",
+      "AC-241",
+      "AC-242",
+      "AC-243",
+      "AC-244",
+      "AC-245",
+      "AC-246",
+      "AC-247",
+      "AC-248",
+      "AC-249"
+    ],
+    "implementationRefs": [
+      "packages/persistence/** @requirement FR-DATA-006",
+      "packages/evidence/** @requirement FR-DATA-006"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/data.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g0_data_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/data-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-020.spec.ts",
+      "tests/negative/AC-020.negative.spec.ts",
+      "tests/acceptance/AC-021.spec.ts",
+      "tests/negative/AC-021.negative.spec.ts",
+      "tests/acceptance/AC-022.spec.ts",
+      "tests/negative/AC-022.negative.spec.ts",
+      "tests/acceptance/AC-023.spec.ts",
+      "tests/negative/AC-023.negative.spec.ts",
+      "tests/acceptance/AC-240.spec.ts",
+      "tests/negative/AC-240.negative.spec.ts",
+      "tests/acceptance/AC-241.spec.ts",
+      "tests/negative/AC-241.negative.spec.ts",
+      "tests/acceptance/AC-242.spec.ts",
+      "tests/negative/AC-242.negative.spec.ts",
+      "tests/acceptance/AC-243.spec.ts",
+      "tests/negative/AC-243.negative.spec.ts",
+      "tests/acceptance/AC-244.spec.ts",
+      "tests/negative/AC-244.negative.spec.ts",
+      "tests/acceptance/AC-245.spec.ts",
+      "tests/negative/AC-245.negative.spec.ts",
+      "tests/acceptance/AC-246.spec.ts",
+      "tests/negative/AC-246.negative.spec.ts",
+      "tests/acceptance/AC-247.spec.ts",
+      "tests/negative/AC-247.negative.spec.ts",
+      "tests/acceptance/AC-248.spec.ts",
+      "tests/negative/AC-248.negative.spec.ts",
+      "tests/acceptance/AC-249.spec.ts",
+      "tests/negative/AC-249.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/data/"
+    ],
+    "telemetryRefs": [
+      "telemetry/data.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.2 Data and signal",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

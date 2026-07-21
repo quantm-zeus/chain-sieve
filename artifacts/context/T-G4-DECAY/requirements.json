@@ -1,0 +1,233 @@
+[
+  {
+    "id": "FR-DECAY-001",
+    "text": "Opportunity-window state and finite expiry.",
+    "textSha256": "54af4ec280536d1eb9bc52685ba0278fd41eadf4e7a6e9c25876fb71ad854dee",
+    "line": 6078,
+    "family": "FR-DECAY",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-DECAY-001"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/decay.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_decay_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/decay-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/decay/"
+    ],
+    "telemetryRefs": [
+      "telemetry/decay.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DECAY-002",
+    "text": "Expired thesis suppresses new opportunity alerts unless new material evidence creates a new thesis version.",
+    "textSha256": "4a3482b43f1940b1077c9cbe64bd36c4d855709fe0200fe1d4045136b489b8f3",
+    "line": 6079,
+    "family": "FR-DECAY",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-DECAY-002"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/decay.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_decay_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/decay-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/decay/"
+    ],
+    "telemetryRefs": [
+      "telemetry/decay.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  },
+  {
+    "id": "FR-DECAY-003",
+    "text": "Decay state deterministically changes research budget, monitoring cadence, validity, and alert-update behavior under a versioned policy.",
+    "textSha256": "d5c496abc938c94efa2cbcb81d9758efa18827c1e5aa09a3fdc8f377f9003e57",
+    "line": 6080,
+    "family": "FR-DECAY",
+    "dependencyGroup": "G4",
+    "owner": "packages/thesis",
+    "normativeLevel": "MUST",
+    "acceptanceCriteria": [
+      "AC-070",
+      "AC-071",
+      "AC-072",
+      "AC-073"
+    ],
+    "implementationRefs": [
+      "packages/thesis/** @requirement FR-DECAY-003"
+    ],
+    "schemaRefs": [
+      "packages/shared-schemas/src/decay.ts"
+    ],
+    "persistenceRefs": [
+      "migrations/g4_decay_*.sql"
+    ],
+    "apiToolUiRefs": [
+      "docs/generated/decay-surfaces.json"
+    ],
+    "testRefs": [
+      "tests/acceptance/AC-070.spec.ts",
+      "tests/negative/AC-070.negative.spec.ts",
+      "tests/acceptance/AC-071.spec.ts",
+      "tests/negative/AC-071.negative.spec.ts",
+      "tests/acceptance/AC-072.spec.ts",
+      "tests/negative/AC-072.negative.spec.ts",
+      "tests/acceptance/AC-073.spec.ts",
+      "tests/negative/AC-073.negative.spec.ts"
+    ],
+    "fixtureRefs": [
+      "tests/fixtures/decay/"
+    ],
+    "telemetryRefs": [
+      "telemetry/decay.*"
+    ],
+    "securityRightsCostControls": [
+      "INV-001",
+      "INV-002",
+      "INV-003",
+      "INV-004",
+      "INV-005",
+      "INV-006",
+      "INV-007",
+      "INV-008",
+      "INV-009",
+      "INV-010",
+      "Section 9.5",
+      "Section 33",
+      "Section 34",
+      "Section 35",
+      "Section 37"
+    ],
+    "activationGateRefs": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "rollbackRefs": [
+      "FR-PROD-012",
+      "AC-279",
+      "Section 85.6"
+    ],
+    "section": "38. Functional requirements catalogue",
+    "status": "NOT_IMPLEMENTED",
+    "subsection": "38.8 Thesis, timing, and decomposition",
+    "supersededBy": [],
+    "supersedes": []
+  }
+]

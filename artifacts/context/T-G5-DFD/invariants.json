@@ -1,0 +1,92 @@
+[
+  {
+    "id": "INV-001",
+    "text": "The system is permanently read-only with respect to financial execution, custody, signing, and transaction construction.",
+    "textSha256": "c0f17111104dc990c452a4c240e9145d49fb95540613e2b628ac812e9b8dd6dd",
+    "line": 7337,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-001.spec.ts"
+  },
+  {
+    "id": "INV-002",
+    "text": "Agent intelligence never replaces deterministic identity, evidence, time, execution, risk, capability, rights, cost, quota, capacity, or policy controls.",
+    "textSha256": "1c9f069b97a991c607d536f36697f7ffd176768c4fa85f27c2129635fb62cd8a",
+    "line": 7338,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-002.spec.ts"
+  },
+  {
+    "id": "INV-003",
+    "text": "No automated external side effect occurs directly from model output.",
+    "textSha256": "86f4d228eca81585ea2c3a36b12f81eb9ec99ff6449d288264199daa2a16eeaf",
+    "line": 7339,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-003.spec.ts"
+  },
+  {
+    "id": "INV-004",
+    "text": "Every retained decision is reconstructable from frozen evidence, availability, acquisition state, configuration, code, adapter, and artifact versions.",
+    "textSha256": "bfbf22708b1a51aeadb09a62af3e4b868563c2dacdc8846ecb56bbcb8bdf0720",
+    "line": 7340,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-004.spec.ts"
+  },
+  {
+    "id": "INV-005",
+    "text": "Historical replay uses only data and learned artifacts actually available to the system at the simulated time.",
+    "textSha256": "a4c6c3b2db75fcad331bb7e57be308985200ff34651d358474f33cd3d46da9cb",
+    "line": 7341,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-005.spec.ts"
+  },
+  {
+    "id": "INV-006",
+    "text": "Backfilled historical data is never backdated into production replay.",
+    "textSha256": "6d886e5372396022b3f410dcc5001f76032e7aee053c253a0600e5b7f53db213",
+    "line": 7342,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-006.spec.ts"
+  },
+  {
+    "id": "INV-007",
+    "text": "Evaluation includes alerts, watches, ignores, rejects, below-cutoff cases, exploration/control cases, and missed opportunities under symmetric action-time semantics.",
+    "textSha256": "5f97a9f974d4559db3f00c93687e6b901b7502d23ca95df9afbc5a97a520c56b",
+    "line": 7343,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-007.spec.ts"
+  },
+  {
+    "id": "INV-008",
+    "text": "Provider count is not source independence; declared lineage and empirical dependence both constrain effective confirmation.",
+    "textSha256": "814e55c48f2a267ff4a8d5b21bd807e9891c187d5260f38afab353e108f12d22",
+    "line": 7344,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-008.spec.ts"
+  },
+  {
+    "id": "INV-009",
+    "text": "A durable workflow or collector may retry; every state transition and external side effect remains idempotent and fenced.",
+    "textSha256": "3b5127dc245e3bc873ceeb79ab803ac58696fdc1dd97f7a1c2d36ac592d36a7f",
+    "line": 7345,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-009.spec.ts"
+  },
+  {
+    "id": "INV-010",
+    "text": "The primary policy objective is conservative net shadow-portfolio utility under finite capital and hard constraints, not isolated price appreciation or alert win rate.",
+    "textSha256": "952cc62a46842a917ab29d75a9dae264c5a0a25b0d99abd76ebf63b07e411120",
+    "line": 7346,
+    "section": "45. Final architecture invariants",
+    "status": "PLANNED",
+    "testRef": "tests/invariants/INV-010.spec.ts"
+  }
+]

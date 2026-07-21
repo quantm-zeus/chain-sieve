@@ -1,0 +1,3972 @@
+[
+  {
+    "requirementId": "FR-CORE-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-007",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CORE-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-007",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-008",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SIG-010",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-001",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-002",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-003",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-004",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-005",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-006",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-007",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WF-008",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-001",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-002",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-003",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-004",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-005",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-006",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-007",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-008",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-006",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-007",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-001",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-002",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-003",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-004",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-005",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-006",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-007",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADM-008",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-THS-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-THS-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-THS-003",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WHY-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WHY-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DECAY-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DECAY-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DECAY-003",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NAR-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NAR-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-XCF-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-XCF-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CROWD-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CROWD-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CROWD-003",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CROWD-004",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CROWD-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-REG-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-REG-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-POL-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-POL-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-POL-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-POL-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-POL-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAT-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAT-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ANA-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ANA-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ANA-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CF-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CF-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CF-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AL-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AL-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AL-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NB-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NB-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FB-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FB-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CAP-001",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CAP-002",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CAP-003",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-CAP-004",
+    "activationGates": [
+      "dependency-group:G4",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-007",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-009",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-010",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-010",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-011",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-012",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOLSEC-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SUP-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SUP-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRD-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRD-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRD-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRD-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALERT-001",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALERT-002",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALERT-003",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALERT-004",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALERT-005",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOC-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOC-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOC-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SOC-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-001",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-002",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-003",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-004",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-005",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-006",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-004",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-005",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-006",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-007",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-008",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-009",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-010",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WPI-011",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-006",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-WAL-007",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DFD-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DFD-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DFD-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DFD-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DFD-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAR-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAR-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAR-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAR-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LAR-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LMS-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LMS-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LMS-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LMS-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LMS-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADQ-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADQ-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADQ-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADQ-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADQ-005",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NLL-001",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NLL-002",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NLL-003",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-NLL-004",
+    "activationGates": [
+      "dependency-group:G5",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OOD-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OOD-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OOD-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OOD-004",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OOD-005",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MVD-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MVD-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MVD-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MVD-004",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MVD-005",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FHZ-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FHZ-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FHZ-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FHZ-004",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-FHZ-005",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AIG-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AIG-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AIG-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AIG-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AIG-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXP-006",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-006",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-007",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SPF-008",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AMS-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AMS-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AMS-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AMS-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AMS-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OF-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OF-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OF-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OF-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OF-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-006",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ADG-007",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-002",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-003",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-004",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-005",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-ALAB-006",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AEP-001",
+    "activationGates": [
+      "dependency-group:G7",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-001",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-002",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-003",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-004",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-005",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-006",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-OBJ-010",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-007",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-009",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-010",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-011",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COL-012",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-007",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-009",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROV-010",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-007",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-010",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-011",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-012",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-013",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-014",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-015",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DATA-016",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-009",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-010",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-011",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-AGT-012",
+    "activationGates": [
+      "dependency-group:G3",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-011",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-012",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-013",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-014",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-015",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-016",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-COST-017",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-010",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-011",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-012",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-013",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DISC-014",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-013",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-014",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-015",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-016",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-017",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-018",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-019",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-020",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-021",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EXEC-022",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-008",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-009",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-010",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-011",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MAT-012",
+    "activationGates": [
+      "dependency-group:G1",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-010",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-011",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-012",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-013",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-014",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-015",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-016",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-017",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-018",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-019",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-EVAL-020",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-009",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-010",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-011",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-MCP-012",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-007",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-008",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-009",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-010",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-011",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-SEC-012",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-003",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-004",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-005",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-DR-006",
+    "activationGates": [
+      "dependency-group:G2",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-001",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-002",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-003",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-004",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-005",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-LEGAL-006",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-001",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-002",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-003",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-004",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-005",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-TRACE-006",
+    "activationGates": [
+      "dependency-group:G0",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-007",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-008",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-009",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-010",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-011",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  },
+  {
+    "requirementId": "FR-PROD-012",
+    "activationGates": [
+      "dependency-group:G6",
+      "Section 9.5",
+      "Section 40",
+      "Section 46"
+    ],
+    "initialState": "DISABLED"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA",
+    "T-G1-DISC",
+    "T-G1-EVAL",
+    "T-G1-EXEC",
+    "T-G1-MAT",
+    "T-G1-OBJ",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD",
+    "T-G2-ADM",
+    "T-G2-ALERT",
+    "T-G2-DR",
+    "T-G2-PROD",
+    "T-G2-WF",
+    "T-G3-ADM",
+    "T-G3-AGT"
+  ],
+  "interfaceHashes": {
+    "apps/dashboard:contract": "17a059b990e86bad6bc15f4fe29888d784cc4c40cc92e79ea146d1ffc5c8ab9f"
+  }
+}

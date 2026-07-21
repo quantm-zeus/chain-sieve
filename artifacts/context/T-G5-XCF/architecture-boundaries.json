@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/capital-flow"
+  ],
+  "allowedPaths": [
+    "packages/capital-flow/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-XCF/**",
+    "packages/shared-schemas/src/xcf.ts"
+  ],
+  "writeSet": [
+    "packages/capital-flow/**"
+  ]
+}

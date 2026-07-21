@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/thesis"
+  ],
+  "allowedPaths": [
+    "packages/thesis/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G4-DECAY/**",
+    "packages/shared-schemas/src/decay.ts"
+  ],
+  "writeSet": [
+    "packages/thesis/**"
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G1-COST",
+  "title": "FR-COST implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G1",
+  "cluster": "C-G1-IMPLEMENTATION",
+  "riskLevel": "MEDIUM",
+  "autonomyLevel": "AUTONOMOUS",
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "requirements": [
+    "FR-COST-011",
+    "FR-COST-012",
+    "FR-COST-013",
+    "FR-COST-014",
+    "FR-COST-015",
+    "FR-COST-016",
+    "FR-COST-017"
+  ],
+  "acceptanceCriteria": [
+    "AC-100",
+    "AC-101",
+    "AC-102",
+    "AC-103",
+    "AC-104",
+    "AC-105",
+    "AC-224",
+    "AC-225",
+    "AC-226",
+    "AC-227",
+    "AC-228",
+    "AC-229"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/cost-router"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G1-COST/**",
+    "packages/shared-schemas/src/cost.ts"
+  ],
+  "writeSet": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ],
+  "allowedPaths": [
+    "packages/cost-router/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "exclusiveLocks": [
+    "packages/cost-router/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/cost-router:contract": "8e5c0d842b1e8356191b725562857968784fb1cb2815788c92a575d5a4f62c81"
+  },
+  "deliverables": [
+    "packages/cost-router/** @requirement FR-COST-011",
+    "packages/capacity-planner/** @requirement FR-COST-011",
+    "packages/quota-forecast/** @requirement FR-COST-011",
+    "packages/cost-router/** @requirement FR-COST-012",
+    "packages/capacity-planner/** @requirement FR-COST-012",
+    "packages/quota-forecast/** @requirement FR-COST-012",
+    "packages/cost-router/** @requirement FR-COST-013",
+    "packages/capacity-planner/** @requirement FR-COST-013",
+    "packages/quota-forecast/** @requirement FR-COST-013",
+    "packages/cost-router/** @requirement FR-COST-014",
+    "packages/capacity-planner/** @requirement FR-COST-014",
+    "packages/quota-forecast/** @requirement FR-COST-014",
+    "packages/cost-router/** @requirement FR-COST-015",
+    "packages/capacity-planner/** @requirement FR-COST-015",
+    "packages/quota-forecast/** @requirement FR-COST-015",
+    "packages/cost-router/** @requirement FR-COST-016",
+    "packages/capacity-planner/** @requirement FR-COST-016",
+    "packages/quota-forecast/** @requirement FR-COST-016",
+    "packages/cost-router/** @requirement FR-COST-017",
+    "packages/capacity-planner/** @requirement FR-COST-017",
+    "packages/quota-forecast/** @requirement FR-COST-017",
+    "packages/cost-router implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-100.spec.ts",
+    "tests/negative/AC-100.negative.spec.ts",
+    "tests/acceptance/AC-101.spec.ts",
+    "tests/negative/AC-101.negative.spec.ts",
+    "tests/acceptance/AC-102.spec.ts",
+    "tests/negative/AC-102.negative.spec.ts",
+    "tests/acceptance/AC-103.spec.ts",
+    "tests/negative/AC-103.negative.spec.ts",
+    "tests/acceptance/AC-104.spec.ts",
+    "tests/negative/AC-104.negative.spec.ts",
+    "tests/acceptance/AC-105.spec.ts",
+    "tests/negative/AC-105.negative.spec.ts",
+    "tests/acceptance/AC-224.spec.ts",
+    "tests/negative/AC-224.negative.spec.ts",
+    "tests/acceptance/AC-225.spec.ts",
+    "tests/negative/AC-225.negative.spec.ts",
+    "tests/acceptance/AC-226.spec.ts",
+    "tests/negative/AC-226.negative.spec.ts",
+    "tests/acceptance/AC-227.spec.ts",
+    "tests/negative/AC-227.negative.spec.ts",
+    "tests/acceptance/AC-228.spec.ts",
+    "tests/negative/AC-228.negative.spec.ts",
+    "tests/acceptance/AC-229.spec.ts",
+    "tests/negative/AC-229.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm task:verify T-G1-COST",
+      "expected": "exit 0 with independently derived evidence"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6432,
+      "id": "FR-COST-011"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6433,
+      "id": "FR-COST-012"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6434,
+      "id": "FR-COST-013"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6435,
+      "id": "FR-COST-014"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6436,
+      "id": "FR-COST-015"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6437,
+      "id": "FR-COST-016"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6438,
+      "id": "FR-COST-017"
+    }
+  ]
+}

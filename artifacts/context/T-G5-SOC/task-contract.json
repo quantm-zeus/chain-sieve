@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-G5-SOC",
+  "title": "FR-SOC implementation contract",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "G5",
+  "cluster": "C-G5-IMPLEMENTATION",
+  "riskLevel": "MEDIUM",
+  "autonomyLevel": "AUTONOMOUS",
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE",
+    "T-G1-COST",
+    "T-G1-DATA",
+    "T-G1-DISC",
+    "T-G1-EVAL",
+    "T-G1-EXEC",
+    "T-G1-MAT",
+    "T-G1-OBJ",
+    "T-G1-SIG",
+    "T-G1-SOLSEC",
+    "T-G1-SUP",
+    "T-G1-TRD",
+    "T-G2-ADM",
+    "T-G2-ALERT",
+    "T-G2-DR",
+    "T-G2-PROD",
+    "T-G2-WF",
+    "T-G3-ADM",
+    "T-G3-AGT",
+    "T-G4-ADM",
+    "T-G4-CAP",
+    "T-G4-CROWD",
+    "T-G4-DECAY",
+    "T-G4-FB",
+    "T-G4-LAT",
+    "T-G4-NB",
+    "T-G4-THS",
+    "T-G4-WHY"
+  ],
+  "requirements": [
+    "FR-SOC-001",
+    "FR-SOC-002",
+    "FR-SOC-003",
+    "FR-SOC-004"
+  ],
+  "acceptanceCriteria": [
+    "AC-140",
+    "AC-141",
+    "AC-142",
+    "AC-143"
+  ],
+  "invariants": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "packages/social-capability"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G5-SOC/**",
+    "packages/shared-schemas/src/soc.ts"
+  ],
+  "writeSet": [
+    "packages/social-capability/**"
+  ],
+  "allowedPaths": [
+    "packages/social-capability/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "exclusiveLocks": [
+    "packages/social-capability/public-api"
+  ],
+  "interfaceHashes": {
+    "packages/social-capability:contract": "60a70870f49265a54710349e3db1a95e7d8585c3c5e0194146ba3fb8d4c7f3e5"
+  },
+  "deliverables": [
+    "packages/social-capability/** @requirement FR-SOC-001",
+    "packages/social-capability/** @requirement FR-SOC-002",
+    "packages/social-capability/** @requirement FR-SOC-003",
+    "packages/social-capability/** @requirement FR-SOC-004",
+    "packages/social-capability implementation and tests"
+  ],
+  "constraints": [
+    "Preserve every referenced normative ID and degraded behavior.",
+    "Keep product influence disabled until explicit activation gates pass.",
+    "Use point-in-time and evidence semantics where externally sourced data is involved."
+  ],
+  "nonGoals": [
+    "No financial execution, signing, custody, or transaction submission.",
+    "No automatic alpha or product capability activation.",
+    "No unrelated dependency-group implementation."
+  ],
+  "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
+  "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+  "requiredTests": [
+    "tests/acceptance/AC-140.spec.ts",
+    "tests/negative/AC-140.negative.spec.ts",
+    "tests/acceptance/AC-141.spec.ts",
+    "tests/negative/AC-141.negative.spec.ts",
+    "tests/acceptance/AC-142.spec.ts",
+    "tests/negative/AC-142.negative.spec.ts",
+    "tests/acceptance/AC-143.spec.ts",
+    "tests/negative/AC-143.negative.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm task:verify T-G5-SOC",
+      "expected": "exit 0 with independently derived evidence"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "all architecture fitness controls pass"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 24,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "A source hash differs from the task contract.",
+    "A dependency is not MERGED or its public interface hash changed.",
+    "Required behavior exceeds a declared budget without an approved split.",
+    "A prohibited capability or activation path would be introduced."
+  ],
+  "completionDefinition": [
+    "All mapped positive and negative tests pass.",
+    "Deterministic verifier derives PASS from repository evidence.",
+    "One atomic task commit exists and architecture checks pass.",
+    "Degraded, replay, rollback, and observability behavior is documented and tested."
+  ],
+  "sourceReferences": [
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6201,
+      "id": "FR-SOC-001"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6202,
+      "id": "FR-SOC-002"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6203,
+      "id": "FR-SOC-003"
+    },
+    {
+      "path": "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+      "line": 6204,
+      "id": "FR-SOC-004"
+    }
+  ]
+}

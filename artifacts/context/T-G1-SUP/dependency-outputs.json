@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    "T-G0-COL",
+    "T-G0-CORE",
+    "T-G0-COST",
+    "T-G0-DATA",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-MCP",
+    "T-G0-PROV",
+    "T-G0-SEC",
+    "T-G0-TRACE"
+  ],
+  "interfaceHashes": {
+    "packages/supply-confidence:contract": "c7324a9a738a4c1a36071ae73381e1ed43b61f855cb809a87e1fadcf7c614815"
+  }
+}

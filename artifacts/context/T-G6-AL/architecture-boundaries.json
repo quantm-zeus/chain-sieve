@@ -1,0 +1,25 @@
+{
+  "ownerPackages": [
+    "packages/active-learning"
+  ],
+  "allowedPaths": [
+    "packages/active-learning/**",
+    "tests/**",
+    "docs/implementation/**",
+    "infra/migrations/**"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/generated/**",
+    ".github/workflows/**"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-G6-AL/**",
+    "packages/shared-schemas/src/al.ts"
+  ],
+  "writeSet": [
+    "packages/active-learning/**"
+  ]
+}
