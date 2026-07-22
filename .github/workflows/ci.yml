@@ -2,7 +2,9 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, bootstrap/agent-harness-and-codebase]
+    branches: [main]
+    tags: ['harness-v*']
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -35,6 +37,8 @@ jobs:
       - run: pnpm prd:drift-check
       - run: pnpm requirements:coverage
       - run: pnpm harness:verify
+      - name: Verify runtime, generated goals, and proof-carrying rejection
+        run: pnpm exec vitest run tests/harness/runtime-baseline.spec.ts tests/harness/compiler.spec.ts tests/harness/verifier-forgery.spec.ts tests/harness/cluster-verifier-forgery.spec.ts
   tier2:
     name: Tier 2 · cluster integration
     needs: tier1
@@ -80,7 +84,7 @@ jobs:
           if pnpm cluster:verify C-G0-IMPLEMENTATION; then exit 1; fi
   tier3:
     name: Tier 3 · pre-main
-    needs: tier2
+    needs: [tier2, production-images]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -102,3 +106,47 @@ jobs:
       - run: pnpm placeholders:scan
       - run: pnpm tests:skeleton-integrity
       - run: pnpm test:mutation
+  production-images:
+    name: Tier 3 · production image (${{ matrix.service }}, ${{ matrix.platform }})
+    needs: tier2
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api, dashboard]
+        platform: [linux/amd64, linux/arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build exact production image
+        run: docker buildx build --platform "${{ matrix.platform }}" --load --file "apps/${{ matrix.service }}/Dockerfile" --tag "chain-sieve-${{ matrix.service }}:ci" .
+      - name: Verify and smoke production image
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="chain-sieve-${{ matrix.service }}:ci"
+          expected_arch="${{ matrix.platform }}"
+          expected_arch="${expected_arch#linux/}"
+          test "$(docker image inspect "$image" --format '{{.Architecture}}')" = "$expected_arch"
+          test "$(docker image inspect "$image" --format '{{.Config.User}}')" = node
+          if [ "${{ matrix.service }}" = api ]; then
+            docker run -d --name production-smoke --read-only --tmpfs /tmp:rw,size=64m -p 13000:3000 \
+              -e NODE_ENV=production -e API_HOST=0.0.0.0 -e API_PORT=3000 \
+              -e DATABASE_URL=postgres://ciag:ciag_test@127.0.0.1:5432/ciag \
+              -e OBJECT_STORE_DRIVER=filesystem -e OBJECT_STORE_ROOT=/tmp/object-store \
+              -e MCP_ALLOWED_ORIGINS=http://127.0.0.1:3001 \
+              -e MCP_BOOTSTRAP_TOKEN=local-synthetic-bootstrap-token "$image"
+            endpoint=http://127.0.0.1:13000/api/v1/health
+          else
+            docker run -d --name production-smoke --read-only --tmpfs /tmp:rw,size=32m -p 13001:3001 \
+              -e NODE_ENV=production -e HOST=0.0.0.0 -e PORT=3001 \
+              -e ORIGIN=http://127.0.0.1:13001 -e PUBLIC_API_BASE_URL=http://127.0.0.1:3000 "$image"
+            endpoint=http://127.0.0.1:13001/
+          fi
+          for attempt in {1..30}; do curl --fail --silent --show-error "$endpoint" >/dev/null && break; sleep 1; done
+          curl --fail --silent --show-error "$endpoint" >/dev/null
+          test "$(docker inspect production-smoke --format '{{.HostConfig.ReadonlyRootfs}}')" = true
+          docker exec production-smoke sh -lc 'test ! -e /pnpm/store && test ! -d /app/node_modules && test ! -d /app/tests'
+          docker stop --time 10 production-smoke
+          test "$(docker inspect production-smoke --format '{{.State.ExitCode}}')" = 0

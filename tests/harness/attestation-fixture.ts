@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { TaskContractSchema, TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/shared-schemas';
@@ -44,7 +44,7 @@ export const createAttestationFixture = async (): Promise<AttestationFixture> =>
   git(root, ['init', '-b', 'task/t-g0-core']);
   git(root, ['config', 'user.email', 'test@example.invalid']);
   git(root, ['config', 'user.name', 'Attestation Test']);
-  const contractText = await readFile('tasks/G0/T-G0-CORE.contract.json', 'utf8');
+  const contractText = `${git(process.cwd(), ['show', 'HEAD:tasks/G0/T-G0-CORE.contract.json'])}\n`;
   const task = TaskContractSchema.parse(JSON.parse(contractText));
   await put(root, `tasks/${task.dependencyGroup}/${task.id}.contract.json`, contractText);
   await put(
