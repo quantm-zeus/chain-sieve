@@ -1,0 +1,103 @@
+name: chain-sieve-production
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ciag}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-ciag}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    command: server /data
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - minio-data:/data
+
+  minio-init:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      [
+        'mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} && mc mb --ignore-existing local/$${S3_BUCKET}',
+      ]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      S3_BUCKET: ${S3_BUCKET:-ciag-artifacts}
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: chain-sieve-api:harness-v1.0.1
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    environment:
+      NODE_ENV: production
+      API_HOST: 0.0.0.0
+      API_PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-ciag}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-ciag}
+      OBJECT_STORE_DRIVER: s3
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-ciag-artifacts}
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      S3_FORCE_PATH_STYLE: 'true'
+      MCP_ALLOWED_ORIGINS: ${MCP_ALLOWED_ORIGINS:?MCP_ALLOWED_ORIGINS is required}
+      MCP_BOOTSTRAP_TOKEN: ${MCP_BOOTSTRAP_TOKEN:?MCP_BOOTSTRAP_TOKEN is required}
+      CAPABILITY_MODE: SYNTHETIC_SHADOW
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    image: chain-sieve-dashboard:harness-v1.0.1
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3001
+      ORIGIN: ${DASHBOARD_ORIGIN:?DASHBOARD_ORIGIN is required}
+      PUBLIC_API_BASE_URL: http://api:3000
+    ports:
+      - '3001:3001'
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  minio-data:
