@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { waitForCompilerIdle } from '../prd-compiler/compiler.js';
 
 export const NODE_RUNTIME_VERSION = '22.23.1';
 export const PNPM_RUNTIME_VERSION = '10.13.1';
@@ -45,6 +46,14 @@ export const validateRuntimeBaseline = (
 };
 
 export const verifyRuntimeBaseline = async (): Promise<ReturnType<typeof validateRuntimeBaseline>> => {
+  const readStable = async (path: string): Promise<string> => {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      await waitForCompilerIdle();
+      try { return await readFile(path, 'utf8'); }
+      catch (error: unknown) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
+    }
+    throw new Error(`RUNTIME_BASELINE_FILE_UNAVAILABLE:${path}`);
+  };
   const dockerPaths = [
     'infra/docker/api.Dockerfile',
     'infra/docker/dashboard.Dockerfile',
@@ -53,13 +62,13 @@ export const verifyRuntimeBaseline = async (): Promise<ReturnType<typeof validat
   ];
   const [packageJson, nodeVersion, nvmrc, ciWorkflow, scheduledWorkflow, architecturalBaseline, ...dockerfiles] =
     await Promise.all([
-      readFile('package.json', 'utf8'),
-      readFile('.node-version', 'utf8'),
-      readFile('.nvmrc', 'utf8'),
-      readFile('.github/workflows/ci.yml', 'utf8'),
-      readFile('.github/workflows/scheduled-verification.yml', 'utf8'),
-      readFile('tasks/generated/architectural-baseline.json', 'utf8'),
-      ...dockerPaths.map((path) => readFile(path, 'utf8')),
+      readStable('package.json'),
+      readStable('.node-version'),
+      readStable('.nvmrc'),
+      readStable('.github/workflows/ci.yml'),
+      readStable('.github/workflows/scheduled-verification.yml'),
+      readStable('tasks/generated/architectural-baseline.json'),
+      ...dockerPaths.map(readStable),
     ]);
   return validateRuntimeBaseline({
     packageJson,
