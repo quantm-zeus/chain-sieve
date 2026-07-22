@@ -216,6 +216,11 @@ export const validateTaskAttestation = async (
   const changed = deriveChangedFiles(bindings.baseCommitSha, bindings.headCommitSha, cwd);
   if (!sameJson(changed, bindings.changedFiles)) throw new Error('CHANGED_FILE_EVIDENCE_MISMATCH');
   if (changed.length === 0) throw new Error('EMPTY_CHANGED_FILE_EVIDENCE');
+  if (options.clusterHead) for (const file of changed) {
+    const existsAtClusterHead = spawnSync('git', ['cat-file', '-e', `${options.clusterHead}:${file.path}`], { cwd }).status === 0;
+    if (file.status === 'D' ? existsAtClusterHead : !existsAtClusterHead || hashPathAtCommit(options.clusterHead, file.path, 'M', cwd) !== file.sha256)
+      throw new Error(`SOURCE_CHANGED_AFTER_RESULT_GENERATION:${file.path}`);
+  }
   const requirements = deriveRequirementMapping(task, changed, bindings.headCommitSha, cwd);
   if (!sameJson(requirements, bindings.requirementToCode)) throw new Error('REQUIREMENT_TO_CODE_MAPPING_MISMATCH');
   const acceptance = await deriveAcceptanceMapping(task, bindings.headCommitSha, cwd);

@@ -24,8 +24,9 @@ describe('proof-carrying task verification', () => {
   });
 
   it('rejects a committed source mutation after result generation', async () => {
-    await fixture.commitSourceMutation();
+    const mutatedHead = await fixture.commitSourceMutation();
     await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, currentHeadRequired: true })).rejects.toThrow('HEAD_COMMIT_MISMATCH');
+    await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, clusterHead: mutatedHead })).rejects.toThrow('SOURCE_CHANGED_AFTER_RESULT_GENERATION');
   });
 
   it('rejects a result copied from another task', async () => {
