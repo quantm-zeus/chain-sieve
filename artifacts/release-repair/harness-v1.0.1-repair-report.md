@@ -9,6 +9,7 @@ Status: **ready for independent clean-room attestation with two external GitHub-
 - Verified implementation head: `5bc384810fcf994ab9f96e5975de47dc5fa5434d`
 - Verified implementation tree: `54596a6dd15df1fbed9f16c85973cbeddfe2363a`
 - Repair contract SHA-256: `9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a`
+- Narrow amendment hashes: A001 `59e538a48966eb38eb74a93f024053887139a724b73b2e280a0cf318d00a99f7`; A002 `ba284f76726d50c01e664222ffd83fbb2799691c0d94d4f52f4f6ee142f22e84`. A002 authorizes only the previously omitted task-lease schema and merge-queue verifier integration paths.
 - Lease: fencing version 2, ID `HARNESS-V1.0.1-REPAIR:2:1784726848931`; stale version 1 is rejected.
 - Failed tag remains immutable: tag object `a8515700a7c09cbf2ea7dc97e59c19e91d4be316`, target `90027c40753d502d1893fd518382080b5302dd63`, tree `561efa1c33b1cef08972d844fd42ad38c65b25b8`.
 

@@ -17,7 +17,17 @@
   },
   "repairContract": {
     "path": "tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml",
-    "sha256": "9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a"
+    "sha256": "9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a",
+    "amendments": [
+      {
+        "path": "artifacts/context/HARNESS-V1.0.1-REPAIR/amendment-001.json",
+        "sha256": "59e538a48966eb38eb74a93f024053887139a724b73b2e280a0cf318d00a99f7"
+      },
+      {
+        "path": "artifacts/context/HARNESS-V1.0.1-REPAIR/amendment-002.json",
+        "sha256": "ba284f76726d50c01e664222ffd83fbb2799691c0d94d4f52f4f6ee142f22e84"
+      }
+    ]
   },
   "lease": {
     "storage": ".git/ciag-runtime/task-state.json",
