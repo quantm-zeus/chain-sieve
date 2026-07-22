@@ -69,8 +69,8 @@ importers:
         specifier: ^1.17.2
         version: 1.29.0(zod@4.4.3)
       drizzle-orm:
-        specifier: ^0.44.3
-        version: 0.44.7(@types/pg@8.20.0)(pg@8.22.0)(postgres@3.4.9)
+        specifier: 0.45.2
+        version: 0.45.2(@types/pg@8.20.0)(pg@8.22.0)(postgres@3.4.9)
       hono:
         specifier: ^4.8.9
         version: 4.12.31
@@ -1287,8 +1287,8 @@ packages:
   discontinuous-range@1.0.0:
     resolution: {integrity: sha512-c68LpLbO+7kP/b1Hr1qs8/BJ09F5khZGTxqxZuhzxpmwJKOgRFHJWIb9/KmqnqHhLdO55aOxFH/EGBvUQbL/RQ==}
 
-  drizzle-orm@0.44.7:
-    resolution: {integrity: sha512-quIpnYznjU9lHshEOAYLoZ9s3jweleHlZIAWR/jX9gAWNg/JhQ1wj0KGRf7/Zm+obRrYd9GjPVJg790QY9N5AQ==}
+  drizzle-orm@0.45.2:
+    resolution: {integrity: sha512-kY0BSaTNYWnoDMVoyY8uxmyHjpJW1geOmBMdSSicKo9CIIWkSxMIj2rkeSR51b8KAPB7m+qysjuHme5nKP+E5Q==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -3450,7 +3450,7 @@ snapshots:
 
   discontinuous-range@1.0.0: {}
 
-  drizzle-orm@0.44.7(@types/pg@8.20.0)(pg@8.22.0)(postgres@3.4.9):
+  drizzle-orm@0.45.2(@types/pg@8.20.0)(pg@8.22.0)(postgres@3.4.9):
     optionalDependencies:
       '@types/pg': 8.20.0
       pg: 8.22.0
