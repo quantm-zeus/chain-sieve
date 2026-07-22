@@ -75,7 +75,7 @@ export const validateClusterResult = async (
   const tree = git(['rev-parse', 'HEAD^{tree}'], cwd);
   if (result.headCommitSha !== head) throw new Error('CLUSTER_HEAD_COMMIT_MISMATCH');
   if (result.headTreeSha !== tree) throw new Error('CLUSTER_TREE_MISMATCH');
-  if (git(['status', '--porcelain', '--untracked-files=no'], cwd) !== '') throw new Error('DIRTY_TRACKED_SOURCE');
+  if (git(['status', '--porcelain'], cwd) !== '') throw new Error('DIRTY_WORKTREE');
   const contractText = await readFile(join(cwd, clusterContractPath(cluster)), 'utf8');
   if (result.clusterContractSha256 !== sha256(contractText)) throw new Error('WRONG_CLUSTER_CONTRACT_HASH');
   const attestations = await deriveClusterTaskAttestations(cluster, tasks, state, head, cwd);

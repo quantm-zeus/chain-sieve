@@ -20,7 +20,12 @@ describe('proof-carrying task verification', () => {
 
   it('rejects tracked source mutation after result generation', async () => {
     await writeFile(`${fixture.root}/${fixture.codePath}`, 'export const attested = false;\n');
-    await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, currentHeadRequired: true })).rejects.toThrow('DIRTY_TRACKED_SOURCE');
+    await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, currentHeadRequired: true })).rejects.toThrow('DIRTY_WORKTREE');
+  });
+
+  it('rejects an untracked source file after result generation', async () => {
+    await writeFile(`${fixture.root}/packages/domain/src/untracked.ts`, 'export const untracked = true;\n');
+    await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, currentHeadRequired: true })).rejects.toThrow('DIRTY_WORKTREE');
   });
 
   it('rejects a committed source mutation after result generation', async () => {

@@ -206,8 +206,8 @@ export const validateTaskAttestation = async (
     throw new Error('TASK_BASE_NOT_ANCESTOR');
   if (options.currentHeadRequired && gitText(['rev-parse', 'HEAD'], cwd) !== bindings.headCommitSha)
     throw new Error('HEAD_COMMIT_MISMATCH');
-  if (options.currentHeadRequired && gitText(['status', '--porcelain', '--untracked-files=no'], cwd) !== '')
-    throw new Error('DIRTY_TRACKED_SOURCE');
+  if (options.currentHeadRequired && gitText(['status', '--porcelain'], cwd) !== '')
+    throw new Error('DIRTY_WORKTREE');
   if (
     options.clusterHead &&
     spawnSync('git', ['merge-base', '--is-ancestor', bindings.headCommitSha, options.clusterHead], { cwd }).status !== 0

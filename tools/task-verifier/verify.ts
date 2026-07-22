@@ -39,7 +39,7 @@ export const verifyTask = async (taskId: string, holder: string, leaseVersion: n
   transition(target, ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'], 'VERIFYING'); await writeState(state);
   try {
     const expectedBranch = `task/${taskId.toLowerCase()}`; const branch = git(['branch', '--show-current']); if (branch !== expectedBranch || target.branch !== expectedBranch) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
-    if (git(['status', '--porcelain', '--untracked-files=no']) !== '') throw new Error('DIRTY_TRACKED_SOURCE');
+    if (git(['status', '--porcelain']) !== '') throw new Error('DIRTY_WORKTREE');
     const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`; const hasCluster = git(['show-ref', '--verify', `refs/heads/${clusterBranch}`], process.cwd(), true) !== ''; const base = hasCluster ? git(['rev-parse', clusterBranch]) : target.baseCommit; if (!base) throw new Error('TASK_BASE_COMMIT_MISSING');
     const commit = git(['rev-parse', 'HEAD']); if (commit === base) throw new Error('TASK_COMMIT_MISSING'); if (Number(git(['rev-list', '--count', `${base}..${commit}`])) !== 1) throw new Error('TASK_COMMIT_NOT_ATOMIC');
     const changed = git(['diff', '--name-only', `${base}..${commit}`]).split('\n').filter(Boolean); if (changed.length === 0) throw new Error('TASK_DIFF_EMPTY'); if (changed.length > task.complexityBudget.maxFiles) throw new Error('TASK_FILE_BUDGET_EXCEEDED');

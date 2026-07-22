@@ -31,7 +31,7 @@ export const performTaskSelfReview = async (
   if (head === target.baseCommit) throw new Error('TASK_COMMIT_MISSING');
   if (Number(git(['rev-list', '--count', `${target.baseCommit}..${head}`], cwd)) !== 1)
     throw new Error('TASK_COMMIT_NOT_ATOMIC');
-  if (git(['status', '--porcelain', '--untracked-files=no'], cwd) !== '') throw new Error('DIRTY_TRACKED_SOURCE');
+  if (git(['status', '--porcelain'], cwd) !== '') throw new Error('DIRTY_WORKTREE');
   const changed = git(['diff', '--name-only', `${target.baseCommit}..${head}`], cwd)
     .split('\n')
     .filter(Boolean);
