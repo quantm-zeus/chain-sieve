@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "COMPLETE_EXACT_FILES_ARCHIVED",
+  "prompts": [
+    {
+      "path": "docs/prompts/01-bootstrap-codebase-and-harness.md",
+      "sha256": "4b92847390726635294fc5ca0479a001e3c1c367f1c3c332c15528ff7e1453b8",
+      "purpose": "Original repository bootstrap and implementation-harness instruction",
+      "source": "pre-existing owner-provided workspace file present before repair implementation; byte identity recorded without reconstruction",
+      "archived_at": "2026-07-21T17:59:02Z"
+    },
+    {
+      "path": "docs/prompts/02-independent-codebase-review.md",
+      "sha256": "d6b354e708ca8226fd0bf776f114024b1bd16b27ab99eba1e91decbe00d028d9",
+      "purpose": "Original independent codebase and harness review instruction",
+      "source": "pre-existing owner-provided workspace file present before repair implementation; byte identity recorded without reconstruction",
+      "archived_at": "2026-07-21T17:59:02Z"
+    }
+  ],
+  "originalExecutionDates": "unknown; intentionally not fabricated"
+}
