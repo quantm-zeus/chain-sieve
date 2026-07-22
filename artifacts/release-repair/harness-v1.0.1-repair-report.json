@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportId": "HARNESS-V1.0.1-REPAIR-20260722",
+  "status": "READY_FOR_INDEPENDENT_ATTESTATION_WITH_EXTERNAL_GITHUB_BLOCKERS",
+  "attestationStatus": "NOT_ATTESTED",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirementManifest": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "failedRelease": {
+    "tag": "harness-v1.0.0",
+    "tagObjectSha": "a8515700a7c09cbf2ea7dc97e59c19e91d4be316",
+    "targetCommitSha": "90027c40753d502d1893fd518382080b5302dd63",
+    "targetTreeSha": "561efa1c33b1cef08972d844fd42ad38c65b25b8",
+    "unchangedAfterFinalFetch": true
+  },
+  "repairContract": {
+    "path": "tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml",
+    "sha256": "9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a"
+  },
+  "lease": {
+    "storage": ".git/ciag-runtime/task-state.json",
+    "versionControlled": false,
+    "leaseId": "HARNESS-V1.0.1-REPAIR:2:1784726848931",
+    "holder": "codex-release-repair-20260722-session2",
+    "fencingVersion": 2,
+    "branch": "fix/harness-v1.0.1-attestation",
+    "acquisitionHead": "822cbbe7f7229432bde66e5ba8e0e088a795f33c",
+    "staleVersionOneBeginRejected": "STALE_LEASE_VERSION",
+    "staleVersionOneCompleteRejected": "STALE_LEASE_VERSION"
+  },
+  "git": {
+    "branch": "fix/harness-v1.0.1-attestation",
+    "repairContinuationBase": "822cbbe7f7229432bde66e5ba8e0e088a795f33c",
+    "verifiedImplementationHead": "5bc384810fcf994ab9f96e5975de47dc5fa5434d",
+    "verifiedImplementationTree": "54596a6dd15df1fbed9f16c85973cbeddfe2363a",
+    "reportCommit": "derive from the commit containing this immutable report",
+    "mainModifiedDirectly": false,
+    "finalTagCreated": false,
+    "releaseCandidateTagCreated": false
+  },
+  "cleanup": {
+    "changedFileCountBefore": 98,
+    "changedFileCountAfterFormattingCleanup": 33,
+    "formattingOnlyFilesReverted": 51,
+    "functionalAndFormattingFilesMinimized": 14,
+    "classificationEntries": 98,
+    "unexpectedFilesRemaining": 0,
+    "safetyBackups": [
+      {
+        "path": "../harness-v1.0.1-before-cleanup.patch",
+        "sha256": "ac6d99fd6b152284eb4b201164b208cedc98f3f54641a0e6fd19dc4e63c0070a"
+      },
+      {
+        "path": "../harness-v1.0.1-before-cleanup.status",
+        "sha256": "8f3f4c5f237e6cb9eba94aca37f2823dd99f471e55672eb2b7607c16b3c38992"
+      },
+      {
+        "path": "../harness-v1.0.1-before-cleanup.stat",
+        "sha256": "81c3127dffdce571e1b4ceea2e856586f568a03236ffda70167bafe7d66a7bf1"
+      },
+      {
+        "path": "../harness-v1.0.1-change-classification.json",
+        "sha256": "57ada9272699fc5cadc21e73f3a29a8c5817b0090f2461b35d45657572b5b693"
+      }
+    ]
+  },
+  "environment": {
+    "node": "v22.23.1",
+    "pnpm": "10.13.1",
+    "git": "2.39.5",
+    "operatingSystem": "Linux 6.12.76-linuxkit aarch64",
+    "architecture": "aarch64",
+    "containerImage": "node:22.23.1-bookworm",
+    "freshNodeModulesVolume": "chain-sieve-v101-final-node-modules",
+    "freshPnpmStoreVolume": "chain-sieve-v101-final-pnpm-store"
+  },
+  "atomicCommits": [
+    { "sha": "1e655d10d9310614cf77342d3e15f579c54855b4", "subject": "fix(verifier): bind task and cluster results to git evidence", "findingIds": ["ATTEST-P0-001"], "filesChanged": 14 },
+    { "sha": "de465282a89496a25e503120dbfcb93984d939c4", "subject": "fix(runtime): restore Node.js 22 compatibility", "findingIds": ["ATTEST-P0-002"], "filesChanged": 14 },
+    { "sha": "4b60e6c96c4888e4f7e0798716b13bacfd365b85", "subject": "feat(lifecycle): add executable begin and self-review commands", "findingIds": ["ATTEST-P1-004"], "filesChanged": 5 },
+    { "sha": "bdff7174a193e75746c5df2c232c826ce5a1f206", "subject": "fix(mcp): propagate correlation IDs and cancel timeouts", "findingIds": ["ATTEST-P1-006", "ATTEST-P2-011"], "filesChanged": 3 },
+    { "sha": "065d80875affc934426c8b82ce1324bdb47c7c5c", "subject": "build(container): add production amd64 and arm64 images", "findingIds": ["ATTEST-P1-003"], "filesChanged": 8 },
+    { "sha": "84d6422231c72ca37cefd5cbf4d19fc341469df2", "subject": "fix(persistence): upgrade drizzle to patched release", "findingIds": ["ATTEST-P2-009"], "filesChanged": 2 },
+    { "sha": "caa706aa67efb35539e3d62ecc120dd7e9bcfe6c", "subject": "docs(provenance): archive original prompts and manifest", "findingIds": ["ATTEST-P2-007"], "filesChanged": 4 },
+    { "sha": "d7bf996e4e61cfdbadda08b55808e3711b48e909", "subject": "chore(format): establish owned-file formatting baseline", "findingIds": ["ATTEST-P2-008"], "filesChanged": 5 },
+    { "sha": "e38e6b979c0f71786cd56bbf40321289d9379f98", "subject": "ci(harness): enforce runtime containers and generated goals", "findingIds": ["ATTEST-P0-002", "ATTEST-P1-003", "ATTEST-P1-004", "ATTEST-P2-010"], "filesChanged": 2 },
+    { "sha": "e608d9d81addc67d6715e69d822a23418eb7e2e1", "subject": "fix(verifier): serialize runtime baseline reads", "findingIds": ["ATTEST-P0-002"], "filesChanged": 1 },
+    { "sha": "796b1181bcfac2ae493ffb6d987ac4d0bcbd4b27", "subject": "test(persistence): verify live commit and migration rerun", "findingIds": ["ATTEST-P2-009"], "filesChanged": 1 },
+    { "sha": "c42b1ef8545843b5a1c1c4be806fda1234af1e25", "subject": "fix(verifier): reject post-attestation cluster mutations", "findingIds": ["ATTEST-P0-001"], "filesChanged": 2 },
+    { "sha": "2995e1b373bf4aa0d334328b7d814ff1eb94999d", "subject": "fix(verifier): reject untracked source during verification", "findingIds": ["ATTEST-P0-001"], "filesChanged": 7 },
+    { "sha": "5bc384810fcf994ab9f96e5975de47dc5fa5434d", "subject": "test(container): validate production image contracts", "findingIds": ["ATTEST-P1-003"], "filesChanged": 1 }
+  ],
+  "verification": {
+    "allRequiredLocalCommandsExitCode": 0,
+    "commands": [
+      "pnpm install --frozen-lockfile",
+      "pnpm build",
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm format:check",
+      "pnpm test",
+      "pnpm spec:verify",
+      "pnpm prd:compile (twice)",
+      "pnpm prd:drift-check",
+      "pnpm requirements:coverage",
+      "pnpm architecture:verify",
+      "pnpm tests:skeleton-integrity",
+      "pnpm placeholders:scan",
+      "pnpm prohibited-capabilities:scan",
+      "pnpm migration:verify",
+      "pnpm harness:verify",
+      "pnpm test:e2e",
+      "pnpm test:mutation",
+      "pnpm test:harness",
+      "pnpm test:system",
+      "pnpm test:integration",
+      "pnpm test:service",
+      "pnpm harness:lifecycle"
+    ],
+    "unitAndHarness": { "status": "PASS", "testFiles": 17, "tests": 70 },
+    "harnessFocused": { "status": "PASS", "testFiles": 8, "tests": 32 },
+    "compiler": {
+      "status": "PASS_BYTE_IDENTICAL",
+      "runs": 2,
+      "generatedFiles": 1160,
+      "compilerAggregateHash": "e2020d8d2091d12c359cad931e254df7a80bbc7531f82e6bf753f034dfb82aa6",
+      "independentPathAndFileHashAggregate": "8f1a91a9eba179b77c003b9a8729e5e8edf5607318da63d17c0c7c59128275f1"
+    },
+    "format": { "status": "PASS", "ownedFilesChecked": 127, "rewritten": 0 },
+    "generatedGoalCommands": { "status": "PASS", "unknownCommands": 0, "invalidTransitions": 0 },
+    "workingTree": "CLEAN"
+  },
+  "forgeryRejections": {
+    "status": "PASS",
+    "cases": {
+      "forgedTaskPassEmptyEvidence": "TASK_RESULT_SCHEMA_INVALID",
+      "forgedClusterPassEmptyEvidence": "CLUSTER_RESULT_SCHEMA_INVALID",
+      "trackedMutation": "DIRTY_WORKTREE",
+      "untrackedMutation": "DIRTY_WORKTREE",
+      "committedMutationAtTaskHead": "HEAD_COMMIT_MISMATCH",
+      "committedMutationAtClusterHead": "SOURCE_CHANGED_AFTER_RESULT_GENERATION",
+      "copiedTask": "TASK_RESULT_COPIED_FROM_ANOTHER_TASK",
+      "copiedCommit": "HEAD_COMMIT_MISMATCH",
+      "wrongTree": "WRONG_TREE_HASH",
+      "missingAcceptanceMapping": "ACCEPTANCE_TO_TEST_MAPPING_MISMATCH",
+      "missingTestArtifact": "MISSING_REQUIRED_TEST_ARTIFACT",
+      "staleLease": "STALE_LEASE",
+      "unreachableTaskCommit": "TASK_COMMIT_NOT_REACHABLE_FROM_CLUSTER_HEAD",
+      "noLiveLease": "NO_ACTIVE_LEASE"
+    }
+  },
+  "mcp": {
+    "correlation": "PASS_SUCCESS_VALIDATION_AUTH_RATE_CONCURRENCY_TIMEOUT_INTERNAL",
+    "incomingValidIdPreserved": true,
+    "timeout": "PASS_504_DETERMINISTIC",
+    "postTimeoutSideEffects": 0,
+    "slowToolProductionExposure": false
+  },
+  "persistence": {
+    "drizzleOrm": "0.45.2",
+    "ghsaGpj5G38j94v9": "PATCHED_NOT_REPORTED_BY_AUDIT",
+    "emptyDatabaseMigration": "PASS",
+    "migrationRerun": "PASS",
+    "query": "PASS",
+    "transactionCommit": "PASS",
+    "transactionRollback": "PASS",
+    "readinessMissingSchema": "PASS_FALSE",
+    "readinessCompleteSchema": "PASS_TRUE"
+  },
+  "liveServices": {
+    "status": "PASS",
+    "postgresql": "17-alpine clean volume",
+    "minio": "RELEASE.2025-07-23T15-54-02Z clean volume",
+    "walkingSkeleton": "PASS_SYNTHETIC_SHADOW"
+  },
+  "productionImages": {
+    "linuxArm64": { "apiBuild": "PASS", "apiSmoke": "PASS", "dashboardBuild": "PASS", "dashboardSmoke": "PASS" },
+    "linuxAmd64": { "apiBuild": "PASS", "apiSmoke": "PASS", "dashboardBuild": "PASS", "dashboardSmoke": "PASS" },
+    "runtimeUser": "node",
+    "readOnlyFilesystem": "PASS",
+    "apiHealth": 200,
+    "apiReadinessWithoutDependencies": 503,
+    "apiPort": 3000,
+    "dashboardPort": 3001,
+    "packageManagerCacheAbsent": true,
+    "browserPayloadAbsent": true,
+    "gracefulSigtermExitCode": 0,
+    "correctedSmokeInvocationNote": "The first manual API smoke invocation exited 1 because required production environment variables were intentionally absent; the corrected production-configured invocation passed on both architectures. This was a smoke-command error, not an image defect."
+  },
+  "promptProvenance": {
+    "status": "COMPLETE_EXACT_FILES_ARCHIVED",
+    "bootstrapPromptSha256": "4b92847390726635294fc5ca0479a001e3c1c367f1c3c332c15528ff7e1453b8",
+    "reviewPromptSha256": "d6b354e708ca8226fd0bf776f114024b1bd16b27ab99eba1e91decbe00d028d9",
+    "originalExecutionDates": "unknown and not fabricated"
+  },
+  "githubControls": {
+    "status": "BLOCKED_GITHUB_PERMISSION",
+    "ghAuthStatus": "You are not logged into any GitHub hosts",
+    "remote": "git@github.com:quantm-zeus/chain-sieve.git",
+    "remoteDefaultBranch": "bootstrap/agent-harness-and-codebase",
+    "requiredDefaultBranch": "main",
+    "branchRulesetChanged": false,
+    "tagRulesetChanged": false,
+    "localReleaseTagWorkflowAdded": true
+  },
+  "additionalAdvisories": [
+    {
+      "id": "GHSA-frvp-7c67-39w9",
+      "package": "@hono/node-server",
+      "version": "1.19.14",
+      "severity": "moderate",
+      "scopeAssessment": "Windows serve-static path handling; the production image is Linux and this API does not use serve-static",
+      "highSeverityAuditExitCode": 0,
+      "disposition": "outside the bounded drizzle advisory finding; disclosed for owner follow-up"
+    }
+  ],
+  "resolvedFindingIds": [
+    "ATTEST-P0-001",
+    "ATTEST-P0-002",
+    "ATTEST-P1-003",
+    "ATTEST-P1-004",
+    "ATTEST-P1-006",
+    "ATTEST-P2-007",
+    "ATTEST-P2-008",
+    "ATTEST-P2-009",
+    "ATTEST-P2-011"
+  ],
+  "remainingFindingIds": ["ATTEST-P1-005", "ATTEST-P2-010"]
+}

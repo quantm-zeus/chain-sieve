@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "release": "harness-v1.0.1",
+  "attestationStatus": "NOT_ATTESTED",
+  "findings": [
+    { "id": "ATTEST-P0-001", "status": "RESOLVED", "evidence": ["1e655d10d9310614cf77342d3e15f579c54855b4", "c42b1ef8545843b5a1c1c4be806fda1234af1e25", "2995e1b373bf4aa0d334328b7d814ff1eb94999d", "tests/harness/verifier-forgery.spec.ts", "tests/harness/cluster-verifier-forgery.spec.ts"] },
+    { "id": "ATTEST-P0-002", "status": "RESOLVED", "evidence": ["de465282a89496a25e503120dbfcb93984d939c4", "e608d9d81addc67d6715e69d822a23418eb7e2e1", "tests/harness/runtime-baseline.spec.ts", "node:22.23.1-bookworm clean verification"] },
+    { "id": "ATTEST-P1-003", "status": "RESOLVED", "evidence": ["065d80875affc934426c8b82ce1324bdb47c7c5c", "5bc384810fcf994ab9f96e5975de47dc5fa5434d", "linux/amd64 and linux/arm64 API/dashboard build and smoke PASS"] },
+    { "id": "ATTEST-P1-004", "status": "RESOLVED", "evidence": ["4b60e6c96c4888e4f7e0798716b13bacfd365b85", "tests/harness/compiler.spec.ts", "pnpm prd:compile PASS"] },
+    { "id": "ATTEST-P1-005", "status": "BLOCKED_GITHUB_PERMISSION", "evidence": ["gh auth status: not logged in", "origin HEAD: refs/heads/bootstrap/agent-harness-and-codebase", "no remote mutation attempted without authentication"] },
+    { "id": "ATTEST-P1-006", "status": "RESOLVED", "evidence": ["bdff7174a193e75746c5df2c232c826ce5a1f206", "tests/unit/api.spec.ts", "tests/unit/mcp-timeout.spec.ts"] },
+    { "id": "ATTEST-P2-007", "status": "RESOLVED", "evidence": ["caa706aa67efb35539e3d62ecc120dd7e9bcfe6c", "docs/prompts/prompt-manifest.json", "tests/harness/prompt-provenance.spec.ts"] },
+    { "id": "ATTEST-P2-008", "status": "RESOLVED", "evidence": ["d7bf996e4e61cfdbadda08b55808e3711b48e909", "docs/formatting-policy.md", "pnpm format:check PASS for 127 owned files"] },
+    { "id": "ATTEST-P2-009", "status": "RESOLVED", "evidence": ["84d6422231c72ca37cefd5cbf4d19fc341469df2", "796b1181bcfac2ae493ffb6d987ac4d0bcbd4b27", "drizzle-orm 0.45.2", "live migration/query/transaction PASS"] },
+    { "id": "ATTEST-P2-010", "status": "BLOCKED_GITHUB_PERMISSION", "evidence": ["gh auth status: not logged in", "branch and tag rulesets not changed", "local tag/workflow_dispatch CI gates added in e38e6b979c0f71786cd56bbf40321289d9379f98"] },
+    { "id": "ATTEST-P2-011", "status": "RESOLVED", "evidence": ["bdff7174a193e75746c5df2c232c826ce5a1f206", "deterministic test-only slow MCP tool", "504 with zero post-timeout side effects"] }
+  ],
+  "resolved": 9,
+  "blockedExternal": 2,
+  "remainingP0": 0,
+  "remainingLocalP1": 0
+}
