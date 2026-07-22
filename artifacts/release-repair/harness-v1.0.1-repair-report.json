@@ -103,7 +103,7 @@
     { "sha": "5bc384810fcf994ab9f96e5975de47dc5fa5434d", "subject": "test(container): validate production image contracts", "findingIds": ["ATTEST-P1-003"], "filesChanged": 1 }
   ],
   "verification": {
-    "allRequiredLocalCommandsExitCode": 0,
+    "finalRequiredLocalCommandsExitCode": 0,
     "commands": [
       "pnpm install --frozen-lockfile",
       "pnpm build",
@@ -139,6 +139,11 @@
       "independentPathAndFileHashAggregate": "8f1a91a9eba179b77c003b9a8729e5e8edf5607318da63d17c0c7c59128275f1"
     },
     "format": { "status": "PASS", "ownedFilesChecked": 127, "rewritten": 0 },
+    "e2e": {
+      "finalStatus": "PASS",
+      "tests": 2,
+      "correctedEnvironmentNote": "An exact-head combined run mounted a cached Chromium binary into a fresh Node container without its apt shared-library dependencies and failed before page launch with missing libnspr4.so. Re-running the CI-equivalent pnpm exec playwright install --with-deps chromium in the same official Node 22 container followed by pnpm test:e2e passed 2/2."
+    },
     "generatedGoalCommands": { "status": "PASS", "unknownCommands": 0, "invalidTransitions": 0 },
     "workingTree": "CLEAN"
   },
