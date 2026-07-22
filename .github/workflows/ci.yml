@@ -15,7 +15,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 24.14.0, cache: pnpm }
+        with: { node-version: 22.23.1, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -29,7 +29,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 24.14.0, cache: pnpm }
+        with: { node-version: 22.23.1, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm spec:verify
       - run: pnpm prd:drift-check
@@ -57,7 +57,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 24.14.0, cache: pnpm }
+        with: { node-version: 22.23.1, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: docker run --rm --network host --entrypoint /bin/sh minio/minio:RELEASE.2025-07-23T15-54-02Z -c "mc alias set local http://127.0.0.1:9000 ciag ciag_test_only && mc mb --ignore-existing local/ciag-artifacts"
       - run: pnpm test:integration
@@ -87,7 +87,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 24.14.0, cache: pnpm }
+        with: { node-version: 22.23.1, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test

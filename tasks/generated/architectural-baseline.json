@@ -1,6 +1,6 @@
 {
   "architecture": "modular-monolith",
-  "runtime": "node-24",
+  "runtime": "node-22",
   "packageOwners": [
     "apps/api/src/mcp",
     "apps/collector",
