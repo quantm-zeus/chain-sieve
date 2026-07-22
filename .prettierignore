@@ -2,7 +2,16 @@
 build
 dist
 node_modules
+.pnpm-store
+docs/spec
+artifacts/spec
 artifacts/context
+artifacts/release-attestation
+artifacts/final
+artifacts/reviews
+docs/prompts/*.md
+tasks/repairs/*.yaml
+tasks/repairs/*.sha256
 tasks/G0
 tasks/G1
 tasks/G2
@@ -19,4 +28,6 @@ clusters/G4
 clusters/G5
 clusters/G6
 clusters/G7
+tasks/generated
+docs/schemas
 pnpm-lock.yaml
