@@ -4,13 +4,53 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "taskId": {
       "type": "string"
     },
     "reviewer": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewedCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "reviewedTree": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "passes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "const": "PASS"
+          },
+          "evidence": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
     },
     "verdict": {
       "type": "string",
@@ -34,12 +74,17 @@
             ]
           },
           "text": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
+          },
+          "resolved": {
+            "type": "boolean"
           }
         },
         "required": [
           "severity",
-          "text"
+          "text",
+          "resolved"
         ],
         "additionalProperties": false
       }
@@ -49,6 +94,9 @@
     "schemaVersion",
     "taskId",
     "reviewer",
+    "reviewedCommit",
+    "reviewedTree",
+    "passes",
     "verdict",
     "findings"
   ],

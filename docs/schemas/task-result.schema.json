@@ -4,43 +4,11 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "taskId": {
-      "type": "string"
-    },
-    "leaseVersion": {
-      "type": "integer",
-      "exclusiveMinimum": 0,
-      "maximum": 9007199254740991
-    },
-    "commit": {
-      "type": "string"
-    },
-    "evidence": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "command": {
-            "type": "string"
-          },
-          "exitCode": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "outputSha256": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "command",
-          "exitCode",
-          "outputSha256"
-        ],
-        "additionalProperties": false
-      }
+      "type": "string",
+      "minLength": 1
     },
     "status": {
       "type": "string",
@@ -49,15 +17,302 @@
         "FAIL",
         "BLOCKED"
       ]
+    },
+    "bindings": {
+      "type": "object",
+      "properties": {
+        "taskContractSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "prdSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "requirementManifestSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "auditSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "baseCommitSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "headCommitSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "headTreeSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "changedFiles": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "C",
+                  "M",
+                  "R",
+                  "T",
+                  "U",
+                  "X",
+                  "B",
+                  "D"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "requirementToCode": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "requirementId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "files": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "requirementId",
+              "files"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "acceptanceToTests": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "acceptanceId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tests": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "acceptanceId",
+              "tests"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "requiredTestArtifacts": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string",
+                "minLength": 1
+              },
+              "exitCode": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "outputSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "artifactPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifactSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "command",
+              "exitCode",
+              "outputSha256",
+              "artifactPath",
+              "artifactSha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "dependencyInterfaceHashes": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "verifierVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationPolicyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "leaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "leaseFencingVersion": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "verificationTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        },
+        "selfReviewPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selfReviewSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "taskContractSha256",
+        "prdSha256",
+        "requirementManifestSha256",
+        "auditSha256",
+        "baseCommitSha",
+        "headCommitSha",
+        "headTreeSha",
+        "changedFiles",
+        "requirementToCode",
+        "acceptanceToTests",
+        "requiredTestArtifacts",
+        "dependencyInterfaceHashes",
+        "verifierVersion",
+        "verificationPolicyVersion",
+        "leaseId",
+        "leaseFencingVersion",
+        "verificationTimestamp",
+        "selfReviewPath",
+        "selfReviewSha256"
+      ],
+      "additionalProperties": false
+    },
+    "commandEvidence": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exitCode": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "outputSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "artifactPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "command",
+          "exitCode",
+          "outputSha256",
+          "artifactPath",
+          "artifactSha256"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
     "schemaVersion",
     "taskId",
-    "leaseVersion",
-    "commit",
-    "evidence",
-    "status"
+    "status",
+    "bindings",
+    "commandEvidence"
   ],
   "additionalProperties": false
 }

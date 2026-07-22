@@ -11,6 +11,8 @@ export const ReadinessSchema = z.object({
 export const SourceHashesSchema = z.object({ prd: z.string().regex(/^[a-f0-9]{64}$/), requirements: z.string().regex(/^[a-f0-9]{64}$/), audit: z.string().regex(/^[a-f0-9]{64}$/) });
 const IdList = z.array(z.string().min(1));
 const VerificationCommandSchema = z.object({ command: z.string().min(1), expected: z.string().min(1) });
+const Sha256Schema = z.string().regex(/^[a-f0-9]{64}$/);
+const GitShaSchema = z.string().regex(/^[a-f0-9]{40,64}$/);
 
 export const TaskContractSchema = z.object({
   schemaVersion: z.literal('1.0.0'),
@@ -47,12 +49,27 @@ export const TaskContractSchema = z.object({
   sourceReferences: z.array(z.object({ path: z.string(), line: z.number().int().positive(), id: z.string() })).min(1),
 });
 
-export const TaskResultSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), leaseVersion: z.number().int().positive(), commit: z.string(), evidence: z.array(z.object({ command: z.string(), exitCode: z.number().int(), outputSha256: z.string() })), status: z.enum(['PASS', 'FAIL', 'BLOCKED']) });
-export const TaskReviewSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), reviewer: z.string(), verdict: z.enum(['PASS', 'CHANGES_REQUIRED']), findings: z.array(z.object({ severity: z.enum(['P0', 'P1', 'P2', 'P3']), text: z.string() })) });
+const HashedPathSchema = z.object({ path: z.string().min(1), sha256: Sha256Schema });
+const ChangedFileSchema = HashedPathSchema.extend({ status: z.enum(['A', 'C', 'M', 'R', 'T', 'U', 'X', 'B', 'D']) });
+const CommandEvidenceSchema = z.object({ command: z.string().min(1), exitCode: z.number().int(), outputSha256: Sha256Schema, artifactPath: z.string().min(1), artifactSha256: Sha256Schema });
+export const TaskResultSchema = z.object({
+  schemaVersion: z.literal('2.0.0'), taskId: z.string().min(1), status: z.enum(['PASS', 'FAIL', 'BLOCKED']),
+  bindings: z.object({
+    taskContractSha256: Sha256Schema, prdSha256: Sha256Schema, requirementManifestSha256: Sha256Schema, auditSha256: Sha256Schema,
+    baseCommitSha: GitShaSchema, headCommitSha: GitShaSchema, headTreeSha: GitShaSchema,
+    changedFiles: z.array(ChangedFileSchema).min(1),
+    requirementToCode: z.array(z.object({ requirementId: z.string().min(1), files: z.array(HashedPathSchema).min(1) })).min(1),
+    acceptanceToTests: z.array(z.object({ acceptanceId: z.string().min(1), tests: z.array(HashedPathSchema).min(1) })).min(1),
+    requiredTestArtifacts: z.array(CommandEvidenceSchema).min(1), dependencyInterfaceHashes: z.record(z.string(), Sha256Schema),
+    verifierVersion: z.string().min(1), verificationPolicyVersion: z.string().min(1), leaseId: z.string().min(1), leaseFencingVersion: z.number().int().positive(), verificationTimestamp: z.string().datetime(), selfReviewPath: z.string().min(1), selfReviewSha256: Sha256Schema,
+  }),
+  commandEvidence: z.array(CommandEvidenceSchema).min(1),
+});
+export const TaskReviewSchema = z.object({ schemaVersion: z.literal('2.0.0'), taskId: z.string(), reviewer: z.string().min(1), reviewedCommit: GitShaSchema, reviewedTree: GitShaSchema, passes: z.array(z.object({ name: z.string().min(1), status: z.literal('PASS'), evidence: z.array(z.string().min(1)).min(1) })).min(1), verdict: z.enum(['PASS', 'CHANGES_REQUIRED']), findings: z.array(z.object({ severity: z.enum(['P0', 'P1', 'P2', 'P3']), text: z.string().min(1), resolved: z.boolean() })) });
 export const TaskAmendmentSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), reason: z.string(), changedFields: IdList, approvedBy: z.string(), sourceHashes: SourceHashesSchema });
-export const TaskLeaseSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), holder: z.string(), version: z.number().int().positive(), acquiredAt: z.string().datetime(), expiresAt: z.string().datetime(), state: z.enum(['ACTIVE', 'RELEASED', 'EXPIRED', 'COMPLETED']) });
+export const TaskLeaseSchema = z.object({ schemaVersion: z.literal('2.0.0'), taskId: z.string(), holder: z.string(), leaseId: z.string().min(1), fencingVersion: z.number().int().positive(), version: z.number().int().positive(), acquiredAt: z.string().datetime(), expiresAt: z.string().datetime(), state: z.enum(['ACTIVE', 'RELEASED', 'EXPIRED', 'COMPLETED']) });
 export const ClusterContractSchema = z.object({ schemaVersion: z.literal('1.0.0'), id: z.string(), group: z.string(), title: z.string(), sourceHashes: SourceHashesSchema, dependencies: IdList, tasks: IdList.min(1), requirements: IdList.min(1), acceptanceCriteria: IdList, invariants: IdList, entryCriteria: IdList, exitCriteria: IdList, verificationCommands: z.array(VerificationCommandSchema), rollback: z.string() });
-export const ClusterResultSchema = z.object({ schemaVersion: z.literal('1.0.0'), clusterId: z.string(), taskResults: IdList, evidenceHash: z.string(), status: z.enum(['PASS', 'FAIL', 'BLOCKED']) });
+export const ClusterResultSchema = z.object({ schemaVersion: z.literal('2.0.0'), clusterId: z.string(), status: z.enum(['PASS', 'FAIL', 'BLOCKED']), clusterContractSha256: Sha256Schema, headCommitSha: GitShaSchema, headTreeSha: GitShaSchema, taskAttestations: z.array(z.object({ taskId: z.string().min(1), taskCommitSha: GitShaSchema, taskTreeSha: GitShaSchema, resultSha256: Sha256Schema })).min(1), commandEvidence: z.array(CommandEvidenceSchema).min(1), verifierVersion: z.string().min(1), verificationPolicyVersion: z.string().min(1), verificationTimestamp: z.string().datetime() });
 export const ClusterReviewSchema = z.object({ schemaVersion: z.literal('1.0.0'), clusterId: z.string(), verdict: z.enum(['PASS', 'CHANGES_REQUIRED']), architecturalDiff: z.string(), findings: z.array(z.string()) });
 export const ArchitecturalDiffSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), importsAdded: IdList, importsRemoved: IdList, publicInterfacesChanged: IdList, migrationsAdded: IdList, capabilityChanges: IdList });
 export const ContextManifestSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), sourceHashes: SourceHashesSchema, files: z.array(z.object({ path: z.string(), sha256: z.string(), bytes: z.number().int().nonnegative() })), generatedAt: z.string() });

@@ -4,7 +4,7 @@ import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { TaskLeaseSchema } from '@ciag/shared-schemas';
 
 export type TaskLifecycleState = 'PLANNED' | 'READY' | 'LEASED' | 'IMPLEMENTING' | 'SELF_REVIEWING' | 'VERIFYING' | 'VERIFIED' | 'MERGE_QUEUED' | 'MERGED' | 'BLOCKED';
-export interface TaskState { taskId: string; state: TaskLifecycleState; leaseVersion: number; holder?: string; expiresAt?: string; commit?: string; baseCommit?: string; branch?: string }
+export interface TaskState { taskId: string; state: TaskLifecycleState; leaseVersion: number; holder?: string; leaseId?: string; acquiredAt?: string; expiresAt?: string; commit?: string; baseCommit?: string; branch?: string }
 export interface LifecycleDocument { schemaVersion: '1.0.0'; tasks: Record<string, TaskState> }
 export interface LeaseContract { id: string; dependencies: string[]; exclusiveLocks: string[] }
 
@@ -24,8 +24,8 @@ export const acquire = (state: LifecycleDocument, tasks: LeaseContract[], taskId
   const task = tasks.find((item) => item.id === taskId); if (!task) throw new Error('TASK_CONTRACT_NOT_FOUND');
   const conflict = Object.values(state.tasks).find((item) => activeStates.has(item.state) && item.expiresAt && Date.parse(item.expiresAt) > now.getTime() && tasks.find((candidate) => candidate.id === item.taskId)?.exclusiveLocks.some((lock) => task.exclusiveLocks.includes(lock)));
   if (conflict) throw new Error(`PATH_LOCK_CONFLICT:${conflict.taskId}`);
-  target.state = 'LEASED'; target.leaseVersion += 1; target.holder = holder; target.expiresAt = new Date(now.getTime() + ttlMs).toISOString(); if (baseCommit) target.baseCommit = baseCommit; if (branch) target.branch = branch;
-  return TaskLeaseSchema.parse({ schemaVersion: '1.0.0', taskId, holder, version: target.leaseVersion, acquiredAt: now.toISOString(), expiresAt: target.expiresAt, state: 'ACTIVE' });
+  target.state = 'LEASED'; target.leaseVersion += 1; target.holder = holder; target.acquiredAt = now.toISOString(); target.leaseId = `${taskId}:${target.leaseVersion}:${now.getTime()}`; target.expiresAt = new Date(now.getTime() + ttlMs).toISOString(); if (baseCommit) target.baseCommit = baseCommit; if (branch) target.branch = branch;
+  return TaskLeaseSchema.parse({ schemaVersion: '2.0.0', taskId, holder, leaseId: target.leaseId, fencingVersion: target.leaseVersion, version: target.leaseVersion, acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: 'ACTIVE' });
 };
 export const assertLease = (state: LifecycleDocument, taskId: string, version: number, holder: string, now: Date): TaskState => { const target = state.tasks[taskId]; if (!target || !activeStates.has(target.state)) throw new Error('NO_ACTIVE_LEASE'); if (target.leaseVersion !== version) throw new Error('STALE_LEASE_VERSION'); if (target.holder !== holder) throw new Error('STALE_LEASE_HOLDER'); if (!target.expiresAt || Date.parse(target.expiresAt) <= now.getTime()) throw new Error('LEASE_EXPIRED'); return target; };
 export const transition = (target: TaskState, from: TaskLifecycleState[], to: TaskLifecycleState): void => { if (!from.includes(target.state)) throw new Error(`INVALID_TASK_TRANSITION:${target.state}:${to}`); target.state = to; };
