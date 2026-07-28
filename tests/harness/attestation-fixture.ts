@@ -8,6 +8,7 @@ import {
   deriveAcceptanceMapping,
   deriveChangedFiles,
   deriveRequirementMapping,
+  hashPathAtCommit,
   persistCommandEvidence,
   TASK_VERIFIER_VERSION,
   VERIFICATION_POLICY_VERSION,
@@ -71,13 +72,35 @@ export const createAttestationFixture = async (): Promise<AttestationFixture> =>
     [{ command, exitCode: 0, output: 'all mapped tests passed\n', outputSha256: sha256('all mapped tests passed\n') }],
     root,
   );
+  const leaseId = `${task.id}:1:fixture`;
+  const mandatoryPassNames = [
+    'requirement-coverage',
+    'acceptance-test-coverage',
+    'scope-and-forbidden-path-review',
+    'dependency-interface-review',
+    'adversarial-review',
+    'test-quality-review',
+    'architecture-boundary-review',
+    'clean-worktree-review',
+  ];
   const review = TaskReviewSchema.parse({
     schemaVersion: '2.0.0',
     taskId: task.id,
     reviewer: 'fixture-reviewer',
+    reviewedBaseCommit: base,
     reviewedCommit: head,
     reviewedTree: tree,
-    passes: [{ name: 'scope-and-atomicity', status: 'PASS', evidence: ['commit-count:1'] }],
+    changedFiles,
+    dependencyInterfaceHashes: task.interfaceHashes,
+    acceptanceTestArtifacts: task.requiredTests.map((path) => ({
+      path,
+      sha256: hashPathAtCommit(head, path, 'M', root),
+    })),
+    leaseId,
+    leaseFencingVersion: 1,
+    reviewedAt: '2026-07-21T00:00:00.000Z',
+    rebase: { conflictsDetected: false, semanticChangesDetected: false },
+    passes: mandatoryPassNames.map((name) => ({ name, status: 'PASS', evidence: [`fixture:${name}`] })),
     verdict: 'PASS',
     findings: [],
   });
@@ -85,7 +108,6 @@ export const createAttestationFixture = async (): Promise<AttestationFixture> =>
   const reviewPath = `reviews/${task.id}/${head}.review.json`;
   await put(runtimeRoot(root), reviewPath, reviewText);
   const specification = await loadAndValidateSpecification();
-  const leaseId = `${task.id}:1:fixture`;
   const result = TaskResultSchema.parse({
     schemaVersion: '2.0.0',
     taskId: task.id,

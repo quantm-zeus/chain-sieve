@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "harness": {
+      "type": "string",
+      "const": "production-lifecycle"
+    },
+    "repository": {
+      "type": "string",
+      "const": "isolated-temporary-git-repository"
+    },
+    "scenarios": {
+      "minItems": 8,
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F",
+              "G",
+              "H"
+            ]
+          },
+          "commandsExecuted": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exitCode": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "outputSha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "expectedRejection": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "command",
+                "exitCode",
+                "outputSha256"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "stateTransitionsObserved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "commitShas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40,64}$"
+            }
+          },
+          "gitTreeShas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40,64}$"
+            }
+          },
+          "leaseVersions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "evidenceHashes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "queueOperations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rebaseResult": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verificationResult": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mergeResult": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revertResult": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cleanupResult": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "scenarioId",
+          "commandsExecuted",
+          "stateTransitionsObserved",
+          "commitShas",
+          "gitTreeShas",
+          "leaseVersions",
+          "evidenceHashes",
+          "queueOperations",
+          "rebaseResult",
+          "verificationResult",
+          "mergeResult",
+          "revertResult",
+          "cleanupResult"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "harness",
+    "repository",
+    "scenarios",
+    "generatedAt"
+  ],
+  "additionalProperties": false
+}

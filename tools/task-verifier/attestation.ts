@@ -4,6 +4,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/shared-schemas';
 import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.js';
+import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
 
 export const TASK_VERIFIER_VERSION = '2.0.0';
@@ -134,7 +135,18 @@ export const validateCommandEvidenceArtifact = async (item: CommandEvidence, cwd
   if (item.exitCode !== 0) throw new Error(`COMMAND_FAILED:${item.command}`);
 };
 
-const validateSelfReview = async (result: TaskResult, cwd: string): Promise<void> => {
+const requiredReviewPasses = [
+  'requirement-coverage',
+  'acceptance-test-coverage',
+  'scope-and-forbidden-path-review',
+  'dependency-interface-review',
+  'adversarial-review',
+  'test-quality-review',
+  'architecture-boundary-review',
+  'clean-worktree-review',
+];
+
+const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskState): Promise<void> => {
   const root = resolve(runtimeRoot(cwd));
   const absolute = resolve(root, result.bindings.selfReviewPath);
   if (absolute !== root && !absolute.startsWith(`${root}/`)) throw new Error('SELF_REVIEW_PATH_ESCAPE');
@@ -148,16 +160,31 @@ const validateSelfReview = async (result: TaskResult, cwd: string): Promise<void
   const review = TaskReviewSchema.parse(JSON.parse(text));
   if (
     review.taskId !== result.taskId ||
+    review.reviewedBaseCommit !== result.bindings.baseCommitSha ||
     review.reviewedCommit !== result.bindings.headCommitSha ||
     review.reviewedTree !== result.bindings.headTreeSha
   )
     throw new Error('SELF_REVIEW_BINDING_MISMATCH');
-  if (review.passes.length === 0) throw new Error('EMPTY_SELF_REVIEW');
+  for (const name of requiredReviewPasses)
+    if (!review.passes.some((pass) => pass.name === name)) throw new Error(`SELF_REVIEW_PASS_MISSING:${name}`);
+  if (!sameJson(review.changedFiles, result.bindings.changedFiles))
+    throw new Error('SELF_REVIEW_CHANGED_FILES_MISMATCH');
+  if (!sameJson(review.dependencyInterfaceHashes, result.bindings.dependencyInterfaceHashes))
+    throw new Error('SELF_REVIEW_DEPENDENCY_INTERFACES_MISMATCH');
+  if (
+    review.leaseId !== result.bindings.leaseId ||
+    review.leaseFencingVersion !== result.bindings.leaseFencingVersion
+  )
+    throw new Error('SELF_REVIEW_LEASE_BINDING_MISMATCH');
+  if (Date.parse(review.reviewedAt) > Date.parse(result.bindings.verificationTimestamp))
+    throw new Error('TASK_RESULT_PREDATES_FRESH_SELF_REVIEW');
   if (
     review.verdict !== 'PASS' ||
     review.findings.some((finding) => !finding.resolved && (finding.severity === 'P0' || finding.severity === 'P1'))
   )
     throw new Error('UNRESOLVED_P0_P1_SELF_REVIEW');
+  if (state?.selfReviewEvidence)
+    await assertEvidenceCurrent(result.taskId, 'SELF_REVIEW', state.selfReviewEvidence, cwd);
 };
 
 export interface ValidateTaskAttestationOptions {
@@ -249,7 +276,11 @@ export const validateTaskAttestation = async (
       throw new Error(`MISSING_REQUIRED_TEST_ARTIFACT:${item.command}`);
     await validateCommandEvidenceArtifact(item, cwd);
   }
-  await validateSelfReview(result, cwd);
+  await validateSelfReview(result, cwd, options.state);
+  if (options.state?.taskResultEvidence)
+    await assertEvidenceCurrent(result.taskId, 'TASK_RESULT', options.state.taskResultEvidence, cwd);
+  if (options.state?.verificationEvidence)
+    await assertEvidenceCurrent(result.taskId, 'VERIFICATION', options.state.verificationEvidence, cwd);
   return result;
 };
 

@@ -5,7 +5,16 @@ import { dirname, join } from 'node:path';
 import { ClusterContractSchema, TaskContractSchema, TaskResultSchema, type ClusterContract, type TaskContract } from '@ciag/shared-schemas';
 import { driftCheck, loadAndValidateSpecification, sha256, waitForCompilerIdle } from '../prd-compiler/compiler.js';
 import { placeholderViolations, scanPlaceholders, scanProhibitedCapabilities, verifyArchitecture } from '../architecture-verifier/verify.js';
-import { assertLease, readState, runtimeRoot, transition, writeState } from '../task-runner/state.js';
+import { registerCurrentEvidence } from '../task-runner/evidence-ledger.js';
+import {
+  assertLease,
+  currentLeaseCredential,
+  readState,
+  runtimeRoot,
+  transition,
+  writeState,
+  type EvidenceReference,
+} from '../task-runner/state.js';
 import { deriveAcceptanceMapping, deriveChangedFiles, deriveRequirementMapping, persistCommandEvidence, TASK_VERIFIER_VERSION, validateTaskAttestation, VERIFICATION_POLICY_VERSION } from './attestation.js';
 import { verifyRuntimeBaseline } from './runtime-baseline.js';
 
@@ -15,7 +24,8 @@ export const deriveEvidenceVerdict = (requiredCommands: string[], evidence: Comm
 const git = (args: string[], cwd = process.cwd(), allowFailure = false): string => { const result = spawnSync('git', args, { cwd, encoding: 'utf8' }); if (result.status !== 0 && !allowFailure) throw new Error(`GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`); return result.stdout.trim(); };
 const run = (command: string, args: string[], cwd = process.cwd()): CommandEvidence => { const result = spawnSync(command, args, { cwd, encoding: 'utf8', env: process.env, maxBuffer: 32 * 1024 * 1024 }); const output = `${result.stdout ?? ''}${result.stderr ?? ''}`; return { command: [command, ...args].join(' '), exitCode: result.status ?? 1, output, outputSha256: sha256(output) }; };
 const covers = (pattern: string, path: string): boolean => pattern.endsWith('/**') ? path === pattern.slice(0, -3) || path.startsWith(pattern.slice(0, -2)) : pattern === path;
-const resultPath = (taskId: string, cwd = process.cwd()): string => join(runtimeRoot(cwd), 'results', `${taskId}.result.json`);
+export const resultPath = (taskId: string, cwd = process.cwd()): string =>
+  join(runtimeRoot(cwd), 'results', `${taskId}.result.json`);
 
 export const loadTasks = async (): Promise<TaskContract[]> => { await waitForCompilerIdle(); const tasks: TaskContract[] = []; for (let index = 0; index <= 7; index += 1) { const root = join(process.cwd(), `tasks/G${index}`); for (const file of await readdir(root)) if (file.endsWith('.contract.json')) tasks.push(TaskContractSchema.parse(JSON.parse(await readFile(join(root, file), 'utf8')))); } return tasks.sort((left, right) => left.id.localeCompare(right.id)); };
 export const loadClusters = async (): Promise<ClusterContract[]> => { await waitForCompilerIdle(); const clusters: ClusterContract[] = []; for (let index = 0; index <= 7; index += 1) { const root = join(process.cwd(), `clusters/G${index}`); for (const file of await readdir(root)) if (file.endsWith('.contract.json')) clusters.push(ClusterContractSchema.parse(JSON.parse(await readFile(join(root, file), 'utf8')))); } return clusters.sort((left, right) => left.id.localeCompare(right.id)); };
@@ -35,8 +45,9 @@ export const verifyTaskContract = async (taskId: string): Promise<{ taskId: stri
 };
 
 export const verifyTask = async (taskId: string, holder: string, leaseVersion: number): Promise<{ taskId: string; commit: string; evidenceHash: string }> => {
-  const tasks = await loadTasks(); const task = tasks.find((item) => item.id === taskId); if (!task) throw new Error('TASK_NOT_FOUND'); await verifyTaskContract(taskId); const state = await readState(tasks); const target = assertLease(state, taskId, leaseVersion, holder, new Date()); if (!['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(target.state)) throw new Error(`SELF_REVIEW_REQUIRED:${target.state}`); const previousState = target.state;
-  transition(target, ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'], 'VERIFYING'); await writeState(state);
+  const tasks = await loadTasks(); const task = tasks.find((item) => item.id === taskId); if (!task) throw new Error('TASK_NOT_FOUND'); await verifyTaskContract(taskId); const state = await readState(tasks); const target = assertLease(state, taskId, leaseVersion, holder, new Date()); if (target.state !== 'SELF_REVIEWING') throw new Error(`SELF_REVIEW_REQUIRED:${target.state}`); const credential = currentLeaseCredential(target);
+  const reviewCommit = git(['rev-parse', 'HEAD']); const reviewTree = git(['rev-parse', 'HEAD^{tree}']); if (!target.selfReviewEvidence) throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
+  transition(target, ['SELF_REVIEWING'], 'VERIFYING', { command: 'task:verify', credential, evidence: target.selfReviewEvidence, currentCommit: reviewCommit, currentTree: reviewTree }); await writeState(state);
   try {
     const expectedBranch = `task/${taskId.toLowerCase()}`; const branch = git(['branch', '--show-current']); if (branch !== expectedBranch || target.branch !== expectedBranch) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
     if (git(['status', '--porcelain']) !== '') throw new Error('DIRTY_WORKTREE');
@@ -49,8 +60,8 @@ export const verifyTask = async (taskId: string, holder: string, leaseVersion: n
     const commands: Array<[string, string[]]> = [['pnpm', ['exec', 'vitest', 'run', ...task.requiredTests]], ['pnpm', ['architecture:verify']], ['pnpm', ['placeholders:scan']], ['pnpm', ['prohibited-capabilities:scan']], ['pnpm', ['spec:verify']]]; const evidence = commands.map(([command, args]) => run(command, args)); deriveEvidenceVerdict(evidence.map((item) => item.command), evidence);
     const headTree = git(['rev-parse', 'HEAD^{tree}']); const changedFiles = deriveChangedFiles(base, commit); const commandEvidence = await persistCommandEvidence(taskId, commit, evidence); const reviewPath = join(runtimeRoot(), 'reviews', taskId, `${commit}.review.json`); const reviewText = await readFile(reviewPath, 'utf8'); if (!target.leaseId) throw new Error('LEASE_ID_MISSING'); const specification = await loadAndValidateSpecification(); const contractText = await readFile(`tasks/${task.dependencyGroup}/${task.id}.contract.json`, 'utf8');
     const result = TaskResultSchema.parse({ schemaVersion: '2.0.0', taskId, status: 'PASS', bindings: { taskContractSha256: sha256(contractText), prdSha256: specification.hashes.prd, requirementManifestSha256: specification.hashes.requirements, auditSha256: specification.hashes.audit, baseCommitSha: base, headCommitSha: commit, headTreeSha: headTree, changedFiles, requirementToCode: deriveRequirementMapping(task, changedFiles, commit), acceptanceToTests: await deriveAcceptanceMapping(task, commit), requiredTestArtifacts: commandEvidence.filter((item) => item.command.startsWith('pnpm exec vitest run ')), dependencyInterfaceHashes: task.interfaceHashes, verifierVersion: TASK_VERIFIER_VERSION, verificationPolicyVersion: VERIFICATION_POLICY_VERSION, leaseId: target.leaseId, leaseFencingVersion: target.leaseVersion, verificationTimestamp: new Date().toISOString(), selfReviewPath: `reviews/${taskId}/${commit}.review.json`, selfReviewSha256: sha256(reviewText) }, commandEvidence });
-    await validateTaskAttestation(task, result, { currentHeadRequired: true, state: target }); const path = resultPath(taskId); await mkdir(dirname(path), { recursive: true }); await writeFile(path, `${JSON.stringify(result, null, 2)}\n`, { mode: 0o600 }); target.state = 'VERIFIED'; target.commit = commit; await writeState(state); return { taskId, commit, evidenceHash: sha256(JSON.stringify(result)) };
-  } catch (error) { target.state = previousState === 'VERIFIED' || previousState === 'MERGE_QUEUED' ? previousState : 'SELF_REVIEWING'; await writeState(state); throw error; }
+    await validateTaskAttestation(task, result, { currentHeadRequired: true, state: target }); const path = resultPath(taskId); const resultText = `${JSON.stringify(result, null, 2)}\n`; await mkdir(dirname(path), { recursive: true }); await writeFile(path, resultText, { mode: 0o600 }); const evidenceHash = sha256(resultText); const relativePath = `results/${taskId}.result.json`; const resultEvidence: EvidenceReference = { path: relativePath, sha256: evidenceHash, status: 'CURRENT', commit, tree: headTree }; const verificationEvidence: EvidenceReference = { path: relativePath, sha256: evidenceHash, status: 'CURRENT', commit, tree: headTree }; await registerCurrentEvidence(taskId, 'TASK_RESULT', resultEvidence); await registerCurrentEvidence(taskId, 'VERIFICATION', verificationEvidence); target.taskResultEvidence = resultEvidence; target.commit = commit; target.tree = headTree; transition(target, ['VERIFYING'], 'VERIFIED', { command: 'task:verify:proof-carrying', credential, evidence: verificationEvidence, currentCommit: commit, currentTree: headTree }); await writeState(state); return { taskId, commit, evidenceHash };
+  } catch (error) { target.state = 'SELF_REVIEWING'; await writeState(state); throw error; }
 };
 
 export const readTaskResult = async (taskId: string, cwd = process.cwd()): Promise<ReturnType<typeof TaskResultSchema.parse>> => TaskResultSchema.parse(JSON.parse(await readFile(resultPath(taskId, cwd), 'utf8')));
