@@ -99,6 +99,24 @@ export const runLifecycleHarness = async (): Promise<{
       if (!task) throw new Error(`LIFECYCLE_TASK_MISSING:${id}`);
       return task;
     };
+    for (const task of [byId('T-G0-CORE'), byId('T-G0-TRACE')]) {
+      for (const path of task.requiredTests) {
+        const absolute = join(repository, path);
+        await mkdir(dirname(absolute), { recursive: true });
+        await writeFile(
+          absolute,
+          [
+            "import { describe, expect, it } from 'vitest';",
+            `describe('${task.id} lifecycle acceptance fixture', () => {`,
+            `  it('${path}', () => { expect('${task.id}:${path}').toContain('${task.id}'); });`,
+            '});',
+            '',
+          ].join('\n'),
+        );
+      }
+    }
+    git(repository, ['add', 'tests/acceptance', 'tests/negative']);
+    git(repository, ['commit', '-m', 'test: add isolated lifecycle acceptance fixtures']);
 
     for (const taskId of ['T-G0-COL-01', 'T-G0-COL-02']) {
       run('task:validate', ['task:validate', taskId], repository);
