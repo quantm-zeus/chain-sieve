@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+  "attestedCommit": "a4072215f73cd2cdbf5608535633327b0b34891e",
+  "verdict": "FAIL_RELEASE",
+  "findings": [
+    {
+      "id": "FINAL-LIFECYCLE-001",
+      "severity": "P0",
+      "summary": "Mandatory lifecycle verification omits DRAFT and VALIDATED, omits lease renewal, and does not execute the real post-rebase task verifier."
+    },
+    {
+      "id": "FINAL-LIFECYCLE-002",
+      "severity": "P0",
+      "summary": "Rebase changes commit and tree while self-review and task-result evidence remain bound to the pre-rebase revision."
+    },
+    {
+      "id": "FINAL-CI-003",
+      "severity": "release-control",
+      "summary": "The repair merge commit requires a complete Tier 0 through Tier 3 PASS."
+    }
+  ],
+  "githubPlanLimitationsDisposition": "record separately; no code change and no represented resolution"
+}

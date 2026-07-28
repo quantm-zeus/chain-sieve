@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "verifiedAt": "2026-07-28T15:44:35Z",
+  "baseCommit": "a4072215f73cd2cdbf5608535633327b0b34891e",
+  "baseTree": "428579a08d21ffeb7e0d3f7941e4642a38bfc22a",
+  "originMainCommit": "a4072215f73cd2cdbf5608535633327b0b34891e",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "sha256SumsCheck": "PASS",
+  "specVerify": "PASS",
+  "nodeVersion": "v22.23.1",
+  "pnpmVersion": "10.13.1",
+  "immutableTag": {
+    "name": "harness-v1.0.0",
+    "tagObjectSha": "a8515700a7c09cbf2ea7dc97e59c19e91d4be316",
+    "targetCommitSha": "90027c40753d502d1893fd518382080b5302dd63"
+  }
+}

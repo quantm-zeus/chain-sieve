@@ -6,10 +6,12 @@ import type { LeaseContract } from './state.js';
 
 const RepairLeaseContractSchema = z.object({
   schemaVersion: z.literal('1.0.0'),
-  id: z.string().regex(/^HARNESS-V\d+\.\d+\.\d+-REPAIR$/),
-  contractPath: z.string().regex(/^tasks\/repairs\/HARNESS-V\d+\.\d+\.\d+-REPAIR\.yaml$/),
+  id: z.string().regex(/^HARNESS-V\d+\.\d+\.\d+(?:-[A-Z0-9]+)*-REPAIR$/),
+  contractPath: z
+    .string()
+    .regex(/^tasks\/repairs\/HARNESS-V\d+\.\d+\.\d+(?:-[A-Z0-9]+)*-REPAIR\.yaml$/),
   contractSha256: z.string().regex(/^[a-f0-9]{64}$/),
-  approvedBranch: z.string().regex(/^fix\/harness-v\d+\.\d+\.\d+-attestation$/),
+  approvedBranch: z.string().regex(/^fix\/harness-v\d+\.\d+\.\d+(?:-[a-z0-9]+)*$/),
   sourceHashes: z.object({
     prd: z.string().regex(/^[a-f0-9]{64}$/),
     requirements: z.string().regex(/^[a-f0-9]{64}$/),
@@ -38,7 +40,8 @@ const assertContractBinding = (yaml: string, contract: z.infer<typeof RepairLeas
 };
 
 export const loadRepairLeaseContract = async (taskId: string, cwd = process.cwd()): Promise<RepairLeaseContract> => {
-  if (!/^HARNESS-V\d+\.\d+\.\d+-REPAIR$/.test(taskId)) throw new Error('REPAIR_TASK_ID_INVALID');
+  if (!/^HARNESS-V\d+\.\d+\.\d+(?:-[A-Z0-9]+)*-REPAIR$/.test(taskId))
+    throw new Error('REPAIR_TASK_ID_INVALID');
   const metadataPath = join(cwd, 'artifacts/context', taskId, 'lease-contract.json');
   const contract = RepairLeaseContractSchema.parse(JSON.parse(await readFile(metadataPath, 'utf8')));
   if (contract.id !== taskId) throw new Error('REPAIR_CONTRACT_ID_MISMATCH');
