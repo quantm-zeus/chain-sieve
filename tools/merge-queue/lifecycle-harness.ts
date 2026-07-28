@@ -92,6 +92,7 @@ export const runLifecycleHarness = async (): Promise<{
     git(repository, ['config', 'user.name', 'ChainSieve Lifecycle Harness']);
     git(repository, ['switch', '-c', 'cluster/g0']);
     await symlink(join(source, 'node_modules'), join(repository, 'node_modules'), 'dir');
+    await writeFile(join(repository, '.git/info/exclude'), '\nnode_modules\n', { flag: 'a' });
     const tasks = await loadTasks();
     const byId = (id: string) => {
       const task = tasks.find((candidate) => candidate.id === id);
