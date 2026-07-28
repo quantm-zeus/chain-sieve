@@ -38,7 +38,7 @@ jobs:
       - run: pnpm requirements:coverage
       - run: pnpm harness:verify
       - name: Verify runtime, generated goals, and proof-carrying rejection
-        run: pnpm exec vitest run tests/harness/runtime-baseline.spec.ts tests/harness/compiler.spec.ts tests/harness/verifier-forgery.spec.ts tests/harness/cluster-verifier-forgery.spec.ts
+        run: pnpm exec vitest run tests/harness/runtime-baseline.spec.ts tests/harness/compiler.spec.ts tests/harness/verifier-forgery.spec.ts tests/harness/cluster-verifier-forgery.spec.ts tests/harness/lifecycle.spec.ts tests/harness/git-lifecycle.spec.ts tests/harness/lifecycle-regressions.spec.ts
   tier2:
     name: Tier 2 · cluster integration
     needs: tier1
@@ -90,7 +90,8 @@ jobs:
       - run: pnpm architecture:verify
       - run: pnpm placeholders:scan
       - run: pnpm prohibited-capabilities:scan
-      - run: pnpm harness:lifecycle
+      - name: Run real production lifecycle, rebase verification, and automatic-revert scenarios
+        run: pnpm harness:lifecycle
       - name: Reject unimplemented task and cluster completion
         run: |
           if pnpm task:verify T-G0-CORE --holder forged --lease-version 1; then exit 1; fi
