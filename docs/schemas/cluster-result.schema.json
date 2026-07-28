@@ -4,19 +4,9 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "clusterId": {
-      "type": "string"
-    },
-    "taskResults": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "evidenceHash": {
       "type": "string"
     },
     "status": {
@@ -26,14 +16,115 @@
         "FAIL",
         "BLOCKED"
       ]
+    },
+    "clusterContractSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "headCommitSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "headTreeSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "taskAttestations": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "taskCommitSha": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "taskTreeSha": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "resultSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "taskId",
+          "taskCommitSha",
+          "taskTreeSha",
+          "resultSha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "commandEvidence": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exitCode": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "outputSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "artifactPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "command",
+          "exitCode",
+          "outputSha256",
+          "artifactPath",
+          "artifactSha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "verifierVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verificationPolicyVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verificationTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
     }
   },
   "required": [
     "schemaVersion",
     "clusterId",
-    "taskResults",
-    "evidenceHash",
-    "status"
+    "status",
+    "clusterContractSha256",
+    "headCommitSha",
+    "headTreeSha",
+    "taskAttestations",
+    "commandEvidence",
+    "verifierVersion",
+    "verificationPolicyVersion",
+    "verificationTimestamp"
   ],
   "additionalProperties": false
 }

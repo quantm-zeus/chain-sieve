@@ -1,0 +1,216 @@
+schema_version: 1.0.0
+id: HARNESS-V1.0.1-REPAIR
+title: Bounded harness-v1.0.1 clean-room attestation repair
+approval:
+  authority: repository owner request
+  approved_branch: fix/harness-v1.0.1-attestation
+  approved_release: harness-v1.0.1
+  approved_at: 2026-07-22
+source_hashes:
+  prd: baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299
+  requirement_manifest: e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff
+  audit: ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8
+failed_release:
+  tag: harness-v1.0.0
+  tag_object_sha: a8515700a7c09cbf2ea7dc97e59c19e91d4be316
+  target_commit_sha: 90027c40753d502d1893fd518382080b5302dd63
+  target_tree_sha: 561efa1c33b1cef08972d844fd42ad38c65b25b8
+  immutable: true
+base_commit_sha: 90027c40753d502d1893fd518382080b5302dd63
+finding_ids:
+  - ATTEST-P0-001
+  - ATTEST-P0-002
+  - ATTEST-P1-003
+  - ATTEST-P1-004
+  - ATTEST-P1-005
+  - ATTEST-P1-006
+  - ATTEST-P2-007
+  - ATTEST-P2-008
+  - ATTEST-P2-009
+  - ATTEST-P2-010
+  - ATTEST-P2-011
+read_set:
+  - docs/spec/**
+  - artifacts/release-attestation/harness-v1.0.0/**
+  - artifacts/context/HARNESS-V1.0.1-REPAIR/**
+  - tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml
+  - clusters/G0/C-G0-IMPLEMENTATION.zcode-goal.md
+  - package.json
+  - pnpm-lock.yaml
+  - .github/**
+  - apps/api/**
+  - apps/dashboard/**
+  - packages/mcp-adapter/**
+  - packages/shared-schemas/**
+  - packages/tool-core/**
+  - tools/**
+  - tests/**
+allowed_paths:
+  - tasks/repairs/HARNESS-V1.0.1-REPAIR.yaml
+  - tasks/repairs/HARNESS-V1.0.1-REPAIR.sha256
+  - artifacts/context/HARNESS-V1.0.1-REPAIR/**
+  - artifacts/release-attestation/harness-v1.0.0/**
+  - artifacts/release-repair/**
+  - artifacts/task-runtime/**
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+  - .node-version
+  - .nvmrc
+  - .npmrc
+  - .dockerignore
+  - .prettierignore
+  - .prettierrc.json
+  - .github/workflows/**
+  - apps/api/Dockerfile
+  - apps/api/package.json
+  - apps/api/src/app.ts
+  - apps/api/src/main.ts
+  - apps/dashboard/Dockerfile
+  - apps/dashboard/package.json
+  - apps/dashboard/svelte.config.js
+  - apps/dashboard/src/**
+  - docker-compose.production.yml
+  - packages/mcp-adapter/**
+  - packages/shared-schemas/src/index.ts
+  - packages/tool-core/**
+  - tools/task-verifier/**
+  - tools/cluster-verifier/**
+  - tools/task-runner/**
+  - tools/prd-compiler/**
+  - docs/schemas/task-result.schema.json
+  - docs/schemas/cluster-result.schema.json
+  - docs/schemas/task-review.schema.json
+  - docs/prompts/**
+  - docs/formatting-policy.md
+  - docs/local-development.md
+  - docs/deployment-baseline.md
+  - docs/implementation-workflow.md
+  - docs/task-contract-guide.md
+  - docs/cluster-contract-guide.md
+  - docs/release-and-capability-workflow.md
+  - clusters/**/C-*.zcode-goal.md
+  - tasks/generated/**
+  - artifacts/spec/**
+  - tests/harness/**
+  - tests/unit/**
+  - tests/integration/**
+  - tests/system/**
+  - tests/service/**
+  - tests/e2e/**
+  - vitest.config.ts
+  - vitest.service.config.ts
+  - playwright.config.ts
+  - tsconfig.json
+forbidden_paths:
+  - docs/spec/**
+  - infra/migrations/**
+  - packages/agent-runtime/**
+  - packages/alerts/**
+  - packages/capability-registry/**
+  - packages/evaluation/**
+  - packages/provider-contracts/**
+  - packages/scheduler/**
+  - artifacts/release-attestation/harness-v1.0.0/*.source
+  - refs/tags/harness-v1.0.0
+  - refs/heads/main
+exclusive_locks:
+  - harness/task-result-verification-policy
+  - harness/cluster-result-verification-policy
+  - harness/task-lifecycle-state
+  - harness/compiler-goal-generation
+  - runtime/node-baseline
+  - deployment/production-containers
+  - api/mcp-response-envelope
+  - repository/formatting-policy
+  - repository/release-evidence
+deliverables:
+  - proof-carrying task results and independently revalidated cluster verification
+  - deterministic forgery, mutation, copied-result, stale-lease, and reachability regressions
+  - exact Node.js 22 runtime baseline with drift prevention
+  - production API and dashboard images for linux/amd64 and linux/arm64
+  - executable task lifecycle commands and generated-goal command validation
+  - correlation IDs on all API and MCP response paths
+  - deterministic cancellable MCP timeout regression tool available only in test mode
+  - exact prompt archive manifest without fabricated dates
+  - owned-file formatting policy and clean baseline
+  - drizzle-orm patched to at least 0.45.2 with database regressions
+  - authenticated GitHub control evidence or explicit permission blocker
+  - immutable release repair report and resolution record
+required_tests:
+  - tests/harness/verifier-forgery.spec.ts
+  - tests/harness/cluster-verifier-forgery.spec.ts
+  - tests/harness/git-lifecycle.spec.ts
+  - tests/harness/lifecycle.spec.ts
+  - tests/harness/compiler.spec.ts
+  - tests/harness/runtime-baseline.spec.ts
+  - tests/unit/api.spec.ts
+  - tests/unit/mcp-timeout.spec.ts
+  - tests/integration/migrations.spec.ts
+  - tests/e2e/production-images.spec.ts
+verification_commands:
+  - pnpm install --frozen-lockfile
+  - pnpm build
+  - pnpm lint
+  - pnpm typecheck
+  - pnpm format:check
+  - pnpm test
+  - pnpm spec:verify
+  - pnpm prd:compile
+  - pnpm prd:drift-check
+  - pnpm requirements:coverage
+  - pnpm architecture:verify
+  - pnpm tests:skeleton-integrity
+  - pnpm placeholders:scan
+  - pnpm prohibited-capabilities:scan
+  - pnpm migration:verify
+  - pnpm harness:verify
+  - pnpm test:e2e
+  - pnpm test:mutation
+  - pnpm test:harness
+  - pnpm test:system
+  - pnpm test:integration
+  - pnpm test:service
+  - pnpm harness:lifecycle
+  - pnpm test:harness -- verifier-forgery cluster-verifier-forgery
+  - docker buildx build --platform linux/amd64 --file apps/api/Dockerfile .
+  - docker buildx build --platform linux/arm64 --file apps/api/Dockerfile .
+  - docker buildx build --platform linux/amd64 --file apps/dashboard/Dockerfile .
+  - docker buildx build --platform linux/arm64 --file apps/dashboard/Dockerfile .
+rollback_strategy:
+  - revert repair commits in reverse category order without rewriting history
+  - leave harness-v1.0.0 and its evidence untouched
+  - do not create harness-v1.0.1 unless independent clean-room verification passes
+  - no database migration is authorized or required
+stop_conditions:
+  - any authoritative source hash drifts
+  - harness-v1.0.0 tag object or target changes
+  - repair requires a forbidden product package or Crypto Intelligence cluster implementation
+  - an exclusive lock conflicts with another active lease
+  - the repair lease is stale, lost, or cannot be fenced
+  - required safety semantics are unclear or proof-carrying evidence cannot fail closed
+  - a required migration becomes necessary without a persistence-owned amendment
+  - a P0 or P1 finding remains after self-review
+  - GitHub mutation is requested without successful authentication and API authorization
+  - final verification is not performed on exact Node.js 22 with a clean tracked tree
+completion_definition:
+  - all eleven finding IDs have a truthful RESOLVED or externally BLOCKED disposition with evidence
+  - every P0 and P1 code/repository finding is resolved
+  - every required local command passes from a clean Node.js 22 environment
+  - both production images build and smoke-test on linux/amd64 and linux/arm64
+  - task and cluster forgery suites reject every controlled case for the expected reason
+  - compiler output is byte-for-byte deterministic and generated goals reference only valid lifecycle commands
+  - release reports bind the contract, sources, base commit, head commit, tree, and evidence hashes
+  - repair branch is pushed and merged only through an approved protected workflow
+  - final patch tag is withheld for independent clean-room attestation
+budgets:
+  max_files: 80
+  max_changed_lines: 8000
+  max_migrations: 0
+  max_product_packages: 0
+  require_owner_amendment_above_budget: true
+bootstrap_note: >-
+  The pre-repair task runner only discovers generated G0-G7 JSON contracts and hard-codes
+  task/<id> branches. This owner-approved repair contract therefore authorizes only the
+  minimum runner/schema change needed to discover, acquire, fence, and verify this YAML
+  repair task on the approved fix/harness-v1.0.1-attestation branch before further repair work.

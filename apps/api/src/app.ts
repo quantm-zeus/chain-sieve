@@ -11,7 +11,7 @@ import { validateOrigin } from '@ciag/security';
 import { JsonLogger } from '@ciag/observability';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
-export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number }
+export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void }
 type ApiEnv = { Variables: { correlationId: string } };
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
@@ -19,9 +19,11 @@ const healthRoute = createRoute({ method: 'get', path: '/api/v1/health', respons
 const readinessRoute = createRoute({ method: 'get', path: '/api/v1/readiness', responses: { 200: { description: 'Dependencies are ready', content: { 'application/json': { schema: ReadinessSchema } } }, 503: { description: 'A dependency is unavailable', content: { 'application/json': { schema: ReadinessSchema } } } } });
 
 const bootstrapMcpAdapter = (): McpAdapter => new McpAdapter(new ToolCore(new ExactMemoryCache(), { authorize: async () => ({ status: 'AVAILABLE', capabilityMode: 'SYNTHETIC_SHADOW', value: { quotaCharged: 0 } }) }));
-export const createMcpServer = (adapter: McpAdapter = bootstrapMcpAdapter()): McpServer => {
+const waitForAbortableDelay = (milliseconds: number, signal: AbortSignal): Promise<void> => new Promise((resolve, reject) => { if (signal.aborted) { reject(new Error('MCP_OPERATION_ABORTED')); return; } const timer = setTimeout(resolve, milliseconds); signal.addEventListener('abort', () => { clearTimeout(timer); reject(new Error('MCP_OPERATION_ABORTED')); }, { once: true }); });
+export const createMcpServer = (adapter: McpAdapter = bootstrapMcpAdapter(), test?: { enabled: boolean; slowToolDelayMs: number; onSideEffect?: () => void }): McpServer => {
   const server = new McpServer({ name: 'crypto-intelligence-agent-gateway', version: '0.1.0' });
   server.registerTool('system_readiness', { description: adapter.listTools()[0]?.description ?? 'Synthetic readiness only.', inputSchema: {} }, async () => ({ content: [{ type: 'text', text: JSON.stringify(adapter.systemReadiness()) }] }));
+  if (test?.enabled) server.registerTool('__test_slow', { description: 'Controllably slow synthetic tool for timeout regression only.', inputSchema: {} }, async (_input, extra) => { await waitForAbortableDelay(test.slowToolDelayMs, extra.signal); if (extra.signal.aborted) throw new Error('MCP_OPERATION_ABORTED'); test.onSideEffect?.(); return { content: [{ type: 'text', text: 'completed' }] }; });
   return server;
 };
 
@@ -39,12 +41,12 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   let activeMcpRequests = 0;
   const rateWindows = new Map<string, { startedAt: number; count: number }>();
   app.use('*', async (context, next) => {
-    const correlationId = context.req.header('x-correlation-id') ?? randomUUID();
+    const incomingCorrelationId = context.req.header('x-correlation-id');
+    const correlationId = incomingCorrelationId && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(incomingCorrelationId) ? incomingCorrelationId : randomUUID();
     context.set('correlationId', correlationId);
-    context.header('x-correlation-id', correlationId);
     const started = Date.now();
-    await next();
-    logger.log('info', 'http_request', { correlationId, method: context.req.method, path: context.req.path, status: context.res.status, durationMs: Date.now() - started });
+    try { await next(); }
+    finally { context.res.headers.set('x-correlation-id', correlationId); logger.log('info', 'http_request', { correlationId, method: context.req.method, path: context.req.path, status: context.res.status, durationMs: Date.now() - started }); }
   });
   app.onError((error, context) => {
     const correlationId = context.get('correlationId');
@@ -65,6 +67,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   });
   app.post('/mcp', async (context) => {
     validateOrigin(context.req.header('origin'), input.allowedOrigins);
+    if (input.mcpTestMode === true && context.req.header('x-mcp-test-internal-error') === '1') throw new Error('MCP_TEST_INTERNAL_ERROR');
     if (input.mcpAuthToken) { const expected = Buffer.from(`Bearer ${input.mcpAuthToken}`); const supplied = Buffer.from(context.req.header('authorization') ?? ''); if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) return context.json({ error: { code: 'UNAUTHORIZED', message: 'Valid bearer authentication is required', correlationId: context.get('correlationId') } }, 401); }
     if (!context.req.header('content-type')?.toLowerCase().startsWith('application/json')) return context.json({ error: { code: 'UNSUPPORTED_MEDIA_TYPE', message: 'application/json required', correlationId: context.get('correlationId') } }, 415);
     const declaredLength = Number(context.req.header('content-length') ?? '0');
@@ -79,11 +82,12 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     const transportOptions = { enableJsonResponse: true, allowedOrigins: input.allowedOrigins, enableDnsRebindingProtection: true };
     Object.assign(transportOptions, { sessionIdGenerator: undefined });
     const transport = new WebStandardStreamableHTTPServerTransport(transportOptions);
-    const server = createMcpServer();
+    const server = createMcpServer(undefined, { enabled: input.mcpTestMode === true, slowToolDelayMs: input.mcpTestSlowToolDelayMs ?? 100, ...(input.onMcpTestSideEffect ? { onSideEffect: input.onMcpTestSideEffect } : {}) });
     activeMcpRequests += 1;
     let timeout: ReturnType<typeof setTimeout> | undefined;
-    try { await server.connect(transport); return await Promise.race([transport.handleRequest(context.req.raw), new Promise<Response>((resolve) => { timeout = setTimeout(() => resolve(context.json({ error: { code: 'MCP_TIMEOUT', message: 'MCP request timed out', correlationId: context.get('correlationId') } }, 504)), mcpTimeoutMs); })]); }
-    finally { if (timeout) clearTimeout(timeout); activeMcpRequests -= 1; await server.close(); }
+    const abortController = new AbortController();
+    try { await server.connect(transport); const request = new Request(context.req.raw, { signal: abortController.signal }); return await Promise.race([transport.handleRequest(request), new Promise<Response>((resolve) => { timeout = setTimeout(() => { resolve(context.json({ error: { code: 'MCP_TIMEOUT', message: 'MCP request timed out', correlationId: context.get('correlationId') } }, 504)); abortController.abort(); }, mcpTimeoutMs); })]); }
+    finally { if (timeout) clearTimeout(timeout); abortController.abort(); activeMcpRequests -= 1; await server.close().catch(() => undefined); }
   });
   return app;
 };

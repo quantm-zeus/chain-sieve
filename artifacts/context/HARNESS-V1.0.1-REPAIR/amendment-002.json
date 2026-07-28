@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "amendmentId": "HARNESS-V1.0.1-REPAIR-A002",
+  "taskId": "HARNESS-V1.0.1-REPAIR",
+  "baseContractSha256": "9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "approvedBy": "repository owner continuation directive, Phase 1 and Phase 8",
+  "reason": "The frozen contract authorized fenced task lifecycle and proof-carrying task/cluster verification but omitted the task-lease schema and merge-queue verifier integration paths needed to implement those exact owner-required repairs.",
+  "addedAllowedPaths": ["docs/schemas/task-lease.schema.json", "tools/merge-queue/cli.ts"],
+  "scopeExpansion": "none; both paths implement the already-approved lease, lifecycle and verifier findings and contain no product implementation",
+  "approvedAt": "2026-07-22"
+}

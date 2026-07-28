@@ -4,13 +4,22 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "taskId": {
       "type": "string"
     },
     "holder": {
       "type": "string"
+    },
+    "leaseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fencingVersion": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
     },
     "version": {
       "type": "integer",
@@ -41,6 +50,8 @@
     "schemaVersion",
     "taskId",
     "holder",
+    "leaseId",
+    "fencingVersion",
     "version",
     "acquiredAt",
     "expiresAt",

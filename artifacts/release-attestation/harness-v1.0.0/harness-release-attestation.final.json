@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "attestationId": "CSA-HARNESS-V1.0.0-20260721T170912Z",
+  "finalizedAt": "2026-07-21T17:14:29Z",
+  "release": "harness-v1.0.0",
+  "remoteUrl": "git@github.com:quantm-zeus/chain-sieve.git",
+  "remoteDefaultBranch": "bootstrap/agent-harness-and-codebase",
+  "remoteMainFullSha": "90027c40753d502d1893fd518382080b5302dd63",
+  "tagObjectFullSha": "a8515700a7c09cbf2ea7dc97e59c19e91d4be316",
+  "peeledTargetFullSha": "90027c40753d502d1893fd518382080b5302dd63",
+  "treeFullSha": "561efa1c33b1cef08972d844fd42ad38c65b25b8",
+  "verifiedCommitFullSha": "1d92ab62a8cf9268750c3ab494d04af098b32979",
+  "initialAttestation": {
+    "jsonSha256": "ec3935eeda0d587307ce8b2bf4077443cfaadd72a58b2c0f3b2fffdebb89e6a4",
+    "markdownSha256": "d599821dc37df04253dd5ad8ae39720955c3b62bf5401c3083b4533dbc6f3ffe"
+  },
+  "answers": {
+    "exactPublishedTagVerified": false,
+    "node22Works": false,
+    "livePostgresqlAndMinioPass": true,
+    "linuxArm64BuildPass": false,
+    "allHarnessGatesReal": false,
+    "branchAndTagProtectionsEnabled": "UNVERIFIABLE_NO_GITHUB_API_AUTH",
+    "firstZcodeClusterReady": false,
+    "exactNextCommand": "gh auth login --hostname github.com --git-protocol ssh --web"
+  },
+  "blockingFindingIds": [
+    "ATTEST-P0-001",
+    "ATTEST-P0-002",
+    "ATTEST-P1-003",
+    "ATTEST-P1-004"
+  ],
+  "processProvenance": "BLOCKED_PROMPT_ARCHIVAL",
+  "repair": {
+    "status": "BLOCKED_NO_ACQUIRABLE_RELEASE_REPAIR_TASK_CONTRACT",
+    "branchCreated": false,
+    "sourceModified": false,
+    "remoteRefsModified": false,
+    "tagMovedOrRecreated": false,
+    "patchTagPublished": false,
+    "requiredBranchNameAfterContractApproval": "fix/harness-v1.0.1-attestation",
+    "requiredPatchTagAfterFullIndependentVerification": "harness-v1.0.1"
+  },
+  "cleanup": {
+    "controlledMutationsReverted": true,
+    "gitLocalRuntimeForgeryEvidenceRemoved": true,
+    "taggedCheckoutClean": true,
+    "dockerStackStopped": true,
+    "dockerTestVolumesRemoved": true
+  },
+  "verdict": "FAIL_RELEASE"
+}

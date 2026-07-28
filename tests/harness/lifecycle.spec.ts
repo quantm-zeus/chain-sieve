@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import type { TaskContract } from '@ciag/shared-schemas';
 import { acquire, assertLease, refreshReady, type LifecycleDocument } from '../../tools/task-runner/state.js';
+import { loadRepairLeaseContract } from '../../tools/task-runner/repair-contract.js';
 
 const task = (id: string, lock: string, dependencies: string[] = []): TaskContract => ({ schemaVersion: '1.0.0', id, title: id, sourceHashes: { prd: 'a'.repeat(64), requirements: 'b'.repeat(64), audit: 'c'.repeat(64) }, dependencyGroup: 'G0', cluster: 'C-G0-X', riskLevel: 'LOW', autonomyLevel: 'AUTONOMOUS', dependencies, requirements: ['FR-X-001'], acceptanceCriteria: [], invariants: ['INV-001'], adrs: ['ADR-001'], ownerPackages: ['packages/x'], readSet: [], writeSet: ['packages/x/**'], allowedPaths: ['packages/x/**'], forbiddenPaths: ['docs/spec/**'], exclusiveLocks: [lock], interfaceHashes: { x: 'd'.repeat(64) }, deliverables: ['x'], constraints: ['x'], nonGoals: ['x'], degradedBehavior: 'x', rollback: 'x', requiredTests: ['x'], verificationCommands: [{ command: 'pnpm test', expected: 'exit 0' }], complexityBudget: { maxFiles: 1, maxChangedLines: 1, maxCyclomaticComplexity: 1 }, changeBudget: { maxMigrations: 0, maxPublicInterfaces: 0, requiresSplitAboveBudget: true }, stopConditions: ['x'], completionDefinition: ['x'], sourceReferences: [{ path: 'x', line: 1, id: 'FR-X-001' }] });
 
 describe('leases and locks', () => {
+  it('loads the owner-approved repair lease only when its frozen contract and sources match', async () => {
+    await expect(loadRepairLeaseContract('HARNESS-V1.0.1-REPAIR')).resolves.toMatchObject({
+      approvedBranch: 'fix/harness-v1.0.1-attestation',
+      contractSha256: '9191d56a5ac654b582ffa37f54b707fe1386521669b6f836b5c2acc0654c163a',
+    });
+  });
   it('rejects a stale worker fencing version', () => { const tasks = [task('T-G0-A', 'a')]; const state: LifecycleDocument = { schemaVersion: '1.0.0', tasks: { 'T-G0-A': { taskId: 'T-G0-A', state: 'READY', leaseVersion: 0 } } }; acquire(state, tasks, 'T-G0-A', 'worker', new Date('2026-01-01')); expect(() => assertLease(state, 'T-G0-A', 0, 'worker', new Date('2026-01-01'))).toThrow('STALE_LEASE_VERSION'); });
   it('rejects an exclusive path-lock conflict', () => { const tasks = [task('T-G0-A', 'same'), task('T-G0-B', 'same')]; const state: LifecycleDocument = { schemaVersion: '1.0.0', tasks: { 'T-G0-A': { taskId: 'T-G0-A', state: 'READY', leaseVersion: 0 }, 'T-G0-B': { taskId: 'T-G0-B', state: 'READY', leaseVersion: 0 } } }; acquire(state, tasks, 'T-G0-A', 'one', new Date('2026-01-01')); expect(() => acquire(state, tasks, 'T-G0-B', 'two', new Date('2026-01-01'))).toThrow('PATH_LOCK_CONFLICT'); });
   it('advances dependency state only after MERGED', () => { const tasks = [task('T-G0-A', 'a'), task('T-G0-B', 'b', ['T-G0-A'])]; const state: LifecycleDocument = { schemaVersion: '1.0.0', tasks: { 'T-G0-A': { taskId: 'T-G0-A', state: 'VERIFIED', leaseVersion: 1 }, 'T-G0-B': { taskId: 'T-G0-B', state: 'PLANNED', leaseVersion: 0 } } }; refreshReady(state, tasks); expect(state.tasks['T-G0-B']?.state).toBe('PLANNED'); state.tasks['T-G0-A']!.state = 'MERGED'; refreshReady(state, tasks); expect(state.tasks['T-G0-B']?.state).toBe('READY'); });
