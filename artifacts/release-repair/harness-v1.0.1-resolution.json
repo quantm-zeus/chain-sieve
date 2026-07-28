@@ -18,5 +18,15 @@
   "resolved": 9,
   "blockedExternal": 2,
   "remainingP0": 0,
-  "remainingLocalP1": 0
+  "remainingLocalP1": 0,
+  "ciRepairLedger": [
+    {
+      "cycle": 1,
+      "startingSha": "a5c876f8feeb1fa964af544bbbca477c20a78575",
+      "classification": "SERVICE_CONTAINER_CONFIGURATION",
+      "fixCommit": "c1d030e7d245ec4fbef12d2a20cbbee922286dbf",
+      "githubRunUrl": "https://github.com/quantm-zeus/chain-sieve/actions/runs/30368864272",
+      "githubConclusion": "success"
+    }
+  ]
 }

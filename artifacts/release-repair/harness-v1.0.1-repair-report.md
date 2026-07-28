@@ -49,3 +49,10 @@ The production audit also reports unrelated moderate `GHSA-frvp-7c67-39w9` in `@
 ## Release boundary
 
 No Crypto Intelligence product cluster was started. `main` was not modified directly. No release-candidate or final patch tag was created. Independent review must verify the merged repair commit before any final immutable tag is created.
+
+## CI repair ledger
+
+- Cycle 1 started at `a5c876f8feeb1fa964af544bbbca477c20a78575`. CI job `Tier 2 · cluster integration` failed during `Initialize containers`: the pinned MinIO image was created without a `server` command, printed CLI help, and exited. Classification: `SERVICE_CONTAINER_CONFIGURATION`.
+- The minimal repair in `.github/workflows/ci.yml` starts the same pinned image explicitly as `minio server /data --console-address ':9001'`, waits for `/minio/health/ready` with bounded Node.js 22 polling, then provisions `ciag-artifacts` through `mc`. PostgreSQL and every Tier 2 repository gate remain required.
+- Local verification passed workflow YAML parsing, explicit MinIO startup/readiness, bucket provisioning, `pnpm test:integration`, `pnpm test:system`, `pnpm test:service`, `pnpm migration:verify`, `pnpm architecture:verify`, `pnpm placeholders:scan`, `pnpm prohibited-capabilities:scan`, and `pnpm harness:lifecycle`.
+- Commit `c1d030e7d245ec4fbef12d2a20cbbee922286dbf` (`ci(tier2): start MinIO service with explicit server command`) passed CI run `30368864272`: Tier 0, Tier 1, Tier 2, Tier 3 pre-main, and API/dashboard production images on `linux/amd64` and `linux/arm64` all passed.

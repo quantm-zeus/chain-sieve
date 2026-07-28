@@ -242,5 +242,23 @@
     "ATTEST-P2-009",
     "ATTEST-P2-011"
   ],
-  "remainingFindingIds": ["ATTEST-P1-005", "ATTEST-P2-010"]
+  "remainingFindingIds": ["ATTEST-P1-005", "ATTEST-P2-010"],
+  "ciRepairLedger": [
+    {
+      "cycle": 1,
+      "startingSha": "a5c876f8feeb1fa964af544bbbca477c20a78575",
+      "workflow": "CI",
+      "job": "Tier 2 · cluster integration",
+      "step": "Initialize containers",
+      "classification": "SERVICE_CONTAINER_CONFIGURATION",
+      "exactError": "MinIO starts with no server command, prints CLI help, then exits.",
+      "firstCausalError": "GitHub Actions created minio/minio:RELEASE.2025-07-23T15-54-02Z without command arguments, so its entrypoint invoked minio with no server subcommand.",
+      "secondaryErrors": ["MinIO health check became unhealthy", "Tier 2 repository commands were skipped"],
+      "affectedFiles": [".github/workflows/ci.yml"],
+      "localVerification": ["workflow YAML parse", "pinned MinIO explicit server startup", "bounded API readiness", "bucket provisioning", "Tier 2 command sequence"],
+      "fixCommit": "c1d030e7d245ec4fbef12d2a20cbbee922286dbf",
+      "githubRunUrl": "https://github.com/quantm-zeus/chain-sieve/actions/runs/30368864272",
+      "githubConclusion": "success"
+    }
+  ]
 }
