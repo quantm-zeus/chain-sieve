@@ -50,12 +50,6 @@ jobs:
         ports: ['5432:5432']
         options: >-
           --health-cmd "pg_isready -U ciag" --health-interval 5s --health-timeout 5s --health-retries 20
-      minio:
-        image: minio/minio:RELEASE.2025-07-23T15-54-02Z
-        env: { MINIO_ROOT_USER: ciag, MINIO_ROOT_PASSWORD: ciag_test_only }
-        ports: ['9000:9000']
-        options: >-
-          --health-cmd "mc ready local" --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -63,7 +57,26 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22.23.1, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - run: docker run --rm --network host --entrypoint /bin/sh minio/minio:RELEASE.2025-07-23T15-54-02Z -c "mc alias set local http://127.0.0.1:9000 ciag ciag_test_only && mc mb --ignore-existing local/ciag-artifacts"
+      - name: Start MinIO and wait for API readiness
+        run: |
+          docker run --detach --name ciag-minio --publish 127.0.0.1:9000:9000 --publish 127.0.0.1:9001:9001 --env MINIO_ROOT_USER=ciag --env MINIO_ROOT_PASSWORD=ciag_test_only minio/minio:RELEASE.2025-07-23T15-54-02Z server /data --console-address ':9001'
+          node <<'NODE'
+          const endpoint = 'http://127.0.0.1:9000/minio/health/ready';
+          const deadline = Date.now() + 30_000;
+          let lastError = 'no response';
+          for (;;) {
+            try {
+              const response = await fetch(endpoint);
+              if (response.ok) break;
+              lastError = `HTTP ${response.status}`;
+            } catch (error) {
+              lastError = error instanceof Error ? error.message : String(error);
+            }
+            if (Date.now() >= deadline) throw new Error(`MinIO did not become ready at ${endpoint}: ${lastError}`);
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+          NODE
+      - run: docker exec ciag-minio mc alias set local http://127.0.0.1:9000 ciag ciag_test_only && docker exec ciag-minio mc mb --ignore-existing local/ciag-artifacts
       - run: pnpm test:integration
       - run: pnpm test:system
       - run: pnpm test:service
