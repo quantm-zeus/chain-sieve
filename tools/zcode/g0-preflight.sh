@@ -25,6 +25,22 @@ EXPECTED_TREE="706e400d3eb5c41a95209523bb034f2e2c60bd34"
 EXPECTED_BRANCH="cluster/g0"
 EXPECTED_WORKTREE="/Users/quantm/Documents/My Projects/chain-sieve-worktrees/g0"
 
+if ! command -v node >/dev/null 2>&1 || ! command -v pnpm >/dev/null 2>&1; then
+  if [ ! -r "$HOME/.nvm/nvm.sh" ]; then
+    printf '%s\n' "FAIL:PINNED_NODE_RUNTIME_UNAVAILABLE" >&2
+    exit 1
+  fi
+  set +u
+  . "$HOME/.nvm/nvm.sh"
+  nvm use 22.23.1 >/dev/null
+  set -u
+  corepack prepare pnpm@10.13.1 --activate >/dev/null
+fi
+if [ "$(node --version)" != "v22.23.1" ] || [ "$(pnpm --version)" != "10.13.1" ]; then
+  printf '%s\n' "FAIL:PINNED_RUNTIME_VERSION" >&2
+  exit 1
+fi
+
 ROOT="$(git rev-parse --show-toplevel)"
 if [ "$ROOT" != "$EXPECTED_WORKTREE" ]; then
   printf '%s\n' "FAIL:CANONICAL_WORKTREE_REQUIRED:$ROOT" >&2
