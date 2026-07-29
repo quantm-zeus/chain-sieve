@@ -77,6 +77,13 @@ interface TaskState {
   expiresAt?: string;
 }
 
+interface GoalRecord {
+  taskId: string;
+  path: string;
+  sha256: string;
+  commands: string[];
+}
+
 const loadTasks = async (): Promise<TaskContract[]> => {
   const files = (await readdir(join(root, 'tasks/G0')))
     .filter((name) => name.endsWith('.contract.json'))
@@ -370,7 +377,7 @@ const generate = async (): Promise<void> => {
     );
   }
 
-  const contexts = [];
+  const contexts: Array<Awaited<ReturnType<typeof contextAttestation>>> = [];
   for (const task of tasks) contexts.push(await contextAttestation(task));
   const contextAggregate = {
     schemaVersion: '1.0.0',
@@ -396,7 +403,7 @@ const generate = async (): Promise<void> => {
     await readFile(join(root, 'package.json'), 'utf8'),
   ) as { scripts: Record<string, string> };
   const taskIds = new Set(tasks.map((task) => task.id));
-  const goalRecords = [];
+  const goalRecords: GoalRecord[] = [];
   for (const task of tasks) {
     const context = contexts.find((item) => item.taskId === task.id)!;
     const text = taskGoal(task, context);
