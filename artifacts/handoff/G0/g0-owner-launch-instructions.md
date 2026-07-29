@@ -3,7 +3,7 @@
 Repository preparation is complete. Do not run the task-preparation step until
 the owner separately authorizes the first implementation task.
 
-1. Install and open the ZCode desktop application.
+1. Open the installed ZCode desktop application if it is not already open.
 2. Connect and confirm the desired model in the ZCode UI.
 3. Open this workspace:
 

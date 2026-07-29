@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0.0",
-  "recordedAt": "2026-07-29T15:53:45Z",
+  "recordedAt": "2026-07-29T15:58:54Z",
   "verdict": "ZCODE_READY_APP_SETUP_REQUIRED",
   "release": {
     "tag": "harness-v1.0.1",
@@ -168,15 +168,20 @@
     "goalPayloadSha256": "7dad763baad4f0dc55271698f7e51543859f1048fdb405276669a2b18ae3e9ff"
   },
   "zcodeDesktop": {
-    "applicationStatus": "ZCODE_APP_INSTALL_REQUIRED",
+    "applicationStatus": "INSTALLED",
+    "applicationPath": "/Applications/ZCode.app",
     "checkedPaths": [
       "/Applications/ZCode.app",
       "/Users/quantm/Applications/ZCode.app"
     ],
-    "applicationVersion": null,
-    "modelConnectionStatus": "NOT_VERIFIABLE_APP_MISSING",
+    "applicationVersion": "3.5.3",
+    "applicationBuild": "3.5.3.3911",
+    "bundleIdentifier": "dev.zcode.app",
+    "observedRunning": true,
+    "modelConnectionStatus": "ZCODE_MODEL_CONNECTION_REQUIRES_OWNER_UI",
     "terminalCliRequired": false,
-    "started": false
+    "startedByPreparation": false,
+    "implementationSessionStarted": false
   },
   "readinessCommands": [
     {
@@ -273,7 +278,6 @@
     "completed": false
   },
   "remainingOwnerActions": [
-    "Install and open the ZCode desktop application.",
     "Connect and confirm the desired model through the ZCode UI.",
     "Open the canonical G0 worktree.",
     "After separate task-launch authorization, run the one-task preflight for T-G0-CORE.",

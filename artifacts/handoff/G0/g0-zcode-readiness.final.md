@@ -3,8 +3,8 @@
 Verdict: `ZCODE_READY_APP_SETUP_REQUIRED`
 
 The repository-side G0 preparation is complete on canonical branch
-`cluster/g0`. The only remaining actions are installing/opening ZCode desktop
-and connecting the desired model through its UI.
+`cluster/g0`. ZCode Desktop is installed; the only remaining application setup
+is confirming the desired model connection through its UI.
 
 ## Immutable baseline
 
@@ -75,12 +75,14 @@ implemented, not verified, and not completed.
 
 ## Desktop status
 
-- `/Applications/ZCode.app`: not installed
+- `/Applications/ZCode.app`: installed
 - `/Users/quantm/Applications/ZCode.app`: not installed
-- Version: unavailable
-- Model connection: not verifiable because the app is absent
+- Version: `3.5.3` (build `3.5.3.3911`)
+- Bundle identifier: `dev.zcode.app`
+- Process status: already running when inspected; not started by preparation
+- Model connection: `ZCODE_MODEL_CONNECTION_REQUIRES_OWNER_UI`
 - Terminal ZCode CLI: not required
 
-ZCode was not started. No implementation lease was acquired. No product
-implementation occurred. No task entered `IMPLEMENTING`. `main` and
-`harness-v1.0.1` remain unchanged.
+No ZCode implementation session was started by this preparation. No
+implementation lease was acquired. No product implementation occurred. No task
+entered `IMPLEMENTING`. `main` and `harness-v1.0.1` remain unchanged.
