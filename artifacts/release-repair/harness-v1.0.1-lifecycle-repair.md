@@ -1,6 +1,6 @@
 # ChainSieve harness-v1.0.1 lifecycle repair
 
-Status: **all bounded local lifecycle and release gates pass; pull-request CI is pending**.
+Status: **ready for merge with one external GitHub-control blocker**.
 
 This report does not authorize a direct merge, a release tag, final clean-room attestation, or ZCode G0.
 
@@ -59,9 +59,12 @@ API and dashboard production images built and smoke-tested for `linux/amd64` and
 - `cf15faacce9b7bf71746f7e03c12939c478c19c8` — keep the temporary lifecycle clone clean
 - `b939736b3595b3679284643feb8496235290466d` — seed isolated acceptance fixtures
 - `e26bc69d9c07ac6affecd0258fc2ef2593a2b962` — authorize fenced recovery
+- `10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1` — record lifecycle recovery verification
 
 ## External boundary
 
-`FINAL-CI-003` remains pending until the final pushed report commit receives a complete Tier 0–3 result. GitHub repository-control or plan limitations will be recorded separately after remote inspection; they are not represented as code changes.
+Pull request [#2](https://github.com/quantm-zeus/chain-sieve/pull/2) targets `main`. CI run [30454465214](https://github.com/quantm-zeus/chain-sieve/actions/runs/30454465214) completed successfully on exact head `10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1`: Tier 0, Tier 1, Tier 2, all four API/dashboard `linux/amd64` and `linux/arm64` jobs, and Tier 3 pre-main passed.
+
+The remaining blocker is external. Both the repository-ruleset and `main` branch-protection APIs return HTTP 403 with: “Upgrade to GitHub Pro or make this repository public to enable this feature.” No code change was attempted for this plan limitation.
 
 No Crypto Intelligence product functionality was implemented. `main` was not modified directly. No release tag was created or moved. ZCode G0 was not started.

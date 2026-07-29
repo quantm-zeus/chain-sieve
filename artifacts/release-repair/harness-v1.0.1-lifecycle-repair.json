@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "reportId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR-20260729",
-  "status": "LOCAL_VERIFICATION_PASS_PR_PENDING",
+  "status": "READY_FOR_MERGE_WITH_EXTERNAL_GITHUB_CONTROL_BLOCKER",
   "attestationStatus": "NOT_REQUESTED",
   "repairContract": {
     "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
@@ -57,8 +57,8 @@
     "branch": "fix/harness-v1.0.1-lifecycle",
     "verifiedRepairHead": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
     "verifiedRepairTree": "9cc2c3adfc8d1102eb57ae5a32eae66fd8a8608c",
-    "finalBranchHeadAtReportGeneration": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
-    "finalBranchTreeAtReportGeneration": "9cc2c3adfc8d1102eb57ae5a32eae66fd8a8608c",
+    "finalBranchHeadAtReportGeneration": "10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1",
+    "finalBranchTreeAtReportGeneration": "0c098066ddae585391903e1501365b64edd6c013",
     "reportBindingPolicy": "The report binds the fully verified pre-report commit and tree. The immutable report commit itself is the first descendant containing this file and is resolved from Git history, avoiding a self-referential commit hash.",
     "mainModifiedDirectly": false,
     "releaseTagCreatedOrMoved": false,
@@ -88,6 +88,10 @@
     {
       "sha": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
       "subject": "docs(recovery): authorize fenced lifecycle repair reacquisition"
+    },
+    {
+      "sha": "10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1",
+      "subject": "docs(repair): record lifecycle recovery verification"
     }
   ],
   "environment": {
@@ -273,19 +277,34 @@
   },
   "fullReleaseGate": {
     "local": "PASS",
-    "tier0ThroughTier3": "PENDING_PR_CREATION",
-    "overall": "PENDING_EXTERNAL_CI"
+    "tier0ThroughTier3": "PASS",
+    "overall": "PASS_WITH_EXTERNAL_GITHUB_CONTROL_BLOCKER",
+    "pullRequest": "https://github.com/quantm-zeus/chain-sieve/pull/2",
+    "ciRun": {
+      "url": "https://github.com/quantm-zeus/chain-sieve/actions/runs/30454465214",
+      "headSha": "10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1",
+      "startedAt": "2026-07-29T13:05:51Z",
+      "completedAt": "2026-07-29T13:14:07Z",
+      "conclusion": "success",
+      "jobs": {
+        "tier0StaticAndUnit": "PASS",
+        "tier1TaskContracts": "PASS",
+        "tier2ClusterIntegration": "PASS",
+        "tier3ApiLinuxAmd64": "PASS",
+        "tier3ApiLinuxArm64": "PASS",
+        "tier3DashboardLinuxAmd64": "PASS",
+        "tier3DashboardLinuxArm64": "PASS",
+        "tier3PreMain": "PASS"
+      }
+    }
   },
   "remainingExternalBlockers": [
     {
       "id": "GITHUB-CONTROL-PLAN",
-      "status": "TO_BE_INSPECTED_AFTER_PUSH",
-      "classification": "external repository control; not a code change"
-    },
-    {
-      "id": "FINAL-CI-003",
-      "status": "PENDING_PR_CI",
-      "classification": "complete Tier 0-3 must pass on the final pushed repair commit"
+      "status": "CONFIRMED",
+      "reason": "GitHub REST returned HTTP 403: Upgrade to GitHub Pro or make this repository public to enable private-repository rulesets and main branch protection.",
+      "classification": "external repository control; not a code change",
+      "codeChangeAttempted": false
     }
   ]
 }

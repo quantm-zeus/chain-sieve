@@ -31,11 +31,12 @@
     },
     {
       "id": "FINAL-CI-003",
-      "status": "PENDING_EXTERNAL_CI",
+      "status": "RESOLVED",
       "evidence": [
         "mandatory lifecycle job committed without continue-on-error",
         "complete local Tier 0-3-equivalent suite PASS",
-        "final PR run pending push"
+        "CI run 30454465214 PASS on exact head 10b6a5f2b5fd5df5f23db3b8c321eb50cab883c1",
+        "Tier 0, Tier 1, Tier 2, four production-image jobs, and Tier 3 pre-main all PASS"
       ]
     }
   ],
@@ -69,8 +70,7 @@
     "reportCommit": "resolve from the first descendant containing this immutable resolution file"
   },
   "remainingBlockers": [
-    "FINAL-CI-003 pending complete Tier 0-3 result on the final pushed repair commit",
-    "GitHub plan or repository-control limitations pending remote inspection"
+    "GitHub private-repository rulesets and main branch protection unavailable: HTTP 403 requires GitHub Pro or a public repository"
   ],
   "prohibitionsPreserved": {
     "directMainMerge": true,
