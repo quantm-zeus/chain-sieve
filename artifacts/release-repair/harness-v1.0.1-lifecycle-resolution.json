@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "repairTaskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+  "repairContractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+  "recoveryAmendment": {
+    "id": "HARNESS-V1.0.1-LIFECYCLE-REPAIR-RECOVERY-001",
+    "fileSha256": "210146f4407edb2c43607ee93ccae5bb220d7cf8c02aaeb3780b7f8a502e3225"
+  },
+  "findings": [
+    {
+      "id": "FINAL-LIFECYCLE-001",
+      "status": "RESOLVED_LOCALLY",
+      "evidence": [
+        "real persisted DRAFT through MERGED transition coverage",
+        "validation evidence",
+        "lease renewal and stale-fence rejection",
+        "real post-rebase task verifier",
+        "observed A-H lifecycle manifest"
+      ]
+    },
+    {
+      "id": "FINAL-LIFECYCLE-002",
+      "status": "RESOLVED_LOCALLY",
+      "evidence": [
+        "pre-rebase evidence invalidated",
+        "fresh exact-commit/tree self-review",
+        "fresh proof-carrying task result",
+        "real task:verify after rebase",
+        "automatic integration-failure revert"
+      ]
+    },
+    {
+      "id": "FINAL-CI-003",
+      "status": "PENDING_EXTERNAL_CI",
+      "evidence": [
+        "mandatory lifecycle job committed without continue-on-error",
+        "complete local Tier 0-3-equivalent suite PASS",
+        "final PR run pending push"
+      ]
+    }
+  ],
+  "recovery": {
+    "expiredLeaseId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR:2:1785254231489",
+    "expiredFencingVersion": 2,
+    "oldLeaseRejected": true,
+    "oldLeaseRejectionReason": "STALE_LEASE_VERSION",
+    "newLeaseId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR:3:1785329127900",
+    "newFencingVersion": 3,
+    "newLeaseActiveAtResolutionGeneration": true
+  },
+  "localVerification": {
+    "status": "PASS",
+    "node": "v22.23.1",
+    "lifecycleScenarios": 8,
+    "lifecycleObservedCommands": 43,
+    "postgresql17": "PASS",
+    "minioImmutableObjects": "PASS",
+    "mcpTimeoutAndCancellation": "PASS",
+    "compilerByteDeterminism": "PASS",
+    "proofCarryingForgeryRejection": "PASS",
+    "linuxAmd64ProductionImages": "PASS_API_AND_DASHBOARD",
+    "linuxArm64ProductionImages": "PASS_API_AND_DASHBOARD",
+    "workingTreeBeforeReports": "CLEAN"
+  },
+  "git": {
+    "branch": "fix/harness-v1.0.1-lifecycle",
+    "verifiedRepairHead": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
+    "verifiedRepairTree": "9cc2c3adfc8d1102eb57ae5a32eae66fd8a8608c",
+    "reportCommit": "resolve from the first descendant containing this immutable resolution file"
+  },
+  "remainingBlockers": [
+    "FINAL-CI-003 pending complete Tier 0-3 result on the final pushed repair commit",
+    "GitHub plan or repository-control limitations pending remote inspection"
+  ],
+  "prohibitionsPreserved": {
+    "directMainMerge": true,
+    "releaseTagCreationOrMovement": true,
+    "finalCleanRoomAttestation": true,
+    "zcodeG0Start": true,
+    "productFunctionality": true
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR-20260729",
+  "status": "LOCAL_VERIFICATION_PASS_PR_PENDING",
+  "attestationStatus": "NOT_REQUESTED",
+  "repairContract": {
+    "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+    "path": "tasks/repairs/HARNESS-V1.0.1-LIFECYCLE-REPAIR.yaml",
+    "sha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+    "baseCommit": "a4072215f73cd2cdbf5608535633327b0b34891e",
+    "baseGitTree": "428579a08d21ffeb7e0d3f7941e4642a38bfc22a",
+    "findingIds": ["FINAL-LIFECYCLE-001", "FINAL-LIFECYCLE-002", "FINAL-CI-003"]
+  },
+  "recoveryAmendment": {
+    "amendmentId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR-RECOVERY-001",
+    "path": "artifacts/context/HARNESS-V1.0.1-LIFECYCLE-REPAIR/amendment-001.json",
+    "payloadSha256": "76bdd2c3cf65df184220afb587df5662c8cbb7af122cdb578876c92a8493fcde",
+    "fileSha256": "210146f4407edb2c43607ee93ccae5bb220d7cf8c02aaeb3780b7f8a502e3225",
+    "recoverySourceHead": "b939736b3595b3679284643feb8496235290466d",
+    "recoverySourceTree": "c1f0bc47d9f1650adcf67d15013163a6d8545b0f",
+    "validation": "PASS",
+    "historyPreserved": true,
+    "observedTransitions": [
+      "IMPLEMENTING -> BLOCKED",
+      "BLOCKED -> READY",
+      "READY -> LEASED",
+      "LEASED -> IMPLEMENTING"
+    ]
+  },
+  "lease": {
+    "expiredLeaseId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR:2:1785254231489",
+    "expiredFencingVersion": 2,
+    "expiredAt": "2026-07-28T16:12:11.489Z",
+    "oldLeaseRejection": {
+      "status": "PASS",
+      "reason": "STALE_LEASE_VERSION",
+      "operationsRejected": [
+        "source modification",
+        "verification",
+        "report generation",
+        "push",
+        "PR creation",
+        "state transition",
+        "completion"
+      ]
+    },
+    "newLeaseId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR:3:1785329127900",
+    "newFencingVersion": 3,
+    "holder": "codex-lifecycle-repair-recovery-001",
+    "acquiredAt": "2026-07-29T12:45:27.900Z",
+    "expiresAt": "2026-07-29T18:45:27.900Z",
+    "state": "ACTIVE",
+    "branch": "fix/harness-v1.0.1-lifecycle",
+    "amendmentSha256": "210146f4407edb2c43607ee93ccae5bb220d7cf8c02aaeb3780b7f8a502e3225"
+  },
+  "git": {
+    "branch": "fix/harness-v1.0.1-lifecycle",
+    "verifiedRepairHead": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
+    "verifiedRepairTree": "9cc2c3adfc8d1102eb57ae5a32eae66fd8a8608c",
+    "finalBranchHeadAtReportGeneration": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
+    "finalBranchTreeAtReportGeneration": "9cc2c3adfc8d1102eb57ae5a32eae66fd8a8608c",
+    "reportBindingPolicy": "The report binds the fully verified pre-report commit and tree. The immutable report commit itself is the first descendant containing this file and is resolved from Git history, avoiding a self-referential commit hash.",
+    "mainModifiedDirectly": false,
+    "releaseTagCreatedOrMoved": false,
+    "zcodeG0Started": false
+  },
+  "atomicCommits": [
+    {
+      "sha": "a1b309fa607f6c1e7a6f706058f517d1db9fc2d2",
+      "subject": "chore(lifecycle): freeze repair contract and acquisition bootstrap"
+    },
+    {
+      "sha": "5b3d3d9431bf2d7cea3acd3e29c0d2e8951a5867",
+      "subject": "fix(lifecycle): enforce evidence-bound production workflow"
+    },
+    {
+      "sha": "43882db084e748441c3930b1f0d83d93d1a58f2a",
+      "subject": "ci(harness): require real lifecycle integration verification"
+    },
+    {
+      "sha": "cf15faacce9b7bf71746f7e03c12939c478c19c8",
+      "subject": "fix(harness): keep temporary lifecycle clone clean"
+    },
+    {
+      "sha": "b939736b3595b3679284643feb8496235290466d",
+      "subject": "test(harness): seed isolated acceptance fixtures"
+    },
+    {
+      "sha": "e26bc69d9c07ac6affecd0258fc2ef2593a2b962",
+      "subject": "docs(recovery): authorize fenced lifecycle repair reacquisition"
+    }
+  ],
+  "environment": {
+    "node": "v22.23.1",
+    "pnpm": "10.13.1",
+    "git": "2.50.1 (Apple Git-155)",
+    "host": "Darwin arm64",
+    "dependencyStore": "/tmp/chain-sieve-pnpm-store.EVo7zW",
+    "frozenLockfile": true
+  },
+  "verification": {
+    "status": "PASS",
+    "requiredCommands": [
+      { "command": "pnpm install --frozen-lockfile", "exitCode": 0 },
+      { "command": "pnpm build", "exitCode": 0 },
+      { "command": "pnpm lint", "exitCode": 0 },
+      { "command": "pnpm typecheck", "exitCode": 0 },
+      { "command": "pnpm format:check", "exitCode": 0, "files": 134 },
+      { "command": "pnpm test", "exitCode": 0, "testFiles": 18, "tests": 87 },
+      {
+        "command": "pnpm spec:verify",
+        "exitCode": 0,
+        "requirements": 397,
+        "acceptanceCriteria": 204
+      },
+      {
+        "command": "pnpm prd:compile",
+        "exitCode": 0,
+        "runs": 2,
+        "generatedFiles": 1161,
+        "aggregateSha256": "d2be43304d7cd5001e0f079f2ab533fdb495c67ffa3a102eb25bd0ca110ec522"
+      },
+      {
+        "command": "pnpm prd:drift-check",
+        "exitCode": 0,
+        "aggregateSha256": "d2be43304d7cd5001e0f079f2ab533fdb495c67ffa3a102eb25bd0ca110ec522"
+      },
+      { "command": "pnpm requirements:coverage", "exitCode": 0 },
+      { "command": "pnpm architecture:verify", "exitCode": 0 },
+      { "command": "pnpm tests:skeleton-integrity", "exitCode": 0 },
+      { "command": "pnpm placeholders:scan", "exitCode": 0 },
+      { "command": "pnpm prohibited-capabilities:scan", "exitCode": 0 },
+      { "command": "pnpm migration:verify", "exitCode": 0 },
+      { "command": "pnpm harness:verify", "exitCode": 0 },
+      { "command": "pnpm test:e2e", "exitCode": 0, "tests": 2 },
+      { "command": "pnpm test:mutation", "exitCode": 0, "tests": 12 },
+      {
+        "command": "pnpm test:harness",
+        "exitCode": 0,
+        "testFiles": 9,
+        "tests": 49
+      },
+      { "command": "pnpm test:system", "exitCode": 0, "tests": 5 },
+      { "command": "pnpm test:integration", "exitCode": 0, "tests": 3 },
+      {
+        "command": "pnpm test:service",
+        "exitCode": 0,
+        "tests": 1,
+        "services": ["PostgreSQL 17", "MinIO RELEASE.2025-07-23T15-54-02Z"]
+      },
+      {
+        "command": "pnpm harness:lifecycle",
+        "exitCode": 0,
+        "runsAfterRecovery": 2,
+        "scenarios": 8,
+        "observedCommands": 43,
+        "evidenceHashes": 7
+      }
+    ],
+    "focusedSuites": [
+      {
+        "command": "pnpm exec vitest run tests/harness/verifier-forgery.spec.ts tests/harness/cluster-verifier-forgery.spec.ts tests/harness/lifecycle-regressions.spec.ts tests/harness/lifecycle.spec.ts tests/harness/git-lifecycle.spec.ts tests/harness/runtime-baseline.spec.ts tests/harness/compiler.spec.ts tests/unit/mcp-timeout.spec.ts",
+        "exitCode": 0,
+        "testFiles": 8,
+        "tests": 49,
+        "coverage": [
+          "proof-carrying forgery rejection",
+          "post-rebase stale-evidence rejection",
+          "lease renewal and stale fencing",
+          "real merge queue",
+          "automatic revert",
+          "Node.js 22 runtime",
+          "compiler determinism",
+          "MCP timeout and cancellation"
+        ]
+      }
+    ],
+    "notablePreconditions": [
+      {
+        "command": "pnpm test:service without required live-service environment",
+        "exitCode": 1,
+        "result": "SERVICE_TEST_CONFIGURATION_REQUIRED",
+        "classification": "expected fail-closed precondition; corrected live-service invocation passed"
+      }
+    ],
+    "workingTreeBeforeReport": "CLEAN"
+  },
+  "lifecycle": {
+    "status": "PASS",
+    "manifestGeneratedAt": "2026-07-29T13:01:52.563Z",
+    "stateTransitionCoverage": [
+      "DRAFT",
+      "VALIDATED",
+      "READY",
+      "LEASED",
+      "IMPLEMENTING",
+      "SELF_REVIEWING",
+      "VERIFYING",
+      "VERIFIED",
+      "MERGE_QUEUED",
+      "MERGED"
+    ],
+    "scenarios": {
+      "A": "PASS_NORMAL_REAL_QUEUE_MERGE",
+      "B": "PASS_RENEWED_1_TO_2_OLD_FENCE_REJECTED_NEW_FENCE_ACCEPTED",
+      "C": "PASS_PATH_LOCK_CONFLICT_REJECTED",
+      "D": "PASS_REAL_REBASE_FRESH_EVIDENCE_REAL_TASK_VERIFY_MERGED",
+      "E": "PASS_ALL_PRE_REBASE_EVIDENCE_REJECTED",
+      "F": "PASS_DIRTY_TRACKED_SOURCE_REJECTED",
+      "G": "PASS_AUTOMATIC_REVERT_CREATED_AND_TREE_RESTORED",
+      "H": "PASS_WORKTREES_LEASES_LOCKS_QUEUE_BRANCHES_CLEAN"
+    },
+    "leaseRenewalResult": "OLD_FENCE_REJECTED_NEW_FENCE_ACCEPTED",
+    "realMergeQueueResult": "MERGED_THROUGH_REAL_PRODUCTION_PROCESSOR",
+    "postRebaseReviewResult": "FRESH_COMMIT_AND_TREE_BOUND_SELF_REVIEW_GENERATED",
+    "postRebaseVerificationResult": "REAL_POST_REBASE_TASK_VERIFY_PASS",
+    "staleEvidenceRejectionResult": "ALL_PRE_REBASE_EVIDENCE_REJECTED",
+    "automaticRevertResult": "AUTOMATIC_REVERT_CREATED_AUDITED_AND_TREE_RESTORED",
+    "cleanupResult": "WORKTREES_LEASES_LOCKS_QUEUE_BRANCHES_CLEAN"
+  },
+  "liveServices": {
+    "status": "PASS",
+    "postgresql": {
+      "image": "postgres:17-alpine",
+      "migrationAndServiceTests": "PASS"
+    },
+    "minio": {
+      "image": "minio/minio:RELEASE.2025-07-23T15-54-02Z",
+      "immutableObjectTests": "PASS"
+    },
+    "containersRemovedAfterTest": true
+  },
+  "productionImages": {
+    "status": "PASS",
+    "contracts": {
+      "runtimeUser": "node",
+      "readOnlyRootFilesystem": true,
+      "packageManagerStoreAbsent": true,
+      "workspaceNodeModulesAbsent": true,
+      "testsAbsent": true,
+      "gracefulStopExitCode": 0
+    },
+    "images": [
+      {
+        "service": "api",
+        "platform": "linux/amd64",
+        "imageId": "sha256:cefec45c546ca460c31f9d3ec663954cdb62fa6574801893fcf0e537f49c9492",
+        "buildExitCode": 0,
+        "smokeExitCode": 0
+      },
+      {
+        "service": "api",
+        "platform": "linux/arm64",
+        "imageId": "sha256:776c83be7fe6db42c186c69e49015e581af367fefa9e68fc6ba5af1c1be95549",
+        "buildExitCode": 0,
+        "smokeExitCode": 0
+      },
+      {
+        "service": "dashboard",
+        "platform": "linux/amd64",
+        "imageId": "sha256:ca693a54ece65af5ca1b7f803bda229b92785b9a1780755d3c1093a547752189",
+        "buildExitCode": 0,
+        "smokeExitCode": 0
+      },
+      {
+        "service": "dashboard",
+        "platform": "linux/arm64",
+        "imageId": "sha256:a7da92630a6cb4b24e043a972e9a7f52fb892ba5854c1cbcdd2cd940bee9a77e",
+        "buildExitCode": 0,
+        "smokeExitCode": 0
+      }
+    ]
+  },
+  "fullReleaseGate": {
+    "local": "PASS",
+    "tier0ThroughTier3": "PENDING_PR_CREATION",
+    "overall": "PENDING_EXTERNAL_CI"
+  },
+  "remainingExternalBlockers": [
+    {
+      "id": "GITHUB-CONTROL-PLAN",
+      "status": "TO_BE_INSPECTED_AFTER_PUSH",
+      "classification": "external repository control; not a code change"
+    },
+    {
+      "id": "FINAL-CI-003",
+      "status": "PENDING_PR_CI",
+      "classification": "complete Tier 0-3 must pass on the final pushed repair commit"
+    }
+  ]
+}
