@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+  "contractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+  "requiredStates": [
+    "DRAFT",
+    "VALIDATED",
+    "READY",
+    "LEASED",
+    "IMPLEMENTING",
+    "SELF_REVIEWING",
+    "VERIFYING",
+    "VERIFIED",
+    "MERGE_QUEUED",
+    "MERGED"
+  ],
+  "requiredScenarios": ["A", "B", "C", "D", "E", "F", "G", "H"],
+  "requiredBindings": [
+    "task contract hash",
+    "source PRD hashes",
+    "base commit",
+    "head commit",
+    "head Git tree",
+    "changed-file hashes",
+    "dependency-interface hashes",
+    "acceptance-test artifact hashes",
+    "self-review hash",
+    "lease ID",
+    "fencing version"
+  ],
+  "negativeAssertions": [
+    "missing DRAFT rejected",
+    "missing VALIDATED rejected",
+    "stale lease rejected after renewal",
+    "real merge-queue bypass rejected",
+    "pre-rebase self-review rejected",
+    "pre-rebase task result rejected",
+    "pre-rebase verification rejected",
+    "wrong post-rebase commit or tree rejected",
+    "tracked post-result mutation rejected",
+    "missing automatic revert rejected",
+    "missing observed command or phase rejected"
+  ]
+}

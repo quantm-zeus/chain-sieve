@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "amendmentId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR-RECOVERY-001",
+  "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+  "baseContractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+  "originalContractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+  "sourceBranch": "fix/harness-v1.0.1-lifecycle",
+  "sourceHeadSha": "b939736b3595b3679284643feb8496235290466d",
+  "sourceGitTreeSha": "c1f0bc47d9f1650adcf67d15013163a6d8545b0f",
+  "expiredLeaseId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR:2:1785254231489",
+  "expiredFencingVersion": 2,
+  "expirationTimestamp": "2026-07-28T16:12:11.489Z",
+  "recoveryReason": "The bounded lifecycle repair completed its real A-H lifecycle run, but the repair lease expired before the outstanding full verification, immutable reports, push, and pull-request preparation could complete.",
+  "reason": "Owner-approved recovery of the exact expired fenced repair lease without scope expansion.",
+  "allowedStateTransitions": [
+    "expired IMPLEMENTING -> BLOCKED (RECOVERY_PENDING equivalent)",
+    "BLOCKED -> READY (READY_FOR_REACQUISITION equivalent)",
+    "READY -> LEASED",
+    "LEASED -> IMPLEMENTING"
+  ],
+  "newLeasePolicy": {
+    "minimumFencingVersion": 3,
+    "reuseExpiredFencingVersion": false,
+    "taskId": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+    "branch": "fix/harness-v1.0.1-lifecycle",
+    "recoverySourceHeadSha": "b939736b3595b3679284643feb8496235290466d",
+    "recoverySourceGitTreeSha": "c1f0bc47d9f1650adcf67d15013163a6d8545b0f",
+    "originalContractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+    "boundedTtlMilliseconds": 21600000,
+    "requiredHolder": "codex-lifecycle-repair-recovery-001",
+    "mustReferenceAmendmentHash": true
+  },
+  "expiredLeaseAuditPolicy": {
+    "preserveOriginalLeaseRecord": true,
+    "preserveHistoricalState": true,
+    "oldLeaseMayAuthorizeOperations": false
+  },
+  "changedFields": [
+    "recovery state transition",
+    "lease reacquisition fencing version",
+    "lease expiry duration",
+    "recovery audit binding"
+  ],
+  "approvedBy": "Repository owner recovery directive dated 2026-07-29",
+  "ownerApproval": {
+    "authority": "repository owner",
+    "approvedAt": "2026-07-29",
+    "scope": "strictly bounded recovery of HARNESS-V1.0.1-LIFECYCLE-REPAIR only",
+    "prohibitions": [
+      "no repair redesign",
+      "no scope broadening",
+      "no product functionality",
+      "no direct main merge",
+      "no release tag creation or movement",
+      "no ZCode G0 start"
+    ]
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "createdAt": "2026-07-29T12:43:35Z",
+  "amendmentSha256": "76bdd2c3cf65df184220afb587df5662c8cbb7af122cdb578876c92a8493fcde",
+  "amendmentSha256Scope": "SHA-256 of RFC-style key-sorted compact JSON for this document before amendmentSha256 and amendmentSha256Scope were added"
+}

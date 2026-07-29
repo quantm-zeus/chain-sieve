@@ -7,7 +7,7 @@ describe('proof-carrying cluster verification', () => {
   it('rejects a forged cluster PASS with empty task and command evidence', async () => {
     const cluster = (await loadClusters())[0]!;
     const tasks = await loadTasks();
-    const state: LifecycleDocument = { schemaVersion: '1.0.0', tasks: {} };
+    const state: LifecycleDocument = { schemaVersion: '2.0.0', tasks: {} };
     const forged = {
       schemaVersion: '2.0.0',
       clusterId: cluster.id,

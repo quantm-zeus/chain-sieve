@@ -1,0 +1,208 @@
+schema_version: 1.0.0
+id: HARNESS-V1.0.1-LIFECYCLE-REPAIR
+title: Bounded harness-v1.0.1 lifecycle and merge-queue repair
+approval:
+  authority: repository owner lifecycle-repair directive
+  approved_branch: fix/harness-v1.0.1-lifecycle
+  approved_release: harness-v1.0.1
+  approved_at: 2026-07-28
+source_hashes:
+  prd: baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299
+  requirement_manifest: e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff
+  audit: ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8
+base_commit_sha: a4072215f73cd2cdbf5608535633327b0b34891e
+base_git_tree_sha: 428579a08d21ffeb7e0d3f7941e4642a38bfc22a
+failed_attestation:
+  verdict: FAIL_RELEASE
+  exact_main_commit: a4072215f73cd2cdbf5608535633327b0b34891e
+  finding_ids:
+    - FINAL-LIFECYCLE-001
+    - FINAL-LIFECYCLE-002
+    - FINAL-CI-003
+read_set:
+  - docs/spec/**
+  - tasks/repairs/HARNESS-V1.0.1-LIFECYCLE-REPAIR.yaml
+  - artifacts/context/HARNESS-V1.0.1-LIFECYCLE-REPAIR/**
+  - package.json
+  - pnpm-lock.yaml
+  - .github/workflows/**
+  - packages/shared-schemas/src/index.ts
+  - tools/task-runner/**
+  - tools/task-verifier/**
+  - tools/worktree-manager/**
+  - tools/merge-queue/**
+  - tools/cluster-verifier/**
+  - tests/harness/**
+allowed_paths:
+  - tasks/repairs/HARNESS-V1.0.1-LIFECYCLE-REPAIR.yaml
+  - tasks/repairs/HARNESS-V1.0.1-LIFECYCLE-REPAIR.sha256
+  - artifacts/context/HARNESS-V1.0.1-LIFECYCLE-REPAIR/**
+  - artifacts/release-repair/harness-v1.0.1-lifecycle-repair.json
+  - artifacts/release-repair/harness-v1.0.1-lifecycle-repair.md
+  - artifacts/release-repair/harness-v1.0.1-lifecycle-resolution.json
+  - package.json
+  - .github/workflows/ci.yml
+  - .github/workflows/scheduled-verification.yml
+  - packages/shared-schemas/src/index.ts
+  - docs/schemas/task-lease.schema.json
+  - docs/schemas/task-review.schema.json
+  - docs/schemas/task-result.schema.json
+  - docs/schemas/lifecycle-manifest.schema.json
+  - tools/task-runner/**
+  - tools/task-verifier/**
+  - tools/worktree-manager/**
+  - tools/merge-queue/**
+  - tools/cluster-verifier/**
+  - tests/harness/**
+forbidden_paths:
+  - docs/spec/**
+  - artifacts/spec/**
+  - tasks/generated/**
+  - clusters/**
+  - infra/migrations/**
+  - apps/**
+  - packages/agent-runtime/**
+  - packages/alerts/**
+  - packages/capability-registry/**
+  - packages/config/**
+  - packages/domain/**
+  - packages/evaluation/**
+  - packages/evidence/**
+  - packages/mcp-adapter/**
+  - packages/object-store/**
+  - packages/observability/**
+  - packages/persistence/**
+  - packages/provider-contracts/**
+  - packages/runtime-cache/**
+  - packages/scheduler/**
+  - packages/security/**
+  - packages/test-fixtures/**
+  - packages/tool-core/**
+  - packages/workflow-runtime/**
+  - refs/tags/harness-v1.0.0
+  - refs/heads/main
+exclusive_locks:
+  - harness/task-lifecycle-state
+  - harness/task-validation-evidence
+  - harness/task-result-verification-policy
+  - harness/task-self-review-policy
+  - harness/lease-fencing-policy
+  - harness/worktree-manager
+  - harness/merge-queue-processor
+  - harness/lifecycle-ci-gate
+  - repository/release-repair-evidence
+required_state_transitions:
+  - DRAFT -> VALIDATED
+  - VALIDATED -> READY
+  - READY -> LEASED
+  - LEASED -> IMPLEMENTING
+  - IMPLEMENTING -> SELF_REVIEWING
+  - SELF_REVIEWING -> VERIFYING
+  - VERIFYING -> VERIFIED
+  - VERIFIED -> MERGE_QUEUED
+  - MERGE_QUEUED -> MERGED
+failure_states:
+  - BLOCKED
+  - INTEGRATION_FAILED
+  - REVERTED_AFTER_INTEGRATION_FAILURE
+required_production_components:
+  - task runner
+  - task validator
+  - lease manager with fencing renewal
+  - worktree manager
+  - path-lock manager
+  - self-review generator and validator
+  - task-result generator
+  - proof-carrying task verifier
+  - real merge-queue processor
+  - cluster integration verifier
+  - lifecycle CI gate
+required_scenarios:
+  - A normal task lifecycle
+  - B lease renewal and old-fence rejection
+  - C deterministic path-lock conflict
+  - D cluster-head advance and real rebase
+  - E stale pre-rebase evidence rejection
+  - F tracked post-rebase mutation rejection
+  - G integration failure and automatic revert
+  - H complete cleanup
+required_tests:
+  - tests/harness/lifecycle.spec.ts
+  - tests/harness/git-lifecycle.spec.ts
+  - tests/harness/lifecycle-regressions.spec.ts
+  - tests/harness/verifier-forgery.spec.ts
+  - tests/harness/cluster-verifier-forgery.spec.ts
+required_commands:
+  - pnpm install --frozen-lockfile
+  - pnpm build
+  - pnpm lint
+  - pnpm typecheck
+  - pnpm format:check
+  - pnpm test
+  - pnpm spec:verify
+  - pnpm prd:compile
+  - pnpm prd:drift-check
+  - pnpm requirements:coverage
+  - pnpm architecture:verify
+  - pnpm tests:skeleton-integrity
+  - pnpm placeholders:scan
+  - pnpm prohibited-capabilities:scan
+  - pnpm migration:verify
+  - pnpm harness:verify
+  - pnpm test:e2e
+  - pnpm test:mutation
+  - pnpm test:harness
+  - pnpm test:system
+  - pnpm test:integration
+  - pnpm test:service
+  - pnpm harness:lifecycle
+  - pnpm exec vitest run tests/harness/verifier-forgery.spec.ts tests/harness/cluster-verifier-forgery.spec.ts tests/harness/lifecycle-regressions.spec.ts
+proof_obligations:
+  - validation evidence is content-addressed and bound to the exact task contract
+  - every protected transition validates the current lease owner, task, expiry, lease ID and fencing version
+  - lease renewal increments fencing and invalidates the prior credential
+  - persisted state records every mandatory transition without inferred or printed-only states
+  - self-review evidence is derived from the exact commit, Git tree, diff and changed-file hashes
+  - task results bind the current base, head, tree, changed files, dependency interfaces, tests, self-review, lease and fence
+  - a rebase marks all pre-rebase review, result and verification evidence STALE
+  - post-rebase evidence is regenerated by re-executing review, tests and the real task verifier
+  - merge-queue success requires the production processor and post-merge integration verification
+  - integration failure creates a revert commit, persists audit evidence and restores branch contents
+  - lifecycle PASS derives only from the observed manifest and fails closed on an omitted phase
+  - proof-carrying forgery and post-result mutation rejection remain unchanged or stronger
+rollback_strategy:
+  - revert repair commits in reverse dependency order without rewriting history
+  - preserve harness-v1.0.0 and all prior attestation evidence unchanged
+  - preserve main and release tags; merge only through the pull-request workflow
+  - use no database migration and activate no product capability
+  - retain integration-failure and revert audit artifacts during rollback
+completion_criteria:
+  - FINAL-LIFECYCLE-001 and FINAL-LIFECYCLE-002 are resolved by production-path evidence
+  - scenarios A through H execute in an isolated temporary Git repository
+  - all positive and deterministic negative lifecycle regressions pass on Node.js 22.23.1
+  - pnpm harness:lifecycle cannot PASS without every required command, transition, evidence binding, queue operation and cleanup result
+  - the complete required local verification suite passes from a clean tracked tree
+  - immutable repair reports contain actual commit, tree, evidence and test hashes
+  - the branch is pushed and a pull request targets main
+  - Tier 0 through Tier 3 CI completes successfully for the final repair head
+  - GitHub plan or repository-control limitations are recorded separately and never represented as code fixes
+stop_conditions:
+  - authoritative source or base commit/tree drift
+  - stale, lost, expired, wrong-owner or wrong-task repair lease
+  - active exclusive-lock collision
+  - required work leaves an allowed path or enters a forbidden product capability
+  - proof-carrying verification would be weakened
+  - lifecycle behavior requires a database migration
+  - a required test or CI tier cannot produce independently derived evidence
+budgets:
+  max_files: 45
+  max_changed_lines: 6000
+  max_migrations: 0
+  max_product_packages: 0
+  require_owner_amendment_above_budget: true
+bootstrap_policy: >-
+  The base repair loader does not accept the owner-required
+  HARNESS-V1.0.1-LIFECYCLE-REPAIR identifier or lifecycle branch suffix. The owner directive
+  authorizes only freezing this contract/context pack and minimally extending repair-contract
+  discovery to validate and acquire this exact content-addressed task. No other implementation
+  may begin before acquisition and fencing succeed.

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "HARNESS-V1.0.1-LIFECYCLE-REPAIR",
+  "contractPath": "tasks/repairs/HARNESS-V1.0.1-LIFECYCLE-REPAIR.yaml",
+  "contractSha256": "f9ab4b031f7a853619cc53045d4d0be39464bd7b216b19b1d7b56d69cc19a7cb",
+  "approvedBranch": "fix/harness-v1.0.1-lifecycle",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencies": [],
+  "exclusiveLocks": [
+    "harness/task-lifecycle-state",
+    "harness/task-validation-evidence",
+    "harness/task-result-verification-policy",
+    "harness/task-self-review-policy",
+    "harness/lease-fencing-policy",
+    "harness/worktree-manager",
+    "harness/merge-queue-processor",
+    "harness/lifecycle-ci-gate",
+    "repository/release-repair-evidence"
+  ]
+}

@@ -1,23 +1,22 @@
-import { spawnSync } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { loadTasks, readTaskResult } from '../task-verifier/verify.js';
-import { assertLease, readState, refreshReady, runtimeRoot, transition, writeState } from '../task-runner/state.js';
+import { loadTasks } from '../task-verifier/verify.js';
+import { readState } from '../task-runner/state.js';
+import { enqueueTask, processMergeQueue, readQueue } from './processor.js';
 
-interface Queue { schemaVersion: '1.0.0'; taskIds: string[] }
-const path = join(runtimeRoot(), 'merge-queue.json');
-const readQueue = async (): Promise<Queue> => { try { const queue = JSON.parse(await readFile(path, 'utf8')) as Queue; if (queue.schemaVersion !== '1.0.0' || !Array.isArray(queue.taskIds)) throw new Error('MERGE_QUEUE_INVALID'); return queue; } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; return { schemaVersion: '1.0.0', taskIds: [] }; } };
-const writeQueue = async (queue: Queue): Promise<void> => { await mkdir(dirname(path), { recursive: true }); await writeFile(path, `${JSON.stringify(queue, null, 2)}\n`, { mode: 0o600 }); };
-const git = (args: string[], cwd = process.cwd()): string => { const result = spawnSync('git', args, { cwd, encoding: 'utf8' }); if (result.status !== 0) throw new Error(`GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`); return result.stdout.trim(); };
-const command = process.argv[2] ?? 'add'; const taskId = process.argv[3];
+const command = process.argv[2] ?? 'add';
+const taskId = process.argv[3];
 try {
-  const tasks = await loadTasks(); const queue = await readQueue(); const state = await readState(tasks);
-  if (command === 'add') { const task = tasks.find((candidate) => candidate.id === taskId); if (!task) throw new Error('VALID_TASK_ID_REQUIRED'); const target = state.tasks[task.id]; if (!target || target.state !== 'VERIFIED' || !target.commit) throw new Error('TASK_NOT_VERIFIED'); const result = await readTaskResult(task.id); if (result.bindings.headCommitSha !== target.commit || result.status !== 'PASS') throw new Error('TASK_RESULT_MISMATCH'); transition(target, ['VERIFIED'], 'MERGE_QUEUED'); if (!queue.taskIds.includes(task.id)) queue.taskIds.push(task.id); await writeState(state); await writeQueue(queue); console.log(JSON.stringify(queue)); }
-  else if (command === 'process') {
-    const next = queue.taskIds[0]; if (!next) throw new Error('MERGE_QUEUE_EMPTY'); const task = tasks.find((candidate) => candidate.id === next); if (!task) throw new Error('TASK_NOT_FOUND'); const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`; const current = git(['branch', '--show-current']); if (current === 'main') throw new Error('DIRECT_MAIN_MERGE_PROHIBITED'); if (current !== clusterBranch) throw new Error(`CLUSTER_BRANCH_REQUIRED:${clusterBranch}`); if (git(['status', '--porcelain']) !== '') throw new Error('CLUSTER_WORKTREE_NOT_CLEAN'); const target = state.tasks[next]; if (!target || target.state !== 'MERGE_QUEUED' || !target.holder) throw new Error('TASK_NOT_MERGE_QUEUED'); assertLease(state, next, target.leaseVersion, target.holder, new Date());
-    const worktrees = git(['worktree', 'list', '--porcelain']); const blocks = worktrees.split('\n\n'); const block = blocks.find((value) => value.includes(`branch refs/heads/task/${next.toLowerCase()}`)); const taskWorktree = block?.split('\n').find((line) => line.startsWith('worktree '))?.slice('worktree '.length); if (!taskWorktree) throw new Error('TASK_WORKTREE_NOT_FOUND');
-    git(['rebase', clusterBranch], taskWorktree); const verification = spawnSync('pnpm', ['task:verify', next, '--holder', target.holder, '--lease-version', String(target.leaseVersion)], { cwd: taskWorktree, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }); if (verification.status !== 0) throw new Error(`POST_REBASE_TASK_VERIFICATION_FAILED:${verification.stderr}`); const commit = git(['rev-parse', 'HEAD'], taskWorktree); if (Number(git(['rev-list', '--count', `${clusterBranch}..${commit}`])) !== 1) throw new Error('TASK_COMMIT_NOT_ATOMIC'); git(['merge', '--ff-only', commit]);
-    const integration = spawnSync('pnpm', ['test:integration'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }); if (integration.status !== 0) { git(['revert', '--no-edit', commit]); target.state = 'BLOCKED'; queue.taskIds.shift(); await writeState(state); await writeQueue(queue); throw new Error(`POST_MERGE_INTEGRATION_FAILED_REVERTED:${commit}`); }
-    const result = await readTaskResult(next); if (result.bindings.headCommitSha !== commit) throw new Error('POST_REBASE_RESULT_MISMATCH'); target.state = 'MERGED'; target.commit = commit; refreshReady(state, tasks); queue.taskIds.shift(); await writeState(state); await writeQueue(queue); console.log(JSON.stringify({ taskId: next, commit, status: 'MERGED' }));
+  const tasks = await loadTasks();
+  if (command === 'add') {
+    const task = tasks.find((candidate) => candidate.id === taskId);
+    if (!task) throw new Error('VALID_TASK_ID_REQUIRED');
+    const state = await readState(tasks);
+    const queue = await readQueue();
+    const item = await enqueueTask(task, tasks, state, queue);
+    console.log(JSON.stringify({ status: 'QUEUED', item }, null, 2));
+  } else if (command === 'process') {
+    console.log(JSON.stringify(await processMergeQueue(tasks), null, 2));
   } else throw new Error(`UNKNOWN_COMMAND:${command}`);
-} catch (error) { console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) })); process.exitCode = 1; }
+} catch (error) {
+  console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) }));
+  process.exitCode = 1;
+}

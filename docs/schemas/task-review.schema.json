@@ -13,6 +13,10 @@
       "type": "string",
       "minLength": 1
     },
+    "reviewedBaseCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
     "reviewedCommit": {
       "type": "string",
       "pattern": "^[a-f0-9]{40,64}$"
@@ -20,6 +24,109 @@
     "reviewedTree": {
       "type": "string",
       "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "changedFiles": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "A",
+              "C",
+              "M",
+              "R",
+              "T",
+              "U",
+              "X",
+              "B",
+              "D"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "dependencyInterfaceHashes": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "acceptanceTestArtifacts": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "leaseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "leaseFencingVersion": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "reviewedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+    },
+    "rebase": {
+      "type": "object",
+      "properties": {
+        "previousHeadCommit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "conflictsDetected": {
+          "type": "boolean"
+        },
+        "semanticChangesDetected": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "conflictsDetected",
+        "semanticChangesDetected"
+      ],
+      "additionalProperties": false
     },
     "passes": {
       "minItems": 1,
@@ -94,8 +201,16 @@
     "schemaVersion",
     "taskId",
     "reviewer",
+    "reviewedBaseCommit",
     "reviewedCommit",
     "reviewedTree",
+    "changedFiles",
+    "dependencyInterfaceHashes",
+    "acceptanceTestArtifacts",
+    "leaseId",
+    "leaseFencingVersion",
+    "reviewedAt",
+    "rebase",
     "passes",
     "verdict",
     "findings"
