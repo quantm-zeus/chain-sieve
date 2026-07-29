@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-PROV-01",
+  "canonicalBranch": "cluster/g0",
+  "release": {
+    "tag": "harness-v1.0.1",
+    "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
+    "commit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "contextPath": "artifacts/context/T-G0-PROV-01",
+  "canonicalContextManifestSha256": "ba9e8bbb6273dfe127e0701dc30698db9682377607cc65ef1c67c006053c9dec",
+  "sha256SumsSha256": "9e96da31fb7b7659c1a5b26aabee3fa7cf9637763b1930b3cf1d46b99e77f63b",
+  "files": [
+    {
+      "path": "task-contract.json",
+      "sha256": "38f4c05b7eae352823217801e5e0b0f1d10a63aea202def6850f7b1700358e6e",
+      "bytes": 6500
+    },
+    {
+      "path": "requirements.json",
+      "sha256": "85626f574d84bcff8aaf9e03f2d8cea2fc5187ac174284244d7f91169796189b",
+      "bytes": 26022
+    },
+    {
+      "path": "acceptance-criteria.json",
+      "sha256": "210f11fdf7901ba008686fce2c14df9d8bb8b605722c6e6a6dcc669e2e368abb",
+      "bytes": 5809
+    },
+    {
+      "path": "invariants.json",
+      "sha256": "df6149df9a2b0f1a9025c52652138be5ec08b98f5468c5f0e50edca3309bf526",
+      "bytes": 4019
+    },
+    {
+      "path": "adrs.json",
+      "sha256": "2a8c4d2c0edcc0bdf64aa2e44b9e396f6a5885f67c52c470ca668ed90686ce68",
+      "bytes": 669
+    },
+    {
+      "path": "architecture-boundaries.json",
+      "sha256": "5b63decf0304172c3d5d275c8dd62dca1e5d52dec0f53d6de18de5b79abdeda3",
+      "bytes": 519
+    },
+    {
+      "path": "dependency-outputs.json",
+      "sha256": "ef7e5109288dd2f9964f0cc37d73003d9cb1e9dbdb9d2c7f23cb53dd9c3e10da",
+      "bytes": 164
+    },
+    {
+      "path": "public-schemas.json",
+      "sha256": "467f1e80a3ee1392ee718de95ae48851eddf7438a359ef3fda4f89a54ba7f291",
+      "bytes": 331
+    },
+    {
+      "path": "semantic-fields.json",
+      "sha256": "54b67c0102778ddecfc62e969751e98ec17d8953596b148f6c080647b707981e",
+      "bytes": 426
+    },
+    {
+      "path": "pre-mortem.json",
+      "sha256": "e72a565d750ab0204767159fbbb82ece99afdc117c064fc74d710cf6e7f5b9cb",
+      "bytes": 260
+    },
+    {
+      "path": "source-references.json",
+      "sha256": "786c5f5cb61d1792a572d48e61a105d8d9629af1429fb139ea0dbf14265778e2",
+      "bytes": 1027
+    }
+  ],
+  "generatedAt": "2026-07-29T15:39:14Z"
+}

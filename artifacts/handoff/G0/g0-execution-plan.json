@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0.0",
+  "clusterId": "C-G0-IMPLEMENTATION",
+  "canonicalBranch": "cluster/g0",
+  "formalDependencyWaves": [
+    [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-CORE",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DATA",
+      "T-G0-DISC",
+      "T-G0-DR",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G0-TRACE"
+    ]
+  ],
+  "taskGraphAcyclic": true,
+  "contractMaximumParallelism": 9,
+  "recommendedInitialParallelism": 1,
+  "firstRecommendedTask": "T-G0-CORE",
+  "rationale": "Begin serially with the shared domain/schema foundation. The contracts have no formal edges, but all tasks share tests and implementation documentation, several share public interfaces, and DATA/DR share migration ownership.",
+  "pathLockGroups": {
+    "apps/api/src/mcp/public-api": [
+      "T-G0-MCP"
+    ],
+    "apps/collector/public-api": [
+      "T-G0-COL-01",
+      "T-G0-COL-02"
+    ],
+    "infra/migrations": [
+      "T-G0-DATA",
+      "T-G0-DR"
+    ],
+    "packages/cost-router/public-api": [
+      "T-G0-COST-01",
+      "T-G0-COST-02"
+    ],
+    "packages/discovery-universe/public-api": [
+      "T-G0-DISC"
+    ],
+    "packages/domain/public-api": [
+      "T-G0-CORE"
+    ],
+    "packages/provider-lifecycle/public-api": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02"
+    ],
+    "packages/requirement-manifest/public-api": [
+      "T-G0-TRACE"
+    ],
+    "packages/security/public-api": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02"
+    ]
+  },
+  "schemaAndMigrationConflicts": {
+    "infra/migrations": [
+      "T-G0-DATA",
+      "T-G0-DR"
+    ],
+    "packages/persistence": [
+      "T-G0-DATA",
+      "T-G0-DR"
+    ]
+  },
+  "sharedInterfaceConflicts": {
+    "apps/collector/public-api": [
+      "T-G0-COL-01",
+      "T-G0-COL-02"
+    ],
+    "packages/cost-router/public-api": [
+      "T-G0-COST-01",
+      "T-G0-COST-02"
+    ],
+    "packages/provider-lifecycle/public-api": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02"
+    ],
+    "packages/security/public-api": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02"
+    ]
+  },
+  "sharedConfigurationConflicts": {
+    "tests/**": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-CORE",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DATA",
+      "T-G0-DISC",
+      "T-G0-DR",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G0-TRACE"
+    ],
+    "docs/implementation/**": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-CORE",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DATA",
+      "T-G0-DISC",
+      "T-G0-DR",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G0-TRACE"
+    ]
+  },
+  "operationalOrder": [
+    "T-G0-CORE",
+    "T-G0-DATA",
+    "T-G0-SEC-01",
+    "T-G0-SEC-02",
+    "T-G0-MCP",
+    "T-G0-COL-01",
+    "T-G0-COL-02",
+    "T-G0-COST-01",
+    "T-G0-COST-02",
+    "T-G0-DISC",
+    "T-G0-DR",
+    "T-G0-PROV-01",
+    "T-G0-PROV-02",
+    "T-G0-TRACE"
+  ],
+  "generatedAt": "2026-07-29T15:39:14Z"
+}

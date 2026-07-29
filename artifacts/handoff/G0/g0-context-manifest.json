@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0.0",
+  "clusterId": "C-G0-IMPLEMENTATION",
+  "canonicalBranch": "cluster/g0",
+  "release": {
+    "tag": "harness-v1.0.1",
+    "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
+    "commit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "packs": [
+    {
+      "taskId": "T-G0-COL-01",
+      "contextPath": "artifacts/context/T-G0-COL-01",
+      "contextManifestSha256": "f88311815d0b3be67b0fedc5f9e2ea87694b858b2859fe6d8da907a558c0789f",
+      "aggregateSha256": "562ff84a3393f34035991d60dbeed80874e68f40fee7a8a534380392e0fa79fa",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-COL-02",
+      "contextPath": "artifacts/context/T-G0-COL-02",
+      "contextManifestSha256": "81a0280812cdfddc32865c2016f2d4d07657acfc3085052086131ad62d80ee8b",
+      "aggregateSha256": "aeaac7059ecdf3db2b0ba238f5968be2142f1b53f9b7c19e30d7151dd6ea9a00",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-CORE",
+      "contextPath": "artifacts/context/T-G0-CORE",
+      "contextManifestSha256": "8f3e50bc929f40c26562cbf46fa68700dc5b4be5ae5b9d9e842667b4e5b7c2d3",
+      "aggregateSha256": "36357e4817107ddb2ca393ae730f56a71b376d1950a5357a421af5a8aae6ad29",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-COST-01",
+      "contextPath": "artifacts/context/T-G0-COST-01",
+      "contextManifestSha256": "6d62483b510ec5803e562b5b384f144d47142fe6a7f9591ba041666347152f84",
+      "aggregateSha256": "87eb69a295d370419e676b9b8c0826922b2ac6469b15d8e73b2552b887f2c638",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-COST-02",
+      "contextPath": "artifacts/context/T-G0-COST-02",
+      "contextManifestSha256": "9888e925a9f8d7cc103ee97b19ae5db8d4544c4acd06c676f895077792e2cc18",
+      "aggregateSha256": "58f7d644ab3da2a70c55beb29cfd2aac63fa30469ef67d1de5b81a760de6ef55",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-DATA",
+      "contextPath": "artifacts/context/T-G0-DATA",
+      "contextManifestSha256": "37b370cb5db96240924a6044a98d2110fa7e5425bbf9d2c9f0d7e0f562eed0e9",
+      "aggregateSha256": "e0dbdd29166e54eb6c3d1be9bd024d240d728fc51b1a4bb489515c1bd937db2e",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-DISC",
+      "contextPath": "artifacts/context/T-G0-DISC",
+      "contextManifestSha256": "1e597fc5654d10e9c5719160b6bae04c08e0eeb277c2d57494324871288fc13d",
+      "aggregateSha256": "2585266019e65d2114f4cfe938dc909915bdb6d5f1fb5b01f1e3072c0d82d30a",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-DR",
+      "contextPath": "artifacts/context/T-G0-DR",
+      "contextManifestSha256": "9eb8f2e9b3a7c5b597713124610d2cd8226147e2f1bab589bb48d5f377f74dc1",
+      "aggregateSha256": "d525aff792ce26b2735260a9648e190c8d4e89de3f89fe85ad3a230bdc634441",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-MCP",
+      "contextPath": "artifacts/context/T-G0-MCP",
+      "contextManifestSha256": "71d63f504386081cadb4e76e322df7355eae94e05ec717e286db52e5eb45c944",
+      "aggregateSha256": "ccaa9d23323b161699e65e928e6903bcd8e020addb666047fc88a71064813524",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-PROV-01",
+      "contextPath": "artifacts/context/T-G0-PROV-01",
+      "contextManifestSha256": "ba9e8bbb6273dfe127e0701dc30698db9682377607cc65ef1c67c006053c9dec",
+      "aggregateSha256": "9e96da31fb7b7659c1a5b26aabee3fa7cf9637763b1930b3cf1d46b99e77f63b",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-PROV-02",
+      "contextPath": "artifacts/context/T-G0-PROV-02",
+      "contextManifestSha256": "b281879f9964bc2a1ece5c880787c9dcbd80b4c46eb8875bbe9aa1f5f47073a8",
+      "aggregateSha256": "857667178f3f1dc3101db2bf78bf9c43c7eb241be2b784366bc608a315eb56a6",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-SEC-01",
+      "contextPath": "artifacts/context/T-G0-SEC-01",
+      "contextManifestSha256": "d351d996fabd0ec1c0938fbd669b112f56f699a58667c41c020201bbfe060ce7",
+      "aggregateSha256": "cf56d8044afd090f15f6e7422095cd63443693feb3acc1d1e8941eda61b51224",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-SEC-02",
+      "contextPath": "artifacts/context/T-G0-SEC-02",
+      "contextManifestSha256": "5641939924193617494d901d1798bac23e3cb59003f0fe25c701fd308740169e",
+      "aggregateSha256": "c0d48c1d58dcc55e6682eec1e7efb9e1641352dd29737765f10b613d226c579c",
+      "fileCount": 12
+    },
+    {
+      "taskId": "T-G0-TRACE",
+      "contextPath": "artifacts/context/T-G0-TRACE",
+      "contextManifestSha256": "80f94149c4709a70452ca7806e5046993beaa01fd61a327ab1a3ee1f10ae1911",
+      "aggregateSha256": "51eb51b995044bc5892812edadbc5421fc679921c737b55d614ac85258374d7c",
+      "fileCount": 12
+    }
+  ],
+  "aggregateSha256": "7891120c4bfda855313a5380da386e9f67f59942fb27a684cb4bbc5ee62bd2ea",
+  "generatedAt": "2026-07-29T15:39:14Z"
+}

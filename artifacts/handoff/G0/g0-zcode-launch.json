@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "1.0.0",
+  "clusterId": "C-G0-IMPLEMENTATION",
+  "canonicalBranch": "cluster/g0",
+  "canonicalWorktree": "/Users/quantm/Documents/My Projects/chain-sieve-worktrees/g0",
+  "release": {
+    "tag": "harness-v1.0.1",
+    "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
+    "commit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "preflightPath": "tools/zcode/g0-preflight.sh",
+  "defaultMode": "--validate-only",
+  "authorizedFutureMode": "--prepare-task <task-id>",
+  "inventoryPath": "artifacts/handoff/G0/g0-task-inventory.json",
+  "inventorySha256": "e3aa850d2fcae7123893b3321b907f46a0ab5a99420578e1f050ebee67bf51e6",
+  "executionPlanPath": "artifacts/handoff/G0/g0-execution-plan.json",
+  "contextManifestPath": "artifacts/handoff/G0/g0-context-manifest.json",
+  "contextAggregateSha256": "7891120c4bfda855313a5380da386e9f67f59942fb27a684cb4bbc5ee62bd2ea",
+  "taskGoals": [
+    {
+      "taskId": "T-G0-COL-01",
+      "path": "artifacts/handoff/G0/goals/T-G0-COL-01.zcode-goal.md",
+      "sha256": "2a3ed4a6e1dd08198a39883b0836e9001afa6b51b9cfa6a3ae18c2909eefd638",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-COL-01 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-110.spec.ts tests/negative/AC-110.negative.spec.ts tests/acceptance/AC-225.spec.ts tests/negative/AC-225.negative.spec.ts tests/acceptance/AC-230.spec.ts tests/negative/AC-230.negative.spec.ts tests/acceptance/AC-237.spec.ts tests/negative/AC-237.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-COL-01 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-COL-01 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-COL-01",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-COL-01 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-COL-02",
+      "path": "artifacts/handoff/G0/goals/T-G0-COL-02.zcode-goal.md",
+      "sha256": "56b7edfd73a1ad77fd67b8551aee73e0e592759e43e38d470125ac07794340cf",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-COL-02 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-111.spec.ts tests/negative/AC-111.negative.spec.ts tests/acceptance/AC-226.spec.ts tests/negative/AC-226.negative.spec.ts tests/acceptance/AC-231.spec.ts tests/negative/AC-231.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-COL-02 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-COL-02 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-COL-02",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-COL-02 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-CORE",
+      "path": "artifacts/handoff/G0/goals/T-G0-CORE.zcode-goal.md",
+      "sha256": "5cb6753ef0c0962fcc0e9954d5d03d8003627072a617c16a4053e7c74a0fde85",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-CORE --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-001.spec.ts tests/negative/AC-001.negative.spec.ts tests/acceptance/AC-004.spec.ts tests/negative/AC-004.negative.spec.ts tests/acceptance/AC-245.spec.ts tests/negative/AC-245.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-CORE --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-CORE --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-CORE",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-CORE --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-COST-01",
+      "path": "artifacts/handoff/G0/goals/T-G0-COST-01.zcode-goal.md",
+      "sha256": "865d390070b059300b3f1008d52792aaa42eb9f93ad82e73dd380f14136b2d5a",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-COST-01 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-100.spec.ts tests/negative/AC-100.negative.spec.ts tests/acceptance/AC-103.spec.ts tests/negative/AC-103.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-COST-01 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-COST-01 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-COST-01",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-COST-01 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-COST-02",
+      "path": "artifacts/handoff/G0/goals/T-G0-COST-02.zcode-goal.md",
+      "sha256": "4f372245976a5d3568486b2775fe53a987f6d5235b99766d977e30fd6c9b2e37",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-COST-02 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-101.spec.ts tests/negative/AC-101.negative.spec.ts tests/acceptance/AC-104.spec.ts tests/negative/AC-104.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-COST-02 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-COST-02 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-COST-02",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-COST-02 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-DATA",
+      "path": "artifacts/handoff/G0/goals/T-G0-DATA.zcode-goal.md",
+      "sha256": "2cef4abf35e279dbf2fc11a4d9ab6ae3f913c709739fd5d523c08e5107c4b4f3",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-DATA --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-020.spec.ts tests/negative/AC-020.negative.spec.ts tests/acceptance/AC-240.spec.ts tests/negative/AC-240.negative.spec.ts tests/acceptance/AC-246.spec.ts tests/negative/AC-246.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-DATA --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-DATA --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-DATA",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-DATA --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-DISC",
+      "path": "artifacts/handoff/G0/goals/T-G0-DISC.zcode-goal.md",
+      "sha256": "9f5c7cd5665b712e6ce2d8408ee548f18e27e6425908edb91184b48372f46de4",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-DISC --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-112.spec.ts tests/negative/AC-112.negative.spec.ts tests/acceptance/AC-227.spec.ts tests/negative/AC-227.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-DISC --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-DISC --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-DISC",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-DISC --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-DR",
+      "path": "artifacts/handoff/G0/goals/T-G0-DR.zcode-goal.md",
+      "sha256": "f20f698512efeceb7224f3ca3c3177881112f79e0bc72425cd24598d98aab045",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-DR --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-060.spec.ts tests/negative/AC-060.negative.spec.ts tests/acceptance/AC-062.spec.ts tests/negative/AC-062.negative.spec.ts tests/acceptance/AC-263.spec.ts tests/negative/AC-263.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-DR --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-DR --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-DR",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-DR --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-MCP",
+      "path": "artifacts/handoff/G0/goals/T-G0-MCP.zcode-goal.md",
+      "sha256": "73dadb10e989c5e1d868fcf344789bdf46b13e7de038872d35b3828c14d9a872",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-MCP --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-002.spec.ts tests/negative/AC-002.negative.spec.ts tests/acceptance/AC-052.spec.ts tests/negative/AC-052.negative.spec.ts tests/acceptance/AC-256.spec.ts tests/negative/AC-256.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-MCP --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-MCP --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-MCP",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-MCP --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-PROV-01",
+      "path": "artifacts/handoff/G0/goals/T-G0-PROV-01.zcode-goal.md",
+      "sha256": "7de8e120e3b299860b5adde3fb26c4d74f1f0a0cd02c33c95c1a31aae133883b",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-PROV-01 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-250.spec.ts tests/negative/AC-250.negative.spec.ts tests/acceptance/AC-252.spec.ts tests/negative/AC-252.negative.spec.ts tests/acceptance/AC-257.spec.ts tests/negative/AC-257.negative.spec.ts tests/acceptance/AC-270.spec.ts tests/negative/AC-270.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-PROV-01 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-PROV-01 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-PROV-01",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-PROV-01 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-PROV-02",
+      "path": "artifacts/handoff/G0/goals/T-G0-PROV-02.zcode-goal.md",
+      "sha256": "16f0da38214585f54567de8fc04e12f09c842c0c6974f4f2cd01e243d16ccdca",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-PROV-02 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-251.spec.ts tests/negative/AC-251.negative.spec.ts tests/acceptance/AC-253.spec.ts tests/negative/AC-253.negative.spec.ts tests/acceptance/AC-258.spec.ts tests/negative/AC-258.negative.spec.ts tests/acceptance/AC-271.spec.ts tests/negative/AC-271.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-PROV-02 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-PROV-02 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-PROV-02",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-PROV-02 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-SEC-01",
+      "path": "artifacts/handoff/G0/goals/T-G0-SEC-01.zcode-goal.md",
+      "sha256": "9f48742ed2f3aa947c746aeac115f26ddf9af5a092fb61cb96dfd29208b4bea2",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-SEC-01 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-050.spec.ts tests/negative/AC-050.negative.spec.ts tests/acceptance/AC-053.spec.ts tests/negative/AC-053.negative.spec.ts tests/acceptance/AC-259.spec.ts tests/negative/AC-259.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-SEC-01 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-SEC-01 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-SEC-01",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-SEC-01 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-SEC-02",
+      "path": "artifacts/handoff/G0/goals/T-G0-SEC-02.zcode-goal.md",
+      "sha256": "7e7af7b0e22e779d9fa517a92b0f96433e1896acfc57850623ec2a47e1d0112d",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-SEC-02 --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-051.spec.ts tests/negative/AC-051.negative.spec.ts tests/acceptance/AC-254.spec.ts tests/negative/AC-254.negative.spec.ts tests/acceptance/AC-276.spec.ts tests/negative/AC-276.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-SEC-02 --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-SEC-02 --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-SEC-02",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-SEC-02 --holder <holder> --lease-version <version>"
+      ]
+    },
+    {
+      "taskId": "T-G0-TRACE",
+      "path": "artifacts/handoff/G0/goals/T-G0-TRACE.zcode-goal.md",
+      "sha256": "e5095faf8e8878de206591883df7e8e44feab40a72a104cdb5c8e6a441f6639f",
+      "commands": [
+        "pnpm spec:verify",
+        "pnpm task:begin T-G0-TRACE --holder <holder> --lease-version <version>",
+        "pnpm exec vitest run tests/acceptance/AC-265.spec.ts tests/negative/AC-265.negative.spec.ts tests/acceptance/AC-266.spec.ts tests/negative/AC-266.negative.spec.ts tests/acceptance/AC-267.spec.ts tests/negative/AC-267.negative.spec.ts tests/acceptance/AC-268.spec.ts tests/negative/AC-268.negative.spec.ts tests/acceptance/AC-269.spec.ts tests/negative/AC-269.negative.spec.ts",
+        "pnpm architecture:verify",
+        "pnpm prohibited-capabilities:scan",
+        "pnpm task:self-review T-G0-TRACE --holder <holder> --lease-version <version>",
+        "pnpm task:verify T-G0-TRACE --holder <holder> --lease-version <version>",
+        "pnpm merge-queue:add T-G0-TRACE",
+        "pnpm merge-queue:process",
+        "pnpm task:renew T-G0-TRACE --holder <holder> --lease-version <version>"
+      ]
+    }
+  ],
+  "clusterGoal": {
+    "path": "clusters/G0/C-G0-IMPLEMENTATION.zcode-goal.md",
+    "sha256": "0971d911f4cd702abaa4e9a0c946fdf15718ad9a1a9313b7df7ec50ac3a13074"
+  },
+  "goalPayloadPath": "artifacts/handoff/G0/g0-goal-payload.md",
+  "lease": {
+    "acquisition": "pnpm task:acquire <task-id> --holder zcode-g0",
+    "durationMilliseconds": 900000,
+    "renewal": "pnpm task:renew <task-id> --holder zcode-g0 --lease-version <version>",
+    "pathLocks": "integrated into fenced task acquisition"
+  },
+  "zcodeDesktop": {
+    "autoLaunch": false,
+    "cliRequired": false
+  },
+  "generatedAt": "2026-07-29T15:39:14Z"
+}

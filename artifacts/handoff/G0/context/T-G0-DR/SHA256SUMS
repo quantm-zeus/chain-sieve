@@ -1,0 +1,12 @@
+d05f2adadd5facc8f92e695ba4dfe633e2dc3f819eb7d5ff579d286c3033f983  artifacts/context/T-G0-DR/task-contract.json
+70382622b9f01ee7421b4c6d9fd535b9bcce7094dc818e3a14fb536f129e4374  artifacts/context/T-G0-DR/requirements.json
+d8c410f713ee43a5fa7f77f03946e0955e710fa1fbe7d16ba239ca7b3f93f789  artifacts/context/T-G0-DR/acceptance-criteria.json
+df6149df9a2b0f1a9025c52652138be5ec08b98f5468c5f0e50edca3309bf526  artifacts/context/T-G0-DR/invariants.json
+2a8c4d2c0edcc0bdf64aa2e44b9e396f6a5885f67c52c470ca668ed90686ce68  artifacts/context/T-G0-DR/adrs.json
+29a757c2debcc06225b2346b45f36b33c873882b93e9f9a8a4a2d31352694e24  artifacts/context/T-G0-DR/architecture-boundaries.json
+260f438f7e1f7ae0a80f289161f50c93b1a0271260c94274a81c9c81d2a2f5a6  artifacts/context/T-G0-DR/dependency-outputs.json
+12c1f552e872c62e836915a59819a844dc75dbf6ebd87817f2c8a14def457914  artifacts/context/T-G0-DR/public-schemas.json
+54b67c0102778ddecfc62e969751e98ec17d8953596b148f6c080647b707981e  artifacts/context/T-G0-DR/semantic-fields.json
+e72a565d750ab0204767159fbbb82ece99afdc117c064fc74d710cf6e7f5b9cb  artifacts/context/T-G0-DR/pre-mortem.json
+06ec986c52e2ef2768ef2e74e43fbe64659d90e4e76f08909923edb62ad3ed50  artifacts/context/T-G0-DR/source-references.json
+9eb8f2e9b3a7c5b597713124610d2cd8226147e2f1bab589bb48d5f377f74dc1  artifacts/context/T-G0-DR/context-manifest.json

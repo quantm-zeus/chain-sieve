@@ -1,0 +1,812 @@
+{
+  "schemaVersion": "1.0.0",
+  "clusterId": "C-G0-IMPLEMENTATION",
+  "canonicalBranch": "cluster/g0",
+  "release": {
+    "tag": "harness-v1.0.1",
+    "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
+    "commit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34"
+  },
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "taskCount": 14,
+  "tasks": [
+    {
+      "taskId": "T-G0-COL-01",
+      "title": "FR-COL implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-COL-001",
+        "FR-COL-002",
+        "FR-COL-003",
+        "FR-COL-004",
+        "FR-COL-005",
+        "FR-COL-006",
+        "FR-COL-007",
+        "FR-COL-008"
+      ],
+      "acceptanceCriteria": [
+        "AC-110",
+        "AC-225",
+        "AC-230",
+        "AC-237"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "apps/collector/**",
+        "packages/collector-core/**",
+        "packages/collector-solana/**",
+        "packages/program-decoders/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "apps/collector/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-110.spec.ts",
+        "tests/negative/AC-110.negative.spec.ts",
+        "tests/acceptance/AC-225.spec.ts",
+        "tests/negative/AC-225.negative.spec.ts",
+        "tests/acceptance/AC-230.spec.ts",
+        "tests/negative/AC-230.negative.spec.ts",
+        "tests/acceptance/AC-237.spec.ts",
+        "tests/negative/AC-237.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-COL-01",
+      "contextPackHash": "562ff84a3393f34035991d60dbeed80874e68f40fee7a8a534380392e0fa79fa",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-COL-01.zcode-goal.md",
+      "taskGoalHash": "2a3ed4a6e1dd08198a39883b0836e9001afa6b51b9cfa6a3ae18c2909eefd638"
+    },
+    {
+      "taskId": "T-G0-COL-02",
+      "title": "FR-COL implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-COL-009",
+        "FR-COL-010",
+        "FR-COL-011",
+        "FR-COL-012"
+      ],
+      "acceptanceCriteria": [
+        "AC-111",
+        "AC-226",
+        "AC-231"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "apps/collector/**",
+        "packages/collector-core/**",
+        "packages/collector-solana/**",
+        "packages/program-decoders/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "apps/collector/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-111.spec.ts",
+        "tests/negative/AC-111.negative.spec.ts",
+        "tests/acceptance/AC-226.spec.ts",
+        "tests/negative/AC-226.negative.spec.ts",
+        "tests/acceptance/AC-231.spec.ts",
+        "tests/negative/AC-231.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-COL-02",
+      "contextPackHash": "aeaac7059ecdf3db2b0ba238f5968be2142f1b53f9b7c19e30d7151dd6ea9a00",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-COL-02.zcode-goal.md",
+      "taskGoalHash": "56b7edfd73a1ad77fd67b8551aee73e0e592759e43e38d470125ac07794340cf"
+    },
+    {
+      "taskId": "T-G0-CORE",
+      "title": "FR-CORE implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-CORE-001",
+        "FR-CORE-002",
+        "FR-CORE-003",
+        "FR-CORE-004",
+        "FR-CORE-005",
+        "FR-CORE-006",
+        "FR-CORE-007",
+        "FR-CORE-008"
+      ],
+      "acceptanceCriteria": [
+        "AC-001",
+        "AC-004",
+        "AC-245"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/domain/**",
+        "packages/shared-schemas/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/domain/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-001.spec.ts",
+        "tests/negative/AC-001.negative.spec.ts",
+        "tests/acceptance/AC-004.spec.ts",
+        "tests/negative/AC-004.negative.spec.ts",
+        "tests/acceptance/AC-245.spec.ts",
+        "tests/negative/AC-245.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-CORE",
+      "contextPackHash": "36357e4817107ddb2ca393ae730f56a71b376d1950a5357a421af5a8aae6ad29",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-CORE.zcode-goal.md",
+      "taskGoalHash": "5cb6753ef0c0962fcc0e9954d5d03d8003627072a617c16a4053e7c74a0fde85"
+    },
+    {
+      "taskId": "T-G0-COST-01",
+      "title": "FR-COST implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-COST-001",
+        "FR-COST-002",
+        "FR-COST-003",
+        "FR-COST-004",
+        "FR-COST-005",
+        "FR-COST-006",
+        "FR-COST-007",
+        "FR-COST-008"
+      ],
+      "acceptanceCriteria": [
+        "AC-100",
+        "AC-103"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/cost-router/**",
+        "packages/capacity-planner/**",
+        "packages/quota-forecast/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/cost-router/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-100.spec.ts",
+        "tests/negative/AC-100.negative.spec.ts",
+        "tests/acceptance/AC-103.spec.ts",
+        "tests/negative/AC-103.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-COST-01",
+      "contextPackHash": "87eb69a295d370419e676b9b8c0826922b2ac6469b15d8e73b2552b887f2c638",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-COST-01.zcode-goal.md",
+      "taskGoalHash": "865d390070b059300b3f1008d52792aaa42eb9f93ad82e73dd380f14136b2d5a"
+    },
+    {
+      "taskId": "T-G0-COST-02",
+      "title": "FR-COST implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-COST-009",
+        "FR-COST-010"
+      ],
+      "acceptanceCriteria": [
+        "AC-101",
+        "AC-104"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/cost-router/**",
+        "packages/capacity-planner/**",
+        "packages/quota-forecast/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/cost-router/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-101.spec.ts",
+        "tests/negative/AC-101.negative.spec.ts",
+        "tests/acceptance/AC-104.spec.ts",
+        "tests/negative/AC-104.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-COST-02",
+      "contextPackHash": "58f7d644ab3da2a70c55beb29cfd2aac63fa30469ef67d1de5b81a760de6ef55",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-COST-02.zcode-goal.md",
+      "taskGoalHash": "4f372245976a5d3568486b2775fe53a987f6d5235b99766d977e30fd6c9b2e37"
+    },
+    {
+      "taskId": "T-G0-DATA",
+      "title": "FR-DATA implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-DATA-001",
+        "FR-DATA-002",
+        "FR-DATA-003",
+        "FR-DATA-004",
+        "FR-DATA-005",
+        "FR-DATA-006"
+      ],
+      "acceptanceCriteria": [
+        "AC-020",
+        "AC-240",
+        "AC-246"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/persistence/**",
+        "packages/evidence/**",
+        "tests/**",
+        "docs/implementation/**",
+        "infra/migrations/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**"
+      ],
+      "pathLockGroups": [
+        "infra/migrations"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-020.spec.ts",
+        "tests/negative/AC-020.negative.spec.ts",
+        "tests/acceptance/AC-240.spec.ts",
+        "tests/negative/AC-240.negative.spec.ts",
+        "tests/acceptance/AC-246.spec.ts",
+        "tests/negative/AC-246.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 3,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-DATA",
+      "contextPackHash": "e0dbdd29166e54eb6c3d1be9bd024d240d728fc51b1a4bb489515c1bd937db2e",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-DATA.zcode-goal.md",
+      "taskGoalHash": "2cef4abf35e279dbf2fc11a4d9ab6ae3f913c709739fd5d523c08e5107c4b4f3"
+    },
+    {
+      "taskId": "T-G0-DISC",
+      "title": "FR-DISC implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-DISC-001",
+        "FR-DISC-002",
+        "FR-DISC-003",
+        "FR-DISC-004",
+        "FR-DISC-005"
+      ],
+      "acceptanceCriteria": [
+        "AC-112",
+        "AC-227"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/discovery-universe/**",
+        "packages/cheap-monitor/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/discovery-universe/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-112.spec.ts",
+        "tests/negative/AC-112.negative.spec.ts",
+        "tests/acceptance/AC-227.spec.ts",
+        "tests/negative/AC-227.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-DISC",
+      "contextPackHash": "2585266019e65d2114f4cfe938dc909915bdb6d5f1fb5b01f1e3072c0d82d30a",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-DISC.zcode-goal.md",
+      "taskGoalHash": "9f5c7cd5665b712e6ce2d8408ee548f18e27e6425908edb91184b48372f46de4"
+    },
+    {
+      "taskId": "T-G0-DR",
+      "title": "FR-DR implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-DR-001",
+        "FR-DR-002"
+      ],
+      "acceptanceCriteria": [
+        "AC-060",
+        "AC-062",
+        "AC-263"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/persistence/**",
+        "packages/workflow-runtime/**",
+        "packages/release-conformance/**",
+        "tests/**",
+        "docs/implementation/**",
+        "infra/migrations/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**"
+      ],
+      "pathLockGroups": [
+        "infra/migrations"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-060.spec.ts",
+        "tests/negative/AC-060.negative.spec.ts",
+        "tests/acceptance/AC-062.spec.ts",
+        "tests/negative/AC-062.negative.spec.ts",
+        "tests/acceptance/AC-263.spec.ts",
+        "tests/negative/AC-263.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 3,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-DR",
+      "contextPackHash": "d525aff792ce26b2735260a9648e190c8d4e89de3f89fe85ad3a230bdc634441",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-DR.zcode-goal.md",
+      "taskGoalHash": "f20f698512efeceb7224f3ca3c3177881112f79e0bc72425cd24598d98aab045"
+    },
+    {
+      "taskId": "T-G0-MCP",
+      "title": "FR-MCP implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-MCP-001",
+        "FR-MCP-002",
+        "FR-MCP-003",
+        "FR-MCP-004",
+        "FR-MCP-005",
+        "FR-MCP-008",
+        "FR-MCP-009",
+        "FR-MCP-010"
+      ],
+      "acceptanceCriteria": [
+        "AC-002",
+        "AC-052",
+        "AC-256"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "apps/api/src/mcp/**",
+        "packages/tool-core/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "apps/api/src/mcp/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-002.spec.ts",
+        "tests/negative/AC-002.negative.spec.ts",
+        "tests/acceptance/AC-052.spec.ts",
+        "tests/negative/AC-052.negative.spec.ts",
+        "tests/acceptance/AC-256.spec.ts",
+        "tests/negative/AC-256.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-MCP",
+      "contextPackHash": "ccaa9d23323b161699e65e928e6903bcd8e020addb666047fc88a71064813524",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-MCP.zcode-goal.md",
+      "taskGoalHash": "73dadb10e989c5e1d868fcf344789bdf46b13e7de038872d35b3828c14d9a872"
+    },
+    {
+      "taskId": "T-G0-PROV-01",
+      "title": "FR-PROV implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-PROV-001",
+        "FR-PROV-002",
+        "FR-PROV-003",
+        "FR-PROV-004",
+        "FR-PROV-005",
+        "FR-PROV-006",
+        "FR-PROV-007",
+        "FR-PROV-008"
+      ],
+      "acceptanceCriteria": [
+        "AC-250",
+        "AC-252",
+        "AC-257",
+        "AC-270"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/provider-lifecycle/**",
+        "packages/providers/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/provider-lifecycle/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-250.spec.ts",
+        "tests/negative/AC-250.negative.spec.ts",
+        "tests/acceptance/AC-252.spec.ts",
+        "tests/negative/AC-252.negative.spec.ts",
+        "tests/acceptance/AC-257.spec.ts",
+        "tests/negative/AC-257.negative.spec.ts",
+        "tests/acceptance/AC-270.spec.ts",
+        "tests/negative/AC-270.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-PROV-01",
+      "contextPackHash": "9e96da31fb7b7659c1a5b26aabee3fa7cf9637763b1930b3cf1d46b99e77f63b",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-PROV-01.zcode-goal.md",
+      "taskGoalHash": "7de8e120e3b299860b5adde3fb26c4d74f1f0a0cd02c33c95c1a31aae133883b"
+    },
+    {
+      "taskId": "T-G0-PROV-02",
+      "title": "FR-PROV implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-PROV-009",
+        "FR-PROV-010"
+      ],
+      "acceptanceCriteria": [
+        "AC-251",
+        "AC-253",
+        "AC-258",
+        "AC-271"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/provider-lifecycle/**",
+        "packages/providers/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/provider-lifecycle/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-251.spec.ts",
+        "tests/negative/AC-251.negative.spec.ts",
+        "tests/acceptance/AC-253.spec.ts",
+        "tests/negative/AC-253.negative.spec.ts",
+        "tests/acceptance/AC-258.spec.ts",
+        "tests/negative/AC-258.negative.spec.ts",
+        "tests/acceptance/AC-271.spec.ts",
+        "tests/negative/AC-271.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-PROV-02",
+      "contextPackHash": "857667178f3f1dc3101db2bf78bf9c43c7eb241be2b784366bc608a315eb56a6",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-PROV-02.zcode-goal.md",
+      "taskGoalHash": "16f0da38214585f54567de8fc04e12f09c842c0c6974f4f2cd01e243d16ccdca"
+    },
+    {
+      "taskId": "T-G0-SEC-01",
+      "title": "FR-SEC implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-SEC-001",
+        "FR-SEC-002",
+        "FR-SEC-003",
+        "FR-SEC-004",
+        "FR-SEC-005",
+        "FR-SEC-006",
+        "FR-SEC-007",
+        "FR-SEC-008"
+      ],
+      "acceptanceCriteria": [
+        "AC-050",
+        "AC-053",
+        "AC-259"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/security/**",
+        "packages/tenant-isolation/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/security/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-050.spec.ts",
+        "tests/negative/AC-050.negative.spec.ts",
+        "tests/acceptance/AC-053.spec.ts",
+        "tests/negative/AC-053.negative.spec.ts",
+        "tests/acceptance/AC-259.spec.ts",
+        "tests/negative/AC-259.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-SEC-01",
+      "contextPackHash": "cf56d8044afd090f15f6e7422095cd63443693feb3acc1d1e8941eda61b51224",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-SEC-01.zcode-goal.md",
+      "taskGoalHash": "9f48742ed2f3aa947c746aeac115f26ddf9af5a092fb61cb96dfd29208b4bea2"
+    },
+    {
+      "taskId": "T-G0-SEC-02",
+      "title": "FR-SEC implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-SEC-009",
+        "FR-SEC-010",
+        "FR-SEC-011",
+        "FR-SEC-012"
+      ],
+      "acceptanceCriteria": [
+        "AC-051",
+        "AC-254",
+        "AC-276"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/security/**",
+        "packages/tenant-isolation/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/security/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-051.spec.ts",
+        "tests/negative/AC-051.negative.spec.ts",
+        "tests/acceptance/AC-254.spec.ts",
+        "tests/negative/AC-254.negative.spec.ts",
+        "tests/acceptance/AC-276.spec.ts",
+        "tests/negative/AC-276.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-SEC-02",
+      "contextPackHash": "c0d48c1d58dcc55e6682eec1e7efb9e1641352dd29737765f10b613d226c579c",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-SEC-02.zcode-goal.md",
+      "taskGoalHash": "7e7af7b0e22e779d9fa517a92b0f96433e1896acfc57850623ec2a47e1d0112d"
+    },
+    {
+      "taskId": "T-G0-TRACE",
+      "title": "FR-TRACE implementation contract",
+      "clusterId": "C-G0-IMPLEMENTATION",
+      "currentState": "READY",
+      "requirements": [
+        "FR-TRACE-001",
+        "FR-TRACE-002",
+        "FR-TRACE-003",
+        "FR-TRACE-004",
+        "FR-TRACE-005",
+        "FR-TRACE-006"
+      ],
+      "acceptanceCriteria": [
+        "AC-265",
+        "AC-266",
+        "AC-267",
+        "AC-268",
+        "AC-269"
+      ],
+      "dependencies": [],
+      "dependencyWave": 1,
+      "allowedPaths": [
+        "packages/requirement-manifest/**",
+        "packages/release-conformance/**",
+        "tests/**",
+        "docs/implementation/**"
+      ],
+      "forbiddenPaths": [
+        "docs/spec/**",
+        "artifacts/spec/**",
+        "tasks/generated/**",
+        ".github/workflows/**",
+        "infra/migrations/**"
+      ],
+      "pathLockGroups": [
+        "packages/requirement-manifest/public-api"
+      ],
+      "requiredTests": [
+        "tests/acceptance/AC-265.spec.ts",
+        "tests/negative/AC-265.negative.spec.ts",
+        "tests/acceptance/AC-266.spec.ts",
+        "tests/negative/AC-266.negative.spec.ts",
+        "tests/acceptance/AC-267.spec.ts",
+        "tests/negative/AC-267.negative.spec.ts",
+        "tests/acceptance/AC-268.spec.ts",
+        "tests/negative/AC-268.negative.spec.ts",
+        "tests/acceptance/AC-269.spec.ts",
+        "tests/negative/AC-269.negative.spec.ts"
+      ],
+      "requiredFixtures": [],
+      "requiredMigrations": [],
+      "migrationAllowance": 0,
+      "requiredTelemetry": [
+        "Degraded, replay, rollback, and observability behavior is documented and tested."
+      ],
+      "rollbackRequirements": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
+      "contextPackPath": "artifacts/context/T-G0-TRACE",
+      "contextPackHash": "51eb51b995044bc5892812edadbc5421fc679921c737b55d614ac85258374d7c",
+      "taskGoalPath": "artifacts/handoff/G0/goals/T-G0-TRACE.zcode-goal.md",
+      "taskGoalHash": "e5095faf8e8878de206591883df7e8e44feab40a72a104cdb5c8e6a441f6639f"
+    }
+  ],
+  "generatedAt": "2026-07-29T15:39:14Z"
+}
