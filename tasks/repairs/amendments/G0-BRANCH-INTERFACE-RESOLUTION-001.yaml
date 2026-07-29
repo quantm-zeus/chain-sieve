@@ -1,0 +1,42 @@
+schema_version: 1.0.0
+amendment_id: G0-BRANCH-INTERFACE-RESOLUTION-001
+cluster_id: C-G0-IMPLEMENTATION
+release_baseline:
+  tag: harness-v1.0.1
+  tag_object: a3bc4476b270efe911da12a4d649e3e5ebcdf69c
+  commit: 1027664eb708b4c1249dda5f1c33f5129946ab3e
+  tree: 706e400d3eb5c41a95209523bb034f2e2c60bd34
+source_hashes:
+  prd: baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299
+  requirement_manifest: e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff
+  audit: ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8
+previous_required_branch: cluster/C-G0-IMPLEMENTATION
+canonical_execution_branch: cluster/g0
+previous_preparation_branch_head: 43e8b49a92a838b81adbe7b94300671c5ed7e6a1
+previous_preparation_branch_tree: b63f6ff2eb100ffa2614c4da8667351c1f428b34
+affected_readiness_contract: ChainSieve G0 implementation-readiness preparation
+resolution:
+  reason: >-
+    The previous owner-provided branch name conflicted with the published and
+    independently attested harness, which canonically addresses G0 as cluster/g0.
+  owner_approval: >-
+    Repository owner continuation directive dated 2026-07-29 explicitly approves
+    cluster/g0 as the canonical G0 execution branch.
+  statements:
+    - C-G0-IMPLEMENTATION is the cluster ID.
+    - cluster/g0 is the canonical G0 execution branch.
+    - The previous branch remains historical preparation evidence.
+    - No harness behavior is changed.
+prohibited_harness_modifications:
+  - tools/prd-compiler/compiler.ts
+  - tools/worktree-manager/manager.ts
+  - tools/task-verifier/verify.ts
+  - tools/merge-queue/processor.ts
+prohibited_actions:
+  - modify or merge main
+  - modify or recreate harness-v1.0.1
+  - implement product functionality
+  - acquire an implementation lease during readiness preparation
+  - start ZCode during readiness preparation
+created_at: 2026-07-29T15:39:14Z
+sha256_record: tasks/repairs/amendments/G0-BRANCH-INTERFACE-RESOLUTION-001.sha256

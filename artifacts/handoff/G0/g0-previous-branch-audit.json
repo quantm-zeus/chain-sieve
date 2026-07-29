@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0.0",
+  "recordedAt": "2026-07-29T15:39:14Z",
+  "status": "PASS",
+  "releaseBaseline": {
+    "tag": "harness-v1.0.1",
+    "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
+    "commit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34"
+  },
+  "previousBranch": {
+    "name": "cluster/C-G0-IMPLEMENTATION",
+    "head": "43e8b49a92a838b81adbe7b94300671c5ed7e6a1",
+    "tree": "b63f6ff2eb100ffa2614c4da8667351c1f428b34",
+    "remoteHead": "43e8b49a92a838b81adbe7b94300671c5ed7e6a1",
+    "relationshipToRelease": "one descendant commit",
+    "commitCountAfterRelease": 1
+  },
+  "commits": [
+    {
+      "commit": "43e8b49a92a838b81adbe7b94300671c5ed7e6a1",
+      "tree": "b63f6ff2eb100ffa2614c4da8667351c1f428b34",
+      "subject": "docs(g0): record implementation readiness blocker",
+      "stablePatchId": "ad32b6848e70aaf523a6618944839c54d2fd46cb"
+    }
+  ],
+  "changedFiles": [
+    {
+      "path": "artifacts/handoff/G0/SHA256SUMS",
+      "classification": "HANDOFF_ARTIFACT"
+    },
+    {
+      "path": "artifacts/handoff/G0/g0-owner-launch-instructions.md",
+      "classification": "READINESS_REPORT"
+    },
+    {
+      "path": "artifacts/handoff/G0/g0-zcode-readiness.final.json",
+      "classification": "READINESS_REPORT"
+    },
+    {
+      "path": "artifacts/handoff/G0/g0-zcode-readiness.final.md",
+      "classification": "READINESS_REPORT"
+    }
+  ],
+  "classificationCounts": {
+    "TASK_VALIDATION_EVIDENCE": 0,
+    "TASK_READINESS_STATE": 0,
+    "CONTEXT_PACK": 0,
+    "GENERATED_GOAL": 0,
+    "HANDOFF_ARTIFACT": 1,
+    "READINESS_REPORT": 3,
+    "HARNESS_CHANGE": 0,
+    "PRODUCT_IMPLEMENTATION": 0,
+    "UNEXPECTED": 0
+  },
+  "scopeChecks": {
+    "productImplementation": false,
+    "providerIntegration": false,
+    "cryptoIntelligenceBehavior": false,
+    "prdSemanticModification": false,
+    "releaseTagModification": false,
+    "harnessModification": false,
+    "taskEnteredImplementing": false,
+    "activeImplementationLease": false
+  },
+  "historicalWorktree": {
+    "path": "/Users/quantm/Documents/My Projects/chain-sieve-worktrees/C-G0-IMPLEMENTATION",
+    "trackedTreeCleanAtAudit": true,
+    "preservedUntrackedFiles": [
+      {
+        "path": "artifacts/handoff/G0.zip",
+        "sha256": "49e4a54b1af3fb9dae76b423149319ef319bbce16a5406476ca57ac06f46e51b",
+        "classification": "HANDOFF_ARTIFACT_ARCHIVE_NOT_MIGRATED"
+      }
+    ]
+  },
+  "migrationDecision": "PERMITTED"
+}
