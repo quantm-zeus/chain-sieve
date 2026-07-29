@@ -30,10 +30,18 @@ if ! command -v node >/dev/null 2>&1 || ! command -v pnpm >/dev/null 2>&1; then
     printf '%s\n' "FAIL:PINNED_NODE_RUNTIME_UNAVAILABLE" >&2
     exit 1
   fi
+  set +e
   set +u
   . "$HOME/.nvm/nvm.sh"
+  NVM_SOURCE_STATUS="$?"
   nvm use 22.23.1 >/dev/null
+  NVM_USE_STATUS="$?"
   set -u
+  set -e
+  if [ "$NVM_SOURCE_STATUS" -ne 0 ] || [ "$NVM_USE_STATUS" -ne 0 ]; then
+    printf '%s\n' "FAIL:PINNED_NODE_RUNTIME_ACTIVATION" >&2
+    exit 1
+  fi
   corepack prepare pnpm@10.13.1 --activate >/dev/null
 fi
 if [ "$(node --version)" != "v22.23.1" ] || [ "$(pnpm --version)" != "10.13.1" ]; then
