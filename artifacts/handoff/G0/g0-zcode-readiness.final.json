@@ -1,15 +1,13 @@
 {
-  "schemaVersion": "1.0.0",
-  "recordedAt": "2026-07-29T15:29:48Z",
-  "verdict": "ZCODE_PREPARATION_BLOCKED",
+  "schemaVersion": "2.0.0",
+  "recordedAt": "2026-07-29T15:53:45Z",
+  "verdict": "ZCODE_READY_APP_SETUP_REQUIRED",
   "release": {
-    "repository": "quantm-zeus/chain-sieve",
-    "remote": "git@github.com:quantm-zeus/chain-sieve.git",
     "tag": "harness-v1.0.1",
     "tagObject": "a3bc4476b270efe911da12a4d649e3e5ebcdf69c",
     "targetCommit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
     "tree": "706e400d3eb5c41a95209523bb034f2e2c60bd34",
-    "annotated": true,
+    "originMain": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
     "reachableFromOriginMain": true
   },
   "sourceHashes": {
@@ -19,18 +17,24 @@
   },
   "cluster": {
     "id": "C-G0-IMPLEMENTATION",
-    "dependencyGroup": "G0",
-    "contractPath": "clusters/G0/C-G0-IMPLEMENTATION.contract.json",
-    "contractSha256": "9d270a4981cf5302c94bba136340c7ee024a5b2991443717a03af2a2c4b13a15",
-    "branch": "cluster/C-G0-IMPLEMENTATION",
-    "branchHeadBeforeBlockingReport": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
-    "branchTreeBeforeBlockingReport": "706e400d3eb5c41a95209523bb034f2e2c60bd34",
-    "remoteBranchShaBeforeBlockingReport": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
-    "worktree": "/Users/quantm/Documents/My Projects/chain-sieve-worktrees/C-G0-IMPLEMENTATION",
-    "worktreeBranch": "cluster/C-G0-IMPLEMENTATION",
-    "taskCount": 14
+    "canonicalBranch": "cluster/g0",
+    "canonicalBranchHeadAtEvidenceGeneration": "6f69ed2fd987eb2d59516c16358091e8cfcee11c",
+    "canonicalBranchTreeAtEvidenceGeneration": "86037d226607afc52e1f0ea5950d96134f3d8e3e",
+    "remoteBranchHeadAtEvidenceGeneration": "6f69ed2fd987eb2d59516c16358091e8cfcee11c",
+    "baseCommit": "1027664eb708b4c1249dda5f1c33f5129946ab3e",
+    "canonicalWorktree": "/Users/quantm/Documents/My Projects/chain-sieve-worktrees/g0",
+    "historicalPreparationBranchRetained": true,
+    "historicalBlockedReportPath": "artifacts/handoff/G0/history/2026-07-29-blocked/g0-zcode-readiness.final.json"
+  },
+  "branchResolution": {
+    "amendmentId": "G0-BRANCH-INTERFACE-RESOLUTION-001",
+    "path": "tasks/repairs/amendments/G0-BRANCH-INTERFACE-RESOLUTION-001.yaml",
+    "sha256": "11f56651bd9f35e693c340ae9f628f682b5fa20dc139119b6b10b3753bae7614",
+    "status": "OWNER_APPROVED_RESOLVED",
+    "harnessChanged": false
   },
   "tasks": {
+    "count": 14,
     "states": {
       "T-G0-COL-01": "READY",
       "T-G0-COL-02": "READY",
@@ -47,23 +51,7 @@
       "T-G0-SEC-02": "READY",
       "T-G0-TRACE": "READY"
     },
-    "validationEvidenceSha256": {
-      "T-G0-COL-01": "88e97c22004f95a508c95ef52a5774d113b9813aaed0fc6f07896826a7b4eca9",
-      "T-G0-COL-02": "a6e07844fac9ec7c3808bc9897e5d3f6170a92a670027ae11f7cda4962699755",
-      "T-G0-CORE": "fb6de862be9ba1ca2b574b227381c18690c190bb0b9f2acd7c4e954501e56ac9",
-      "T-G0-COST-01": "214c2242578bf097e2e9722ea958145f47e9593b58261f0534f213d2d5467959",
-      "T-G0-COST-02": "02f3185c32667e274140aad478487666251ed7c72c7c6266b7448a34f2edc1ef",
-      "T-G0-DATA": "94319fa5d164d6383b923f57d7cfa8aeb90760228bf1758556ed2c5151abd40d",
-      "T-G0-DISC": "228c1d60dab30bad36dca774559e8595a4812167d17e43c71db7c3553c72a59c",
-      "T-G0-DR": "235952380d1032240c33353e00e7603dd2220e73f4d04ceadd9b02d45e43331f",
-      "T-G0-MCP": "90a2776f7c8d64fbf1247af6b13696487729b60f599f2bc537f1566a080ba617",
-      "T-G0-PROV-01": "b0c2d5dddf822a76b6a6330c2d01583d66bef2ca2b6b174cf2545c78a89132a9",
-      "T-G0-PROV-02": "4350de5025502e8cc3dee62b180677d5ebdf5fbeca07ad8bb3e4f27c7a874c5b",
-      "T-G0-SEC-01": "d5ce30268213dfef2c3fc37d3d7c8272a7327f88acc5f5033924bfb29f27571a",
-      "T-G0-SEC-02": "102982031a9394c1e5e12fafd422c7723ce28b178b70fa373a2753a59a383074",
-      "T-G0-TRACE": "14c3f835a38db8eb24b685766ac348e7afbd45acd198dbde54c39a4a9a6e6584"
-    },
-    "leaseVersions": {
+    "fencingVersions": {
       "T-G0-COL-01": 0,
       "T-G0-COL-02": 0,
       "T-G0-CORE": 0,
@@ -79,15 +67,18 @@
       "T-G0-SEC-02": 0,
       "T-G0-TRACE": 0
     },
-    "activeLeaseCount": 0,
+    "validationEvidence": "PASS_14_CURRENT_CONTENT_HASHES",
+    "lifecycleHistories": "PASS_DRAFT_TO_VALIDATED_TO_READY",
+    "activeTaskLeaseCount": 0,
+    "activeClusterLeaseCount": 0,
+    "activePathLockCount": 0,
     "implementingCount": 0,
     "verifiedCount": 0,
-    "mergedCount": 0
+    "mergedCount": 0,
+    "stateDocumentSha256": "e695d0e3e42070cdb7f6bc7c8819f32e68985bffee91d3bc4fc7a4304ea2dc89"
   },
-  "dependencyPlan": {
-    "acyclic": true,
-    "missingDependencies": [],
-    "waves": [
+  "execution": {
+    "formalDependencyWaves": [
       [
         "T-G0-COL-01",
         "T-G0-COL-02",
@@ -105,104 +96,192 @@
         "T-G0-TRACE"
       ]
     ],
-    "firstRunnableTaskIds": [
-      "T-G0-COL-01",
-      "T-G0-COL-02",
-      "T-G0-CORE",
-      "T-G0-COST-01",
-      "T-G0-COST-02",
-      "T-G0-DATA",
-      "T-G0-DISC",
-      "T-G0-DR",
-      "T-G0-MCP",
-      "T-G0-PROV-01",
-      "T-G0-PROV-02",
-      "T-G0-SEC-01",
-      "T-G0-SEC-02",
-      "T-G0-TRACE"
-    ],
-    "contractLockMaximumParallelism": 9,
-    "launchableParallelism": 0
+    "contractMaximumParallelism": 9,
+    "recommendedOperationalParallelism": 1,
+    "firstRecommendedTask": "T-G0-CORE",
+    "planPath": "artifacts/handoff/G0/g0-execution-plan.json",
+    "planSha256": "824984fbb43694586a4c9c2ff2e15d406bef490ba6b80fad08721b8f770984ca"
   },
-  "contextPacks": {
-    "compilerRefresh": "PASS",
-    "compilerAggregateHash": "d2be43304d7cd5001e0f079f2ab533fdb495c67ffa3a102eb25bd0ca110ec522",
+  "inventory": {
+    "path": "artifacts/handoff/G0/g0-task-inventory.json",
+    "sha256": "e3aa850d2fcae7123893b3321b907f46a0ab5a99420578e1f050ebee67bf51e6",
+    "status": "PASS"
+  },
+  "contexts": {
+    "aggregateManifestPath": "artifacts/handoff/G0/g0-context-manifest.json",
+    "aggregateManifestSha256": "e6d3232fb837af508a4a90c4a7320db150dedc778fee58d48a85ab456069b0e8",
+    "aggregatePackSha256": "7891120c4bfda855313a5380da386e9f67f59942fb27a684cb4bbc5ee62bd2ea",
+    "deterministicRepeatedGeneration": "PASS",
     "packCount": 14,
-    "perPackSha256SumsGenerated": false,
-    "status": "COMPILER_GENERATED_NOT_FINAL_HANDOFF_VERIFIED"
+    "packHashes": {
+      "T-G0-COL-01": "562ff84a3393f34035991d60dbeed80874e68f40fee7a8a534380392e0fa79fa",
+      "T-G0-COL-02": "aeaac7059ecdf3db2b0ba238f5968be2142f1b53f9b7c19e30d7151dd6ea9a00",
+      "T-G0-CORE": "36357e4817107ddb2ca393ae730f56a71b376d1950a5357a421af5a8aae6ad29",
+      "T-G0-COST-01": "87eb69a295d370419e676b9b8c0826922b2ac6469b15d8e73b2552b887f2c638",
+      "T-G0-COST-02": "58f7d644ab3da2a70c55beb29cfd2aac63fa30469ef67d1de5b81a760de6ef55",
+      "T-G0-DATA": "e0dbdd29166e54eb6c3d1be9bd024d240d728fc51b1a4bb489515c1bd937db2e",
+      "T-G0-DISC": "2585266019e65d2114f4cfe938dc909915bdb6d5f1fb5b01f1e3072c0d82d30a",
+      "T-G0-DR": "d525aff792ce26b2735260a9648e190c8d4e89de3f89fe85ad3a230bdc634441",
+      "T-G0-MCP": "ccaa9d23323b161699e65e928e6903bcd8e020addb666047fc88a71064813524",
+      "T-G0-PROV-01": "9e96da31fb7b7659c1a5b26aabee3fa7cf9637763b1930b3cf1d46b99e77f63b",
+      "T-G0-PROV-02": "857667178f3f1dc3101db2bf78bf9c43c7eb241be2b784366bc608a315eb56a6",
+      "T-G0-SEC-01": "cf56d8044afd090f15f6e7422095cd63443693feb3acc1d1e8941eda61b51224",
+      "T-G0-SEC-02": "c0d48c1d58dcc55e6682eec1e7efb9e1641352dd29737765f10b613d226c579c",
+      "T-G0-TRACE": "51eb51b995044bc5892812edadbc5421fc679921c737b55d614ac85258374d7c"
+    },
+    "status": "PASS"
   },
   "goals": {
+    "taskGoalCount": 14,
+    "taskGoalHashes": {
+      "T-G0-COL-01": "2a3ed4a6e1dd08198a39883b0836e9001afa6b51b9cfa6a3ae18c2909eefd638",
+      "T-G0-COL-02": "56b7edfd73a1ad77fd67b8551aee73e0e592759e43e38d470125ac07794340cf",
+      "T-G0-CORE": "5cb6753ef0c0962fcc0e9954d5d03d8003627072a617c16a4053e7c74a0fde85",
+      "T-G0-COST-01": "865d390070b059300b3f1008d52792aaa42eb9f93ad82e73dd380f14136b2d5a",
+      "T-G0-COST-02": "4f372245976a5d3568486b2775fe53a987f6d5235b99766d977e30fd6c9b2e37",
+      "T-G0-DATA": "2cef4abf35e279dbf2fc11a4d9ab6ae3f913c709739fd5d523c08e5107c4b4f3",
+      "T-G0-DISC": "9f5c7cd5665b712e6ce2d8408ee548f18e27e6425908edb91184b48372f46de4",
+      "T-G0-DR": "f20f698512efeceb7224f3ca3c3177881112f79e0bc72425cd24598d98aab045",
+      "T-G0-MCP": "73dadb10e989c5e1d868fcf344789bdf46b13e7de038872d35b3828c14d9a872",
+      "T-G0-PROV-01": "7de8e120e3b299860b5adde3fb26c4d74f1f0a0cd02c33c95c1a31aae133883b",
+      "T-G0-PROV-02": "16f0da38214585f54567de8fc04e12f09c842c0c6974f4f2cd01e243d16ccdca",
+      "T-G0-SEC-01": "9f48742ed2f3aa947c746aeac115f26ddf9af5a092fb61cb96dfd29208b4bea2",
+      "T-G0-SEC-02": "7e7af7b0e22e779d9fa517a92b0f96433e1896acfc57850623ec2a47e1d0112d",
+      "T-G0-TRACE": "e5095faf8e8878de206591883df7e8e44feab40a72a104cdb5c8e6a441f6639f"
+    },
     "clusterGoalPath": "clusters/G0/C-G0-IMPLEMENTATION.zcode-goal.md",
     "clusterGoalSha256": "0971d911f4cd702abaa4e9a0c946fdf15718ad9a1a9313b7df7ec50ac3a13074",
-    "compilerCommandValidation": "PASS",
-    "branchInterfaceValidation": "FAIL",
-    "perTaskGoalsGenerated": false,
-    "status": "BLOCKED"
+    "canonicalBranchBinding": "PASS",
+    "commandValidation": "PASS",
+    "unknownCommandRejection": "PASS"
   },
-  "leases": {
-    "activeTaskLeases": 0,
-    "activeClusterLeases": 0,
-    "staleLeaseAccepted": false,
-    "justInTimeLeaseAcquired": false
+  "launchPackage": {
+    "manifestPath": "artifacts/handoff/G0/g0-zcode-launch.json",
+    "manifestSha256": "2657d6c4bae300b0ef948139d65779973f9a5ae1586e32b497434416a30bf562",
+    "preflightPath": "tools/zcode/g0-preflight.sh",
+    "preflightSha256": "c0a97ce799f350c9138c37f11fb36490e95d269c0521d19a15dc1d6fd024b0ba",
+    "validateOnlyExitCode": 0,
+    "validateOnlyResult": "PASS_10_OF_10",
+    "validateOnlyMutation": false,
+    "prepareTaskExecuted": false,
+    "goalPayloadPath": "artifacts/handoff/G0/g0-goal-payload.md",
+    "goalPayloadSha256": "7dad763baad4f0dc55271698f7e51543859f1048fdb405276669a2b18ae3e9ff"
   },
-  "pathLocks": {
-    "activeConflicts": [],
-    "contractLockGroups": 9,
-    "acquisitionMechanism": "integrated into task:acquire",
-    "status": "PREFLIGHT_CLEAR_BUT_LAUNCH_BLOCKED"
+  "zcodeDesktop": {
+    "applicationStatus": "ZCODE_APP_INSTALL_REQUIRED",
+    "checkedPaths": [
+      "/Applications/ZCode.app",
+      "/Users/quantm/Applications/ZCode.app"
+    ],
+    "applicationVersion": null,
+    "modelConnectionStatus": "NOT_VERIFIABLE_APP_MISSING",
+    "terminalCliRequired": false,
+    "started": false
   },
-  "launcher": {
-    "path": null,
-    "generated": false,
-    "dryRun": "NOT_RUN_BLOCKED_BEFORE_GENERATION",
-    "futureLaunchCommand": null
-  },
-  "zcode": {
-    "installed": false,
-    "version": null,
-    "verifiedInvocation": null,
-    "status": "ZCODE_RUNTIME_MISSING"
-  },
-  "checks": {
-    "specVerify": "PASS",
-    "harnessVerify": "PASS",
-    "clusterList": "PASS",
-    "clusterReady": "PASS",
-    "taskValidation": "PASS_14_OF_14",
-    "taskReadinessTransition": "PASS_14_OF_14",
-    "fullReadinessSuite": "NOT_RUN_BLOCKED",
-    "clusterCompletionVerification": "NOT_RUN_BLOCKED"
-  },
-  "blockers": [
+  "readinessCommands": [
     {
-      "code": "CLUSTER_BRANCH_INTERFACE_DRIFT",
-      "severity": "P0",
-      "requiredBranch": "cluster/C-G0-IMPLEMENTATION",
-      "harnessBranch": "cluster/g0",
-      "evidence": [
-        "clusters/G0/C-G0-IMPLEMENTATION.zcode-goal.md:3",
-        "tools/prd-compiler/compiler.ts:127",
-        "tools/worktree-manager/manager.ts:26",
-        "tools/merge-queue/processor.ts:174",
-        "tools/task-verifier/verify.ts:54"
-      ],
-      "resolutionAuthorityRequired": "Owner-approved, versioned harness amendment or owner-approved cluster branch change"
+      "command": "pnpm install --frozen-lockfile",
+      "status": "PASS"
     },
     {
-      "code": "ZCODE_RUNTIME_MISSING",
-      "severity": "P1",
-      "evidence": [
-        "zcode --help: command not found",
-        "zcode help: command not found",
-        "zcode version: command not found",
-        "zcode --version: command not found"
-      ],
-      "resolutionAuthorityRequired": "Install and authenticate the actual ZCode runtime, then verify its interface read-only"
+      "command": "pnpm build",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm lint",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm format:check",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm test",
+      "status": "PASS_18_FILES_87_TESTS"
+    },
+    {
+      "command": "pnpm spec:verify",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm prd:drift-check",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm requirements:coverage",
+      "status": "PASS_397_REQUIREMENTS_204_ACCEPTANCE"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm placeholders:scan",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm migration:verify",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm harness:verify",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm harness:lifecycle",
+      "status": "PASS_ATTESTED_RELEASE_SOURCE_CONTEXT_8_SCENARIOS_43_COMMANDS"
+    },
+    {
+      "command": "pnpm cluster:list",
+      "status": "PASS_G0_14_TASKS"
+    },
+    {
+      "command": "pnpm cluster:ready",
+      "status": "PASS_G0_READY_TO_BEGIN"
+    },
+    {
+      "command": "pnpm cluster:verify C-G0-IMPLEMENTATION",
+      "status": "EXPECTED_NOT_IMPLEMENTED_EXIT_1",
+      "evidence": "CLUSTER_TASK_NOT_MERGED:T-G0-COL-01:READY"
+    },
+    {
+      "command": "tools/zcode/g0-preflight.sh --validate-only",
+      "status": "PASS_NO_MUTATION"
     }
+  ],
+  "diagnostics": [
+    {
+      "command": "pnpm harness:lifecycle",
+      "context": "canonical cluster/g0 worktree",
+      "status": "CONTEXT_COLLISION",
+      "evidence": "isolated fixture clones the current branch then intentionally creates cluster/g0",
+      "disposition": "RERUN_PASS_FROM_CLEAN_ATTESTED_RELEASE_MAIN_SOURCE"
+    }
+  ],
+  "completionState": {
+    "readyToBegin": true,
+    "implemented": false,
+    "verified": false,
+    "completed": false
+  },
+  "remainingOwnerActions": [
+    "Install and open the ZCode desktop application.",
+    "Connect and confirm the desired model through the ZCode UI.",
+    "Open the canonical G0 worktree.",
+    "After separate task-launch authorization, run the one-task preflight for T-G0-CORE.",
+    "Open the printed task workspace and paste the generated Goal Mode payload."
   ],
   "confirmations": {
     "zcodeStarted": false,
-    "g0LeaseAcquired": false,
+    "implementationLeaseAcquired": false,
     "productImplementationPerformed": false,
     "taskEnteredImplementing": false,
     "mainBranchChanged": false,

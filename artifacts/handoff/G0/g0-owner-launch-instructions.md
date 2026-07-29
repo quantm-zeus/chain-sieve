@@ -1,25 +1,39 @@
-# G0 owner action required before launch preparation can resume
+# G0 owner launch instructions
 
-Do not launch ZCode and do not acquire a task lease.
+Repository preparation is complete. Do not run the task-preparation step until
+the owner separately authorizes the first implementation task.
 
-Choose and authorize exactly one branch-interface resolution:
+1. Install and open the ZCode desktop application.
+2. Connect and confirm the desired model in the ZCode UI.
+3. Open this workspace:
 
-1. Keep `cluster/C-G0-IMPLEMENTATION` and approve a versioned, independently reviewed harness amendment updating the goal generator, worktree manager, task verifier, and merge queue to use that branch; or
-2. Approve `cluster/g0` as the G0 execution branch and amend the readiness contract accordingly.
+   ```text
+   /Users/quantm/Documents/My Projects/chain-sieve-worktrees/g0
+   ```
 
-The relevant hard-coded interface locations are:
+4. Validate the repository without mutation:
 
-- `tools/prd-compiler/compiler.ts:127`
-- `tools/worktree-manager/manager.ts:26`
-- `tools/task-verifier/verify.ts:54`
-- `tools/merge-queue/processor.ts:174`
+   ```sh
+   tools/zcode/g0-preflight.sh --validate-only
+   ```
 
-After the branch decision is implemented and independently verified:
+5. After separate owner authorization, prepare only the recommended first task:
 
-1. Install and authenticate the actual ZCode runtime.
-2. Verify its version and goal-mode invocation using read-only help/version commands.
-3. Restart G0 readiness preparation.
-4. Generate the remaining inventory, context checksums, per-task goals, execution plan, and just-in-time launcher.
-5. Run the launcher only in `--dry-run` or `--validate-only` mode.
+   ```sh
+   tools/zcode/g0-preflight.sh --prepare-task T-G0-CORE
+   ```
 
-There is intentionally no future launch command in this report because the runtime interface is not installed and the repository execution branch is unresolved.
+6. The preflight prints `TASK_WORKSPACE`, `TASK_GOAL`, `LAUNCH_RECEIPT`,
+   `LEASE_ID`, and `FENCING_VERSION`. Open the printed task workspace in ZCode.
+7. In ZCode Agent, enter `/goal`, then paste:
+
+   ```text
+   Load the task goal path printed by the G0 preflight and the corresponding launch receipt. Implement exactly that one task, honoring the current lease ID, holder, fencing version, path locks, allowed and forbidden paths, required tests, mandatory self-review, one atomic commit, proof-carrying task verification, and the repository merge queue. Stop before any direct main merge and do not start another task.
+   ```
+
+8. Attach or paste the task-specific goal printed by the preflight. Confirm its
+   receipt-bound base commit/tree before allowing implementation.
+
+The static Goal Mode payload is
+`artifacts/handoff/G0/g0-goal-payload.md`. The shell preflight never starts
+ZCode automatically, and its default mode is always `--validate-only`.
