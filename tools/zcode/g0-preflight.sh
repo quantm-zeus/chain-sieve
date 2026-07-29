@@ -33,12 +33,15 @@ if ! command -v node >/dev/null 2>&1 || ! command -v pnpm >/dev/null 2>&1; then
   set +e
   set +u
   . "$HOME/.nvm/nvm.sh"
-  NVM_SOURCE_STATUS="$?"
+  if ! command -v nvm >/dev/null 2>&1; then
+    printf '%s\n' "FAIL:NVM_ACTIVATION" >&2
+    exit 1
+  fi
   nvm use 22.23.1 >/dev/null
   NVM_USE_STATUS="$?"
   set -u
   set -e
-  if [ "$NVM_SOURCE_STATUS" -ne 0 ] || [ "$NVM_USE_STATUS" -ne 0 ]; then
+  if [ "$NVM_USE_STATUS" -ne 0 ]; then
     printf '%s\n' "FAIL:PINNED_NODE_RUNTIME_ACTIVATION" >&2
     exit 1
   fi
