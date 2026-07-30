@@ -20,6 +20,7 @@ import {
 } from '../task-runner/state.js';
 import { readTaskResult } from '../task-verifier/verify.js';
 import { validateTaskAttestation } from '../task-verifier/attestation.js';
+import { taskBranch } from '../worktree-manager/identity.js';
 
 export interface QueueItem {
   taskId: string;
@@ -84,7 +85,7 @@ const git = (args: string[], cwd: string, allowFailure = false): string => {
 
 const taskWorktree = (taskId: string, cwd: string): string => {
   const blocks = git(['worktree', 'list', '--porcelain'], cwd).split('\n\n');
-  const block = blocks.find((value) => value.includes(`branch refs/heads/task/${taskId.toLowerCase()}`));
+  const block = blocks.find((value) => value.includes(`branch refs/heads/${taskBranch(taskId)}`));
   const path = block?.split('\n').find((line) => line.startsWith('worktree '))?.slice('worktree '.length);
   if (!path) throw new Error('TASK_WORKTREE_NOT_FOUND');
   return path;
@@ -247,7 +248,7 @@ export const processMergeQueue = async (
   const commit = git(['rev-parse', 'HEAD'], worktree);
   const tree = git(['rev-parse', 'HEAD^{tree}'], worktree);
   if (commit !== target.commit || tree !== target.tree) throw new Error('POST_REBASE_RESULT_MISMATCH');
-  if (git(['rev-parse', `task/${task.id.toLowerCase()}`], cwd) !== commit)
+  if (git(['rev-parse', taskBranch(task.id)], cwd) !== commit)
     throw new Error('TASK_COMMIT_NOT_REACHABLE_FROM_REBASED_BRANCH');
   if (Number(git(['rev-list', '--count', `${clusterBranch}..${commit}`], cwd)) !== 1)
     throw new Error('TASK_COMMIT_NOT_ATOMIC');

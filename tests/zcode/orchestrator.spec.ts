@@ -881,8 +881,15 @@ describe('payload, receipt, desktop, GitHub, CI, and no-mutation adapters', () =
     );
     expect(runner.calls.slice(0, 2).map((call) => call.args)).toEqual([
       ['--silent', 'merge-queue:process'],
-      ['--silent', 'worktree:cleanup', task.contract.id],
+      [
+        '--silent',
+        'worktree:cleanup',
+        task.contract.id,
+        '--source-worktree',
+        task.cluster.branch.worktree,
+      ],
     ]);
+    expect(runner.calls[1]?.cwd).toBe(root);
   });
 
   it('mocks existing PR lookup', () => {

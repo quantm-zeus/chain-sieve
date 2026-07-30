@@ -10,7 +10,12 @@ import {
 } from '@ciag/shared-schemas';
 import type { LifecycleDocument, TaskState } from '../../task-runner/state.js';
 import { ZCodeError } from './errors.js';
-import { defaultWorktreeRoot, taskWorkspacePath } from './paths.js';
+import {
+  canonicalWorktreePath,
+  defaultWorktreeRoot,
+  taskBranch,
+  taskWorkspacePath,
+} from './paths.js';
 import type {
   BranchInterface,
   ClusterLifecycleState,
@@ -275,8 +280,8 @@ const branchInterface = async (
   const worktree = configuredWorktree
     ? resolve(root, configuredWorktree)
     : join(worktreeRoot, leaf);
-  const safeWorktreeRoot = resolve(worktreeRoot);
-  if (!resolve(worktree).startsWith(`${safeWorktreeRoot}/`))
+  const safeWorktreeRoot = canonicalWorktreePath(worktreeRoot);
+  if (!canonicalWorktreePath(worktree).startsWith(`${safeWorktreeRoot}/`))
     throw new ZCodeError('UNSAFE_CLUSTER_WORKTREE', worktree);
   return {
     branch,
@@ -697,14 +702,17 @@ export const discoverProject = async (
       else branchRemoteState = 'DIVERGED';
     }
     const registered = worktrees.find(
-      (item) => resolve(item.worktree) === resolve(branch.worktree),
+      (item) =>
+        canonicalWorktreePath(item.worktree) ===
+        canonicalWorktreePath(branch.worktree),
     );
     const branchRegistration = worktrees.find(
       (item) => item.branch === branch.branch,
     );
     const conflictingWorktree =
       branchRegistration &&
-      resolve(branchRegistration.worktree) !== resolve(branch.worktree)
+      canonicalWorktreePath(branchRegistration.worktree) !==
+        canonicalWorktreePath(branch.worktree)
         ? branchRegistration.worktree
         : undefined;
     let worktreeHead = registered?.head;
@@ -810,7 +818,9 @@ export const discoverProject = async (
     'DUPLICATE_CLUSTER_BRANCH',
   );
   assertUnique(
-    clusterRecords.map((cluster) => resolve(cluster.branch.worktree)),
+    clusterRecords.map((cluster) =>
+      canonicalWorktreePath(cluster.branch.worktree),
+    ),
     'DUPLICATE_CLUSTER_WORKTREE',
   );
   const taskRecords: TaskRecord[] = [];
@@ -825,6 +835,20 @@ export const discoverProject = async (
       lifecycleState.worktree ??
       taskWorkspacePath(cluster.branch.worktree, task.id);
     const workspaceExists = existsSync(workspace);
+    const workspaceRegistration = worktrees.find(
+      (item) =>
+        canonicalWorktreePath(item.worktree) ===
+        canonicalWorktreePath(workspace),
+    );
+    const taskBranchRegistration = worktrees.find(
+      (item) => item.branch === taskBranch(task.id),
+    );
+    const conflictingWorkspace =
+      taskBranchRegistration &&
+      canonicalWorktreePath(taskBranchRegistration.worktree) !==
+        canonicalWorktreePath(workspace)
+        ? taskBranchRegistration.worktree
+        : undefined;
     const workspaceHead = workspaceExists
       ? git(runner, workspace, ['rev-parse', 'HEAD'], { allowFailure: true }) ||
         undefined
@@ -877,6 +901,9 @@ export const discoverProject = async (
         priorities.get(task.cluster)?.get(task.id) ?? Number.MAX_SAFE_INTEGER,
       workspace,
       workspaceExists,
+      workspaceRegistered: Boolean(workspaceRegistration),
+      workspaceForeign: Boolean(workspaceHead && !workspaceRegistration),
+      ...(conflictingWorkspace ? { conflictingWorkspace } : {}),
       ...(workspaceBranch ? { workspaceBranch } : {}),
       ...(workspaceHead ? { workspaceHead } : {}),
       ...(workspaceTree ? { workspaceTree } : {}),

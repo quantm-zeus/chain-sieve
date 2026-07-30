@@ -17,6 +17,7 @@ import {
 } from '../task-runner/state.js';
 import { deriveAcceptanceMapping, deriveChangedFiles, deriveRequirementMapping, persistCommandEvidence, TASK_VERIFIER_VERSION, validateTaskAttestation, VERIFICATION_POLICY_VERSION } from './attestation.js';
 import { verifyRuntimeBaseline } from './runtime-baseline.js';
+import { taskBranch } from '../worktree-manager/identity.js';
 
 export interface CommandEvidence { command: string; exitCode: number; output: string; outputSha256: string }
 export const deriveEvidenceVerdict = (requiredCommands: string[], evidence: CommandEvidence[]): 'PASS' => { for (const command of requiredCommands) { const item = evidence.find((candidate) => candidate.command === command); if (!item) throw new Error(`MISSING_COMMAND_EVIDENCE:${command}`); if (item.exitCode !== 0) throw new Error(`COMMAND_FAILED:${command}`); if (sha256(item.output) !== item.outputSha256) throw new Error(`FORGED_COMMAND_EVIDENCE:${command}`); if (/^(?:PASS|ok|true)$/i.test(item.output.trim())) throw new Error(`UNSUBSTANTIATED_COMMAND_EVIDENCE:${command}`); } return 'PASS'; };
@@ -49,7 +50,7 @@ export const verifyTask = async (taskId: string, holder: string, leaseVersion: n
   const reviewCommit = git(['rev-parse', 'HEAD']); const reviewTree = git(['rev-parse', 'HEAD^{tree}']); if (!target.selfReviewEvidence) throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
   transition(target, ['SELF_REVIEWING'], 'VERIFYING', { command: 'task:verify', credential, evidence: target.selfReviewEvidence, currentCommit: reviewCommit, currentTree: reviewTree }); await writeState(state);
   try {
-    const expectedBranch = `task/${taskId.toLowerCase()}`; const branch = git(['branch', '--show-current']); if (branch !== expectedBranch || target.branch !== expectedBranch) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
+    const expectedBranch = taskBranch(taskId); const branch = git(['branch', '--show-current']); if (branch !== expectedBranch || target.branch !== expectedBranch) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
     if (git(['status', '--porcelain']) !== '') throw new Error('DIRTY_WORKTREE');
     const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`; const hasCluster = git(['show-ref', '--verify', `refs/heads/${clusterBranch}`], process.cwd(), true) !== ''; const base = hasCluster ? git(['rev-parse', clusterBranch]) : target.baseCommit; if (!base) throw new Error('TASK_BASE_COMMIT_MISSING');
     const commit = git(['rev-parse', 'HEAD']); if (commit === base) throw new Error('TASK_COMMIT_MISSING'); if (Number(git(['rev-list', '--count', `${base}..${commit}`])) !== 1) throw new Error('TASK_COMMIT_NOT_ATOMIC');

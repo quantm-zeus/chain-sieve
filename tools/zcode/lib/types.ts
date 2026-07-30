@@ -55,6 +55,9 @@ export interface TaskRecord {
   priority: number;
   workspace: string;
   workspaceExists: boolean;
+  workspaceRegistered?: boolean;
+  workspaceForeign?: boolean;
+  conflictingWorkspace?: string;
   workspaceBranch?: string;
   workspaceHead?: string;
   workspaceTree?: string;
@@ -155,6 +158,7 @@ export interface PayloadBinding {
 }
 
 export interface StatusView {
+  nextAction: OrchestrationAction;
   completedTasks: number;
   totalTasks: number;
   completedClusters: number;
