@@ -20,6 +20,7 @@ import {
   type EvidenceReference,
 } from './state.js';
 import { productValidationInput, validateLifecycleContract, type LifecycleValidationInput } from './validator.js';
+import { taskBranch } from '../worktree-manager/identity.js';
 
 const option = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -112,7 +113,7 @@ try {
     console.log(JSON.stringify(state.tasks[taskId], null, 2));
   } else if (command === 'acquire') {
     const repair = repairTasks.find((task) => task.id === taskId);
-    const expected = repair?.approvedBranch ?? `task/${taskId.toLowerCase()}`;
+    const expected = repair?.approvedBranch ?? taskBranch(taskId);
     const branch = git(['branch', '--show-current']);
     if (branch !== expected) throw new Error(`TASK_BRANCH_REQUIRED:${expected}`);
     const lease = acquire(state, tasks, taskId, holder, new Date(), 900_000, git(['rev-parse', 'HEAD']), branch);
@@ -128,7 +129,7 @@ try {
       console.log(JSON.stringify(lease, null, 2));
     } else if (command === 'begin') {
       const expected =
-        repairTasks.find((task) => task.id === taskId)?.approvedBranch ?? `task/${taskId.toLowerCase()}`;
+        repairTasks.find((task) => task.id === taskId)?.approvedBranch ?? taskBranch(taskId);
       const branch = git(['branch', '--show-current']);
       if (branch !== expected || target.branch !== expected) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
       if (git(['status', '--porcelain']) !== '') throw new Error('DIRTY_WORKTREE');

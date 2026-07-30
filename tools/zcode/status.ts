@@ -48,6 +48,7 @@ try {
           : 'clean'
     }`,
   );
+  console.log(`Next action: ${status.nextAction}`);
 } catch (error) {
   console.error(errorCode(error));
   process.exitCode = 1;

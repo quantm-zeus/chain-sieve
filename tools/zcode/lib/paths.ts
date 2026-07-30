@@ -1,6 +1,13 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+export {
+  canonicalWorktreePath,
+  isManagedTaskWorkspace,
+  taskBranch,
+  taskWorkspacePath,
+  taskWorktreeRoot,
+} from '../../worktree-manager/identity.js';
 import { ZCodeError } from './errors.js';
 
 const hasRepositoryMarkers = (path: string): boolean =>
@@ -28,8 +35,3 @@ export const findRepositoryRoot = (start?: string): string => {
 
 export const defaultWorktreeRoot = (root: string): string =>
   process.env.CHAINSIEVE_WORKTREE_ROOT ?? `${root}-worktrees`;
-
-export const taskWorkspacePath = (
-  clusterWorktree: string,
-  taskId: string,
-): string => join(clusterWorktree, '.worktrees', taskId);

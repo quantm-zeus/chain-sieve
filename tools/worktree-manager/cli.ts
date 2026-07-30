@@ -1,5 +1,10 @@
 import { loadTasks } from '../task-verifier/verify.js';
-import { cleanupTaskWorktree, createTaskWorktree, worktreeStatus } from './manager.js';
+import {
+  cleanupTaskWorktree,
+  createTaskWorktree,
+  WorktreeManagerError,
+  worktreeStatus,
+} from './manager.js';
 
 const command = process.argv[2] ?? 'status';
 const taskId = process.argv[3];
@@ -13,6 +18,18 @@ try {
     else throw new Error(`UNKNOWN_COMMAND:${command}`);
   }
 } catch (error) {
-  console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) }));
+  console.error(
+    JSON.stringify({
+      status: 'FAIL',
+      error: error instanceof WorktreeManagerError
+        ? error.code
+        : error instanceof Error
+          ? error.message
+          : String(error),
+      ...(error instanceof WorktreeManagerError && error.details.length > 0
+        ? { details: error.details }
+        : {}),
+    }),
+  );
   process.exitCode = 1;
 }

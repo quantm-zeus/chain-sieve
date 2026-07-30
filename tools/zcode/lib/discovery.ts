@@ -10,7 +10,11 @@ import {
 } from '@ciag/shared-schemas';
 import type { LifecycleDocument, TaskState } from '../../task-runner/state.js';
 import { ZCodeError } from './errors.js';
-import { defaultWorktreeRoot, taskWorkspacePath } from './paths.js';
+import {
+  defaultWorktreeRoot,
+  taskBranch,
+  taskWorkspacePath,
+} from './paths.js';
 import type {
   BranchInterface,
   ClusterLifecycleState,
@@ -825,6 +829,17 @@ export const discoverProject = async (
       lifecycleState.worktree ??
       taskWorkspacePath(cluster.branch.worktree, task.id);
     const workspaceExists = existsSync(workspace);
+    const workspaceRegistration = worktrees.find(
+      (item) => resolve(item.worktree) === resolve(workspace),
+    );
+    const taskBranchRegistration = worktrees.find(
+      (item) => item.branch === taskBranch(task.id),
+    );
+    const conflictingWorkspace =
+      taskBranchRegistration &&
+      resolve(taskBranchRegistration.worktree) !== resolve(workspace)
+        ? taskBranchRegistration.worktree
+        : undefined;
     const workspaceHead = workspaceExists
       ? git(runner, workspace, ['rev-parse', 'HEAD'], { allowFailure: true }) ||
         undefined
@@ -877,6 +892,9 @@ export const discoverProject = async (
         priorities.get(task.cluster)?.get(task.id) ?? Number.MAX_SAFE_INTEGER,
       workspace,
       workspaceExists,
+      workspaceRegistered: Boolean(workspaceRegistration),
+      workspaceForeign: Boolean(workspaceHead && !workspaceRegistration),
+      ...(conflictingWorkspace ? { conflictingWorkspace } : {}),
       ...(workspaceBranch ? { workspaceBranch } : {}),
       ...(workspaceHead ? { workspaceHead } : {}),
       ...(workspaceTree ? { workspaceTree } : {}),

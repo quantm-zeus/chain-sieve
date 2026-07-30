@@ -25,6 +25,11 @@ import {
   validateLaunchReceipt,
   zcodeRuntimeRoot,
 } from './runtime.js';
+import {
+  isManagedTaskWorkspace,
+  taskBranch,
+  taskWorkspacePath,
+} from './paths.js';
 import type {
   ClusterRecord,
   CommandResult,
@@ -369,7 +374,7 @@ const initializeCluster = async (
   return refreshed;
 };
 
-const startTask = async (
+export const startTask = async (
   inventory: ProjectInventory,
   task: TaskRecord,
   runner: CommandRunner,
@@ -377,19 +382,90 @@ const startTask = async (
 ): Promise<void> => {
   const application = ensureZCodeApplication();
   assertClusterWorktree(task.cluster);
-  if (task.workspaceExists)
-    throw new ZCodeError('TASK_WORKTREE_ALREADY_EXISTS', task.workspace);
+  if (task.workspaceExists && task.workspaceHead) {
+    const expectedBranch = taskBranch(task.contract.id);
+    if (task.state.state !== 'READY')
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_STATE_INVALID',
+        task.state.state,
+      );
+    if (
+      task.state.leaseState === 'ACTIVE' &&
+      task.state.expiresAt &&
+      Date.parse(task.state.expiresAt) > Date.now()
+    )
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_ACTIVE_LEASE',
+        task.contract.id,
+      );
+    const lockOwner = inventory.tasks.find(
+      (candidate) =>
+        candidate.contract.id !== task.contract.id &&
+        [
+          'LEASED',
+          'IMPLEMENTING',
+          'SELF_REVIEWING',
+          'VERIFYING',
+          'VERIFIED',
+          'MERGE_QUEUED',
+        ].includes(candidate.state.state) &&
+        candidate.state.leaseState === 'ACTIVE' &&
+        candidate.state.expiresAt &&
+        Date.parse(candidate.state.expiresAt) > Date.now() &&
+        candidate.contract.exclusiveLocks.some((lock) =>
+          task.contract.exclusiveLocks.includes(lock),
+        ),
+    );
+    if (lockOwner)
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_PATH_LOCK_CONFLICT',
+        lockOwner.contract.id,
+      );
+    if (task.conflictingWorkspace)
+      throw new ZCodeError(
+        'TASK_BRANCH_ATTACHED_TO_OTHER_WORKTREE',
+        task.conflictingWorkspace,
+      );
+    if (!task.workspaceRegistered || task.workspaceForeign)
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_REPOSITORY_MISMATCH',
+        task.workspace,
+      );
+    if (task.workspaceBranch !== expectedBranch)
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_BRANCH_MISMATCH',
+        `${task.workspaceBranch ?? 'detached'}:${expectedBranch}`,
+      );
+    if (task.workspaceDirty)
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_DIRTY',
+        task.workspace,
+        task.workspaceChanges ?? [],
+      );
+    if (task.workspaceHead !== task.cluster.worktreeHead)
+      throw new ZCodeError(
+        'TASK_WORKTREE_REUSE_HEAD_MISMATCH',
+        `${task.workspaceHead}:${task.cluster.worktreeHead ?? 'missing'}`,
+      );
+  }
   const worktreeRaw = runPnpm(
     runner,
     task.cluster.branch.worktree,
     ['worktree:create', task.contract.id],
     'TASK_WORKTREE_CREATE_FAILED',
   );
-  const worktree = parseJsonOutput<{ target: string }>(
+  const worktree = parseJsonOutput<{ target: string; reused: boolean }>(
     worktreeRaw,
     'TASK_WORKTREE_OUTPUT_INVALID',
   );
-  if (!worktree.target.startsWith(`${task.cluster.branch.worktree}/`))
+  const expectedWorkspace = taskWorkspacePath(
+    task.cluster.branch.worktree,
+    task.contract.id,
+  );
+  if (
+    !isManagedTaskWorkspace(task.cluster.branch.worktree, worktree.target) ||
+    worktree.target !== expectedWorkspace
+  )
     throw new ZCodeError(
       'TASK_WORKTREE_OUTSIDE_CLUSTER_PLANE',
       worktree.target,

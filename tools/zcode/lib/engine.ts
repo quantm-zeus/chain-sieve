@@ -5,6 +5,7 @@ import type {
   TaskRecord,
   ClusterRecord,
 } from './types.js';
+import { isManagedTaskWorkspace, taskBranch } from './paths.js';
 
 const protectedStates = new Set([
   'LEASED',
@@ -106,7 +107,7 @@ const activeDecision = (
       cluster: task.cluster,
       taskWorkspace: workspace,
     };
-  if (!workspace.startsWith(`${task.cluster.branch.worktree}/.worktrees/`))
+  if (!isManagedTaskWorkspace(task.cluster.branch.worktree, workspace))
     return {
       action: 'STOP',
       reason: `TASK_WORKTREE_OUTSIDE_CLUSTER_PLANE:${workspace}`,
@@ -114,7 +115,7 @@ const activeDecision = (
       cluster: task.cluster,
       taskWorkspace: workspace,
     };
-  const expectedBranch = `task/${task.contract.id.toLowerCase()}`;
+  const expectedBranch = taskBranch(task.contract.id);
   if (
     task.workspaceBranch !== expectedBranch ||
     state.branch !== expectedBranch
@@ -314,6 +315,7 @@ export const decideNextAction = (
 export const statusView = (inventory: ProjectInventory): StatusView => {
   const decision = decideNextAction(inventory);
   return {
+    nextAction: decision.action,
     completedTasks: inventory.tasks.filter(
       (task) => task.state.state === 'MERGED',
     ).length,
