@@ -24,6 +24,17 @@ const protectedStates = new Set([
   'VERIFIED',
   'MERGE_QUEUED',
 ]);
+const lifecycleStates = new Set([
+  'DRAFT',
+  'VALIDATED',
+  'READY',
+  ...protectedStates,
+  'MERGED',
+  'BLOCKED',
+  'INTEGRATION_FAILED',
+  'REVERTED_AFTER_INTEGRATION_FAILURE',
+]);
+const leaseStates = new Set(['ACTIVE', 'RELEASED', 'EXPIRED', 'COMPLETED']);
 
 export class WorktreeManagerError extends Error {
   constructor(
@@ -100,10 +111,60 @@ const lifecycle = (cwd: string): LifecycleDocument | undefined => {
   const path = join(commonDirectory(cwd), 'ciag-runtime', 'task-state.json');
   if (!existsSync(path)) return undefined;
   try {
-    const value = JSON.parse(readFileSync(path, 'utf8')) as LifecycleDocument;
-    if (value.schemaVersion !== '2.0.0' || typeof value.tasks !== 'object')
+    const value = JSON.parse(readFileSync(path, 'utf8')) as unknown;
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      !('schemaVersion' in value) ||
+      value.schemaVersion !== '2.0.0' ||
+      !('tasks' in value) ||
+      !value.tasks ||
+      typeof value.tasks !== 'object' ||
+      Array.isArray(value.tasks)
+    )
       throw new Error('invalid lifecycle schema');
-    return value;
+    const tasks: Record<string, TaskState> = {};
+    for (const [taskId, raw] of Object.entries(value.tasks)) {
+      if (
+        !raw ||
+        typeof raw !== 'object' ||
+        Array.isArray(raw) ||
+        !('taskId' in raw) ||
+        raw.taskId !== taskId ||
+        !('state' in raw) ||
+        typeof raw.state !== 'string' ||
+        !lifecycleStates.has(raw.state) ||
+        !('leaseVersion' in raw) ||
+        !Number.isInteger(raw.leaseVersion) ||
+        Number(raw.leaseVersion) < 0
+      )
+        throw new Error(`invalid task lifecycle:${taskId}`);
+      const optionalStrings = [
+        'holder',
+        'leaseId',
+        'acquiredAt',
+        'renewedAt',
+        'expiresAt',
+        'baseCommit',
+        'branch',
+        'worktree',
+      ];
+      if (
+        optionalStrings.some(
+          (key) =>
+            key in raw &&
+            raw[key as keyof typeof raw] !== undefined &&
+            typeof raw[key as keyof typeof raw] !== 'string',
+        ) ||
+        ('leaseState' in raw &&
+          raw.leaseState !== undefined &&
+          (typeof raw.leaseState !== 'string' ||
+            !leaseStates.has(raw.leaseState)))
+      )
+        throw new Error(`invalid task lifecycle fields:${taskId}`);
+      tasks[taskId] = raw as TaskState;
+    }
+    return { schemaVersion: '2.0.0', tasks };
   } catch (error) {
     throw new WorktreeManagerError(
       'TASK_STATE_INVALID',
@@ -118,27 +179,39 @@ const activeLease = (state: TaskState | undefined, now = Date.now()): boolean =>
     state &&
       protectedStates.has(state.state) &&
       state.leaseState === 'ACTIVE' &&
+      Number.isInteger(state.leaseVersion) &&
+      state.leaseVersion >= 1 &&
+      state.holder &&
+      state.holder.trim() &&
+      state.leaseId &&
+      state.leaseId.trim() &&
+      state.acquiredAt &&
+      Number.isFinite(Date.parse(state.acquiredAt)) &&
       state.expiresAt &&
       Date.parse(state.expiresAt) > now,
   );
 
 const lifecycleOwnsCommittedBranch = (
   state: TaskState | undefined,
-  branch: string,
+  expectedBranch: string,
+  revision: string,
   target: string,
   clusterHead: string,
   gitCwd: string,
 ): boolean =>
   Boolean(
     activeLease(state) &&
-      state?.branch === branch &&
+      state?.branch === expectedBranch &&
       state.worktree &&
       canonicalPath(state.worktree) === canonicalPath(target) &&
       state.baseCommit &&
-      git(['merge-base', '--is-ancestor', state.baseCommit, branch], gitCwd, true)
-        .status === 0 &&
       git(
-        ['merge-base', '--is-ancestor', clusterHead, branch],
+        ['merge-base', '--is-ancestor', state.baseCommit, revision],
+        gitCwd,
+        true,
+      ).status === 0 &&
+      git(
+        ['merge-base', '--is-ancestor', clusterHead, revision],
         gitCwd,
         true,
       ).status === 0,
@@ -190,16 +263,20 @@ const removeSafePartialTarget = (
   root: string,
   target: string,
   registered: boolean,
-  state: TaskState | undefined,
+  document: LifecycleDocument | undefined,
 ): boolean => {
   if (!existsSync(target)) return false;
+  const referenced = Object.values(document?.tasks ?? {}).some(
+    (state) =>
+      state.worktree &&
+      canonicalPath(state.worktree) === canonicalPath(target),
+  );
   const safe =
     isManagedTaskWorkspace(root, target) &&
     lstatSync(target).isDirectory() &&
     readdirSync(target).length === 0 &&
     !registered &&
-    (!state?.worktree ||
-      canonicalPath(state.worktree) !== canonicalPath(target));
+    !referenced;
   if (!safe)
     throw new WorktreeManagerError(
       'UNREGISTERED_TASK_WORKTREE_PATH_CONFLICT',
@@ -242,7 +319,8 @@ export const createTaskWorktree = (
       'TASK_BRANCH_ATTACHED_TO_OTHER_WORKTREE',
       branchRegistration.path,
     );
-  const state = lifecycle(cwd)?.tasks[task.id];
+  const document = lifecycle(cwd);
+  const state = document?.tasks[task.id];
   if (targetRegistration) {
     if (targetRegistration.branch !== branch)
       throw new WorktreeManagerError(
@@ -266,6 +344,7 @@ export const createTaskWorktree = (
         !lifecycleOwnsCommittedBranch(
           state,
           branch,
+          branch,
           target,
           clusterHead,
           target,
@@ -282,27 +361,36 @@ export const createTaskWorktree = (
     return { taskId: task.id, branch, baseBranch, target, reused: true };
   }
 
-  const recoveredPartialTarget = removeSafePartialTarget(
-    root,
-    target,
-    false,
-    state,
-  );
   const localBranch =
     git(
       ['show-ref', '--verify', `refs/heads/${branch}`],
       cwd,
       true,
     ).status === 0;
-  if (localBranch) {
-    const head = git(['rev-parse', branch], cwd).stdout;
-    const commits = uniqueCommits(cwd, baseBranch, branch);
+  const remoteRef = `refs/remotes/origin/${branch}`;
+  const remoteBranch =
+    git(['show-ref', '--verify', remoteRef], cwd, true).status === 0;
+  if (localBranch && remoteBranch) {
+    const localHead = git(['rev-parse', branch], cwd).stdout;
+    const remoteHead = git(['rev-parse', remoteRef], cwd).stdout;
+    if (localHead !== remoteHead)
+      throw new WorktreeManagerError(
+        'TASK_BRANCH_REMOTE_DIVERGENCE',
+        branch,
+        [`local ${localHead}`, `origin ${remoteHead}`],
+      );
+  }
+  const revision = localBranch ? branch : remoteBranch ? remoteRef : undefined;
+  if (revision) {
+    const head = git(['rev-parse', revision], cwd).stdout;
+    const commits = uniqueCommits(cwd, baseBranch, revision);
     if (head !== clusterHead) {
       if (
         commits.length === 0 ||
         !lifecycleOwnsCommittedBranch(
           state,
           branch,
+          revision,
           target,
           clusterHead,
           cwd,
@@ -321,6 +409,13 @@ export const createTaskWorktree = (
         task.id,
       );
     }
+    const recoveredPartialTarget = removeSafePartialTarget(
+      root,
+      target,
+      false,
+      document,
+    );
+    if (!localBranch) git(['branch', branch, remoteRef], cwd);
     git(['worktree', 'add', target, branch], cwd);
     return {
       taskId: task.id,
@@ -332,6 +427,12 @@ export const createTaskWorktree = (
     };
   }
 
+  const recoveredPartialTarget = removeSafePartialTarget(
+    root,
+    target,
+    false,
+    document,
+  );
   git(['worktree', 'add', '-b', branch, target, 'HEAD'], cwd);
   return {
     taskId: task.id,
@@ -372,11 +473,32 @@ export const cleanupTaskWorktree = (
       'TASK_BRANCH_ATTACHED_TO_OTHER_WORKTREE',
       branchRegistration.path,
     );
-  if (
-    targetRegistration &&
-    targetRegistration.branch !== branch
-  )
+  if (targetRegistration && targetRegistration.branch !== branch)
     throw new WorktreeManagerError('WORKTREE_IDENTITY_MISMATCH', target);
+  const document = lifecycle(cwd);
+  const state = document?.tasks[task.id];
+  if (activeLease(state))
+    throw new WorktreeManagerError(
+      'TASK_WORKTREE_HAS_ACTIVE_LEASE',
+      task.id,
+    );
+  if (targetRegistration && commonDirectory(target) !== commonDirectory(cwd))
+    throw new WorktreeManagerError('WORKTREE_REPOSITORY_MISMATCH', target);
+  const localBranch =
+    git(
+      ['show-ref', '--verify', `refs/heads/${branch}`],
+      cwd,
+      true,
+    ).status === 0;
+  if (localBranch) {
+    const commits = uniqueCommits(cwd, baseBranch, branch);
+    if (commits.length > 0)
+      throw new WorktreeManagerError(
+        'TASK_BRANCH_HAS_UNMERGED_COMMITS',
+        branch,
+        commits,
+      );
+  }
   if (targetRegistration) {
     const status = git(['status', '--porcelain'], target).stdout;
     if (status !== '')
@@ -387,33 +509,15 @@ export const cleanupTaskWorktree = (
       );
     git(['worktree', 'remove', target], cwd);
   } else {
-    removeSafePartialTarget(
-      root,
-      target,
-      false,
-      lifecycle(cwd)?.tasks[task.id],
-    );
+    removeSafePartialTarget(root, target, false, document);
   }
 
-  const localBranch =
-    git(
-      ['show-ref', '--verify', `refs/heads/${branch}`],
-      cwd,
-      true,
-    ).status === 0;
   if (!localBranch)
     return {
       taskId: task.id,
       removed: target,
       alreadyRemoved: !targetRegistration,
     };
-  const commits = uniqueCommits(cwd, baseBranch, branch);
-  if (commits.length > 0)
-    throw new WorktreeManagerError(
-      'TASK_BRANCH_HAS_UNMERGED_COMMITS',
-      branch,
-      commits,
-    );
   git(['branch', '-d', branch], cwd);
   return {
     taskId: task.id,

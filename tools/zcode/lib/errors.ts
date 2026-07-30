@@ -11,7 +11,10 @@ export class ZCodeError extends Error {
 
 const MAX_DETAIL_LINES = 8;
 const MAX_DETAIL_LINE_LENGTH = 500;
-const sensitive = /\b(token|password|secret|api[_-]?key|authorization|cookie)\b(\s*[:=]\s*)([^\s,;"']+)/gi;
+const sensitiveLine =
+  /((?:^|[\s,;{([])["']?[A-Za-z0-9_-]*(?:authorization|cookie)[A-Za-z0-9_-]*["']?\s*[:=]\s*).*$/gim;
+const sensitiveAssignment =
+  /((?:^|[\s,;{([])["']?[A-Za-z0-9_-]*(?:token|password|secret|api[_-]?key|authorization|cookie)[A-Za-z0-9_-]*["']?\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gim;
 
 const withoutControlCharacters = (value: string): string =>
   [...value]
@@ -23,11 +26,8 @@ const withoutControlCharacters = (value: string): string =>
 
 const sanitize = (value: string): string =>
   withoutControlCharacters(value)
-    .replace(
-      /\b(authorization|cookie)\b(\s*[:=]\s*).*$/gi,
-      '$1$2[REDACTED]',
-    )
-    .replace(sensitive, '$1$2[REDACTED]')
+    .replace(sensitiveLine, '$1[REDACTED]')
+    .replace(sensitiveAssignment, '$1[REDACTED]')
     .replace(/\bBearer\s+[A-Za-z0-9._~+/-]+=*/gi, 'Bearer [REDACTED]')
     .slice(0, MAX_DETAIL_LINE_LENGTH);
 

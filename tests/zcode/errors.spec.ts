@@ -31,4 +31,21 @@ describe('ZCode error rendering', () => {
     expect(rendered).not.toContain('x'.repeat(600));
     expect(rendered).toContain('[REDACTED]');
   });
+
+  it('redacts underscore-delimited environment secret keys', () => {
+    const rendered = errorCode(
+      new ZCodeError('FAILED', undefined, [
+        [
+          'GH_TOKEN=ghp_one',
+          'GITHUB_TOKEN=ghp_two',
+          'OPENAI_API_KEY=sk-three',
+          'AWS_SECRET_ACCESS_KEY=four',
+        ].join(' '),
+      ]),
+    );
+
+    for (const secret of ['ghp_one', 'ghp_two', 'sk-three', 'four'])
+      expect(rendered).not.toContain(secret);
+    expect(rendered.match(/\[REDACTED]/g)).toHaveLength(4);
+  });
 });

@@ -77,6 +77,18 @@ const managerError = (operation: () => unknown): WorktreeManagerError => {
   throw new Error('expected WorktreeManagerError');
 };
 
+const writeLifecycle = (
+  root: string,
+  tasks: Record<string, Record<string, unknown>>,
+): void => {
+  const runtime = join(root, '.git', 'ciag-runtime');
+  mkdirSync(runtime, { recursive: true });
+  writeFileSync(
+    join(runtime, 'task-state.json'),
+    `${JSON.stringify({ schemaVersion: '2.0.0', tasks }, null, 2)}\n`,
+  );
+};
+
 afterEach(() => {
   for (const path of temporaryRoots.splice(0))
     rmSync(path, { recursive: true, force: true });
@@ -108,6 +120,23 @@ describe('real Git task worktree lifecycle', () => {
     expect(git(value.taskTarget, ['rev-parse', 'HEAD'])).toBe(value.head);
   });
 
+  it('attaches an existing compatible remote task branch without replacing it', () => {
+    const value = fixture();
+    git(value.root, [
+      'update-ref',
+      `refs/remotes/origin/${taskBranch(task.id)}`,
+      value.head,
+    ]);
+
+    const result = createTaskWorktree(task, value.cluster);
+
+    expect(result.reused).toBe(true);
+    expect(git(value.taskTarget, ['rev-parse', 'HEAD'])).toBe(value.head);
+    expect(git(value.taskTarget, ['branch', '--show-current'])).toBe(
+      taskBranch(task.id),
+    );
+  });
+
   it('reuses an already registered compatible clean task worktree', () => {
     const value = fixture();
     createTaskWorktree(task, value.cluster);
@@ -128,6 +157,26 @@ describe('real Git task worktree lifecycle', () => {
     expect(git(value.taskTarget, ['branch', '--show-current'])).toBe(
       taskBranch(task.id),
     );
+  });
+
+  it('does not remove an empty partial target referenced by another lifecycle record', () => {
+    const value = fixture();
+    mkdirSync(value.taskTarget, { recursive: true });
+    writeLifecycle(value.root, {
+      'T-G0-OTHER': {
+        taskId: 'T-G0-OTHER',
+        state: 'READY',
+        leaseVersion: 0,
+        worktree: value.taskTarget,
+      },
+    });
+
+    const error = managerError(() =>
+      createTaskWorktree(task, value.cluster),
+    );
+
+    expect(error.code).toBe('UNREGISTERED_TASK_WORKTREE_PATH_CONFLICT');
+    expect(existsSync(value.taskTarget)).toBe(true);
   });
 
   it('rejects a nonempty unregistered target without deleting user files', () => {
@@ -176,6 +225,68 @@ describe('real Git task worktree lifecycle', () => {
     expect(git(value.root, ['rev-parse', taskBranch(task.id)])).toBe(unique);
   });
 
+  it('rejects incomplete lease evidence for a branch with unique commits', () => {
+    const value = fixture();
+    const other = join(value.base, 'incomplete lease worktree');
+    git(value.root, ['worktree', 'add', '-q', '-b', taskBranch(task.id), other]);
+    writeFileSync(join(other, 'implementation.txt'), 'preserve\n');
+    git(other, ['add', 'implementation.txt']);
+    git(other, ['commit', '-q', '-m', 'claimed without fencing']);
+    const unique = git(other, ['rev-parse', 'HEAD']);
+    git(value.root, ['worktree', 'remove', other]);
+    writeLifecycle(value.root, {
+      [task.id]: {
+        taskId: task.id,
+        state: 'LEASED',
+        leaseVersion: 0,
+        leaseState: 'ACTIVE',
+        expiresAt: new Date(Date.now() + 60_000).toISOString(),
+        branch: taskBranch(task.id),
+        worktree: value.taskTarget,
+        baseCommit: value.head,
+      },
+    });
+
+    const error = managerError(() =>
+      createTaskWorktree(task, value.cluster),
+    );
+
+    expect(error.code).toBe('UNCLAIMED_TASK_BRANCH_HAS_COMMITS');
+    expect(git(value.root, ['rev-parse', taskBranch(task.id)])).toBe(unique);
+  });
+
+  it('rejects an unclaimed remote task branch with unique commits', () => {
+    const value = fixture();
+    const other = join(value.base, 'remote commit worktree');
+    git(value.root, ['worktree', 'add', '-q', '-b', taskBranch(task.id), other]);
+    writeFileSync(join(other, 'implementation.txt'), 'remote preserve\n');
+    git(other, ['add', 'implementation.txt']);
+    git(other, ['commit', '-q', '-m', 'remote unique implementation']);
+    const unique = git(other, ['rev-parse', 'HEAD']);
+    git(value.root, ['worktree', 'remove', other]);
+    git(value.root, [
+      'update-ref',
+      `refs/remotes/origin/${taskBranch(task.id)}`,
+      unique,
+    ]);
+    git(value.root, ['branch', '-D', taskBranch(task.id)]);
+
+    const error = managerError(() =>
+      createTaskWorktree(task, value.cluster),
+    );
+
+    expect(error.code).toBe('UNCLAIMED_TASK_BRANCH_HAS_COMMITS');
+    expect(
+      git(value.root, [
+        'rev-parse',
+        `refs/remotes/origin/${taskBranch(task.id)}`,
+      ]),
+    ).toBe(unique);
+    expect(
+      git(value.root, ['branch', '--list', taskBranch(task.id)]),
+    ).toBe('');
+  });
+
   it('rejects a dirty cluster source worktree', () => {
     const value = fixture();
     writeFileSync(join(value.cluster, 'seed.txt'), 'dirty\n');
@@ -205,6 +316,37 @@ describe('real Git task worktree lifecycle', () => {
     expect(existsSync(value.taskTarget)).toBe(false);
   });
 
+  it('refuses to clean up a workspace with an active fenced lease', () => {
+    const value = fixture();
+    createTaskWorktree(task, value.cluster);
+    const acquiredAt = new Date().toISOString();
+    writeLifecycle(value.root, {
+      [task.id]: {
+        taskId: task.id,
+        state: 'LEASED',
+        leaseVersion: 1,
+        holder: 'integration-worker',
+        leaseId: `${task.id}:1:${Date.now()}`,
+        acquiredAt,
+        expiresAt: new Date(Date.now() + 60_000).toISOString(),
+        leaseState: 'ACTIVE',
+        baseCommit: value.head,
+        branch: taskBranch(task.id),
+        worktree: value.taskTarget,
+      },
+    });
+
+    const error = managerError(() =>
+      cleanupTaskWorktree(task, value.cluster),
+    );
+
+    expect(error.code).toBe('TASK_WORKTREE_HAS_ACTIVE_LEASE');
+    expect(existsSync(value.taskTarget)).toBe(true);
+    expect(git(value.taskTarget, ['branch', '--show-current'])).toBe(
+      taskBranch(task.id),
+    );
+  });
+
   it('preserves a task branch containing unmerged implementation commits', () => {
     const value = fixture();
     createTaskWorktree(task, value.cluster);
@@ -219,5 +361,6 @@ describe('real Git task worktree lifecycle', () => {
 
     expect(error.code).toBe('TASK_BRANCH_HAS_UNMERGED_COMMITS');
     expect(git(value.root, ['rev-parse', taskBranch(task.id)])).toBe(unique);
+    expect(existsSync(value.taskTarget)).toBe(true);
   });
 });

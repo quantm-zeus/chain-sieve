@@ -450,8 +450,13 @@ export const startTask = async (
   }
   const worktreeRaw = runPnpm(
     runner,
-    task.cluster.branch.worktree,
-    ['worktree:create', task.contract.id],
+    inventory.root,
+    [
+      'worktree:create',
+      task.contract.id,
+      '--source-worktree',
+      task.cluster.branch.worktree,
+    ],
     'TASK_WORKTREE_CREATE_FAILED',
   );
   const worktree = parseJsonOutput<{ target: string; reused: boolean }>(
@@ -637,8 +642,13 @@ export const verifyAndIntegrateTask = async (
     throw new ZCodeError('TASK_INTEGRATION_FAILED', processed.status);
   runPnpm(
     runner,
-    task.cluster.branch.worktree,
-    ['worktree:cleanup', task.contract.id],
+    inventory.root,
+    [
+      'worktree:cleanup',
+      task.contract.id,
+      '--source-worktree',
+      task.cluster.branch.worktree,
+    ],
     'TASK_WORKTREE_CLEANUP_FAILED',
   );
   const refreshed = await rediscover(inventory.root, runner);
