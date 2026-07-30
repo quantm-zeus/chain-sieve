@@ -51,7 +51,10 @@
     "worktree:status": "tsx tools/worktree-manager/cli.ts status",
     "worktree:cleanup": "tsx tools/worktree-manager/cli.ts cleanup",
     "merge-queue:add": "tsx tools/merge-queue/cli.ts add",
-    "merge-queue:process": "tsx tools/merge-queue/cli.ts process"
+    "merge-queue:process": "tsx tools/merge-queue/cli.ts process",
+    "zcode": "tsx tools/zcode/orchestrator.ts",
+    "zcode:status": "tsx tools/zcode/status.ts",
+    "zcode:g0": "pnpm zcode"
   },
   "dependencies": {
     "@ciag/alerts": "workspace:*",
