@@ -29,7 +29,7 @@ try {
       if (target.state === 'MERGED' && !completed)
         throw new Error('TASK_CLEANUP_LIFECYCLE_NOT_COMPLETE');
       const result = cleanupTaskWorktree(task, sourceWorktree);
-      if (completed) {
+      if (completed || target.leaseState === 'RELEASED') {
         if (target.lifecycleBinding) target.completedLifecycleBinding = target.lifecycleBinding;
         if (target.verificationBaseline) target.completedVerificationBaseline = target.verificationBaseline;
         delete target.lifecycleBinding;
