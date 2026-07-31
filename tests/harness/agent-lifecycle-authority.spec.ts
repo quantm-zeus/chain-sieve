@@ -94,6 +94,22 @@ describe('explicit authoritative lease lifecycle', () => {
     expect(() => recoverExpiredLease(active, conflictingTasks, recovery(), new Date('2026-08-01T00:00:00.000Z'))).toThrow('RECOVERY_PATH_LOCK_CONFLICT');
   });
 
+  it('does not mistake an independently expired historical credential for an active task', () => {
+    const state = expired();
+    state.tasks['T-G0-OTHER'] = {
+      taskId: 'T-G0-OTHER',
+      state: 'IMPLEMENTING',
+      leaseVersion: 4,
+      holder: 'historical',
+      leaseId: 'other:4:expired',
+      expiresAt: '2026-07-30T00:00:00.000Z',
+      leaseState: 'ACTIVE',
+    };
+    expect(() =>
+      recoverExpiredLease(state, tasks, recovery(), new Date('2026-08-01T00:00:00.000Z')),
+    ).not.toThrow();
+  });
+
   it('derives tracked and untracked hashes from byte content in an isolated Git repository', async () => {
     const root = await mkdtemp(join(tmpdir(), 'chain-sieve-work-hash-'));
     temporary.push(root);

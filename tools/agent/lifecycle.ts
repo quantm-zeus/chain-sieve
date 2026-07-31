@@ -47,10 +47,12 @@ try {
   const tasks = await loadTasks();
   const state = await readState(tasks, root);
   if (command === 'migration-check') {
-    const active = Object.values(state.tasks).filter((item) => ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(item.state));
+    const productTaskIds = new Set(tasks.map((task) => task.id));
+    const active = Object.values(state.tasks).filter((item) => productTaskIds.has(item.taskId) && ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(item.state));
     console.log(JSON.stringify({ schemaVersion: '1.0.0', status: 'PASS', active: active.map((item) => ({ taskId: item.taskId, lifecycleBinding: item.lifecycleBinding ? 'BOUND' : 'MIGRATION_REQUIRED', verificationBaseline: item.verificationBaseline ? 'BOUND' : 'MIGRATION_REQUIRED' })) }, null, 2));
   } else if (command === 'migrate') {
-    const active = Object.values(state.tasks).filter((item) => ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(item.state));
+    const productTaskIds = new Set(tasks.map((task) => task.id));
+    const active = Object.values(state.tasks).filter((item) => productTaskIds.has(item.taskId) && ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(item.state));
     console.log(JSON.stringify({ schemaVersion: '1.0.0', dryRun: process.argv.includes('--dry-run'), mutations: active.filter((item) => !item.lifecycleBinding || !item.verificationBaseline).map((item) => ({ taskId: item.taskId, change: 'ADD_IMMUTABLE_LIFECYCLE_BINDING_AND_TRUSTED_BASELINE', credentialsChanged: false, productWorkChanged: false })) }, null, 2));
     if (!process.argv.includes('--dry-run')) throw new Error('MIGRATION_REQUIRES_AUTHORITATIVE_RECOVERY_OR_ACQUISITION');
   } else if (command === 'renew') {

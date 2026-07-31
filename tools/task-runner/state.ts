@@ -551,16 +551,20 @@ export const recoverExpiredLease = (
   if (target.baseCommit !== expectation.expectedBaseCommit) throw new Error('RECOVERY_EXPECTED_BASE_MISMATCH');
   if (!target.expiresAt || Date.parse(target.expiresAt) > now.getTime()) throw new Error('RECOVERY_LEASE_NOT_EXPIRED');
   if (!protectedStates.has(target.state)) throw new Error('RECOVERY_STATE_NOT_ACTIVE');
+  const isConcurrentActive = (item: TaskState): boolean =>
+    protectedStates.has(item.state) &&
+    (!item.expiresAt || Date.parse(item.expiresAt) > now.getTime()) &&
+    !['EXPIRED', 'RELEASED', 'COMPLETED'].includes(item.leaseState ?? 'ACTIVE');
   const contract = tasks.find((item) => item.id === target.taskId);
   if (!contract) throw new Error('TASK_CONTRACT_NOT_FOUND');
   const conflict = Object.values(state.tasks).find((item) => {
-    if (item.taskId === target.taskId || !protectedStates.has(item.state)) return false;
+    if (item.taskId === target.taskId || !isConcurrentActive(item)) return false;
     const other = tasks.find((candidate) => candidate.id === item.taskId);
     return Boolean(other?.exclusiveLocks.some((lock) => contract.exclusiveLocks.includes(lock)));
   });
   if (conflict) throw new Error(`RECOVERY_PATH_LOCK_CONFLICT:${conflict.taskId}`);
   const secondActive = Object.values(state.tasks).find(
-    (item) => item.taskId !== target.taskId && protectedStates.has(item.state),
+    (item) => item.taskId !== target.taskId && isConcurrentActive(item),
   );
   if (secondActive) throw new Error(`RECOVERY_MULTIPLE_ACTIVE_TASKS:${secondActive.taskId}`);
   target.retiredLeases ??= [];
