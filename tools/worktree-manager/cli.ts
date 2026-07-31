@@ -24,15 +24,19 @@ try {
       const tasks = await loadTasks();
       const state = await readState(tasks, sourceWorktree);
       const target = state.tasks[task.id];
-      if (!target || target.state !== 'MERGED' || target.leaseState !== 'COMPLETED')
+      if (!target) throw new Error('TASK_CLEANUP_LIFECYCLE_MISSING');
+      const completed = target.state === 'MERGED' && target.leaseState === 'COMPLETED';
+      if (target.state === 'MERGED' && !completed)
         throw new Error('TASK_CLEANUP_LIFECYCLE_NOT_COMPLETE');
       const result = cleanupTaskWorktree(task, sourceWorktree);
-      if (target.lifecycleBinding) target.completedLifecycleBinding = target.lifecycleBinding;
-      if (target.verificationBaseline) target.completedVerificationBaseline = target.verificationBaseline;
-      delete target.lifecycleBinding;
-      delete target.verificationBaseline;
-      delete target.worktree;
-      await writeState(state, sourceWorktree);
+      if (completed) {
+        if (target.lifecycleBinding) target.completedLifecycleBinding = target.lifecycleBinding;
+        if (target.verificationBaseline) target.completedVerificationBaseline = target.verificationBaseline;
+        delete target.lifecycleBinding;
+        delete target.verificationBaseline;
+        delete target.worktree;
+        await writeState(state, sourceWorktree);
+      }
       console.log(JSON.stringify(result));
     }
     else throw new Error(`UNKNOWN_COMMAND:${command}`);
