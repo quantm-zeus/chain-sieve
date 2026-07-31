@@ -118,6 +118,7 @@ const persistPostRebaseReceipt = async (
   const baseline = await readVerificationBaseline(trustedRoot, target);
   if (!lifecycle || !baseline) throw new Error('POST_REBASE_AUTHORITY_MISSING');
   const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`;
+  const clusterWorktree = git(['rev-parse', '--show-toplevel'], trustedRoot);
   const record = {
     contract: task,
     contractPath: lifecycle.contractPath,
@@ -132,7 +133,7 @@ const persistPostRebaseReceipt = async (
       : {}),
     cluster: {
       contract: { id: task.cluster },
-      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: trustedRoot },
+      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: clusterWorktree },
     },
     state: target,
     workspace: worktree,

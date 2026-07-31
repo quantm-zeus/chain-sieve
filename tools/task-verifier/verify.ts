@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { access, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { ClusterContractSchema, TaskContractSchema, TaskResultSchema, TaskReviewSchema, type ClusterContract, type TaskContract } from '@ciag/shared-schemas';
 import { driftCheck, loadAndValidateSpecification, sha256, waitForCompilerIdle } from '../prd-compiler/compiler.js';
@@ -89,8 +89,10 @@ export const verifyTask = async (
   const target = assertLease(state, taskId, leaseVersion, holder, new Date());
   if (target.state !== 'SELF_REVIEWING') throw new Error(`SELF_REVIEW_REQUIRED:${target.state}`);
   if (!target.worktree) throw new Error('TASK_WORKTREE_MISSING');
-  const targetWorktree = options.targetWorktree ?? target.worktree;
-  if (targetWorktree !== target.worktree) throw new Error('TASK_WORKTREE_TARGET_MISMATCH');
+  const authorizedWorktree = await realpath(target.worktree);
+  const requestedWorktree = await realpath(options.targetWorktree ?? target.worktree);
+  if (requestedWorktree !== authorizedWorktree) throw new Error('TASK_WORKTREE_TARGET_MISMATCH');
+  const targetWorktree = authorizedWorktree;
   const lifecycle = await readLifecycleBinding(trustedRoot, target);
   if (!lifecycle) throw new Error('LIFECYCLE_BINDING_MISSING');
   const baseline = await validateVerificationBaseline(trustedRoot, target);

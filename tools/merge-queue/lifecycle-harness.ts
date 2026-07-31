@@ -57,7 +57,6 @@ const parseError = (output: string): string => {
 const persistHarnessReceipt = async (
   repository: string,
   task: Awaited<ReturnType<typeof loadTasks>>[number],
-  worktree: string,
 ): Promise<string> => {
   const tasks = await loadTasks();
   const state = await readState(tasks, repository);
@@ -75,6 +74,8 @@ const persistHarnessReceipt = async (
     !target.baseCommit
   )
     throw new Error('HARNESS_RECEIPT_BINDING_MISSING');
+  const authorizedWorktree = target.worktree!;
+  const authorizedClusterWorktree = git(repository, ['rev-parse', '--show-toplevel']);
   const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`;
   const record = {
     contract: task,
@@ -84,10 +85,10 @@ const persistHarnessReceipt = async (
     contextManifestSha256: lifecycle.contextManifestSha256,
     cluster: {
       contract: { id: task.cluster },
-      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: repository },
+      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: authorizedClusterWorktree },
     },
     state: target,
-    workspace: worktree,
+    workspace: authorizedWorktree,
     workspaceBranch: target.branch,
   } as unknown as TaskRecord;
   const stored = await persistGoalAndPayload(repository, new SystemCommandRunner(), {
@@ -96,13 +97,13 @@ const persistHarnessReceipt = async (
       ...baseline.releaseBaseline,
       tagObject: git(repository, ['rev-parse', `refs/tags/${baseline.releaseBaseline.tag}`]),
     },
-    taskWorkspace: worktree,
+    taskWorkspace: authorizedWorktree,
     leaseId: target.leaseId,
     holder: target.holder,
     fencingVersion: target.leaseVersion,
     expiresAt: target.expiresAt,
     baseCommit: target.baseCommit,
-    baseTree: git(worktree, ['rev-parse', `${target.baseCommit}^{tree}`]),
+    baseTree: git(authorizedWorktree, ['rev-parse', `${target.baseCommit}^{tree}`]),
     contextManifestPath: lifecycle.contextManifestPath,
     contextManifestSha256: lifecycle.contextManifestSha256,
     ...(lifecycle.conformanceManifestPath ? { conformanceManifestPath: lifecycle.conformanceManifestPath } : {}),
@@ -350,7 +351,7 @@ export const runLifecycleHarness = async (): Promise<{
       '-m',
       'test: atomic lifecycle implementation',
     ]);
-    const normalReceiptId = await persistHarnessReceipt(repository, normalTask, normalWorktree);
+    const normalReceiptId = await persistHarnessReceipt(repository, normalTask);
     run(
       'task:self-review',
       [
@@ -516,7 +517,7 @@ export const runLifecycleHarness = async (): Promise<{
       '-m',
       'test: lifecycle integration failure fixture',
     ]);
-    const failureReceiptId = await persistHarnessReceipt(repository, failureTask, failureWorktree);
+    const failureReceiptId = await persistHarnessReceipt(repository, failureTask);
     run(
       'task:self-review',
       [
