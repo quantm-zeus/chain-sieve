@@ -225,11 +225,12 @@ export const runLifecycleHarness = async (): Promise<{
           absolute,
           [
             "import { describe, expect, it } from 'vitest';",
+            "import fc from 'fast-check';",
             `import { ${exported} } from '${module}';`,
             `describe('${task.id} lifecycle acceptance fixture', () => {`,
             negative
               ? `  it('rejects a seeded invalid value', () => { const seededFault = -1; expect(() => ${exported}(seededFault)).toThrow('INVALID_LIFECYCLE_FIXTURE'); });`
-              : `  it('invokes changed production behavior', () => { const property = (value: number) => ${exported}(value) === value; expect(property(7)).toBe(true); });`,
+              : `  it('invokes changed production behavior under a real property', () => { fc.assert(fc.property(fc.nat(), (value) => { expect(${exported}(value)).toBe(value); })); });`,
             '});',
             '',
           ].join('\n'),
