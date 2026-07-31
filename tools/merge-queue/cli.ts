@@ -1,15 +1,23 @@
 import { loadTasks } from '../task-verifier/verify.js';
 import { readState } from '../task-runner/state.js';
 import { enqueueTask, processMergeQueue, readQueue } from './processor.js';
+import { readBoundTaskContract } from '../task-runner/authority.js';
 
 const command = process.argv[2] ?? 'add';
 const taskId = process.argv[3];
 try {
-  const tasks = await loadTasks();
+  const generatedTasks = await loadTasks();
+  const lifecycle = await readState(generatedTasks);
+  const tasks = await Promise.all(
+    generatedTasks.map(async (task) => {
+      const target = lifecycle.tasks[task.id];
+      return (target?.lifecycleBinding ? await readBoundTaskContract(process.cwd(), target) : undefined) ?? task;
+    }),
+  );
   if (command === 'add') {
     const task = tasks.find((candidate) => candidate.id === taskId);
     if (!task) throw new Error('VALID_TASK_ID_REQUIRED');
-    const state = await readState(tasks);
+    const state = lifecycle;
     const queue = await readQueue();
     const item = await enqueueTask(task, tasks, state, queue);
     console.log(JSON.stringify({ status: 'QUEUED', item }, null, 2));

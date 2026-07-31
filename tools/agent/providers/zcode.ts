@@ -30,7 +30,7 @@ export class ZCodeProvider implements AgentProvider {
   }
 
   generatePayload(binding: TaskLaunchBinding): string {
-    return `/goal Load and obey the complete task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source. Complete exactly this task through its atomic commit, self-review, and real task verifier, then stop without invoking the merge queue or starting another task.`;
+    return `/goal Load and obey the complete task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source. Complete exactly this task through its atomic commit and self-review, then stop so the root control plane can run the authoritative task verifier. Do not invoke the merge queue or start another task.`;
   }
 
   copyPayload(payload: string): void {

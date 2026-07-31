@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/sig-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -9,7 +9,7 @@
   },
   {
     "path": "migrations/g5_sig_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -26,7 +26,8 @@
   },
   {
     "path": "packages/signal-intelligence/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-SIG",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -34,7 +35,7 @@
   },
   {
     "path": "telemetry/sig.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -42,7 +43,7 @@
   },
   {
     "path": "tests/acceptance/AC-020.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -50,7 +51,7 @@
   },
   {
     "path": "tests/acceptance/AC-021.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -58,7 +59,7 @@
   },
   {
     "path": "tests/acceptance/AC-022.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -66,7 +67,7 @@
   },
   {
     "path": "tests/acceptance/AC-023.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -74,7 +75,7 @@
   },
   {
     "path": "tests/acceptance/AC-136.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -82,7 +83,7 @@
   },
   {
     "path": "tests/acceptance/AC-154.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -90,7 +91,7 @@
   },
   {
     "path": "tests/acceptance/AC-190.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -98,7 +99,7 @@
   },
   {
     "path": "tests/acceptance/AC-191.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -106,7 +107,7 @@
   },
   {
     "path": "tests/acceptance/AC-192.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -114,7 +115,7 @@
   },
   {
     "path": "tests/acceptance/AC-193.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -122,7 +123,7 @@
   },
   {
     "path": "tests/fixtures/sig/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -130,7 +131,7 @@
   },
   {
     "path": "tests/negative/AC-020.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -138,7 +139,7 @@
   },
   {
     "path": "tests/negative/AC-021.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -146,7 +147,7 @@
   },
   {
     "path": "tests/negative/AC-022.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -154,7 +155,7 @@
   },
   {
     "path": "tests/negative/AC-023.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -162,7 +163,7 @@
   },
   {
     "path": "tests/negative/AC-136.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -170,7 +171,7 @@
   },
   {
     "path": "tests/negative/AC-154.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -178,7 +179,7 @@
   },
   {
     "path": "tests/negative/AC-190.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -186,7 +187,7 @@
   },
   {
     "path": "tests/negative/AC-191.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -194,7 +195,7 @@
   },
   {
     "path": "tests/negative/AC-192.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"
@@ -202,7 +203,7 @@
   },
   {
     "path": "tests/negative/AC-193.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SIG-007",
       "FR-SIG-008"

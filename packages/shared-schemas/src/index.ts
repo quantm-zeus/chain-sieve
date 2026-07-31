@@ -79,6 +79,8 @@ export const TaskResultSchema = z.object({
     requiredTestArtifacts: z.array(CommandEvidenceSchema).min(1), dependencyInterfaceHashes: z.record(z.string(), Sha256Schema),
     verifierVersion: z.string().min(1), verificationPolicyVersion: z.string().min(1), leaseId: z.string().min(1), leaseFencingVersion: z.number().int().positive(), verificationTimestamp: z.string().datetime(), selfReviewPath: z.string().min(1), selfReviewSha256: Sha256Schema,
     conformanceManifestPath: z.string().min(1).optional(), conformanceManifestSha256: Sha256Schema.optional(),
+    lifecycleBindingSha256: Sha256Schema, verificationBaselineSha256: Sha256Schema,
+    launchReceiptId: z.string().min(1), launchReceiptSha256: Sha256Schema,
   }),
   commandEvidence: z.array(CommandEvidenceSchema).min(1),
 });
@@ -94,6 +96,10 @@ export const TaskReviewSchema = z.object({
   acceptanceTestArtifacts: z.array(HashedPathSchema).min(1),
   leaseId: z.string().min(1),
   leaseFencingVersion: z.number().int().positive(),
+  lifecycleBindingSha256: Sha256Schema,
+  verificationBaselineSha256: Sha256Schema,
+  launchReceiptId: z.string().min(1),
+  launchReceiptSha256: Sha256Schema,
   reviewedAt: z.string().datetime(),
   rebase: z.object({
     previousHeadCommit: GitShaSchema.optional(),
@@ -122,10 +128,35 @@ export const TaskAmendmentSchema = z.object({ schemaVersion: z.literal('1.0.0'),
 export const TaskLeaseSchema = z.object({ schemaVersion: z.literal('2.0.0'), taskId: z.string(), holder: z.string(), leaseId: z.string().min(1), fencingVersion: z.number().int().positive(), version: z.number().int().positive(), acquiredAt: z.string().datetime(), expiresAt: z.string().datetime(), state: z.enum(['ACTIVE', 'RELEASED', 'EXPIRED', 'COMPLETED']) });
 export const ClusterContractSchema = z.object({ schemaVersion: z.literal('1.0.0'), id: z.string(), group: z.string(), title: z.string(), sourceHashes: SourceHashesSchema, dependencies: IdList, tasks: IdList.min(1), requirements: IdList.min(1), acceptanceCriteria: IdList, integrationAcceptanceCriteria: IdList.default([]), invariants: IdList, entryCriteria: IdList, exitCriteria: IdList, verificationCommands: z.array(VerificationCommandSchema), rollback: z.string() });
 export const ClusterResultSchema = z.object({ schemaVersion: z.literal('2.0.0'), clusterId: z.string(), status: z.enum(['PASS', 'FAIL', 'BLOCKED']), clusterContractSha256: Sha256Schema, headCommitSha: GitShaSchema, headTreeSha: GitShaSchema, taskAttestations: z.array(z.object({ taskId: z.string().min(1), taskCommitSha: GitShaSchema, taskTreeSha: GitShaSchema, resultSha256: Sha256Schema })).min(1), commandEvidence: z.array(CommandEvidenceSchema).min(1), verifierVersion: z.string().min(1), verificationPolicyVersion: z.string().min(1), verificationTimestamp: z.string().datetime() });
-export const ClusterReviewSchema = z.object({ schemaVersion: z.literal('1.0.0'), clusterId: z.string(), verdict: z.enum(['PASS', 'CHANGES_REQUIRED']), architecturalDiff: z.string(), findings: z.array(z.string()) });
+export const ClusterReviewSchema = z.object({
+  schemaVersion: z.literal('2.0.0'),
+  clusterId: z.string().min(1),
+  reviewerIdentity: z.string().min(1),
+  reviewedProductCommit: GitShaSchema,
+  reviewedProductTree: GitShaSchema,
+  clusterContractSha256: Sha256Schema,
+  clusterResultPath: z.string().min(1),
+  clusterResultSha256: Sha256Schema,
+  taskAttestationHashes: z.array(z.object({ taskId: z.string().min(1), resultSha256: Sha256Schema })).min(1),
+  reviewedAt: z.string().datetime(),
+  reviewPasses: z.array(z.object({ name: z.string().min(1), status: z.literal('PASS'), evidence: IdList.min(1) })).min(1),
+  findings: z.array(z.object({ severity: z.enum(['P0', 'P1', 'P2', 'P3']), text: z.string().min(1), resolved: z.boolean() })),
+  verdict: z.enum(['PASS', 'CHANGES_REQUIRED']),
+  reviewArtifactCommit: GitShaSchema.optional(),
+});
 export const ArchitecturalDiffSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), importsAdded: IdList, importsRemoved: IdList, publicInterfacesChanged: IdList, migrationsAdded: IdList, capabilityChanges: IdList });
 export const ContextManifestSchema = z.object({ schemaVersion: z.literal('1.0.0'), taskId: z.string(), sourceHashes: SourceHashesSchema, files: z.array(z.object({ path: z.string(), sha256: z.string(), bytes: z.number().int().nonnegative() })), conformanceManifestPath: z.string().min(1).optional(), conformanceManifestSha256: Sha256Schema.optional(), generatedAt: z.string() });
-export const ReadyQueueSchema = z.object({ schemaVersion: z.literal('1.0.0'), generatedFrom: z.string(), ready: IdList, blocked: z.array(z.object({ taskId: z.string(), dependencies: IdList })) });
+export const ReadyQueueSchema = z.object({
+  schemaVersion: z.literal('2.0.0'),
+  generatedFrom: Sha256Schema,
+  ready: IdList,
+  blocked: z.array(z.object({
+    taskId: z.string().min(1),
+    reason: z.enum(['DEPENDENCY_BLOCKED', 'SPECIFICATION_GAP']),
+    dependencies: IdList,
+  })),
+  counts: z.object({ total: z.number().int().nonnegative(), implementationReady: z.number().int().nonnegative(), specificationGap: z.number().int().nonnegative() }),
+});
 export const LifecycleManifestSchema = z.object({
   schemaVersion: z.literal('1.0.0'),
   harness: z.literal('production-lifecycle'),

@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/trd-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -11,7 +11,8 @@
   },
   {
     "path": "migrations/g1_trd_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-DATA-01",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -42,7 +43,7 @@
   },
   {
     "path": "telemetry/trd.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -52,7 +53,7 @@
   },
   {
     "path": "tests/acceptance/AC-130.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -62,7 +63,7 @@
   },
   {
     "path": "tests/acceptance/AC-131.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -72,7 +73,7 @@
   },
   {
     "path": "tests/acceptance/AC-132.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -82,7 +83,7 @@
   },
   {
     "path": "tests/acceptance/AC-133.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -92,7 +93,7 @@
   },
   {
     "path": "tests/acceptance/AC-134.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -102,7 +103,7 @@
   },
   {
     "path": "tests/acceptance/AC-135.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -112,7 +113,7 @@
   },
   {
     "path": "tests/acceptance/AC-136.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -122,7 +123,7 @@
   },
   {
     "path": "tests/acceptance/AC-233.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -132,7 +133,7 @@
   },
   {
     "path": "tests/fixtures/trd/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -142,7 +143,7 @@
   },
   {
     "path": "tests/negative/AC-130.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -152,7 +153,7 @@
   },
   {
     "path": "tests/negative/AC-131.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -162,7 +163,7 @@
   },
   {
     "path": "tests/negative/AC-132.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -172,7 +173,7 @@
   },
   {
     "path": "tests/negative/AC-133.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -182,7 +183,7 @@
   },
   {
     "path": "tests/negative/AC-134.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -192,7 +193,7 @@
   },
   {
     "path": "tests/negative/AC-135.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -202,7 +203,7 @@
   },
   {
     "path": "tests/negative/AC-136.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",
@@ -212,7 +213,7 @@
   },
   {
     "path": "tests/negative/AC-233.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-TRD-001",
       "FR-TRD-002",

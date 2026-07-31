@@ -103,6 +103,22 @@
       "exclusiveMinimum": 0,
       "maximum": 9007199254740991
     },
+    "lifecycleBindingSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "verificationBaselineSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "launchReceiptId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "launchReceiptSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "reviewedAt": {
       "type": "string",
       "format": "date-time",
@@ -209,6 +225,10 @@
     "acceptanceTestArtifacts",
     "leaseId",
     "leaseFencingVersion",
+    "lifecycleBindingSha256",
+    "verificationBaselineSha256",
+    "launchReceiptId",
+    "launchReceiptSha256",
     "reviewedAt",
     "rebase",
     "passes",

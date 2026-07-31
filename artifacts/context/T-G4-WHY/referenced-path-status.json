@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/why-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -9,7 +9,7 @@
   },
   {
     "path": "migrations/g4_why_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -26,7 +26,8 @@
   },
   {
     "path": "packages/thesis/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G4-DECAY",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -34,7 +35,7 @@
   },
   {
     "path": "telemetry/why.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -42,7 +43,7 @@
   },
   {
     "path": "tests/acceptance/AC-070.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -50,7 +51,7 @@
   },
   {
     "path": "tests/acceptance/AC-071.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -58,7 +59,7 @@
   },
   {
     "path": "tests/acceptance/AC-072.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -66,7 +67,7 @@
   },
   {
     "path": "tests/acceptance/AC-073.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -74,7 +75,7 @@
   },
   {
     "path": "tests/fixtures/why/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -82,7 +83,7 @@
   },
   {
     "path": "tests/negative/AC-070.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -90,7 +91,7 @@
   },
   {
     "path": "tests/negative/AC-071.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -98,7 +99,7 @@
   },
   {
     "path": "tests/negative/AC-072.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"
@@ -106,7 +107,7 @@
   },
   {
     "path": "tests/negative/AC-073.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-WHY-001",
       "FR-WHY-002"

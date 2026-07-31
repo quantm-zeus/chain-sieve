@@ -5,7 +5,11 @@ import { dirname, join } from 'node:path';
 import { sha256 } from '../prd-compiler/compiler.js';
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { readState } from '../task-runner/state.js';
+import { readLifecycleBinding, readVerificationBaseline } from '../task-runner/authority.js';
 import { loadTasks } from '../task-verifier/verify.js';
+import { persistGoalAndPayload } from '../agent/lib/runtime.js';
+import { SystemCommandRunner } from '../agent/lib/system.js';
+import type { TaskRecord } from '../agent/lib/types.js';
 import { processMergeQueue, readQueue } from './processor.js';
 import {
   deriveLifecycleVerdict,
@@ -50,6 +54,73 @@ const parseError = (output: string): string => {
   return matches.at(-1)?.[1] ?? output.trim().slice(-400);
 };
 
+const persistHarnessReceipt = async (
+  repository: string,
+  task: Awaited<ReturnType<typeof loadTasks>>[number],
+  worktree: string,
+): Promise<string> => {
+  const tasks = await loadTasks();
+  const state = await readState(tasks, repository);
+  const target = state.tasks[task.id]!;
+  const lifecycle = await readLifecycleBinding(repository, target);
+  const baseline = await readVerificationBaseline(repository, target);
+  if (
+    !lifecycle ||
+    !baseline ||
+    !target.lifecycleBinding ||
+    !target.verificationBaseline ||
+    !target.leaseId ||
+    !target.holder ||
+    !target.expiresAt ||
+    !target.baseCommit
+  )
+    throw new Error('HARNESS_RECEIPT_BINDING_MISSING');
+  const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`;
+  const record = {
+    contract: task,
+    contractPath: lifecycle.contractPath,
+    contextPath: lifecycle.contextManifestPath.replace(/\/context-manifest\.json$/, ''),
+    contextManifestPath: lifecycle.contextManifestPath,
+    contextManifestSha256: lifecycle.contextManifestSha256,
+    cluster: {
+      contract: { id: task.cluster },
+      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: repository },
+    },
+    state: target,
+    workspace: worktree,
+    workspaceBranch: target.branch,
+  } as unknown as TaskRecord;
+  const stored = await persistGoalAndPayload(repository, new SystemCommandRunner(), {
+    task: record,
+    release: {
+      ...baseline.releaseBaseline,
+      tagObject: git(repository, ['rev-parse', `refs/tags/${baseline.releaseBaseline.tag}`]),
+    },
+    taskWorkspace: worktree,
+    leaseId: target.leaseId,
+    holder: target.holder,
+    fencingVersion: target.leaseVersion,
+    expiresAt: target.expiresAt,
+    baseCommit: target.baseCommit,
+    baseTree: git(worktree, ['rev-parse', `${target.baseCommit}^{tree}`]),
+    contextManifestPath: lifecycle.contextManifestPath,
+    contextManifestSha256: lifecycle.contextManifestSha256,
+    ...(lifecycle.conformanceManifestPath ? { conformanceManifestPath: lifecycle.conformanceManifestPath } : {}),
+    ...(lifecycle.conformanceManifestSha256 ? { conformanceManifestSha256: lifecycle.conformanceManifestSha256 } : {}),
+    taskContractPath: lifecycle.contractPath,
+    taskContractSha256: lifecycle.contractSha256,
+    lifecycleBindingPath: target.lifecycleBinding.path,
+    lifecycleBindingSha256: target.lifecycleBinding.sha256,
+    verificationBaselinePath: target.verificationBaseline.path,
+    verificationBaselineSha256: target.verificationBaseline.sha256,
+    controlPlaneCommit: baseline.controlPlaneCommit,
+    controlPlaneTree: baseline.controlPlaneTree,
+    failures: [],
+  }, 'antigravity');
+  if (!stored.binding.launchReceiptId) throw new Error('HARNESS_RECEIPT_ID_MISSING');
+  return stored.binding.launchReceiptId;
+};
+
 export const runLifecycleHarness = async (): Promise<{
   manifest: ObservedLifecycleManifest;
   verdict: ReturnType<typeof deriveLifecycleVerdict>;
@@ -79,7 +150,7 @@ export const runLifecycleHarness = async (): Promise<{
       cwd,
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
-      env: { ...process.env, ...extraEnv },
+      env: { ...process.env, CIAG_LIFECYCLE_HARNESS: '1', CIAG_TRUSTED_CONTROL_PLANE: repository, ...extraEnv },
     });
     const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
     const observed: ObservedCommand = {
@@ -222,14 +293,17 @@ export const runLifecycleHarness = async (): Promise<{
       normalWorktree,
     );
     run(
-      'task:renew',
+      'agent:renew',
       [
-        'task:renew',
+        'agent:renew',
+        '--',
         normalTask.id,
+        '--expected-lease-id',
+        (await readState(tasks, normalWorktree)).tasks[normalTask.id]!.leaseId!,
+        '--expected-fencing-version',
+        '1',
         '--holder',
         'lifecycle-worker',
-        '--lease-version',
-        '1',
       ],
       normalWorktree,
     );
@@ -276,6 +350,7 @@ export const runLifecycleHarness = async (): Promise<{
       '-m',
       'test: atomic lifecycle implementation',
     ]);
+    const normalReceiptId = await persistHarnessReceipt(repository, normalTask, normalWorktree);
     run(
       'task:self-review',
       [
@@ -285,6 +360,8 @@ export const runLifecycleHarness = async (): Promise<{
         'lifecycle-worker',
         '--lease-version',
         '2',
+        '--launch-receipt-id',
+        normalReceiptId,
       ],
       normalWorktree,
     );
@@ -297,8 +374,10 @@ export const runLifecycleHarness = async (): Promise<{
         'lifecycle-worker',
         '--lease-version',
         '2',
+        '--target-worktree',
+        normalWorktree,
       ],
-      normalWorktree,
+      repository,
     );
     const preRebaseState = await readState(tasks, repository);
     const preRebaseTarget = structuredClone(
@@ -437,6 +516,7 @@ export const runLifecycleHarness = async (): Promise<{
       '-m',
       'test: lifecycle integration failure fixture',
     ]);
+    const failureReceiptId = await persistHarnessReceipt(repository, failureTask, failureWorktree);
     run(
       'task:self-review',
       [
@@ -446,6 +526,8 @@ export const runLifecycleHarness = async (): Promise<{
         'failure-worker',
         '--lease-version',
         '1',
+        '--launch-receipt-id',
+        failureReceiptId,
       ],
       failureWorktree,
     );
@@ -458,8 +540,10 @@ export const runLifecycleHarness = async (): Promise<{
         'failure-worker',
         '--lease-version',
         '1',
+        '--target-worktree',
+        failureWorktree,
       ],
-      failureWorktree,
+      repository,
     );
     await writeFile(
       failurePath,
@@ -545,7 +629,7 @@ export const runLifecycleHarness = async (): Promise<{
 
     for (const command of allCommands) {
       const scenario =
-        command.command === 'task:renew' ||
+        command.command === 'agent:renew' ||
         command.expectedRejection === 'STALE_LEASE_VERSION'
           ? scenarios.B
           : command.expectedRejection === 'PATH_LOCK_CONFLICT'

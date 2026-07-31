@@ -44,8 +44,8 @@
     },
     {
       "path": "referenced-path-status.json",
-      "sha256": "dfd197f1bd3af3bb69dee3e73ddcd6044f1aa3217dff2e00a39574f71e80bc20",
-      "bytes": 4640
+      "sha256": "0aa08926a26c272c74fade0a8315fd6f4245a9c104e91d5f76e3cc80ab37ae8b",
+      "bytes": 4620
     },
     {
       "path": "invariants.json",

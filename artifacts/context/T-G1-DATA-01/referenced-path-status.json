@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/data-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -15,7 +15,7 @@
   },
   {
     "path": "migrations/g1_data_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -72,7 +72,7 @@
   },
   {
     "path": "telemetry/data.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -86,7 +86,7 @@
   },
   {
     "path": "tests/acceptance/AC-020.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -100,7 +100,7 @@
   },
   {
     "path": "tests/acceptance/AC-021.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -114,7 +114,7 @@
   },
   {
     "path": "tests/acceptance/AC-022.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -128,7 +128,7 @@
   },
   {
     "path": "tests/acceptance/AC-023.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -142,7 +142,7 @@
   },
   {
     "path": "tests/acceptance/AC-240.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -156,7 +156,7 @@
   },
   {
     "path": "tests/acceptance/AC-241.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -170,7 +170,7 @@
   },
   {
     "path": "tests/acceptance/AC-242.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -184,7 +184,7 @@
   },
   {
     "path": "tests/acceptance/AC-243.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -198,7 +198,7 @@
   },
   {
     "path": "tests/acceptance/AC-244.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -212,7 +212,7 @@
   },
   {
     "path": "tests/acceptance/AC-245.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -226,7 +226,7 @@
   },
   {
     "path": "tests/acceptance/AC-246.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -240,7 +240,7 @@
   },
   {
     "path": "tests/acceptance/AC-247.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -254,7 +254,7 @@
   },
   {
     "path": "tests/acceptance/AC-248.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -268,7 +268,7 @@
   },
   {
     "path": "tests/acceptance/AC-249.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -282,7 +282,7 @@
   },
   {
     "path": "tests/fixtures/data/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -296,7 +296,7 @@
   },
   {
     "path": "tests/negative/AC-020.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -310,7 +310,7 @@
   },
   {
     "path": "tests/negative/AC-021.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -324,7 +324,7 @@
   },
   {
     "path": "tests/negative/AC-022.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -338,7 +338,7 @@
   },
   {
     "path": "tests/negative/AC-023.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -352,7 +352,7 @@
   },
   {
     "path": "tests/negative/AC-240.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -366,7 +366,7 @@
   },
   {
     "path": "tests/negative/AC-241.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -380,7 +380,7 @@
   },
   {
     "path": "tests/negative/AC-242.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -394,7 +394,7 @@
   },
   {
     "path": "tests/negative/AC-243.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -408,7 +408,7 @@
   },
   {
     "path": "tests/negative/AC-244.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -422,7 +422,7 @@
   },
   {
     "path": "tests/negative/AC-245.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -436,7 +436,7 @@
   },
   {
     "path": "tests/negative/AC-246.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -450,7 +450,7 @@
   },
   {
     "path": "tests/negative/AC-247.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -464,7 +464,7 @@
   },
   {
     "path": "tests/negative/AC-248.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",
@@ -478,7 +478,7 @@
   },
   {
     "path": "tests/negative/AC-249.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DATA-007",
       "FR-DATA-008",

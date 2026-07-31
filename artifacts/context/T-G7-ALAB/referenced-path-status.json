@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/alab-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -13,7 +13,7 @@
   },
   {
     "path": "migrations/g7_alab_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -25,7 +25,8 @@
   },
   {
     "path": "packages/alpha-artifact-store/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G7-AEP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -62,7 +63,7 @@
   },
   {
     "path": "telemetry/alab.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -74,7 +75,7 @@
   },
   {
     "path": "tests/acceptance/AC-214.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -86,7 +87,7 @@
   },
   {
     "path": "tests/acceptance/AC-215.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -98,7 +99,7 @@
   },
   {
     "path": "tests/acceptance/AC-216.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -110,7 +111,7 @@
   },
   {
     "path": "tests/acceptance/AC-217.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -122,7 +123,7 @@
   },
   {
     "path": "tests/acceptance/AC-218.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -134,7 +135,7 @@
   },
   {
     "path": "tests/acceptance/AC-219.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -146,7 +147,7 @@
   },
   {
     "path": "tests/fixtures/alab/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -158,7 +159,7 @@
   },
   {
     "path": "tests/negative/AC-214.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -170,7 +171,7 @@
   },
   {
     "path": "tests/negative/AC-215.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -182,7 +183,7 @@
   },
   {
     "path": "tests/negative/AC-216.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -194,7 +195,7 @@
   },
   {
     "path": "tests/negative/AC-217.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -206,7 +207,7 @@
   },
   {
     "path": "tests/negative/AC-218.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",
@@ -218,7 +219,7 @@
   },
   {
     "path": "tests/negative/AC-219.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALAB-001",
       "FR-ALAB-002",

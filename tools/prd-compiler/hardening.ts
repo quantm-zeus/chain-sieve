@@ -7,7 +7,8 @@ export type ReferencePathStatus =
   | 'EXISTS'
   | 'EXPECTED_TO_CREATE'
   | 'INVALID_REFERENCE'
-  | 'OWNED_BY_OTHER_TASK';
+  | 'OWNED_BY_OTHER_TASK'
+  | 'SPECIFICATION_GAP';
 
 export interface HardeningRequirement {
   id: string;
@@ -44,6 +45,10 @@ export interface AcceptanceTask {
   cluster: string;
   requirements: string[];
   ownerPackages: string[];
+  allowedPaths?: string[];
+  forbiddenPaths?: string[];
+  writeSet?: string[];
+  changeBudget?: { maxMigrations: number };
 }
 
 export interface AcceptanceAssignment {
@@ -148,8 +153,8 @@ const matchesScope = (reference: string, scope: string): boolean => {
 
 export const classifyReferencedPaths = (
   requirements: HardeningRequirement[],
-  task: AcceptanceTask & { writeSet?: string[]; allowedPaths?: string[] },
-  allTasks: Array<AcceptanceTask & { writeSet?: string[] }>,
+  task: AcceptanceTask,
+  allTasks: AcceptanceTask[],
   options: { root?: string; baselinePaths?: string[] } = {},
 ): Array<{
   path: string;
@@ -187,8 +192,6 @@ export const classifyReferencedPaths = (
       const exists = options.root ? existsSync(`${options.root}/${withoutGlob(path)}`) : false;
       if (baseline || exists)
         return { path, status: 'EXISTS' as const, requirementIds: [...requirementIds].sort() };
-      if ([...(task.writeSet ?? []), ...(task.allowedPaths ?? [])].some((scope) => matchesScope(path, scope)))
-        return { path, status: 'EXPECTED_TO_CREATE' as const, requirementIds: [...requirementIds].sort() };
       const owner = allTasks.find(
         (candidate) =>
           candidate.id !== task.id &&
@@ -201,17 +204,47 @@ export const classifyReferencedPaths = (
           ownerTask: owner.id,
           requirementIds: [...requirementIds].sort(),
         };
-      if (
-        /^(?:docs\/generated\/|migrations\/|telemetry\/|tests\/|packages\/|apps\/|infra\/)/.test(
-          path,
-        )
-      )
+      const staticPath = withoutGlob(path);
+      if (!/^(?:packages|apps|tests|fixtures|migrations|infra|telemetry|docs|artifacts)\//.test(staticPath))
+        return { path, status: 'INVALID_REFERENCE' as const, requirementIds: [...requirementIds].sort() };
+      const migrationReference = /^(?:migrations|infra\/migrations)\//.test(staticPath);
+      const forbidden = (task.forbiddenPaths ?? []).some((scope) => matchesScope(path, scope));
+      if (migrationReference && ((task.changeBudget?.maxMigrations ?? 0) === 0 || forbidden)) {
+        const migrationOwner = allTasks.find(
+          (candidate) =>
+            candidate.id !== task.id &&
+            candidate.cluster === task.cluster &&
+            (candidate.changeBudget?.maxMigrations ?? 0) > 0 &&
+            candidate.ownerPackages.includes('packages/persistence') &&
+            (candidate.allowedPaths ?? []).includes('infra/migrations/**'),
+        );
+        if (migrationOwner)
+          return {
+            path,
+            status: 'OWNED_BY_OTHER_TASK' as const,
+            ownerTask: migrationOwner.id,
+            requirementIds: [...requirementIds].sort(),
+          };
         return {
           path,
-          status: 'EXPECTED_TO_CREATE' as const,
+          status: 'SPECIFICATION_GAP' as const,
           requirementIds: [...requirementIds].sort(),
         };
-      return { path, status: 'INVALID_REFERENCE' as const, requirementIds: [...requirementIds].sort() };
+      }
+      const inWriteSet = (task.writeSet ?? []).some((scope) => matchesScope(path, scope));
+      const allowed = (task.allowedPaths ?? []).some((scope) => matchesScope(path, scope));
+      const ownerPackage = task.ownerPackages.some((scope) => matchesScope(path, scope));
+      const explicitTestOutput = /^(?:tests|fixtures|telemetry)\//.test(staticPath) &&
+        requirements.some((requirement) =>
+          [...requirement.testRefs, ...requirement.fixtureRefs, ...requirement.telemetryRefs]
+            .map(normalizeReference)
+            .includes(path),
+        );
+      if (inWriteSet && allowed && !forbidden && (ownerPackage || explicitTestOutput))
+        return { path, status: 'EXPECTED_TO_CREATE' as const, requirementIds: [...requirementIds].sort() };
+      if (forbidden)
+        return { path, status: 'INVALID_REFERENCE' as const, requirementIds: [...requirementIds].sort() };
+      return { path, status: 'SPECIFICATION_GAP' as const, requirementIds: [...requirementIds].sort() };
     })
     .sort((left, right) => left.path.localeCompare(right.path));
 };

@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/ood-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -12,7 +12,7 @@
   },
   {
     "path": "migrations/g6_ood_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -46,7 +46,7 @@
   },
   {
     "path": "telemetry/ood.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -57,7 +57,7 @@
   },
   {
     "path": "tests/acceptance/AC-180.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -68,7 +68,7 @@
   },
   {
     "path": "tests/acceptance/AC-181.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -79,7 +79,7 @@
   },
   {
     "path": "tests/acceptance/AC-182.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -90,7 +90,7 @@
   },
   {
     "path": "tests/acceptance/AC-183.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -101,7 +101,7 @@
   },
   {
     "path": "tests/acceptance/AC-184.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -112,7 +112,7 @@
   },
   {
     "path": "tests/acceptance/AC-185.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -123,7 +123,7 @@
   },
   {
     "path": "tests/acceptance/AC-186.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -134,7 +134,7 @@
   },
   {
     "path": "tests/fixtures/ood/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -145,7 +145,7 @@
   },
   {
     "path": "tests/negative/AC-180.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -156,7 +156,7 @@
   },
   {
     "path": "tests/negative/AC-181.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -167,7 +167,7 @@
   },
   {
     "path": "tests/negative/AC-182.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -178,7 +178,7 @@
   },
   {
     "path": "tests/negative/AC-183.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -189,7 +189,7 @@
   },
   {
     "path": "tests/negative/AC-184.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -200,7 +200,7 @@
   },
   {
     "path": "tests/negative/AC-185.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",
@@ -211,7 +211,7 @@
   },
   {
     "path": "tests/negative/AC-186.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-OOD-001",
       "FR-OOD-002",

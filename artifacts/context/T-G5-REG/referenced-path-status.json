@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/reg-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -9,7 +9,7 @@
   },
   {
     "path": "migrations/g5_reg_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -34,7 +34,7 @@
   },
   {
     "path": "telemetry/reg.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -42,7 +42,7 @@
   },
   {
     "path": "tests/acceptance/AC-077.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -50,7 +50,7 @@
   },
   {
     "path": "tests/acceptance/AC-078.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -58,7 +58,7 @@
   },
   {
     "path": "tests/acceptance/AC-079.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -66,7 +66,7 @@
   },
   {
     "path": "tests/fixtures/reg/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -74,7 +74,7 @@
   },
   {
     "path": "tests/negative/AC-077.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -82,7 +82,7 @@
   },
   {
     "path": "tests/negative/AC-078.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"
@@ -90,7 +90,7 @@
   },
   {
     "path": "tests/negative/AC-079.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-REG-001",
       "FR-REG-002"

@@ -73,6 +73,14 @@ Implement exactly one task, \`${task.id}\`, in cluster \`${task.cluster}\`.
 - Context pack: \`${binding.task.contextPath}\`
 - Context manifest: \`${binding.contextManifestPath}\`
 - Context manifest SHA-256: \`${binding.contextManifestSha256}\`
+- Task contract: \`${binding.taskContractPath}\`
+- Task contract SHA-256: \`${binding.taskContractSha256}\`
+- Lifecycle binding: \`${binding.lifecycleBindingPath}\`
+- Lifecycle binding SHA-256: \`${binding.lifecycleBindingSha256}\`
+- Trusted verification baseline: \`${binding.verificationBaselinePath}\`
+- Trusted verification baseline SHA-256: \`${binding.verificationBaselineSha256}\`
+- Trusted control-plane commit/tree: \`${binding.controlPlaneCommit}\` / \`${binding.controlPlaneTree}\`
+- Launch receipt ID: \`${binding.launchReceiptId ?? 'pending'}\`
 - Immutable conformance manifest: ${binding.conformanceManifestPath ? `\`${binding.conformanceManifestPath}\`` : 'legacy compatibility task'}
 - Immutable conformance manifest SHA-256: ${binding.conformanceManifestSha256 ? `\`${binding.conformanceManifestSha256}\`` : 'legacy compatibility task'}
 - Path-lock bindings: ${task.exclusiveLocks.length === 0 ? 'none' : task.exclusiveLocks.map((lock) => `\`${lock}\``).join(', ')}
@@ -106,13 +114,12 @@ ${task.verificationCommands.map((item) => `- \`${item.command}\` — ${item.expe
    The immutable conformance oracle is control-plane-owned and must not be modified.
 6. Create exactly one atomic implementation commit.
 7. Self-review the entire committed diff for scope, point-in-time leakage, fabricated success, unsafe fallback, activation, secrets, migration reversibility, and missing observability.
-8. Run \`pnpm task:self-review ${task.id} --holder ${binding.holder} --lease-version ${binding.fencingVersion}\`.
-9. Run \`pnpm task:verify ${task.id} --holder ${binding.holder} --lease-version ${binding.fencingVersion}\`.
-10. Stop. The root orchestrator alone owns merge-queue and next-task actions.
+8. Run \`pnpm task:self-review ${task.id} --holder ${binding.holder} --lease-version ${binding.fencingVersion} --launch-receipt-id ${binding.launchReceiptId ?? '<receipt-id>'}\`.
+9. Stop. The root orchestrator performs authoritative verification from the clean trusted control plane, then owns merge-queue and next-task actions.
 
 The orchestration receipt and proof-carrying task result together must bind the task ID, cluster ID, contract hash, commit SHA, Git tree SHA, lease ID, fencing version, goal hash, context-pack hash, test-artifact hashes, requirements, and acceptance criteria. A manually authored PASS field is not evidence.
 
-Do not renew the lease inside this agent runtime because renewal changes the proof bindings. Pause before the renewal window and ask the owner to run the same root \`pnpm agent\` command; the orchestrator will renew through the authoritative lifecycle, regenerate the receipt and goal, and resume this task.
+Do not renew or recover a lease inside this agent runtime. Pause before the renewal window and ask the owner to use the explicit root lifecycle command printed by the orchestrator.
 
 ## Atomicity, merge, and stopping conditions
 
@@ -128,7 +135,7 @@ ${binding.failures.map((failure) => `- Correction required: ${failure}`).join('\
 };
 
 export const generatePayload = (binding: PayloadBinding): string =>
-  `/goal Load and obey the complete task goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source. Complete exactly this task through its atomic commit, self-review, and real task verifier, then stop without invoking the merge queue or starting another task.`;
+  `/goal Load and obey the complete task goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source. Complete exactly this task through its atomic commit and self-review, then stop so the root control plane can run the authoritative verifier. Do not invoke the merge queue or start another task.`;
 
 export const persistGoalAndPayload = async (
   root: string,
@@ -138,7 +145,9 @@ export const persistGoalAndPayload = async (
   payloadFactory: (binding: PayloadBinding) => string = generatePayload,
 ): Promise<{ binding: PayloadBinding; payload: string }> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const initialGoal = generateGoal(binding);
+  const launchReceiptId = `${provider}-${sha256(`${binding.task.contract.id}:${binding.leaseId}:${binding.fencingVersion}:${binding.controlPlaneCommit}`).slice(0, 32)}`;
+  const receiptBound = { ...binding, launchReceiptId };
+  const initialGoal = generateGoal(receiptBound);
   const goalSha256 = sha256(initialGoal);
   const goalPath = join(
     runtime,
@@ -146,7 +155,7 @@ export const persistGoalAndPayload = async (
     binding.task.contract.id,
     `${goalSha256}.md`,
   );
-  const completeBinding: PayloadBinding = { ...binding, goalPath, goalSha256 };
+  const completeBinding: PayloadBinding = { ...receiptBound, goalPath, goalSha256 };
   const goal = generateGoal(completeBinding);
   const finalGoalSha256 = sha256(goal);
   const finalGoalPath =
@@ -180,13 +189,15 @@ export const persistGoalAndPayload = async (
     runtime,
     'launch-receipts',
     binding.task.contract.id,
-    `${sha256(`${binding.leaseId}:${binding.fencingVersion}:${provider}`)}.json`,
+    `${launchReceiptId}.json`,
   );
-  const receipt = {
+  const receiptCore = {
     schemaVersion: '2.0.0',
+    receiptId: launchReceiptId,
     provider,
     clusterId: binding.task.contract.cluster,
     taskId: binding.task.contract.id,
+    taskBranch: binding.task.workspaceBranch ?? binding.task.state.branch,
     clusterBranch: binding.task.cluster.branch.branch,
     clusterWorktree: binding.task.cluster.branch.worktree,
     taskWorktree: binding.taskWorkspace,
@@ -202,6 +213,14 @@ export const persistGoalAndPayload = async (
     goalSha256: finalBinding.goalSha256,
     contextManifestPath: binding.contextManifestPath,
     contextManifestSha256: binding.contextManifestSha256,
+    contractPath: binding.taskContractPath,
+    contractSha256: binding.taskContractSha256,
+    lifecycleBindingPath: binding.lifecycleBindingPath,
+    lifecycleBindingSha256: binding.lifecycleBindingSha256,
+    verificationBaselinePath: binding.verificationBaselinePath,
+    verificationBaselineSha256: binding.verificationBaselineSha256,
+    controlPlaneCommit: binding.controlPlaneCommit,
+    controlPlaneTree: binding.controlPlaneTree,
     ...(binding.conformanceManifestPath
       ? { conformanceManifestPath: binding.conformanceManifestPath }
       : {}),
@@ -210,8 +229,10 @@ export const persistGoalAndPayload = async (
       : {}),
     pathLocks: binding.task.contract.exclusiveLocks,
   };
-  await writeImmutable(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
-  return { binding: finalBinding, payload };
+  const receipt = { ...receiptCore, receiptHash: sha256(JSON.stringify(receiptCore)) };
+  const receiptText = `${JSON.stringify(receipt, null, 2)}\n`;
+  await writeImmutable(receiptPath, receiptText);
+  return { binding: { ...finalBinding, launchReceiptSha256: sha256(receiptText) }, payload };
 };
 
 export const validateLaunchReceipt = async (
@@ -224,6 +245,31 @@ export const validateLaunchReceipt = async (
     fencingVersion: number;
     contextManifestSha256: string;
     conformanceManifestSha256?: string;
+    receiptId?: string;
+    receiptSha256?: string;
+    provider?: AgentProviderId;
+    holder?: string;
+    expiresAt?: string;
+    taskBranch?: string;
+    taskWorktree?: string;
+    clusterBranch?: string;
+    clusterWorktree?: string;
+    baseCommit?: string;
+    baseTree?: string;
+    release?: PayloadBinding['release'];
+    integrationTarget?: string;
+    contextManifestPath?: string;
+    conformanceManifestPath?: string;
+    contractPath?: string;
+    contractSha256?: string;
+    lifecycleBindingPath?: string;
+    lifecycleBindingSha256?: string;
+    verificationBaselinePath?: string;
+    verificationBaselineSha256?: string;
+    pathLocks?: string[];
+    controlPlaneCommit?: string;
+    controlPlaneTree?: string;
+    requireProviderNeutral?: boolean;
   },
 ): Promise<void> => {
   const runtimes = [
@@ -248,12 +294,14 @@ export const validateLaunchReceipt = async (
         clusterId?: string;
         leaseId?: string;
         fencingVersion?: number;
+        receiptId?: string;
       };
       return (
         value.taskId === binding.taskId &&
         value.clusterId === binding.clusterId &&
         value.leaseId === binding.leaseId &&
-        value.fencingVersion === binding.fencingVersion
+        value.fencingVersion === binding.fencingVersion &&
+        (!binding.receiptId || value.receiptId === binding.receiptId)
       );
     } catch {
       return false;
@@ -262,6 +310,10 @@ export const validateLaunchReceipt = async (
   if (!selected)
     throw new ZCodeError('LAUNCH_RECEIPT_MISSING', binding.taskId);
   const receipt = JSON.parse(selected.raw) as {
+    schemaVersion?: string;
+    receiptId?: string;
+    receiptHash?: string;
+    provider?: AgentProviderId;
     taskId?: string;
     clusterId?: string;
     leaseId?: string;
@@ -270,7 +322,39 @@ export const validateLaunchReceipt = async (
     goalPath?: string;
     goalSha256?: string;
     conformanceManifestSha256?: string;
+    holder?: string;
+    expiresAt?: string;
+    taskBranch?: string;
+    taskWorktree?: string;
+    clusterBranch?: string;
+    clusterWorktree?: string;
+    baseCommit?: string;
+    baseTree?: string;
+    release?: PayloadBinding['release'];
+    integrationTarget?: string;
+    contextManifestPath?: string;
+    conformanceManifestPath?: string;
+    contractPath?: string;
+    contractSha256?: string;
+    lifecycleBindingPath?: string;
+    lifecycleBindingSha256?: string;
+    verificationBaselinePath?: string;
+    verificationBaselineSha256?: string;
+    pathLocks?: string[];
+    controlPlaneCommit?: string;
+    controlPlaneTree?: string;
   };
+  if (binding.receiptSha256 && sha256(selected.raw) !== binding.receiptSha256)
+    throw new ZCodeError('LAUNCH_RECEIPT_FILE_HASH_MISMATCH');
+  if (binding.requireProviderNeutral && receipt.schemaVersion !== '2.0.0')
+    throw new ZCodeError('PROVIDER_NEUTRAL_LAUNCH_RECEIPT_REQUIRED');
+  if (receipt.schemaVersion === '2.0.0') {
+    if (!receipt.receiptId || !receipt.receiptHash)
+      throw new ZCodeError('LAUNCH_RECEIPT_ID_OR_HASH_MISSING');
+    const { receiptHash, ...core } = receipt;
+    if (sha256(JSON.stringify(core)) !== receiptHash)
+      throw new ZCodeError('LAUNCH_RECEIPT_INTERNAL_HASH_MISMATCH');
+  }
   if (
     receipt.taskId !== binding.taskId ||
     receipt.clusterId !== binding.clusterId
@@ -296,6 +380,40 @@ export const validateLaunchReceipt = async (
   const goal = await readFile(receipt.goalPath);
   if (sha256(goal) !== receipt.goalSha256)
     throw new ZCodeError('LAUNCH_RECEIPT_GOAL_HASH_MISMATCH');
+  if (receipt.schemaVersion === '2.0.0') {
+    const comparisons: Array<[unknown, unknown, string]> = [
+      [receipt.receiptId, binding.receiptId, 'ID'],
+      [receipt.provider, binding.provider, 'PROVIDER'],
+      [receipt.holder, binding.holder, 'HOLDER'],
+      [receipt.expiresAt, binding.expiresAt, 'EXPIRY'],
+      [receipt.taskBranch, binding.taskBranch, 'TASK_BRANCH'],
+      [receipt.taskWorktree, binding.taskWorktree, 'TASK_WORKTREE'],
+      [receipt.clusterBranch, binding.clusterBranch, 'CLUSTER_BRANCH'],
+      [receipt.clusterWorktree, binding.clusterWorktree, 'CLUSTER_WORKTREE'],
+      [receipt.baseCommit, binding.baseCommit, 'BASE_COMMIT'],
+      [receipt.baseTree, binding.baseTree, 'BASE_TREE'],
+      [receipt.integrationTarget, binding.integrationTarget, 'INTEGRATION_TARGET'],
+      [receipt.contextManifestPath, binding.contextManifestPath, 'CONTEXT_PATH'],
+      [receipt.conformanceManifestPath, binding.conformanceManifestPath, 'CONFORMANCE_PATH'],
+      [receipt.contractPath, binding.contractPath, 'CONTRACT_PATH'],
+      [receipt.contractSha256, binding.contractSha256, 'CONTRACT_HASH'],
+      [receipt.lifecycleBindingPath, binding.lifecycleBindingPath, 'LIFECYCLE_BINDING_PATH'],
+      [receipt.lifecycleBindingSha256, binding.lifecycleBindingSha256, 'LIFECYCLE_BINDING_HASH'],
+      [receipt.verificationBaselinePath, binding.verificationBaselinePath, 'VERIFICATION_BASELINE_PATH'],
+      [receipt.verificationBaselineSha256, binding.verificationBaselineSha256, 'VERIFICATION_BASELINE_HASH'],
+      [receipt.controlPlaneCommit, binding.controlPlaneCommit, 'CONTROL_PLANE_COMMIT'],
+      [receipt.controlPlaneTree, binding.controlPlaneTree, 'CONTROL_PLANE_TREE'],
+    ];
+    for (const [actual, expected, name] of comparisons)
+      if ((binding.requireProviderNeutral || expected !== undefined) && actual !== expected)
+        throw new ZCodeError(`LAUNCH_RECEIPT_${name}_MISMATCH`);
+    if (binding.release && JSON.stringify(receipt.release) !== JSON.stringify(binding.release))
+      throw new ZCodeError('LAUNCH_RECEIPT_RELEASE_MISMATCH');
+    if (binding.pathLocks && JSON.stringify(receipt.pathLocks) !== JSON.stringify(binding.pathLocks))
+      throw new ZCodeError('LAUNCH_RECEIPT_LOCK_MISMATCH');
+    if (!receipt.expiresAt || Date.parse(receipt.expiresAt) <= Date.now())
+      throw new ZCodeError('LAUNCH_RECEIPT_EXPIRED');
+  }
 };
 
 export const persistProjectMapping = async (

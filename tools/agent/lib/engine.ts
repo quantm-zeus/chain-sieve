@@ -15,6 +15,7 @@ const protectedStates = new Set([
   'VERIFIED',
   'MERGE_QUEUED',
 ]);
+const RENEWAL_WINDOW_MS = 5 * 60 * 1000;
 
 const taskOrder = (left: TaskRecord, right: TaskRecord): number =>
   left.dependencyWave - right.dependencyWave ||
@@ -83,6 +84,14 @@ const activeDecision = (
     return {
       action: 'STOP',
       reason: 'LEASE_EXPIRED:AUTHORITATIVE_RECOVERY_REQUIRED',
+      task,
+      cluster: task.cluster,
+      taskWorkspace: workspace,
+    };
+  if (Date.parse(state.expiresAt) - now.getTime() <= RENEWAL_WINDOW_MS)
+    return {
+      action: 'STOP',
+      reason: `LEASE_RENEWAL_REQUIRED:pnpm agent:renew -- ${task.contract.id} --expected-lease-id ${state.leaseId ?? '<missing>'} --expected-fencing-version ${state.leaseVersion} --holder ${state.holder ?? '<missing>'}`,
       task,
       cluster: task.cluster,
       taskWorkspace: workspace,

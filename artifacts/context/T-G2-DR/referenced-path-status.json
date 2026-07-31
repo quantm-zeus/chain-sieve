@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/dr-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -11,7 +11,7 @@
   },
   {
     "path": "migrations/g2_dr_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -31,7 +31,8 @@
   },
   {
     "path": "packages/release-conformance/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-DR",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -62,7 +63,7 @@
   },
   {
     "path": "telemetry/dr.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -72,7 +73,7 @@
   },
   {
     "path": "tests/acceptance/AC-060.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -82,7 +83,7 @@
   },
   {
     "path": "tests/acceptance/AC-061.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -92,7 +93,7 @@
   },
   {
     "path": "tests/acceptance/AC-062.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -102,7 +103,7 @@
   },
   {
     "path": "tests/acceptance/AC-260.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -112,7 +113,7 @@
   },
   {
     "path": "tests/acceptance/AC-261.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -122,7 +123,7 @@
   },
   {
     "path": "tests/acceptance/AC-262.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -132,7 +133,7 @@
   },
   {
     "path": "tests/acceptance/AC-263.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -142,7 +143,7 @@
   },
   {
     "path": "tests/acceptance/AC-264.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -152,7 +153,7 @@
   },
   {
     "path": "tests/fixtures/dr/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -162,7 +163,7 @@
   },
   {
     "path": "tests/negative/AC-060.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -172,7 +173,7 @@
   },
   {
     "path": "tests/negative/AC-061.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -182,7 +183,7 @@
   },
   {
     "path": "tests/negative/AC-062.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -192,7 +193,7 @@
   },
   {
     "path": "tests/negative/AC-260.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -202,7 +203,7 @@
   },
   {
     "path": "tests/negative/AC-261.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -212,7 +213,7 @@
   },
   {
     "path": "tests/negative/AC-262.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -222,7 +223,7 @@
   },
   {
     "path": "tests/negative/AC-263.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",
@@ -232,7 +233,7 @@
   },
   {
     "path": "tests/negative/AC-264.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-DR-003",
       "FR-DR-004",

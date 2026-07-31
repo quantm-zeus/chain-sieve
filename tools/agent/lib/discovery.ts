@@ -9,6 +9,7 @@ import {
   type TaskContract,
 } from '@ciag/shared-schemas';
 import type { LifecycleDocument, TaskState } from '../../task-runner/state.js';
+import { readLifecycleBinding } from '../../task-runner/authority.js';
 import { ZCodeError } from './errors.js';
 import {
   canonicalWorktreePath,
@@ -392,8 +393,8 @@ const clusterState = (
     return 'COMPLETE';
   if (!branchHead) return 'UNPREPARED';
   if (values.every((state) => state === 'MERGED')) {
-    if (!hasReview) return 'REVIEW_REQUIRED';
     if (!hasResult) return 'VERIFYING';
+    if (!hasReview) return 'REVIEW_REQUIRED';
     return 'READY';
   }
   if (
@@ -896,13 +897,32 @@ export const discoverProject = async (
     const workspaceExists = existsSync(workspace);
     let effectiveTask = task;
     let contextRoot = root;
+    let selectedContractPath = taskPaths.find(
+      (path) => basename(path) === `${task.id}.contract.json`,
+    )!;
     let compatibilityMigration: TaskRecord['compatibilityMigration'];
-    if (
+    const persistedBinding = await readLifecycleBinding(root, lifecycleState);
+    if (persistedBinding) {
+      if (persistedBinding.taskId !== task.id || persistedBinding.clusterId !== task.cluster)
+        throw new ZCodeError('LIFECYCLE_BINDING_TASK_MISMATCH', task.id);
+      if (persistedBinding.baseCommit !== lifecycleState.baseCommit)
+        throw new ZCodeError('LIFECYCLE_BINDING_BASE_MISMATCH', task.id);
+      const boundContractPath = join(persistedBinding.bindingRoot, persistedBinding.contractPath);
+      const boundText = await readFile(boundContractPath, 'utf8');
+      if (sha256(boundText) !== persistedBinding.contractSha256)
+        throw new ZCodeError('LIFECYCLE_BINDING_CONTRACT_DRIFT', task.id);
+      const boundContext = await readFile(join(persistedBinding.bindingRoot, persistedBinding.contextManifestPath));
+      if (sha256(boundContext) !== persistedBinding.contextManifestSha256)
+        throw new ZCodeError('LIFECYCLE_BINDING_CONTEXT_DRIFT', task.id);
+      effectiveTask = TaskContractSchema.parse(JSON.parse(boundText));
+      contextRoot = persistedBinding.bindingRoot;
+      selectedContractPath = boundContractPath;
+      if (persistedBinding.contractMode === 'LEGACY') compatibilityMigration = 'LEGACY_ACTIVE_CONTRACT';
+    } else if (
       workspaceExists &&
-      ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING'].includes(
+      ['LEASED', 'IMPLEMENTING', 'SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
         lifecycleState.state,
-      ) &&
-      lifecycleState.holder === 'zcode-orchestrator'
+      )
     ) {
       const legacyContractPath = join(
         workspace,
@@ -921,6 +941,7 @@ export const discoverProject = async (
         if (sha256(legacyText) !== sha256(currentText)) {
           effectiveTask = TaskContractSchema.parse(JSON.parse(legacyText));
           contextRoot = workspace;
+          selectedContractPath = legacyContractPath;
           compatibilityMigration = 'LEGACY_ACTIVE_CONTRACT';
         }
       }
@@ -976,20 +997,15 @@ export const discoverProject = async (
         : undefined;
     taskRecords.push({
       contract: effectiveTask,
-      contractPath: relative(
-        root,
-        taskPaths.find(
-          (path) => basename(path) === `${task.id}.contract.json`,
-        )!,
-      ),
+      contractPath: relative(contextRoot, selectedContractPath),
       contextPath: `artifacts/context/${task.id}`,
       contextManifestPath: context.path,
       contextManifestSha256: context.sha256,
-      ...(context.conformanceManifestPath
-        ? { conformanceManifestPath: context.conformanceManifestPath }
+      ...((persistedBinding?.conformanceManifestPath ?? context.conformanceManifestPath)
+        ? { conformanceManifestPath: persistedBinding?.conformanceManifestPath ?? context.conformanceManifestPath }
         : {}),
-      ...(context.conformanceManifestSha256
-        ? { conformanceManifestSha256: context.conformanceManifestSha256 }
+      ...((persistedBinding?.conformanceManifestSha256 ?? context.conformanceManifestSha256)
+        ? { conformanceManifestSha256: persistedBinding?.conformanceManifestSha256 ?? context.conformanceManifestSha256 }
         : {}),
       ...(compatibilityMigration ? { compatibilityMigration } : {}),
       cluster,

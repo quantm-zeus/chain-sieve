@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { mkdtempSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -128,12 +129,34 @@ describe('provider-neutral agent adapters', () => {
     expect(() => provider.copyPayload('payload')).toThrow('CLIPBOARD_FAILED');
   });
 
-  it('switches provider payloads without changing lease or fencing bindings', () => {
+  it('switches providers near expiry in a temporary repository without lifecycle mutation', async () => {
     const value = binding();
+    const root = mkdtempSync(join(tmpdir(), 'agent-provider-switch-'));
+    execFileSync('git', ['init', '-b', 'main'], { cwd: root });
+    const statePath = join(root, '.git/ciag-runtime/task-state.json');
+    await mkdir(join(root, '.git/ciag-runtime'), { recursive: true });
+    const lifecycleState = {
+      schemaVersion: '2.0.0',
+      tasks: {
+        'T-G0-CORE': {
+          taskId: 'T-G0-CORE',
+          state: 'IMPLEMENTING',
+          leaseId: value.leaseId,
+          leaseVersion: value.fencingVersion,
+          expiresAt: new Date(Date.now() + 4 * 60 * 1000).toISOString(),
+        },
+      },
+    };
+    await writeFile(statePath, `${JSON.stringify(lifecycleState, null, 2)}\n`);
+    const stateBefore = await readFile(statePath, 'utf8');
+    const antigravityRunner = new Runner();
+    const zcodeRunner = new Runner();
     const before = { leaseId: value.leaseId, fencingVersion: value.fencingVersion };
-    new AntigravityProvider(new Runner()).generatePayload(value);
-    new ZCodeProvider(new Runner()).generatePayload(value);
+    new AntigravityProvider(antigravityRunner).generatePayload(value);
+    new ZCodeProvider(zcodeRunner).generatePayload(value);
     expect({ leaseId: value.leaseId, fencingVersion: value.fencingVersion }).toEqual(before);
+    expect(await readFile(statePath, 'utf8')).toBe(stateBefore);
+    expect([...antigravityRunner.calls, ...zcodeRunner.calls].some((call) => call.command === 'pnpm' && call.args.includes('task:renew'))).toBe(false);
   });
 
   it('rejects root main as an implementation workspace', () => {

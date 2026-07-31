@@ -36,6 +36,7 @@ import type {
   ProjectInventory,
   TaskRecord,
 } from './types.js';
+import { readLifecycleBinding, readVerificationBaseline } from '../../task-runner/authority.js';
 
 const NEW_TASK_HOLDER = 'agent-orchestrator';
 const RENEWAL_WINDOW_MS = 5 * 60 * 1000;
@@ -213,34 +214,18 @@ const leaseForTask = async (
   provider: AgentProvider,
   failures: string[] = [],
 ): Promise<{ binding: PayloadBinding; payload: string }> => {
-  let currentInventory = inventory;
-  let currentTask =
-    currentInventory.tasks.find(
+  const currentTask =
+    inventory.tasks.find(
       (candidate) => candidate.contract.id === task.contract.id,
     ) ?? task;
-  if (renewalRequired(currentTask)) {
-    const state = currentTask.state;
-    if (!state.holder || state.leaseVersion < 1)
-      throw new ZCodeError('LEASE_CREDENTIAL_MISSING', task.contract.id);
-    runPnpm(
-      runner,
-      currentTask.workspace!,
-      [
-        'task:renew',
-        task.contract.id,
-        '--holder',
-        state.holder,
-        '--lease-version',
-        String(state.leaseVersion),
-      ],
-      'LEASE_RENEWAL_FAILED',
-    );
-    currentInventory = await discoverProject(inventory.root, runner);
-    currentTask = currentInventory.tasks.find(
-      (candidate) => candidate.contract.id === task.contract.id,
-    )!;
-  }
   const state = currentTask.state;
+  if (state.expiresAt && Date.parse(state.expiresAt) <= Date.now())
+    throw new ZCodeError('LEASE_EXPIRED:AUTHORITATIVE_RECOVERY_REQUIRED');
+  if (renewalRequired(currentTask))
+    throw new ZCodeError(
+      'LEASE_RENEWAL_REQUIRED',
+      `pnpm agent:renew -- ${task.contract.id} --expected-lease-id ${state.leaseId ?? '<missing>'} --expected-fencing-version ${state.leaseVersion} --holder ${state.holder ?? '<missing>'}`,
+    );
   if (
     !state.leaseId ||
     !state.holder ||
@@ -250,6 +235,12 @@ const leaseForTask = async (
     state.leaseState !== 'ACTIVE'
   )
     throw new ZCodeError('ACTIVE_LEASE_BINDING_MISSING', task.contract.id);
+  const lifecycleBinding = await readLifecycleBinding(inventory.root, state);
+  const verificationBaseline = await readVerificationBaseline(inventory.root, state);
+  if (!lifecycleBinding || !state.lifecycleBinding)
+    throw new ZCodeError('LIFECYCLE_BINDING_MISSING', task.contract.id);
+  if (!verificationBaseline || !state.verificationBaseline)
+    throw new ZCodeError('VERIFICATION_BASELINE_MISSING', task.contract.id);
   const baseTree = requireSuccess(
     runner.run('git', ['rev-parse', `${state.baseCommit}^{tree}`], {
       cwd: currentTask.workspace,
@@ -269,12 +260,20 @@ const leaseForTask = async (
     baseTree,
     contextManifestPath: currentTask.contextManifestPath,
     contextManifestSha256: currentTask.contextManifestSha256,
-    ...(currentTask.conformanceManifestPath
-      ? { conformanceManifestPath: currentTask.conformanceManifestPath }
+    ...(lifecycleBinding.conformanceManifestPath
+      ? { conformanceManifestPath: lifecycleBinding.conformanceManifestPath }
       : {}),
-    ...(currentTask.conformanceManifestSha256
-      ? { conformanceManifestSha256: currentTask.conformanceManifestSha256 }
+    ...(lifecycleBinding.conformanceManifestSha256
+      ? { conformanceManifestSha256: lifecycleBinding.conformanceManifestSha256 }
       : {}),
+    taskContractPath: lifecycleBinding.contractPath,
+    taskContractSha256: lifecycleBinding.contractSha256,
+    lifecycleBindingPath: state.lifecycleBinding.path,
+    lifecycleBindingSha256: state.lifecycleBinding.sha256,
+    verificationBaselinePath: state.verificationBaseline.path,
+    verificationBaselineSha256: state.verificationBaseline.sha256,
+    controlPlaneCommit: verificationBaseline.controlPlaneCommit,
+    controlPlaneTree: verificationBaseline.controlPlaneTree,
     failures,
   }, provider.id, (complete) => provider.generatePayload(complete));
 };
@@ -594,6 +593,21 @@ const validateVerifiedTask = async (
   const state = task.state;
   if (!state.leaseId || state.leaseVersion < 1)
     throw new ZCodeError('VERIFIED_TASK_LEASE_MISSING');
+  if (!state.baseCommit || !state.holder || !state.branch)
+    throw new ZCodeError('VERIFIED_TASK_BINDING_INCOMPLETE');
+  const result = await readTaskResult(task.contract.id, task.workspace);
+  const lifecycle = await readLifecycleBinding(inventory.root, state);
+  const baseline = await readVerificationBaseline(inventory.root, state);
+  if (!lifecycle || !baseline || !state.lifecycleBinding || !state.verificationBaseline)
+    throw new ZCodeError('TRUSTED_AUTHORITY_BINDING_MISSING');
+  const baseTree = requireSuccess(
+    runner.run('git', ['rev-parse', `${state.baseCommit}^{tree}`], { cwd: task.workspace }),
+    'TASK_BASE_TREE_UNAVAILABLE',
+    'git rev-parse base^{tree}',
+  );
+  const provider = result.bindings.launchReceiptId.startsWith('antigravity-')
+    ? 'antigravity'
+    : 'zcode';
   await validateLaunchReceipt(inventory.root, runner, {
     taskId: task.contract.id,
     clusterId: task.contract.cluster,
@@ -603,6 +617,29 @@ const validateVerifiedTask = async (
     ...(task.conformanceManifestSha256
       ? { conformanceManifestSha256: task.conformanceManifestSha256 }
       : {}),
+    receiptId: result.bindings.launchReceiptId,
+    receiptSha256: result.bindings.launchReceiptSha256,
+    provider,
+    holder: state.holder,
+    taskBranch: state.branch,
+    taskWorktree: task.workspace,
+    clusterBranch: task.cluster.branch.branch,
+    clusterWorktree: task.cluster.branch.worktree,
+    baseCommit: state.baseCommit,
+    baseTree,
+    release: inventory.release,
+    integrationTarget: task.cluster.branch.integrationTarget,
+    contextManifestPath: task.contextManifestPath,
+    contractPath: lifecycle.contractPath,
+    contractSha256: lifecycle.contractSha256,
+    lifecycleBindingPath: state.lifecycleBinding.path,
+    lifecycleBindingSha256: state.lifecycleBinding.sha256,
+    verificationBaselinePath: state.verificationBaseline.path,
+    verificationBaselineSha256: state.verificationBaseline.sha256,
+    pathLocks: task.contract.exclusiveLocks,
+    controlPlaneCommit: baseline.controlPlaneCommit,
+    controlPlaneTree: baseline.controlPlaneTree,
+    requireProviderNeutral: true,
   });
   if (task.compatibilityMigration === 'LEGACY_ACTIVE_CONTRACT') {
     const compatibilityPath = join(
@@ -620,7 +657,6 @@ const validateVerifiedTask = async (
         ],
       );
   }
-  const result = await readTaskResult(task.contract.id, task.workspace);
   await validateTaskAttestation(task.contract, result, {
     cwd: task.workspace,
     currentHeadRequired: true,
@@ -652,8 +688,10 @@ export const verifyAndIntegrateTask = async (
         state.holder!,
         '--lease-version',
         String(state.leaseVersion),
+        '--target-worktree',
+        task.workspace,
       ],
-      { cwd: task.workspace },
+      { cwd: inventory.root },
     );
     if (result.status !== 0) {
       const refreshed = await rediscover(inventory.root, runner);
@@ -729,11 +767,11 @@ const reviewPackagePath = async (
 Review the complete diff on \`${cluster.branch.branch}\` against \`${cluster.branch.integrationTarget}\`.
 Verify every task result, requirement, acceptance criterion, invariant, dependency interface, migration, security boundary, rollback path, degraded behavior, and capability state.
 
-Write the independent review to:
+The cluster result already freezes the reviewed product commit and tree. Write the independent review to:
 
 \`artifacts/reviews/clusters/${cluster.contract.id}.review.json\`
 
-The file must conform to \`docs/schemas/cluster-review.schema.json\`, name this cluster, and record \`PASS\` only when there is no release-blocking P0/P1 finding. Commit that review artifact atomically on the cluster branch. Do not modify product source. Then run \`pnpm agent\` again from the root repository.
+The file must conform to \`docs/schemas/cluster-review.schema.json\` and bind the exact product commit, product tree, cluster contract hash, cluster result path/hash, and every task attestation hash. Record \`PASS\` only when there is no unresolved P0/P1 finding. Commit only that exact review artifact in one commit whose direct parent is the reviewed product commit. Omit \`reviewArtifactCommit\` inside that commit because a commit cannot contain its own hash; the trusted validator derives the review commit from Git and verifies its parent and artifact-only diff. Do not modify product source, contracts, tests, generated manifests, or the cluster result. Then run \`pnpm agent\` again from the root repository.
 `;
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, text, { mode: 0o600 });
@@ -751,12 +789,6 @@ const verifyCluster = async (
     cluster.branch.worktree,
     ['cluster:verify', cluster.contract.id],
     'CLUSTER_VERIFICATION_FAILED',
-  );
-  runPnpm(
-    runner,
-    cluster.branch.worktree,
-    ['cluster:report', cluster.contract.id],
-    'CLUSTER_REPORT_FAILED',
   );
   return discoverProject(inventory.root, runner);
 };

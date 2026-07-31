@@ -108,6 +108,30 @@ export const createAttestationFixture =
       root,
     );
     const leaseId = `${task.id}:1:fixture`;
+    const lifecycleBindingText = `${JSON.stringify(
+      {
+        schemaVersion: '1.0.0',
+        taskId: task.id,
+        clusterId: task.cluster,
+        contractMode: 'GENERATED',
+        bindingRoot: root,
+        contractPath: `tasks/${task.dependencyGroup}/${task.id}.contract.json`,
+        contractSha256: sha256(contractText),
+        contextManifestPath: `artifacts/context/${task.id}/context-manifest.json`,
+        contextManifestSha256: 'c'.repeat(64),
+        ...(task.conformanceManifestPath ? { conformanceManifestPath: task.conformanceManifestPath } : {}),
+        ...(task.conformanceManifestSha256 ? { conformanceManifestSha256: task.conformanceManifestSha256 } : {}),
+        sourceHashes: task.sourceHashes,
+        baseCommit: base,
+      },
+      null,
+      2,
+    )}\n`;
+    const lifecycleBindingSha256 = sha256(lifecycleBindingText);
+    await put(runtimeRoot(root), 'lifecycle-binding.json', lifecycleBindingText);
+    const verificationBaselineSha256 = 'e'.repeat(64);
+    const launchReceiptId = 'antigravity-fixture';
+    const launchReceiptSha256 = 'd'.repeat(64);
     const mandatoryPassNames = [
       'requirement-coverage',
       'acceptance-test-coverage',
@@ -133,6 +157,10 @@ export const createAttestationFixture =
       })),
       leaseId,
       leaseFencingVersion: 1,
+      lifecycleBindingSha256,
+      verificationBaselineSha256,
+      launchReceiptId,
+      launchReceiptSha256,
       reviewedAt: '2026-07-21T00:00:00.000Z',
       rebase: { conflictsDetected: false, semanticChangesDetected: false },
       passes: mandatoryPassNames.map((name) => ({
@@ -178,6 +206,10 @@ export const createAttestationFixture =
         selfReviewSha256: sha256(reviewText),
         conformanceManifestPath: task.conformanceManifestPath,
         conformanceManifestSha256: task.conformanceManifestSha256,
+        lifecycleBindingSha256,
+        verificationBaselineSha256,
+        launchReceiptId,
+        launchReceiptSha256,
       },
       commandEvidence,
     });
@@ -190,6 +222,8 @@ export const createAttestationFixture =
       expiresAt: '2099-01-01T00:00:00.000Z',
       baseCommit: base,
       branch: 'task/t-g0-core',
+      lifecycleBinding: { path: 'lifecycle-binding.json', sha256: lifecycleBindingSha256, status: 'CURRENT' },
+      verificationBaseline: { path: 'verification-baseline.json', sha256: verificationBaselineSha256, status: 'CURRENT' },
     };
     return {
       root,

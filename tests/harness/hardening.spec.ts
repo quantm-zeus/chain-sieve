@@ -27,6 +27,17 @@ describe('context, acceptance partition, and specification hardening', () => {
     expect(buildImplementationBrief('T-G0-X', [requirement], [{ path: 'bad/path', status: 'INVALID_REFERENCE' }])).toMatchObject({ specificationStatus: 'SPECIFICATION_GAP' });
   });
 
+  it('requires deterministic ownership evidence for future paths', () => {
+    const requirement = { id: 'FR-X-001', text: 'Detailed input output schema returns an explicit result with failure status.', textSha256: 'a', line: 1, owner: 'packages/x', dependencyGroup: 'G0', implementationRefs: [], schemaRefs: [], persistenceRefs: [], apiToolUiRefs: [], testRefs: [], fixtureRefs: [], telemetryRefs: [], rollbackRefs: [], activationGateRefs: [] };
+    const task = { id: 'T-G0-X', cluster: 'C-G0-X', requirements: ['FR-X-001'], ownerPackages: ['packages/x'], writeSet: ['packages/x/**'], allowedPaths: ['packages/x/**'], forbiddenPaths: ['docs/spec/**', 'infra/migrations/**'], changeBudget: { maxMigrations: 0 } };
+    const classify = (path: string, allTasks: typeof task[] = []) => classifyReferencedPaths([{ ...requirement, implementationRefs: [path] }], task, [task, ...allTasks])[0]!;
+    expect(classify('packagess/x/typo.ts').status).toBe('INVALID_REFERENCE');
+    expect(classify('docs/spec/forbidden.md').status).toBe('INVALID_REFERENCE');
+    expect(classify('packages/y/src/output.ts', [{ ...task, id: 'T-G0-Y', ownerPackages: ['packages/y'], writeSet: ['packages/y/**'], allowedPaths: ['packages/y/**'], forbiddenPaths: [] }])).toMatchObject({ status: 'OWNED_BY_OTHER_TASK', ownerTask: 'T-G0-Y' });
+    expect(classify('migrations/g0_x_*.sql').status).toBe('SPECIFICATION_GAP');
+    expect(classify('packages/x/src/output.ts').status).toBe('EXPECTED_TO_CREATE');
+  });
+
   it('detects cross-task, cluster, and project acceptance levels', () => {
     const criteria = [
       { id: 'AC-T', text: 'local', textSha256: 'a', line: 1, requirementRefs: ['FR-A'], positiveTestRef: 'p', negativeOrFailureTestRef: 'n' },
@@ -54,5 +65,24 @@ describe('context, acceptance partition, and specification hardening', () => {
     expect(core.acceptanceCriteria).not.toContain('AC-245');
     expect(core.taskAcceptanceFacets.find((item) => item.acceptanceId === 'AC-001')?.text).toContain('does not claim full AC-001 satisfaction');
     expect(core.taskAcceptanceFacets.find((item) => item.acceptanceId === 'AC-245')?.text).toContain('does not claim full AC-245 satisfaction');
+  });
+
+  it('accounts for every task exactly once and never schedules a specification gap', async () => {
+    const queue = JSON.parse(await readFile('tasks/generated/ready-queue.json', 'utf8')) as {
+      counts: { total: number; implementationReady: number; specificationGap: number };
+      ready: string[];
+      blocked: Array<{ taskId: string; reason: string }>;
+    };
+    expect(queue.counts).toEqual({ total: 84, implementationReady: 71, specificationGap: 13 });
+    const scheduled = [
+      ...queue.ready,
+      ...queue.blocked.map((item) => item.taskId),
+    ];
+    expect(new Set(scheduled).size).toBe(84);
+    expect(scheduled).toHaveLength(84);
+    const gaps = queue.blocked.filter((item) => item.reason === 'SPECIFICATION_GAP');
+    expect(gaps).toHaveLength(13);
+    expect(queue.ready.some((taskId) => gaps.some((item) => item.taskId === taskId))).toBe(false);
+    expect(gaps.some((item) => item.taskId === 'T-G0-CORE')).toBe(true);
   });
 });

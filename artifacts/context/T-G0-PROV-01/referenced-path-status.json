@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/prov-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -15,7 +15,8 @@
   },
   {
     "path": "migrations/g0_prov_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-DATA",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -29,7 +30,8 @@
   },
   {
     "path": "packages/provider-lifecycle/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-PROV-02",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -43,7 +45,8 @@
   },
   {
     "path": "packages/providers/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-PROV-02",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -72,7 +75,7 @@
   },
   {
     "path": "telemetry/prov.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -86,7 +89,7 @@
   },
   {
     "path": "tests/acceptance/AC-250.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -100,7 +103,7 @@
   },
   {
     "path": "tests/acceptance/AC-251.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -114,7 +117,7 @@
   },
   {
     "path": "tests/acceptance/AC-252.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -128,7 +131,7 @@
   },
   {
     "path": "tests/acceptance/AC-253.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -142,7 +145,7 @@
   },
   {
     "path": "tests/acceptance/AC-254.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -156,7 +159,7 @@
   },
   {
     "path": "tests/acceptance/AC-255.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -170,7 +173,7 @@
   },
   {
     "path": "tests/acceptance/AC-256.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -184,7 +187,7 @@
   },
   {
     "path": "tests/acceptance/AC-257.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -198,7 +201,7 @@
   },
   {
     "path": "tests/acceptance/AC-258.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -212,7 +215,7 @@
   },
   {
     "path": "tests/acceptance/AC-259.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -226,7 +229,7 @@
   },
   {
     "path": "tests/acceptance/AC-270.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -240,7 +243,7 @@
   },
   {
     "path": "tests/acceptance/AC-271.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -254,7 +257,7 @@
   },
   {
     "path": "tests/acceptance/AC-272.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -268,7 +271,7 @@
   },
   {
     "path": "tests/acceptance/AC-273.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -282,7 +285,7 @@
   },
   {
     "path": "tests/fixtures/prov/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -296,7 +299,7 @@
   },
   {
     "path": "tests/negative/AC-250.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -310,7 +313,7 @@
   },
   {
     "path": "tests/negative/AC-251.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -324,7 +327,7 @@
   },
   {
     "path": "tests/negative/AC-252.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -338,7 +341,7 @@
   },
   {
     "path": "tests/negative/AC-253.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -352,7 +355,7 @@
   },
   {
     "path": "tests/negative/AC-254.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -366,7 +369,7 @@
   },
   {
     "path": "tests/negative/AC-255.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -380,7 +383,7 @@
   },
   {
     "path": "tests/negative/AC-256.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -394,7 +397,7 @@
   },
   {
     "path": "tests/negative/AC-257.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -408,7 +411,7 @@
   },
   {
     "path": "tests/negative/AC-258.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -422,7 +425,7 @@
   },
   {
     "path": "tests/negative/AC-259.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -436,7 +439,7 @@
   },
   {
     "path": "tests/negative/AC-270.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -450,7 +453,7 @@
   },
   {
     "path": "tests/negative/AC-271.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -464,7 +467,7 @@
   },
   {
     "path": "tests/negative/AC-272.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",
@@ -478,7 +481,7 @@
   },
   {
     "path": "tests/negative/AC-273.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-PROV-001",
       "FR-PROV-002",

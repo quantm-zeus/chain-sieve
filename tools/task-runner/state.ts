@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readlink, rename, symlink, unlink, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { TaskLeaseSchema } from '@ciag/shared-schemas';
 
@@ -62,6 +62,20 @@ export interface TaskState {
   selfReviewEvidence?: EvidenceReference;
   taskResultEvidence?: EvidenceReference;
   verificationEvidence?: EvidenceReference;
+  lifecycleBinding?: EvidenceReference;
+  verificationBaseline?: EvidenceReference;
+  completedLifecycleBinding?: EvidenceReference;
+  completedVerificationBaseline?: EvidenceReference;
+  launchReceiptEvidence?: EvidenceReference;
+  retiredLeases?: Array<{
+    leaseId: string;
+    fencingVersion: number;
+    state: 'EXPIRED' | 'RENEWED';
+    retiredAt: string;
+  }>;
+  renewal?: { requestSha256: string; receipt: EvidenceReference; resultingLeaseId: string; resultingFencingVersion: number };
+  recovery?: { requestSha256: string; receipt: EvidenceReference; previousLeaseId: string; previousFencingVersion: number; resultingLeaseId: string; resultingFencingVersion: number };
+  blockedReason?: 'SPECIFICATION_GAP';
   history?: TransitionRecord[];
 }
 
@@ -106,6 +120,44 @@ const commonGitDirectory = (cwd = process.cwd()): string => {
 };
 
 export const runtimeRoot = (cwd = process.cwd()): string => join(commonGitDirectory(cwd), 'ciag-runtime');
+export const acquireLifecycleMutationLock = async (
+  cwd = process.cwd(),
+): Promise<() => Promise<void>> => {
+  const path = join(runtimeRoot(cwd), 'lifecycle-mutation.lock');
+  await mkdir(dirname(path), { recursive: true });
+  const token = `${process.pid}:${Date.now()}`;
+  try {
+    await symlink(token, path);
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === 'EEXIST') {
+      const existing = await readlink(path).catch(() => '');
+      const ownerPid = Number(existing.split(':')[0]);
+      let ownerAlive = Number.isInteger(ownerPid) && ownerPid > 0;
+      if (ownerAlive) {
+        try {
+          process.kill(ownerPid, 0);
+        } catch (processError: unknown) {
+          ownerAlive = (processError as NodeJS.ErrnoException).code === 'EPERM';
+        }
+      }
+      if (!ownerAlive) {
+        await unlink(path).catch(() => undefined);
+        return acquireLifecycleMutationLock(cwd);
+      }
+      throw new Error('LIFECYCLE_MUTATION_IN_PROGRESS');
+    }
+    throw error;
+  }
+  let released = false;
+  return async () => {
+    if (released) return;
+    released = true;
+    if ((await readlink(path).catch(() => '')) !== token) return;
+    await unlink(path).catch((error: unknown) => {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    });
+  };
+};
 export const statePath = (cwd = process.cwd()): string => join(runtimeRoot(cwd), 'task-state.json');
 
 const initialTask = (taskId: string): TaskState => ({
@@ -167,7 +219,9 @@ export const readState = async (tasks: LeaseContract[], cwd = process.cwd()): Pr
 export const writeState = async (state: LifecycleDocument, cwd = process.cwd()): Promise<void> => {
   const target = statePath(cwd);
   await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
+  const temporary = `${target}.${process.pid}.tmp`;
+  await writeFile(temporary, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
+  await rename(temporary, target);
 };
 
 const protectedStates = new Set<TaskLifecycleState>([
@@ -404,6 +458,132 @@ export const renewLease = (
     acquiredAt: target.acquiredAt,
     expiresAt: target.expiresAt,
     state: 'ACTIVE',
+  });
+};
+
+export interface ExplicitRenewalExpectation {
+  taskId: string;
+  expectedLeaseId: string;
+  expectedFencingVersion: number;
+  holder: string;
+  requestSha256: string;
+  receipt: EvidenceReference;
+}
+
+export const renewValidLease = (
+  state: LifecycleDocument,
+  expectation: ExplicitRenewalExpectation,
+  now: Date,
+  ttlMs = 900_000,
+): ReturnType<typeof TaskLeaseSchema.parse> => {
+  const target = state.tasks[expectation.taskId];
+  if (!target) throw new Error('TASK_NOT_FOUND');
+  if (target.renewal?.requestSha256 === expectation.requestSha256) {
+    if (
+      target.leaseId !== target.renewal.resultingLeaseId ||
+      target.leaseVersion !== target.renewal.resultingFencingVersion
+    )
+      throw new Error('RENEWAL_RETRY_NO_LONGER_CURRENT');
+    return TaskLeaseSchema.parse({
+      schemaVersion: '2.0.0', taskId: target.taskId, holder: target.holder,
+      leaseId: target.leaseId, fencingVersion: target.leaseVersion, version: target.leaseVersion,
+      acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: target.leaseState,
+    });
+  }
+  if (target.leaseId !== expectation.expectedLeaseId) throw new Error('RENEWAL_EXPECTED_LEASE_MISMATCH');
+  if (target.leaseVersion !== expectation.expectedFencingVersion) throw new Error('RENEWAL_EXPECTED_FENCING_MISMATCH');
+  if (target.holder !== expectation.holder) throw new Error('RENEWAL_EXPECTED_HOLDER_MISMATCH');
+  const previousLeaseId = target.leaseId;
+  const previousVersion = target.leaseVersion;
+  const credential = currentLeaseCredential(target);
+  const lease = renewLease(state, credential, now, ttlMs);
+  target.retiredLeases ??= [];
+  target.retiredLeases.push({ leaseId: previousLeaseId, fencingVersion: previousVersion, state: 'RENEWED', retiredAt: now.toISOString() });
+  target.renewal = {
+    requestSha256: expectation.requestSha256,
+    receipt: expectation.receipt,
+    resultingLeaseId: lease.leaseId,
+    resultingFencingVersion: lease.fencingVersion,
+  };
+  return lease;
+};
+
+export interface ExpiredRecoveryExpectation {
+  taskId: string;
+  expectedExpiredLeaseId: string;
+  expectedFencingVersion: number;
+  expectedHolder: string;
+  expectedTaskState: TaskLifecycleState;
+  expectedTaskBranch: string;
+  expectedTaskWorktree: string;
+  expectedBaseCommit: string;
+  requestSha256: string;
+  receipt: EvidenceReference;
+}
+
+export const recoverExpiredLease = (
+  state: LifecycleDocument,
+  tasks: LeaseContract[],
+  expectation: ExpiredRecoveryExpectation,
+  now: Date,
+  ttlMs = 900_000,
+): ReturnType<typeof TaskLeaseSchema.parse> => {
+  const target = state.tasks[expectation.taskId];
+  if (!target) throw new Error('TASK_NOT_FOUND');
+  if (target.recovery?.requestSha256 === expectation.requestSha256) {
+    if (
+      target.leaseId !== target.recovery.resultingLeaseId ||
+      target.leaseVersion !== target.recovery.resultingFencingVersion
+    )
+      throw new Error('RECOVERY_RETRY_NO_LONGER_CURRENT');
+    return TaskLeaseSchema.parse({
+      schemaVersion: '2.0.0', taskId: target.taskId, holder: target.holder,
+      leaseId: target.leaseId, fencingVersion: target.leaseVersion, version: target.leaseVersion,
+      acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: target.leaseState,
+    });
+  }
+  if (target.leaseId !== expectation.expectedExpiredLeaseId) throw new Error('RECOVERY_EXPECTED_LEASE_MISMATCH');
+  if (target.leaseVersion !== expectation.expectedFencingVersion) throw new Error('RECOVERY_EXPECTED_FENCING_MISMATCH');
+  if (target.holder !== expectation.expectedHolder) throw new Error('RECOVERY_EXPECTED_HOLDER_MISMATCH');
+  if (target.state !== expectation.expectedTaskState) throw new Error('RECOVERY_EXPECTED_STATE_MISMATCH');
+  if (target.branch !== expectation.expectedTaskBranch) throw new Error('RECOVERY_EXPECTED_BRANCH_MISMATCH');
+  if (target.worktree !== expectation.expectedTaskWorktree) throw new Error('RECOVERY_EXPECTED_WORKTREE_MISMATCH');
+  if (target.baseCommit !== expectation.expectedBaseCommit) throw new Error('RECOVERY_EXPECTED_BASE_MISMATCH');
+  if (!target.expiresAt || Date.parse(target.expiresAt) > now.getTime()) throw new Error('RECOVERY_LEASE_NOT_EXPIRED');
+  if (!protectedStates.has(target.state)) throw new Error('RECOVERY_STATE_NOT_ACTIVE');
+  const contract = tasks.find((item) => item.id === target.taskId);
+  if (!contract) throw new Error('TASK_CONTRACT_NOT_FOUND');
+  const conflict = Object.values(state.tasks).find((item) => {
+    if (item.taskId === target.taskId || !protectedStates.has(item.state)) return false;
+    const other = tasks.find((candidate) => candidate.id === item.taskId);
+    return Boolean(other?.exclusiveLocks.some((lock) => contract.exclusiveLocks.includes(lock)));
+  });
+  if (conflict) throw new Error(`RECOVERY_PATH_LOCK_CONFLICT:${conflict.taskId}`);
+  const secondActive = Object.values(state.tasks).find(
+    (item) => item.taskId !== target.taskId && protectedStates.has(item.state),
+  );
+  if (secondActive) throw new Error(`RECOVERY_MULTIPLE_ACTIVE_TASKS:${secondActive.taskId}`);
+  target.retiredLeases ??= [];
+  target.retiredLeases.push({ leaseId: target.leaseId, fencingVersion: target.leaseVersion, state: 'EXPIRED', retiredAt: now.toISOString() });
+  const previousLeaseId = target.leaseId;
+  const previousFencingVersion = target.leaseVersion;
+  target.leaseVersion += 1;
+  target.leaseId = `${target.taskId}:${target.leaseVersion}:recovery:${expectation.requestSha256.slice(0, 16)}`;
+  target.renewedAt = now.toISOString();
+  target.expiresAt = new Date(now.getTime() + ttlMs).toISOString();
+  target.leaseState = 'ACTIVE';
+  target.recovery = {
+    requestSha256: expectation.requestSha256,
+    receipt: expectation.receipt,
+    previousLeaseId,
+    previousFencingVersion,
+    resultingLeaseId: target.leaseId,
+    resultingFencingVersion: target.leaseVersion,
+  };
+  return TaskLeaseSchema.parse({
+    schemaVersion: '2.0.0', taskId: target.taskId, holder: target.holder,
+    leaseId: target.leaseId, fencingVersion: target.leaseVersion, version: target.leaseVersion,
+    acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: 'ACTIVE',
   });
 };
 

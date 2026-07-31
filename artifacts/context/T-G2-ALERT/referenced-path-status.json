@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/alert-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -12,7 +12,8 @@
   },
   {
     "path": "migrations/g2_alert_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G2-DR",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -46,7 +47,7 @@
   },
   {
     "path": "telemetry/alert.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -57,7 +58,7 @@
   },
   {
     "path": "tests/acceptance/AC-140.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -68,7 +69,7 @@
   },
   {
     "path": "tests/acceptance/AC-141.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -79,7 +80,7 @@
   },
   {
     "path": "tests/acceptance/AC-142.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -90,7 +91,7 @@
   },
   {
     "path": "tests/acceptance/AC-143.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -101,7 +102,7 @@
   },
   {
     "path": "tests/acceptance/AC-245.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -112,7 +113,7 @@
   },
   {
     "path": "tests/acceptance/AC-246.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -123,7 +124,7 @@
   },
   {
     "path": "tests/acceptance/AC-247.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -134,7 +135,7 @@
   },
   {
     "path": "tests/acceptance/AC-248.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -145,7 +146,7 @@
   },
   {
     "path": "tests/acceptance/AC-249.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -156,7 +157,7 @@
   },
   {
     "path": "tests/fixtures/alert/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -167,7 +168,7 @@
   },
   {
     "path": "tests/negative/AC-140.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -178,7 +179,7 @@
   },
   {
     "path": "tests/negative/AC-141.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -189,7 +190,7 @@
   },
   {
     "path": "tests/negative/AC-142.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -200,7 +201,7 @@
   },
   {
     "path": "tests/negative/AC-143.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -211,7 +212,7 @@
   },
   {
     "path": "tests/negative/AC-245.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -222,7 +223,7 @@
   },
   {
     "path": "tests/negative/AC-246.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -233,7 +234,7 @@
   },
   {
     "path": "tests/negative/AC-247.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -244,7 +245,7 @@
   },
   {
     "path": "tests/negative/AC-248.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",
@@ -255,7 +256,7 @@
   },
   {
     "path": "tests/negative/AC-249.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-ALERT-001",
       "FR-ALERT-002",

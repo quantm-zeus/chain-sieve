@@ -159,6 +159,16 @@ export interface PayloadBinding {
   contextManifestSha256: string;
   conformanceManifestPath?: string;
   conformanceManifestSha256?: string;
+  taskContractPath: string;
+  taskContractSha256: string;
+  lifecycleBindingPath: string;
+  lifecycleBindingSha256: string;
+  verificationBaselinePath: string;
+  verificationBaselineSha256: string;
+  controlPlaneCommit: string;
+  controlPlaneTree: string;
+  launchReceiptId?: string;
+  launchReceiptSha256?: string;
   failures: string[];
 }
 

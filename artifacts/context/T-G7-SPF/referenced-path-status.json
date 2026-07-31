@@ -1,7 +1,7 @@
 [
   {
     "path": "docs/generated/spf-surfaces.json",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -15,7 +15,7 @@
   },
   {
     "path": "migrations/g7_spf_*.sql",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -29,7 +29,8 @@
   },
   {
     "path": "packages/shadow-portfolio/**",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-OBJ-01",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -58,7 +59,7 @@
   },
   {
     "path": "telemetry/spf.*",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -72,7 +73,7 @@
   },
   {
     "path": "tests/acceptance/AC-190.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -86,7 +87,7 @@
   },
   {
     "path": "tests/acceptance/AC-191.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -100,7 +101,7 @@
   },
   {
     "path": "tests/acceptance/AC-192.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -114,7 +115,7 @@
   },
   {
     "path": "tests/acceptance/AC-193.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -128,7 +129,7 @@
   },
   {
     "path": "tests/acceptance/AC-194.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -142,7 +143,7 @@
   },
   {
     "path": "tests/acceptance/AC-195.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -156,7 +157,7 @@
   },
   {
     "path": "tests/acceptance/AC-196.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -170,7 +171,7 @@
   },
   {
     "path": "tests/acceptance/AC-197.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -184,7 +185,7 @@
   },
   {
     "path": "tests/acceptance/AC-198.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -198,7 +199,7 @@
   },
   {
     "path": "tests/fixtures/spf/",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -212,7 +213,7 @@
   },
   {
     "path": "tests/negative/AC-190.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -226,7 +227,7 @@
   },
   {
     "path": "tests/negative/AC-191.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -240,7 +241,7 @@
   },
   {
     "path": "tests/negative/AC-192.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -254,7 +255,7 @@
   },
   {
     "path": "tests/negative/AC-193.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -268,7 +269,7 @@
   },
   {
     "path": "tests/negative/AC-194.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -282,7 +283,7 @@
   },
   {
     "path": "tests/negative/AC-195.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -296,7 +297,7 @@
   },
   {
     "path": "tests/negative/AC-196.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -310,7 +311,7 @@
   },
   {
     "path": "tests/negative/AC-197.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",
@@ -324,7 +325,7 @@
   },
   {
     "path": "tests/negative/AC-198.negative.spec.ts",
-    "status": "EXPECTED_TO_CREATE",
+    "status": "SPECIFICATION_GAP",
     "requirementIds": [
       "FR-SPF-001",
       "FR-SPF-002",

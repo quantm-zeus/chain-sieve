@@ -14,13 +14,13 @@ import {
   readState,
   refreshReady,
   releaseLease,
-  renewLease,
   transition,
   writeState,
   type EvidenceReference,
 } from './state.js';
 import { productValidationInput, validateLifecycleContract, type LifecycleValidationInput } from './validator.js';
 import { taskBranch } from '../worktree-manager/identity.js';
+import { persistLifecycleAuthority } from './authority.js';
 
 const option = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -30,6 +30,19 @@ const git = (args: string[]): string => {
   const result = spawnSync('git', args, { encoding: 'utf8' });
   if (result.status !== 0) throw new Error(`GIT_FAILED:${args.join(':')}`);
   return result.stdout.trim();
+};
+const trustedRoot = (): string => {
+  if (process.env.CIAG_LIFECYCLE_HARNESS === '1' && process.env.CIAG_TRUSTED_CONTROL_PLANE)
+    return process.env.CIAG_TRUSTED_CONTROL_PLANE;
+  const blocks = git(['worktree', 'list', '--porcelain']).split('\n\n');
+  for (const block of blocks) {
+    const lines = block.split('\n');
+    if (lines.includes('branch refs/heads/main')) {
+      const worktree = lines.find((line) => line.startsWith('worktree '));
+      if (worktree) return worktree.slice('worktree '.length);
+    }
+  }
+  throw new Error('TRUSTED_MAIN_WORKTREE_NOT_FOUND');
 };
 const yamlList = (yaml: string, key: string): string[] => {
   const lines = yaml.split('\n');
@@ -91,13 +104,25 @@ try {
   const tasks = [...productTasks, ...repairTasks];
   const state = await readState(tasks);
   if (command === 'list') console.log(JSON.stringify(Object.values(state.tasks), null, 2));
-  else if (command === 'ready')
-    console.log(JSON.stringify(Object.values(state.tasks).filter((task) => task.state === 'READY'), null, 2));
+  else if (command === 'ready') {
+    const runnable = new Set(productTasks.filter((task) => task.specificationStatus === 'READY').map((task) => task.id));
+    console.log(JSON.stringify(Object.values(state.tasks).filter((task) => task.state === 'READY' && runnable.has(task.taskId)), null, 2));
+  }
   else if (!taskId) throw new Error('TASK_ID_REQUIRED');
   else if (command === 'validate') {
     const product = productTasks.find((task) => task.id === taskId);
     const repair = repairTasks.find((task) => task.id === taskId);
     if (!product && !repair) throw new Error('TASK_NOT_FOUND');
+    if (product?.specificationStatus === 'SPECIFICATION_GAP') {
+      const target = state.tasks[taskId]!;
+      const from = target.state;
+      target.state = 'BLOCKED';
+      target.blockedReason = 'SPECIFICATION_GAP';
+      target.history ??= [];
+      target.history.push({ from, to: 'BLOCKED', at: new Date().toISOString(), command: 'task:validate:specification-gap' });
+      await writeState(state);
+      console.log(JSON.stringify({ status: 'BLOCKED', reason: 'SPECIFICATION_GAP', taskId }, null, 2));
+    } else {
     if (product) await verifyTaskContract(taskId);
     const specification = await loadAndValidateSpecification();
     const input = product
@@ -107,6 +132,7 @@ try {
     markValidated(state.tasks[taskId]!, evidence);
     await writeState(state);
     console.log(JSON.stringify({ status: 'VALIDATED', artifact, evidence }, null, 2));
+    }
   } else if (command === 'mark-ready') {
     markReady(state, tasks, taskId);
     await writeState(state);
@@ -117,6 +143,16 @@ try {
     const branch = git(['branch', '--show-current']);
     if (branch !== expected) throw new Error(`TASK_BRANCH_REQUIRED:${expected}`);
     const lease = acquire(state, tasks, taskId, holder, new Date(), 900_000, git(['rev-parse', 'HEAD']), branch);
+    const product = productTasks.find((task) => task.id === taskId);
+    if (product) {
+      const authority = await persistLifecycleAuthority({
+        trustedRoot: trustedRoot(), taskRoot: process.cwd(), task: product,
+        state: state.tasks[taskId]!, contractPath: `tasks/${product.dependencyGroup}/${product.id}.contract.json`,
+        contextManifestPath: `artifacts/context/${product.id}/context-manifest.json`, contractMode: 'GENERATED',
+      });
+      state.tasks[taskId]!.lifecycleBinding = authority.binding;
+      state.tasks[taskId]!.verificationBaseline = authority.baseline;
+    }
     await writeState(state);
     console.log(JSON.stringify(lease, null, 2));
   } else {
@@ -124,9 +160,9 @@ try {
     const target = assertLease(state, taskId, version, holder, new Date());
     const credential = currentLeaseCredential(target);
     if (command === 'renew') {
-      const lease = renewLease(state, credential, new Date());
-      await writeState(state);
-      console.log(JSON.stringify(lease, null, 2));
+      throw new Error(
+        `IMPLICIT_RENEWAL_PROHIBITED:USE_AGENT_RENEW:${taskId}:${credential.leaseId}:${credential.fencingVersion}`,
+      );
     } else if (command === 'begin') {
       const expected =
         repairTasks.find((task) => task.id === taskId)?.approvedBranch ?? taskBranch(taskId);
@@ -161,7 +197,8 @@ try {
         evidence: implementationEvidence,
       });
       await writeState(state);
-      const review = await performTaskSelfReview(task, target, holder);
+      const launchReceiptId = option('--launch-receipt-id');
+      const review = await performTaskSelfReview(task, target, holder, process.cwd(), { ...(launchReceiptId ? { launchReceiptId } : {}) });
       target.selfReviewEvidence = review.evidence;
       await registerCurrentEvidence(taskId, 'SELF_REVIEW', review.evidence);
       await writeState(state);

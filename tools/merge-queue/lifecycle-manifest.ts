@@ -20,7 +20,7 @@ export const requiredLifecycleCommands = [
   'task:mark-ready',
   'worktree:create',
   'task:acquire',
-  'task:renew',
+  'agent:renew',
   'task:begin',
   'task:self-review',
   'task:verify',

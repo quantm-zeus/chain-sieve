@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { TaskReviewSchema, type TaskContract } from '@ciag/shared-schemas';
 import { sha256 } from '../prd-compiler/compiler.js';
@@ -55,6 +55,7 @@ const patchId = (commit: string, cwd: string): string => {
 export interface SelfReviewOptions {
   previousHeadCommit?: string;
   now?: Date;
+  launchReceiptId?: string;
 }
 
 export const performTaskSelfReview = async (
@@ -65,6 +66,11 @@ export const performTaskSelfReview = async (
   options: SelfReviewOptions = {},
 ): Promise<{ path: string; sha256: string; evidence: EvidenceReference }> => {
   if (!target.baseCommit) throw new Error('TASK_BASE_COMMIT_MISSING');
+  if (!target.lifecycleBinding || !target.verificationBaseline)
+    throw new Error('TRUSTED_LIFECYCLE_AUTHORITY_MISSING');
+  if (!options.launchReceiptId) throw new Error('LAUNCH_RECEIPT_ID_REQUIRED');
+  const receiptPath = join(runtimeRoot(cwd), 'agent', 'launch-receipts', task.id, `${options.launchReceiptId}.json`);
+  const receiptText = await readFile(receiptPath, 'utf8');
   const credential = currentLeaseCredential(target);
   const head = git(['rev-parse', 'HEAD'], cwd);
   const tree = git(['rev-parse', 'HEAD^{tree}'], cwd);
@@ -107,6 +113,10 @@ export const performTaskSelfReview = async (
     acceptanceTestArtifacts,
     leaseId: credential.leaseId,
     leaseFencingVersion: credential.fencingVersion,
+    lifecycleBindingSha256: target.lifecycleBinding.sha256,
+    verificationBaselineSha256: target.verificationBaseline.sha256,
+    launchReceiptId: options.launchReceiptId,
+    launchReceiptSha256: sha256(receiptText),
     reviewedAt: (options.now ?? new Date()).toISOString(),
     rebase: {
       ...(options.previousHeadCommit ? { previousHeadCommit: options.previousHeadCommit } : {}),

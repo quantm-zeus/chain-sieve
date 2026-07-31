@@ -6,6 +6,7 @@ import { TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/sha
 import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.js';
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
+import { readLifecycleBinding } from '../task-runner/authority.js';
 
 export const TASK_VERIFIER_VERSION = '2.0.0';
 export const VERIFICATION_POLICY_VERSION = 'harness-task-proof-v2';
@@ -189,6 +190,13 @@ const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskS
     review.leaseFencingVersion !== result.bindings.leaseFencingVersion
   )
     throw new Error('SELF_REVIEW_LEASE_BINDING_MISMATCH');
+  if (
+    review.lifecycleBindingSha256 !== result.bindings.lifecycleBindingSha256 ||
+    review.verificationBaselineSha256 !== result.bindings.verificationBaselineSha256 ||
+    review.launchReceiptId !== result.bindings.launchReceiptId ||
+    review.launchReceiptSha256 !== result.bindings.launchReceiptSha256
+  )
+    throw new Error('SELF_REVIEW_TRUSTED_AUTHORITY_BINDING_MISMATCH');
   if (Date.parse(review.reviewedAt) > Date.parse(result.bindings.verificationTimestamp))
     throw new Error('TASK_RESULT_PREDATES_FRESH_SELF_REVIEW');
   if (
@@ -223,7 +231,30 @@ export const validateTaskAttestation = async (
   if (result.taskId !== task.id) throw new Error(`TASK_RESULT_COPIED_FROM_ANOTHER_TASK:${result.taskId}`);
   const specification = await loadAndValidateSpecification();
   const bindings = result.bindings;
-  const contractText = await readFile(join(cwd, contractPath(task)), 'utf8');
+  const lifecycleEvidence = options.state?.lifecycleBinding ?? options.state?.completedLifecycleBinding;
+  const baselineEvidence = options.state?.verificationBaseline ?? options.state?.completedVerificationBaseline;
+  if (
+    options.state &&
+    (lifecycleEvidence?.sha256 !== bindings.lifecycleBindingSha256 ||
+      baselineEvidence?.sha256 !== bindings.verificationBaselineSha256)
+  )
+    throw new Error('TASK_RESULT_TRUSTED_AUTHORITY_MISMATCH');
+  const lifecycle = options.state ? await readLifecycleBinding(cwd, options.state, true) : undefined;
+  let contractText: string;
+  try {
+    contractText = await readFile(
+      lifecycle ? join(lifecycle.bindingRoot, lifecycle.contractPath) : join(cwd, contractPath(task)),
+      'utf8',
+    );
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || !lifecycle) throw error;
+    const archived = spawnSync('git', ['show', `${bindings.headCommitSha}:${lifecycle.contractPath}`], {
+      cwd,
+      encoding: 'utf8',
+    });
+    if (archived.status !== 0) throw new Error('COMPLETED_LIFECYCLE_CONTRACT_MISSING');
+    contractText = archived.stdout;
+  }
   if (sha256(contractText) !== bindings.taskContractSha256) throw new Error('WRONG_TASK_CONTRACT_HASH');
   if (task.conformanceManifestPath && task.conformanceManifestSha256) {
     if (
@@ -232,7 +263,7 @@ export const validateTaskAttestation = async (
     )
       throw new Error('CONFORMANCE_RESULT_BINDING_MISMATCH');
     const conformanceText = await readFile(
-      join(cwd, task.conformanceManifestPath),
+      join(lifecycle?.conformanceBindingRoot ?? cwd, task.conformanceManifestPath),
       'utf8',
     );
     if (sha256(conformanceText) !== task.conformanceManifestSha256)
