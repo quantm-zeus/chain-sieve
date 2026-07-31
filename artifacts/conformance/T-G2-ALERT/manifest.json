@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-ALERT",
+  "immutable": true,
+  "requirements": [
+    "FR-ALERT-001",
+    "FR-ALERT-002",
+    "FR-ALERT-003",
+    "FR-ALERT-004",
+    "FR-ALERT-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-140:T-G2-ALERT:INTERFACE_FACET",
+    "AC-141:T-G2-ALERT:INTERFACE_FACET",
+    "AC-142:T-G2-ALERT:INTERFACE_FACET",
+    "AC-143:T-G2-ALERT:INTERFACE_FACET",
+    "AC-245:T-G2-ALERT:INTERFACE_FACET",
+    "AC-246:T-G2-ALERT:INTERFACE_FACET",
+    "AC-247:T-G2-ALERT:INTERFACE_FACET",
+    "AC-248:T-G2-ALERT:INTERFACE_FACET",
+    "AC-249:T-G2-ALERT:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G2-ALERT.spec.ts",
+    "tests/task-facets/T-G2-ALERT.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/alerts/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G2-ALERT/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

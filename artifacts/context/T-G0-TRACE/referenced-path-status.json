@@ -1,0 +1,207 @@
+[
+  {
+    "path": "docs/generated/trace-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "migrations/g0_trace_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "packages/release-conformance/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "packages/requirement-manifest/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/trace.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "telemetry/trace.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-265.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-266.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-267.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-268.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-269.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/fixtures/trace/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-265.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-266.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-267.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-268.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-269.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-TRACE-001",
+      "FR-TRACE-002",
+      "FR-TRACE-003",
+      "FR-TRACE-004",
+      "FR-TRACE-005",
+      "FR-TRACE-006"
+    ]
+  }
+]

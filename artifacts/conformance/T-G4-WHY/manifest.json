@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-WHY",
+  "immutable": true,
+  "requirements": [
+    "FR-WHY-001",
+    "FR-WHY-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-070:T-G4-WHY:INTERFACE_FACET",
+    "AC-071:T-G4-WHY:INTERFACE_FACET",
+    "AC-072:T-G4-WHY:INTERFACE_FACET",
+    "AC-073:T-G4-WHY:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-WHY.spec.ts",
+    "tests/task-facets/T-G4-WHY.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/thesis/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-WHY/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

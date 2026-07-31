@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-ALAB-001",
+    "sourceLine": 6361,
+    "startLine": 6359,
+    "endLine": 6363,
+    "exactText": "### 38.36 Offline Alpha Lab and artifact import\n\n- **FR-ALAB-001 MUST:** Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths.\n- **FR-ALAB-002 MUST:** Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.\n- **FR-ALAB-003 MUST:** Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited."
+  },
+  {
+    "id": "FR-ALAB-002",
+    "sourceLine": 6362,
+    "startLine": 6360,
+    "endLine": 6364,
+    "exactText": "\n- **FR-ALAB-001 MUST:** Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths.\n- **FR-ALAB-002 MUST:** Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.\n- **FR-ALAB-003 MUST:** Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.\n- **FR-ALAB-004 MUST:** Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key."
+  },
+  {
+    "id": "FR-ALAB-003",
+    "sourceLine": 6363,
+    "startLine": 6361,
+    "endLine": 6365,
+    "exactText": "- **FR-ALAB-001 MUST:** Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths.\n- **FR-ALAB-002 MUST:** Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.\n- **FR-ALAB-003 MUST:** Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.\n- **FR-ALAB-004 MUST:** Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.\n- **FR-ALAB-005 MUST:** Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions."
+  },
+  {
+    "id": "FR-ALAB-004",
+    "sourceLine": 6364,
+    "startLine": 6362,
+    "endLine": 6366,
+    "exactText": "- **FR-ALAB-002 MUST:** Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.\n- **FR-ALAB-003 MUST:** Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.\n- **FR-ALAB-004 MUST:** Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.\n- **FR-ALAB-005 MUST:** Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.\n- **FR-ALAB-006 MUST:** Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine."
+  },
+  {
+    "id": "FR-ALAB-005",
+    "sourceLine": 6365,
+    "startLine": 6363,
+    "endLine": 6367,
+    "exactText": "- **FR-ALAB-003 MUST:** Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.\n- **FR-ALAB-004 MUST:** Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.\n- **FR-ALAB-005 MUST:** Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.\n- **FR-ALAB-006 MUST:** Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine.\n- **FR-AEP-001 MUST:** A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields."
+  },
+  {
+    "id": "FR-ALAB-006",
+    "sourceLine": 6366,
+    "startLine": 6364,
+    "endLine": 6368,
+    "exactText": "- **FR-ALAB-004 MUST:** Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.\n- **FR-ALAB-005 MUST:** Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.\n- **FR-ALAB-006 MUST:** Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine.\n- **FR-AEP-001 MUST:** A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields.\n"
+  },
+  {
+    "id": "AC-214",
+    "sourceLine": 6723,
+    "startLine": 6721,
+    "endLine": 6725,
+    "exactText": "### 39.20 Offline Alpha Lab and agent context\n\n- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key."
+  },
+  {
+    "id": "AC-215",
+    "sourceLine": 6724,
+    "startLine": 6722,
+    "endLine": 6726,
+    "exactText": "\n- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action."
+  },
+  {
+    "id": "AC-216",
+    "sourceLine": 6725,
+    "startLine": 6723,
+    "endLine": 6727,
+    "exactText": "- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy."
+  },
+  {
+    "id": "AC-217",
+    "sourceLine": 6726,
+    "startLine": 6724,
+    "endLine": 6728,
+    "exactText": "- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls."
+  },
+  {
+    "id": "AC-218",
+    "sourceLine": 6727,
+    "startLine": 6725,
+    "endLine": 6729,
+    "exactText": "- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls.\n"
+  },
+  {
+    "id": "AC-219",
+    "sourceLine": 6728,
+    "startLine": 6726,
+    "endLine": 6730,
+    "exactText": "- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls.\n\n"
+  }
+]

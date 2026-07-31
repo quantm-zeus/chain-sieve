@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-OF",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-OF-001",
+      "exactNormativeText": "Candidate selection supports versioned Pareto/frontier analysis across upside, tradability, security, lead time, evidence confidence, liquidity, crowding, novelty, and failure hazard."
+    },
+    {
+      "id": "FR-OF-002",
+      "exactNormativeText": "Dominance handles missing/uncertain dimensions conservatively; unknown values cannot be treated as favorable."
+    },
+    {
+      "id": "FR-OF-003",
+      "exactNormativeText": "Frontier classes remain descriptive and profile-specific; critical risk gates apply before frontier membership."
+    },
+    {
+      "id": "FR-OF-004",
+      "exactNormativeText": "Dominated candidates may receive lower research quota only when diversity, exploration, coverage, and risk-monitoring constraints remain satisfied."
+    },
+    {
+      "id": "FR-OF-005",
+      "exactNormativeText": "Frontier contribution is evaluated against scalar/Pareto baselines for tradable utility, hidden-gem recall, diversity, and quota efficiency."
+    }
+  ],
+  "expectedModules": [
+    "packages/opportunity-frontier/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/of.ts",
+    "docs/generated/of-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Candidate selection supports versioned Pareto/frontier analysis across upside, tradability, security, lead time, evidence confidence, liquidity, crowding, novelty, and failure hazard.",
+    "Dominance handles missing/uncertain dimensions conservatively; unknown values cannot be treated as favorable.",
+    "Frontier classes remain descriptive and profile-specific; critical risk gates apply before frontier membership.",
+    "Dominated candidates may receive lower research quota only when diversity, exploration, coverage, and risk-monitoring constraints remain satisfied.",
+    "Frontier contribution is evaluated against scalar/Pareto baselines for tradable utility, hidden-gem recall, diversity, and quota efficiency."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/of.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

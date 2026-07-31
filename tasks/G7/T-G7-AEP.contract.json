@@ -92,10 +92,44 @@
   "requirements": [
     "FR-AEP-001"
   ],
-  "acceptanceCriteria": [
-    "AC-214",
-    "AC-216",
-    "AC-218"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-214",
+      "facetId": "AC-214:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-214 system or integration oracle consumes. This facet does not claim full AC-214 satisfaction.",
+      "sourceAcceptanceSha256": "fc05d9c1d46ecffdedfd2a0561ebf8cbf4f8f1277c091e57671b7ff029b0ee0f"
+    },
+    {
+      "acceptanceId": "AC-215",
+      "facetId": "AC-215:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-215 system or integration oracle consumes. This facet does not claim full AC-215 satisfaction.",
+      "sourceAcceptanceSha256": "3000b9a047762eca7407df26f520880350968d1377088c8b9d0b3b8dfe82bcaf"
+    },
+    {
+      "acceptanceId": "AC-216",
+      "facetId": "AC-216:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-216 system or integration oracle consumes. This facet does not claim full AC-216 satisfaction.",
+      "sourceAcceptanceSha256": "f8050ee5fef22721977bc12b52865db5186adec8a39e20c8838c75aca3d47f63"
+    },
+    {
+      "acceptanceId": "AC-217",
+      "facetId": "AC-217:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-217 system or integration oracle consumes. This facet does not claim full AC-217 satisfaction.",
+      "sourceAcceptanceSha256": "489cf5dca88e57c936a7e369c8d50be3c321a50c21db6b57e13cbae72719d8e6"
+    },
+    {
+      "acceptanceId": "AC-218",
+      "facetId": "AC-218:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-218 system or integration oracle consumes. This facet does not claim full AC-218 satisfaction.",
+      "sourceAcceptanceSha256": "82c510ff76fc5d810e516f989508fbae6dd4f0154c86bca10b8a37fce5062d51"
+    },
+    {
+      "acceptanceId": "AC-219",
+      "facetId": "AC-219:T-G7-AEP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AEP for FR-AEP-001 that the unchanged AC-219 system or integration oracle consumes. This facet does not claim full AC-219 satisfaction.",
+      "sourceAcceptanceSha256": "62ec151c986d18534b0da0c354b7911fcdc9fdb473552348a3e04e03847b0e98"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -117,7 +151,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AEP/**"
+    "artifacts/context/T-G7-AEP/**",
+    "artifacts/conformance/T-G7-AEP/manifest.json"
   ],
   "writeSet": [
     "packages/agent-runtime/**",
@@ -126,7 +161,10 @@
   "allowedPaths": [
     "packages/agent-runtime/**",
     "packages/alpha-artifact-store/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -134,6 +172,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-AEP/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -150,7 +190,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -160,17 +201,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-214.spec.ts",
-    "tests/negative/AC-214.negative.spec.ts",
-    "tests/acceptance/AC-216.spec.ts",
-    "tests/negative/AC-216.negative.spec.ts",
-    "tests/acceptance/AC-218.spec.ts",
-    "tests/negative/AC-218.negative.spec.ts"
+    "tests/task-facets/T-G7-AEP.spec.ts",
+    "tests/task-facets/T-G7-AEP.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-214.spec.ts tests/negative/AC-214.negative.spec.ts tests/acceptance/AC-216.spec.ts tests/negative/AC-216.negative.spec.ts tests/acceptance/AC-218.spec.ts tests/negative/AC-218.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G7-AEP.spec.ts tests/task-facets/T-G7-AEP.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -195,10 +236,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -209,5 +252,9 @@
       "line": 6367,
       "id": "FR-AEP-001"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G7-AEP/manifest.json",
+  "conformanceManifestSha256": "cde62880f8f437872069ab796f4ab723a6fe7fd7feab96508b672136c3446ac4",
+  "testQualityGate": "NEGATIVE_CASE"
 }

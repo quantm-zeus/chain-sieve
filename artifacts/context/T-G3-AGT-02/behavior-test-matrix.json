@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-AGT-02",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-030",
+      "facetId": "AC-030:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-030 system or integration oracle consumes. This facet does not claim full AC-030 satisfaction.",
+      "sourceAcceptanceSha256": "16a63a2e5ee3a48e7c6e757b6d18be8a31a9285a3bec696866f623cce1681a7b"
+    },
+    {
+      "acceptanceId": "AC-031",
+      "facetId": "AC-031:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-031 system or integration oracle consumes. This facet does not claim full AC-031 satisfaction.",
+      "sourceAcceptanceSha256": "fa5f00d7e442fba08a8ee0ea19ed2d44b8b4a9e9b01eaae082e97de3f296c4cb"
+    },
+    {
+      "acceptanceId": "AC-032",
+      "facetId": "AC-032:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-032 system or integration oracle consumes. This facet does not claim full AC-032 satisfaction.",
+      "sourceAcceptanceSha256": "5bd0c4f6fdee418ba4cd3310614952c18a79af347be7e7cc742a536ccc7c7f9f"
+    },
+    {
+      "acceptanceId": "AC-033",
+      "facetId": "AC-033:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-033 system or integration oracle consumes. This facet does not claim full AC-033 satisfaction.",
+      "sourceAcceptanceSha256": "7b6e14cbeddd9c26e86a6f31b1ce6d79c1e5f23b5cc71b5153888902c7e577bf"
+    },
+    {
+      "acceptanceId": "AC-034",
+      "facetId": "AC-034:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-034 system or integration oracle consumes. This facet does not claim full AC-034 satisfaction.",
+      "sourceAcceptanceSha256": "0bd3ea4000d2699e1474e50f0a49492c911f08018978fba8eaf927ba9f6f26c5"
+    },
+    {
+      "acceptanceId": "AC-242",
+      "facetId": "AC-242:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-242 system or integration oracle consumes. This facet does not claim full AC-242 satisfaction.",
+      "sourceAcceptanceSha256": "1b0e2f5fea865ad80db2254788e7167585f21ac49ddff1f03f2f5c37aace0ccc"
+    },
+    {
+      "acceptanceId": "AC-243",
+      "facetId": "AC-243:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-243 system or integration oracle consumes. This facet does not claim full AC-243 satisfaction.",
+      "sourceAcceptanceSha256": "79a59cbe85e9ad12ef8011011518d95f87824d01493ac3ad6de23a198add6337"
+    },
+    {
+      "acceptanceId": "AC-244",
+      "facetId": "AC-244:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-244 system or integration oracle consumes. This facet does not claim full AC-244 satisfaction.",
+      "sourceAcceptanceSha256": "639ce740b0718cd65afa9972a290ff7fc4fa3c17a280aca3a4c752949d603f9d"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

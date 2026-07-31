@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-PROV-01",
+  "immutable": true,
+  "requirements": [
+    "FR-PROV-001",
+    "FR-PROV-002",
+    "FR-PROV-003",
+    "FR-PROV-004",
+    "FR-PROV-005",
+    "FR-PROV-006",
+    "FR-PROV-007",
+    "FR-PROV-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-250:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-251:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-252:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-253:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-254:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-255:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-256:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-257:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-258:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-259:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-270:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-271:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-272:T-G0-PROV-01:INTERFACE_FACET",
+    "AC-273:T-G0-PROV-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-PROV-01.spec.ts",
+    "tests/task-facets/T-G0-PROV-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/provider-lifecycle/**",
+    "packages/providers/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-PROV-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

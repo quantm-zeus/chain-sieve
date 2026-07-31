@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/deployer-funder-dna/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-DFD/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-DFD/**"
+    "artifacts/context/T-G5-DFD/**",
+    "artifacts/conformance/T-G5-DFD/manifest.json"
   ],
   "writeSet": [
     "packages/deployer-funder-dna/**"

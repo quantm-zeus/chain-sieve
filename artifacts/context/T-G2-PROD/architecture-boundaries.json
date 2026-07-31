@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/release-conformance/**",
     "packages/capability-registry/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-PROD/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-PROD/**"
+    "artifacts/context/T-G2-PROD/**",
+    "artifacts/conformance/T-G2-PROD/manifest.json"
   ],
   "writeSet": [
     "packages/release-conformance/**",

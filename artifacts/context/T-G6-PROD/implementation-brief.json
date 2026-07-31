@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-PROD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-PROD-007",
+      "exactNormativeText": "Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions."
+    },
+    {
+      "id": "FR-PROD-008",
+      "exactNormativeText": "Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection."
+    },
+    {
+      "id": "FR-PROD-009",
+      "exactNormativeText": "Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved."
+    },
+    {
+      "id": "FR-PROD-010",
+      "exactNormativeText": "Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish."
+    },
+    {
+      "id": "FR-PROD-011",
+      "exactNormativeText": "Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe."
+    },
+    {
+      "id": "FR-PROD-012",
+      "exactNormativeText": "Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates."
+    }
+  ],
+  "expectedModules": [
+    "packages/release-conformance/**",
+    "packages/capability-registry/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/prod.ts",
+    "docs/generated/prod-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.",
+    "Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.",
+    "Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.",
+    "Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.",
+    "Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe.",
+    "Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/prod.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

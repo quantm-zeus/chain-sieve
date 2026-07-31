@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-ADG",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-200",
+      "facetId": "AC-200:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-200 system or integration oracle consumes. This facet does not claim full AC-200 satisfaction.",
+      "sourceAcceptanceSha256": "337addba80ca72de1ba47758b4e36c5174269048834dd54d1f8faf0d53dd6b7a"
+    },
+    {
+      "acceptanceId": "AC-201",
+      "facetId": "AC-201:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-201 system or integration oracle consumes. This facet does not claim full AC-201 satisfaction.",
+      "sourceAcceptanceSha256": "cf88e920a2085582fb098909026658e2a63e497e21166ba0f12447b21716b5d0"
+    },
+    {
+      "acceptanceId": "AC-202",
+      "facetId": "AC-202:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-202 system or integration oracle consumes. This facet does not claim full AC-202 satisfaction.",
+      "sourceAcceptanceSha256": "412c0a62f28288916ef66122d7e9b11d483c75c9c00b7ea2895868915c198d82"
+    },
+    {
+      "acceptanceId": "AC-203",
+      "facetId": "AC-203:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-203 system or integration oracle consumes. This facet does not claim full AC-203 satisfaction.",
+      "sourceAcceptanceSha256": "ec88d1bb9a0059fb843202861eeb220cc8f931bca8c929be5983c52dbb5fa0bc"
+    },
+    {
+      "acceptanceId": "AC-204",
+      "facetId": "AC-204:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-204 system or integration oracle consumes. This facet does not claim full AC-204 satisfaction.",
+      "sourceAcceptanceSha256": "2f973efbc900e38eaf01bfbb88e9ba6a679d540c95addeccacc5ba707b01a6b4"
+    },
+    {
+      "acceptanceId": "AC-205",
+      "facetId": "AC-205:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-205 system or integration oracle consumes. This facet does not claim full AC-205 satisfaction.",
+      "sourceAcceptanceSha256": "f862114cdbe97e6ac38a2211b3d9746ea6581e831ac0de69698526c91034ff87"
+    },
+    {
+      "acceptanceId": "AC-206",
+      "facetId": "AC-206:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-206 system or integration oracle consumes. This facet does not claim full AC-206 satisfaction.",
+      "sourceAcceptanceSha256": "a813813603180d688bd3104ae567b6ad6229bb2f593bfad0b61b47f4ce7e3d11"
+    },
+    {
+      "acceptanceId": "AC-207",
+      "facetId": "AC-207:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-207 system or integration oracle consumes. This facet does not claim full AC-207 satisfaction.",
+      "sourceAcceptanceSha256": "41cb7d7318d46830cabc2682763a1dff31f008d523a49b615c8f9883aac83fee"
+    },
+    {
+      "acceptanceId": "AC-208",
+      "facetId": "AC-208:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-208 system or integration oracle consumes. This facet does not claim full AC-208 satisfaction.",
+      "sourceAcceptanceSha256": "8aca5ad52266ac2d8a9eab56e4de7afa0f8625644271e63f2020ca0804d54db8"
+    },
+    {
+      "acceptanceId": "AC-209",
+      "facetId": "AC-209:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-209 system or integration oracle consumes. This facet does not claim full AC-209 satisfaction.",
+      "sourceAcceptanceSha256": "9ddeb72a9581e6f964f30b83e32563126a799246fa5e1f18575c74ae9cd4b3c1"
+    },
+    {
+      "acceptanceId": "AC-210",
+      "facetId": "AC-210:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-210 system or integration oracle consumes. This facet does not claim full AC-210 satisfaction.",
+      "sourceAcceptanceSha256": "19f1d1c6c8bade10182f6545b818f022e4d8b195d2064d4dcf72a31f66bcb025"
+    },
+    {
+      "acceptanceId": "AC-211",
+      "facetId": "AC-211:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-211 system or integration oracle consumes. This facet does not claim full AC-211 satisfaction.",
+      "sourceAcceptanceSha256": "4d8e9db47b0a24fb7d2e90c3bf18dc03d811d6e9c31942af9dd0d00a835a2ffe"
+    },
+    {
+      "acceptanceId": "AC-212",
+      "facetId": "AC-212:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-212 system or integration oracle consumes. This facet does not claim full AC-212 satisfaction.",
+      "sourceAcceptanceSha256": "84daf4601b043deddf320042ae837ea9f6da06c9abafa99043d2813debf2387b"
+    },
+    {
+      "acceptanceId": "AC-213",
+      "facetId": "AC-213:T-G7-ADG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-ADG for FR-ADG-001, FR-ADG-002, FR-ADG-003, FR-ADG-004, FR-ADG-005, FR-ADG-006, FR-ADG-007 that the unchanged AC-213 system or integration oracle consumes. This facet does not claim full AC-213 satisfaction.",
+      "sourceAcceptanceSha256": "c95023da2670aa36d1472e9b0230d2eacea40481d21d516ec50939e731903ad9"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

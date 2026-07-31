@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-DATA-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DATA-015",
+      "exactNormativeText": "Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic."
+    },
+    {
+      "id": "FR-DATA-016",
+      "exactNormativeText": "Provider conflicts preserve all raw observations and distinguish benign latency/rounding variance, common-upstream duplication, material disagreement, and unresolved decision-critical conflict."
+    }
+  ],
+  "expectedModules": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/data.ts",
+    "docs/generated/data-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic.",
+    "Provider conflicts preserve all raw observations and distinguish benign latency/rounding variance, common-upstream duplication, material disagreement, and unresolved decision-critical conflict."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic."
+  ],
+  "idempotencyExpectations": [
+    "Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic."
+  ],
+  "observabilityExpectations": [
+    "telemetry/data.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-THS",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-THS-001",
+      "exactNormativeText": "Versioned thesis lifecycle with deterministic transition rules."
+    },
+    {
+      "id": "FR-THS-002",
+      "exactNormativeText": "Explicit strengthening, weakening, invalidation, expected-evidence, and expiry conditions."
+    },
+    {
+      "id": "FR-THS-003",
+      "exactNormativeText": "Thesis events preserve point-in-time evidence and state history."
+    }
+  ],
+  "expectedModules": [
+    "packages/thesis/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/ths.ts",
+    "docs/generated/ths-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Thesis events preserve point-in-time evidence and state history."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/ths.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

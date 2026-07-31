@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/offline-alpha-lab/**",
     "packages/alpha-artifact-store/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-ALAB/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-ALAB/**"
+    "artifacts/context/T-G7-ALAB/**",
+    "artifacts/conformance/T-G7-ALAB/manifest.json"
   ],
   "writeSet": [
     "packages/offline-alpha-lab/**",

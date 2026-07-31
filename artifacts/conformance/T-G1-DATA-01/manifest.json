@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-DATA-01",
+  "immutable": true,
+  "requirements": [
+    "FR-DATA-007",
+    "FR-DATA-008",
+    "FR-DATA-009",
+    "FR-DATA-010",
+    "FR-DATA-011",
+    "FR-DATA-012",
+    "FR-DATA-013",
+    "FR-DATA-014"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-020:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-021:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-022:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-023:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-240:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-241:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-242:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-243:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-244:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-245:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-246:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-247:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-248:T-G1-DATA-01:INTERFACE_FACET",
+    "AC-249:T-G1-DATA-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-DATA-01.spec.ts",
+    "tests/task-facets/T-G1-DATA-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-DATA-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

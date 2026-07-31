@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EXEC-02",
+  "immutable": true,
+  "requirements": [
+    "FR-EXEC-009",
+    "FR-EXEC-010",
+    "FR-EXEC-011",
+    "FR-EXEC-012",
+    "FR-EXEC-013",
+    "FR-EXEC-014",
+    "FR-EXEC-015",
+    "FR-EXEC-016"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-120:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-121:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-122:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-123:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-124:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-125:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-126:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-127:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-128:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-230:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-231:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-232:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-233:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-234:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-235:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-236:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-237:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-238:T-G1-EXEC-02:INTERFACE_FACET",
+    "AC-239:T-G1-EXEC-02:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-EXEC-02.spec.ts",
+    "tests/task-facets/T-G1-EXEC-02.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/execution-simulator/**",
+    "packages/pool-math/**",
+    "packages/transfer-semantics/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-EXEC-02/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

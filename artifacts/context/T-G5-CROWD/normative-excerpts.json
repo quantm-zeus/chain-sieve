@@ -1,0 +1,44 @@
+[
+  {
+    "id": "FR-CROWD-005",
+    "sourceLine": 6092,
+    "startLine": 6090,
+    "endLine": 6094,
+    "exactText": "- **FR-CROWD-003 MUST:** High crowding cannot be hidden by positive wallet or social signals.\n- **FR-CROWD-004 MUST:** Estimated cost basis/profitable supply exposes method, coverage, uncertainty, and excluded supply.\n- **FR-CROWD-005 MUST:** Liquidity Stress Lite is independent of full wallet/cost-basis capability; Full Crowding is separately capability- and evaluation-gated.\n\n### 38.10 Regime and policy compilation"
+  },
+  {
+    "id": "AC-074",
+    "sourceLine": 6580,
+    "startLine": 6578,
+    "endLine": 6582,
+    "exactText": "- **AC-072:** “Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.\n- **AC-073:** Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.\n- **AC-074:** Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence.\n- **AC-075:** Cross-chain fixtures do not double count bridge lock/mint/release or router hops.\n- **AC-076:** Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision."
+  },
+  {
+    "id": "AC-075",
+    "sourceLine": 6581,
+    "startLine": 6579,
+    "endLine": 6583,
+    "exactText": "- **AC-073:** Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.\n- **AC-074:** Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence.\n- **AC-075:** Cross-chain fixtures do not double count bridge lock/mint/release or router hops.\n- **AC-076:** Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.\n- **AC-077:** Regime route is selected only from approved active routes and remains immutable for the run."
+  },
+  {
+    "id": "AC-076",
+    "sourceLine": 6582,
+    "startLine": 6580,
+    "endLine": 6584,
+    "exactText": "- **AC-074:** Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence.\n- **AC-075:** Cross-chain fixtures do not double count bridge lock/mint/release or router hops.\n- **AC-076:** Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.\n- **AC-077:** Regime route is selected only from approved active routes and remains immutable for the run.\n- **AC-078:** A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected."
+  },
+  {
+    "id": "AC-091",
+    "sourceLine": 6590,
+    "startLine": 6588,
+    "endLine": 6592,
+    "exactText": "- **AC-082:** Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.\n- **AC-090:** Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.\n- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.\n- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions."
+  },
+  {
+    "id": "AC-092",
+    "sourceLine": 6591,
+    "startLine": 6589,
+    "endLine": 6593,
+    "exactText": "- **AC-090:** Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.\n- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.\n- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state."
+  }
+]

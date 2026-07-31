@@ -114,6 +114,7 @@ const clusterContract = (
   tasks,
   requirements: tasks.map((id) => `FR-${id}`),
   acceptanceCriteria: tasks.map((id) => `AC-${id}`),
+  integrationAcceptanceCriteria: [],
   invariants: ['INV-001'],
   entryCriteria: ['dependencies complete'],
   exitCriteria: ['verified'],

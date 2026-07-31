@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EXEC-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EXEC-009",
+      "exactNormativeText": "Multiple exit policies are evaluated only as pre-registered separate experiments; the system never chooses the best policy retrospectively for the primary result."
+    },
+    {
+      "id": "FR-EXEC-010",
+      "exactNormativeText": "Execution assumptions and code versions are frozen in replay manifests."
+    },
+    {
+      "id": "FR-EXEC-011",
+      "exactNormativeText": "Promoted/alerted/control-sample candidates receive a finite selective outcome-observation plan; insufficient temporal/liquidity resolution cannot prove tradable success."
+    },
+    {
+      "id": "FR-EXEC-012",
+      "exactNormativeText": "Production tradability uses versioned conservative stress assumptions for quote latency, adverse selection/MEV, fee volatility and liquidity deterioration."
+    },
+    {
+      "id": "FR-EXEC-013",
+      "exactNormativeText": "Each supported pool, launch curve, migration route, and token transfer path resolves to a versioned `PoolMathAdapter`/`TransferSemanticsAdapter` keyed by chain, program, program version, curve type, and account-layout version."
+    },
+    {
+      "id": "FR-EXEC-014",
+      "exactNormativeText": "Historical execution stores the exact slot/block, raw account-state hashes, reserves, ticks/bin arrays/curve state, fee configuration, oracle/quote inputs, token extensions, route, adapter version, and state-completeness assessment used for each simulation."
+    },
+    {
+      "id": "FR-EXEC-015",
+      "exactNormativeText": "Generic constant-product math is allowed only for a verified constant-product pool; concentrated-liquidity, discrete-bin, stable-swap, dynamic-fee, bonding-curve, virtual-reserve, and unknown designs require their own adapter or return `EXECUTION_UNAVAILABLE`."
+    },
+    {
+      "id": "FR-EXEC-016",
+      "exactNormativeText": "Every active adapter passes deterministic unit/property tests, protocol fixtures, historical observed-trade parity, current reference-quote parity when available, boundary/overflow tests, and version-specific tolerance gates."
+    }
+  ],
+  "expectedModules": [
+    "packages/execution-simulator/**",
+    "packages/pool-math/**",
+    "packages/transfer-semantics/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/exec.ts",
+    "docs/generated/exec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Multiple exit policies are evaluated only as pre-registered separate experiments; the system never chooses the best policy retrospectively for the primary result.",
+    "Execution assumptions and code versions are frozen in replay manifests.",
+    "Promoted/alerted/control-sample candidates receive a finite selective outcome-observation plan; insufficient temporal/liquidity resolution cannot prove tradable success.",
+    "Production tradability uses versioned conservative stress assumptions for quote latency, adverse selection/MEV, fee volatility and liquidity deterioration.",
+    "Each supported pool, launch curve, migration route, and token transfer path resolves to a versioned `PoolMathAdapter`/`TransferSemanticsAdapter` keyed by chain, program, program version, curve type, and account-layout version.",
+    "Historical execution stores the exact slot/block, raw account-state hashes, reserves, ticks/bin arrays/curve state, fee configuration, oracle/quote inputs, token extensions, route, adapter version, and state-completeness assessment used for each simulation.",
+    "Generic constant-product math is allowed only for a verified constant-product pool; concentrated-liquidity, discrete-bin, stable-swap, dynamic-fee, bonding-curve, virtual-reserve, and unknown designs require their own adapter or return `EXECUTION_UNAVAILABLE`.",
+    "Every active adapter passes deterministic unit/property tests, protocol fixtures, historical observed-trade parity, current reference-quote parity when available, boundary/overflow tests, and version-specific tolerance gates."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [
+    "Execution assumptions and code versions are frozen in replay manifests."
+  ],
+  "observabilityExpectations": [
+    "telemetry/exec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

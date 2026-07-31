@@ -22,9 +22,80 @@
     "FR-COST-007",
     "FR-COST-008"
   ],
-  "acceptanceCriteria": [
-    "AC-100",
-    "AC-103"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-100",
+      "facetId": "AC-100:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-100 system or integration oracle consumes. This facet does not claim full AC-100 satisfaction.",
+      "sourceAcceptanceSha256": "4e7c08e5b712ed043b2f6a0a308c955d844fcb6f248b21aa34b1f6dca2af7cc4"
+    },
+    {
+      "acceptanceId": "AC-101",
+      "facetId": "AC-101:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-101 system or integration oracle consumes. This facet does not claim full AC-101 satisfaction.",
+      "sourceAcceptanceSha256": "a17d654b048120d1d65f13327aab75394117b69f4f8221225920dd0295d9294e"
+    },
+    {
+      "acceptanceId": "AC-102",
+      "facetId": "AC-102:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-102 system or integration oracle consumes. This facet does not claim full AC-102 satisfaction.",
+      "sourceAcceptanceSha256": "e3617d0c02ad95103c13c6e21f7b12f5b5214d375b3832bb9368ded034c7f6c8"
+    },
+    {
+      "acceptanceId": "AC-103",
+      "facetId": "AC-103:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-103 system or integration oracle consumes. This facet does not claim full AC-103 satisfaction.",
+      "sourceAcceptanceSha256": "8388f258f6b808ac501e067ac2a4bb7ca239c0dde9ae6d4876f50e556717b8ce"
+    },
+    {
+      "acceptanceId": "AC-104",
+      "facetId": "AC-104:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-104 system or integration oracle consumes. This facet does not claim full AC-104 satisfaction.",
+      "sourceAcceptanceSha256": "5b20c308f91709481ed73f8af14d41d6601026b48b6252436498a200952376ef"
+    },
+    {
+      "acceptanceId": "AC-105",
+      "facetId": "AC-105:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-105 system or integration oracle consumes. This facet does not claim full AC-105 satisfaction.",
+      "sourceAcceptanceSha256": "dd5de2439d09b7eac6a3b3f52c708451dcc3839367cf5cabc43af279a046a9c4"
+    },
+    {
+      "acceptanceId": "AC-224",
+      "facetId": "AC-224:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-224 system or integration oracle consumes. This facet does not claim full AC-224 satisfaction.",
+      "sourceAcceptanceSha256": "41c0b1270321d5a04e9b45d3cfb8161fc5d6a0df788a433acb11c3327ac6e8ee"
+    },
+    {
+      "acceptanceId": "AC-225",
+      "facetId": "AC-225:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-225 system or integration oracle consumes. This facet does not claim full AC-225 satisfaction.",
+      "sourceAcceptanceSha256": "d22cb3228e7ec342a827f3ac0202e60f84d560f537183713c64060eb97440486"
+    },
+    {
+      "acceptanceId": "AC-226",
+      "facetId": "AC-226:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-226 system or integration oracle consumes. This facet does not claim full AC-226 satisfaction.",
+      "sourceAcceptanceSha256": "de3dd739c5cdae070dd33d5b9ada08bcf66b371c76084b863e501ec2d30dd86c"
+    },
+    {
+      "acceptanceId": "AC-227",
+      "facetId": "AC-227:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-227 system or integration oracle consumes. This facet does not claim full AC-227 satisfaction.",
+      "sourceAcceptanceSha256": "130b82a8639e43fbe39659941833364eb9705d15d9458dea393c4c8b685de509"
+    },
+    {
+      "acceptanceId": "AC-228",
+      "facetId": "AC-228:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-228 system or integration oracle consumes. This facet does not claim full AC-228 satisfaction.",
+      "sourceAcceptanceSha256": "b2ecf9b6734f062d2839e1d60101d4da367f62bc617fba48fcd88cdba872486d"
+    },
+    {
+      "acceptanceId": "AC-229",
+      "facetId": "AC-229:T-G0-COST-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COST-01 for FR-COST-001, FR-COST-002, FR-COST-003, FR-COST-004, FR-COST-005, FR-COST-006, FR-COST-007, FR-COST-008 that the unchanged AC-229 system or integration oracle consumes. This facet does not claim full AC-229 satisfaction.",
+      "sourceAcceptanceSha256": "3f54a54fbd86bbafc092710529450c51b71d91e82cfdd3886efc5335025d2fdf"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -46,7 +117,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-COST-01/**"
+    "artifacts/context/T-G0-COST-01/**",
+    "artifacts/conformance/T-G0-COST-01/manifest.json"
   ],
   "writeSet": [
     "packages/cost-router/**",
@@ -57,7 +129,10 @@
     "packages/cost-router/**",
     "packages/capacity-planner/**",
     "packages/quota-forecast/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -65,6 +140,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-COST-01/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -103,7 +180,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -113,15 +191,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-100.spec.ts",
-    "tests/negative/AC-100.negative.spec.ts",
-    "tests/acceptance/AC-103.spec.ts",
-    "tests/negative/AC-103.negative.spec.ts"
+    "tests/task-facets/T-G0-COST-01.spec.ts",
+    "tests/task-facets/T-G0-COST-01.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-100.spec.ts tests/negative/AC-100.negative.spec.ts tests/acceptance/AC-103.spec.ts tests/negative/AC-103.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G0-COST-01.spec.ts tests/task-facets/T-G0-COST-01.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -146,10 +226,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -195,5 +277,9 @@
       "line": 6139,
       "id": "FR-COST-008"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G0-COST-01/manifest.json",
+  "conformanceManifestSha256": "1fe5cacb7d95df3852f535080703e60ce15fd4429724604914a8e3cc1e64d578",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

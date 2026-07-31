@@ -1,0 +1,445 @@
+[
+  {
+    "path": "docs/generated/adg-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "migrations/g7_adg_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "packages/alpha-governance/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/adg.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "telemetry/adg.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-200.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-201.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-202.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-203.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-204.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-205.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-206.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-207.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-208.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-209.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-210.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-211.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-212.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-213.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/fixtures/adg/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-200.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-201.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-202.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-203.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-204.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-205.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-206.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-207.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-208.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-209.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-210.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-211.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-212.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-213.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ADG-001",
+      "FR-ADG-002",
+      "FR-ADG-003",
+      "FR-ADG-004",
+      "FR-ADG-005",
+      "FR-ADG-006",
+      "FR-ADG-007"
+    ]
+  }
+]

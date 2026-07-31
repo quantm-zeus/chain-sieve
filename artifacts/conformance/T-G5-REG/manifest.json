@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-REG",
+  "immutable": true,
+  "requirements": [
+    "FR-REG-001",
+    "FR-REG-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-077:T-G5-REG:INTERFACE_FACET",
+    "AC-078:T-G5-REG:INTERFACE_FACET",
+    "AC-079:T-G5-REG:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-REG.spec.ts",
+    "tests/task-facets/T-G5-REG.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/regime-router/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-REG/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SUP",
+  "immutable": true,
+  "requirements": [
+    "FR-SUP-001",
+    "FR-SUP-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-130:T-G1-SUP:INTERFACE_FACET",
+    "AC-131:T-G1-SUP:INTERFACE_FACET",
+    "AC-132:T-G1-SUP:INTERFACE_FACET",
+    "AC-133:T-G1-SUP:INTERFACE_FACET",
+    "AC-134:T-G1-SUP:INTERFACE_FACET",
+    "AC-135:T-G1-SUP:INTERFACE_FACET",
+    "AC-136:T-G1-SUP:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-SUP.spec.ts",
+    "tests/task-facets/T-G1-SUP.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/supply-confidence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-SUP/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

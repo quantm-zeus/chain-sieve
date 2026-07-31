@@ -1,0 +1,136 @@
+[
+  {
+    "path": "docs/generated/aep-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "migrations/g7_aep_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "packages/agent-runtime/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "packages/alpha-artifact-store/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/aep.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "telemetry/aep.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-214.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-215.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-216.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-217.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-218.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-219.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/fixtures/aep/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-214.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-215.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-216.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-217.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-218.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-219.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AEP-001"
+    ]
+  }
+]

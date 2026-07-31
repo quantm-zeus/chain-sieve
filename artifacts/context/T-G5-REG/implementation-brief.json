@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-REG",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-REG-001",
+      "exactNormativeText": "Deterministic regime classification and approved route selection."
+    },
+    {
+      "id": "FR-REG-002",
+      "exactNormativeText": "Route decision is frozen per run and has an approved fallback."
+    }
+  ],
+  "expectedModules": [
+    "packages/regime-router/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/reg.ts",
+    "docs/generated/reg-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/reg.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-CROWD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-CROWD-005",
+      "exactNormativeText": "Liquidity Stress Lite is independent of full wallet/cost-basis capability; Full Crowding is separately capability- and evaluation-gated."
+    }
+  ],
+  "expectedModules": [
+    "packages/crowding/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/crowd.ts",
+    "docs/generated/crowd-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Liquidity Stress Lite is independent of full wallet/cost-basis capability; Full Crowding is separately capability- and evaluation-gated."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/crowd.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-TRACE",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-TRACE-001",
+      "exactNormativeText": "A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping."
+    },
+    {
+      "id": "FR-TRACE-002",
+      "exactNormativeText": "Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links."
+    },
+    {
+      "id": "FR-TRACE-003",
+      "exactNormativeText": "CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest."
+    },
+    {
+      "id": "FR-TRACE-004",
+      "exactNormativeText": "Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans."
+    },
+    {
+      "id": "FR-TRACE-005",
+      "exactNormativeText": "Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior."
+    },
+    {
+      "id": "FR-TRACE-006",
+      "exactNormativeText": "Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target."
+    }
+  ],
+  "expectedModules": [
+    "packages/requirement-manifest/**",
+    "packages/release-conformance/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/trace.ts",
+    "docs/generated/trace-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.",
+    "Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.",
+    "CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.",
+    "Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.",
+    "Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.",
+    "Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/trace.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

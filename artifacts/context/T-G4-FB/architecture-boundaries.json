@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/fallback-runtime/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-FB/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-FB/**"
+    "artifacts/context/T-G4-FB/**",
+    "artifacts/conformance/T-G4-FB/manifest.json"
   ],
   "writeSet": [
     "packages/fallback-runtime/**"

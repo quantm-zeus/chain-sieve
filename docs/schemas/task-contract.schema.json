@@ -84,6 +84,38 @@
         "minLength": 1
       }
     },
+    "taskAcceptanceFacets": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "acceptanceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "facetId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceAcceptanceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "acceptanceId",
+          "facetId",
+          "text",
+          "sourceAcceptanceSha256"
+        ],
+        "additionalProperties": false
+      }
+    },
     "invariants": {
       "type": "array",
       "items": {
@@ -185,7 +217,6 @@
       "minLength": 1
     },
     "requiredTests": {
-      "minItems": 1,
       "type": "array",
       "items": {
         "type": "string",
@@ -306,6 +337,30 @@
         ],
         "additionalProperties": false
       }
+    },
+    "specificationStatus": {
+      "default": "READY",
+      "type": "string",
+      "enum": [
+        "READY",
+        "SPECIFICATION_GAP"
+      ]
+    },
+    "conformanceManifestPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conformanceManifestSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "testQualityGate": {
+      "default": "NEGATIVE_CASE",
+      "type": "string",
+      "enum": [
+        "NEGATIVE_CASE",
+        "SEEDED_FAULT_OR_PROPERTY"
+      ]
     }
   },
   "required": [
@@ -320,6 +375,7 @@
     "dependencies",
     "requirements",
     "acceptanceCriteria",
+    "taskAcceptanceFacets",
     "invariants",
     "adrs",
     "ownerPackages",
@@ -340,7 +396,9 @@
     "changeBudget",
     "stopConditions",
     "completionDefinition",
-    "sourceReferences"
+    "sourceReferences",
+    "specificationStatus",
+    "testQualityGate"
   ],
   "additionalProperties": false
 }

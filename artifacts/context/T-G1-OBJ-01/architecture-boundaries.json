@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/objective-governance/**",
     "packages/shadow-portfolio/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-OBJ-01/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-OBJ-01/**"
+    "artifacts/context/T-G1-OBJ-01/**",
+    "artifacts/conformance/T-G1-OBJ-01/manifest.json"
   ],
   "writeSet": [
     "packages/objective-governance/**",

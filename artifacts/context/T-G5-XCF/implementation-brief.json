@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-XCF",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-XCF-001",
+      "exactNormativeText": "Cross-chain aggregate bridge, stablecoin, DEX, and bounded wallet-flow assessment is implemented with reconciliation, source rights, temporal alignment, and uncertainty."
+    },
+    {
+      "id": "FR-XCF-002",
+      "exactNormativeText": "Bridge-leg and router-hop reconciliation prevents double counting."
+    }
+  ],
+  "expectedModules": [
+    "packages/capital-flow/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/xcf.ts",
+    "docs/generated/xcf-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Cross-chain aggregate bridge, stablecoin, DEX, and bounded wallet-flow assessment is implemented with reconciliation, source rights, temporal alignment, and uncertainty.",
+    "Bridge-leg and router-hop reconciliation prevents double counting."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/xcf.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

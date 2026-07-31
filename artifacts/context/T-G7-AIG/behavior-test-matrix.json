@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AIG",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-190",
+      "facetId": "AC-190:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-190 system or integration oracle consumes. This facet does not claim full AC-190 satisfaction.",
+      "sourceAcceptanceSha256": "fe8cbd08238305a7396778af06537c8fb5f2a3f2bdd3496e519627c953d31e3d"
+    },
+    {
+      "acceptanceId": "AC-191",
+      "facetId": "AC-191:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-191 system or integration oracle consumes. This facet does not claim full AC-191 satisfaction.",
+      "sourceAcceptanceSha256": "e0a947b81038aeba8874eca06a5513e0964431b8d5a490c796a05dbb93e100a0"
+    },
+    {
+      "acceptanceId": "AC-192",
+      "facetId": "AC-192:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-192 system or integration oracle consumes. This facet does not claim full AC-192 satisfaction.",
+      "sourceAcceptanceSha256": "18b1e12ff5599462b95458ebe41661329e4089475c2c4ea1bf432c70ba4142b4"
+    },
+    {
+      "acceptanceId": "AC-193",
+      "facetId": "AC-193:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-193 system or integration oracle consumes. This facet does not claim full AC-193 satisfaction.",
+      "sourceAcceptanceSha256": "9ec5f756cb1c2aaa4f46d20c51200f86df59a01b5c8870658b8138edcfd43a8e"
+    },
+    {
+      "acceptanceId": "AC-194",
+      "facetId": "AC-194:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-194 system or integration oracle consumes. This facet does not claim full AC-194 satisfaction.",
+      "sourceAcceptanceSha256": "c9869ee2d612e0a104baa259f115052c23ed1194bd2d72df654b970a6a3bbff7"
+    },
+    {
+      "acceptanceId": "AC-195",
+      "facetId": "AC-195:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-195 system or integration oracle consumes. This facet does not claim full AC-195 satisfaction.",
+      "sourceAcceptanceSha256": "0317a27112da59f467c1cf27abad35cd28311768083586a65f5dc82b37dda27d"
+    },
+    {
+      "acceptanceId": "AC-196",
+      "facetId": "AC-196:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-196 system or integration oracle consumes. This facet does not claim full AC-196 satisfaction.",
+      "sourceAcceptanceSha256": "b711ba5ce59c2389f29a7891bb2c9af3d0954d0fa4fd2e6e36ff20a211895c38"
+    },
+    {
+      "acceptanceId": "AC-197",
+      "facetId": "AC-197:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-197 system or integration oracle consumes. This facet does not claim full AC-197 satisfaction.",
+      "sourceAcceptanceSha256": "b893acec26d2b404b5ce8a26778608ae208d3af5b43ca57b9b50a16bfecd945d"
+    },
+    {
+      "acceptanceId": "AC-198",
+      "facetId": "AC-198:T-G7-AIG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G7-AIG for FR-AIG-001, FR-AIG-002, FR-AIG-003, FR-AIG-004, FR-AIG-005 that the unchanged AC-198 system or integration oracle consumes. This facet does not claim full AC-198 satisfaction.",
+      "sourceAcceptanceSha256": "301151017c7d9ae6f42c535dab775750d0f7bea785ca28cc8e0922d5b3a8dd95"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/alpha-governance/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-ADG/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-ADG/**"
+    "artifacts/context/T-G7-ADG/**",
+    "artifacts/conformance/T-G7-ADG/manifest.json"
   ],
   "writeSet": [
     "packages/alpha-governance/**"

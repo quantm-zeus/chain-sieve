@@ -1,0 +1,121 @@
+[
+  {
+    "id": "FR-OBJ-001",
+    "sourceLine": 6374,
+    "startLine": 6372,
+    "endLine": 6376,
+    "exactText": "### 38.37 Objective, portfolio utility, and claim scope\n\n- **FR-OBJ-001 MUST:** The primary production objective is the conservative lower confidence bound of net shadow-portfolio utility per capital-day under fixed capital, concurrency, execution, latency, liquidity, risk, and opportunity-cost assumptions.\n- **FR-OBJ-002 MUST:** Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy.\n- **FR-OBJ-003 MUST:** Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint."
+  },
+  {
+    "id": "FR-OBJ-002",
+    "sourceLine": 6375,
+    "startLine": 6373,
+    "endLine": 6377,
+    "exactText": "\n- **FR-OBJ-001 MUST:** The primary production objective is the conservative lower confidence bound of net shadow-portfolio utility per capital-day under fixed capital, concurrency, execution, latency, liquidity, risk, and opportunity-cost assumptions.\n- **FR-OBJ-002 MUST:** Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy.\n- **FR-OBJ-003 MUST:** Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint.\n- **FR-OBJ-004 MUST:** Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty."
+  },
+  {
+    "id": "FR-OBJ-003",
+    "sourceLine": 6376,
+    "startLine": 6374,
+    "endLine": 6378,
+    "exactText": "- **FR-OBJ-001 MUST:** The primary production objective is the conservative lower confidence bound of net shadow-portfolio utility per capital-day under fixed capital, concurrency, execution, latency, liquidity, risk, and opportunity-cost assumptions.\n- **FR-OBJ-002 MUST:** Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy.\n- **FR-OBJ-003 MUST:** Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint.\n- **FR-OBJ-004 MUST:** Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty.\n- **FR-OBJ-005 MUST:** Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective."
+  },
+  {
+    "id": "FR-OBJ-004",
+    "sourceLine": 6377,
+    "startLine": 6375,
+    "endLine": 6379,
+    "exactText": "- **FR-OBJ-002 MUST:** Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy.\n- **FR-OBJ-003 MUST:** Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint.\n- **FR-OBJ-004 MUST:** Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty.\n- **FR-OBJ-005 MUST:** Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective.\n- **FR-OBJ-006 MUST:** The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion."
+  },
+  {
+    "id": "FR-OBJ-005",
+    "sourceLine": 6378,
+    "startLine": 6376,
+    "endLine": 6380,
+    "exactText": "- **FR-OBJ-003 MUST:** Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint.\n- **FR-OBJ-004 MUST:** Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty.\n- **FR-OBJ-005 MUST:** Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective.\n- **FR-OBJ-006 MUST:** The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion.\n- **FR-OBJ-007 MUST:** Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method."
+  },
+  {
+    "id": "FR-OBJ-006",
+    "sourceLine": 6379,
+    "startLine": 6377,
+    "endLine": 6381,
+    "exactText": "- **FR-OBJ-004 MUST:** Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty.\n- **FR-OBJ-005 MUST:** Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective.\n- **FR-OBJ-006 MUST:** The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion.\n- **FR-OBJ-007 MUST:** Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method.\n- **FR-OBJ-008 MUST:** A configurable action-delay distribution includes at least p50, p90, and conservative-tail scenarios; active opportunity policy must pass its declared robust-delay gate rather than only a single favorable fixed delay."
+  },
+  {
+    "id": "FR-OBJ-007",
+    "sourceLine": 6380,
+    "startLine": 6378,
+    "endLine": 6382,
+    "exactText": "- **FR-OBJ-005 MUST:** Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective.\n- **FR-OBJ-006 MUST:** The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion.\n- **FR-OBJ-007 MUST:** Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method.\n- **FR-OBJ-008 MUST:** A configurable action-delay distribution includes at least p50, p90, and conservative-tail scenarios; active opportunity policy must pass its declared robust-delay gate rather than only a single favorable fixed delay.\n- **FR-OBJ-009 MUST:** The system supports utility sensitivity to capital, notional, concurrency, route capacity, alert latency, exit policy, and risk-aversion coefficients without rewriting the frozen primary experiment."
+  },
+  {
+    "id": "FR-OBJ-008",
+    "sourceLine": 6381,
+    "startLine": 6379,
+    "endLine": 6383,
+    "exactText": "- **FR-OBJ-006 MUST:** The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion.\n- **FR-OBJ-007 MUST:** Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method.\n- **FR-OBJ-008 MUST:** A configurable action-delay distribution includes at least p50, p90, and conservative-tail scenarios; active opportunity policy must pass its declared robust-delay gate rather than only a single favorable fixed delay.\n- **FR-OBJ-009 MUST:** The system supports utility sensitivity to capital, notional, concurrency, route capacity, alert latency, exit policy, and risk-aversion coefficients without rewriting the frozen primary experiment.\n- **FR-OBJ-010 MUST:** The product, agent, UI, API, exports, and notifications prohibit guaranteed-profit language and must state that opportunity outputs are evidence-backed research signals whose realized outcome remains uncertain."
+  },
+  {
+    "id": "AC-220",
+    "sourceLine": 6735,
+    "startLine": 6733,
+    "endLine": 6737,
+    "exactText": "### 39.21 Objective, collector, and sustainable capacity\n\n- **AC-220:** Under identical universe, capital, execution, and time assumptions, a policy with higher per-alert success but lower lower-bound net portfolio utility is not promoted over the higher-utility policy.\n- **AC-221:** Changing a candidate denominator, execution scenario, horizon, or delay policy after outcomes are visible invalidates the promotion comparison and creates an objective-integrity incident.\n- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method."
+  },
+  {
+    "id": "AC-221",
+    "sourceLine": 6736,
+    "startLine": 6734,
+    "endLine": 6738,
+    "exactText": "\n- **AC-220:** Under identical universe, capital, execution, and time assumptions, a policy with higher per-alert success but lower lower-bound net portfolio utility is not promoted over the higher-utility policy.\n- **AC-221:** Changing a candidate denominator, execution scenario, horizon, or delay policy after outcomes are visible invalidates the promotion comparison and creates an objective-integrity incident.\n- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method.\n- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive."
+  },
+  {
+    "id": "AC-222",
+    "sourceLine": 6737,
+    "startLine": 6735,
+    "endLine": 6739,
+    "exactText": "- **AC-220:** Under identical universe, capital, execution, and time assumptions, a policy with higher per-alert success but lower lower-bound net portfolio utility is not promoted over the higher-utility policy.\n- **AC-221:** Changing a candidate denominator, execution scenario, horizon, or delay policy after outcomes are visible invalidates the promotion comparison and creates an objective-integrity incident.\n- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method.\n- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event."
+  },
+  {
+    "id": "AC-223",
+    "sourceLine": 6738,
+    "startLine": 6736,
+    "endLine": 6740,
+    "exactText": "- **AC-221:** Changing a candidate denominator, execution scenario, horizon, or delay policy after outcomes are visible invalidates the promotion comparison and creates an objective-integrity incident.\n- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method.\n- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it."
+  },
+  {
+    "id": "AC-245",
+    "sourceLine": 6766,
+    "startLine": 6764,
+    "endLine": 6768,
+    "exactText": "- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then."
+  },
+  {
+    "id": "AC-246",
+    "sourceLine": 6767,
+    "startLine": 6765,
+    "endLine": 6769,
+    "exactText": "- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable."
+  },
+  {
+    "id": "AC-247",
+    "sourceLine": 6768,
+    "startLine": 6766,
+    "endLine": 6770,
+    "exactText": "- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion."
+  },
+  {
+    "id": "AC-248",
+    "sourceLine": 6769,
+    "startLine": 6767,
+    "endLine": 6771,
+    "exactText": "- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n"
+  },
+  {
+    "id": "AC-249",
+    "sourceLine": 6770,
+    "startLine": 6768,
+    "endLine": 6772,
+    "exactText": "- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n\n### 39.24 MCP transport, provider negative capability, and security"
+  }
+]

@@ -1,0 +1,115 @@
+[
+  {
+    "path": "docs/generated/crowd-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "migrations/g5_crowd_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "packages/crowding/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/crowd.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "telemetry/crowd.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-074.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-075.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-076.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-091.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-092.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/crowd/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-074.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-075.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-076.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-091.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-092.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-CROWD-005"
+    ]
+  }
+]

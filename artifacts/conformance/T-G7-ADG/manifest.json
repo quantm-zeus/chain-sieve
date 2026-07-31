@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-ADG",
+  "immutable": true,
+  "requirements": [
+    "FR-ADG-001",
+    "FR-ADG-002",
+    "FR-ADG-003",
+    "FR-ADG-004",
+    "FR-ADG-005",
+    "FR-ADG-006",
+    "FR-ADG-007"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-200:T-G7-ADG:INTERFACE_FACET",
+    "AC-201:T-G7-ADG:INTERFACE_FACET",
+    "AC-202:T-G7-ADG:INTERFACE_FACET",
+    "AC-203:T-G7-ADG:INTERFACE_FACET",
+    "AC-204:T-G7-ADG:INTERFACE_FACET",
+    "AC-205:T-G7-ADG:INTERFACE_FACET",
+    "AC-206:T-G7-ADG:INTERFACE_FACET",
+    "AC-207:T-G7-ADG:INTERFACE_FACET",
+    "AC-208:T-G7-ADG:INTERFACE_FACET",
+    "AC-209:T-G7-ADG:INTERFACE_FACET",
+    "AC-210:T-G7-ADG:INTERFACE_FACET",
+    "AC-211:T-G7-ADG:INTERFACE_FACET",
+    "AC-212:T-G7-ADG:INTERFACE_FACET",
+    "AC-213:T-G7-ADG:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-ADG.spec.ts",
+    "tests/task-facets/T-G7-ADG.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/alpha-governance/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-ADG/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

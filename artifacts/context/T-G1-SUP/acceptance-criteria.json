@@ -1,56 +1,248 @@
-[
-  {
-    "id": "AC-131",
-    "text": "External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.",
-    "textSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10",
-    "line": 6632,
-    "requirementRefs": [
-      "FR-SOLSEC-001",
-      "FR-SOLSEC-002",
-      "FR-SOLSEC-003",
-      "FR-SOLSEC-004",
-      "FR-SOLSEC-005",
-      "FR-SOLSEC-006",
-      "FR-SUP-001",
-      "FR-SUP-002",
-      "FR-TRD-001",
-      "FR-TRD-002",
-      "FR-TRD-003",
-      "FR-TRD-004"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-131.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-131.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.12 Solana security and economic events",
-    "testClass": "execution-solana"
-  },
-  {
-    "id": "AC-134",
-    "text": "Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.",
-    "textSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18",
-    "line": 6635,
-    "requirementRefs": [
-      "FR-SOLSEC-001",
-      "FR-SOLSEC-002",
-      "FR-SOLSEC-003",
-      "FR-SOLSEC-004",
-      "FR-SOLSEC-005",
-      "FR-SOLSEC-006",
-      "FR-SUP-001",
-      "FR-SUP-002",
-      "FR-TRD-001",
-      "FR-TRD-002",
-      "FR-TRD-003",
-      "FR-TRD-004"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-134.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-134.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.12 Solana security and economic events",
-    "testClass": "execution-solana"
-  }
-]
+{
+  "taskLocal": [],
+  "facets": [
+    {
+      "acceptanceId": "AC-130",
+      "facetId": "AC-130:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-130 system or integration oracle consumes. This facet does not claim full AC-130 satisfaction.",
+      "sourceAcceptanceSha256": "ea9853a7711d59725ecd339040bd84e2a95305529b208e39c2e9ee1cca81a08c"
+    },
+    {
+      "acceptanceId": "AC-131",
+      "facetId": "AC-131:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-131 system or integration oracle consumes. This facet does not claim full AC-131 satisfaction.",
+      "sourceAcceptanceSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10"
+    },
+    {
+      "acceptanceId": "AC-132",
+      "facetId": "AC-132:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-132 system or integration oracle consumes. This facet does not claim full AC-132 satisfaction.",
+      "sourceAcceptanceSha256": "da10ace021f9f86905ef73fe2612d1de7259f10c910c885a47f60e217c37a5f8"
+    },
+    {
+      "acceptanceId": "AC-133",
+      "facetId": "AC-133:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-133 system or integration oracle consumes. This facet does not claim full AC-133 satisfaction.",
+      "sourceAcceptanceSha256": "b5f06cd7bd2ea21127a7e854238f0b82a92d5afe11afcd68f67cb5e0c252ab26"
+    },
+    {
+      "acceptanceId": "AC-134",
+      "facetId": "AC-134:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-134 system or integration oracle consumes. This facet does not claim full AC-134 satisfaction.",
+      "sourceAcceptanceSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18"
+    },
+    {
+      "acceptanceId": "AC-135",
+      "facetId": "AC-135:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-135 system or integration oracle consumes. This facet does not claim full AC-135 satisfaction.",
+      "sourceAcceptanceSha256": "bf04f986a93c324b3e2424f0746100778fdf1aad461041a2c0bb022ec0633bf2"
+    },
+    {
+      "acceptanceId": "AC-136",
+      "facetId": "AC-136:T-G1-SUP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SUP for FR-SUP-001, FR-SUP-002 that the unchanged AC-136 system or integration oracle consumes. This facet does not claim full AC-136 satisfaction.",
+      "sourceAcceptanceSha256": "936b29a101783b3a42140c65ed0828b27d88ed21b43287643c5213d7aed2fe26"
+    }
+  ],
+  "fullCriteriaVerifiedElsewhere": [
+    {
+      "id": "AC-130",
+      "text": "SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.",
+      "textSha256": "ea9853a7711d59725ecd339040bd84e2a95305529b208e39c2e9ee1cca81a08c",
+      "line": 6631,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-130.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-130.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-131",
+      "text": "External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.",
+      "textSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10",
+      "line": 6632,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-131.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-131.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-132",
+      "text": "Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.",
+      "textSha256": "da10ace021f9f86905ef73fe2612d1de7259f10c910c885a47f60e217c37a5f8",
+      "line": 6633,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-132.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-132.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-133",
+      "text": "A routed swap across multiple pools produces one economic trade and no hop-volume double count.",
+      "textSha256": "b5f06cd7bd2ea21127a7e854238f0b82a92d5afe11afcd68f67cb5e0c252ab26",
+      "line": 6634,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-133.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-133.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-134",
+      "text": "Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.",
+      "textSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18",
+      "line": 6635,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-134.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-134.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-135",
+      "text": "Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.",
+      "textSha256": "bf04f986a93c324b3e2424f0746100778fdf1aad461041a2c0bb022ec0633bf2",
+      "line": 6636,
+      "requirementRefs": [
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-135.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-135.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    },
+    {
+      "id": "AC-136",
+      "text": "Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.",
+      "textSha256": "936b29a101783b3a42140c65ed0828b27d88ed21b43287643c5213d7aed2fe26",
+      "line": 6637,
+      "requirementRefs": [
+        "FR-SIG-001",
+        "FR-SIG-002",
+        "FR-SIG-003",
+        "FR-SIG-004",
+        "FR-SIG-005",
+        "FR-SIG-006",
+        "FR-SIG-007",
+        "FR-SIG-008",
+        "FR-SIG-009",
+        "FR-SIG-010",
+        "FR-SOLSEC-001",
+        "FR-SOLSEC-002",
+        "FR-SOLSEC-003",
+        "FR-SOLSEC-004",
+        "FR-SOLSEC-005",
+        "FR-SOLSEC-006",
+        "FR-SUP-001",
+        "FR-SUP-002",
+        "FR-TRD-001",
+        "FR-TRD-002",
+        "FR-TRD-003",
+        "FR-TRD-004"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-136.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-136.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.12 Solana security and economic events",
+      "testClass": "execution-solana"
+    }
+  ]
+}

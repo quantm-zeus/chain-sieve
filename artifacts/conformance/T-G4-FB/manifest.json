@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-FB",
+  "immutable": true,
+  "requirements": [
+    "FR-FB-001",
+    "FR-FB-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-083:T-G4-FB:INTERFACE_FACET",
+    "AC-084:T-G4-FB:INTERFACE_FACET",
+    "AC-085:T-G4-FB:INTERFACE_FACET",
+    "AC-086:T-G4-FB:INTERFACE_FACET",
+    "AC-087:T-G4-FB:INTERFACE_FACET",
+    "AC-088:T-G4-FB:INTERFACE_FACET",
+    "AC-089:T-G4-FB:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-FB.spec.ts",
+    "tests/task-facets/T-G4-FB.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/fallback-runtime/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-FB/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

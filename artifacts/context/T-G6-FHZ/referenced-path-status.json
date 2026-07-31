@@ -1,0 +1,223 @@
+[
+  {
+    "path": "docs/generated/fhz-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "migrations/g6_fhz_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "packages/failure-hazard/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/fhz.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "telemetry/fhz.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-180.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-181.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-182.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-183.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-184.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-185.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-186.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/fhz/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-180.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-181.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-182.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-183.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-184.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-185.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-186.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-FHZ-001",
+      "FR-FHZ-002",
+      "FR-FHZ-003",
+      "FR-FHZ-004",
+      "FR-FHZ-005"
+    ]
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-MAT-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-MAT-009",
+      "exactNormativeText": "When target and invalidation/stop are both feasible within a coarse interval and ordering is unknown, the primary result uses the adverse feasible order, reports path ambiguity, and may expose optimistic sensitivity only as secondary analysis."
+    },
+    {
+      "id": "FR-MAT-010",
+      "exactNormativeText": "Outcome denominators disclose invalid, censored, partial, low-resolution, rights-blocked, and unobserved cases; policies cannot improve measured performance by reducing outcome collection."
+    },
+    {
+      "id": "FR-MAT-011",
+      "exactNormativeText": "Alert expiry/cancellation and thesis invalidation are time-stamped side effects in the shadow model; post-expiry gains do not count as actionable success."
+    },
+    {
+      "id": "FR-MAT-012",
+      "exactNormativeText": "Capacity-limited opportunities report maximum executable notional and total deployable portfolio capacity; a small-notional success cannot be generalized to larger capital without simulation."
+    }
+  ],
+  "expectedModules": [
+    "packages/outcome-maturity/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/mat.ts",
+    "docs/generated/mat-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "When target and invalidation/stop are both feasible within a coarse interval and ordering is unknown, the primary result uses the adverse feasible order, reports path ambiguity, and may expose optimistic sensitivity only as secondary analysis.",
+    "Outcome denominators disclose invalid, censored, partial, low-resolution, rights-blocked, and unobserved cases; policies cannot improve measured performance by reducing outcome collection.",
+    "Alert expiry/cancellation and thesis invalidation are time-stamped side effects in the shadow model; post-expiry gains do not count as actionable success.",
+    "Capacity-limited opportunities report maximum executable notional and total deployable portfolio capacity; a small-notional success cannot be generalized to larger capital without simulation."
+  ],
+  "failureAndDegradedBehavior": [
+    "Outcome denominators disclose invalid, censored, partial, low-resolution, rights-blocked, and unobserved cases; policies cannot improve measured performance by reducing outcome collection."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/mat.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

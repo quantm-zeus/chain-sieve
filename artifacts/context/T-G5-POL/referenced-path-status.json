@@ -1,0 +1,135 @@
+[
+  {
+    "path": "docs/generated/pol-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "migrations/g5_pol_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "packages/policy-compiler/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/pol.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "telemetry/pol.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-077.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-078.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-079.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/pol/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-077.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-078.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-079.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-POL-001",
+      "FR-POL-002",
+      "FR-POL-003",
+      "FR-POL-004",
+      "FR-POL-005"
+    ]
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "FR-AL-001",
+    "sourceLine": 6117,
+    "startLine": 6115,
+    "endLine": 6119,
+    "exactText": "### 38.12 Learning, notebook, fallback, and capability\n\n- **FR-AL-001 MUST:** Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls.\n- **FR-AL-002 MUST:** Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required.\n- **FR-AL-003 MUST:** Human labels do not automatically update production policy."
+  },
+  {
+    "id": "FR-AL-002",
+    "sourceLine": 6118,
+    "startLine": 6116,
+    "endLine": 6120,
+    "exactText": "\n- **FR-AL-001 MUST:** Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls.\n- **FR-AL-002 MUST:** Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required.\n- **FR-AL-003 MUST:** Human labels do not automatically update production policy.\n- **FR-NB-001 MUST:** Persistent research notebooks/casebooks link notes, claims, evidence, runs, theses, outcomes, permissions, and provenance while remaining untrusted model context."
+  },
+  {
+    "id": "FR-AL-003",
+    "sourceLine": 6119,
+    "startLine": 6117,
+    "endLine": 6121,
+    "exactText": "- **FR-AL-001 MUST:** Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls.\n- **FR-AL-002 MUST:** Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required.\n- **FR-AL-003 MUST:** Human labels do not automatically update production policy.\n- **FR-NB-001 MUST:** Persistent research notebooks/casebooks link notes, claims, evidence, runs, theses, outcomes, permissions, and provenance while remaining untrusted model context.\n- **FR-NB-002 MUST:** Notebook content cannot modify frozen evidence or grant tool authority."
+  },
+  {
+    "id": "AC-083",
+    "sourceLine": 6592,
+    "startLine": 6590,
+    "endLine": 6594,
+    "exactText": "- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.\n- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions."
+  },
+  {
+    "id": "AC-084",
+    "sourceLine": 6593,
+    "startLine": 6591,
+    "endLine": 6595,
+    "exactText": "- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking."
+  },
+  {
+    "id": "AC-085",
+    "sourceLine": 6594,
+    "startLine": 6592,
+    "endLine": 6596,
+    "exactText": "- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert."
+  },
+  {
+    "id": "AC-086",
+    "sourceLine": 6595,
+    "startLine": 6593,
+    "endLine": 6597,
+    "exactText": "- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map."
+  },
+  {
+    "id": "AC-087",
+    "sourceLine": 6596,
+    "startLine": 6594,
+    "endLine": 6598,
+    "exactText": "- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked."
+  },
+  {
+    "id": "AC-088",
+    "sourceLine": 6597,
+    "startLine": 6595,
+    "endLine": 6599,
+    "exactText": "- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked.\n"
+  },
+  {
+    "id": "AC-089",
+    "sourceLine": 6598,
+    "startLine": 6596,
+    "endLine": 6600,
+    "exactText": "- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked.\n\n"
+  }
+]

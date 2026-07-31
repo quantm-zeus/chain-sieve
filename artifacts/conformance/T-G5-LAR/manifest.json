@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-LAR",
+  "immutable": true,
+  "requirements": [
+    "FR-LAR-001",
+    "FR-LAR-002",
+    "FR-LAR-003",
+    "FR-LAR-004",
+    "FR-LAR-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-170:T-G5-LAR:INTERFACE_FACET",
+    "AC-171:T-G5-LAR:INTERFACE_FACET",
+    "AC-172:T-G5-LAR:INTERFACE_FACET",
+    "AC-173:T-G5-LAR:INTERFACE_FACET",
+    "AC-174:T-G5-LAR:INTERFACE_FACET",
+    "AC-175:T-G5-LAR:INTERFACE_FACET",
+    "AC-176:T-G5-LAR:INTERFACE_FACET",
+    "AC-177:T-G5-LAR:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-LAR.spec.ts",
+    "tests/task-facets/T-G5-LAR.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/liquidity-resilience/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-LAR/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

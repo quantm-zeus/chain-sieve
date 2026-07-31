@@ -68,9 +68,56 @@
     "FR-NLL-003",
     "FR-NLL-004"
   ],
-  "acceptanceCriteria": [
-    "AC-173",
-    "AC-177"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-170",
+      "facetId": "AC-170:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-170 system or integration oracle consumes. This facet does not claim full AC-170 satisfaction.",
+      "sourceAcceptanceSha256": "c6748012d8a79a94df148d480a4471edae39cc1610000fadb090ca8381ebebed"
+    },
+    {
+      "acceptanceId": "AC-171",
+      "facetId": "AC-171:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-171 system or integration oracle consumes. This facet does not claim full AC-171 satisfaction.",
+      "sourceAcceptanceSha256": "ef76e52d9e63967c06d11c8d8792c8f5e3a240228434d297f66d40e06865298e"
+    },
+    {
+      "acceptanceId": "AC-172",
+      "facetId": "AC-172:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-172 system or integration oracle consumes. This facet does not claim full AC-172 satisfaction.",
+      "sourceAcceptanceSha256": "bd384fcd71a42af659734d0da5024184ba357a668404333b56e674c745120823"
+    },
+    {
+      "acceptanceId": "AC-173",
+      "facetId": "AC-173:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-173 system or integration oracle consumes. This facet does not claim full AC-173 satisfaction.",
+      "sourceAcceptanceSha256": "8c324ce155e611ed4be8666a4af966ff0be62683b606d7d8ea7f5acdecf8f16b"
+    },
+    {
+      "acceptanceId": "AC-174",
+      "facetId": "AC-174:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-174 system or integration oracle consumes. This facet does not claim full AC-174 satisfaction.",
+      "sourceAcceptanceSha256": "045a0984d74660538e97191464a5fd1d7a0ab7575b2faafd5e11af853a878214"
+    },
+    {
+      "acceptanceId": "AC-175",
+      "facetId": "AC-175:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-175 system or integration oracle consumes. This facet does not claim full AC-175 satisfaction.",
+      "sourceAcceptanceSha256": "38ad09a4eee4ff28605381d768cfc8f83d3b009b4ecc55918ce01214000951fd"
+    },
+    {
+      "acceptanceId": "AC-176",
+      "facetId": "AC-176:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-176 system or integration oracle consumes. This facet does not claim full AC-176 satisfaction.",
+      "sourceAcceptanceSha256": "a1b11346619a01bdf4309b35afe0ce5db381529997da40eec652461114086781"
+    },
+    {
+      "acceptanceId": "AC-177",
+      "facetId": "AC-177:T-G5-NLL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NLL for FR-NLL-001, FR-NLL-002, FR-NLL-003, FR-NLL-004 that the unchanged AC-177 system or integration oracle consumes. This facet does not claim full AC-177 satisfaction.",
+      "sourceAcceptanceSha256": "be0d9db703b3d443d09a5d38bf965d75f278e95c0623ed2a0588da715a99110e"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -92,14 +139,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-NLL/**"
+    "artifacts/context/T-G5-NLL/**",
+    "artifacts/conformance/T-G5-NLL/manifest.json"
   ],
   "writeSet": [
     "packages/leader-laggard/**"
   ],
   "allowedPaths": [
     "packages/leader-laggard/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -107,6 +158,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-NLL/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -125,7 +178,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -135,15 +189,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-173.spec.ts",
-    "tests/negative/AC-173.negative.spec.ts",
-    "tests/acceptance/AC-177.spec.ts",
-    "tests/negative/AC-177.negative.spec.ts"
+    "tests/task-facets/T-G5-NLL.spec.ts",
+    "tests/task-facets/T-G5-NLL.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-173.spec.ts tests/negative/AC-173.negative.spec.ts tests/acceptance/AC-177.spec.ts tests/negative/AC-177.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G5-NLL.spec.ts tests/task-facets/T-G5-NLL.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -168,10 +224,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -197,5 +255,9 @@
       "line": 6278,
       "id": "FR-NLL-004"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G5-NLL/manifest.json",
+  "conformanceManifestSha256": "ef606e73e2463d224d7064542f77c18dc2a5abfae473da405c44115e8adf59ea",
+  "testQualityGate": "NEGATIVE_CASE"
 }

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-OOD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-OOD-001",
+      "exactNormativeText": "Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment."
+    },
+    {
+      "id": "FR-OOD-002",
+      "exactNormativeText": "Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination."
+    },
+    {
+      "id": "FR-OOD-003",
+      "exactNormativeText": "`HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence."
+    },
+    {
+      "id": "FR-OOD-004",
+      "exactNormativeText": "Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately."
+    },
+    {
+      "id": "FR-OOD-005",
+      "exactNormativeText": "OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware."
+    }
+  ],
+  "expectedModules": [
+    "packages/novelty-detector/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/ood.ts",
+    "docs/generated/ood-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment.",
+    "Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.",
+    "`HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.",
+    "Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately.",
+    "OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/ood.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-CAP",
+  "immutable": true,
+  "requirements": [
+    "FR-CAP-001",
+    "FR-CAP-002",
+    "FR-CAP-003",
+    "FR-CAP-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-083:T-G4-CAP:INTERFACE_FACET",
+    "AC-084:T-G4-CAP:INTERFACE_FACET",
+    "AC-085:T-G4-CAP:INTERFACE_FACET",
+    "AC-086:T-G4-CAP:INTERFACE_FACET",
+    "AC-087:T-G4-CAP:INTERFACE_FACET",
+    "AC-088:T-G4-CAP:INTERFACE_FACET",
+    "AC-089:T-G4-CAP:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-CAP.spec.ts",
+    "tests/task-facets/T-G4-CAP.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/capability-registry/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-CAP/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

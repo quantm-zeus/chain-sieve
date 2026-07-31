@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-DR",
+  "immutable": true,
+  "requirements": [
+    "FR-DR-001",
+    "FR-DR-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-060:T-G0-DR:INTERFACE_FACET",
+    "AC-061:T-G0-DR:INTERFACE_FACET",
+    "AC-062:T-G0-DR:INTERFACE_FACET",
+    "AC-260:T-G0-DR:INTERFACE_FACET",
+    "AC-261:T-G0-DR:INTERFACE_FACET",
+    "AC-262:T-G0-DR:INTERFACE_FACET",
+    "AC-263:T-G0-DR:INTERFACE_FACET",
+    "AC-264:T-G0-DR:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-DR.spec.ts",
+    "tests/task-facets/T-G0-DR.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-DR/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

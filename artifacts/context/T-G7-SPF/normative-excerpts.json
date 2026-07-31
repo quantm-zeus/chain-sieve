@@ -1,0 +1,121 @@
+[
+  {
+    "id": "FR-SPF-001",
+    "sourceLine": 6323,
+    "startLine": 6321,
+    "endLine": 6325,
+    "exactText": "### 38.32 Shadow Portfolio and Decision Simulation\n\n- **FR-SPF-001 MUST:** The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost.\n- **FR-SPF-002 MUST:** Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.\n- **FR-SPF-003 MUST:** The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions."
+  },
+  {
+    "id": "FR-SPF-002",
+    "sourceLine": 6324,
+    "startLine": 6322,
+    "endLine": 6326,
+    "exactText": "\n- **FR-SPF-001 MUST:** The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost.\n- **FR-SPF-002 MUST:** Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.\n- **FR-SPF-003 MUST:** The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.\n- **FR-SPF-004 MUST:** Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost."
+  },
+  {
+    "id": "FR-SPF-003",
+    "sourceLine": 6325,
+    "startLine": 6323,
+    "endLine": 6327,
+    "exactText": "- **FR-SPF-001 MUST:** The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost.\n- **FR-SPF-002 MUST:** Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.\n- **FR-SPF-003 MUST:** The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.\n- **FR-SPF-004 MUST:** Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.\n- **FR-SPF-005 MUST:** Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs."
+  },
+  {
+    "id": "FR-SPF-004",
+    "sourceLine": 6326,
+    "startLine": 6324,
+    "endLine": 6328,
+    "exactText": "- **FR-SPF-002 MUST:** Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.\n- **FR-SPF-003 MUST:** The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.\n- **FR-SPF-004 MUST:** Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.\n- **FR-SPF-005 MUST:** Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.\n- **FR-SPF-006 MUST:** Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities."
+  },
+  {
+    "id": "FR-SPF-005",
+    "sourceLine": 6327,
+    "startLine": 6325,
+    "endLine": 6329,
+    "exactText": "- **FR-SPF-003 MUST:** The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.\n- **FR-SPF-004 MUST:** Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.\n- **FR-SPF-005 MUST:** Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.\n- **FR-SPF-006 MUST:** Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.\n- **FR-SPF-007 MUST:** Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills."
+  },
+  {
+    "id": "FR-SPF-006",
+    "sourceLine": 6328,
+    "startLine": 6326,
+    "endLine": 6330,
+    "exactText": "- **FR-SPF-004 MUST:** Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.\n- **FR-SPF-005 MUST:** Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.\n- **FR-SPF-006 MUST:** Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.\n- **FR-SPF-007 MUST:** Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills.\n- **FR-SPF-008 MUST:** When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity."
+  },
+  {
+    "id": "FR-SPF-007",
+    "sourceLine": 6329,
+    "startLine": 6327,
+    "endLine": 6331,
+    "exactText": "- **FR-SPF-005 MUST:** Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.\n- **FR-SPF-006 MUST:** Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.\n- **FR-SPF-007 MUST:** Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills.\n- **FR-SPF-008 MUST:** When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity.\n"
+  },
+  {
+    "id": "FR-SPF-008",
+    "sourceLine": 6330,
+    "startLine": 6328,
+    "endLine": 6332,
+    "exactText": "- **FR-SPF-006 MUST:** Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.\n- **FR-SPF-007 MUST:** Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills.\n- **FR-SPF-008 MUST:** When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity.\n\n### 38.33 Adversarial Manipulation Simulation"
+  },
+  {
+    "id": "AC-190",
+    "sourceLine": 6693,
+    "startLine": 6691,
+    "endLine": 6695,
+    "exactText": "### 39.18 Scheduling, exploration, and portfolio\n\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims."
+  },
+  {
+    "id": "AC-191",
+    "sourceLine": 6694,
+    "startLine": 6692,
+    "endLine": 6696,
+    "exactText": "\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy."
+  },
+  {
+    "id": "AC-192",
+    "sourceLine": 6695,
+    "startLine": 6693,
+    "endLine": 6697,
+    "exactText": "- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction."
+  },
+  {
+    "id": "AC-193",
+    "sourceLine": 6696,
+    "startLine": 6694,
+    "endLine": 6698,
+    "exactText": "- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions."
+  },
+  {
+    "id": "AC-194",
+    "sourceLine": 6697,
+    "startLine": 6695,
+    "endLine": 6699,
+    "exactText": "- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy."
+  },
+  {
+    "id": "AC-195",
+    "sourceLine": 6698,
+    "startLine": 6696,
+    "endLine": 6700,
+    "exactText": "- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied."
+  },
+  {
+    "id": "AC-196",
+    "sourceLine": 6699,
+    "startLine": 6697,
+    "endLine": 6701,
+    "exactText": "- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity."
+  },
+  {
+    "id": "AC-197",
+    "sourceLine": 6700,
+    "startLine": 6698,
+    "endLine": 6702,
+    "exactText": "- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity.\n"
+  },
+  {
+    "id": "AC-198",
+    "sourceLine": 6701,
+    "startLine": 6699,
+    "endLine": 6703,
+    "exactText": "- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity.\n\n### 39.19 Adversarial robustness, frontier, and decay"
+  }
+]

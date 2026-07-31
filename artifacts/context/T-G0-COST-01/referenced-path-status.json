@@ -1,0 +1,451 @@
+[
+  {
+    "path": "docs/generated/cost-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "migrations/g0_cost_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "packages/capacity-planner/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "packages/cost-router/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "packages/quota-forecast/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/cost.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "telemetry/cost.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-100.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-101.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-102.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-103.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-104.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-105.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-224.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-225.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-226.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-227.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-228.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-229.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/fixtures/cost/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-100.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-101.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-102.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-103.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-104.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-105.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-224.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-225.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-226.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-227.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-228.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-229.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-COST-001",
+      "FR-COST-002",
+      "FR-COST-003",
+      "FR-COST-004",
+      "FR-COST-005",
+      "FR-COST-006",
+      "FR-COST-007",
+      "FR-COST-008"
+    ]
+  }
+]

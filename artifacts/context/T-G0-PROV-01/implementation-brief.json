@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-PROV-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-PROV-001",
+      "exactNormativeText": "Every provider operation has lifecycle state `DISCOVERED`, `VERIFIED`, `ACTIVE`, `DEGRADED`, `DEPRECATED`, `BLOCKED`, or `REMOVED`, with last documentation verification, last live probe, replacement operation, sunset date, and affected features."
+    },
+    {
+      "id": "FR-PROV-002",
+      "exactNormativeText": "Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified."
+    },
+    {
+      "id": "FR-PROV-003",
+      "exactNormativeText": "A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved."
+    },
+    {
+      "id": "FR-PROV-004",
+      "exactNormativeText": "Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted."
+    },
+    {
+      "id": "FR-PROV-005",
+      "exactNormativeText": "Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy."
+    },
+    {
+      "id": "FR-PROV-006",
+      "exactNormativeText": "GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests."
+    },
+    {
+      "id": "FR-PROV-007",
+      "exactNormativeText": "New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source."
+    },
+    {
+      "id": "FR-PROV-008",
+      "exactNormativeText": "A provider response containing transaction payloads, signing requests, executable instructions, private-key fields, or unexpected write capability is rejected, quarantined, audited, and excluded from model context."
+    }
+  ],
+  "expectedModules": [
+    "packages/provider-lifecycle/**",
+    "packages/providers/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/prov.ts",
+    "docs/generated/prov-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every provider operation has lifecycle state `DISCOVERED`, `VERIFIED`, `ACTIVE`, `DEGRADED`, `DEPRECATED`, `BLOCKED`, or `REMOVED`, with last documentation verification, last live probe, replacement operation, sunset date, and affected features.",
+    "Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified.",
+    "A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved.",
+    "Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted.",
+    "Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy.",
+    "GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests.",
+    "New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source.",
+    "A provider response containing transaction payloads, signing requests, executable instructions, private-key fields, or unexpected write capability is rejected, quarantined, audited, and excluded from model context."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/prov.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

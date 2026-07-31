@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-PROD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-PROD-001",
+      "exactNormativeText": "`IMPLEMENTED`, `AVAILABLE`, and `PROVEN` are independent module states."
+    },
+    {
+      "id": "FR-PROD-002",
+      "exactNormativeText": "The complete production codebase may be deployed while insufficient modules remain disabled, partial, or shadow-only."
+    },
+    {
+      "id": "FR-PROD-003",
+      "exactNormativeText": "Dependency groups define build order and test prerequisites without requiring throwaway MVP architecture."
+    },
+    {
+      "id": "FR-PROD-004",
+      "exactNormativeText": "Free-only production is declared best-effort unless every critical external dependency provides an applicable SLA."
+    },
+    {
+      "id": "FR-PROD-005",
+      "exactNormativeText": "MCP protocol revisions and target clients are governed by a compatibility matrix and conformance tests."
+    },
+    {
+      "id": "FR-PROD-006",
+      "exactNormativeText": "Production live paths use bounded precomputed alpha matching; heavy Alpha Lab jobs and artifact imports follow the isolated export/import trust boundary."
+    }
+  ],
+  "expectedModules": [
+    "packages/release-conformance/**",
+    "packages/capability-registry/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/prod.ts",
+    "docs/generated/prod-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "`IMPLEMENTED`, `AVAILABLE`, and `PROVEN` are independent module states.",
+    "The complete production codebase may be deployed while insufficient modules remain disabled, partial, or shadow-only.",
+    "Dependency groups define build order and test prerequisites without requiring throwaway MVP architecture.",
+    "Free-only production is declared best-effort unless every critical external dependency provides an applicable SLA.",
+    "MCP protocol revisions and target clients are governed by a compatibility matrix and conformance tests.",
+    "Production live paths use bounded precomputed alpha matching; heavy Alpha Lab jobs and artifact imports follow the isolated export/import trust boundary."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/prod.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

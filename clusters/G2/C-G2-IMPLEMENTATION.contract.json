@@ -47,20 +47,8 @@
     "FR-WF-007",
     "FR-WF-008"
   ],
-  "acceptanceCriteria": [
-    "AC-010",
-    "AC-014",
-    "AC-264",
-    "AC-140",
-    "AC-142",
-    "AC-061",
-    "AC-260",
-    "AC-144",
-    "AC-273",
-    "AC-277",
-    "AC-011",
-    "AC-063"
-  ],
+  "acceptanceCriteria": [],
+  "integrationAcceptanceCriteria": [],
   "invariants": [
     "INV-001",
     "INV-002",
@@ -79,8 +67,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

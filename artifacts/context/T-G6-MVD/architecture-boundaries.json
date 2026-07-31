@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/multi-view-disagreement/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-MVD/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-MVD/**"
+    "artifacts/context/T-G6-MVD/**",
+    "artifacts/conformance/T-G6-MVD/manifest.json"
   ],
   "writeSet": [
     "packages/multi-view-disagreement/**"

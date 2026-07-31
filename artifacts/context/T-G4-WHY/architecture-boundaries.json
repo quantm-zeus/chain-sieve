@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/thesis/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-WHY/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-WHY/**"
+    "artifacts/context/T-G4-WHY/**",
+    "artifacts/conformance/T-G4-WHY/manifest.json"
   ],
   "writeSet": [
     "packages/thesis/**"

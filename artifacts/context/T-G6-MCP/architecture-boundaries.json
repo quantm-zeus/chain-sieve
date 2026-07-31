@@ -5,7 +5,10 @@
   "allowedPaths": [
     "apps/api/src/mcp/**",
     "packages/tool-core/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-MCP/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-MCP/**"
+    "artifacts/context/T-G6-MCP/**",
+    "artifacts/conformance/T-G6-MCP/manifest.json"
   ],
   "writeSet": [
     "apps/api/src/mcp/**",

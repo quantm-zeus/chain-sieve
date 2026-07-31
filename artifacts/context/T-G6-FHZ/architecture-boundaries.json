@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/failure-hazard/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-FHZ/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-FHZ/**"
+    "artifacts/context/T-G6-FHZ/**",
+    "artifacts/conformance/T-G6-FHZ/manifest.json"
   ],
   "writeSet": [
     "packages/failure-hazard/**"

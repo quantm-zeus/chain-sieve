@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COL-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-COL-001",
+      "exactNormativeText": "A long-running first-party collector observes an explicit, versioned allowlist of chains, programs, program versions, accounts, event families, and finality policies; it cannot imply coverage outside that scope."
+    },
+    {
+      "id": "FR-COL-002",
+      "exactNormativeText": "The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior."
+    },
+    {
+      "id": "FR-COL-003",
+      "exactNormativeText": "Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy."
+    },
+    {
+      "id": "FR-COL-004",
+      "exactNormativeText": "Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events."
+    },
+    {
+      "id": "FR-COL-005",
+      "exactNormativeText": "Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims."
+    },
+    {
+      "id": "FR-COL-006",
+      "exactNormativeText": "Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations."
+    },
+    {
+      "id": "FR-COL-007",
+      "exactNormativeText": "Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated."
+    },
+    {
+      "id": "FR-COL-008",
+      "exactNormativeText": "Collector health exposes connected state, endpoint generation, head slot, finalized slot, checkpoint lag, gap count/duration, backfill status, decode-failure rate, streamed bytes, event rate, deduplication rate, and resource consumption."
+    }
+  ],
+  "expectedModules": [
+    "apps/collector/**",
+    "packages/collector-core/**",
+    "packages/collector-solana/**",
+    "packages/program-decoders/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/col.ts",
+    "docs/generated/col-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "A long-running first-party collector observes an explicit, versioned allowlist of chains, programs, program versions, accounts, event families, and finality policies; it cannot imply coverage outside that scope.",
+    "The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior.",
+    "Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy.",
+    "Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events.",
+    "Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims.",
+    "Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations.",
+    "Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated.",
+    "Collector health exposes connected state, endpoint generation, head slot, finalized slot, checkpoint lag, gap count/duration, backfill status, decode-failure rate, streamed bytes, event rate, deduplication rate, and resource consumption."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/col.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

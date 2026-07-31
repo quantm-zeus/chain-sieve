@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AEP",
+  "immutable": true,
+  "requirements": [
+    "FR-AEP-001"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-214:T-G7-AEP:INTERFACE_FACET",
+    "AC-215:T-G7-AEP:INTERFACE_FACET",
+    "AC-216:T-G7-AEP:INTERFACE_FACET",
+    "AC-217:T-G7-AEP:INTERFACE_FACET",
+    "AC-218:T-G7-AEP:INTERFACE_FACET",
+    "AC-219:T-G7-AEP:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-AEP.spec.ts",
+    "tests/task-facets/T-G7-AEP.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/agent-runtime/**",
+    "packages/alpha-artifact-store/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-AEP/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SIG",
+  "immutable": true,
+  "requirements": [
+    "FR-SIG-001",
+    "FR-SIG-002",
+    "FR-SIG-003",
+    "FR-SIG-004",
+    "FR-SIG-005",
+    "FR-SIG-006",
+    "FR-SIG-009"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-020:T-G1-SIG:INTERFACE_FACET",
+    "AC-021:T-G1-SIG:INTERFACE_FACET",
+    "AC-022:T-G1-SIG:INTERFACE_FACET",
+    "AC-023:T-G1-SIG:INTERFACE_FACET",
+    "AC-136:T-G1-SIG:INTERFACE_FACET",
+    "AC-154:T-G1-SIG:INTERFACE_FACET",
+    "AC-190:T-G1-SIG:INTERFACE_FACET",
+    "AC-191:T-G1-SIG:INTERFACE_FACET",
+    "AC-192:T-G1-SIG:INTERFACE_FACET",
+    "AC-193:T-G1-SIG:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-SIG.spec.ts",
+    "tests/task-facets/T-G1-SIG.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/signal-intelligence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-SIG/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

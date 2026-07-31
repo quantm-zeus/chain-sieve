@@ -52,9 +52,12 @@
     "worktree:cleanup": "tsx tools/worktree-manager/cli.ts cleanup",
     "merge-queue:add": "tsx tools/merge-queue/cli.ts add",
     "merge-queue:process": "tsx tools/merge-queue/cli.ts process",
-    "zcode": "tsx tools/zcode/orchestrator.ts",
-    "zcode:status": "tsx tools/zcode/status.ts",
-    "zcode:g0": "pnpm zcode"
+    "agent": "tsx tools/agent/orchestrator.ts",
+    "agent:status": "tsx tools/agent/status.ts",
+    "antigravity": "pnpm agent -- --provider antigravity",
+    "zcode": "pnpm agent -- --provider zcode",
+    "zcode:status": "pnpm agent:status",
+    "zcode:g0": "pnpm agent -- --provider zcode"
   },
   "dependencies": {
     "@ciag/alerts": "workspace:*",

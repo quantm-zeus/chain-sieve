@@ -1,0 +1,245 @@
+[
+  {
+    "path": "docs/generated/lar-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "migrations/g5_lar_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "packages/liquidity-resilience/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/lar.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "telemetry/lar.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-170.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-171.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-172.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-173.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-174.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-175.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-176.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-177.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/lar/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-170.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-171.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-172.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-173.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-174.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-175.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-176.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-177.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAR-001",
+      "FR-LAR-002",
+      "FR-LAR-003",
+      "FR-LAR-004",
+      "FR-LAR-005"
+    ]
+  }
+]

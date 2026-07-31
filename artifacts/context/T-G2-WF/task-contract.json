@@ -55,9 +55,92 @@
     "FR-WF-007",
     "FR-WF-008"
   ],
-  "acceptanceCriteria": [
-    "AC-011",
-    "AC-063"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-010",
+      "facetId": "AC-010:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-010 system or integration oracle consumes. This facet does not claim full AC-010 satisfaction.",
+      "sourceAcceptanceSha256": "f828c63f2d124adaf7eabe2386818b7c5b8267214256cafa2c41e0dccb7a26e9"
+    },
+    {
+      "acceptanceId": "AC-011",
+      "facetId": "AC-011:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-011 system or integration oracle consumes. This facet does not claim full AC-011 satisfaction.",
+      "sourceAcceptanceSha256": "9548a32b2ae1f48b5e89357eb5cab1c11d97c7c2edf812683163de916467d7d6"
+    },
+    {
+      "acceptanceId": "AC-012",
+      "facetId": "AC-012:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-012 system or integration oracle consumes. This facet does not claim full AC-012 satisfaction.",
+      "sourceAcceptanceSha256": "6676b5118ae440817ba278ea409da158ba16925b7d7b9ee47b8adbb231a3206a"
+    },
+    {
+      "acceptanceId": "AC-013",
+      "facetId": "AC-013:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-013 system or integration oracle consumes. This facet does not claim full AC-013 satisfaction.",
+      "sourceAcceptanceSha256": "519aa355f4e5cdd521b3cef3738a042aaef5c01c47a534cd3363e4eff2167647"
+    },
+    {
+      "acceptanceId": "AC-014",
+      "facetId": "AC-014:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-014 system or integration oracle consumes. This facet does not claim full AC-014 satisfaction.",
+      "sourceAcceptanceSha256": "458a434438daf82b0ebe974460f9511379161ee39f067827d8c6ac0e1a79add6"
+    },
+    {
+      "acceptanceId": "AC-060",
+      "facetId": "AC-060:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-060 system or integration oracle consumes. This facet does not claim full AC-060 satisfaction.",
+      "sourceAcceptanceSha256": "00ba75dcb5d2de62f41ee2d640df1bdae2620fe1e73616886394325c75e000f6"
+    },
+    {
+      "acceptanceId": "AC-061",
+      "facetId": "AC-061:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-061 system or integration oracle consumes. This facet does not claim full AC-061 satisfaction.",
+      "sourceAcceptanceSha256": "3ed092856658e7ea4789e9dfd6b2837dccf2253dd6bf74f98f05831a9045795f"
+    },
+    {
+      "acceptanceId": "AC-062",
+      "facetId": "AC-062:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-062 system or integration oracle consumes. This facet does not claim full AC-062 satisfaction.",
+      "sourceAcceptanceSha256": "5dd7afabdd1daf42d10c4d26da9035600c8e8c5d9fa8b8785e7c2b9dafa05c82"
+    },
+    {
+      "acceptanceId": "AC-063",
+      "facetId": "AC-063:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-063 system or integration oracle consumes. This facet does not claim full AC-063 satisfaction.",
+      "sourceAcceptanceSha256": "9bf2649687eeeb036eb66f2df7075ecd75065325c4a9a61b8bdce1af1d3c7cae"
+    },
+    {
+      "acceptanceId": "AC-260",
+      "facetId": "AC-260:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-260 system or integration oracle consumes. This facet does not claim full AC-260 satisfaction.",
+      "sourceAcceptanceSha256": "69ba0d661ff3c806d9084169ba668716496c2e324da0e3ebb549c01bc63b7ed6"
+    },
+    {
+      "acceptanceId": "AC-261",
+      "facetId": "AC-261:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-261 system or integration oracle consumes. This facet does not claim full AC-261 satisfaction.",
+      "sourceAcceptanceSha256": "2c0919f7d5d666d60379bd7761094eb88a247794df45bd7949ac5da49d503fc8"
+    },
+    {
+      "acceptanceId": "AC-262",
+      "facetId": "AC-262:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-262 system or integration oracle consumes. This facet does not claim full AC-262 satisfaction.",
+      "sourceAcceptanceSha256": "19d956f5519bd27c1186303adcf1d38ce5713b608bbd1befb75294ef08df00d9"
+    },
+    {
+      "acceptanceId": "AC-263",
+      "facetId": "AC-263:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-263 system or integration oracle consumes. This facet does not claim full AC-263 satisfaction.",
+      "sourceAcceptanceSha256": "5babeec53f44a192eec3b7b97d7ef2d966ec1bfdf40dc9d32cf872c2c065abef"
+    },
+    {
+      "acceptanceId": "AC-264",
+      "facetId": "AC-264:T-G2-WF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-WF for FR-WF-001, FR-WF-002, FR-WF-003, FR-WF-004, FR-WF-005, FR-WF-006, FR-WF-007, FR-WF-008 that the unchanged AC-264 system or integration oracle consumes. This facet does not claim full AC-264 satisfaction.",
+      "sourceAcceptanceSha256": "5c190dd8f7a7294f5d7f97e06c9812cc4a9528b5b4ac7a6910520a4a91716ffb"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -79,7 +162,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-WF/**"
+    "artifacts/context/T-G2-WF/**",
+    "artifacts/conformance/T-G2-WF/manifest.json"
   ],
   "writeSet": [
     "packages/workflow-runtime/**",
@@ -88,7 +172,10 @@
   "allowedPaths": [
     "packages/workflow-runtime/**",
     "apps/api/src/internal/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -96,6 +183,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-WF/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -126,7 +215,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -136,15 +226,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-011.spec.ts",
-    "tests/negative/AC-011.negative.spec.ts",
-    "tests/acceptance/AC-063.spec.ts",
-    "tests/negative/AC-063.negative.spec.ts"
+    "tests/task-facets/T-G2-WF.spec.ts",
+    "tests/task-facets/T-G2-WF.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-011.spec.ts tests/negative/AC-011.negative.spec.ts tests/acceptance/AC-063.spec.ts tests/negative/AC-063.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G2-WF.spec.ts tests/task-facets/T-G2-WF.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -169,10 +261,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -218,5 +312,9 @@
       "line": 6024,
       "id": "FR-WF-008"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G2-WF/manifest.json",
+  "conformanceManifestSha256": "ad609138ba2f822a811d9e458c14b63de24e41690d3f3a048eb2c452787b079b",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

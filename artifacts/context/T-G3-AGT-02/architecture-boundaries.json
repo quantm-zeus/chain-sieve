@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/agent-runtime/**",
     "packages/evidence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G3-AGT-02/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G3-AGT-02/**"
+    "artifacts/context/T-G3-AGT-02/**",
+    "artifacts/conformance/T-G3-AGT-02/manifest.json"
   ],
   "writeSet": [
     "packages/agent-runtime/**",

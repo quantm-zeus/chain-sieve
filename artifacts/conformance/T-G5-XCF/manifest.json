@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-XCF",
+  "immutable": true,
+  "requirements": [
+    "FR-XCF-001",
+    "FR-XCF-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-074:T-G5-XCF:INTERFACE_FACET",
+    "AC-075:T-G5-XCF:INTERFACE_FACET",
+    "AC-076:T-G5-XCF:INTERFACE_FACET",
+    "AC-091:T-G5-XCF:INTERFACE_FACET",
+    "AC-092:T-G5-XCF:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-XCF.spec.ts",
+    "tests/task-facets/T-G5-XCF.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/capital-flow/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-XCF/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

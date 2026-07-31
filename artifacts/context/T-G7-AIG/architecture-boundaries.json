@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/information-gain-scheduler/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-AIG/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AIG/**"
+    "artifacts/context/T-G7-AIG/**",
+    "artifacts/conformance/T-G7-AIG/manifest.json"
   ],
   "writeSet": [
     "packages/information-gain-scheduler/**"

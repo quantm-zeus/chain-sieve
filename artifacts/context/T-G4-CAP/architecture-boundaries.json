@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/capability-registry/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-CAP/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-CAP/**"
+    "artifacts/context/T-G4-CAP/**",
+    "artifacts/conformance/T-G4-CAP/manifest.json"
   ],
   "writeSet": [
     "packages/capability-registry/**"

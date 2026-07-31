@@ -68,6 +68,14 @@
         "minLength": 1
       }
     },
+    "integrationAcceptanceCriteria": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "invariants": {
       "type": "array",
       "items": {
@@ -124,6 +132,7 @@
     "tasks",
     "requirements",
     "acceptanceCriteria",
+    "integrationAcceptanceCriteria",
     "invariants",
     "entryCriteria",
     "exitCriteria",

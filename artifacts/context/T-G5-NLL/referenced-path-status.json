@@ -1,0 +1,223 @@
+[
+  {
+    "path": "docs/generated/nll-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "migrations/g5_nll_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "packages/leader-laggard/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/nll.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "telemetry/nll.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-170.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-171.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-172.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-173.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-174.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-175.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-176.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-177.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/fixtures/nll/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-170.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-171.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-172.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-173.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-174.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-175.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-176.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-177.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NLL-001",
+      "FR-NLL-002",
+      "FR-NLL-003",
+      "FR-NLL-004"
+    ]
+  }
+]

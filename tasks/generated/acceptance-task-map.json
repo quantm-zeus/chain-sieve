@@ -1,126 +1,126 @@
 {
   "AC-001": [
-    "T-G0-CORE"
+    "PROJECT"
   ],
   "AC-002": [
-    "T-G0-MCP"
+    "PROJECT"
   ],
   "AC-003": [
-    "T-G6-MCP"
+    "PROJECT"
   ],
   "AC-004": [
-    "T-G0-CORE"
+    "PROJECT"
   ],
   "AC-010": [
-    "T-G2-ADM"
+    "PROJECT"
   ],
   "AC-011": [
-    "T-G2-WF"
+    "PROJECT"
   ],
   "AC-012": [
-    "T-G3-ADM"
+    "PROJECT"
   ],
   "AC-013": [
-    "T-G4-ADM"
+    "PROJECT"
   ],
   "AC-014": [
-    "T-G2-ADM"
+    "PROJECT"
   ],
   "AC-020": [
-    "T-G0-DATA"
+    "PROJECT"
   ],
   "AC-021": [
-    "T-G1-DATA-01"
+    "PROJECT"
   ],
   "AC-022": [
-    "T-G1-DATA-02"
+    "PROJECT"
   ],
   "AC-023": [
-    "T-G1-SIG"
+    "PROJECT"
   ],
   "AC-030": [
-    "T-G3-AGT-01"
+    "C-G3-IMPLEMENTATION"
   ],
   "AC-031": [
-    "T-G3-AGT-02"
+    "C-G3-IMPLEMENTATION"
   ],
   "AC-032": [
-    "T-G3-AGT-01"
+    "C-G3-IMPLEMENTATION"
   ],
   "AC-033": [
-    "T-G3-AGT-02"
+    "C-G3-IMPLEMENTATION"
   ],
   "AC-034": [
-    "T-G3-AGT-01"
+    "C-G3-IMPLEMENTATION"
   ],
   "AC-040": [
-    "T-G1-EVAL-01"
+    "PROJECT"
   ],
   "AC-041": [
-    "T-G1-EVAL-02"
+    "PROJECT"
   ],
   "AC-042": [
-    "T-G1-MAT-01"
+    "PROJECT"
   ],
   "AC-043": [
-    "T-G1-MAT-02"
+    "PROJECT"
   ],
   "AC-044": [
-    "T-G6-EVAL-01"
+    "PROJECT"
   ],
   "AC-050": [
-    "T-G0-SEC-01"
+    "PROJECT"
   ],
   "AC-051": [
-    "T-G0-SEC-02"
+    "PROJECT"
   ],
   "AC-052": [
-    "T-G0-MCP"
+    "PROJECT"
   ],
   "AC-053": [
-    "T-G0-SEC-01"
+    "PROJECT"
   ],
   "AC-060": [
-    "T-G0-DR"
+    "PROJECT"
   ],
   "AC-061": [
-    "T-G2-DR"
+    "PROJECT"
   ],
   "AC-062": [
-    "T-G0-DR"
+    "PROJECT"
   ],
   "AC-063": [
-    "T-G2-WF"
+    "PROJECT"
   ],
   "AC-070": [
-    "T-G4-DECAY"
+    "C-G4-IMPLEMENTATION"
   ],
   "AC-071": [
-    "T-G4-THS"
+    "C-G4-IMPLEMENTATION"
   ],
   "AC-072": [
-    "T-G4-WHY"
+    "C-G4-IMPLEMENTATION"
   ],
   "AC-073": [
-    "T-G4-DECAY"
+    "C-G4-IMPLEMENTATION"
   ],
   "AC-074": [
-    "T-G4-CROWD"
+    "PROJECT"
   ],
   "AC-075": [
-    "T-G5-CROWD"
+    "PROJECT"
   ],
   "AC-076": [
-    "T-G5-NAR"
+    "PROJECT"
   ],
   "AC-077": [
-    "T-G5-POL"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-078": [
-    "T-G5-REG"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-079": [
-    "T-G5-POL"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-080": [
     "T-G4-LAT"
@@ -135,436 +135,436 @@
     "T-G6-ANA"
   ],
   "AC-091": [
-    "T-G5-XCF"
+    "PROJECT"
   ],
   "AC-092": [
-    "T-G4-CROWD"
+    "PROJECT"
   ],
   "AC-083": [
-    "T-G4-CAP"
+    "PROJECT"
   ],
   "AC-084": [
-    "T-G4-FB"
+    "PROJECT"
   ],
   "AC-085": [
-    "T-G4-NB"
+    "PROJECT"
   ],
   "AC-086": [
-    "T-G6-AL"
+    "PROJECT"
   ],
   "AC-087": [
-    "T-G6-CF"
+    "PROJECT"
   ],
   "AC-088": [
-    "T-G4-CAP"
+    "PROJECT"
   ],
   "AC-089": [
-    "T-G4-FB"
+    "PROJECT"
   ],
   "AC-100": [
-    "T-G0-COST-01"
+    "PROJECT"
   ],
   "AC-101": [
-    "T-G0-COST-02"
+    "PROJECT"
   ],
   "AC-102": [
-    "T-G1-COST"
+    "PROJECT"
   ],
   "AC-103": [
-    "T-G0-COST-01"
+    "PROJECT"
   ],
   "AC-104": [
-    "T-G0-COST-02"
+    "PROJECT"
   ],
   "AC-105": [
-    "T-G1-COST"
+    "PROJECT"
   ],
   "AC-110": [
-    "T-G0-COL-01"
+    "PROJECT"
   ],
   "AC-111": [
-    "T-G0-COL-02"
+    "PROJECT"
   ],
   "AC-112": [
-    "T-G0-DISC"
+    "PROJECT"
   ],
   "AC-113": [
-    "T-G1-DISC-01"
+    "PROJECT"
   ],
   "AC-120": [
-    "T-G1-EXEC-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-121": [
-    "T-G1-EXEC-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-122": [
-    "T-G1-EXEC-03"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-123": [
-    "T-G1-EXEC-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-124": [
-    "T-G1-EXEC-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-125": [
-    "T-G1-EXEC-03"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-126": [
-    "T-G1-MAT-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-127": [
-    "T-G1-MAT-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-128": [
-    "T-G1-EXEC-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-130": [
-    "T-G1-SOLSEC"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-131": [
-    "T-G1-SUP"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-132": [
-    "T-G1-TRD"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-133": [
-    "T-G1-SOLSEC"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-134": [
-    "T-G1-SUP"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-135": [
-    "T-G1-TRD"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-136": [
-    "T-G5-SIG"
+    "PROJECT"
   ],
   "AC-140": [
-    "T-G2-ALERT"
+    "PROJECT"
   ],
   "AC-141": [
-    "T-G5-SOC"
+    "PROJECT"
   ],
   "AC-142": [
-    "T-G2-ALERT"
+    "PROJECT"
   ],
   "AC-143": [
-    "T-G5-SOC"
+    "PROJECT"
   ],
   "AC-144": [
-    "T-G2-PROD"
+    "PROJECT"
   ],
   "AC-150": [
-    "T-G6-EVAL-02"
+    "PROJECT"
   ],
   "AC-151": [
-    "T-G6-PROD"
+    "PROJECT"
   ],
   "AC-152": [
-    "T-G1-EVAL-01"
+    "PROJECT"
   ],
   "AC-153": [
-    "T-G1-EVAL-02"
+    "PROJECT"
   ],
   "AC-154": [
-    "T-G6-SIG"
+    "PROJECT"
   ],
   "AC-160": [
-    "T-G5-DFD"
+    "PROJECT"
   ],
   "AC-161": [
-    "T-G5-WAL"
+    "PROJECT"
   ],
   "AC-162": [
-    "T-G6-WPI-01"
+    "PROJECT"
   ],
   "AC-163": [
-    "T-G6-WPI-02"
+    "PROJECT"
   ],
   "AC-164": [
-    "T-G5-DFD"
+    "PROJECT"
   ],
   "AC-165": [
-    "T-G5-WAL"
+    "PROJECT"
   ],
   "AC-166": [
-    "T-G6-WPI-01"
+    "PROJECT"
   ],
   "AC-167": [
-    "T-G6-WPI-02"
+    "PROJECT"
   ],
   "AC-168": [
-    "T-G5-DFD"
+    "PROJECT"
   ],
   "AC-169": [
-    "T-G5-WAL"
+    "PROJECT"
   ],
   "AC-170": [
-    "T-G5-ADQ"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-171": [
-    "T-G5-LAR"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-172": [
-    "T-G5-LMS"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-173": [
-    "T-G5-NLL"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-174": [
-    "T-G5-ADQ"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-175": [
-    "T-G5-LAR"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-176": [
-    "T-G5-LMS"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-177": [
-    "T-G5-NLL"
+    "C-G5-IMPLEMENTATION"
   ],
   "AC-180": [
-    "T-G6-FHZ"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-181": [
-    "T-G6-MVD"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-182": [
-    "T-G6-OOD"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-183": [
-    "T-G6-FHZ"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-184": [
-    "T-G6-MVD"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-185": [
-    "T-G6-OOD"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-186": [
-    "T-G6-FHZ"
+    "C-G6-IMPLEMENTATION"
   ],
   "AC-190": [
-    "T-G7-AIG"
+    "PROJECT"
   ],
   "AC-191": [
-    "T-G7-EXP"
+    "PROJECT"
   ],
   "AC-192": [
-    "T-G7-SPF"
+    "PROJECT"
   ],
   "AC-193": [
-    "T-G1-SIG"
+    "PROJECT"
   ],
   "AC-194": [
-    "T-G7-AIG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-195": [
-    "T-G7-EXP"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-196": [
-    "T-G7-SPF"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-197": [
-    "T-G7-AIG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-198": [
-    "T-G7-EXP"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-200": [
-    "T-G7-ADG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-201": [
-    "T-G7-AMS"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-202": [
-    "T-G7-OF"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-203": [
-    "T-G7-ADG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-204": [
-    "T-G7-AMS"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-205": [
-    "T-G7-OF"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-206": [
-    "T-G7-ADG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-207": [
-    "T-G7-AMS"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-208": [
-    "T-G7-OF"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-209": [
-    "T-G7-ADG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-210": [
-    "T-G7-AMS"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-211": [
-    "T-G7-OF"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-212": [
-    "T-G7-ADG"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-213": [
-    "T-G7-AMS"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-214": [
-    "T-G7-AEP"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-215": [
-    "T-G7-ALAB"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-216": [
-    "T-G7-AEP"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-217": [
-    "T-G7-ALAB"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-218": [
-    "T-G7-AEP"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-219": [
-    "T-G7-ALAB"
+    "C-G7-IMPLEMENTATION"
   ],
   "AC-220": [
-    "T-G1-OBJ-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-221": [
-    "T-G1-OBJ-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-222": [
-    "T-G1-OBJ-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-223": [
-    "T-G1-OBJ-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-224": [
-    "T-G1-DISC-02"
+    "PROJECT"
   ],
   "AC-225": [
-    "T-G0-COL-01"
+    "PROJECT"
   ],
   "AC-226": [
-    "T-G0-COL-02"
+    "PROJECT"
   ],
   "AC-227": [
-    "T-G0-DISC"
+    "PROJECT"
   ],
   "AC-228": [
-    "T-G1-DISC-01"
+    "PROJECT"
   ],
   "AC-229": [
-    "T-G1-DISC-02"
+    "PROJECT"
   ],
   "AC-230": [
-    "T-G0-COL-01"
+    "PROJECT"
   ],
   "AC-231": [
-    "T-G0-COL-02"
+    "PROJECT"
   ],
   "AC-232": [
-    "T-G1-EXEC-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-233": [
-    "T-G1-EXEC-03"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-234": [
-    "T-G1-SOLSEC"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-235": [
-    "T-G1-EXEC-01"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-236": [
-    "T-G1-EXEC-02"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-237": [
-    "T-G0-COL-01"
+    "PROJECT"
   ],
   "AC-238": [
-    "T-G1-EXEC-03"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-239": [
-    "T-G1-SOLSEC"
+    "C-G1-IMPLEMENTATION"
   ],
   "AC-240": [
-    "T-G0-DATA"
+    "PROJECT"
   ],
   "AC-241": [
-    "T-G1-DATA-01"
+    "PROJECT"
   ],
   "AC-242": [
-    "T-G1-DATA-02"
+    "PROJECT"
   ],
   "AC-243": [
-    "T-G6-EVAL-01"
+    "PROJECT"
   ],
   "AC-244": [
-    "T-G6-EVAL-02"
+    "PROJECT"
   ],
   "AC-245": [
-    "T-G0-CORE"
+    "PROJECT"
   ],
   "AC-246": [
-    "T-G0-DATA"
+    "PROJECT"
   ],
   "AC-247": [
-    "T-G1-DATA-01"
+    "PROJECT"
   ],
   "AC-248": [
-    "T-G1-DATA-02"
+    "PROJECT"
   ],
   "AC-249": [
-    "T-G1-EVAL-01"
+    "PROJECT"
   ],
   "AC-250": [
-    "T-G0-PROV-01"
+    "PROJECT"
   ],
   "AC-251": [
-    "T-G0-PROV-02"
+    "PROJECT"
   ],
   "AC-252": [
-    "T-G0-PROV-01"
+    "PROJECT"
   ],
   "AC-253": [
-    "T-G0-PROV-02"
+    "PROJECT"
   ],
   "AC-254": [
-    "T-G0-SEC-02"
+    "PROJECT"
   ],
   "AC-255": [
-    "T-G6-MCP"
+    "PROJECT"
   ],
   "AC-256": [
-    "T-G0-MCP"
+    "PROJECT"
   ],
   "AC-257": [
-    "T-G0-PROV-01"
+    "PROJECT"
   ],
   "AC-258": [
-    "T-G0-PROV-02"
+    "PROJECT"
   ],
   "AC-259": [
-    "T-G0-SEC-01"
+    "PROJECT"
   ],
   "AC-260": [
-    "T-G2-DR"
+    "PROJECT"
   ],
   "AC-261": [
-    "T-G3-ADM"
+    "PROJECT"
   ],
   "AC-262": [
-    "T-G4-ADM"
+    "PROJECT"
   ],
   "AC-263": [
-    "T-G0-DR"
+    "PROJECT"
   ],
   "AC-264": [
-    "T-G2-ADM"
+    "PROJECT"
   ],
   "AC-265": [
     "T-G0-TRACE"
@@ -582,33 +582,33 @@
     "T-G0-TRACE"
   ],
   "AC-270": [
-    "T-G0-PROV-01"
+    "C-G0-IMPLEMENTATION"
   ],
   "AC-271": [
-    "T-G0-PROV-02"
+    "C-G0-IMPLEMENTATION"
   ],
   "AC-272": [
-    "T-G6-LEGAL"
+    "PROJECT"
   ],
   "AC-273": [
-    "T-G2-PROD"
+    "PROJECT"
   ],
   "AC-274": [
-    "T-G6-LEGAL"
+    "PROJECT"
   ],
   "AC-275": [
-    "T-G6-PROD"
+    "PROJECT"
   ],
   "AC-276": [
-    "T-G0-SEC-02"
+    "PROJECT"
   ],
   "AC-277": [
-    "T-G2-PROD"
+    "PROJECT"
   ],
   "AC-278": [
-    "T-G6-LEGAL"
+    "PROJECT"
   ],
   "AC-279": [
-    "T-G6-PROD"
+    "PROJECT"
   ]
 }

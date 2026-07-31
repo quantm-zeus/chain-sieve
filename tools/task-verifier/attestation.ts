@@ -86,7 +86,7 @@ export const deriveAcceptanceMapping = async (
   cwd = process.cwd(),
 ): Promise<TaskResult['bindings']['acceptanceToTests']> => {
   const specification = await loadAndValidateSpecification();
-  return task.acceptanceCriteria.map((acceptanceId) => {
+  const taskCriteria = task.acceptanceCriteria.map((acceptanceId) => {
     const acceptance = specification.manifest.acceptanceCriteria.find((item) => item.id === acceptanceId);
     if (!acceptance) throw new Error(`UNKNOWN_ACCEPTANCE:${acceptanceId}`);
     const paths = [acceptance.positiveTestRef, acceptance.negativeOrFailureTestRef];
@@ -94,6 +94,19 @@ export const deriveAcceptanceMapping = async (
       throw new Error(`MISSING_ACCEPTANCE_MAPPING:${acceptanceId}`);
     return { acceptanceId, tests: [...new Set(paths)].map((path) => hashedPath(head, path, cwd)) };
   });
+  const facetPaths = [
+    `tests/task-facets/${task.id}.spec.ts`,
+    `tests/task-facets/${task.id}.negative.spec.ts`,
+  ];
+  const facets = task.taskAcceptanceFacets.map((facet) => {
+    if (facetPaths.some((path) => !task.requiredTests.includes(path)))
+      throw new Error(`MISSING_ACCEPTANCE_FACET_MAPPING:${facet.facetId}`);
+    return {
+      acceptanceId: facet.facetId,
+      tests: facetPaths.map((path) => hashedPath(head, path, cwd)),
+    };
+  });
+  return [...taskCriteria, ...facets];
 };
 
 export const persistCommandEvidence = async (
@@ -212,6 +225,19 @@ export const validateTaskAttestation = async (
   const bindings = result.bindings;
   const contractText = await readFile(join(cwd, contractPath(task)), 'utf8');
   if (sha256(contractText) !== bindings.taskContractSha256) throw new Error('WRONG_TASK_CONTRACT_HASH');
+  if (task.conformanceManifestPath && task.conformanceManifestSha256) {
+    if (
+      bindings.conformanceManifestPath !== task.conformanceManifestPath ||
+      bindings.conformanceManifestSha256 !== task.conformanceManifestSha256
+    )
+      throw new Error('CONFORMANCE_RESULT_BINDING_MISMATCH');
+    const conformanceText = await readFile(
+      join(cwd, task.conformanceManifestPath),
+      'utf8',
+    );
+    if (sha256(conformanceText) !== task.conformanceManifestSha256)
+      throw new Error('CONFORMANCE_RESULT_HASH_MISMATCH');
+  }
   if (bindings.prdSha256 !== specification.hashes.prd) throw new Error('WRONG_PRD_HASH');
   if (bindings.requirementManifestSha256 !== specification.hashes.requirements)
     throw new Error('WRONG_REQUIREMENT_MANIFEST_HASH');

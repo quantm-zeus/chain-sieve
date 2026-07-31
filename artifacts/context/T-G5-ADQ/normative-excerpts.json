@@ -1,0 +1,93 @@
+[
+  {
+    "id": "FR-ADQ-001",
+    "sourceLine": 6267,
+    "startLine": 6265,
+    "endLine": 6269,
+    "exactText": "### 38.25 Attention Diffusion Quality\n\n- **FR-ADQ-001 MUST:** Attention diffusion models independent source/community breadth, propagation sequence, concentration, duplication similarity, account/source quality, paid-promotion evidence, and social-to-economic-buyer conversion.\n- **FR-ADQ-002 MUST:** Missing paid social capability is missingness, not negative attention; source rights and bot/scraping prohibitions are enforced.\n- **FR-ADQ-003 MUST:** KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion."
+  },
+  {
+    "id": "FR-ADQ-002",
+    "sourceLine": 6268,
+    "startLine": 6266,
+    "endLine": 6270,
+    "exactText": "\n- **FR-ADQ-001 MUST:** Attention diffusion models independent source/community breadth, propagation sequence, concentration, duplication similarity, account/source quality, paid-promotion evidence, and social-to-economic-buyer conversion.\n- **FR-ADQ-002 MUST:** Missing paid social capability is missingness, not negative attention; source rights and bot/scraping prohibitions are enforced.\n- **FR-ADQ-003 MUST:** KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion.\n- **FR-ADQ-004 MUST:** Attention evidence cannot override deterministic security, execution, creator, or liquidity risk."
+  },
+  {
+    "id": "FR-ADQ-003",
+    "sourceLine": 6269,
+    "startLine": 6267,
+    "endLine": 6271,
+    "exactText": "- **FR-ADQ-001 MUST:** Attention diffusion models independent source/community breadth, propagation sequence, concentration, duplication similarity, account/source quality, paid-promotion evidence, and social-to-economic-buyer conversion.\n- **FR-ADQ-002 MUST:** Missing paid social capability is missingness, not negative attention; source rights and bot/scraping prohibitions are enforced.\n- **FR-ADQ-003 MUST:** KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion.\n- **FR-ADQ-004 MUST:** Attention evidence cannot override deterministic security, execution, creator, or liquidity risk.\n- **FR-ADQ-005 MUST:** Free-tier operation supports aggregate/user-curated sources and exposes coverage sufficient to prevent overclaiming."
+  },
+  {
+    "id": "FR-ADQ-004",
+    "sourceLine": 6270,
+    "startLine": 6268,
+    "endLine": 6272,
+    "exactText": "- **FR-ADQ-002 MUST:** Missing paid social capability is missingness, not negative attention; source rights and bot/scraping prohibitions are enforced.\n- **FR-ADQ-003 MUST:** KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion.\n- **FR-ADQ-004 MUST:** Attention evidence cannot override deterministic security, execution, creator, or liquidity risk.\n- **FR-ADQ-005 MUST:** Free-tier operation supports aggregate/user-curated sources and exposes coverage sufficient to prevent overclaiming.\n"
+  },
+  {
+    "id": "FR-ADQ-005",
+    "sourceLine": 6271,
+    "startLine": 6269,
+    "endLine": 6273,
+    "exactText": "- **FR-ADQ-003 MUST:** KOL concentration, synchronized reposts, paid boosts, and price-leading-attention patterns are separated from organic multi-cluster diffusion.\n- **FR-ADQ-004 MUST:** Attention evidence cannot override deterministic security, execution, creator, or liquidity risk.\n- **FR-ADQ-005 MUST:** Free-tier operation supports aggregate/user-curated sources and exposes coverage sufficient to prevent overclaiming.\n\n### 38.26 Narrative Leader–Laggard Intelligence"
+  },
+  {
+    "id": "AC-170",
+    "sourceLine": 6672,
+    "startLine": 6670,
+    "endLine": 6674,
+    "exactText": "### 39.16 Liquidity, launch, attention, and rotation\n\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort."
+  },
+  {
+    "id": "AC-171",
+    "sourceLine": 6673,
+    "startLine": 6671,
+    "endLine": 6675,
+    "exactText": "\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state."
+  },
+  {
+    "id": "AC-172",
+    "sourceLine": 6674,
+    "startLine": 6672,
+    "endLine": 6676,
+    "exactText": "- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used."
+  },
+  {
+    "id": "AC-173",
+    "sourceLine": 6675,
+    "startLine": 6673,
+    "endLine": 6677,
+    "exactText": "- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion."
+  },
+  {
+    "id": "AC-174",
+    "sourceLine": 6676,
+    "startLine": 6674,
+    "endLine": 6678,
+    "exactText": "- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies."
+  },
+  {
+    "id": "AC-175",
+    "sourceLine": 6677,
+    "startLine": 6675,
+    "endLine": 6679,
+    "exactText": "- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates."
+  },
+  {
+    "id": "AC-176",
+    "sourceLine": 6678,
+    "startLine": 6676,
+    "endLine": 6680,
+    "exactText": "- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n"
+  },
+  {
+    "id": "AC-177",
+    "sourceLine": 6679,
+    "startLine": 6677,
+    "endLine": 6681,
+    "exactText": "- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n\n### 39.17 Novelty, disagreement, and hazards"
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-TRACE",
+  "immutable": true,
+  "requirements": [
+    "FR-TRACE-001",
+    "FR-TRACE-002",
+    "FR-TRACE-003",
+    "FR-TRACE-004",
+    "FR-TRACE-005",
+    "FR-TRACE-006"
+  ],
+  "taskAcceptanceCriteria": [
+    "AC-265",
+    "AC-266",
+    "AC-267",
+    "AC-268",
+    "AC-269"
+  ],
+  "taskAcceptanceFacets": [],
+  "taskOwnedTests": [
+    "tests/acceptance/AC-265.spec.ts",
+    "tests/negative/AC-265.negative.spec.ts",
+    "tests/acceptance/AC-266.spec.ts",
+    "tests/negative/AC-266.negative.spec.ts",
+    "tests/acceptance/AC-267.spec.ts",
+    "tests/negative/AC-267.negative.spec.ts",
+    "tests/acceptance/AC-268.spec.ts",
+    "tests/negative/AC-268.negative.spec.ts",
+    "tests/acceptance/AC-269.spec.ts",
+    "tests/negative/AC-269.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/requirement-manifest/**",
+    "packages/release-conformance/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-TRACE/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

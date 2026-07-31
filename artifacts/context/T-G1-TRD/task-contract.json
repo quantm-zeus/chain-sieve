@@ -33,9 +33,56 @@
     "FR-TRD-003",
     "FR-TRD-004"
   ],
-  "acceptanceCriteria": [
-    "AC-132",
-    "AC-135"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-130",
+      "facetId": "AC-130:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-130 system or integration oracle consumes. This facet does not claim full AC-130 satisfaction.",
+      "sourceAcceptanceSha256": "ea9853a7711d59725ecd339040bd84e2a95305529b208e39c2e9ee1cca81a08c"
+    },
+    {
+      "acceptanceId": "AC-131",
+      "facetId": "AC-131:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-131 system or integration oracle consumes. This facet does not claim full AC-131 satisfaction.",
+      "sourceAcceptanceSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10"
+    },
+    {
+      "acceptanceId": "AC-132",
+      "facetId": "AC-132:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-132 system or integration oracle consumes. This facet does not claim full AC-132 satisfaction.",
+      "sourceAcceptanceSha256": "da10ace021f9f86905ef73fe2612d1de7259f10c910c885a47f60e217c37a5f8"
+    },
+    {
+      "acceptanceId": "AC-133",
+      "facetId": "AC-133:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-133 system or integration oracle consumes. This facet does not claim full AC-133 satisfaction.",
+      "sourceAcceptanceSha256": "b5f06cd7bd2ea21127a7e854238f0b82a92d5afe11afcd68f67cb5e0c252ab26"
+    },
+    {
+      "acceptanceId": "AC-134",
+      "facetId": "AC-134:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-134 system or integration oracle consumes. This facet does not claim full AC-134 satisfaction.",
+      "sourceAcceptanceSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18"
+    },
+    {
+      "acceptanceId": "AC-135",
+      "facetId": "AC-135:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-135 system or integration oracle consumes. This facet does not claim full AC-135 satisfaction.",
+      "sourceAcceptanceSha256": "bf04f986a93c324b3e2424f0746100778fdf1aad461041a2c0bb022ec0633bf2"
+    },
+    {
+      "acceptanceId": "AC-136",
+      "facetId": "AC-136:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-136 system or integration oracle consumes. This facet does not claim full AC-136 satisfaction.",
+      "sourceAcceptanceSha256": "936b29a101783b3a42140c65ed0828b27d88ed21b43287643c5213d7aed2fe26"
+    },
+    {
+      "acceptanceId": "AC-233",
+      "facetId": "AC-233:T-G1-TRD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-TRD for FR-TRD-001, FR-TRD-002, FR-TRD-003, FR-TRD-004 that the unchanged AC-233 system or integration oracle consumes. This facet does not claim full AC-233 satisfaction.",
+      "sourceAcceptanceSha256": "1a025efb0b8e036b4f7cbb3fc1c54c5fedaad7198acb0d6e43b0c2bed5532065"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -57,14 +104,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-TRD/**"
+    "artifacts/context/T-G1-TRD/**",
+    "artifacts/conformance/T-G1-TRD/manifest.json"
   ],
   "writeSet": [
     "packages/economic-trade-normalizer/**"
   ],
   "allowedPaths": [
     "packages/economic-trade-normalizer/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -72,6 +123,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-TRD/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -90,7 +143,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -100,15 +154,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-132.spec.ts",
-    "tests/negative/AC-132.negative.spec.ts",
-    "tests/acceptance/AC-135.spec.ts",
-    "tests/negative/AC-135.negative.spec.ts"
+    "tests/task-facets/T-G1-TRD.spec.ts",
+    "tests/task-facets/T-G1-TRD.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-132.spec.ts tests/negative/AC-132.negative.spec.ts tests/acceptance/AC-135.spec.ts tests/negative/AC-135.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G1-TRD.spec.ts tests/task-facets/T-G1-TRD.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -133,10 +189,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -162,5 +220,9 @@
       "line": 6192,
       "id": "FR-TRD-004"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G1-TRD/manifest.json",
+  "conformanceManifestSha256": "55d31ec6d4eb85f1c4d780958c9195dfb1081666e5d09ce009fd3cb28c99795c",
+  "testQualityGate": "NEGATIVE_CASE"
 }

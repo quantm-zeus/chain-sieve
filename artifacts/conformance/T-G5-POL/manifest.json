@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-POL",
+  "immutable": true,
+  "requirements": [
+    "FR-POL-001",
+    "FR-POL-002",
+    "FR-POL-003",
+    "FR-POL-004",
+    "FR-POL-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-077:T-G5-POL:INTERFACE_FACET",
+    "AC-078:T-G5-POL:INTERFACE_FACET",
+    "AC-079:T-G5-POL:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-POL.spec.ts",
+    "tests/task-facets/T-G5-POL.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/policy-compiler/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-POL/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

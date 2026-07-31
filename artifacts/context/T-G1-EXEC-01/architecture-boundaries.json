@@ -6,7 +6,10 @@
     "packages/execution-simulator/**",
     "packages/pool-math/**",
     "packages/transfer-semantics/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -14,11 +17,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-EXEC-01/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-EXEC-01/**"
+    "artifacts/context/T-G1-EXEC-01/**",
+    "artifacts/conformance/T-G1-EXEC-01/manifest.json"
   ],
   "writeSet": [
     "packages/execution-simulator/**",

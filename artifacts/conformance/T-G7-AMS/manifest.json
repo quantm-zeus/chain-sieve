@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AMS",
+  "immutable": true,
+  "requirements": [
+    "FR-AMS-001",
+    "FR-AMS-002",
+    "FR-AMS-003",
+    "FR-AMS-004",
+    "FR-AMS-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-200:T-G7-AMS:INTERFACE_FACET",
+    "AC-201:T-G7-AMS:INTERFACE_FACET",
+    "AC-202:T-G7-AMS:INTERFACE_FACET",
+    "AC-203:T-G7-AMS:INTERFACE_FACET",
+    "AC-204:T-G7-AMS:INTERFACE_FACET",
+    "AC-205:T-G7-AMS:INTERFACE_FACET",
+    "AC-206:T-G7-AMS:INTERFACE_FACET",
+    "AC-207:T-G7-AMS:INTERFACE_FACET",
+    "AC-208:T-G7-AMS:INTERFACE_FACET",
+    "AC-209:T-G7-AMS:INTERFACE_FACET",
+    "AC-210:T-G7-AMS:INTERFACE_FACET",
+    "AC-211:T-G7-AMS:INTERFACE_FACET",
+    "AC-212:T-G7-AMS:INTERFACE_FACET",
+    "AC-213:T-G7-AMS:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-AMS.spec.ts",
+    "tests/task-facets/T-G7-AMS.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/adversarial-simulator/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-AMS/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

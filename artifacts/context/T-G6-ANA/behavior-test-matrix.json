@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-ANA",
+  "taskLocalCriteria": [
+    {
+      "acceptanceId": "AC-081",
+      "positive": "tests/acceptance/AC-081.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-081.negative.spec.ts",
+      "exactNormativeText": "Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features."
+    },
+    {
+      "acceptanceId": "AC-082",
+      "positive": "tests/acceptance/AC-082.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-082.negative.spec.ts",
+      "exactNormativeText": "Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics."
+    },
+    {
+      "acceptanceId": "AC-090",
+      "positive": "tests/acceptance/AC-090.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-090.negative.spec.ts",
+      "exactNormativeText": "Historical analog replay uses the index cutoff and normalization parameters available at the simulated time."
+    }
+  ],
+  "localFacets": [],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

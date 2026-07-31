@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-SOC",
+  "immutable": true,
+  "requirements": [
+    "FR-SOC-001",
+    "FR-SOC-002",
+    "FR-SOC-003",
+    "FR-SOC-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-140:T-G5-SOC:INTERFACE_FACET",
+    "AC-141:T-G5-SOC:INTERFACE_FACET",
+    "AC-142:T-G5-SOC:INTERFACE_FACET",
+    "AC-143:T-G5-SOC:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-SOC.spec.ts",
+    "tests/task-facets/T-G5-SOC.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/social-capability/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-SOC/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

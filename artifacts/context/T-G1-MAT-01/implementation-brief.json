@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-MAT-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-MAT-001",
+      "exactNormativeText": "Every profile/horizon/scenario outcome has an explicit maturity state."
+    },
+    {
+      "id": "FR-MAT-002",
+      "exactNormativeText": "Pending and partially matured outcomes are excluded from final denominators."
+    },
+    {
+      "id": "FR-MAT-003",
+      "exactNormativeText": "Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure."
+    },
+    {
+      "id": "FR-MAT-004",
+      "exactNormativeText": "Negative-control tests detect leakage and spurious lift."
+    },
+    {
+      "id": "FR-MAT-005",
+      "exactNormativeText": "Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size."
+    },
+    {
+      "id": "FR-MAT-006",
+      "exactNormativeText": "Subjective user utility is stored separately from objective signal and tradable market outcomes."
+    },
+    {
+      "id": "FR-MAT-007",
+      "exactNormativeText": "When high-resolution outcomes are sampled, every case stores inclusion probability/stratum and evaluation uses valid weighted estimators or explicitly limits its population claim."
+    },
+    {
+      "id": "FR-MAT-008",
+      "exactNormativeText": "A `TRADABLE_SUCCESS` used for production promotion requires fully matured high-resolution execution evidence for the exact notional, delay policy, adapter, route, and exit policy; coarse signal data cannot substitute."
+    }
+  ],
+  "expectedModules": [
+    "packages/outcome-maturity/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/mat.ts",
+    "docs/generated/mat-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every profile/horizon/scenario outcome has an explicit maturity state.",
+    "Pending and partially matured outcomes are excluded from final denominators.",
+    "Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure.",
+    "Negative-control tests detect leakage and spurious lift.",
+    "Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size.",
+    "Subjective user utility is stored separately from objective signal and tradable market outcomes.",
+    "When high-resolution outcomes are sampled, every case stores inclusion probability/stratum and evaluation uses valid weighted estimators or explicitly limits its population claim.",
+    "A `TRADABLE_SUCCESS` used for production promotion requires fully matured high-resolution execution evidence for the exact notional, delay policy, adapter, route, and exit policy; coarse signal data cannot substitute."
+  ],
+  "failureAndDegradedBehavior": [
+    "Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/mat.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

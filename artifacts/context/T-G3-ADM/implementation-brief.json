@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-ADM",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-ADM-002",
+      "exactNormativeText": "Agent Workbench with streaming/tool timeline."
+    },
+    {
+      "id": "FR-ADM-004",
+      "exactNormativeText": "Frozen run investigation."
+    },
+    {
+      "id": "FR-ADM-005",
+      "exactNormativeText": "Candidate Radar and why-not-alerted."
+    },
+    {
+      "id": "FR-ADM-008",
+      "exactNormativeText": "Admin chat may create a validated schedule draft, but activation requires resolved-config review, capacity forecast, explicit approval, and immutable version creation."
+    }
+  ],
+  "expectedModules": [
+    "apps/dashboard/**",
+    "apps/api/src/routes/admin/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/adm.ts",
+    "docs/generated/adm-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Agent Workbench with streaming/tool timeline.",
+    "Frozen run investigation.",
+    "Candidate Radar and why-not-alerted.",
+    "Admin chat may create a validated schedule draft, but activation requires resolved-config review, capacity forecast, explicit approval, and immutable version creation."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/adm.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

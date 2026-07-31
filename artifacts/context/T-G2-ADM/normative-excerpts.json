@@ -1,0 +1,121 @@
+[
+  {
+    "id": "FR-ADM-001",
+    "sourceLine": 6049,
+    "startLine": 6047,
+    "endLine": 6051,
+    "exactText": "### 38.6 Admin\n\n- **FR-ADM-001 MUST:** Overview and incidents.\n- **FR-ADM-002 MUST:** Agent Workbench with streaming/tool timeline.\n- **FR-ADM-003 MUST:** Schedule/configuration control plane."
+  },
+  {
+    "id": "FR-ADM-003",
+    "sourceLine": 6051,
+    "startLine": 6049,
+    "endLine": 6053,
+    "exactText": "- **FR-ADM-001 MUST:** Overview and incidents.\n- **FR-ADM-002 MUST:** Agent Workbench with streaming/tool timeline.\n- **FR-ADM-003 MUST:** Schedule/configuration control plane.\n- **FR-ADM-004 MUST:** Frozen run investigation.\n- **FR-ADM-005 MUST:** Candidate Radar and why-not-alerted."
+  },
+  {
+    "id": "FR-ADM-007",
+    "sourceLine": 6055,
+    "startLine": 6053,
+    "endLine": 6057,
+    "exactText": "- **FR-ADM-005 MUST:** Candidate Radar and why-not-alerted.\n- **FR-ADM-006 MUST:** Evaluation and Missed Gems views.\n- **FR-ADM-007 MUST:** Kill switches.\n- **FR-ADM-008 MUST:** Admin chat may create a validated schedule draft, but activation requires resolved-config review, capacity forecast, explicit approval, and immutable version creation.\n"
+  },
+  {
+    "id": "AC-010",
+    "sourceLine": 6530,
+    "startLine": 6528,
+    "endLine": 6532,
+    "exactText": "### 39.2 Workflow\n\n- **AC-010:** Duplicate scheduler deliveries create exactly one logical run.\n- **AC-011:** A crash after decision commit but before Telegram sends exactly one notification after recovery.\n- **AC-012:** A stale worker cannot commit after lease fencing changes."
+  },
+  {
+    "id": "AC-011",
+    "sourceLine": 6531,
+    "startLine": 6529,
+    "endLine": 6533,
+    "exactText": "\n- **AC-010:** Duplicate scheduler deliveries create exactly one logical run.\n- **AC-011:** A crash after decision commit but before Telegram sends exactly one notification after recovery.\n- **AC-012:** A stale worker cannot commit after lease fencing changes.\n- **AC-013:** Active runs continue with their original immutable config/workflow version after deployment."
+  },
+  {
+    "id": "AC-012",
+    "sourceLine": 6532,
+    "startLine": 6530,
+    "endLine": 6534,
+    "exactText": "- **AC-010:** Duplicate scheduler deliveries create exactly one logical run.\n- **AC-011:** A crash after decision commit but before Telegram sends exactly one notification after recovery.\n- **AC-012:** A stale worker cannot commit after lease fencing changes.\n- **AC-013:** Active runs continue with their original immutable config/workflow version after deployment.\n- **AC-014:** Admin can validate, enable, pause, resume, run-now, dry-run, and disable a schedule."
+  },
+  {
+    "id": "AC-013",
+    "sourceLine": 6533,
+    "startLine": 6531,
+    "endLine": 6535,
+    "exactText": "- **AC-011:** A crash after decision commit but before Telegram sends exactly one notification after recovery.\n- **AC-012:** A stale worker cannot commit after lease fencing changes.\n- **AC-013:** Active runs continue with their original immutable config/workflow version after deployment.\n- **AC-014:** Admin can validate, enable, pause, resume, run-now, dry-run, and disable a schedule.\n"
+  },
+  {
+    "id": "AC-014",
+    "sourceLine": 6534,
+    "startLine": 6532,
+    "endLine": 6536,
+    "exactText": "- **AC-012:** A stale worker cannot commit after lease fencing changes.\n- **AC-013:** Active runs continue with their original immutable config/workflow version after deployment.\n- **AC-014:** Admin can validate, enable, pause, resume, run-now, dry-run, and disable a schedule.\n\n### 39.3 Data integrity"
+  },
+  {
+    "id": "AC-060",
+    "sourceLine": 6568,
+    "startLine": 6566,
+    "endLine": 6570,
+    "exactText": "### 39.7 Performance and recovery\n\n- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill."
+  },
+  {
+    "id": "AC-061",
+    "sourceLine": 6569,
+    "startLine": 6567,
+    "endLine": 6571,
+    "exactText": "\n- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill.\n- **AC-063:** Cost forecast is displayed before schedule enable."
+  },
+  {
+    "id": "AC-062",
+    "sourceLine": 6570,
+    "startLine": 6568,
+    "endLine": 6572,
+    "exactText": "- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill.\n- **AC-063:** Cost forecast is displayed before schedule enable.\n"
+  },
+  {
+    "id": "AC-063",
+    "sourceLine": 6571,
+    "startLine": 6569,
+    "endLine": 6573,
+    "exactText": "- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill.\n- **AC-063:** Cost forecast is displayed before schedule enable.\n\n"
+  },
+  {
+    "id": "AC-260",
+    "sourceLine": 6787,
+    "startLine": 6785,
+    "endLine": 6789,
+    "exactText": "### 39.25 Recovery, traceability, and release conformance\n\n- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring."
+  },
+  {
+    "id": "AC-261",
+    "sourceLine": 6788,
+    "startLine": 6786,
+    "endLine": 6790,
+    "exactText": "\n- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record."
+  },
+  {
+    "id": "AC-262",
+    "sourceLine": 6789,
+    "startLine": 6787,
+    "endLine": 6791,
+    "exactText": "- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests."
+  },
+  {
+    "id": "AC-263",
+    "sourceLine": 6790,
+    "startLine": 6788,
+    "endLine": 6792,
+    "exactText": "- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target."
+  },
+  {
+    "id": "AC-264",
+    "sourceLine": 6791,
+    "startLine": 6789,
+    "endLine": 6793,
+    "exactText": "- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.\n- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI."
+  }
+]

@@ -66,8 +66,26 @@
     "FR-REG-001",
     "FR-REG-002"
   ],
-  "acceptanceCriteria": [
-    "AC-078"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-077",
+      "facetId": "AC-077:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-077 system or integration oracle consumes. This facet does not claim full AC-077 satisfaction.",
+      "sourceAcceptanceSha256": "09aa1c66c4d58187fc5d55f7f4df3362520a235cb4a5763c2ff1b7487092df51"
+    },
+    {
+      "acceptanceId": "AC-078",
+      "facetId": "AC-078:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-078 system or integration oracle consumes. This facet does not claim full AC-078 satisfaction.",
+      "sourceAcceptanceSha256": "e911fdca061ace6a72d5c2fbc1097bca4c4aa1b44f0853d711562685b1b1dd25"
+    },
+    {
+      "acceptanceId": "AC-079",
+      "facetId": "AC-079:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-079 system or integration oracle consumes. This facet does not claim full AC-079 satisfaction.",
+      "sourceAcceptanceSha256": "4e61d0e1e435a05748dcdb0b14e8203652fb07fbf369d3a526c92a020ebb6700"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -89,14 +107,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-REG/**"
+    "artifacts/context/T-G5-REG/**",
+    "artifacts/conformance/T-G5-REG/manifest.json"
   ],
   "writeSet": [
     "packages/regime-router/**"
   ],
   "allowedPaths": [
     "packages/regime-router/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -104,6 +126,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-REG/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -120,7 +144,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -130,13 +155,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-078.spec.ts",
-    "tests/negative/AC-078.negative.spec.ts"
+    "tests/task-facets/T-G5-REG.spec.ts",
+    "tests/task-facets/T-G5-REG.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-078.spec.ts tests/negative/AC-078.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G5-REG.spec.ts tests/task-facets/T-G5-REG.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -161,10 +190,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -180,5 +211,9 @@
       "line": 6097,
       "id": "FR-REG-002"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G5-REG/manifest.json",
+  "conformanceManifestSha256": "0359b59f77df06da3fb6976887cae65a54bfbcfdf068a049aa420c7520cf5ac2",
+  "testQualityGate": "NEGATIVE_CASE"
 }

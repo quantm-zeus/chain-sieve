@@ -1,0 +1,72 @@
+[
+  {
+    "id": "FR-DR-001",
+    "sourceLine": 6494,
+    "startLine": 6492,
+    "endLine": 6496,
+    "exactText": "- **FR-SEC-011 MUST:** Security incidents have severity, owner, containment, evidence preservation, credential rotation, customer/owner notification policy, recovery verification, postmortem, and regression test.\n- **FR-SEC-012 MUST:** Production release requires a threat model and automated security suite for every trust boundary, including MCP, admin, webhooks, providers, collector, model, database, object store, Alpha Lab, notifications, and public distribution.\n- **FR-DR-001 MUST:** Recovery objectives are tiered: critical configuration/decision/alert/audit/evidence-index metadata target RPO at most 15 minutes; critical observations/checkpoints target at most 60 minutes; replayable raw payloads may target at most 24 hours when rights permit reconstruction.\n- **FR-DR-002 MUST:** PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested.\n- **FR-DR-003 MUST:** Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO."
+  },
+  {
+    "id": "FR-DR-002",
+    "sourceLine": 6495,
+    "startLine": 6493,
+    "endLine": 6497,
+    "exactText": "- **FR-SEC-012 MUST:** Production release requires a threat model and automated security suite for every trust boundary, including MCP, admin, webhooks, providers, collector, model, database, object store, Alpha Lab, notifications, and public distribution.\n- **FR-DR-001 MUST:** Recovery objectives are tiered: critical configuration/decision/alert/audit/evidence-index metadata target RPO at most 15 minutes; critical observations/checkpoints target at most 60 minutes; replayable raw payloads may target at most 24 hours when rights permit reconstruction.\n- **FR-DR-002 MUST:** PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested.\n- **FR-DR-003 MUST:** Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO.\n- **FR-DR-004 MUST:** After recovery, the system reconciles provider calls, quota reservations, workflows, inbox/outbox, alerts, collector gaps, artifacts, and audit checkpoints before active automation resumes."
+  },
+  {
+    "id": "AC-060",
+    "sourceLine": 6568,
+    "startLine": 6566,
+    "endLine": 6570,
+    "exactText": "### 39.7 Performance and recovery\n\n- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill."
+  },
+  {
+    "id": "AC-061",
+    "sourceLine": 6569,
+    "startLine": 6567,
+    "endLine": 6571,
+    "exactText": "\n- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill.\n- **AC-063:** Cost forecast is displayed before schedule enable."
+  },
+  {
+    "id": "AC-062",
+    "sourceLine": 6570,
+    "startLine": 6568,
+    "endLine": 6572,
+    "exactText": "- **AC-060:** Internal overhead targets are met on benchmark workload.\n- **AC-061:** Provider outage returns explicit partial/insufficient output and suppresses unsafe automated alerts.\n- **AC-062:** Backup restore meets configured RPO/RTO in a restore drill.\n- **AC-063:** Cost forecast is displayed before schedule enable.\n"
+  },
+  {
+    "id": "AC-260",
+    "sourceLine": 6787,
+    "startLine": 6785,
+    "endLine": 6789,
+    "exactText": "### 39.25 Recovery, traceability, and release conformance\n\n- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring."
+  },
+  {
+    "id": "AC-261",
+    "sourceLine": 6788,
+    "startLine": 6786,
+    "endLine": 6790,
+    "exactText": "\n- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record."
+  },
+  {
+    "id": "AC-262",
+    "sourceLine": 6789,
+    "startLine": 6787,
+    "endLine": 6791,
+    "exactText": "- **AC-260:** A destructive restore drill recovers critical configuration, decisions, alerts, audit/evidence indexes within the declared 15-minute RPO and critical observations/checkpoints within the declared 60-minute RPO, or blocks active opportunity mode.\n- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests."
+  },
+  {
+    "id": "AC-263",
+    "sourceLine": 6790,
+    "startLine": 6788,
+    "endLine": 6792,
+    "exactText": "- **AC-261:** Restore into a clean environment verifies database/object hashes, migrations, audit chain, cross-store references, workflow/inbox/outbox state, quota reservations, and collector checkpoint/gaps before automation resumes.\n- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target."
+  },
+  {
+    "id": "AC-264",
+    "sourceLine": 6791,
+    "startLine": 6789,
+    "endLine": 6793,
+    "exactText": "- **AC-262:** Failure to meet a recovery tier automatically degrades the affected capability and prevents confirmed opportunity alerts while preserving safe deterministic risk monitoring.\n- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.\n- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI."
+  }
+]

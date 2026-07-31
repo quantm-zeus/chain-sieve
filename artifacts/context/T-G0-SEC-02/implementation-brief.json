@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-SEC-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SEC-009",
+      "exactNormativeText": "Workspace/public mode enforces tenant isolation for rows, artifacts, cache, queues, sessions, quotas, logs, signed URLs, metrics, and model context with cross-tenant adversarial tests."
+    },
+    {
+      "id": "FR-SEC-010",
+      "exactNormativeText": "Abuse controls cover request floods, expensive-query amplification, quota exhaustion, source scraping, alert harvesting, prompt attacks, resource enumeration, and market-manipulation feedback loops without weakening protected risk monitoring."
+    },
+    {
+      "id": "FR-SEC-011",
+      "exactNormativeText": "Security incidents have severity, owner, containment, evidence preservation, credential rotation, customer/owner notification policy, recovery verification, postmortem, and regression test."
+    },
+    {
+      "id": "FR-SEC-012",
+      "exactNormativeText": "Production release requires a threat model and automated security suite for every trust boundary, including MCP, admin, webhooks, providers, collector, model, database, object store, Alpha Lab, notifications, and public distribution."
+    }
+  ],
+  "expectedModules": [
+    "packages/security/**",
+    "packages/tenant-isolation/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/sec.ts",
+    "docs/generated/sec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Workspace/public mode enforces tenant isolation for rows, artifacts, cache, queues, sessions, quotas, logs, signed URLs, metrics, and model context with cross-tenant adversarial tests.",
+    "Abuse controls cover request floods, expensive-query amplification, quota exhaustion, source scraping, alert harvesting, prompt attacks, resource enumeration, and market-manipulation feedback loops without weakening protected risk monitoring.",
+    "Security incidents have severity, owner, containment, evidence preservation, credential rotation, customer/owner notification policy, recovery verification, postmortem, and regression test.",
+    "Production release requires a threat model and automated security suite for every trust boundary, including MCP, admin, webhooks, providers, collector, model, database, object store, Alpha Lab, notifications, and public distribution."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/sec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

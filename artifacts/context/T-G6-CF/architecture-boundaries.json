@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/counterfactual-lab/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-CF/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-CF/**"
+    "artifacts/context/T-G6-CF/**",
+    "artifacts/conformance/T-G6-CF/manifest.json"
   ],
   "writeSet": [
     "packages/counterfactual-lab/**"

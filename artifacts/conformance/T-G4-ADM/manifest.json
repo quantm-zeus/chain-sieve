@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-ADM",
+  "immutable": true,
+  "requirements": [
+    "FR-ADM-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-010:T-G4-ADM:INTERFACE_FACET",
+    "AC-011:T-G4-ADM:INTERFACE_FACET",
+    "AC-012:T-G4-ADM:INTERFACE_FACET",
+    "AC-013:T-G4-ADM:INTERFACE_FACET",
+    "AC-014:T-G4-ADM:INTERFACE_FACET",
+    "AC-060:T-G4-ADM:INTERFACE_FACET",
+    "AC-061:T-G4-ADM:INTERFACE_FACET",
+    "AC-062:T-G4-ADM:INTERFACE_FACET",
+    "AC-063:T-G4-ADM:INTERFACE_FACET",
+    "AC-260:T-G4-ADM:INTERFACE_FACET",
+    "AC-261:T-G4-ADM:INTERFACE_FACET",
+    "AC-262:T-G4-ADM:INTERFACE_FACET",
+    "AC-263:T-G4-ADM:INTERFACE_FACET",
+    "AC-264:T-G4-ADM:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-ADM.spec.ts",
+    "tests/task-facets/T-G4-ADM.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "apps/dashboard/**",
+    "apps/api/src/routes/admin/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-ADM/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

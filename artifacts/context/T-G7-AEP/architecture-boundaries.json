@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/agent-runtime/**",
     "packages/alpha-artifact-store/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-AEP/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AEP/**"
+    "artifacts/context/T-G7-AEP/**",
+    "artifacts/conformance/T-G7-AEP/manifest.json"
   ],
   "writeSet": [
     "packages/agent-runtime/**",

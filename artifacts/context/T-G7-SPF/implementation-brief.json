@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-SPF",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SPF-001",
+      "exactNormativeText": "The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost."
+    },
+    {
+      "id": "FR-SPF-002",
+      "exactNormativeText": "Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes."
+    },
+    {
+      "id": "FR-SPF-003",
+      "exactNormativeText": "The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions."
+    },
+    {
+      "id": "FR-SPF-004",
+      "exactNormativeText": "Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost."
+    },
+    {
+      "id": "FR-SPF-005",
+      "exactNormativeText": "Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs."
+    },
+    {
+      "id": "FR-SPF-006",
+      "exactNormativeText": "Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities."
+    },
+    {
+      "id": "FR-SPF-007",
+      "exactNormativeText": "Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills."
+    },
+    {
+      "id": "FR-SPF-008",
+      "exactNormativeText": "When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity."
+    }
+  ],
+  "expectedModules": [
+    "packages/shadow-portfolio/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/spf.ts",
+    "docs/generated/spf-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The system maintains read-only versioned shadow portfolios with finite capital, maximum concurrent positions, per-position notional, narrative/creator/chain exposure limits, and cash opportunity cost.",
+    "Entries and exits use the same conservative execution engine, latency, fees, partial-fill, liquidity, MEV/adverse-selection, and invalidation assumptions as tradable outcomes.",
+    "The simulator supports deterministic allocation policies and compares top-K, all-confirmed, pattern-only, baseline, and control portfolios without executing transactions.",
+    "Portfolio metrics include net return, expectancy, profit factor, drawdown, CVaR, turnover, capital utilization, concentration, overlap, and skipped-opportunity cost.",
+    "Policy comparison uses identical candidate universes, capital, timestamps, execution assumptions, and data cutoffs.",
+    "Portfolio simulation artifacts are immutable/reproducible and cannot create wallet/trading capabilities.",
+    "Simultaneous or correlated shadow entries/exits sharing a pool/route/liquidity source model aggregate market impact and fill competition rather than summing isolated fills.",
+    "When coarse data permits both favorable and adverse path orderings within one interval, the primary conservative result uses the adverse feasible ordering and reports path ambiguity."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/spf.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

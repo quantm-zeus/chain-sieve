@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/exploration-bandit/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-EXP/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-EXP/**"
+    "artifacts/context/T-G7-EXP/**",
+    "artifacts/conformance/T-G7-EXP/manifest.json"
   ],
   "writeSet": [
     "packages/exploration-bandit/**"

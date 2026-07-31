@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-LMS",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-LMS-001",
+      "exactNormativeText": "Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure."
+    },
+    {
+      "id": "FR-LMS-002",
+      "exactNormativeText": "State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved."
+    },
+    {
+      "id": "FR-LMS-003",
+      "exactNormativeText": "Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited."
+    },
+    {
+      "id": "FR-LMS-004",
+      "exactNormativeText": "Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion."
+    },
+    {
+      "id": "FR-LMS-005",
+      "exactNormativeText": "Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims."
+    }
+  ],
+  "expectedModules": [
+    "packages/launch-state-intelligence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/lms.ts",
+    "docs/generated/lms-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure.",
+    "State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.",
+    "Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.",
+    "Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion.",
+    "Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims."
+  ],
+  "failureAndDegradedBehavior": [
+    "Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/lms.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-CROWD",
+  "immutable": true,
+  "requirements": [
+    "FR-CROWD-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-074:T-G5-CROWD:INTERFACE_FACET",
+    "AC-075:T-G5-CROWD:INTERFACE_FACET",
+    "AC-076:T-G5-CROWD:INTERFACE_FACET",
+    "AC-091:T-G5-CROWD:INTERFACE_FACET",
+    "AC-092:T-G5-CROWD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-CROWD.spec.ts",
+    "tests/task-facets/T-G5-CROWD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/crowding/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-CROWD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

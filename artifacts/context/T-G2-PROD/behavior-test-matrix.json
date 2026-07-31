@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-PROD",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-144",
+      "facetId": "AC-144:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-144 system or integration oracle consumes. This facet does not claim full AC-144 satisfaction.",
+      "sourceAcceptanceSha256": "8c8f58a46d6d91e62c4ece924150c4e8fb4bc1cd8cebe023d97ef4cbc8307a7e"
+    },
+    {
+      "acceptanceId": "AC-150",
+      "facetId": "AC-150:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-150 system or integration oracle consumes. This facet does not claim full AC-150 satisfaction.",
+      "sourceAcceptanceSha256": "f980db94896d2c3aa4d7af79be0da318480b65bd2908877638929f1357b4a420"
+    },
+    {
+      "acceptanceId": "AC-151",
+      "facetId": "AC-151:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-151 system or integration oracle consumes. This facet does not claim full AC-151 satisfaction.",
+      "sourceAcceptanceSha256": "f399030b5840761ebcdc4bebd5b14e921ad5dc79db2d05d4752054d8d13d3818"
+    },
+    {
+      "acceptanceId": "AC-152",
+      "facetId": "AC-152:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-152 system or integration oracle consumes. This facet does not claim full AC-152 satisfaction.",
+      "sourceAcceptanceSha256": "4b3578ad7b4d56ae715dc0f2984d86e01fb1016c122391ff9d5cbed489e9125c"
+    },
+    {
+      "acceptanceId": "AC-153",
+      "facetId": "AC-153:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-153 system or integration oracle consumes. This facet does not claim full AC-153 satisfaction.",
+      "sourceAcceptanceSha256": "a07314901100c09d849db43f90956286b923f94143769177a293e3f6765b01e4"
+    },
+    {
+      "acceptanceId": "AC-154",
+      "facetId": "AC-154:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-154 system or integration oracle consumes. This facet does not claim full AC-154 satisfaction.",
+      "sourceAcceptanceSha256": "cea223c8db76957dc6e9b7d6bede60e2cd4062e0c92b3250258d72b55d53b275"
+    },
+    {
+      "acceptanceId": "AC-272",
+      "facetId": "AC-272:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-272 system or integration oracle consumes. This facet does not claim full AC-272 satisfaction.",
+      "sourceAcceptanceSha256": "4b5d5e60bce47498e79e50ceefd4b801b03ec521cbb7e3c8647dccddc41fd874"
+    },
+    {
+      "acceptanceId": "AC-273",
+      "facetId": "AC-273:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-273 system or integration oracle consumes. This facet does not claim full AC-273 satisfaction.",
+      "sourceAcceptanceSha256": "543965ee652abaa4cce9ddaeca811583f7bb4af16b3abda55d387926950ca67a"
+    },
+    {
+      "acceptanceId": "AC-274",
+      "facetId": "AC-274:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-274 system or integration oracle consumes. This facet does not claim full AC-274 satisfaction.",
+      "sourceAcceptanceSha256": "85bdeb17fb8c5e72ec380adbf23897383fa47b40b9d3c04bd04e1336fa88e080"
+    },
+    {
+      "acceptanceId": "AC-275",
+      "facetId": "AC-275:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-275 system or integration oracle consumes. This facet does not claim full AC-275 satisfaction.",
+      "sourceAcceptanceSha256": "016c7b9a86451caaaffeedefa34e3e3d3a6f5e0fec5a55d3231e9b3829cde4ee"
+    },
+    {
+      "acceptanceId": "AC-276",
+      "facetId": "AC-276:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-276 system or integration oracle consumes. This facet does not claim full AC-276 satisfaction.",
+      "sourceAcceptanceSha256": "f8f56a742c061490924476ec00f82ee91bb43173299cd2e91c5545a865959e0d"
+    },
+    {
+      "acceptanceId": "AC-277",
+      "facetId": "AC-277:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-277 system or integration oracle consumes. This facet does not claim full AC-277 satisfaction.",
+      "sourceAcceptanceSha256": "a1661e003aaca5a7492db8f3436621a68ae7128982c89fa842ad5315be15f716"
+    },
+    {
+      "acceptanceId": "AC-278",
+      "facetId": "AC-278:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-278 system or integration oracle consumes. This facet does not claim full AC-278 satisfaction.",
+      "sourceAcceptanceSha256": "0415e62e60aa5fd2895926d814e732ea4b0dd0af40f22a7671e054ca7cd515ea"
+    },
+    {
+      "acceptanceId": "AC-279",
+      "facetId": "AC-279:T-G2-PROD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-PROD for FR-PROD-001, FR-PROD-002, FR-PROD-003, FR-PROD-004, FR-PROD-005, FR-PROD-006 that the unchanged AC-279 system or integration oracle consumes. This facet does not claim full AC-279 satisfaction.",
+      "sourceAcceptanceSha256": "e9b0b2a55db2c3b25794ae66c6751ea60b78eac3efbd6cc8a595416b25640022"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

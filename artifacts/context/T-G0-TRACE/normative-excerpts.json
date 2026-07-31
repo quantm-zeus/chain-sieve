@@ -1,0 +1,79 @@
+[
+  {
+    "id": "FR-TRACE-001",
+    "sourceLine": 6506,
+    "startLine": 6504,
+    "endLine": 6508,
+    "exactText": "- **FR-LEGAL-005 MUST:** Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation.\n- **FR-LEGAL-006 MUST:** Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse.\n- **FR-TRACE-001 MUST:** A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.\n- **FR-TRACE-002 MUST:** Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.\n- **FR-TRACE-003 MUST:** CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest."
+  },
+  {
+    "id": "FR-TRACE-002",
+    "sourceLine": 6507,
+    "startLine": 6505,
+    "endLine": 6509,
+    "exactText": "- **FR-LEGAL-006 MUST:** Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse.\n- **FR-TRACE-001 MUST:** A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.\n- **FR-TRACE-002 MUST:** Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.\n- **FR-TRACE-003 MUST:** CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.\n- **FR-TRACE-004 MUST:** Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans."
+  },
+  {
+    "id": "FR-TRACE-003",
+    "sourceLine": 6508,
+    "startLine": 6506,
+    "endLine": 6510,
+    "exactText": "- **FR-TRACE-001 MUST:** A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.\n- **FR-TRACE-002 MUST:** Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.\n- **FR-TRACE-003 MUST:** CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.\n- **FR-TRACE-004 MUST:** Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.\n- **FR-TRACE-005 MUST:** Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior."
+  },
+  {
+    "id": "FR-TRACE-004",
+    "sourceLine": 6509,
+    "startLine": 6507,
+    "endLine": 6511,
+    "exactText": "- **FR-TRACE-002 MUST:** Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links.\n- **FR-TRACE-003 MUST:** CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.\n- **FR-TRACE-004 MUST:** Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.\n- **FR-TRACE-005 MUST:** Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.\n- **FR-TRACE-006 MUST:** Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target."
+  },
+  {
+    "id": "FR-TRACE-005",
+    "sourceLine": 6510,
+    "startLine": 6508,
+    "endLine": 6512,
+    "exactText": "- **FR-TRACE-003 MUST:** CI fails when a normative item lacks implementation/test/owner mapping, a mapped code path no longer exists, a requirement is implemented outside its dependency gate, or generated documentation differs from the manifest.\n- **FR-TRACE-004 MUST:** Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.\n- **FR-TRACE-005 MUST:** Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.\n- **FR-TRACE-006 MUST:** Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target.\n- **FR-PROD-007 MUST:** Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions."
+  },
+  {
+    "id": "FR-TRACE-006",
+    "sourceLine": 6511,
+    "startLine": 6509,
+    "endLine": 6513,
+    "exactText": "- **FR-TRACE-004 MUST:** Manual, legal, rights, statistical, and owner-approval gates produce signed/hashed evidence artifacts with approver, scope, expiration, and revocation semantics rather than unchecked booleans.\n- **FR-TRACE-005 MUST:** Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.\n- **FR-TRACE-006 MUST:** Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target.\n- **FR-PROD-007 MUST:** Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.\n- **FR-PROD-008 MUST:** Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection."
+  },
+  {
+    "id": "AC-265",
+    "sourceLine": 6792,
+    "startLine": 6790,
+    "endLine": 6794,
+    "exactText": "- **AC-263:** Collector recovery from backup plus live replay neither skips an unmarked gap nor duplicates a canonical event/first-seen record.\n- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.\n- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI.\n- **AC-267:** Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions."
+  },
+  {
+    "id": "AC-266",
+    "sourceLine": 6793,
+    "startLine": 6791,
+    "endLine": 6795,
+    "exactText": "- **AC-264:** Backup retention, encryption, location, rights, legal hold, deletion, key access, and restore credentials are validated by policy tests.\n- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.\n- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI.\n- **AC-267:** Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions.\n- **AC-268:** Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate."
+  },
+  {
+    "id": "AC-267",
+    "sourceLine": 6794,
+    "startLine": 6792,
+    "endLine": 6796,
+    "exactText": "- **AC-265:** The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target.\n- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI.\n- **AC-267:** Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions.\n- **AC-268:** Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate.\n- **AC-269:** Release conformance reports document hash, manifest hash, SBOM/dependency hash, migration/schema hashes, all test results, deviations, current activation scope, and tested rollback target."
+  },
+  {
+    "id": "AC-268",
+    "sourceLine": 6795,
+    "startLine": 6793,
+    "endLine": 6797,
+    "exactText": "- **AC-266:** Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI.\n- **AC-267:** Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions.\n- **AC-268:** Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate.\n- **AC-269:** Release conformance reports document hash, manifest hash, SBOM/dependency hash, migration/schema hashes, all test results, deviations, current activation scope, and tested rollback target.\n"
+  },
+  {
+    "id": "AC-269",
+    "sourceLine": 6796,
+    "startLine": 6794,
+    "endLine": 6798,
+    "exactText": "- **AC-267:** Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions.\n- **AC-268:** Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate.\n- **AC-269:** Release conformance reports document hash, manifest hash, SBOM/dependency hash, migration/schema hashes, all test results, deviations, current activation scope, and tested rollback target.\n\n### 39.26 Provider lifecycle, claims, and public activation"
+  }
+]

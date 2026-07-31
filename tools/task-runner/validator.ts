@@ -148,6 +148,21 @@ export const productValidationInput = async (
   expectedSourceHashes: LifecycleValidationInput['expectedSourceHashes'],
   cwd = process.cwd(),
 ): Promise<LifecycleValidationInput> => {
+  if (task.specificationStatus === 'SPECIFICATION_GAP')
+    throw new Error(`SPECIFICATION_GAP:${task.id}`);
+  const pathStatus = JSON.parse(
+    await readFile(
+      join(cwd, `artifacts/context/${task.id}/referenced-path-status.json`),
+      'utf8',
+    ),
+  ) as Array<{ path: string; status: string }>;
+  const invalid = pathStatus.filter(
+    (item) => item.status === 'INVALID_REFERENCE',
+  );
+  if (invalid.length > 0)
+    throw new Error(
+      `INVALID_REFERENCE:${task.id}:${invalid.map((item) => item.path).join(',')}`,
+    );
   const contractPath = `tasks/${task.dependencyGroup}/${task.id}.contract.json`;
   const rawRequirementMap = JSON.parse(
     await readFile(join(cwd, 'tasks/generated/requirement-task-map.json'), 'utf8'),
@@ -188,6 +203,12 @@ export const productValidationInput = async (
       `artifacts/context/${task.id}/requirements.json`,
       `artifacts/context/${task.id}/acceptance-criteria.json`,
       `artifacts/context/${task.id}/dependency-outputs.json`,
+      `artifacts/context/${task.id}/normative-excerpts.json`,
+      `artifacts/context/${task.id}/implementation-brief.json`,
+      `artifacts/context/${task.id}/interface-plan.json`,
+      `artifacts/context/${task.id}/behavior-test-matrix.json`,
+      `artifacts/context/${task.id}/referenced-path-status.json`,
+      ...(task.conformanceManifestPath ? [task.conformanceManifestPath] : []),
     ],
     graphFiles: ['tasks/generated/graph.json', 'tasks/generated/cluster-graph.json'],
     clusterReference: task.cluster,

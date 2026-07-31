@@ -1,0 +1,129 @@
+[
+  {
+    "path": "docs/generated/decay-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "migrations/g4_decay_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/decay.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "packages/thesis/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "telemetry/decay.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-070.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-071.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-072.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-073.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/fixtures/decay/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-070.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-071.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-072.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-073.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DECAY-001",
+      "FR-DECAY-002",
+      "FR-DECAY-003"
+    ]
+  }
+]

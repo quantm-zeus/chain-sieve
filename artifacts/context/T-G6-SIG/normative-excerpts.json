@@ -1,0 +1,79 @@
+[
+  {
+    "id": "FR-SIG-010",
+    "sourceLine": 6013,
+    "startLine": 6011,
+    "endLine": 6015,
+    "exactText": "- **FR-SIG-008 MUST:** Social/on-chain lead-lag capability is implemented with source-rights, coverage, bot/repetition, temporal, and missingness controls; unavailable social data remains unknown.\n- **FR-SIG-009 MUST:** Every numeric feature defines minimum denominator/sample, stability transform, outlier/null policy, shrinkage, capped contribution, and cohort fallback.\n- **FR-SIG-010 MUST:** A calibrated expected-net-utility challenger is implemented, but it may rank research priority only after mature tradable-outcome, calibration, regime, uncertainty, source-dependence, and drift gates pass; otherwise deterministic vectors remain authoritative.\n\n### 38.3 Workflow and automation"
+  },
+  {
+    "id": "AC-020",
+    "sourceLine": 6538,
+    "startLine": 6536,
+    "endLine": 6540,
+    "exactText": "### 39.3 Data integrity\n\n- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests."
+  },
+  {
+    "id": "AC-021",
+    "sourceLine": 6539,
+    "startLine": 6537,
+    "endLine": 6541,
+    "exactText": "\n- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures."
+  },
+  {
+    "id": "AC-022",
+    "sourceLine": 6540,
+    "startLine": 6538,
+    "endLine": 6542,
+    "exactText": "- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures.\n"
+  },
+  {
+    "id": "AC-023",
+    "sourceLine": 6541,
+    "startLine": 6539,
+    "endLine": 6543,
+    "exactText": "- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures.\n\n### 39.4 Agent quality"
+  },
+  {
+    "id": "AC-136",
+    "sourceLine": 6637,
+    "startLine": 6635,
+    "endLine": 6639,
+    "exactText": "- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n\n### 39.13 Alerts, social, and protocol compatibility"
+  },
+  {
+    "id": "AC-154",
+    "sourceLine": 6653,
+    "startLine": 6651,
+    "endLine": 6655,
+    "exactText": "- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift.\n\n"
+  },
+  {
+    "id": "AC-190",
+    "sourceLine": 6693,
+    "startLine": 6691,
+    "endLine": 6695,
+    "exactText": "### 39.18 Scheduling, exploration, and portfolio\n\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims."
+  },
+  {
+    "id": "AC-191",
+    "sourceLine": 6694,
+    "startLine": 6692,
+    "endLine": 6696,
+    "exactText": "\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy."
+  },
+  {
+    "id": "AC-192",
+    "sourceLine": 6695,
+    "startLine": 6693,
+    "endLine": 6697,
+    "exactText": "- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction."
+  },
+  {
+    "id": "AC-193",
+    "sourceLine": 6696,
+    "startLine": 6694,
+    "endLine": 6698,
+    "exactText": "- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions."
+  }
+]

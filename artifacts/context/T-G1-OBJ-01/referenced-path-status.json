@@ -1,0 +1,353 @@
+[
+  {
+    "path": "docs/generated/obj-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "migrations/g1_obj_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "packages/objective-governance/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "packages/shadow-portfolio/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/obj.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "telemetry/obj.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-220.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-221.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-222.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-223.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-245.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-246.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-247.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-248.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-249.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/fixtures/obj/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-220.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-221.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-222.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-223.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-245.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-246.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-247.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-248.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-249.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OBJ-001",
+      "FR-OBJ-002",
+      "FR-OBJ-003",
+      "FR-OBJ-004",
+      "FR-OBJ-005",
+      "FR-OBJ-006",
+      "FR-OBJ-007",
+      "FR-OBJ-008"
+    ]
+  }
+]

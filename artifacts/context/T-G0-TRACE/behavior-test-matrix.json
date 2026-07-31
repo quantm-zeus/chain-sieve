@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-TRACE",
+  "taskLocalCriteria": [
+    {
+      "acceptanceId": "AC-265",
+      "positive": "tests/acceptance/AC-265.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-265.negative.spec.ts",
+      "exactNormativeText": "The generated requirement manifest contains every normative FR, AC, invariant, and ADR exactly once with document anchor, dependency group, owner, code/schema/surface/test/telemetry mapping, activation gate, and rollback target."
+    },
+    {
+      "acceptanceId": "AC-266",
+      "positive": "tests/acceptance/AC-266.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-266.negative.spec.ts",
+      "exactNormativeText": "Adding, deleting, duplicating, renumbering, or changing a normative item without a matching manifest/test update fails CI."
+    },
+    {
+      "acceptanceId": "AC-267",
+      "positive": "tests/acceptance/AC-267.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-267.negative.spec.ts",
+      "exactNormativeText": "Every production decision/alert can be traced to exact document/manifest hash, release, migration, policy, feature, model, tool, provider, pool adapter, evidence, and alpha artifact versions."
+    },
+    {
+      "acceptanceId": "AC-268",
+      "positive": "tests/acceptance/AC-268.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-268.negative.spec.ts",
+      "exactNormativeText": "Manual/legal/rights/statistical/owner approvals require signed or hashed evidence with scope, approver, expiry, and revocation; an unchecked database boolean cannot satisfy a release gate."
+    },
+    {
+      "acceptanceId": "AC-269",
+      "positive": "tests/acceptance/AC-269.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-269.negative.spec.ts",
+      "exactNormativeText": "Release conformance reports document hash, manifest hash, SBOM/dependency hash, migration/schema hashes, all test results, deviations, current activation scope, and tested rollback target."
+    }
+  ],
+  "localFacets": [],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

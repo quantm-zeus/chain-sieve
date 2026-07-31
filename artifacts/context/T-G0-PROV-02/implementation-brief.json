@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-PROV-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-PROV-009",
+      "exactNormativeText": "Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy."
+    },
+    {
+      "id": "FR-PROV-010",
+      "exactNormativeText": "Provider source fingerprints capture upstream lineage, field/value fingerprints, timing behavior, outage correlation, schema characteristics, and first-seen behavior for empirical dependence analysis."
+    }
+  ],
+  "expectedModules": [
+    "packages/provider-lifecycle/**",
+    "packages/providers/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/prov.ts",
+    "docs/generated/prov-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy.",
+    "Provider source fingerprints capture upstream lineage, field/value fingerprints, timing behavior, outage correlation, schema characteristics, and first-seen behavior for empirical dependence analysis."
+  ],
+  "failureAndDegradedBehavior": [
+    "Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy."
+  ],
+  "pointInTimeSemantics": [
+    "Provider source fingerprints capture upstream lineage, field/value fingerprints, timing behavior, outage correlation, schema characteristics, and first-seen behavior for empirical dependence analysis."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/prov.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

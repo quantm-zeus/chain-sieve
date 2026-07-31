@@ -1,0 +1,237 @@
+[
+  {
+    "path": "docs/generated/wpi-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "migrations/g6_wpi_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/wpi.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "packages/winning-pattern-intelligence/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "telemetry/wpi.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-160.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-161.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-162.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-163.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-164.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-165.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-166.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-167.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-168.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-169.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/fixtures/wpi/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-160.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-161.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-162.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-163.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-164.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-165.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-166.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-167.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-168.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-169.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-WPI-009",
+      "FR-WPI-010",
+      "FR-WPI-011"
+    ]
+  }
+]

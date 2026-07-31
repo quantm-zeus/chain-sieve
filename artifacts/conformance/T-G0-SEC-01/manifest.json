@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-SEC-01",
+  "immutable": true,
+  "requirements": [
+    "FR-SEC-001",
+    "FR-SEC-002",
+    "FR-SEC-003",
+    "FR-SEC-004",
+    "FR-SEC-005",
+    "FR-SEC-006",
+    "FR-SEC-007",
+    "FR-SEC-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-050:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-051:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-052:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-053:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-250:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-251:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-252:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-253:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-254:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-255:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-256:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-257:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-258:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-259:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-274:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-275:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-276:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-277:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-278:T-G0-SEC-01:INTERFACE_FACET",
+    "AC-279:T-G0-SEC-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-SEC-01.spec.ts",
+    "tests/task-facets/T-G0-SEC-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/security/**",
+    "packages/tenant-isolation/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-SEC-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

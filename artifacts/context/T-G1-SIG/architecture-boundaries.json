@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/signal-intelligence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-SIG/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-SIG/**"
+    "artifacts/context/T-G1-SIG/**",
+    "artifacts/conformance/T-G1-SIG/manifest.json"
   ],
   "writeSet": [
     "packages/signal-intelligence/**"

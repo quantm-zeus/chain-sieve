@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EVAL-01",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-EVAL-001",
+      "exactNormativeText": "Versioned outcome profiles."
+    },
+    {
+      "id": "FR-EVAL-002",
+      "exactNormativeText": "Time-based frozen replay."
+    },
+    {
+      "id": "FR-EVAL-003",
+      "exactNormativeText": "Precision, recall, ranking, lead-time, risk, and cost metrics."
+    },
+    {
+      "id": "FR-EVAL-004",
+      "exactNormativeText": "Baseline comparison."
+    },
+    {
+      "id": "FR-EVAL-005",
+      "exactNormativeText": "Missed Opportunity Analyzer."
+    },
+    {
+      "id": "FR-EVAL-006",
+      "exactNormativeText": "Exploration/control sample."
+    },
+    {
+      "id": "FR-EVAL-007",
+      "exactNormativeText": "Champion–challenger."
+    },
+    {
+      "id": "FR-EVAL-008",
+      "exactNormativeText": "Drift and calibration controls."
+    }
+  ],
+  "expectedModules": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/eval.ts",
+    "docs/generated/eval-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [
+    "Time-based frozen replay."
+  ],
+  "observabilityExpectations": [
+    "telemetry/eval.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

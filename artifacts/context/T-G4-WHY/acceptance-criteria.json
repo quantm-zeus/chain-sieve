@@ -1,25 +1,123 @@
-[
-  {
-    "id": "AC-072",
-    "text": "“Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.",
-    "textSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c",
-    "line": 6578,
-    "requirementRefs": [
-      "FR-DECAY-001",
-      "FR-DECAY-002",
-      "FR-DECAY-003",
-      "FR-THS-001",
-      "FR-THS-002",
-      "FR-THS-003",
-      "FR-WHY-001",
-      "FR-WHY-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-072.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-072.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  }
-]
+{
+  "taskLocal": [],
+  "facets": [
+    {
+      "acceptanceId": "AC-070",
+      "facetId": "AC-070:T-G4-WHY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-WHY for FR-WHY-001, FR-WHY-002 that the unchanged AC-070 system or integration oracle consumes. This facet does not claim full AC-070 satisfaction.",
+      "sourceAcceptanceSha256": "093eddad1bec2c0b1d5ba883659abe2f87b9075bf7107e2701b26121ed559931"
+    },
+    {
+      "acceptanceId": "AC-071",
+      "facetId": "AC-071:T-G4-WHY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-WHY for FR-WHY-001, FR-WHY-002 that the unchanged AC-071 system or integration oracle consumes. This facet does not claim full AC-071 satisfaction.",
+      "sourceAcceptanceSha256": "8b92ac935da656c03924426f05ec394cf5013375d141b0366fc80e3babddc34a"
+    },
+    {
+      "acceptanceId": "AC-072",
+      "facetId": "AC-072:T-G4-WHY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-WHY for FR-WHY-001, FR-WHY-002 that the unchanged AC-072 system or integration oracle consumes. This facet does not claim full AC-072 satisfaction.",
+      "sourceAcceptanceSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c"
+    },
+    {
+      "acceptanceId": "AC-073",
+      "facetId": "AC-073:T-G4-WHY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-WHY for FR-WHY-001, FR-WHY-002 that the unchanged AC-073 system or integration oracle consumes. This facet does not claim full AC-073 satisfaction.",
+      "sourceAcceptanceSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db"
+    }
+  ],
+  "fullCriteriaVerifiedElsewhere": [
+    {
+      "id": "AC-070",
+      "text": "A thesis moves only through allowed transitions and every change has point-in-time evidence and matched condition IDs.",
+      "textSha256": "093eddad1bec2c0b1d5ba883659abe2f87b9075bf7107e2701b26121ed559931",
+      "line": 6576,
+      "requirementRefs": [
+        "FR-DECAY-001",
+        "FR-DECAY-002",
+        "FR-DECAY-003",
+        "FR-THS-001",
+        "FR-THS-002",
+        "FR-THS-003",
+        "FR-WHY-001",
+        "FR-WHY-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-070.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-070.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-071",
+      "text": "An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.",
+      "textSha256": "8b92ac935da656c03924426f05ec394cf5013375d141b0366fc80e3babddc34a",
+      "line": 6577,
+      "requirementRefs": [
+        "FR-DECAY-001",
+        "FR-DECAY-002",
+        "FR-DECAY-003",
+        "FR-THS-001",
+        "FR-THS-002",
+        "FR-THS-003",
+        "FR-WHY-001",
+        "FR-WHY-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-071.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-071.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-072",
+      "text": "“Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.",
+      "textSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c",
+      "line": 6578,
+      "requirementRefs": [
+        "FR-DECAY-001",
+        "FR-DECAY-002",
+        "FR-DECAY-003",
+        "FR-THS-001",
+        "FR-THS-002",
+        "FR-THS-003",
+        "FR-WHY-001",
+        "FR-WHY-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-072.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-072.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-073",
+      "text": "Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.",
+      "textSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db",
+      "line": 6579,
+      "requirementRefs": [
+        "FR-DECAY-001",
+        "FR-DECAY-002",
+        "FR-DECAY-003",
+        "FR-THS-001",
+        "FR-THS-002",
+        "FR-THS-003",
+        "FR-WHY-001",
+        "FR-WHY-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-073.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-073.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    }
+  ]
+}

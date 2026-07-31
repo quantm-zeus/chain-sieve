@@ -1,0 +1,100 @@
+[
+  {
+    "id": "FR-ALERT-001",
+    "sourceLine": 6196,
+    "startLine": 6194,
+    "endLine": 6198,
+    "exactText": "### 38.18 Alerts and social capability\n\n- **FR-ALERT-001 MUST:** Alerts distinguish `EARLY_WATCH`, `CONFIRMED_OPPORTUNITY`, thesis strengthening/weakening, expiry, and risk.\n- **FR-ALERT-002 MUST:** `EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language.\n- **FR-ALERT-003 MUST:** Confirmed alerts require current tradability, security, cost, freshness, and expiry checks."
+  },
+  {
+    "id": "FR-ALERT-002",
+    "sourceLine": 6197,
+    "startLine": 6195,
+    "endLine": 6199,
+    "exactText": "\n- **FR-ALERT-001 MUST:** Alerts distinguish `EARLY_WATCH`, `CONFIRMED_OPPORTUNITY`, thesis strengthening/weakening, expiry, and risk.\n- **FR-ALERT-002 MUST:** `EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language.\n- **FR-ALERT-003 MUST:** Confirmed alerts require current tradability, security, cost, freshness, and expiry checks.\n- **FR-ALERT-004 MUST:** Prior actionable alerts receive material deterioration, cancellation, or expiry updates."
+  },
+  {
+    "id": "FR-ALERT-003",
+    "sourceLine": 6198,
+    "startLine": 6196,
+    "endLine": 6200,
+    "exactText": "- **FR-ALERT-001 MUST:** Alerts distinguish `EARLY_WATCH`, `CONFIRMED_OPPORTUNITY`, thesis strengthening/weakening, expiry, and risk.\n- **FR-ALERT-002 MUST:** `EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language.\n- **FR-ALERT-003 MUST:** Confirmed alerts require current tradability, security, cost, freshness, and expiry checks.\n- **FR-ALERT-004 MUST:** Prior actionable alerts receive material deterioration, cancellation, or expiry updates.\n- **FR-ALERT-005 MUST:** Alert metrics and denominators are separated by alert class."
+  },
+  {
+    "id": "FR-ALERT-004",
+    "sourceLine": 6199,
+    "startLine": 6197,
+    "endLine": 6201,
+    "exactText": "- **FR-ALERT-002 MUST:** `EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language.\n- **FR-ALERT-003 MUST:** Confirmed alerts require current tradability, security, cost, freshness, and expiry checks.\n- **FR-ALERT-004 MUST:** Prior actionable alerts receive material deterioration, cancellation, or expiry updates.\n- **FR-ALERT-005 MUST:** Alert metrics and denominators are separated by alert class.\n- **FR-SOC-001 MUST:** Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage."
+  },
+  {
+    "id": "FR-ALERT-005",
+    "sourceLine": 6200,
+    "startLine": 6198,
+    "endLine": 6202,
+    "exactText": "- **FR-ALERT-003 MUST:** Confirmed alerts require current tradability, security, cost, freshness, and expiry checks.\n- **FR-ALERT-004 MUST:** Prior actionable alerts receive material deterioration, cancellation, or expiry updates.\n- **FR-ALERT-005 MUST:** Alert metrics and denominators are separated by alert class.\n- **FR-SOC-001 MUST:** Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.\n- **FR-SOC-002 MUST:** Missing paid social data cannot be interpreted as negative sentiment or low organic demand."
+  },
+  {
+    "id": "AC-140",
+    "sourceLine": 6641,
+    "startLine": 6639,
+    "endLine": 6643,
+    "exactText": "### 39.13 Alerts, social, and protocol compatibility\n\n- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature."
+  },
+  {
+    "id": "AC-141",
+    "sourceLine": 6642,
+    "startLine": 6640,
+    "endLine": 6644,
+    "exactText": "\n- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request."
+  },
+  {
+    "id": "AC-142",
+    "sourceLine": 6643,
+    "startLine": 6641,
+    "endLine": 6645,
+    "exactText": "- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.\n- **AC-144:** MCP compatibility tests pass for the configured stable revision and each supported target client; draft revisions remain opt-in."
+  },
+  {
+    "id": "AC-143",
+    "sourceLine": 6644,
+    "startLine": 6642,
+    "endLine": 6646,
+    "exactText": "- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.\n- **AC-144:** MCP compatibility tests pass for the configured stable revision and each supported target client; draft revisions remain opt-in.\n"
+  },
+  {
+    "id": "AC-245",
+    "sourceLine": 6766,
+    "startLine": 6764,
+    "endLine": 6768,
+    "exactText": "- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then."
+  },
+  {
+    "id": "AC-246",
+    "sourceLine": 6767,
+    "startLine": 6765,
+    "endLine": 6769,
+    "exactText": "- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable."
+  },
+  {
+    "id": "AC-247",
+    "sourceLine": 6768,
+    "startLine": 6766,
+    "endLine": 6770,
+    "exactText": "- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion."
+  },
+  {
+    "id": "AC-248",
+    "sourceLine": 6769,
+    "startLine": 6767,
+    "endLine": 6771,
+    "exactText": "- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n"
+  },
+  {
+    "id": "AC-249",
+    "sourceLine": 6770,
+    "startLine": 6768,
+    "endLine": 6772,
+    "exactText": "- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n\n### 39.24 MCP transport, provider negative capability, and security"
+  }
+]

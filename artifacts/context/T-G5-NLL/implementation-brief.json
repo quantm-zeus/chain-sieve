@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-NLL",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-NLL-001",
+      "exactNormativeText": "Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings."
+    },
+    {
+      "id": "FR-NLL-002",
+      "exactNormativeText": "Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity."
+    },
+    {
+      "id": "FR-NLL-003",
+      "exactNormativeText": "Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding."
+    },
+    {
+      "id": "FR-NLL-004",
+      "exactNormativeText": "Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates."
+    }
+  ],
+  "expectedModules": [
+    "packages/leader-laggard/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/nll.ts",
+    "docs/generated/nll-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings.",
+    "Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.",
+    "Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding.",
+    "Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/nll.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

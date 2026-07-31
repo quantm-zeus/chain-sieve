@@ -66,8 +66,38 @@
     "FR-XCF-001",
     "FR-XCF-002"
   ],
-  "acceptanceCriteria": [
-    "AC-091"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-074",
+      "facetId": "AC-074:T-G5-XCF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-XCF for FR-XCF-001, FR-XCF-002 that the unchanged AC-074 system or integration oracle consumes. This facet does not claim full AC-074 satisfaction.",
+      "sourceAcceptanceSha256": "3489e8882ab8d5b0b3351101d53c42cb22fb2286cdabb883e1da7a6db60fcb72"
+    },
+    {
+      "acceptanceId": "AC-075",
+      "facetId": "AC-075:T-G5-XCF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-XCF for FR-XCF-001, FR-XCF-002 that the unchanged AC-075 system or integration oracle consumes. This facet does not claim full AC-075 satisfaction.",
+      "sourceAcceptanceSha256": "1b91cf64e412a3491155e78fff83b45ffd1be95fe85e4af079f97d9634d74f9a"
+    },
+    {
+      "acceptanceId": "AC-076",
+      "facetId": "AC-076:T-G5-XCF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-XCF for FR-XCF-001, FR-XCF-002 that the unchanged AC-076 system or integration oracle consumes. This facet does not claim full AC-076 satisfaction.",
+      "sourceAcceptanceSha256": "84dafb8a04e868e4b9a9f12c875046b5eb3092c559e5f3ec6aa22d61befb9fef"
+    },
+    {
+      "acceptanceId": "AC-091",
+      "facetId": "AC-091:T-G5-XCF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-XCF for FR-XCF-001, FR-XCF-002 that the unchanged AC-091 system or integration oracle consumes. This facet does not claim full AC-091 satisfaction.",
+      "sourceAcceptanceSha256": "2ad7358711112121d7f7ea1f6ade0f4108cf4b562ff132b6b09e46ff9eda277f"
+    },
+    {
+      "acceptanceId": "AC-092",
+      "facetId": "AC-092:T-G5-XCF:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-XCF for FR-XCF-001, FR-XCF-002 that the unchanged AC-092 system or integration oracle consumes. This facet does not claim full AC-092 satisfaction.",
+      "sourceAcceptanceSha256": "c7914fe4b07eade381f32708997de4e41f88fd9cce51fb0165ca03fc876b8c8a"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -89,14 +119,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-XCF/**"
+    "artifacts/context/T-G5-XCF/**",
+    "artifacts/conformance/T-G5-XCF/manifest.json"
   ],
   "writeSet": [
     "packages/capital-flow/**"
   ],
   "allowedPaths": [
     "packages/capital-flow/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -104,6 +138,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-XCF/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -120,7 +156,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -130,13 +167,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-091.spec.ts",
-    "tests/negative/AC-091.negative.spec.ts"
+    "tests/task-facets/T-G5-XCF.spec.ts",
+    "tests/task-facets/T-G5-XCF.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-091.spec.ts tests/negative/AC-091.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G5-XCF.spec.ts tests/task-facets/T-G5-XCF.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -161,10 +202,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -180,5 +223,9 @@
       "line": 6087,
       "id": "FR-XCF-002"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G5-XCF/manifest.json",
+  "conformanceManifestSha256": "2d169f2b309b1b460a6c716e9eab0fe927732b879a32149a2eaaf2be631f2ff6",
+  "testQualityGate": "NEGATIVE_CASE"
 }

@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/alerts/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-ALERT/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-ALERT/**"
+    "artifacts/context/T-G2-ALERT/**",
+    "artifacts/conformance/T-G2-ALERT/manifest.json"
   ],
   "writeSet": [
     "packages/alerts/**"

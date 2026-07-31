@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-TRD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-TRD-001",
+      "exactNormativeText": "Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features."
+    },
+    {
+      "id": "FR-TRD-002",
+      "exactNormativeText": "Economic trades use net actor deltas and avoid route/hop double counting."
+    },
+    {
+      "id": "FR-TRD-003",
+      "exactNormativeText": "Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand."
+    },
+    {
+      "id": "FR-TRD-004",
+      "exactNormativeText": "Economic-actor uncertainty reduces feature quality and ranking contribution."
+    }
+  ],
+  "expectedModules": [
+    "packages/economic-trade-normalizer/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/trd.ts",
+    "docs/generated/trd-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.",
+    "Economic trades use net actor deltas and avoid route/hop double counting.",
+    "Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand.",
+    "Economic-actor uncertainty reduces feature quality and ranking contribution."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/trd.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

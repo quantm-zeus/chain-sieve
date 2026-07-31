@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AIG",
+  "immutable": true,
+  "requirements": [
+    "FR-AIG-001",
+    "FR-AIG-002",
+    "FR-AIG-003",
+    "FR-AIG-004",
+    "FR-AIG-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-190:T-G7-AIG:INTERFACE_FACET",
+    "AC-191:T-G7-AIG:INTERFACE_FACET",
+    "AC-192:T-G7-AIG:INTERFACE_FACET",
+    "AC-193:T-G7-AIG:INTERFACE_FACET",
+    "AC-194:T-G7-AIG:INTERFACE_FACET",
+    "AC-195:T-G7-AIG:INTERFACE_FACET",
+    "AC-196:T-G7-AIG:INTERFACE_FACET",
+    "AC-197:T-G7-AIG:INTERFACE_FACET",
+    "AC-198:T-G7-AIG:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-AIG.spec.ts",
+    "tests/task-facets/T-G7-AIG.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/information-gain-scheduler/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-AIG/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

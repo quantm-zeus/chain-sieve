@@ -58,8 +58,32 @@
     "FR-THS-002",
     "FR-THS-003"
   ],
-  "acceptanceCriteria": [
-    "AC-071"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-070",
+      "facetId": "AC-070:T-G4-THS:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-THS for FR-THS-001, FR-THS-002, FR-THS-003 that the unchanged AC-070 system or integration oracle consumes. This facet does not claim full AC-070 satisfaction.",
+      "sourceAcceptanceSha256": "093eddad1bec2c0b1d5ba883659abe2f87b9075bf7107e2701b26121ed559931"
+    },
+    {
+      "acceptanceId": "AC-071",
+      "facetId": "AC-071:T-G4-THS:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-THS for FR-THS-001, FR-THS-002, FR-THS-003 that the unchanged AC-071 system or integration oracle consumes. This facet does not claim full AC-071 satisfaction.",
+      "sourceAcceptanceSha256": "8b92ac935da656c03924426f05ec394cf5013375d141b0366fc80e3babddc34a"
+    },
+    {
+      "acceptanceId": "AC-072",
+      "facetId": "AC-072:T-G4-THS:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-THS for FR-THS-001, FR-THS-002, FR-THS-003 that the unchanged AC-072 system or integration oracle consumes. This facet does not claim full AC-072 satisfaction.",
+      "sourceAcceptanceSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c"
+    },
+    {
+      "acceptanceId": "AC-073",
+      "facetId": "AC-073:T-G4-THS:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-THS for FR-THS-001, FR-THS-002, FR-THS-003 that the unchanged AC-073 system or integration oracle consumes. This facet does not claim full AC-073 satisfaction.",
+      "sourceAcceptanceSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -81,14 +105,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-THS/**"
+    "artifacts/context/T-G4-THS/**",
+    "artifacts/conformance/T-G4-THS/manifest.json"
   ],
   "writeSet": [
     "packages/thesis/**"
   ],
   "allowedPaths": [
     "packages/thesis/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -96,6 +124,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-THS/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -113,7 +143,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -123,13 +154,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-071.spec.ts",
-    "tests/negative/AC-071.negative.spec.ts"
+    "tests/task-facets/T-G4-THS.spec.ts",
+    "tests/task-facets/T-G4-THS.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-071.spec.ts tests/negative/AC-071.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G4-THS.spec.ts tests/task-facets/T-G4-THS.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -154,10 +189,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -178,5 +215,9 @@
       "line": 6075,
       "id": "FR-THS-003"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G4-THS/manifest.json",
+  "conformanceManifestSha256": "b687b50d5768fa8c3105659f5cbf11f999387135be7a569e4a34352fe60fff40",
+  "testQualityGate": "NEGATIVE_CASE"
 }

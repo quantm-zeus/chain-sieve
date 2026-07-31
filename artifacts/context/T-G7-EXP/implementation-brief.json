@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-EXP",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EXP-001",
+      "exactNormativeText": "Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads."
+    },
+    {
+      "id": "FR-EXP-002",
+      "exactNormativeText": "Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp."
+    },
+    {
+      "id": "FR-EXP-003",
+      "exactNormativeText": "Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims."
+    },
+    {
+      "id": "FR-EXP-004",
+      "exactNormativeText": "Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling."
+    },
+    {
+      "id": "FR-EXP-005",
+      "exactNormativeText": "Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias."
+    },
+    {
+      "id": "FR-EXP-006",
+      "exactNormativeText": "Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy."
+    }
+  ],
+  "expectedModules": [
+    "packages/exploration-bandit/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/exp.ts",
+    "docs/generated/exp-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads.",
+    "Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.",
+    "Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.",
+    "Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.",
+    "Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias.",
+    "Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/exp.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

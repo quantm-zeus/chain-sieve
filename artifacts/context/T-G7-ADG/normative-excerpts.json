@@ -1,0 +1,149 @@
+[
+  {
+    "id": "FR-ADG-001",
+    "sourceLine": 6350,
+    "startLine": 6348,
+    "endLine": 6352,
+    "exactText": "### 38.35 Alpha Decay and Pattern Governance\n\n- **FR-ADG-001 MUST:** Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target.\n- **FR-ADG-002 MUST:** Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.\n- **FR-ADG-003 MUST:** Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it."
+  },
+  {
+    "id": "FR-ADG-002",
+    "sourceLine": 6351,
+    "startLine": 6349,
+    "endLine": 6353,
+    "exactText": "\n- **FR-ADG-001 MUST:** Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target.\n- **FR-ADG-002 MUST:** Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.\n- **FR-ADG-003 MUST:** Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.\n- **FR-ADG-004 MUST:** Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence."
+  },
+  {
+    "id": "FR-ADG-003",
+    "sourceLine": 6352,
+    "startLine": 6350,
+    "endLine": 6354,
+    "exactText": "- **FR-ADG-001 MUST:** Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target.\n- **FR-ADG-002 MUST:** Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.\n- **FR-ADG-003 MUST:** Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.\n- **FR-ADG-004 MUST:** Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.\n- **FR-ADG-005 MUST:** Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently."
+  },
+  {
+    "id": "FR-ADG-004",
+    "sourceLine": 6353,
+    "startLine": 6351,
+    "endLine": 6355,
+    "exactText": "- **FR-ADG-002 MUST:** Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.\n- **FR-ADG-003 MUST:** Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.\n- **FR-ADG-004 MUST:** Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.\n- **FR-ADG-005 MUST:** Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.\n- **FR-ADG-006 MUST:** Revalidation uses forward or untouched data and records reactivation false-positive risk."
+  },
+  {
+    "id": "FR-ADG-005",
+    "sourceLine": 6354,
+    "startLine": 6352,
+    "endLine": 6356,
+    "exactText": "- **FR-ADG-003 MUST:** Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.\n- **FR-ADG-004 MUST:** Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.\n- **FR-ADG-005 MUST:** Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.\n- **FR-ADG-006 MUST:** Revalidation uses forward or untouched data and records reactivation false-positive risk.\n- **FR-ADG-007 MUST:** A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence."
+  },
+  {
+    "id": "FR-ADG-006",
+    "sourceLine": 6355,
+    "startLine": 6353,
+    "endLine": 6357,
+    "exactText": "- **FR-ADG-004 MUST:** Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.\n- **FR-ADG-005 MUST:** Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.\n- **FR-ADG-006 MUST:** Revalidation uses forward or untouched data and records reactivation false-positive risk.\n- **FR-ADG-007 MUST:** A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence.\n"
+  },
+  {
+    "id": "FR-ADG-007",
+    "sourceLine": 6356,
+    "startLine": 6354,
+    "endLine": 6358,
+    "exactText": "- **FR-ADG-005 MUST:** Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.\n- **FR-ADG-006 MUST:** Revalidation uses forward or untouched data and records reactivation false-positive risk.\n- **FR-ADG-007 MUST:** A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence.\n\n"
+  },
+  {
+    "id": "AC-200",
+    "sourceLine": 6705,
+    "startLine": 6703,
+    "endLine": 6707,
+    "exactText": "### 39.19 Adversarial robustness, frontier, and decay\n\n- **AC-200:** Address splitting, sybil buyer creation, route inflation, wash trading, liquidity spoofing, indirect creator control, social coordination, and pattern-mimic fixtures execute in CI/evaluation with lineage isolation.\n- **AC-201:** A failed critical adversarial scenario pauses only the affected alpha influence and preserves risk monitoring/fallback.\n- **AC-202:** Synthetic adversarial records cannot appear in real outcome cohorts, wallet reputation, or production calibration datasets."
+  },
+  {
+    "id": "AC-201",
+    "sourceLine": 6706,
+    "startLine": 6704,
+    "endLine": 6708,
+    "exactText": "\n- **AC-200:** Address splitting, sybil buyer creation, route inflation, wash trading, liquidity spoofing, indirect creator control, social coordination, and pattern-mimic fixtures execute in CI/evaluation with lineage isolation.\n- **AC-201:** A failed critical adversarial scenario pauses only the affected alpha influence and preserves risk monitoring/fallback.\n- **AC-202:** Synthetic adversarial records cannot appear in real outcome cohorts, wallet reputation, or production calibration datasets.\n- **AC-203:** A candidate dominated on every known favorable dimension receives lower exploitation quota only after exploration/diversity/risk constraints are applied."
+  },
+  {
+    "id": "AC-202",
+    "sourceLine": 6707,
+    "startLine": 6705,
+    "endLine": 6709,
+    "exactText": "- **AC-200:** Address splitting, sybil buyer creation, route inflation, wash trading, liquidity spoofing, indirect creator control, social coordination, and pattern-mimic fixtures execute in CI/evaluation with lineage isolation.\n- **AC-201:** A failed critical adversarial scenario pauses only the affected alpha influence and preserves risk monitoring/fallback.\n- **AC-202:** Synthetic adversarial records cannot appear in real outcome cohorts, wallet reputation, or production calibration datasets.\n- **AC-203:** A candidate dominated on every known favorable dimension receives lower exploitation quota only after exploration/diversity/risk constraints are applied.\n- **AC-204:** Unknown frontier dimensions cannot make a candidate dominate another candidate."
+  },
+  {
+    "id": "AC-203",
+    "sourceLine": 6708,
+    "startLine": 6706,
+    "endLine": 6710,
+    "exactText": "- **AC-201:** A failed critical adversarial scenario pauses only the affected alpha influence and preserves risk monitoring/fallback.\n- **AC-202:** Synthetic adversarial records cannot appear in real outcome cohorts, wallet reputation, or production calibration datasets.\n- **AC-203:** A candidate dominated on every known favorable dimension receives lower exploitation quota only after exploration/diversity/risk constraints are applied.\n- **AC-204:** Unknown frontier dimensions cannot make a candidate dominate another candidate.\n- **AC-205:** Pattern/wallet/route/hazard artifacts degrade or pause when drift/decay thresholds fail and cannot automatically reactivate."
+  },
+  {
+    "id": "AC-204",
+    "sourceLine": 6709,
+    "startLine": 6707,
+    "endLine": 6711,
+    "exactText": "- **AC-202:** Synthetic adversarial records cannot appear in real outcome cohorts, wallet reputation, or production calibration datasets.\n- **AC-203:** A candidate dominated on every known favorable dimension receives lower exploitation quota only after exploration/diversity/risk constraints are applied.\n- **AC-204:** Unknown frontier dimensions cannot make a candidate dominate another candidate.\n- **AC-205:** Pattern/wallet/route/hazard artifacts degrade or pause when drift/decay thresholds fail and cannot automatically reactivate.\n- **AC-206:** Retired alpha artifacts remain replayable with immutable evidence, evaluations, and prior decisions."
+  },
+  {
+    "id": "AC-205",
+    "sourceLine": 6710,
+    "startLine": 6708,
+    "endLine": 6712,
+    "exactText": "- **AC-203:** A candidate dominated on every known favorable dimension receives lower exploitation quota only after exploration/diversity/risk constraints are applied.\n- **AC-204:** Unknown frontier dimensions cannot make a candidate dominate another candidate.\n- **AC-205:** Pattern/wallet/route/hazard artifacts degrade or pause when drift/decay thresholds fail and cannot automatically reactivate.\n- **AC-206:** Retired alpha artifacts remain replayable with immutable evidence, evaluations, and prior decisions.\n- **AC-207:** Correlated alpha artifacts cannot each claim the full aggregate portfolio lift."
+  },
+  {
+    "id": "AC-206",
+    "sourceLine": 6711,
+    "startLine": 6709,
+    "endLine": 6713,
+    "exactText": "- **AC-204:** Unknown frontier dimensions cannot make a candidate dominate another candidate.\n- **AC-205:** Pattern/wallet/route/hazard artifacts degrade or pause when drift/decay thresholds fail and cannot automatically reactivate.\n- **AC-206:** Retired alpha artifacts remain replayable with immutable evidence, evaluations, and prior decisions.\n- **AC-207:** Correlated alpha artifacts cannot each claim the full aggregate portfolio lift.\n- **AC-208:** Alpha revalidation uses untouched/forward data and explicit owner approval before reactivation."
+  },
+  {
+    "id": "AC-207",
+    "sourceLine": 6712,
+    "startLine": 6710,
+    "endLine": 6714,
+    "exactText": "- **AC-205:** Pattern/wallet/route/hazard artifacts degrade or pause when drift/decay thresholds fail and cannot automatically reactivate.\n- **AC-206:** Retired alpha artifacts remain replayable with immutable evidence, evaluations, and prior decisions.\n- **AC-207:** Correlated alpha artifacts cannot each claim the full aggregate portfolio lift.\n- **AC-208:** Alpha revalidation uses untouched/forward data and explicit owner approval before reactivation.\n- **AC-209:** The final confirmed-alert path records which alpha artifacts influenced research, ranking, disagreement, policy, and alert state."
+  },
+  {
+    "id": "AC-208",
+    "sourceLine": 6713,
+    "startLine": 6711,
+    "endLine": 6715,
+    "exactText": "- **AC-206:** Retired alpha artifacts remain replayable with immutable evidence, evaluations, and prior decisions.\n- **AC-207:** Correlated alpha artifacts cannot each claim the full aggregate portfolio lift.\n- **AC-208:** Alpha revalidation uses untouched/forward data and explicit owner approval before reactivation.\n- **AC-209:** The final confirmed-alert path records which alpha artifacts influenced research, ranking, disagreement, policy, and alert state.\n- **AC-210:** A validation slice exposed during prior pattern/model/threshold selection is marked exhausted and cannot be reused as untouched promotion evidence."
+  },
+  {
+    "id": "AC-209",
+    "sourceLine": 6714,
+    "startLine": 6712,
+    "endLine": 6716,
+    "exactText": "- **AC-207:** Correlated alpha artifacts cannot each claim the full aggregate portfolio lift.\n- **AC-208:** Alpha revalidation uses untouched/forward data and explicit owner approval before reactivation.\n- **AC-209:** The final confirmed-alert path records which alpha artifacts influenced research, ranking, disagreement, policy, and alert state.\n- **AC-210:** A validation slice exposed during prior pattern/model/threshold selection is marked exhausted and cannot be reused as untouched promotion evidence.\n- **AC-211:** With insufficient matured history, Winning Pattern Intelligence returns cold-start/insufficient-history and cannot affect confirmed alerts while deterministic baseline operation continues."
+  },
+  {
+    "id": "AC-210",
+    "sourceLine": 6715,
+    "startLine": 6713,
+    "endLine": 6717,
+    "exactText": "- **AC-208:** Alpha revalidation uses untouched/forward data and explicit owner approval before reactivation.\n- **AC-209:** The final confirmed-alert path records which alpha artifacts influenced research, ranking, disagreement, policy, and alert state.\n- **AC-210:** A validation slice exposed during prior pattern/model/threshold selection is marked exhausted and cannot be reused as untouched promotion evidence.\n- **AC-211:** With insufficient matured history, Winning Pattern Intelligence returns cold-start/insufficient-history and cannot affect confirmed alerts while deterministic baseline operation continues.\n- **AC-212:** A pattern learned from selectively deep-observed candidates limits its population claim or uses valid inclusion adjustment; it cannot claim full-universe lift by default."
+  },
+  {
+    "id": "AC-211",
+    "sourceLine": 6716,
+    "startLine": 6714,
+    "endLine": 6718,
+    "exactText": "- **AC-209:** The final confirmed-alert path records which alpha artifacts influenced research, ranking, disagreement, policy, and alert state.\n- **AC-210:** A validation slice exposed during prior pattern/model/threshold selection is marked exhausted and cannot be reused as untouched promotion evidence.\n- **AC-211:** With insufficient matured history, Winning Pattern Intelligence returns cold-start/insufficient-history and cannot affect confirmed alerts while deterministic baseline operation continues.\n- **AC-212:** A pattern learned from selectively deep-observed candidates limits its population claim or uses valid inclusion adjustment; it cannot claim full-universe lift by default.\n- **AC-213:** An Alpha Lab artifact with mismatched dataset/code/dependency hash, invalid signature, exhausted holdout, failed adversarial gate, or absent evaluation is rejected from import/promotion."
+  },
+  {
+    "id": "AC-212",
+    "sourceLine": 6717,
+    "startLine": 6715,
+    "endLine": 6719,
+    "exactText": "- **AC-210:** A validation slice exposed during prior pattern/model/threshold selection is marked exhausted and cannot be reused as untouched promotion evidence.\n- **AC-211:** With insufficient matured history, Winning Pattern Intelligence returns cold-start/insufficient-history and cannot affect confirmed alerts while deterministic baseline operation continues.\n- **AC-212:** A pattern learned from selectively deep-observed candidates limits its population claim or uses valid inclusion adjustment; it cannot claim full-universe lift by default.\n- **AC-213:** An Alpha Lab artifact with mismatched dataset/code/dependency hash, invalid signature, exhausted holdout, failed adversarial gate, or absent evaluation is rejected from import/promotion.\n"
+  },
+  {
+    "id": "AC-213",
+    "sourceLine": 6718,
+    "startLine": 6716,
+    "endLine": 6720,
+    "exactText": "- **AC-211:** With insufficient matured history, Winning Pattern Intelligence returns cold-start/insufficient-history and cannot affect confirmed alerts while deterministic baseline operation continues.\n- **AC-212:** A pattern learned from selectively deep-observed candidates limits its population claim or uses valid inclusion adjustment; it cannot claim full-universe lift by default.\n- **AC-213:** An Alpha Lab artifact with mismatched dataset/code/dependency hash, invalid signature, exhausted holdout, failed adversarial gate, or absent evaluation is rejected from import/promotion.\n\n"
+  }
+]

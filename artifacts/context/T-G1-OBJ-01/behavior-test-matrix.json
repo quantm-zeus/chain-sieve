@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-OBJ-01",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-220",
+      "facetId": "AC-220:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-220 system or integration oracle consumes. This facet does not claim full AC-220 satisfaction.",
+      "sourceAcceptanceSha256": "a250e9caf890faae0757bda61dc03dc2fcb1fd78834ad522c2e29b163f5c30ad"
+    },
+    {
+      "acceptanceId": "AC-221",
+      "facetId": "AC-221:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-221 system or integration oracle consumes. This facet does not claim full AC-221 satisfaction.",
+      "sourceAcceptanceSha256": "d34728cae539ad0f960cbf1a9afba6ae414753c306aaf01c1f1885d0cc6c6c29"
+    },
+    {
+      "acceptanceId": "AC-222",
+      "facetId": "AC-222:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-222 system or integration oracle consumes. This facet does not claim full AC-222 satisfaction.",
+      "sourceAcceptanceSha256": "8f80c631b12fc263a0dda9c9f66d7611189153aa152a42b9dee5b6737871815f"
+    },
+    {
+      "acceptanceId": "AC-223",
+      "facetId": "AC-223:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-223 system or integration oracle consumes. This facet does not claim full AC-223 satisfaction.",
+      "sourceAcceptanceSha256": "5249790ee236fc02a6512d251aaaed92f00ceaaf0dcd63d346fa436d90561170"
+    },
+    {
+      "acceptanceId": "AC-245",
+      "facetId": "AC-245:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-245 system or integration oracle consumes. This facet does not claim full AC-245 satisfaction.",
+      "sourceAcceptanceSha256": "01075f941c2c87b6061f4ccc4675f02a60a8c6ec5d2fcfb9d03c3fe930d104d1"
+    },
+    {
+      "acceptanceId": "AC-246",
+      "facetId": "AC-246:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-246 system or integration oracle consumes. This facet does not claim full AC-246 satisfaction.",
+      "sourceAcceptanceSha256": "758b8dc629e0bf1660640394a99a89c6e4767e592768157292978eaf28a91417"
+    },
+    {
+      "acceptanceId": "AC-247",
+      "facetId": "AC-247:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-247 system or integration oracle consumes. This facet does not claim full AC-247 satisfaction.",
+      "sourceAcceptanceSha256": "f300abb737b2e9c2e5771e2d9ec88fb715758b86e80886b6318dee294b5426f7"
+    },
+    {
+      "acceptanceId": "AC-248",
+      "facetId": "AC-248:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-248 system or integration oracle consumes. This facet does not claim full AC-248 satisfaction.",
+      "sourceAcceptanceSha256": "af6112d196d9eadefb63f55963f1e45b5419b4534fd8b8e39dc007967f52fe34"
+    },
+    {
+      "acceptanceId": "AC-249",
+      "facetId": "AC-249:T-G1-OBJ-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-OBJ-01 for FR-OBJ-001, FR-OBJ-002, FR-OBJ-003, FR-OBJ-004, FR-OBJ-005, FR-OBJ-006, FR-OBJ-007, FR-OBJ-008 that the unchanged AC-249 system or integration oracle consumes. This facet does not claim full AC-249 satisfaction.",
+      "sourceAcceptanceSha256": "14835a40acbd0ce6b6ad958361cce41a44c62ac2a9e84bfd2299243abbb789cd"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

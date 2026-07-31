@@ -70,6 +70,8 @@ describe('proof-carrying task verification', () => {
 
 describe('live task verification', () => {
   it('rejects task completion without a live lease, task branch and atomic commit', async () => {
-    await expect(verifyTask('T-G0-CORE', 'forged', 1)).rejects.toThrow('NO_ACTIVE_LEASE');
+    await expect(verifyTask('T-G0-CORE', 'forged', 1)).rejects.toThrow(
+      /NO_ACTIVE_LEASE|WRONG_LEASE_OWNER|LEASE_EXPIRED/,
+    );
   });
 });

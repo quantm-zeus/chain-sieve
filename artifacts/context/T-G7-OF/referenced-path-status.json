@@ -1,0 +1,377 @@
+[
+  {
+    "path": "docs/generated/of-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "migrations/g7_of_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "packages/opportunity-frontier/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/of.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "telemetry/of.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-200.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-201.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-202.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-203.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-204.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-205.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-206.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-207.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-208.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-209.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-210.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-211.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-212.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-213.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/of/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-200.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-201.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-202.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-203.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-204.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-205.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-206.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-207.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-208.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-209.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-210.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-211.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-212.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-213.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-OF-001",
+      "FR-OF-002",
+      "FR-OF-003",
+      "FR-OF-004",
+      "FR-OF-005"
+    ]
+  }
+]

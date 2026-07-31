@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/evaluation/**",
     "packages/eval-cli/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-EVAL-01/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-EVAL-01/**"
+    "artifacts/context/T-G6-EVAL-01/**",
+    "artifacts/conformance/T-G6-EVAL-01/manifest.json"
   ],
   "writeSet": [
     "packages/evaluation/**",

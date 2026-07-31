@@ -1,0 +1,121 @@
+[
+  {
+    "id": "FR-WAL-001",
+    "sourceLine": 6233,
+    "startLine": 6231,
+    "endLine": 6235,
+    "exactText": "### 38.21 Wallet Alpha Lineage\n\n- **FR-WAL-001 MUST:** Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization.\n- **FR-WAL-002 MUST:** Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.\n- **FR-WAL-003 MUST:** Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits."
+  },
+  {
+    "id": "FR-WAL-002",
+    "sourceLine": 6234,
+    "startLine": 6232,
+    "endLine": 6236,
+    "exactText": "\n- **FR-WAL-001 MUST:** Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization.\n- **FR-WAL-002 MUST:** Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.\n- **FR-WAL-003 MUST:** Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.\n- **FR-WAL-004 MUST:** Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence."
+  },
+  {
+    "id": "FR-WAL-003",
+    "sourceLine": 6235,
+    "startLine": 6233,
+    "endLine": 6237,
+    "exactText": "- **FR-WAL-001 MUST:** Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization.\n- **FR-WAL-002 MUST:** Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.\n- **FR-WAL-003 MUST:** Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.\n- **FR-WAL-004 MUST:** Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.\n- **FR-WAL-005 MUST:** Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate."
+  },
+  {
+    "id": "FR-WAL-004",
+    "sourceLine": 6236,
+    "startLine": 6234,
+    "endLine": 6238,
+    "exactText": "- **FR-WAL-002 MUST:** Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.\n- **FR-WAL-003 MUST:** Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.\n- **FR-WAL-004 MUST:** Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.\n- **FR-WAL-005 MUST:** Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.\n- **FR-WAL-006 MUST:** Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure."
+  },
+  {
+    "id": "FR-WAL-005",
+    "sourceLine": 6237,
+    "startLine": 6235,
+    "endLine": 6239,
+    "exactText": "- **FR-WAL-003 MUST:** Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.\n- **FR-WAL-004 MUST:** Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.\n- **FR-WAL-005 MUST:** Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.\n- **FR-WAL-006 MUST:** Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure.\n- **FR-WAL-007 MUST:** Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature."
+  },
+  {
+    "id": "FR-WAL-006",
+    "sourceLine": 6238,
+    "startLine": 6236,
+    "endLine": 6240,
+    "exactText": "- **FR-WAL-004 MUST:** Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.\n- **FR-WAL-005 MUST:** Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.\n- **FR-WAL-006 MUST:** Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure.\n- **FR-WAL-007 MUST:** Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature.\n"
+  },
+  {
+    "id": "FR-WAL-007",
+    "sourceLine": 6239,
+    "startLine": 6237,
+    "endLine": 6241,
+    "exactText": "- **FR-WAL-005 MUST:** Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.\n- **FR-WAL-006 MUST:** Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure.\n- **FR-WAL-007 MUST:** Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature.\n\n### 38.22 Deployer–Funder DNA"
+  },
+  {
+    "id": "AC-160",
+    "sourceLine": 6659,
+    "startLine": 6657,
+    "endLine": 6661,
+    "exactText": "### 39.15 Winning pattern and alpha lineage\n\n- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven."
+  },
+  {
+    "id": "AC-161",
+    "sourceLine": 6660,
+    "startLine": 6658,
+    "endLine": 6662,
+    "exactText": "\n- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution."
+  },
+  {
+    "id": "AC-162",
+    "sourceLine": 6661,
+    "startLine": 6659,
+    "endLine": 6663,
+    "exactText": "- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high."
+  },
+  {
+    "id": "AC-163",
+    "sourceLine": 6662,
+    "startLine": 6660,
+    "endLine": 6664,
+    "exactText": "- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation."
+  },
+  {
+    "id": "AC-164",
+    "sourceLine": 6663,
+    "startLine": 6661,
+    "endLine": 6665,
+    "exactText": "- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence."
+  },
+  {
+    "id": "AC-165",
+    "sourceLine": 6664,
+    "startLine": 6662,
+    "endLine": 6666,
+    "exactText": "- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence."
+  },
+  {
+    "id": "AC-166",
+    "sourceLine": 6665,
+    "startLine": 6663,
+    "endLine": 6667,
+    "exactText": "- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision."
+  },
+  {
+    "id": "AC-167",
+    "sourceLine": 6666,
+    "startLine": 6664,
+    "endLine": 6668,
+    "exactText": "- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage."
+  },
+  {
+    "id": "AC-168",
+    "sourceLine": 6667,
+    "startLine": 6665,
+    "endLine": 6669,
+    "exactText": "- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage.\n"
+  },
+  {
+    "id": "AC-169",
+    "sourceLine": 6668,
+    "startLine": 6666,
+    "endLine": 6670,
+    "exactText": "- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage.\n\n### 39.16 Liquidity, launch, attention, and rotation"
+  }
+]

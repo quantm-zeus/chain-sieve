@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-LMS",
+  "immutable": true,
+  "requirements": [
+    "FR-LMS-001",
+    "FR-LMS-002",
+    "FR-LMS-003",
+    "FR-LMS-004",
+    "FR-LMS-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-170:T-G5-LMS:INTERFACE_FACET",
+    "AC-171:T-G5-LMS:INTERFACE_FACET",
+    "AC-172:T-G5-LMS:INTERFACE_FACET",
+    "AC-173:T-G5-LMS:INTERFACE_FACET",
+    "AC-174:T-G5-LMS:INTERFACE_FACET",
+    "AC-175:T-G5-LMS:INTERFACE_FACET",
+    "AC-176:T-G5-LMS:INTERFACE_FACET",
+    "AC-177:T-G5-LMS:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-LMS.spec.ts",
+    "tests/task-facets/T-G5-LMS.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/launch-state-intelligence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-LMS/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

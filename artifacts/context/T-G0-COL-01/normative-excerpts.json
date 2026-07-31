@@ -1,0 +1,149 @@
+[
+  {
+    "id": "FR-COL-001",
+    "sourceLine": 6387,
+    "startLine": 6385,
+    "endLine": 6389,
+    "exactText": "### 38.38 Bounded first-party event collector\n\n- **FR-COL-001 MUST:** A long-running first-party collector observes an explicit, versioned allowlist of chains, programs, program versions, accounts, event families, and finality policies; it cannot imply coverage outside that scope.\n- **FR-COL-002 MUST:** The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior.\n- **FR-COL-003 MUST:** Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy."
+  },
+  {
+    "id": "FR-COL-002",
+    "sourceLine": 6388,
+    "startLine": 6386,
+    "endLine": 6390,
+    "exactText": "\n- **FR-COL-001 MUST:** A long-running first-party collector observes an explicit, versioned allowlist of chains, programs, program versions, accounts, event families, and finality policies; it cannot imply coverage outside that scope.\n- **FR-COL-002 MUST:** The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior.\n- **FR-COL-003 MUST:** Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy.\n- **FR-COL-004 MUST:** Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events."
+  },
+  {
+    "id": "FR-COL-003",
+    "sourceLine": 6389,
+    "startLine": 6387,
+    "endLine": 6391,
+    "exactText": "- **FR-COL-001 MUST:** A long-running first-party collector observes an explicit, versioned allowlist of chains, programs, program versions, accounts, event families, and finality policies; it cannot imply coverage outside that scope.\n- **FR-COL-002 MUST:** The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior.\n- **FR-COL-003 MUST:** Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy.\n- **FR-COL-004 MUST:** Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events.\n- **FR-COL-005 MUST:** Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims."
+  },
+  {
+    "id": "FR-COL-004",
+    "sourceLine": 6390,
+    "startLine": 6388,
+    "endLine": 6392,
+    "exactText": "- **FR-COL-002 MUST:** The initial Solana collector and protocol registry implement versioned read-only coverage for Pump bonding curve/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, and Jupiter route observation/reconciliation, including allowlisted pool or launch creation, state progress, migration, liquidity changes, authority/configuration changes, and selected economic swap/flow events; unsupported versions remain explicit and cannot inherit generic behavior.\n- **FR-COL-003 MUST:** Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy.\n- **FR-COL-004 MUST:** Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events.\n- **FR-COL-005 MUST:** Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims.\n- **FR-COL-006 MUST:** Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations."
+  },
+  {
+    "id": "FR-COL-005",
+    "sourceLine": 6391,
+    "startLine": 6389,
+    "endLine": 6393,
+    "exactText": "- **FR-COL-003 MUST:** Each collector stream stores endpoint, subscription/filter version, connection generation, slot, block hash, transaction/signature, instruction/log/account coordinates, received time, earliest system availability, finality, raw artifact hash, decoder version, and rights policy.\n- **FR-COL-004 MUST:** Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events.\n- **FR-COL-005 MUST:** Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims.\n- **FR-COL-006 MUST:** Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations.\n- **FR-COL-007 MUST:** Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated."
+  },
+  {
+    "id": "FR-COL-006",
+    "sourceLine": 6392,
+    "startLine": 6390,
+    "endLine": 6394,
+    "exactText": "- **FR-COL-004 MUST:** Collector checkpoints are durable and monotonic per partition; reconnect detects missing slot or sequence ranges, records a gap before backfill, and resumes from the last committed checkpoint without silently skipping events.\n- **FR-COL-005 MUST:** Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims.\n- **FR-COL-006 MUST:** Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations.\n- **FR-COL-007 MUST:** Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated.\n- **FR-COL-008 MUST:** Collector health exposes connected state, endpoint generation, head slot, finalized slot, checkpoint lag, gap count/duration, backfill status, decode-failure rate, streamed bytes, event rate, deduplication rate, and resource consumption."
+  },
+  {
+    "id": "FR-COL-007",
+    "sourceLine": 6393,
+    "startLine": 6391,
+    "endLine": 6395,
+    "exactText": "- **FR-COL-005 MUST:** Gap backfill uses independent bounded RPC/indexer operations where available, preserves actual retrieval time, and never backdates `available_at`; unresolved gaps explicitly downgrade coverage and population claims.\n- **FR-COL-006 MUST:** Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations.\n- **FR-COL-007 MUST:** Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated.\n- **FR-COL-008 MUST:** Collector health exposes connected state, endpoint generation, head slot, finalized slot, checkpoint lag, gap count/duration, backfill status, decode-failure rate, streamed bytes, event rate, deduplication rate, and resource consumption.\n- **FR-COL-009 MUST:** Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution."
+  },
+  {
+    "id": "FR-COL-008",
+    "sourceLine": 6394,
+    "startLine": 6392,
+    "endLine": 6396,
+    "exactText": "- **FR-COL-006 MUST:** Reorg, duplicate, delayed, out-of-order, and revised events use immutable revisions/compensating events; the collector never destructively rewrites prior observations.\n- **FR-COL-007 MUST:** Program upgrades, decoder drift, account-layout changes, unknown instruction variants, and parity failures pause only affected decoding/scope, preserve raw events, create an incident, and prevent derived facts until revalidated.\n- **FR-COL-008 MUST:** Collector health exposes connected state, endpoint generation, head slot, finalized slot, checkpoint lag, gap count/duration, backfill status, decode-failure rate, streamed bytes, event rate, deduplication rate, and resource consumption.\n- **FR-COL-009 MUST:** Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution.\n- **FR-COL-010 MUST:** The collector has CPU, memory, network, subscription, event-rate, raw-storage, retry, and monthly-credit ceilings governed by the active Sustainable Capacity Contract."
+  },
+  {
+    "id": "AC-110",
+    "sourceLine": 6612,
+    "startLine": 6610,
+    "endLine": 6614,
+    "exactText": "### 39.10 Discovery coverage\n\n- **AC-110:** Every candidate has deterministic first-seen source/system timestamps and source attribution.\n- **AC-111:** A token later meeting an outcome profile but absent from all live sources is classified through the retrospective universe path as `NOT_DISCOVERED` when evidence permits.\n- **AC-112:** Cheap monitoring of 1,000 candidates uses bounded batch runs and does not create 1,000 scheduler messages or workflows."
+  },
+  {
+    "id": "AC-111",
+    "sourceLine": 6613,
+    "startLine": 6611,
+    "endLine": 6615,
+    "exactText": "\n- **AC-110:** Every candidate has deterministic first-seen source/system timestamps and source attribution.\n- **AC-111:** A token later meeting an outcome profile but absent from all live sources is classified through the retrospective universe path as `NOT_DISCOVERED` when evidence permits.\n- **AC-112:** Cheap monitoring of 1,000 candidates uses bounded batch runs and does not create 1,000 scheduler messages or workflows.\n- **AC-113:** Promotion from cheap monitor to verification is replayable from frozen feature and policy versions."
+  },
+  {
+    "id": "AC-112",
+    "sourceLine": 6614,
+    "startLine": 6612,
+    "endLine": 6616,
+    "exactText": "- **AC-110:** Every candidate has deterministic first-seen source/system timestamps and source attribution.\n- **AC-111:** A token later meeting an outcome profile but absent from all live sources is classified through the retrospective universe path as `NOT_DISCOVERED` when evidence permits.\n- **AC-112:** Cheap monitoring of 1,000 candidates uses bounded batch runs and does not create 1,000 scheduler messages or workflows.\n- **AC-113:** Promotion from cheap monitor to verification is replayable from frozen feature and policy versions.\n"
+  },
+  {
+    "id": "AC-113",
+    "sourceLine": 6615,
+    "startLine": 6613,
+    "endLine": 6617,
+    "exactText": "- **AC-111:** A token later meeting an outcome profile but absent from all live sources is classified through the retrospective universe path as `NOT_DISCOVERED` when evidence permits.\n- **AC-112:** Cheap monitoring of 1,000 candidates uses bounded batch runs and does not create 1,000 scheduler messages or workflows.\n- **AC-113:** Promotion from cheap monitor to verification is replayable from frozen feature and policy versions.\n\n### 39.11 Execution and maturity"
+  },
+  {
+    "id": "AC-224",
+    "sourceLine": 6739,
+    "startLine": 6737,
+    "endLine": 6741,
+    "exactText": "- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method.\n- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope."
+  },
+  {
+    "id": "AC-225",
+    "sourceLine": 6740,
+    "startLine": 6738,
+    "endLine": 6742,
+    "exactText": "- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded."
+  },
+  {
+    "id": "AC-226",
+    "sourceLine": 6741,
+    "startLine": 6739,
+    "endLine": 6743,
+    "exactText": "- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve."
+  },
+  {
+    "id": "AC-227",
+    "sourceLine": 6742,
+    "startLine": 6740,
+    "endLine": 6744,
+    "exactText": "- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve."
+  },
+  {
+    "id": "AC-228",
+    "sourceLine": 6743,
+    "startLine": 6741,
+    "endLine": 6745,
+    "exactText": "- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve.\n"
+  },
+  {
+    "id": "AC-229",
+    "sourceLine": 6744,
+    "startLine": 6742,
+    "endLine": 6746,
+    "exactText": "- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve.\n\n### 39.22 Execution adapters, route fidelity, and mature outcomes"
+  },
+  {
+    "id": "AC-230",
+    "sourceLine": 6748,
+    "startLine": 6746,
+    "endLine": 6750,
+    "exactText": "### 39.22 Execution adapters, route fidelity, and mature outcomes\n\n- **AC-230:** Pump/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, Jupiter route-observation, constant-product, concentrated-liquidity, bin-based, bonding-curve, dynamic-fee, and unknown fixtures resolve only to matching versioned decoders/adapters and signed program-support manifests; an unknown or mismatched design returns an explicit unsupported/degraded state rather than generic constant-product output.\n- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity."
+  },
+  {
+    "id": "AC-231",
+    "sourceLine": 6749,
+    "startLine": 6747,
+    "endLine": 6751,
+    "exactText": "\n- **AC-230:** Pump/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, Jupiter route-observation, constant-product, concentrated-liquidity, bin-based, bonding-curve, dynamic-fee, and unknown fixtures resolve only to matching versioned decoders/adapters and signed program-support manifests; an unknown or mismatched design returns an explicit unsupported/degraded state rather than generic constant-product output.\n- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return."
+  },
+  {
+    "id": "AC-237",
+    "sourceLine": 6755,
+    "startLine": 6753,
+    "endLine": 6757,
+    "exactText": "- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix.\n- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically.\n- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated.\n- **AC-238:** A coarse price candle whose target and invalidation are both reachable yields the adverse feasible primary ordering and a path-ambiguity flag; an optimistic ordering is secondary only.\n- **AC-239:** Production promotion excludes signal-only, low-resolution, partial, censored, invalid, or scenario-mismatched outcomes from the `TRADABLE_SUCCESS` denominator and reports them separately."
+  }
+]

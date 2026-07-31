@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-CF",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-CF-001",
+      "exactNormativeText": "Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations."
+    },
+    {
+      "id": "FR-CF-002",
+      "exactNormativeText": "Counterfactual results cannot directly mutate active configuration."
+    },
+    {
+      "id": "FR-CF-003",
+      "exactNormativeText": "Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score."
+    }
+  ],
+  "expectedModules": [
+    "packages/counterfactual-lab/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/cf.ts",
+    "docs/generated/cf-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.",
+    "Counterfactual results cannot directly mutate active configuration.",
+    "Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/cf.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

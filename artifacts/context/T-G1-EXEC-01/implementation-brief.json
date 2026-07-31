@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EXEC-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EXEC-001",
+      "exactNormativeText": "Every opportunity profile defines signal and tradable outcome semantics."
+    },
+    {
+      "id": "FR-EXEC-002",
+      "exactNormativeText": "Execution simulation supports versioned notionals, action delays, entry/exit policies, price impact, partial fills, and available liquidity."
+    },
+    {
+      "id": "FR-EXEC-003",
+      "exactNormativeText": "Net return includes pool fees, token transfer fees, priority/network fees, and execution impact."
+    },
+    {
+      "id": "FR-EXEC-004",
+      "exactNormativeText": "Target touch requires executable volume or configured target-duration support; an isolated wick cannot automatically count as tradable success."
+    },
+    {
+      "id": "FR-EXEC-005",
+      "exactNormativeText": "Execution simulation is read-only and cannot construct or submit transactions."
+    },
+    {
+      "id": "FR-EXEC-006",
+      "exactNormativeText": "`SIGNAL_SUCCESS` cannot be rendered as profit when `TRADABLE_SUCCESS` is absent or failed."
+    },
+    {
+      "id": "FR-EXEC-007",
+      "exactNormativeText": "Tradability can block `CONFIRMED_OPPORTUNITY` while preserving diagnostic signal labels."
+    },
+    {
+      "id": "FR-EXEC-008",
+      "exactNormativeText": "Alert content exposes configured notional, delay, modeled impact, assumptions, and expiry."
+    }
+  ],
+  "expectedModules": [
+    "packages/execution-simulator/**",
+    "packages/pool-math/**",
+    "packages/transfer-semantics/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/exec.ts",
+    "docs/generated/exec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every opportunity profile defines signal and tradable outcome semantics.",
+    "Execution simulation supports versioned notionals, action delays, entry/exit policies, price impact, partial fills, and available liquidity.",
+    "Net return includes pool fees, token transfer fees, priority/network fees, and execution impact.",
+    "Target touch requires executable volume or configured target-duration support; an isolated wick cannot automatically count as tradable success.",
+    "Execution simulation is read-only and cannot construct or submit transactions.",
+    "`SIGNAL_SUCCESS` cannot be rendered as profit when `TRADABLE_SUCCESS` is absent or failed.",
+    "Tradability can block `CONFIRMED_OPPORTUNITY` while preserving diagnostic signal labels.",
+    "Alert content exposes configured notional, delay, modeled impact, assumptions, and expiry."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/exec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

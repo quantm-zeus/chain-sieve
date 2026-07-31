@@ -85,6 +85,7 @@
     "AC-082",
     "AC-090"
   ],
+  "taskAcceptanceFacets": [],
   "invariants": [
     "INV-001",
     "INV-002",
@@ -105,14 +106,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-ANA/**"
+    "artifacts/context/T-G6-ANA/**",
+    "artifacts/conformance/T-G6-ANA/manifest.json"
   ],
   "writeSet": [
     "packages/analog-finder/**"
   ],
   "allowedPaths": [
     "packages/analog-finder/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -120,6 +125,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-ANA/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -137,7 +144,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -157,7 +165,11 @@
   "verificationCommands": [
     {
       "command": "pnpm exec vitest run tests/acceptance/AC-081.spec.ts tests/negative/AC-081.negative.spec.ts tests/acceptance/AC-082.spec.ts tests/negative/AC-082.negative.spec.ts tests/acceptance/AC-090.spec.ts tests/negative/AC-090.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -182,10 +194,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -206,5 +220,9 @@
       "line": 6110,
       "id": "FR-ANA-003"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G6-ANA/manifest.json",
+  "conformanceManifestSha256": "081d3afbd07b1e187787a25de516e03c23c968f71aae607ae504b0c562f94288",
+  "testQualityGate": "NEGATIVE_CASE"
 }

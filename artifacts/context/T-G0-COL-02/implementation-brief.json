@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COL-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-COL-009",
+      "exactNormativeText": "Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution."
+    },
+    {
+      "id": "FR-COL-010",
+      "exactNormativeText": "The collector has CPU, memory, network, subscription, event-rate, raw-storage, retry, and monthly-credit ceilings governed by the active Sustainable Capacity Contract."
+    },
+    {
+      "id": "FR-COL-011",
+      "exactNormativeText": "First-seen metrics distinguish source event time, collector receipt, provider availability, feature readiness, decision readiness, and delivery; the collector is an independent timing reference only for its verified scope."
+    },
+    {
+      "id": "FR-COL-012",
+      "exactNormativeText": "Collector credentials and dependencies expose no signing, private-key/seed, wallet creation/import/custody/management, transaction construction/submission, or arbitrary-subscription capability to the model or default MCP clients; read-only wallet-address observations remain data, not authority."
+    }
+  ],
+  "expectedModules": [
+    "apps/collector/**",
+    "packages/collector-core/**",
+    "packages/collector-solana/**",
+    "packages/program-decoders/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/col.ts",
+    "docs/generated/col-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution.",
+    "The collector has CPU, memory, network, subscription, event-rate, raw-storage, retry, and monthly-credit ceilings governed by the active Sustainable Capacity Contract.",
+    "First-seen metrics distinguish source event time, collector receipt, provider availability, feature readiness, decision readiness, and delivery; the collector is an independent timing reference only for its verified scope.",
+    "Collector credentials and dependencies expose no signing, private-key/seed, wallet creation/import/custody/management, transaction construction/submission, or arbitrary-subscription capability to the model or default MCP clients; read-only wallet-address observations remain data, not authority."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution.",
+    "First-seen metrics distinguish source event time, collector receipt, provider availability, feature readiness, decision readiness, and delivery; the collector is an independent timing reference only for its verified scope."
+  ],
+  "idempotencyExpectations": [
+    "Collector endpoint selection, failover, reconnect backoff, subscription sharding, and replay are deterministic and bounded; failover cannot create duplicate externally visible state or erase first-seen attribution."
+  ],
+  "observabilityExpectations": [
+    "telemetry/col.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

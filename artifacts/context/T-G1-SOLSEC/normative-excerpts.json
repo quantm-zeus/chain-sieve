@@ -1,0 +1,163 @@
+[
+  {
+    "id": "FR-SOLSEC-001",
+    "sourceLine": 6181,
+    "startLine": 6179,
+    "endLine": 6183,
+    "exactText": "### 38.17 Solana deterministic security, supply, and economic trades\n\n- **FR-SOLSEC-001 MUST:** Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers.\n- **FR-SOLSEC-002 MUST:** Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.\n- **FR-SOLSEC-003 MUST:** Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed."
+  },
+  {
+    "id": "FR-SOLSEC-002",
+    "sourceLine": 6182,
+    "startLine": 6180,
+    "endLine": 6184,
+    "exactText": "\n- **FR-SOLSEC-001 MUST:** Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers.\n- **FR-SOLSEC-002 MUST:** Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.\n- **FR-SOLSEC-003 MUST:** Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.\n- **FR-SOLSEC-004 MUST:** Unknown transfer semantics block profiles requiring complete execution modeling."
+  },
+  {
+    "id": "FR-SOLSEC-003",
+    "sourceLine": 6183,
+    "startLine": 6181,
+    "endLine": 6185,
+    "exactText": "- **FR-SOLSEC-001 MUST:** Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers.\n- **FR-SOLSEC-002 MUST:** Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.\n- **FR-SOLSEC-003 MUST:** Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.\n- **FR-SOLSEC-004 MUST:** Unknown transfer semantics block profiles requiring complete execution modeling.\n- **FR-SOLSEC-005 MUST:** External security providers are independent evidence and cannot override deterministic known risk."
+  },
+  {
+    "id": "FR-SOLSEC-004",
+    "sourceLine": 6184,
+    "startLine": 6182,
+    "endLine": 6186,
+    "exactText": "- **FR-SOLSEC-002 MUST:** Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.\n- **FR-SOLSEC-003 MUST:** Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.\n- **FR-SOLSEC-004 MUST:** Unknown transfer semantics block profiles requiring complete execution modeling.\n- **FR-SOLSEC-005 MUST:** External security providers are independent evidence and cannot override deterministic known risk.\n- **FR-SOLSEC-006 MUST:** A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence."
+  },
+  {
+    "id": "FR-SOLSEC-005",
+    "sourceLine": 6185,
+    "startLine": 6183,
+    "endLine": 6187,
+    "exactText": "- **FR-SOLSEC-003 MUST:** Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.\n- **FR-SOLSEC-004 MUST:** Unknown transfer semantics block profiles requiring complete execution modeling.\n- **FR-SOLSEC-005 MUST:** External security providers are independent evidence and cannot override deterministic known risk.\n- **FR-SOLSEC-006 MUST:** A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence.\n- **FR-SUP-001 MUST:** Circulating supply and market cap expose source, method, excluded supply, and confidence."
+  },
+  {
+    "id": "FR-SOLSEC-006",
+    "sourceLine": 6186,
+    "startLine": 6184,
+    "endLine": 6188,
+    "exactText": "- **FR-SOLSEC-004 MUST:** Unknown transfer semantics block profiles requiring complete execution modeling.\n- **FR-SOLSEC-005 MUST:** External security providers are independent evidence and cannot override deterministic known risk.\n- **FR-SOLSEC-006 MUST:** A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence.\n- **FR-SUP-001 MUST:** Circulating supply and market cap expose source, method, excluded supply, and confidence.\n- **FR-SUP-002 MUST:** Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist."
+  },
+  {
+    "id": "AC-130",
+    "sourceLine": 6631,
+    "startLine": 6629,
+    "endLine": 6633,
+    "exactText": "### 39.12 Solana security and economic events\n\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges."
+  },
+  {
+    "id": "AC-131",
+    "sourceLine": 6632,
+    "startLine": 6630,
+    "endLine": 6634,
+    "exactText": "\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count."
+  },
+  {
+    "id": "AC-132",
+    "sourceLine": 6633,
+    "startLine": 6631,
+    "endLine": 6635,
+    "exactText": "- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features."
+  },
+  {
+    "id": "AC-133",
+    "sourceLine": 6634,
+    "startLine": 6632,
+    "endLine": 6636,
+    "exactText": "- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile."
+  },
+  {
+    "id": "AC-134",
+    "sourceLine": 6635,
+    "startLine": 6633,
+    "endLine": 6637,
+    "exactText": "- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes."
+  },
+  {
+    "id": "AC-135",
+    "sourceLine": 6636,
+    "startLine": 6634,
+    "endLine": 6638,
+    "exactText": "- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n"
+  },
+  {
+    "id": "AC-136",
+    "sourceLine": 6637,
+    "startLine": 6635,
+    "endLine": 6639,
+    "exactText": "- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n\n### 39.13 Alerts, social, and protocol compatibility"
+  },
+  {
+    "id": "AC-230",
+    "sourceLine": 6748,
+    "startLine": 6746,
+    "endLine": 6750,
+    "exactText": "### 39.22 Execution adapters, route fidelity, and mature outcomes\n\n- **AC-230:** Pump/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, Jupiter route-observation, constant-product, concentrated-liquidity, bin-based, bonding-curve, dynamic-fee, and unknown fixtures resolve only to matching versioned decoders/adapters and signed program-support manifests; an unknown or mismatched design returns an explicit unsupported/degraded state rather than generic constant-product output.\n- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity."
+  },
+  {
+    "id": "AC-231",
+    "sourceLine": 6749,
+    "startLine": 6747,
+    "endLine": 6751,
+    "exactText": "\n- **AC-230:** Pump/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, Jupiter route-observation, constant-product, concentrated-liquidity, bin-based, bonding-curve, dynamic-fee, and unknown fixtures resolve only to matching versioned decoders/adapters and signed program-support manifests; an unknown or mismatched design returns an explicit unsupported/degraded state rather than generic constant-product output.\n- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return."
+  },
+  {
+    "id": "AC-232",
+    "sourceLine": 6750,
+    "startLine": 6748,
+    "endLine": 6752,
+    "exactText": "- **AC-230:** Pump/PumpSwap, Raydium AMM v4/CPMM/CLMM/Stable AMM/LaunchLab, Orca Whirlpools, Meteora DLMM/DAMM v1-v2/Dynamic Bonding Curve, Jupiter route-observation, constant-product, concentrated-liquidity, bin-based, bonding-curve, dynamic-fee, and unknown fixtures resolve only to matching versioned decoders/adapters and signed program-support manifests; an unknown or mismatched design returns an explicit unsupported/degraded state rather than generic constant-product output.\n- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return.\n- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time."
+  },
+  {
+    "id": "AC-233",
+    "sourceLine": 6751,
+    "startLine": 6749,
+    "endLine": 6753,
+    "exactText": "- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return.\n- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time.\n- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix."
+  },
+  {
+    "id": "AC-234",
+    "sourceLine": 6752,
+    "startLine": 6750,
+    "endLine": 6754,
+    "exactText": "- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return.\n- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time.\n- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix.\n- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically."
+  },
+  {
+    "id": "AC-235",
+    "sourceLine": 6753,
+    "startLine": 6751,
+    "endLine": 6755,
+    "exactText": "- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return.\n- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time.\n- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix.\n- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically.\n- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated."
+  },
+  {
+    "id": "AC-236",
+    "sourceLine": 6754,
+    "startLine": 6752,
+    "endLine": 6756,
+    "exactText": "- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time.\n- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix.\n- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically.\n- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated.\n- **AC-238:** A coarse price candle whose target and invalidation are both reachable yields the adverse feasible primary ordering and a path-ambiguity flag; an optimistic ordering is secondary only."
+  },
+  {
+    "id": "AC-237",
+    "sourceLine": 6755,
+    "startLine": 6753,
+    "endLine": 6757,
+    "exactText": "- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix.\n- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically.\n- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated.\n- **AC-238:** A coarse price candle whose target and invalidation are both reachable yields the adverse feasible primary ordering and a path-ambiguity flag; an optimistic ordering is secondary only.\n- **AC-239:** Production promotion excludes signal-only, low-resolution, partial, censored, invalid, or scenario-mismatched outcomes from the `TRADABLE_SUCCESS` denominator and reports them separately."
+  },
+  {
+    "id": "AC-238",
+    "sourceLine": 6756,
+    "startLine": 6754,
+    "endLine": 6758,
+    "exactText": "- **AC-236:** Two simultaneous shadow exits sharing one pool cannot each consume the full pre-exit depth; aggregate impact and fill competition reduce or reject fills deterministically.\n- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated.\n- **AC-238:** A coarse price candle whose target and invalidation are both reachable yields the adverse feasible primary ordering and a path-ambiguity flag; an optimistic ordering is secondary only.\n- **AC-239:** Production promotion excludes signal-only, low-resolution, partial, censored, invalid, or scenario-mismatched outcomes from the `TRADABLE_SUCCESS` denominator and reports them separately.\n"
+  },
+  {
+    "id": "AC-239",
+    "sourceLine": 6757,
+    "startLine": 6755,
+    "endLine": 6759,
+    "exactText": "- **AC-237:** Adapter parity drift or a program upgrade degrades only affected scope, triggers re-evaluation of active candidates, preserves historical results, and prevents new confirmed alerts until revalidated.\n- **AC-238:** A coarse price candle whose target and invalidation are both reachable yields the adverse feasible primary ordering and a path-ambiguity flag; an optimistic ordering is secondary only.\n- **AC-239:** Production promotion excludes signal-only, low-resolution, partial, censored, invalid, or scenario-mismatched outcomes from the `TRADABLE_SUCCESS` denominator and reports them separately.\n\n### 39.23 Symmetric evaluation, evidence selection, and source dependence"
+  }
+]

@@ -11,7 +11,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-COL-02": {
     "riskLevel": "MEDIUM",
@@ -25,7 +27,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G0-CORE": {
     "riskLevel": "HIGH",
@@ -39,7 +43,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G0-COST-01": {
     "riskLevel": "HIGH",
@@ -53,7 +59,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-COST-02": {
     "riskLevel": "MEDIUM",
@@ -67,7 +75,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G0-DATA": {
     "riskLevel": "HIGH",
@@ -81,7 +91,9 @@
       "maxMigrations": 3,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-DISC": {
     "riskLevel": "MEDIUM",
@@ -95,7 +107,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G0-DR": {
     "riskLevel": "MEDIUM",
@@ -109,7 +123,9 @@
       "maxMigrations": 3,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G0-MCP": {
     "riskLevel": "HIGH",
@@ -123,7 +139,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-PROV-01": {
     "riskLevel": "HIGH",
@@ -137,7 +155,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-PROV-02": {
     "riskLevel": "MEDIUM",
@@ -151,7 +171,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G0-SEC-01": {
     "riskLevel": "CRITICAL",
@@ -165,7 +187,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-SEC-02": {
     "riskLevel": "CRITICAL",
@@ -179,7 +203,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G0-TRACE": {
     "riskLevel": "HIGH",
@@ -193,7 +219,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-COST": {
     "riskLevel": "HIGH",
@@ -207,7 +235,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-DATA-01": {
     "riskLevel": "HIGH",
@@ -221,7 +251,9 @@
       "maxMigrations": 3,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-DATA-02": {
     "riskLevel": "MEDIUM",
@@ -235,7 +267,9 @@
       "maxMigrations": 3,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G1-DISC-01": {
     "riskLevel": "HIGH",
@@ -249,7 +283,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-DISC-02": {
     "riskLevel": "MEDIUM",
@@ -263,7 +299,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G1-EVAL-01": {
     "riskLevel": "HIGH",
@@ -277,7 +315,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G1-EVAL-02": {
     "riskLevel": "MEDIUM",
@@ -291,7 +331,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G1-EXEC-01": {
     "riskLevel": "CRITICAL",
@@ -305,7 +347,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-EXEC-02": {
     "riskLevel": "CRITICAL",
@@ -319,7 +363,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-EXEC-03": {
     "riskLevel": "CRITICAL",
@@ -333,7 +379,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-MAT-01": {
     "riskLevel": "HIGH",
@@ -347,7 +395,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-MAT-02": {
     "riskLevel": "MEDIUM",
@@ -361,7 +411,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G1-OBJ-01": {
     "riskLevel": "HIGH",
@@ -375,7 +427,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-OBJ-02": {
     "riskLevel": "MEDIUM",
@@ -389,7 +443,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G1-SIG": {
     "riskLevel": "HIGH",
@@ -403,7 +459,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-SOLSEC": {
     "riskLevel": "CRITICAL",
@@ -417,7 +475,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G1-SUP": {
     "riskLevel": "MEDIUM",
@@ -431,7 +491,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G1-TRD": {
     "riskLevel": "MEDIUM",
@@ -445,7 +507,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G2-ADM": {
     "riskLevel": "MEDIUM",
@@ -459,7 +523,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G2-ALERT": {
     "riskLevel": "MEDIUM",
@@ -473,7 +539,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G2-DR": {
     "riskLevel": "MEDIUM",
@@ -487,7 +555,9 @@
       "maxMigrations": 3,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G2-PROD": {
     "riskLevel": "CRITICAL",
@@ -501,7 +571,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G2-WF": {
     "riskLevel": "HIGH",
@@ -515,7 +587,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G3-ADM": {
     "riskLevel": "MEDIUM",
@@ -529,7 +603,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G3-AGT-01": {
     "riskLevel": "HIGH",
@@ -543,7 +619,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G3-AGT-02": {
     "riskLevel": "MEDIUM",
@@ -557,7 +635,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G4-ADM": {
     "riskLevel": "MEDIUM",
@@ -571,7 +651,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-CAP": {
     "riskLevel": "MEDIUM",
@@ -585,7 +667,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-CROWD": {
     "riskLevel": "MEDIUM",
@@ -599,7 +683,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-DECAY": {
     "riskLevel": "MEDIUM",
@@ -613,7 +699,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G4-FB": {
     "riskLevel": "MEDIUM",
@@ -627,7 +715,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-LAT": {
     "riskLevel": "MEDIUM",
@@ -641,7 +731,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-NB": {
     "riskLevel": "MEDIUM",
@@ -655,7 +747,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G4-THS": {
     "riskLevel": "MEDIUM",
@@ -669,7 +763,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G4-WHY": {
     "riskLevel": "MEDIUM",
@@ -683,7 +779,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-ADQ": {
     "riskLevel": "MEDIUM",
@@ -697,7 +795,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-CROWD": {
     "riskLevel": "MEDIUM",
@@ -711,7 +811,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-DFD": {
     "riskLevel": "MEDIUM",
@@ -725,7 +827,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-LAR": {
     "riskLevel": "MEDIUM",
@@ -739,7 +843,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-LMS": {
     "riskLevel": "MEDIUM",
@@ -753,7 +859,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-NAR": {
     "riskLevel": "MEDIUM",
@@ -767,7 +875,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-NLL": {
     "riskLevel": "MEDIUM",
@@ -781,7 +891,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-POL": {
     "riskLevel": "MEDIUM",
@@ -795,7 +907,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-REG": {
     "riskLevel": "MEDIUM",
@@ -809,7 +923,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "SPECIFICATION_GAP"
   },
   "T-G5-SIG": {
     "riskLevel": "MEDIUM",
@@ -823,7 +939,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-SOC": {
     "riskLevel": "MEDIUM",
@@ -837,7 +955,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G5-WAL": {
     "riskLevel": "HIGH",
@@ -851,7 +971,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G5-XCF": {
     "riskLevel": "MEDIUM",
@@ -865,7 +987,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-AL": {
     "riskLevel": "MEDIUM",
@@ -879,7 +1003,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-ANA": {
     "riskLevel": "MEDIUM",
@@ -893,7 +1019,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-CF": {
     "riskLevel": "MEDIUM",
@@ -907,7 +1035,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-EVAL-01": {
     "riskLevel": "HIGH",
@@ -921,7 +1051,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G6-EVAL-02": {
     "riskLevel": "MEDIUM",
@@ -935,7 +1067,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-FHZ": {
     "riskLevel": "MEDIUM",
@@ -949,7 +1083,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-LEGAL": {
     "riskLevel": "CRITICAL",
@@ -963,7 +1099,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G6-MCP": {
     "riskLevel": "MEDIUM",
@@ -977,7 +1115,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-MVD": {
     "riskLevel": "MEDIUM",
@@ -991,7 +1131,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-OOD": {
     "riskLevel": "MEDIUM",
@@ -1005,7 +1147,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-PROD": {
     "riskLevel": "CRITICAL",
@@ -1019,7 +1163,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G6-SIG": {
     "riskLevel": "MEDIUM",
@@ -1033,7 +1179,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G6-WPI-01": {
     "riskLevel": "HIGH",
@@ -1047,7 +1195,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G6-WPI-02": {
     "riskLevel": "MEDIUM",
@@ -1061,7 +1211,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G7-ADG": {
     "riskLevel": "CRITICAL",
@@ -1075,7 +1227,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G7-AEP": {
     "riskLevel": "MEDIUM",
@@ -1089,7 +1243,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G7-AIG": {
     "riskLevel": "MEDIUM",
@@ -1103,7 +1259,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G7-ALAB": {
     "riskLevel": "CRITICAL",
@@ -1117,7 +1275,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G7-AMS": {
     "riskLevel": "MEDIUM",
@@ -1131,7 +1291,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G7-EXP": {
     "riskLevel": "HIGH",
@@ -1145,7 +1307,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   },
   "T-G7-OF": {
     "riskLevel": "MEDIUM",
@@ -1159,7 +1323,9 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "NEGATIVE_CASE",
+    "specificationStatus": "READY"
   },
   "T-G7-SPF": {
     "riskLevel": "HIGH",
@@ -1173,6 +1339,8 @@
       "maxMigrations": 0,
       "maxPublicInterfaces": 4,
       "requiresSplitAboveBudget": true
-    }
+    },
+    "testQualityGate": "SEEDED_FAULT_OR_PROPERTY",
+    "specificationStatus": "READY"
   }
 }

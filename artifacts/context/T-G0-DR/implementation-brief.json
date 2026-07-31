@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-DR",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DR-001",
+      "exactNormativeText": "Recovery objectives are tiered: critical configuration/decision/alert/audit/evidence-index metadata target RPO at most 15 minutes; critical observations/checkpoints target at most 60 minutes; replayable raw payloads may target at most 24 hours when rights permit reconstruction."
+    },
+    {
+      "id": "FR-DR-002",
+      "exactNormativeText": "PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested."
+    }
+  ],
+  "expectedModules": [
+    "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/dr.ts",
+    "docs/generated/dr-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Recovery objectives are tiered: critical configuration/decision/alert/audit/evidence-index metadata target RPO at most 15 minutes; critical observations/checkpoints target at most 60 minutes; replayable raw payloads may target at most 24 hours when rights permit reconstruction.",
+    "PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "PostgreSQL uses point-in-time recovery or an equivalent tested mechanism, object storage uses versioning/immutability where supported, and encryption keys/recovery credentials are separately protected and tested."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/dr.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

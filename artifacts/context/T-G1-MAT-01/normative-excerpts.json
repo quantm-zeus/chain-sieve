@@ -1,0 +1,261 @@
+[
+  {
+    "id": "FR-MAT-001",
+    "sourceLine": 6171,
+    "startLine": 6169,
+    "endLine": 6173,
+    "exactText": "### 38.16 Outcome maturity and statistical integrity\n\n- **FR-MAT-001 MUST:** Every profile/horizon/scenario outcome has an explicit maturity state.\n- **FR-MAT-002 MUST:** Pending and partially matured outcomes are excluded from final denominators.\n- **FR-MAT-003 MUST:** Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure."
+  },
+  {
+    "id": "FR-MAT-002",
+    "sourceLine": 6172,
+    "startLine": 6170,
+    "endLine": 6174,
+    "exactText": "\n- **FR-MAT-001 MUST:** Every profile/horizon/scenario outcome has an explicit maturity state.\n- **FR-MAT-002 MUST:** Pending and partially matured outcomes are excluded from final denominators.\n- **FR-MAT-003 MUST:** Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure.\n- **FR-MAT-004 MUST:** Negative-control tests detect leakage and spurious lift."
+  },
+  {
+    "id": "FR-MAT-003",
+    "sourceLine": 6173,
+    "startLine": 6171,
+    "endLine": 6175,
+    "exactText": "- **FR-MAT-001 MUST:** Every profile/horizon/scenario outcome has an explicit maturity state.\n- **FR-MAT-002 MUST:** Pending and partially matured outcomes are excluded from final denominators.\n- **FR-MAT-003 MUST:** Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure.\n- **FR-MAT-004 MUST:** Negative-control tests detect leakage and spurious lift.\n- **FR-MAT-005 MUST:** Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size."
+  },
+  {
+    "id": "FR-MAT-004",
+    "sourceLine": 6174,
+    "startLine": 6172,
+    "endLine": 6176,
+    "exactText": "- **FR-MAT-002 MUST:** Pending and partially matured outcomes are excluded from final denominators.\n- **FR-MAT-003 MUST:** Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure.\n- **FR-MAT-004 MUST:** Negative-control tests detect leakage and spurious lift.\n- **FR-MAT-005 MUST:** Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size.\n- **FR-MAT-006 MUST:** Subjective user utility is stored separately from objective signal and tradable market outcomes."
+  },
+  {
+    "id": "FR-MAT-005",
+    "sourceLine": 6175,
+    "startLine": 6173,
+    "endLine": 6177,
+    "exactText": "- **FR-MAT-003 MUST:** Censoring and invalid-data reasons are explicit and cannot be silently mapped to failure.\n- **FR-MAT-004 MUST:** Negative-control tests detect leakage and spurious lift.\n- **FR-MAT-005 MUST:** Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size.\n- **FR-MAT-006 MUST:** Subjective user utility is stored separately from objective signal and tradable market outcomes.\n- **FR-MAT-007 MUST:** When high-resolution outcomes are sampled, every case stores inclusion probability/stratum and evaluation uses valid weighted estimators or explicitly limits its population claim."
+  },
+  {
+    "id": "FR-MAT-006",
+    "sourceLine": 6176,
+    "startLine": 6174,
+    "endLine": 6178,
+    "exactText": "- **FR-MAT-004 MUST:** Negative-control tests detect leakage and spurious lift.\n- **FR-MAT-005 MUST:** Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size.\n- **FR-MAT-006 MUST:** Subjective user utility is stored separately from objective signal and tradable market outcomes.\n- **FR-MAT-007 MUST:** When high-resolution outcomes are sampled, every case stores inclusion probability/stratum and evaluation uses valid weighted estimators or explicitly limits its population claim.\n"
+  },
+  {
+    "id": "FR-MAT-007",
+    "sourceLine": 6177,
+    "startLine": 6175,
+    "endLine": 6179,
+    "exactText": "- **FR-MAT-005 MUST:** Confidence intervals use clustered/block methods for correlated token groups and report effective independent sample size.\n- **FR-MAT-006 MUST:** Subjective user utility is stored separately from objective signal and tradable market outcomes.\n- **FR-MAT-007 MUST:** When high-resolution outcomes are sampled, every case stores inclusion probability/stratum and evaluation uses valid weighted estimators or explicitly limits its population claim.\n\n### 38.17 Solana deterministic security, supply, and economic trades"
+  },
+  {
+    "id": "FR-MAT-008",
+    "sourceLine": 6455,
+    "startLine": 6453,
+    "endLine": 6457,
+    "exactText": "- **FR-EXEC-021 MUST:** Adapter deprecation, program upgrade, parity drift, or unknown extension automatically degrades affected tradability and re-evaluates active alerts/watchlists without rewriting historical simulations.\n- **FR-EXEC-022 MUST:** Route selection cannot retrospectively choose a route or pool unavailable at action time, and migration routing follows only transitions known and executable at that time.\n- **FR-MAT-008 MUST:** A `TRADABLE_SUCCESS` used for production promotion requires fully matured high-resolution execution evidence for the exact notional, delay policy, adapter, route, and exit policy; coarse signal data cannot substitute.\n- **FR-MAT-009 MUST:** When target and invalidation/stop are both feasible within a coarse interval and ordering is unknown, the primary result uses the adverse feasible order, reports path ambiguity, and may expose optimistic sensitivity only as secondary analysis.\n- **FR-MAT-010 MUST:** Outcome denominators disclose invalid, censored, partial, low-resolution, rights-blocked, and unobserved cases; policies cannot improve measured performance by reducing outcome collection."
+  },
+  {
+    "id": "AC-040",
+    "sourceLine": 6553,
+    "startLine": 6551,
+    "endLine": 6555,
+    "exactText": "### 39.5 Evaluation\n\n- **AC-040:** Outcome profiles compute separate signal and tradable labels from actionable delivery time, canonical pool, configured notional/delay, modeled impact, all required fees, fill/liquidity constraints, exit policy and maturity state.\n- **AC-041:** Dashboard reports both precision and recall/missed gems.\n- **AC-042:** Baseline and champion use the same frozen candidate universe and data cutoff."
+  },
+  {
+    "id": "AC-041",
+    "sourceLine": 6554,
+    "startLine": 6552,
+    "endLine": 6556,
+    "exactText": "\n- **AC-040:** Outcome profiles compute separate signal and tradable labels from actionable delivery time, canonical pool, configured notional/delay, modeled impact, all required fees, fill/liquidity constraints, exit policy and maturity state.\n- **AC-041:** Dashboard reports both precision and recall/missed gems.\n- **AC-042:** Baseline and champion use the same frozen candidate universe and data cutoff.\n- **AC-043:** Exploration sample is retained for outcome analysis."
+  },
+  {
+    "id": "AC-042",
+    "sourceLine": 6555,
+    "startLine": 6553,
+    "endLine": 6557,
+    "exactText": "- **AC-040:** Outcome profiles compute separate signal and tradable labels from actionable delivery time, canonical pool, configured notional/delay, modeled impact, all required fees, fill/liquidity constraints, exit policy and maturity state.\n- **AC-041:** Dashboard reports both precision and recall/missed gems.\n- **AC-042:** Baseline and champion use the same frozen candidate universe and data cutoff.\n- **AC-043:** Exploration sample is retained for outcome analysis.\n- **AC-044:** All experiment versions and attempted configurations are recorded."
+  },
+  {
+    "id": "AC-043",
+    "sourceLine": 6556,
+    "startLine": 6554,
+    "endLine": 6558,
+    "exactText": "- **AC-041:** Dashboard reports both precision and recall/missed gems.\n- **AC-042:** Baseline and champion use the same frozen candidate universe and data cutoff.\n- **AC-043:** Exploration sample is retained for outcome analysis.\n- **AC-044:** All experiment versions and attempted configurations are recorded.\n"
+  },
+  {
+    "id": "AC-044",
+    "sourceLine": 6557,
+    "startLine": 6555,
+    "endLine": 6559,
+    "exactText": "- **AC-042:** Baseline and champion use the same frozen candidate universe and data cutoff.\n- **AC-043:** Exploration sample is retained for outcome analysis.\n- **AC-044:** All experiment versions and attempted configurations are recorded.\n\n### 39.6 Security"
+  },
+  {
+    "id": "AC-120",
+    "sourceLine": 6619,
+    "startLine": 6617,
+    "endLine": 6621,
+    "exactText": "### 39.11 Execution and maturity\n\n- **AC-120:** A token whose price rises above target but cannot fill/exit the configured notional may be `SIGNAL_SUCCESS` but cannot be `TRADABLE_SUCCESS`.\n- **AC-121:** Entry delay, price impact, pool/token/network fees, partial fills, and exit liquidity change net outcome as defined by fixtures.\n- **AC-122:** A one-slot target wick without executable volume or duration does not satisfy tradable success."
+  },
+  {
+    "id": "AC-121",
+    "sourceLine": 6620,
+    "startLine": 6618,
+    "endLine": 6622,
+    "exactText": "\n- **AC-120:** A token whose price rises above target but cannot fill/exit the configured notional may be `SIGNAL_SUCCESS` but cannot be `TRADABLE_SUCCESS`.\n- **AC-121:** Entry delay, price impact, pool/token/network fees, partial fills, and exit liquidity change net outcome as defined by fixtures.\n- **AC-122:** A one-slot target wick without executable volume or duration does not satisfy tradable success.\n- **AC-123:** Pending/partially matured outcomes are excluded from final precision, failure, calibration, and promotion denominators."
+  },
+  {
+    "id": "AC-122",
+    "sourceLine": 6621,
+    "startLine": 6619,
+    "endLine": 6623,
+    "exactText": "- **AC-120:** A token whose price rises above target but cannot fill/exit the configured notional may be `SIGNAL_SUCCESS` but cannot be `TRADABLE_SUCCESS`.\n- **AC-121:** Entry delay, price impact, pool/token/network fees, partial fills, and exit liquidity change net outcome as defined by fixtures.\n- **AC-122:** A one-slot target wick without executable volume or duration does not satisfy tradable success.\n- **AC-123:** Pending/partially matured outcomes are excluded from final precision, failure, calibration, and promotion denominators.\n- **AC-124:** Censored and invalid outcomes retain explicit reasons and do not silently become failures."
+  },
+  {
+    "id": "AC-123",
+    "sourceLine": 6622,
+    "startLine": 6620,
+    "endLine": 6624,
+    "exactText": "- **AC-121:** Entry delay, price impact, pool/token/network fees, partial fills, and exit liquidity change net outcome as defined by fixtures.\n- **AC-122:** A one-slot target wick without executable volume or duration does not satisfy tradable success.\n- **AC-123:** Pending/partially matured outcomes are excluded from final precision, failure, calibration, and promotion denominators.\n- **AC-124:** Censored and invalid outcomes retain explicit reasons and do not silently become failures.\n- **AC-125:** Subjective owner usefulness cannot change objective market outcome labels."
+  },
+  {
+    "id": "AC-124",
+    "sourceLine": 6623,
+    "startLine": 6621,
+    "endLine": 6625,
+    "exactText": "- **AC-122:** A one-slot target wick without executable volume or duration does not satisfy tradable success.\n- **AC-123:** Pending/partially matured outcomes are excluded from final precision, failure, calibration, and promotion denominators.\n- **AC-124:** Censored and invalid outcomes retain explicit reasons and do not silently become failures.\n- **AC-125:** Subjective owner usefulness cannot change objective market outcome labels.\n- **AC-126:** A low-resolution price snapshot may support a signal label but cannot establish a short-lived executable target or tradable success without the required observation plan."
+  },
+  {
+    "id": "AC-125",
+    "sourceLine": 6624,
+    "startLine": 6622,
+    "endLine": 6626,
+    "exactText": "- **AC-123:** Pending/partially matured outcomes are excluded from final precision, failure, calibration, and promotion denominators.\n- **AC-124:** Censored and invalid outcomes retain explicit reasons and do not silently become failures.\n- **AC-125:** Subjective owner usefulness cannot change objective market outcome labels.\n- **AC-126:** A low-resolution price snapshot may support a signal label but cannot establish a short-lived executable target or tradable success without the required observation plan.\n- **AC-127:** A candidate that is profitable only under the optimistic execution case fails a profile requiring the conservative stress scenario; stress assumptions reproduce in frozen replay."
+  },
+  {
+    "id": "AC-126",
+    "sourceLine": 6625,
+    "startLine": 6623,
+    "endLine": 6627,
+    "exactText": "- **AC-124:** Censored and invalid outcomes retain explicit reasons and do not silently become failures.\n- **AC-125:** Subjective owner usefulness cannot change objective market outcome labels.\n- **AC-126:** A low-resolution price snapshot may support a signal label but cannot establish a short-lived executable target or tradable success without the required observation plan.\n- **AC-127:** A candidate that is profitable only under the optimistic execution case fails a profile requiring the conservative stress scenario; stress assumptions reproduce in frozen replay.\n- **AC-128:** Selected-only high-resolution outcomes cannot be reported as universe-wide tradable recall/profitability; stratified sample fixtures reproduce inclusion-weighted estimates and uncertainty."
+  },
+  {
+    "id": "AC-127",
+    "sourceLine": 6626,
+    "startLine": 6624,
+    "endLine": 6628,
+    "exactText": "- **AC-125:** Subjective owner usefulness cannot change objective market outcome labels.\n- **AC-126:** A low-resolution price snapshot may support a signal label but cannot establish a short-lived executable target or tradable success without the required observation plan.\n- **AC-127:** A candidate that is profitable only under the optimistic execution case fails a profile requiring the conservative stress scenario; stress assumptions reproduce in frozen replay.\n- **AC-128:** Selected-only high-resolution outcomes cannot be reported as universe-wide tradable recall/profitability; stratified sample fixtures reproduce inclusion-weighted estimates and uncertainty.\n"
+  },
+  {
+    "id": "AC-128",
+    "sourceLine": 6627,
+    "startLine": 6625,
+    "endLine": 6629,
+    "exactText": "- **AC-126:** A low-resolution price snapshot may support a signal label but cannot establish a short-lived executable target or tradable success without the required observation plan.\n- **AC-127:** A candidate that is profitable only under the optimistic execution case fails a profile requiring the conservative stress scenario; stress assumptions reproduce in frozen replay.\n- **AC-128:** Selected-only high-resolution outcomes cannot be reported as universe-wide tradable recall/profitability; stratified sample fixtures reproduce inclusion-weighted estimates and uncertainty.\n\n### 39.12 Solana security and economic events"
+  },
+  {
+    "id": "AC-150",
+    "sourceLine": 6649,
+    "startLine": 6647,
+    "endLine": 6651,
+    "exactText": "### 39.14 Statistical integrity and production activation\n\n- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified."
+  },
+  {
+    "id": "AC-151",
+    "sourceLine": 6650,
+    "startLine": 6648,
+    "endLine": 6652,
+    "exactText": "\n- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring."
+  },
+  {
+    "id": "AC-152",
+    "sourceLine": 6651,
+    "startLine": 6649,
+    "endLine": 6653,
+    "exactText": "- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift."
+  },
+  {
+    "id": "AC-153",
+    "sourceLine": 6652,
+    "startLine": 6650,
+    "endLine": 6654,
+    "exactText": "- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift.\n"
+  },
+  {
+    "id": "AC-154",
+    "sourceLine": 6653,
+    "startLine": 6651,
+    "endLine": 6655,
+    "exactText": "- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift.\n\n"
+  },
+  {
+    "id": "AC-240",
+    "sourceLine": 6761,
+    "startLine": 6759,
+    "endLine": 6763,
+    "exactText": "### 39.23 Symmetric evaluation, evidence selection, and source dependence\n\n- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value."
+  },
+  {
+    "id": "AC-241",
+    "sourceLine": 6762,
+    "startLine": 6760,
+    "endLine": 6764,
+    "exactText": "\n- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity."
+  },
+  {
+    "id": "AC-242",
+    "sourceLine": 6763,
+    "startLine": 6761,
+    "endLine": 6765,
+    "exactText": "- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population."
+  },
+  {
+    "id": "AC-243",
+    "sourceLine": 6764,
+    "startLine": 6762,
+    "endLine": 6766,
+    "exactText": "- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs."
+  },
+  {
+    "id": "AC-244",
+    "sourceLine": 6765,
+    "startLine": 6763,
+    "endLine": 6767,
+    "exactText": "- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed."
+  },
+  {
+    "id": "AC-245",
+    "sourceLine": 6766,
+    "startLine": 6764,
+    "endLine": 6768,
+    "exactText": "- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then."
+  },
+  {
+    "id": "AC-246",
+    "sourceLine": 6767,
+    "startLine": 6765,
+    "endLine": 6769,
+    "exactText": "- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable."
+  },
+  {
+    "id": "AC-247",
+    "sourceLine": 6768,
+    "startLine": 6766,
+    "endLine": 6770,
+    "exactText": "- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion."
+  },
+  {
+    "id": "AC-248",
+    "sourceLine": 6769,
+    "startLine": 6767,
+    "endLine": 6771,
+    "exactText": "- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n"
+  },
+  {
+    "id": "AC-249",
+    "sourceLine": 6770,
+    "startLine": 6768,
+    "endLine": 6772,
+    "exactText": "- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n\n### 39.24 MCP transport, provider negative capability, and security"
+  }
+]

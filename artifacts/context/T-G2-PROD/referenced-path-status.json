@@ -1,0 +1,423 @@
+[
+  {
+    "path": "docs/generated/prod-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "migrations/g2_prod_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "packages/capability-registry/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "packages/release-conformance/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/prod.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "telemetry/prod.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-144.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-150.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-151.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-152.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-153.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-154.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-272.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-273.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-274.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-275.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-276.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-277.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-278.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-279.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/fixtures/prod/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-144.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-150.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-151.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-152.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-153.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-154.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-272.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-273.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-274.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-275.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-276.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-277.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-278.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-279.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-PROD-001",
+      "FR-PROD-002",
+      "FR-PROD-003",
+      "FR-PROD-004",
+      "FR-PROD-005",
+      "FR-PROD-006"
+    ]
+  }
+]

@@ -6,7 +6,10 @@
     "packages/persistence/**",
     "packages/workflow-runtime/**",
     "packages/release-conformance/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**",
     "infra/migrations/**"
   ],
@@ -14,11 +17,14 @@
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-DR/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-DR/**"
+    "artifacts/context/T-G2-DR/**",
+    "artifacts/conformance/T-G2-DR/manifest.json"
   ],
   "writeSet": [
     "packages/persistence/**",

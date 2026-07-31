@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-DECAY",
+  "immutable": true,
+  "requirements": [
+    "FR-DECAY-001",
+    "FR-DECAY-002",
+    "FR-DECAY-003"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-070:T-G4-DECAY:INTERFACE_FACET",
+    "AC-071:T-G4-DECAY:INTERFACE_FACET",
+    "AC-072:T-G4-DECAY:INTERFACE_FACET",
+    "AC-073:T-G4-DECAY:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-DECAY.spec.ts",
+    "tests/task-facets/T-G4-DECAY.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/thesis/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-DECAY/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

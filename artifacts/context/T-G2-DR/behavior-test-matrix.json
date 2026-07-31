@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-DR",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-060",
+      "facetId": "AC-060:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-060 system or integration oracle consumes. This facet does not claim full AC-060 satisfaction.",
+      "sourceAcceptanceSha256": "00ba75dcb5d2de62f41ee2d640df1bdae2620fe1e73616886394325c75e000f6"
+    },
+    {
+      "acceptanceId": "AC-061",
+      "facetId": "AC-061:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-061 system or integration oracle consumes. This facet does not claim full AC-061 satisfaction.",
+      "sourceAcceptanceSha256": "3ed092856658e7ea4789e9dfd6b2837dccf2253dd6bf74f98f05831a9045795f"
+    },
+    {
+      "acceptanceId": "AC-062",
+      "facetId": "AC-062:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-062 system or integration oracle consumes. This facet does not claim full AC-062 satisfaction.",
+      "sourceAcceptanceSha256": "5dd7afabdd1daf42d10c4d26da9035600c8e8c5d9fa8b8785e7c2b9dafa05c82"
+    },
+    {
+      "acceptanceId": "AC-260",
+      "facetId": "AC-260:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-260 system or integration oracle consumes. This facet does not claim full AC-260 satisfaction.",
+      "sourceAcceptanceSha256": "69ba0d661ff3c806d9084169ba668716496c2e324da0e3ebb549c01bc63b7ed6"
+    },
+    {
+      "acceptanceId": "AC-261",
+      "facetId": "AC-261:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-261 system or integration oracle consumes. This facet does not claim full AC-261 satisfaction.",
+      "sourceAcceptanceSha256": "2c0919f7d5d666d60379bd7761094eb88a247794df45bd7949ac5da49d503fc8"
+    },
+    {
+      "acceptanceId": "AC-262",
+      "facetId": "AC-262:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-262 system or integration oracle consumes. This facet does not claim full AC-262 satisfaction.",
+      "sourceAcceptanceSha256": "19d956f5519bd27c1186303adcf1d38ce5713b608bbd1befb75294ef08df00d9"
+    },
+    {
+      "acceptanceId": "AC-263",
+      "facetId": "AC-263:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-263 system or integration oracle consumes. This facet does not claim full AC-263 satisfaction.",
+      "sourceAcceptanceSha256": "5babeec53f44a192eec3b7b97d7ef2d966ec1bfdf40dc9d32cf872c2c065abef"
+    },
+    {
+      "acceptanceId": "AC-264",
+      "facetId": "AC-264:T-G2-DR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-DR for FR-DR-003, FR-DR-004, FR-DR-005, FR-DR-006 that the unchanged AC-264 system or integration oracle consumes. This facet does not claim full AC-264 satisfaction.",
+      "sourceAcceptanceSha256": "5c190dd8f7a7294f5d7f97e06c9812cc4a9528b5b4ac7a6910520a4a91716ffb"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

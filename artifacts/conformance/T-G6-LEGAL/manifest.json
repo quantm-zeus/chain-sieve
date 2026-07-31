@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-LEGAL",
+  "immutable": true,
+  "requirements": [
+    "FR-LEGAL-001",
+    "FR-LEGAL-002",
+    "FR-LEGAL-003",
+    "FR-LEGAL-004",
+    "FR-LEGAL-005",
+    "FR-LEGAL-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-272:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-273:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-274:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-275:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-276:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-277:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-278:T-G6-LEGAL:INTERFACE_FACET",
+    "AC-279:T-G6-LEGAL:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-LEGAL.spec.ts",
+    "tests/task-facets/T-G6-LEGAL.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/public-claims-policy/**",
+    "packages/tenant-isolation/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-LEGAL/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

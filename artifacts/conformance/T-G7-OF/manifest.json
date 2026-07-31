@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-OF",
+  "immutable": true,
+  "requirements": [
+    "FR-OF-001",
+    "FR-OF-002",
+    "FR-OF-003",
+    "FR-OF-004",
+    "FR-OF-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-200:T-G7-OF:INTERFACE_FACET",
+    "AC-201:T-G7-OF:INTERFACE_FACET",
+    "AC-202:T-G7-OF:INTERFACE_FACET",
+    "AC-203:T-G7-OF:INTERFACE_FACET",
+    "AC-204:T-G7-OF:INTERFACE_FACET",
+    "AC-205:T-G7-OF:INTERFACE_FACET",
+    "AC-206:T-G7-OF:INTERFACE_FACET",
+    "AC-207:T-G7-OF:INTERFACE_FACET",
+    "AC-208:T-G7-OF:INTERFACE_FACET",
+    "AC-209:T-G7-OF:INTERFACE_FACET",
+    "AC-210:T-G7-OF:INTERFACE_FACET",
+    "AC-211:T-G7-OF:INTERFACE_FACET",
+    "AC-212:T-G7-OF:INTERFACE_FACET",
+    "AC-213:T-G7-OF:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-OF.spec.ts",
+    "tests/task-facets/T-G7-OF.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/opportunity-frontier/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-OF/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

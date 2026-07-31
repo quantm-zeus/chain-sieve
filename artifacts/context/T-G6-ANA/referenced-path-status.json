@@ -1,0 +1,111 @@
+[
+  {
+    "path": "docs/generated/ana-surfaces.json",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "migrations/g6_ana_*.sql",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "packages/analog-finder/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/ana.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "telemetry/ana.*",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-081.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-082.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-090.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/fixtures/ana/",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-081.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-082.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-090.negative.spec.ts",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-ANA-001",
+      "FR-ANA-002",
+      "FR-ANA-003"
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EVAL-02",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-EVAL-009",
+      "exactNormativeText": "Multiple-testing control, experiment registry, and selection-bias diagnostics."
+    }
+  ],
+  "expectedModules": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/eval.ts",
+    "docs/generated/eval-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/eval.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

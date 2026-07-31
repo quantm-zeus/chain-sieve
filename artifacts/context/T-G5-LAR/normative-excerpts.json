@@ -1,0 +1,93 @@
+[
+  {
+    "id": "FR-LAR-001",
+    "sourceLine": 6251,
+    "startLine": 6249,
+    "endLine": 6253,
+    "exactText": "### 38.23 Liquidity Absorption and Resilience\n\n- **FR-LAR-001 MUST:** Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events.\n- **FR-LAR-002 MUST:** The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.\n- **FR-LAR-003 MUST:** A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient."
+  },
+  {
+    "id": "FR-LAR-002",
+    "sourceLine": 6252,
+    "startLine": 6250,
+    "endLine": 6254,
+    "exactText": "\n- **FR-LAR-001 MUST:** Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events.\n- **FR-LAR-002 MUST:** The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.\n- **FR-LAR-003 MUST:** A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.\n- **FR-LAR-004 MUST:** Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress."
+  },
+  {
+    "id": "FR-LAR-003",
+    "sourceLine": 6253,
+    "startLine": 6251,
+    "endLine": 6255,
+    "exactText": "- **FR-LAR-001 MUST:** Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events.\n- **FR-LAR-002 MUST:** The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.\n- **FR-LAR-003 MUST:** A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.\n- **FR-LAR-004 MUST:** Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress.\n- **FR-LAR-005 MUST:** Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience."
+  },
+  {
+    "id": "FR-LAR-004",
+    "sourceLine": 6254,
+    "startLine": 6252,
+    "endLine": 6256,
+    "exactText": "- **FR-LAR-002 MUST:** The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.\n- **FR-LAR-003 MUST:** A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.\n- **FR-LAR-004 MUST:** Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress.\n- **FR-LAR-005 MUST:** Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience.\n"
+  },
+  {
+    "id": "FR-LAR-005",
+    "sourceLine": 6255,
+    "startLine": 6253,
+    "endLine": 6257,
+    "exactText": "- **FR-LAR-003 MUST:** A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.\n- **FR-LAR-004 MUST:** Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress.\n- **FR-LAR-005 MUST:** Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience.\n\n### 38.24 Launch and Migration State Intelligence"
+  },
+  {
+    "id": "AC-170",
+    "sourceLine": 6672,
+    "startLine": 6670,
+    "endLine": 6674,
+    "exactText": "### 39.16 Liquidity, launch, attention, and rotation\n\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort."
+  },
+  {
+    "id": "AC-171",
+    "sourceLine": 6673,
+    "startLine": 6671,
+    "endLine": 6675,
+    "exactText": "\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state."
+  },
+  {
+    "id": "AC-172",
+    "sourceLine": 6674,
+    "startLine": 6672,
+    "endLine": 6676,
+    "exactText": "- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used."
+  },
+  {
+    "id": "AC-173",
+    "sourceLine": 6675,
+    "startLine": 6673,
+    "endLine": 6677,
+    "exactText": "- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion."
+  },
+  {
+    "id": "AC-174",
+    "sourceLine": 6676,
+    "startLine": 6674,
+    "endLine": 6678,
+    "exactText": "- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies."
+  },
+  {
+    "id": "AC-175",
+    "sourceLine": 6677,
+    "startLine": 6675,
+    "endLine": 6679,
+    "exactText": "- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates."
+  },
+  {
+    "id": "AC-176",
+    "sourceLine": 6678,
+    "startLine": 6676,
+    "endLine": 6680,
+    "exactText": "- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n"
+  },
+  {
+    "id": "AC-177",
+    "sourceLine": 6679,
+    "startLine": 6677,
+    "endLine": 6681,
+    "exactText": "- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n\n### 39.17 Novelty, disagreement, and hazards"
+  }
+]

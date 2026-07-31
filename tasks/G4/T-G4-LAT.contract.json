@@ -60,6 +60,14 @@
   "acceptanceCriteria": [
     "AC-080"
   ],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-226",
+      "facetId": "AC-226:T-G4-LAT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-LAT for FR-LAT-001, FR-LAT-002 that the unchanged AC-226 system or integration oracle consumes. This facet does not claim full AC-226 satisfaction.",
+      "sourceAcceptanceSha256": "de3dd739c5cdae070dd33d5b9ada08bcf66b371c76084b863e501ec2d30dd86c"
+    }
+  ],
   "invariants": [
     "INV-001",
     "INV-002",
@@ -80,14 +88,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-LAT/**"
+    "artifacts/context/T-G4-LAT/**",
+    "artifacts/conformance/T-G4-LAT/manifest.json"
   ],
   "writeSet": [
     "packages/latency-profiler/**"
   ],
   "allowedPaths": [
     "packages/latency-profiler/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -95,6 +107,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-LAT/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -111,7 +125,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -122,12 +137,18 @@
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
     "tests/acceptance/AC-080.spec.ts",
-    "tests/negative/AC-080.negative.spec.ts"
+    "tests/negative/AC-080.negative.spec.ts",
+    "tests/task-facets/T-G4-LAT.spec.ts",
+    "tests/task-facets/T-G4-LAT.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-080.spec.ts tests/negative/AC-080.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/acceptance/AC-080.spec.ts tests/negative/AC-080.negative.spec.ts tests/task-facets/T-G4-LAT.spec.ts tests/task-facets/T-G4-LAT.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -152,10 +173,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -171,5 +194,9 @@
       "line": 6107,
       "id": "FR-LAT-002"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G4-LAT/manifest.json",
+  "conformanceManifestSha256": "f97a22ab9aad0aec305f72fabe5fe3aa63842410883118aebc773a6b83c2a873",
+  "testQualityGate": "NEGATIVE_CASE"
 }

@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/workflow-runtime/**",
     "apps/api/src/internal/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-WF/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-WF/**"
+    "artifacts/context/T-G2-WF/**",
+    "artifacts/conformance/T-G2-WF/manifest.json"
   ],
   "writeSet": [
     "packages/workflow-runtime/**",

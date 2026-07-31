@@ -1,0 +1,44 @@
+[
+  {
+    "id": "FR-WHY-001",
+    "sourceLine": 6076,
+    "startLine": 6074,
+    "endLine": 6078,
+    "exactText": "- **FR-THS-002 MUST:** Explicit strengthening, weakening, invalidation, expected-evidence, and expiry conditions.\n- **FR-THS-003 MUST:** Thesis events preserve point-in-time evidence and state history.\n- **FR-WHY-001 MUST:** Deterministic “why now” decomposition against the previous valid evaluation.\n- **FR-WHY-002 MUST:** Material changes include threshold, rank, lifecycle, risk, thesis, expiry, conflict, and capability deltas.\n- **FR-DECAY-001 MUST:** Opportunity-window state and finite expiry."
+  },
+  {
+    "id": "FR-WHY-002",
+    "sourceLine": 6077,
+    "startLine": 6075,
+    "endLine": 6079,
+    "exactText": "- **FR-THS-003 MUST:** Thesis events preserve point-in-time evidence and state history.\n- **FR-WHY-001 MUST:** Deterministic “why now” decomposition against the previous valid evaluation.\n- **FR-WHY-002 MUST:** Material changes include threshold, rank, lifecycle, risk, thesis, expiry, conflict, and capability deltas.\n- **FR-DECAY-001 MUST:** Opportunity-window state and finite expiry.\n- **FR-DECAY-002 MUST:** Expired thesis suppresses new opportunity alerts unless new material evidence creates a new thesis version."
+  },
+  {
+    "id": "AC-070",
+    "sourceLine": 6576,
+    "startLine": 6574,
+    "endLine": 6578,
+    "exactText": "### 39.8 Advanced intelligence\n\n- **AC-070:** A thesis moves only through allowed transitions and every change has point-in-time evidence and matched condition IDs.\n- **AC-071:** An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.\n- **AC-072:** “Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language."
+  },
+  {
+    "id": "AC-071",
+    "sourceLine": 6577,
+    "startLine": 6575,
+    "endLine": 6579,
+    "exactText": "\n- **AC-070:** A thesis moves only through allowed transitions and every change has point-in-time evidence and matched condition IDs.\n- **AC-071:** An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.\n- **AC-072:** “Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.\n- **AC-073:** Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes."
+  },
+  {
+    "id": "AC-072",
+    "sourceLine": 6578,
+    "startLine": 6576,
+    "endLine": 6580,
+    "exactText": "- **AC-070:** A thesis moves only through allowed transitions and every change has point-in-time evidence and matched condition IDs.\n- **AC-071:** An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.\n- **AC-072:** “Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.\n- **AC-073:** Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.\n- **AC-074:** Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence."
+  },
+  {
+    "id": "AC-073",
+    "sourceLine": 6579,
+    "startLine": 6577,
+    "endLine": 6581,
+    "exactText": "- **AC-071:** An expired thesis cannot produce a new opportunity alert without a new thesis version and material evidence.\n- **AC-072:** “Why now” identifies the exact material changes from the previous valid evaluation and does not include unsupported causal language.\n- **AC-073:** Opportunity decay reduces or stops research budget according to policy and records false-expiry outcomes.\n- **AC-074:** Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence.\n- **AC-075:** Cross-chain fixtures do not double count bridge lock/mint/release or router hops."
+  }
+]

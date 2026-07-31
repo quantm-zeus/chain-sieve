@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-AGT-02",
+  "immutable": true,
+  "requirements": [
+    "FR-AGT-009",
+    "FR-AGT-010",
+    "FR-AGT-011",
+    "FR-AGT-012"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-030:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-031:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-032:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-033:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-034:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-242:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-243:T-G3-AGT-02:INTERFACE_FACET",
+    "AC-244:T-G3-AGT-02:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G3-AGT-02.spec.ts",
+    "tests/task-facets/T-G3-AGT-02.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G3-AGT-02/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

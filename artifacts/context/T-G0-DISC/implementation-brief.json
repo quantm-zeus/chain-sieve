@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-DISC",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DISC-001",
+      "exactNormativeText": "Free aggregate discovery is the default broad-universe path."
+    },
+    {
+      "id": "FR-DISC-002",
+      "exactNormativeText": "Every first-seen candidate records source, source timestamp, system timestamp, source rank, and all subsequent discovery sources."
+    },
+    {
+      "id": "FR-DISC-003",
+      "exactNormativeText": "The system maintains a point-in-time discovery-universe registry sufficient to measure source overlap, unique yield, and `NOT_DISCOVERED` misses."
+    },
+    {
+      "id": "FR-DISC-004",
+      "exactNormativeText": "Cheap monitoring is batch-oriented and finite; it does not create one scheduler message/workflow per candidate."
+    },
+    {
+      "id": "FR-DISC-005",
+      "exactNormativeText": "Candidate promotion from cheap monitoring to free-quota verification is deterministic and versioned."
+    }
+  ],
+  "expectedModules": [
+    "packages/discovery-universe/**",
+    "packages/cheap-monitor/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/disc.ts",
+    "docs/generated/disc-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Free aggregate discovery is the default broad-universe path.",
+    "Every first-seen candidate records source, source timestamp, system timestamp, source rank, and all subsequent discovery sources.",
+    "The system maintains a point-in-time discovery-universe registry sufficient to measure source overlap, unique yield, and `NOT_DISCOVERED` misses.",
+    "Cheap monitoring is batch-oriented and finite; it does not create one scheduler message/workflow per candidate.",
+    "Candidate promotion from cheap monitoring to free-quota verification is deterministic and versioned."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Every first-seen candidate records source, source timestamp, system timestamp, source rank, and all subsequent discovery sources.",
+    "The system maintains a point-in-time discovery-universe registry sufficient to measure source overlap, unique yield, and `NOT_DISCOVERED` misses."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/disc.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

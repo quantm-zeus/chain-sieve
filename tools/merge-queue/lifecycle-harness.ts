@@ -15,12 +15,21 @@ import {
 } from './lifecycle-manifest.js';
 
 const git = (cwd: string, args: string[]): string => {
-  const result = spawnSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
-  if (result.status !== 0) throw new Error(`LIFECYCLE_GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`);
+  const result = spawnSync('git', args, {
+    cwd,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  if (result.status !== 0)
+    throw new Error(
+      `LIFECYCLE_GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`,
+    );
   return result.stdout.trim();
 };
 
-const emptyScenario = (scenarioId: ObservedScenario['scenarioId']): ObservedScenario => ({
+const emptyScenario = (
+  scenarioId: ObservedScenario['scenarioId'],
+): ObservedScenario => ({
   scenarioId,
   commandsExecuted: [],
   stateTransitionsObserved: [],
@@ -46,11 +55,17 @@ export const runLifecycleHarness = async (): Promise<{
   verdict: ReturnType<typeof deriveLifecycleVerdict>;
 }> => {
   const source = git(process.cwd(), ['rev-parse', '--show-toplevel']);
-  if (git(source, ['status', '--porcelain']) !== '') throw new Error('LIFECYCLE_SOURCE_WORKTREE_NOT_CLEAN');
-  const temporaryRoot = await mkdtemp(join(tmpdir(), 'chain-sieve-production-lifecycle-'));
+  if (git(source, ['status', '--porcelain']) !== '')
+    throw new Error('LIFECYCLE_SOURCE_WORKTREE_NOT_CLEAN');
+  const temporaryRoot = await mkdtemp(
+    join(tmpdir(), 'chain-sieve-production-lifecycle-'),
+  );
   const repository = join(temporaryRoot, 'repository');
   const scenarios = Object.fromEntries(
-    (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] as const).map((id) => [id, emptyScenario(id)]),
+    (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] as const).map((id) => [
+      id,
+      emptyScenario(id),
+    ]),
   ) as Record<ObservedScenario['scenarioId'], ObservedScenario>;
   const allCommands: ObservedCommand[] = [];
   const run = (
@@ -75,48 +90,91 @@ export const runLifecycleHarness = async (): Promise<{
     };
     allCommands.push(observed);
     if (expectedRejection) {
-      if (result.status === 0 || !parseError(output).includes(expectedRejection))
-        throw new Error(`EXPECTED_REJECTION_NOT_OBSERVED:${expectedRejection}:${parseError(output)}`);
+      if (
+        result.status === 0 ||
+        !parseError(output).includes(expectedRejection)
+      )
+        throw new Error(
+          `EXPECTED_REJECTION_NOT_OBSERVED:${expectedRejection}:${parseError(output)}`,
+        );
     } else if (result.status !== 0) {
-      throw new Error(`LIFECYCLE_COMMAND_FAILED:${command}:${parseError(output)}`);
+      throw new Error(
+        `LIFECYCLE_COMMAND_FAILED:${command}:${parseError(output)}`,
+      );
     }
     return output;
   };
   try {
-    const clone = spawnSync('git', ['clone', '--shared', '--no-hardlinks', source, repository], {
-      encoding: 'utf8',
-      maxBuffer: 32 * 1024 * 1024,
-    });
-    if (clone.status !== 0) throw new Error(`LIFECYCLE_CLONE_FAILED:${clone.stderr}`);
-    git(repository, ['config', 'user.email', 'lifecycle-harness@example.invalid']);
+    const clone = spawnSync(
+      'git',
+      ['clone', '--shared', '--no-hardlinks', source, repository],
+      {
+        encoding: 'utf8',
+        maxBuffer: 32 * 1024 * 1024,
+      },
+    );
+    if (clone.status !== 0)
+      throw new Error(`LIFECYCLE_CLONE_FAILED:${clone.stderr}`);
+    git(repository, [
+      'config',
+      'user.email',
+      'lifecycle-harness@example.invalid',
+    ]);
     git(repository, ['config', 'user.name', 'ChainSieve Lifecycle Harness']);
     git(repository, ['switch', '-c', 'cluster/g0']);
-    await symlink(join(source, 'node_modules'), join(repository, 'node_modules'), 'dir');
-    await writeFile(join(repository, '.git/info/exclude'), '\nnode_modules\n', { flag: 'a' });
+    await symlink(
+      join(source, 'node_modules'),
+      join(repository, 'node_modules'),
+      'dir',
+    );
+    await writeFile(join(repository, '.git/info/exclude'), '\nnode_modules\n', {
+      flag: 'a',
+    });
     const tasks = await loadTasks();
     const byId = (id: string) => {
       const task = tasks.find((candidate) => candidate.id === id);
       if (!task) throw new Error(`LIFECYCLE_TASK_MISSING:${id}`);
       return task;
     };
-    for (const task of [byId('T-G0-CORE'), byId('T-G0-TRACE')]) {
+    for (const task of [byId('T-G0-DISC'), byId('T-G0-TRACE')]) {
       for (const path of task.requiredTests) {
         const absolute = join(repository, path);
+        const exported =
+          task.id === 'T-G0-DISC'
+            ? 'lifecycleHarnessFixture'
+            : 'lifecycleFailureFixture';
+        const module =
+          task.id === 'T-G0-DISC'
+            ? '../../packages/cheap-monitor/src/lifecycle-harness-fixture.js'
+            : '../../packages/release-conformance/src/lifecycle-failure-fixture.js';
+        const negative = /negative/i.test(path);
         await mkdir(dirname(absolute), { recursive: true });
         await writeFile(
           absolute,
           [
             "import { describe, expect, it } from 'vitest';",
+            `import { ${exported} } from '${module}';`,
             `describe('${task.id} lifecycle acceptance fixture', () => {`,
-            `  it('${path}', () => { expect('${task.id}:${path}').toContain('${task.id}'); });`,
+            negative
+              ? `  it('rejects a seeded invalid value', () => { const seededFault = -1; expect(() => ${exported}(seededFault)).toThrow('INVALID_LIFECYCLE_FIXTURE'); });`
+              : `  it('invokes changed production behavior', () => { const property = (value: number) => ${exported}(value) === value; expect(property(7)).toBe(true); });`,
             '});',
             '',
           ].join('\n'),
         );
       }
     }
-    git(repository, ['add', 'tests/acceptance', 'tests/negative']);
-    git(repository, ['commit', '-m', 'test: add isolated lifecycle acceptance fixtures']);
+    git(repository, [
+      'add',
+      'tests/acceptance',
+      'tests/negative',
+      'tests/task-facets',
+    ]);
+    git(repository, [
+      'commit',
+      '-m',
+      'test: add isolated lifecycle acceptance fixtures',
+    ]);
 
     for (const taskId of ['T-G0-COL-01', 'T-G0-COL-02']) {
       run('task:validate', ['task:validate', taskId], repository);
@@ -125,64 +183,158 @@ export const runLifecycleHarness = async (): Promise<{
     }
     const colOne = join(repository, '.worktrees', 'T-G0-COL-01');
     const colTwo = join(repository, '.worktrees', 'T-G0-COL-02');
-    run('task:acquire', ['task:acquire', 'T-G0-COL-01', '--holder', 'lock-one'], colOne);
+    run(
+      'task:acquire',
+      ['task:acquire', 'T-G0-COL-01', '--holder', 'lock-one'],
+      colOne,
+    );
     run(
       'task:acquire',
       ['task:acquire', 'T-G0-COL-02', '--holder', 'lock-two'],
       colTwo,
       'PATH_LOCK_CONFLICT',
     );
-    run('task:release', ['task:release', 'T-G0-COL-01', '--holder', 'lock-one', '--lease-version', '1'], colOne);
+    run(
+      'task:release',
+      [
+        'task:release',
+        'T-G0-COL-01',
+        '--holder',
+        'lock-one',
+        '--lease-version',
+        '1',
+      ],
+      colOne,
+    );
     run('worktree:cleanup', ['worktree:cleanup', 'T-G0-COL-01'], repository);
     run('worktree:cleanup', ['worktree:cleanup', 'T-G0-COL-02'], repository);
-    scenarios.C.verificationResult = 'SECOND_CONFLICTING_PROTECTED_OPERATION_REJECTED';
+    scenarios.C.verificationResult =
+      'SECOND_CONFLICTING_PROTECTED_OPERATION_REJECTED';
 
-    const normalTask = byId('T-G0-CORE');
+    const normalTask = byId('T-G0-DISC');
     run('task:validate', ['task:validate', normalTask.id], repository);
     run('task:mark-ready', ['task:mark-ready', normalTask.id], repository);
     run('worktree:create', ['worktree:create', normalTask.id], repository);
     const normalWorktree = join(repository, '.worktrees', normalTask.id);
-    run('task:acquire', ['task:acquire', normalTask.id, '--holder', 'lifecycle-worker'], normalWorktree);
+    run(
+      'task:acquire',
+      ['task:acquire', normalTask.id, '--holder', 'lifecycle-worker'],
+      normalWorktree,
+    );
     run(
       'task:renew',
-      ['task:renew', normalTask.id, '--holder', 'lifecycle-worker', '--lease-version', '1'],
+      [
+        'task:renew',
+        normalTask.id,
+        '--holder',
+        'lifecycle-worker',
+        '--lease-version',
+        '1',
+      ],
       normalWorktree,
     );
     run(
       'task:begin',
-      ['task:begin', normalTask.id, '--holder', 'lifecycle-worker', '--lease-version', '1'],
+      [
+        'task:begin',
+        normalTask.id,
+        '--holder',
+        'lifecycle-worker',
+        '--lease-version',
+        '1',
+      ],
       normalWorktree,
       'STALE_LEASE_VERSION',
     );
     run(
       'task:begin',
-      ['task:begin', normalTask.id, '--holder', 'lifecycle-worker', '--lease-version', '2'],
+      [
+        'task:begin',
+        normalTask.id,
+        '--holder',
+        'lifecycle-worker',
+        '--lease-version',
+        '2',
+      ],
       normalWorktree,
     );
-    const normalPath = join(normalWorktree, 'packages/domain/src/lifecycle-harness-fixture.ts');
+    const normalPath = join(
+      normalWorktree,
+      'packages/cheap-monitor/src/lifecycle-harness-fixture.ts',
+    );
     await mkdir(dirname(normalPath), { recursive: true });
-    await writeFile(normalPath, 'export const lifecycleHarnessFixture = true;\n');
-    git(normalWorktree, ['add', 'packages/domain/src/lifecycle-harness-fixture.ts']);
-    git(normalWorktree, ['commit', '-m', 'test: atomic lifecycle implementation']);
+    await writeFile(
+      normalPath,
+      "export const lifecycleHarnessFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value; };\n",
+    );
+    git(normalWorktree, [
+      'add',
+      'packages/cheap-monitor/src/lifecycle-harness-fixture.ts',
+    ]);
+    git(normalWorktree, [
+      'commit',
+      '-m',
+      'test: atomic lifecycle implementation',
+    ]);
     run(
       'task:self-review',
-      ['task:self-review', normalTask.id, '--holder', 'lifecycle-worker', '--lease-version', '2'],
+      [
+        'task:self-review',
+        normalTask.id,
+        '--holder',
+        'lifecycle-worker',
+        '--lease-version',
+        '2',
+      ],
       normalWorktree,
     );
     run(
       'task:verify',
-      ['task:verify', normalTask.id, '--holder', 'lifecycle-worker', '--lease-version', '2'],
+      [
+        'task:verify',
+        normalTask.id,
+        '--holder',
+        'lifecycle-worker',
+        '--lease-version',
+        '2',
+      ],
       normalWorktree,
     );
     const preRebaseState = await readState(tasks, repository);
-    const preRebaseTarget = structuredClone(preRebaseState.tasks[normalTask.id]!);
+    const preRebaseTarget = structuredClone(
+      preRebaseState.tasks[normalTask.id]!,
+    );
     run('merge-queue:add', ['merge-queue:add', normalTask.id], repository);
-    const advancePath = join(repository, 'docs/implementation/lifecycle-cluster-advance.md');
+    const advancePath = join(
+      repository,
+      'docs/implementation/lifecycle-cluster-advance.md',
+    );
     await mkdir(dirname(advancePath), { recursive: true });
-    await writeFile(advancePath, 'deterministic cluster-head advance for lifecycle verification\n');
-    git(repository, ['add', 'docs/implementation/lifecycle-cluster-advance.md']);
+    await writeFile(
+      advancePath,
+      'deterministic cluster-head advance for lifecycle verification\n',
+    );
+    git(repository, [
+      'add',
+      'docs/implementation/lifecycle-cluster-advance.md',
+    ]);
     git(repository, ['commit', '-m', 'test: advance lifecycle cluster head']);
-    const queueResult = await processMergeQueue(tasks, { cwd: repository });
+    const queueResult = await processMergeQueue(tasks, {
+      cwd: repository,
+      integrationRunner: (cwd) => {
+        const output = run(
+          'cluster:verify-integration',
+          ['test:integration'],
+          cwd,
+        );
+        return {
+          command: 'pnpm test:integration',
+          exitCode: 0,
+          outputSha256: sha256(output),
+          status: 'PASS',
+        };
+      },
+    });
     allCommands.push({
       command: 'merge-queue:process',
       exitCode: 0,
@@ -214,7 +366,10 @@ export const runLifecycleHarness = async (): Promise<{
     scenarios.B.verificationResult = 'OLD_FENCE_REJECTED_NEW_FENCE_ACCEPTED';
     scenarios.D.rebaseResult = 'REBASING_WITH_FRESH_EVIDENCE';
     scenarios.D.queueOperations = queueResult.queueOperations;
-    scenarios.D.commitShas.push(queueResult.clusterHeadBefore, queueResult.commit);
+    scenarios.D.commitShas.push(
+      queueResult.clusterHeadBefore,
+      queueResult.commit,
+    );
     scenarios.D.gitTreeShas.push(queueResult.tree);
     scenarios.D.evidenceHashes.push(
       queueResult.postRebaseSelfReview!,
@@ -233,7 +388,11 @@ export const runLifecycleHarness = async (): Promise<{
         await assertEvidenceCurrent(normalTask.id, kind, evidence, repository);
         throw new Error(`STALE_${kind}_EVIDENCE_ACCEPTED`);
       } catch (error) {
-        if (!(error instanceof Error) || !error.message.includes(`STALE_${kind}_EVIDENCE`)) throw error;
+        if (
+          !(error instanceof Error) ||
+          !error.message.includes(`STALE_${kind}_EVIDENCE`)
+        )
+          throw error;
       }
     }
     scenarios.E.verificationResult = 'ALL_PRE_REBASE_EVIDENCE_REJECTED';
@@ -243,30 +402,79 @@ export const runLifecycleHarness = async (): Promise<{
     run('task:mark-ready', ['task:mark-ready', failureTask.id], repository);
     run('worktree:create', ['worktree:create', failureTask.id], repository);
     const failureWorktree = join(repository, '.worktrees', failureTask.id);
-    run('task:acquire', ['task:acquire', failureTask.id, '--holder', 'failure-worker'], failureWorktree);
     run(
-      'task:begin',
-      ['task:begin', failureTask.id, '--holder', 'failure-worker', '--lease-version', '1'],
+      'task:acquire',
+      ['task:acquire', failureTask.id, '--holder', 'failure-worker'],
       failureWorktree,
     );
-    const failurePath = join(failureWorktree, 'packages/release-conformance/src/lifecycle-failure-fixture.ts');
+    run(
+      'task:begin',
+      [
+        'task:begin',
+        failureTask.id,
+        '--holder',
+        'failure-worker',
+        '--lease-version',
+        '1',
+      ],
+      failureWorktree,
+    );
+    const failurePath = join(
+      failureWorktree,
+      'packages/release-conformance/src/lifecycle-failure-fixture.ts',
+    );
     await mkdir(dirname(failurePath), { recursive: true });
-    await writeFile(failurePath, 'export const lifecycleFailureFixture = true;\n');
-    git(failureWorktree, ['add', 'packages/release-conformance/src/lifecycle-failure-fixture.ts']);
-    git(failureWorktree, ['commit', '-m', 'test: lifecycle integration failure fixture']);
+    await writeFile(
+      failurePath,
+      "export const lifecycleFailureFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value; };\n",
+    );
+    git(failureWorktree, [
+      'add',
+      'packages/release-conformance/src/lifecycle-failure-fixture.ts',
+    ]);
+    git(failureWorktree, [
+      'commit',
+      '-m',
+      'test: lifecycle integration failure fixture',
+    ]);
     run(
       'task:self-review',
-      ['task:self-review', failureTask.id, '--holder', 'failure-worker', '--lease-version', '1'],
+      [
+        'task:self-review',
+        failureTask.id,
+        '--holder',
+        'failure-worker',
+        '--lease-version',
+        '1',
+      ],
       failureWorktree,
     );
     run(
       'task:verify',
-      ['task:verify', failureTask.id, '--holder', 'failure-worker', '--lease-version', '1'],
+      [
+        'task:verify',
+        failureTask.id,
+        '--holder',
+        'failure-worker',
+        '--lease-version',
+        '1',
+      ],
       failureWorktree,
     );
-    await writeFile(failurePath, 'export const lifecycleFailureFixture = false;\n');
-    run('merge-queue:add', ['merge-queue:add', failureTask.id], repository, 'DIRTY_TRACKED_SOURCE');
-    git(failureWorktree, ['restore', 'packages/release-conformance/src/lifecycle-failure-fixture.ts']);
+    await writeFile(
+      failurePath,
+      'export const lifecycleFailureFixture = (value: number): number => value;\n',
+    );
+    run(
+      'merge-queue:add',
+      ['merge-queue:add', failureTask.id],
+      repository,
+      'DIRTY_TRACKED_SOURCE',
+    );
+    git(failureWorktree, [
+      'restore',
+      'packages/release-conformance/src/lifecycle-failure-fixture.ts',
+    ]);
     scenarios.F.verificationResult = 'DIRTY_TRACKED_SOURCE_REJECTED';
     run('merge-queue:add', ['merge-queue:add', failureTask.id], repository);
     const failureResult = await processMergeQueue(tasks, {
@@ -274,7 +482,12 @@ export const runLifecycleHarness = async (): Promise<{
       integrationRunner: (cwd) => {
         const output = run(
           'cluster:verify-integration',
-          ['exec', 'tsx', '-e', "console.error('deterministic lifecycle integration failure');process.exit(86)"],
+          [
+            'exec',
+            'tsx',
+            '-e',
+            "console.error('deterministic lifecycle integration failure');process.exit(86)",
+          ],
           cwd,
           'deterministic lifecycle integration failure',
         );
@@ -291,11 +504,17 @@ export const runLifecycleHarness = async (): Promise<{
       exitCode: 0,
       outputSha256: sha256(JSON.stringify(failureResult)),
     });
-    if (!failureResult.revertCommit) throw new Error('AUTOMATIC_REVERT_MISSING');
-    scenarios.G.commitShas.push(failureResult.commit, failureResult.mergeCommit, failureResult.revertCommit);
+    if (!failureResult.revertCommit)
+      throw new Error('AUTOMATIC_REVERT_MISSING');
+    scenarios.G.commitShas.push(
+      failureResult.commit,
+      failureResult.mergeCommit,
+      failureResult.revertCommit,
+    );
     scenarios.G.gitTreeShas.push(failureResult.tree);
     scenarios.G.queueOperations = failureResult.queueOperations;
-    scenarios.G.mergeResult = 'MERGED_THROUGH_REAL_QUEUE_THEN_FAILED_INTEGRATION';
+    scenarios.G.mergeResult =
+      'MERGED_THROUGH_REAL_QUEUE_THEN_FAILED_INTEGRATION';
     scenarios.G.revertResult = 'AUTOMATIC_REVERT_CREATED_AND_TREE_RESTORED';
 
     run('worktree:cleanup', ['worktree:cleanup', normalTask.id], repository);
@@ -303,21 +522,31 @@ export const runLifecycleHarness = async (): Promise<{
     const finalState = await readState(tasks, repository);
     const finalQueue = await readQueue(repository);
     const worktrees = git(repository, ['worktree', 'list', '--porcelain']);
-    if (worktrees.includes(`${repository}/.worktrees/`)) throw new Error('TEMPORARY_WORKTREE_NOT_REMOVED');
-    if (finalQueue.items.some((item) => ['QUEUED', 'PROCESSING'].includes(item.status)))
+    if (worktrees.includes(`${repository}/.worktrees/`))
+      throw new Error('TEMPORARY_WORKTREE_NOT_REMOVED');
+    if (
+      finalQueue.items.some((item) =>
+        ['QUEUED', 'PROCESSING'].includes(item.status),
+      )
+    )
       throw new Error('QUEUE_NOT_FINALIZED');
     if (
       [normalTask.id, failureTask.id].some(
-        (id) => !['COMPLETED', 'RELEASED', 'EXPIRED'].includes(finalState.tasks[id]?.leaseState ?? ''),
+        (id) =>
+          !['COMPLETED', 'RELEASED', 'EXPIRED'].includes(
+            finalState.tasks[id]?.leaseState ?? '',
+          ),
       )
     )
       throw new Error('LEASE_NOT_FINALIZED');
-    if (git(repository, ['status', '--porcelain']) !== '') throw new Error('LIFECYCLE_REPOSITORY_NOT_CLEAN');
+    if (git(repository, ['status', '--porcelain']) !== '')
+      throw new Error('LIFECYCLE_REPOSITORY_NOT_CLEAN');
     scenarios.H.cleanupResult = 'WORKTREES_LEASES_LOCKS_QUEUE_BRANCHES_CLEAN';
 
     for (const command of allCommands) {
       const scenario =
-        command.command === 'task:renew' || command.expectedRejection === 'STALE_LEASE_VERSION'
+        command.command === 'task:renew' ||
+        command.expectedRejection === 'STALE_LEASE_VERSION'
           ? scenarios.B
           : command.expectedRejection === 'PATH_LOCK_CONFLICT'
             ? scenarios.C
@@ -329,11 +558,15 @@ export const runLifecycleHarness = async (): Promise<{
       scenario.commandsExecuted.push(command);
     }
     scenarios.D.commandsExecuted.push(
-      ...allCommands.filter((command) => command.command === 'merge-queue:process'),
+      ...allCommands.filter(
+        (command) => command.command === 'merge-queue:process',
+      ),
     );
     scenarios.G.commandsExecuted.push(
       ...allCommands.filter(
-        (command) => command.command === 'merge-queue:process' || command.command === 'cluster:verify-integration',
+        (command) =>
+          command.command === 'merge-queue:process' ||
+          command.command === 'cluster:verify-integration',
       ),
     );
     scenarios.E.commandsExecuted.push({
