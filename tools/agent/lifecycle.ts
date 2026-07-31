@@ -36,6 +36,9 @@ const contextPath = (taskId: string): string => `artifacts/context/${taskId}/con
 const contractPath = (group: string, taskId: string): string => `tasks/${group}/${taskId}.contract.json`;
 
 const command = argumentsAfterSeparator[0];
+const commandArguments = argumentsAfterSeparator[1] === '--'
+  ? argumentsAfterSeparator.slice(2)
+  : argumentsAfterSeparator.slice(1);
 let releaseMutationLock: (() => Promise<void>) | undefined;
 try {
   const root = process.cwd();
@@ -51,7 +54,7 @@ try {
     console.log(JSON.stringify({ schemaVersion: '1.0.0', dryRun: process.argv.includes('--dry-run'), mutations: active.filter((item) => !item.lifecycleBinding || !item.verificationBaseline).map((item) => ({ taskId: item.taskId, change: 'ADD_IMMUTABLE_LIFECYCLE_BINDING_AND_TRUSTED_BASELINE', credentialsChanged: false, productWorkChanged: false })) }, null, 2));
     if (!process.argv.includes('--dry-run')) throw new Error('MIGRATION_REQUIRES_AUTHORITATIVE_RECOVERY_OR_ACQUISITION');
   } else if (command === 'renew') {
-    const taskId = argumentsAfterSeparator[1] ?? '';
+    const taskId = commandArguments[0] ?? '';
     const holder = required('--holder');
     const expectedLeaseId = required('--expected-lease-id');
     const expectedFencingVersion = Number(required('--expected-fencing-version'));
@@ -66,7 +69,7 @@ try {
     await writeState(state, root);
     console.log(JSON.stringify({ action: 'RENEW_VALID_LEASE', idempotentRequest: requestSha256, lease, receipt: receiptRecord.evidence }, null, 2));
   } else if (command === 'recover') {
-    const taskId = argumentsAfterSeparator[1] ?? '';
+    const taskId = commandArguments[0] ?? '';
     const expectedExpiredLeaseId = required('--expected-expired-lease-id');
     const expectedFencingVersion = Number(required('--expected-fencing-version'));
     const expectedHolder = required('--holder');
