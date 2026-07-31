@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import type {
   CommandRunner,
@@ -375,7 +375,9 @@ export const validateLaunchReceipt = async (
   if (!receipt.goalPath || !receipt.goalSha256)
     throw new ZCodeError('LAUNCH_RECEIPT_GOAL_BINDING_MISSING');
   const expectedGoalRoot = join(selected.runtime, 'goals', binding.taskId);
-  if (!resolve(receipt.goalPath).startsWith(`${resolve(expectedGoalRoot)}/`))
+  const canonicalGoalPath = await realpath(receipt.goalPath).catch(() => resolve(receipt.goalPath!));
+  const canonicalGoalRoot = await realpath(expectedGoalRoot).catch(() => resolve(expectedGoalRoot));
+  if (!canonicalGoalPath.startsWith(`${canonicalGoalRoot}/`))
     throw new ZCodeError('LAUNCH_RECEIPT_GOAL_PATH_INVALID');
   const goal = await readFile(receipt.goalPath);
   if (sha256(goal) !== receipt.goalSha256)
