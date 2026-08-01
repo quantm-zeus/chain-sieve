@@ -73,8 +73,27 @@ export interface TaskState {
     state: 'EXPIRED' | 'RENEWED';
     retiredAt: string;
   }>;
-  renewal?: { requestSha256: string; receipt: EvidenceReference; resultingLeaseId: string; resultingFencingVersion: number };
-  recovery?: { requestSha256: string; receipt: EvidenceReference; previousLeaseId: string; previousFencingVersion: number; resultingLeaseId: string; resultingFencingVersion: number };
+  renewal?: {
+    requestSha256: string;
+    receipt: EvidenceReference;
+    ttlMinutes: number;
+    resultingLeaseId: string;
+    resultingFencingVersion: number;
+    resultingExpiresAt: string;
+  };
+  recovery?: {
+    requestSha256: string;
+    receipt: EvidenceReference;
+    ttlMinutes: number;
+    previousLeaseId: string;
+    previousFencingVersion: number;
+    previousExpiresAt: string;
+    resultingLeaseId: string;
+    resultingFencingVersion: number;
+    resultingExpiresAt: string;
+    previousVerificationBaseline?: EvidenceReference;
+    resultingVerificationBaseline?: EvidenceReference;
+  };
   blockedReason?: 'SPECIFICATION_GAP';
   history?: TransitionRecord[];
 }
@@ -233,6 +252,17 @@ const protectedStates = new Set<TaskLifecycleState>([
   'MERGE_QUEUED',
 ]);
 
+export const AGENT_LEASE_TTL_MINUTES = { minimum: 15, maximum: 240, default: 120 } as const;
+
+export const assertAgentLeaseTtlMinutes = (ttlMinutes: number): number => {
+  if (!Number.isInteger(ttlMinutes)) throw new Error('LEASE_TTL_MINUTES_INTEGER_REQUIRED');
+  if (ttlMinutes < AGENT_LEASE_TTL_MINUTES.minimum)
+    throw new Error(`LEASE_TTL_MINUTES_BELOW_MINIMUM:${AGENT_LEASE_TTL_MINUTES.minimum}`);
+  if (ttlMinutes > AGENT_LEASE_TTL_MINUTES.maximum)
+    throw new Error(`LEASE_TTL_MINUTES_ABOVE_MAXIMUM:${AGENT_LEASE_TTL_MINUTES.maximum}`);
+  return ttlMinutes;
+};
+
 const assertCredentialForTarget = (target: TaskState, credential: LeaseCredential, now: Date): TaskState => {
   if (!protectedStates.has(target.state)) throw new Error('NO_ACTIVE_LEASE');
   if (target.leaseState && target.leaseState !== 'ACTIVE') throw new Error('NO_ACTIVE_LEASE');
@@ -340,7 +370,11 @@ export const transition = (
     if (actualFrom === 'LEASED' && !context.worktreeValid) throw new Error('CORRECT_WORKTREE_REQUIRED');
     if (actualFrom === 'IMPLEMENTING') {
       if (!context.evidence || context.evidence.status !== 'CURRENT') throw new Error('IMPLEMENTATION_EVIDENCE_REQUIRED');
+      if (!context.evidence.commit || !context.evidence.tree)
+        throw new Error('IMPLEMENTATION_COMMIT_TREE_BINDING_REQUIRED');
       target.implementationEvidence = context.evidence;
+      target.commit = context.evidence.commit;
+      target.tree = context.evidence.tree;
     }
     if (actualFrom === 'SELF_REVIEWING') {
       if (!context.evidence || context.evidence.status !== 'CURRENT') throw new Error('SELF_REVIEW_EVIDENCE_REQUIRED');
@@ -466,6 +500,7 @@ export interface ExplicitRenewalExpectation {
   expectedLeaseId: string;
   expectedFencingVersion: number;
   holder: string;
+  ttlMinutes: number;
   requestSha256: string;
   receipt: EvidenceReference;
 }
@@ -474,14 +509,16 @@ export const renewValidLease = (
   state: LifecycleDocument,
   expectation: ExplicitRenewalExpectation,
   now: Date,
-  ttlMs = 900_000,
 ): ReturnType<typeof TaskLeaseSchema.parse> => {
   const target = state.tasks[expectation.taskId];
   if (!target) throw new Error('TASK_NOT_FOUND');
+  const ttlMinutes = assertAgentLeaseTtlMinutes(expectation.ttlMinutes);
   if (target.renewal?.requestSha256 === expectation.requestSha256) {
     if (
       target.leaseId !== target.renewal.resultingLeaseId ||
-      target.leaseVersion !== target.renewal.resultingFencingVersion
+      target.leaseVersion !== target.renewal.resultingFencingVersion ||
+      target.expiresAt !== target.renewal.resultingExpiresAt ||
+      ttlMinutes !== target.renewal.ttlMinutes
     )
       throw new Error('RENEWAL_RETRY_NO_LONGER_CURRENT');
     return TaskLeaseSchema.parse({
@@ -490,20 +527,29 @@ export const renewValidLease = (
       acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: target.leaseState,
     });
   }
+  if (
+    target.renewal &&
+    target.renewal.requestSha256 !== expectation.requestSha256 &&
+    target.renewal.resultingLeaseId === expectation.expectedLeaseId &&
+    target.renewal.resultingFencingVersion === expectation.expectedFencingVersion
+  )
+    throw new Error('RENEWAL_REQUEST_CONFLICT');
   if (target.leaseId !== expectation.expectedLeaseId) throw new Error('RENEWAL_EXPECTED_LEASE_MISMATCH');
   if (target.leaseVersion !== expectation.expectedFencingVersion) throw new Error('RENEWAL_EXPECTED_FENCING_MISMATCH');
   if (target.holder !== expectation.holder) throw new Error('RENEWAL_EXPECTED_HOLDER_MISMATCH');
   const previousLeaseId = target.leaseId;
   const previousVersion = target.leaseVersion;
   const credential = currentLeaseCredential(target);
-  const lease = renewLease(state, credential, now, ttlMs);
+  const lease = renewLease(state, credential, now, ttlMinutes * 60_000);
   target.retiredLeases ??= [];
   target.retiredLeases.push({ leaseId: previousLeaseId, fencingVersion: previousVersion, state: 'RENEWED', retiredAt: now.toISOString() });
   target.renewal = {
     requestSha256: expectation.requestSha256,
     receipt: expectation.receipt,
+    ttlMinutes,
     resultingLeaseId: lease.leaseId,
     resultingFencingVersion: lease.fencingVersion,
+    resultingExpiresAt: lease.expiresAt,
   };
   return lease;
 };
@@ -516,9 +562,14 @@ export interface ExpiredRecoveryExpectation {
   expectedTaskState: TaskLifecycleState;
   expectedTaskBranch: string;
   expectedTaskWorktree: string;
-  expectedBaseCommit: string;
+  expectedLifecycleBaseCommit: string;
+  expectedTaskHeadCommit: string;
+  expectedTaskHeadTree: string;
+  ttlMinutes: number;
   requestSha256: string;
   receipt: EvidenceReference;
+  previousVerificationBaseline?: EvidenceReference;
+  resultingVerificationBaseline?: EvidenceReference;
 }
 
 export const recoverExpiredLease = (
@@ -526,14 +577,16 @@ export const recoverExpiredLease = (
   tasks: LeaseContract[],
   expectation: ExpiredRecoveryExpectation,
   now: Date,
-  ttlMs = 900_000,
 ): ReturnType<typeof TaskLeaseSchema.parse> => {
   const target = state.tasks[expectation.taskId];
   if (!target) throw new Error('TASK_NOT_FOUND');
+  const ttlMinutes = assertAgentLeaseTtlMinutes(expectation.ttlMinutes);
   if (target.recovery?.requestSha256 === expectation.requestSha256) {
     if (
       target.leaseId !== target.recovery.resultingLeaseId ||
-      target.leaseVersion !== target.recovery.resultingFencingVersion
+      target.leaseVersion !== target.recovery.resultingFencingVersion ||
+      target.expiresAt !== target.recovery.resultingExpiresAt ||
+      ttlMinutes !== target.recovery.ttlMinutes
     )
       throw new Error('RECOVERY_RETRY_NO_LONGER_CURRENT');
     return TaskLeaseSchema.parse({
@@ -542,13 +595,55 @@ export const recoverExpiredLease = (
       acquiredAt: target.acquiredAt, expiresAt: target.expiresAt, state: target.leaseState,
     });
   }
+  if (
+    target.recovery &&
+    target.recovery.requestSha256 !== expectation.requestSha256 &&
+    target.recovery.previousLeaseId === expectation.expectedExpiredLeaseId &&
+    target.recovery.previousFencingVersion === expectation.expectedFencingVersion
+  )
+    throw new Error('RECOVERY_REQUEST_CONFLICT');
   if (target.leaseId !== expectation.expectedExpiredLeaseId) throw new Error('RECOVERY_EXPECTED_LEASE_MISMATCH');
   if (target.leaseVersion !== expectation.expectedFencingVersion) throw new Error('RECOVERY_EXPECTED_FENCING_MISMATCH');
   if (target.holder !== expectation.expectedHolder) throw new Error('RECOVERY_EXPECTED_HOLDER_MISMATCH');
   if (target.state !== expectation.expectedTaskState) throw new Error('RECOVERY_EXPECTED_STATE_MISMATCH');
   if (target.branch !== expectation.expectedTaskBranch) throw new Error('RECOVERY_EXPECTED_BRANCH_MISMATCH');
   if (target.worktree !== expectation.expectedTaskWorktree) throw new Error('RECOVERY_EXPECTED_WORKTREE_MISMATCH');
-  if (target.baseCommit !== expectation.expectedBaseCommit) throw new Error('RECOVERY_EXPECTED_BASE_MISMATCH');
+  if (target.baseCommit !== expectation.expectedLifecycleBaseCommit)
+    throw new Error('RECOVERY_EXPECTED_LIFECYCLE_BASE_MISMATCH');
+  let bindLegacyTaskHead = false;
+  if (['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED'].includes(target.state)) {
+    if (!target.commit || !target.tree) {
+      const implementation = target.implementationEvidence;
+      const review = target.selfReviewEvidence;
+      const legacyReviewBindingIsCurrent =
+        ['SELF_REVIEWING', 'VERIFYING'].includes(target.state) &&
+        implementation?.status === 'CURRENT' &&
+        implementation.commit === expectation.expectedTaskHeadCommit &&
+        implementation.tree === expectation.expectedTaskHeadTree &&
+        review?.status === 'CURRENT' &&
+        review.commit === expectation.expectedTaskHeadCommit &&
+        review.tree === expectation.expectedTaskHeadTree;
+      if (!legacyReviewBindingIsCurrent) throw new Error('RECOVERY_EXPECTED_TASK_HEAD_BINDING_MISSING');
+      bindLegacyTaskHead = true;
+    } else {
+      if (target.commit !== expectation.expectedTaskHeadCommit)
+        throw new Error('RECOVERY_EXPECTED_TASK_HEAD_MISMATCH');
+      if (target.tree !== expectation.expectedTaskHeadTree)
+        throw new Error('RECOVERY_EXPECTED_TASK_TREE_MISMATCH');
+    }
+  } else if (target.state === 'IMPLEMENTING') {
+    const documentedCommit = target.commit ?? target.implementationEvidence?.commit;
+    const documentedTree = target.tree ?? target.implementationEvidence?.tree;
+    if (documentedCommit || documentedTree) {
+      if (documentedCommit !== expectation.expectedTaskHeadCommit)
+        throw new Error('RECOVERY_EXPECTED_TASK_HEAD_MISMATCH');
+      if (documentedTree !== expectation.expectedTaskHeadTree)
+        throw new Error('RECOVERY_EXPECTED_TASK_TREE_MISMATCH');
+      bindLegacyTaskHead = !target.commit || !target.tree;
+    } else if (expectation.expectedTaskHeadCommit !== expectation.expectedLifecycleBaseCommit) {
+      throw new Error('RECOVERY_UNBOUND_IMPLEMENTING_HEAD');
+    }
+  }
   if (!target.expiresAt || Date.parse(target.expiresAt) > now.getTime()) throw new Error('RECOVERY_LEASE_NOT_EXPIRED');
   if (!protectedStates.has(target.state)) throw new Error('RECOVERY_STATE_NOT_ACTIVE');
   const isConcurrentActive = (item: TaskState): boolean =>
@@ -571,18 +666,34 @@ export const recoverExpiredLease = (
   target.retiredLeases.push({ leaseId: target.leaseId, fencingVersion: target.leaseVersion, state: 'EXPIRED', retiredAt: now.toISOString() });
   const previousLeaseId = target.leaseId;
   const previousFencingVersion = target.leaseVersion;
+  const previousExpiresAt = target.expiresAt;
+  if (bindLegacyTaskHead) {
+    target.commit = expectation.expectedTaskHeadCommit;
+    target.tree = expectation.expectedTaskHeadTree;
+  }
   target.leaseVersion += 1;
   target.leaseId = `${target.taskId}:${target.leaseVersion}:recovery:${expectation.requestSha256.slice(0, 16)}`;
   target.renewedAt = now.toISOString();
-  target.expiresAt = new Date(now.getTime() + ttlMs).toISOString();
+  target.expiresAt = new Date(now.getTime() + ttlMinutes * 60_000).toISOString();
   target.leaseState = 'ACTIVE';
+  if (expectation.resultingVerificationBaseline)
+    target.verificationBaseline = expectation.resultingVerificationBaseline;
   target.recovery = {
     requestSha256: expectation.requestSha256,
     receipt: expectation.receipt,
+    ttlMinutes,
     previousLeaseId,
     previousFencingVersion,
+    previousExpiresAt,
     resultingLeaseId: target.leaseId,
     resultingFencingVersion: target.leaseVersion,
+    resultingExpiresAt: target.expiresAt,
+    ...(expectation.previousVerificationBaseline
+      ? { previousVerificationBaseline: expectation.previousVerificationBaseline }
+      : {}),
+    ...(expectation.resultingVerificationBaseline
+      ? { resultingVerificationBaseline: expectation.resultingVerificationBaseline }
+      : {}),
   };
   return TaskLeaseSchema.parse({
     schemaVersion: '2.0.0', taskId: target.taskId, holder: target.holder,

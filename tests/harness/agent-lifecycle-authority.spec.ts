@@ -1,5 +1,5 @@
-import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -13,17 +13,26 @@ import {
 import { sha256 } from '../../tools/prd-compiler/compiler.js';
 import { TaskContractSchema } from '@ciag/shared-schemas';
 import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from '../../tools/task-verifier/policy.js';
+import { executeOrchestration } from '../../tools/agent/lib/executor.js';
+import { SystemCommandRunner } from '../../tools/agent/lib/system.js';
+import type { AgentProvider } from '../../tools/agent/lib/types.js';
 import {
+  AGENT_LEASE_TTL_MINUTES,
   acquireLifecycleMutationLock,
   recoverExpiredLease,
   renewValidLease,
   runtimeRoot,
   transition,
+  type EvidenceReference,
   type LifecycleDocument,
   type TaskState,
 } from '../../tools/task-runner/state.js';
 
 const receipt = { path: 'receipts/request.json', sha256: 'a'.repeat(64), status: 'CURRENT' as const };
+const lifecycleBaseCommit = '1'.repeat(40);
+const lifecycleBaseTree = '2'.repeat(40);
+const implementationCommit = '3'.repeat(40);
+const implementationTree = '4'.repeat(40);
 const tasks = [
   { id: 'T-G0-CORE', dependencies: [], exclusiveLocks: ['packages/domain/public-api'] },
   { id: 'T-G0-OTHER', dependencies: [], exclusiveLocks: ['packages/other/public-api'] },
@@ -35,7 +44,7 @@ const expired = (): LifecycleDocument => ({
       taskId: 'T-G0-CORE', state: 'IMPLEMENTING', leaseVersion: 1,
       holder: 'zcode-orchestrator', leaseId: 'T-G0-CORE:1:old',
       acquiredAt: '2026-07-30T00:00:00.000Z', expiresAt: '2026-07-30T00:15:00.000Z', leaseState: 'ACTIVE',
-      baseCommit: '1'.repeat(40), branch: 'task/t-g0-core', worktree: '/tmp/task/T-G0-CORE', history: [],
+      baseCommit: lifecycleBaseCommit, branch: 'task/t-g0-core', worktree: '/tmp/task/T-G0-CORE', history: [],
     },
     'T-G0-OTHER': { taskId: 'T-G0-OTHER', state: 'READY', leaseVersion: 0, history: [] },
   },
@@ -44,7 +53,35 @@ const recovery = (requestSha256 = 'b'.repeat(64)) => ({
   taskId: 'T-G0-CORE', expectedExpiredLeaseId: 'T-G0-CORE:1:old', expectedFencingVersion: 1,
   expectedHolder: 'zcode-orchestrator', expectedTaskState: 'IMPLEMENTING' as const,
   expectedTaskBranch: 'task/t-g0-core', expectedTaskWorktree: '/tmp/task/T-G0-CORE',
-  expectedBaseCommit: '1'.repeat(40), requestSha256, receipt,
+  expectedLifecycleBaseCommit: lifecycleBaseCommit,
+  expectedTaskHeadCommit: lifecycleBaseCommit,
+  expectedTaskHeadTree: lifecycleBaseTree,
+  ttlMinutes: 120,
+  requestSha256,
+  receipt,
+});
+const selfReviewing = (): LifecycleDocument => {
+  const state = expired();
+  const target = state.tasks['T-G0-CORE']!;
+  const evidence = {
+    path: 'reviews/T-G0-CORE/review.json',
+    sha256: 'd'.repeat(64),
+    status: 'CURRENT' as const,
+    commit: implementationCommit,
+    tree: implementationTree,
+  };
+  target.state = 'SELF_REVIEWING';
+  target.commit = implementationCommit;
+  target.tree = implementationTree;
+  target.implementationEvidence = { ...evidence, path: `git:${implementationCommit}` };
+  target.selfReviewEvidence = evidence;
+  return state;
+};
+const postCommitRecovery = (requestSha256 = 'e'.repeat(64)) => ({
+  ...recovery(requestSha256),
+  expectedTaskState: 'SELF_REVIEWING' as const,
+  expectedTaskHeadCommit: implementationCommit,
+  expectedTaskHeadTree: implementationTree,
 });
 
 const temporary: string[] = [];
@@ -55,7 +92,7 @@ describe('explicit authoritative lease lifecycle', () => {
     const state = expired();
     const target = state.tasks['T-G0-CORE']!;
     target.expiresAt = '2026-08-01T00:15:00.000Z';
-    const request = { taskId: target.taskId, expectedLeaseId: target.leaseId!, expectedFencingVersion: 1, holder: target.holder!, requestSha256: 'c'.repeat(64), receipt };
+    const request = { taskId: target.taskId, expectedLeaseId: target.leaseId!, expectedFencingVersion: 1, holder: target.holder!, ttlMinutes: 120, requestSha256: 'c'.repeat(64), receipt };
     const first = renewValidLease(state, request, new Date('2026-08-01T00:00:00.000Z'));
     const second = renewValidLease(state, request, new Date('2026-08-01T00:01:00.000Z'));
     expect(first.leaseId).toBe(second.leaseId);
@@ -63,14 +100,55 @@ describe('explicit authoritative lease lifecycle', () => {
     expect(target.retiredLeases).toEqual([{ leaseId: 'T-G0-CORE:1:old', fencingVersion: 1, state: 'RENEWED', retiredAt: '2026-08-01T00:00:00.000Z' }]);
   });
 
-  it('recovers an expired lease with one fencing increment and is idempotent on retry', () => {
+  it('recovers IMPLEMENTING before any implementation commit', () => {
     const state = expired();
-    const first = recoverExpiredLease(state, tasks, recovery(), new Date('2026-08-01T00:00:00.000Z'));
-    const second = recoverExpiredLease(state, tasks, recovery(), new Date('2026-08-01T00:01:00.000Z'));
-    expect(first).toEqual(second);
+    const lease = recoverExpiredLease(state, tasks, recovery(), new Date('2026-08-01T00:00:00.000Z'));
+    expect(lease.fencingVersion).toBe(2);
+    expect(state.tasks['T-G0-CORE']!.baseCommit).toBe(lifecycleBaseCommit);
+    expect(state.tasks['T-G0-CORE']!.commit).toBeUndefined();
+    expect(state.tasks['T-G0-CORE']!.tree).toBeUndefined();
+  });
+
+  it('recovers SELF_REVIEWING with lifecycle base A and task HEAD/tree B', () => {
+    const state = selfReviewing();
+    delete state.tasks['T-G0-CORE']!.commit;
+    delete state.tasks['T-G0-CORE']!.tree;
+    const lease = recoverExpiredLease(state, tasks, postCommitRecovery(), new Date('2026-08-01T00:00:00.000Z'));
+    expect(lease.fencingVersion).toBe(2);
+    expect(state.tasks['T-G0-CORE']).toMatchObject({
+      state: 'SELF_REVIEWING',
+      baseCommit: lifecycleBaseCommit,
+      commit: implementationCommit,
+      tree: implementationTree,
+    });
+  });
+
+  it('increments fencing exactly once and returns the same result on retry', () => {
+    const state = selfReviewing();
+    const request = postCommitRecovery();
+    const first = recoverExpiredLease(state, tasks, request, new Date('2026-08-01T00:00:00.000Z'));
+    const second = recoverExpiredLease(state, tasks, request, new Date('2026-08-01T00:01:00.000Z'));
+    expect(second).toEqual(first);
     expect(first.fencingVersion).toBe(2);
     expect(first.leaseId).not.toBe('T-G0-CORE:1:old');
     expect(state.tasks['T-G0-CORE']!.retiredLeases).toHaveLength(1);
+  });
+
+  it('binds a 120-minute recovery to the expected expiry', () => {
+    expect(AGENT_LEASE_TTL_MINUTES).toEqual({ minimum: 15, maximum: 240, default: 120 });
+    const lease = recoverExpiredLease(selfReviewing(), tasks, postCommitRecovery(), new Date('2026-08-01T00:00:00.000Z'));
+    expect(lease.expiresAt).toBe('2026-08-01T02:00:00.000Z');
+  });
+
+  it('rejects recovery TTL values outside the explicit bounds', () => {
+    expect(() => recoverExpiredLease(selfReviewing(), tasks, { ...postCommitRecovery(), ttlMinutes: 14 }, new Date('2026-08-01T00:00:00.000Z'))).toThrow('LEASE_TTL_MINUTES_BELOW_MINIMUM:15');
+    expect(() => recoverExpiredLease(selfReviewing(), tasks, { ...postCommitRecovery(), ttlMinutes: 241 }, new Date('2026-08-01T00:00:00.000Z'))).toThrow('LEASE_TTL_MINUTES_ABOVE_MAXIMUM:240');
+  });
+
+  it('fails closed when a retry changes the TTL', () => {
+    const state = selfReviewing();
+    recoverExpiredLease(state, tasks, postCommitRecovery(), new Date('2026-08-01T00:00:00.000Z'));
+    expect(() => recoverExpiredLease(state, tasks, { ...postCommitRecovery('f'.repeat(64)), ttlMinutes: 60 }, new Date('2026-08-01T00:01:00.000Z'))).toThrow('RECOVERY_REQUEST_CONFLICT');
   });
 
   it('never recovers a credential that is still valid', () => {
@@ -87,9 +165,44 @@ describe('explicit authoritative lease lifecycle', () => {
     ['wrong holder', { expectedHolder: 'other' }, 'RECOVERY_EXPECTED_HOLDER_MISMATCH'],
     ['branch mismatch', { expectedTaskBranch: 'task/wrong' }, 'RECOVERY_EXPECTED_BRANCH_MISMATCH'],
     ['worktree mismatch', { expectedTaskWorktree: '/tmp/wrong' }, 'RECOVERY_EXPECTED_WORKTREE_MISMATCH'],
-    ['base mismatch', { expectedBaseCommit: '2'.repeat(40) }, 'RECOVERY_EXPECTED_BASE_MISMATCH'],
+    ['lifecycle base mismatch', { expectedLifecycleBaseCommit: '9'.repeat(40) }, 'RECOVERY_EXPECTED_LIFECYCLE_BASE_MISMATCH'],
   ])('fails closed for %s', (_name, change, code) => {
     expect(() => recoverExpiredLease(expired(), tasks, { ...recovery(), ...change }, new Date('2026-08-01T00:00:00.000Z'))).toThrow(code);
+  });
+
+  it('fails closed for a wrong post-implementation task HEAD or tree', () => {
+    expect(() => recoverExpiredLease(selfReviewing(), tasks, { ...postCommitRecovery(), expectedTaskHeadCommit: '8'.repeat(40) }, new Date('2026-08-01T00:00:00.000Z'))).toThrow('RECOVERY_EXPECTED_TASK_HEAD_MISMATCH');
+    expect(() => recoverExpiredLease(selfReviewing(), tasks, { ...postCommitRecovery(), expectedTaskHeadTree: '8'.repeat(40) }, new Date('2026-08-01T00:00:00.000Z'))).toThrow('RECOVERY_EXPECTED_TASK_TREE_MISMATCH');
+  });
+
+  it('preserves self-review evidence bound to implementation commit/tree B', () => {
+    const state = selfReviewing();
+    const before = structuredClone(state.tasks['T-G0-CORE']!.selfReviewEvidence);
+    recoverExpiredLease(state, tasks, postCommitRecovery(), new Date('2026-08-01T00:00:00.000Z'));
+    expect(state.tasks['T-G0-CORE']!.selfReviewEvidence).toEqual(before);
+    expect(before).toMatchObject({ commit: implementationCommit, tree: implementationTree });
+  });
+
+  it('allows authoritative verification to continue from recovered SELF_REVIEWING', () => {
+    const state = selfReviewing();
+    recoverExpiredLease(state, tasks, postCommitRecovery(), new Date('2026-08-01T00:00:00.000Z'));
+    const target = state.tasks['T-G0-CORE']!;
+    const credential = {
+      taskId: target.taskId,
+      holder: target.holder!,
+      leaseId: target.leaseId!,
+      fencingVersion: target.leaseVersion,
+    };
+    transition(target, ['SELF_REVIEWING'], 'VERIFYING', {
+      command: 'trusted-root:task:verify',
+      credential,
+      evidence: target.selfReviewEvidence!,
+      currentCommit: implementationCommit,
+      currentTree: implementationTree,
+      at: new Date('2026-08-01T00:01:00.000Z'),
+    });
+    expect(target.state).toBe('VERIFYING');
+    expect(target.selfReviewEvidence).toMatchObject({ commit: implementationCommit, tree: implementationTree });
   });
 
   it('rejects a second active task and a conflicting lock owner', () => {
@@ -135,7 +248,7 @@ describe('explicit authoritative lease lifecycle', () => {
   });
 
   it('validates every recovery workspace binding in an isolated Git repository', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'chain-sieve-recovery-workspace-'));
+    const root = await realpath(await mkdtemp(join(tmpdir(), 'chain-sieve-recovery-workspace-')));
     temporary.push(root);
     execFileSync('git', ['init', '-b', 'task/t-g0-core'], { cwd: root });
     execFileSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: root });
@@ -152,13 +265,15 @@ describe('explicit authoritative lease lifecycle', () => {
     execFileSync('git', ['add', '.'], { cwd: root });
     execFileSync('git', ['commit', '-m', 'baseline'], { cwd: root });
     const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim();
     await writeFile(join(root, 'tracked.txt'), 'preserved dirty work\n');
     await writeFile(join(root, 'untracked.txt'), 'preserved untracked work\n');
     const hashes = await computeWorkingCopyHashes(root);
     const expected = {
       taskWorktree: root,
       expectedBranch: 'task/t-g0-core',
-      expectedBaseCommit: base,
+      expectedTaskHeadCommit: base,
+      expectedTaskHeadTree: tree,
       expectedTrackedWorkSha256: hashes.tracked,
       expectedUntrackedWorkSha256: hashes.untracked,
       contractPath,
@@ -168,13 +283,161 @@ describe('explicit authoritative lease lifecycle', () => {
     };
     await expect(validateRecoveryWorkspace(expected)).resolves.toMatchObject({ contractText, contextManifestText: contextText });
     await expect(validateRecoveryWorkspace({ ...expected, expectedBranch: 'task/wrong' })).rejects.toThrow('RECOVERY_BRANCH_MISMATCH');
-    await expect(validateRecoveryWorkspace({ ...expected, expectedBaseCommit: '1'.repeat(40) })).rejects.toThrow('RECOVERY_BASE_MISMATCH');
+    await expect(validateRecoveryWorkspace({ ...expected, expectedTaskHeadCommit: '1'.repeat(40) })).rejects.toThrow('RECOVERY_TASK_HEAD_MISMATCH');
+    await expect(validateRecoveryWorkspace({ ...expected, expectedTaskHeadTree: '1'.repeat(40) })).rejects.toThrow('RECOVERY_TASK_TREE_MISMATCH');
     await expect(validateRecoveryWorkspace({ ...expected, expectedTrackedWorkSha256: '2'.repeat(64) })).rejects.toThrow('RECOVERY_TRACKED_WORK_DRIFT');
     await expect(validateRecoveryWorkspace({ ...expected, expectedUntrackedWorkSha256: '3'.repeat(64) })).rejects.toThrow('RECOVERY_UNTRACKED_WORK_DRIFT');
     await expect(validateRecoveryWorkspace({ ...expected, expectedContractSha256: '4'.repeat(64) })).rejects.toThrow('RECOVERY_LEGACY_CONTRACT_DRIFT');
     await expect(validateRecoveryWorkspace({ ...expected, expectedContextManifestSha256: '5'.repeat(64) })).rejects.toThrow('RECOVERY_LEGACY_CONTEXT_DRIFT');
     await mkdir(join(root, 'nested'), { recursive: true });
     await expect(validateRecoveryWorkspace({ ...expected, taskWorktree: join(root, 'nested') })).rejects.toThrow('RECOVERY_WORKTREE_MISMATCH');
+  });
+
+  it('fails when task HEAD changes after recovery preflight', async () => {
+    const root = await realpath(await mkdtemp(join(tmpdir(), 'chain-sieve-recovery-race-')));
+    temporary.push(root);
+    execFileSync('git', ['init', '-b', 'task/t-g0-core'], { cwd: root });
+    execFileSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: root });
+    execFileSync('git', ['config', 'user.name', 'Lifecycle Test'], { cwd: root });
+    await mkdir(join(root, 'tasks/G0'), { recursive: true });
+    await mkdir(join(root, 'artifacts/context/T-G0-CORE'), { recursive: true });
+    const contractPath = 'tasks/G0/T-G0-CORE.contract.json';
+    const contextManifestPath = 'artifacts/context/T-G0-CORE/context-manifest.json';
+    const contractText = '{}\n';
+    const contextText = '{}\n';
+    await writeFile(join(root, contractPath), contractText);
+    await writeFile(join(root, contextManifestPath), contextText);
+    execFileSync('git', ['add', '.'], { cwd: root });
+    execFileSync('git', ['commit', '-m', 'preflight'], { cwd: root });
+    const expectedTaskHeadCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const expectedTaskHeadTree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim();
+    const hashes = await computeWorkingCopyHashes(root);
+    const expected = {
+      taskWorktree: root,
+      expectedBranch: 'task/t-g0-core',
+      expectedTaskHeadCommit,
+      expectedTaskHeadTree,
+      expectedTrackedWorkSha256: hashes.tracked,
+      expectedUntrackedWorkSha256: hashes.untracked,
+      contractPath,
+      expectedContractSha256: sha256(contractText),
+      contextManifestPath,
+      expectedContextManifestSha256: sha256(contextText),
+    };
+    await expect(validateRecoveryWorkspace(expected)).resolves.toBeDefined();
+    await writeFile(join(root, 'changed.txt'), 'changed after preflight\n');
+    execFileSync('git', ['add', '.'], { cwd: root });
+    execFileSync('git', ['commit', '-m', 'changed HEAD'], { cwd: root });
+    await expect(validateRecoveryWorkspace(expected)).rejects.toThrow('RECOVERY_TASK_HEAD_MISMATCH');
+  });
+
+  it('binds CLI recovery TTL into the request, immutable receipt, expiry, and idempotent result', async () => {
+    const fixtureRoot = await realpath(await mkdtemp(join(tmpdir(), 'chain-sieve-recovery-cli-')));
+    temporary.push(fixtureRoot);
+    const trustedRoot = join(fixtureRoot, 'trusted');
+    const sourceRoot = process.cwd();
+    execFileSync('git', ['clone', '--quiet', '--no-local', sourceRoot, trustedRoot]);
+    await writeFile(join(trustedRoot, '.git/info/exclude'), 'node_modules\n', { flag: 'a' });
+    await symlink(join(sourceRoot, 'node_modules'), join(trustedRoot, 'node_modules'));
+    execFileSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: trustedRoot });
+    execFileSync('git', ['config', 'user.name', 'Lifecycle Test'], { cwd: trustedRoot });
+    const lifecycleBase = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: trustedRoot, encoding: 'utf8' }).trim();
+    const taskWorktree = join(fixtureRoot, 'task');
+    execFileSync('git', ['branch', 'task/t-g0-core', lifecycleBase], { cwd: trustedRoot });
+    execFileSync('git', ['worktree', 'add', '--quiet', taskWorktree, 'task/t-g0-core'], { cwd: trustedRoot });
+    await writeFile(join(taskWorktree, 'post-commit-recovery-fixture.txt'), 'implementation commit\n');
+    execFileSync('git', ['add', 'post-commit-recovery-fixture.txt'], { cwd: taskWorktree });
+    execFileSync('git', ['commit', '--quiet', '-m', 'implementation fixture'], { cwd: taskWorktree });
+    const taskHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: taskWorktree, encoding: 'utf8' }).trim();
+    const taskTree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: taskWorktree, encoding: 'utf8' }).trim();
+    const contractText = await readFile(join(taskWorktree, 'tasks/G0/T-G0-CORE.contract.json'), 'utf8');
+    const contextText = await readFile(join(taskWorktree, 'artifacts/context/T-G0-CORE/context-manifest.json'), 'utf8');
+    const evidence = {
+      path: `reviews/T-G0-CORE/${taskHead}.review.json`,
+      sha256: '7'.repeat(64),
+      status: 'CURRENT' as const,
+      commit: taskHead,
+      tree: taskTree,
+    };
+    const state: LifecycleDocument = {
+      schemaVersion: '2.0.0',
+      tasks: {
+        'T-G0-CORE': {
+          taskId: 'T-G0-CORE',
+          state: 'SELF_REVIEWING',
+          leaseVersion: 1,
+          holder: 'zcode-orchestrator',
+          leaseId: 'T-G0-CORE:1:expired',
+          acquiredAt: '2026-07-30T00:00:00.000Z',
+          expiresAt: '2026-07-30T00:15:00.000Z',
+          leaseState: 'ACTIVE',
+          baseCommit: lifecycleBase,
+          branch: 'task/t-g0-core',
+          worktree: taskWorktree,
+          commit: taskHead,
+          tree: taskTree,
+          implementationEvidence: { ...evidence, path: `git:${taskHead}` },
+          selfReviewEvidence: evidence,
+          history: [],
+        },
+      },
+    };
+    await mkdir(runtimeRoot(trustedRoot), { recursive: true });
+    await writeFile(join(runtimeRoot(trustedRoot), 'task-state.json'), `${JSON.stringify(state, null, 2)}\n`);
+    const emptyHash = sha256('');
+    const args = [
+      join(sourceRoot, 'node_modules/tsx/dist/cli.mjs'),
+      join(sourceRoot, 'tools/agent/lifecycle.ts'),
+      'recover', '--', 'T-G0-CORE',
+      '--expected-expired-lease-id', 'T-G0-CORE:1:expired',
+      '--expected-fencing-version', '1',
+      '--holder', 'zcode-orchestrator',
+      '--expected-task-state', 'SELF_REVIEWING',
+      '--expected-task-branch', 'task/t-g0-core',
+      '--expected-task-worktree', taskWorktree,
+      '--expected-lifecycle-base-commit', lifecycleBase,
+      '--expected-task-head-commit', taskHead,
+      '--expected-task-head-tree', taskTree,
+      '--expected-tracked-work-sha256', emptyHash,
+      '--expected-untracked-work-sha256', emptyHash,
+      '--expected-legacy-contract-sha256', sha256(contractText),
+      '--expected-legacy-context-sha256', sha256(contextText),
+      '--ttl-minutes', '120',
+    ];
+    const first = JSON.parse(execFileSync(process.execPath, args, { cwd: trustedRoot, encoding: 'utf8' })) as {
+      idempotentRequest: string;
+      ttlMinutes: number;
+      expiresAt: string;
+      lease: { leaseId: string; expiresAt: string };
+      receipt: EvidenceReference;
+    };
+    const second = JSON.parse(execFileSync(process.execPath, args, { cwd: trustedRoot, encoding: 'utf8' })) as typeof first;
+    expect(second).toEqual(first);
+    expect(first.ttlMinutes).toBe(120);
+    expect(Date.parse(first.expiresAt) - Date.parse(JSON.parse(await readFile(join(runtimeRoot(trustedRoot), first.receipt.path), 'utf8')).operationAt as string)).toBe(120 * 60_000);
+    const receiptDocument = JSON.parse(await readFile(join(runtimeRoot(trustedRoot), first.receipt.path), 'utf8')) as Record<string, unknown>;
+    expect(receiptDocument).toMatchObject({
+      requestSha256: first.idempotentRequest,
+      ttlMinutes: 120,
+      ttlMilliseconds: 120 * 60_000,
+      expiresAt: first.lease.expiresAt,
+    });
+    const recoveredState = await readFile(join(runtimeRoot(trustedRoot), 'task-state.json'), 'utf8');
+    const runner = new SystemCommandRunner();
+    await executeOrchestration(trustedRoot, runner, {
+      dryRun: true,
+      provider: { id: 'zcode' } as AgentProvider,
+    });
+    await executeOrchestration(trustedRoot, runner, {
+      dryRun: true,
+      provider: { id: 'antigravity' } as AgentProvider,
+    });
+    expect(await readFile(join(runtimeRoot(trustedRoot), 'task-state.json'), 'utf8')).toBe(recoveredState);
+    const conflictingArgs = args.map((value, index) => args[index - 1] === '--ttl-minutes' ? '60' : value);
+    const conflicting = spawnSync(process.execPath, conflictingArgs, { cwd: trustedRoot, encoding: 'utf8' });
+    expect(conflicting.status).toBe(1);
+    expect(conflicting.stderr).toContain('RECOVERY_REQUEST_CONFLICT');
+    expect(await readdir(join(runtimeRoot(trustedRoot), 'recoveries/T-G0-CORE'))).toHaveLength(1);
   });
 
   it('persists a recovery-capable baseline with explicit trusted verifier and policy versions', async () => {

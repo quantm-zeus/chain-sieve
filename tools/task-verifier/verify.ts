@@ -23,7 +23,7 @@ import {
   assertConformanceTestQuality,
   readConformanceManifest,
 } from './conformance.js';
-import { readLifecycleBinding, validateVerificationBaseline } from '../task-runner/authority.js';
+import { readLifecycleBinding, readVerificationBaseline, validateVerificationBaseline } from '../task-runner/authority.js';
 import { validateLaunchReceipt } from '../agent/lib/runtime.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
@@ -184,7 +184,36 @@ export const verifyTask = async (
     !target.verificationBaseline
   )
     throw new Error('VERIFICATION_BINDING_MISSING');
-  const receiptExpiry = target.expiresAt;
+  const reviewUsesCurrentLease =
+    review.leaseId === target.leaseId && review.leaseFencingVersion === target.leaseVersion;
+  const reviewUsesRecoveredLease =
+    target.recovery?.previousLeaseId === review.leaseId &&
+    target.recovery.previousFencingVersion === review.leaseFencingVersion &&
+    target.recovery.resultingLeaseId === target.leaseId &&
+    target.recovery.resultingFencingVersion === target.leaseVersion;
+  if (!reviewUsesCurrentLease && !reviewUsesRecoveredLease)
+    throw new Error('SELF_REVIEW_LEASE_BINDING_MISMATCH');
+  const reviewBaselineEvidence =
+    review.verificationBaselineSha256 === target.verificationBaseline.sha256
+      ? target.verificationBaseline
+      : reviewUsesRecoveredLease &&
+          target.recovery?.previousVerificationBaseline?.sha256 === review.verificationBaselineSha256 &&
+          target.recovery.resultingVerificationBaseline?.sha256 === target.verificationBaseline.sha256
+        ? target.recovery.previousVerificationBaseline
+        : undefined;
+  if (!reviewBaselineEvidence) throw new Error('SELF_REVIEW_VERIFICATION_BASELINE_UNAUTHORIZED');
+  const reviewBaseline =
+    reviewBaselineEvidence.sha256 === target.verificationBaseline.sha256
+      ? baseline
+      : await readVerificationBaseline(trustedRoot, {
+          ...target,
+          verificationBaseline: reviewBaselineEvidence,
+        });
+  if (!reviewBaseline) throw new Error('SELF_REVIEW_VERIFICATION_BASELINE_MISSING');
+  const receiptExpiry = reviewUsesCurrentLease
+    ? target.expiresAt
+    : target.recovery?.previousExpiresAt;
+  if (!receiptExpiry) throw new Error('SELF_REVIEW_LEASE_EXPIRY_BINDING_MISSING');
   const provider = review.launchReceiptId.startsWith('antigravity-')
     ? 'antigravity'
     : review.launchReceiptId.startsWith('zcode-')
@@ -195,8 +224,8 @@ export const verifyTask = async (
   await validateLaunchReceipt(trustedRoot, new SystemCommandRunner(), {
     taskId,
     clusterId: task.cluster,
-    leaseId: target.leaseId,
-    fencingVersion: target.leaseVersion,
+    leaseId: review.leaseId,
+    fencingVersion: review.leaseFencingVersion,
     contextManifestSha256: lifecycle.contextManifestSha256,
     ...(lifecycle.conformanceManifestSha256
       ? { conformanceManifestSha256: lifecycle.conformanceManifestSha256 }
@@ -213,8 +242,8 @@ export const verifyTask = async (
     baseCommit: base,
     baseTree: git(['rev-parse', `${base}^{tree}`], targetWorktree),
     release: {
-      ...baseline.releaseBaseline,
-      tagObject: git(['rev-parse', `refs/tags/${baseline.releaseBaseline.tag}`], trustedRoot),
+      ...reviewBaseline.releaseBaseline,
+      tagObject: git(['rev-parse', `refs/tags/${reviewBaseline.releaseBaseline.tag}`], trustedRoot),
     },
     integrationTarget: 'main',
     contextManifestPath: lifecycle.contextManifestPath,
@@ -225,11 +254,11 @@ export const verifyTask = async (
     contractSha256: lifecycle.contractSha256,
     lifecycleBindingPath: target.lifecycleBinding.path,
     lifecycleBindingSha256: target.lifecycleBinding.sha256,
-    verificationBaselinePath: target.verificationBaseline.path,
-    verificationBaselineSha256: target.verificationBaseline.sha256,
+    verificationBaselinePath: reviewBaselineEvidence.path,
+    verificationBaselineSha256: reviewBaselineEvidence.sha256,
     pathLocks: task.exclusiveLocks,
-    controlPlaneCommit: baseline.controlPlaneCommit,
-    controlPlaneTree: baseline.controlPlaneTree,
+    controlPlaneCommit: reviewBaseline.controlPlaneCommit,
+    controlPlaneTree: reviewBaseline.controlPlaneTree,
     requireProviderNeutral: true,
   });
   const credential = currentLeaseCredential(target);

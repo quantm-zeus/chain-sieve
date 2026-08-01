@@ -190,14 +190,23 @@ const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskS
     throw new Error('SELF_REVIEW_CHANGED_FILES_MISMATCH');
   if (!sameJson(review.dependencyInterfaceHashes, result.bindings.dependencyInterfaceHashes))
     throw new Error('SELF_REVIEW_DEPENDENCY_INTERFACES_MISMATCH');
-  if (
+  const currentLeaseMismatch =
     review.leaseId !== result.bindings.leaseId ||
-    review.leaseFencingVersion !== result.bindings.leaseFencingVersion
-  )
+    review.leaseFencingVersion !== result.bindings.leaseFencingVersion;
+  const recoveredLeaseBinding =
+    state?.recovery?.previousLeaseId === review.leaseId &&
+    state.recovery.previousFencingVersion === review.leaseFencingVersion &&
+    state.recovery.resultingLeaseId === result.bindings.leaseId &&
+    state.recovery.resultingFencingVersion === result.bindings.leaseFencingVersion;
+  if (currentLeaseMismatch && !recoveredLeaseBinding)
     throw new Error('SELF_REVIEW_LEASE_BINDING_MISMATCH');
+  const recoveredBaselineBinding =
+    recoveredLeaseBinding &&
+    state?.recovery?.previousVerificationBaseline?.sha256 === review.verificationBaselineSha256 &&
+    state.recovery.resultingVerificationBaseline?.sha256 === result.bindings.verificationBaselineSha256;
   if (
     review.lifecycleBindingSha256 !== result.bindings.lifecycleBindingSha256 ||
-    review.verificationBaselineSha256 !== result.bindings.verificationBaselineSha256 ||
+    (review.verificationBaselineSha256 !== result.bindings.verificationBaselineSha256 && !recoveredBaselineBinding) ||
     review.launchReceiptId !== result.bindings.launchReceiptId ||
     review.launchReceiptSha256 !== result.bindings.launchReceiptSha256
   )

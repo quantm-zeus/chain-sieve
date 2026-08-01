@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { validateTaskAttestation } from '../../tools/task-verifier/attestation.js';
 import { verifyTask } from '../../tools/task-verifier/verify.js';
+import { sha256 } from '../../tools/prd-compiler/compiler.js';
+import { runtimeRoot } from '../../tools/task-runner/state.js';
 import { createAttestationFixture, type AttestationFixture } from './attestation-fixture.js';
 
 describe('proof-carrying task verification', () => {
@@ -11,6 +14,54 @@ describe('proof-carrying task verification', () => {
 
   it('accepts complete independently derived evidence', async () => {
     await expect(validateTaskAttestation(fixture.task, fixture.result, { cwd: fixture.root, currentHeadRequired: true, state: fixture.state })).resolves.toBeDefined();
+  });
+
+  it('accepts unchanged self-review evidence through an exact recovered-lease and baseline bridge', async () => {
+    const previousBaseline = fixture.state.verificationBaseline!;
+    const baselineText = `${JSON.stringify({
+      schemaVersion: '1.1.0',
+      taskId: fixture.task.id,
+      verifierVersion: fixture.result.bindings.verifierVersion,
+      verificationPolicyVersion: fixture.result.bindings.verificationPolicyVersion,
+      recoveryBaseline: true,
+    }, null, 2)}\n`;
+    const baselinePath = 'verification-baseline-recovered.json';
+    const baseline = { path: baselinePath, sha256: sha256(baselineText), status: 'CURRENT' as const };
+    await writeFile(join(runtimeRoot(fixture.root), baselinePath), baselineText);
+    const recoveredLeaseId = `${fixture.task.id}:2:recovery:fixture`;
+    const recoveredState = {
+      ...fixture.state,
+      leaseVersion: 2,
+      leaseId: recoveredLeaseId,
+      verificationBaseline: baseline,
+      recovery: {
+        requestSha256: '9'.repeat(64),
+        receipt: { path: 'recovery.json', sha256: '8'.repeat(64), status: 'CURRENT' as const },
+        ttlMinutes: 120,
+        previousLeaseId: fixture.result.bindings.leaseId,
+        previousFencingVersion: fixture.result.bindings.leaseFencingVersion,
+        previousExpiresAt: '2026-07-21T01:00:00.000Z',
+        resultingLeaseId: recoveredLeaseId,
+        resultingFencingVersion: 2,
+        resultingExpiresAt: '2026-07-21T03:00:00.000Z',
+        previousVerificationBaseline: previousBaseline,
+        resultingVerificationBaseline: baseline,
+      },
+    };
+    const recoveredResult = {
+      ...fixture.result,
+      bindings: {
+        ...fixture.result.bindings,
+        leaseId: recoveredLeaseId,
+        leaseFencingVersion: 2,
+        verificationBaselineSha256: baseline.sha256,
+      },
+    };
+    await expect(validateTaskAttestation(fixture.task, recoveredResult, {
+      cwd: fixture.root,
+      currentHeadRequired: true,
+      state: recoveredState,
+    })).resolves.toBeDefined();
   });
 
   it('rejects a forged PASS with empty evidence', async () => {
@@ -71,7 +122,7 @@ describe('proof-carrying task verification', () => {
 describe('live task verification', () => {
   it('rejects task completion without a live lease, task branch and atomic commit', async () => {
     await expect(verifyTask('T-G0-CORE', 'forged', 1)).rejects.toThrow(
-      /NO_ACTIVE_LEASE|WRONG_LEASE_OWNER|LEASE_EXPIRED/,
+      /NO_ACTIVE_LEASE|WRONG_LEASE_OWNER|LEASE_EXPIRED|STALE_LEASE_VERSION/,
     );
   });
 });

@@ -84,21 +84,35 @@ export const computeWorkingCopyHashes = async (cwd: string): Promise<{ tracked: 
 export const validateRecoveryWorkspace = async (options: {
   taskWorktree: string;
   expectedBranch: string;
-  expectedBaseCommit: string;
+  expectedTaskHeadCommit: string;
+  expectedTaskHeadTree: string;
   expectedTrackedWorkSha256: string;
   expectedUntrackedWorkSha256: string;
   contractPath: string;
   expectedContractSha256: string;
   contextManifestPath: string;
   expectedContextManifestSha256: string;
-}): Promise<{ contractText: string; contextManifestText: string }> => {
+}): Promise<{
+  taskWorktree: string;
+  taskHeadCommit: string;
+  taskHeadTree: string;
+  trackedWorkSha256: string;
+  untrackedWorkSha256: string;
+  contractText: string;
+  contextManifestText: string;
+}> => {
   const worktree = await realpath(resolve(options.taskWorktree));
+  if (worktree !== resolve(options.taskWorktree))
+    throw new Error('RECOVERY_WORKTREE_NOT_CANONICAL');
   if ((await realpath(resolve(git(worktree, ['rev-parse', '--show-toplevel'])))) !== worktree)
     throw new Error('RECOVERY_WORKTREE_MISMATCH');
   if (git(worktree, ['branch', '--show-current']) !== options.expectedBranch)
     throw new Error('RECOVERY_BRANCH_MISMATCH');
-  if (git(worktree, ['rev-parse', 'HEAD']) !== options.expectedBaseCommit)
-    throw new Error('RECOVERY_BASE_MISMATCH');
+  const [taskHeadCommit, taskHeadTree] = git(worktree, ['rev-parse', 'HEAD', 'HEAD^{tree}']).split('\n');
+  if (taskHeadCommit !== options.expectedTaskHeadCommit)
+    throw new Error('RECOVERY_TASK_HEAD_MISMATCH');
+  if (taskHeadTree !== options.expectedTaskHeadTree)
+    throw new Error('RECOVERY_TASK_TREE_MISMATCH');
   const contractText = (await readTrustedFile(worktree, options.contractPath, 'RECOVERY_CONTRACT')).toString('utf8');
   if (sha256(contractText) !== options.expectedContractSha256)
     throw new Error('RECOVERY_LEGACY_CONTRACT_DRIFT');
@@ -110,7 +124,15 @@ export const validateRecoveryWorkspace = async (options: {
     throw new Error('RECOVERY_TRACKED_WORK_DRIFT');
   if (hashes.untracked !== options.expectedUntrackedWorkSha256)
     throw new Error('RECOVERY_UNTRACKED_WORK_DRIFT');
-  return { contractText, contextManifestText };
+  return {
+    taskWorktree: worktree,
+    taskHeadCommit,
+    taskHeadTree,
+    trackedWorkSha256: hashes.tracked,
+    untrackedWorkSha256: hashes.untracked,
+    contractText,
+    contextManifestText,
+  };
 };
 
 const fileHash = async (root: string, path: string): Promise<string> =>
