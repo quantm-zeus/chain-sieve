@@ -247,6 +247,7 @@ export const runLifecycleHarness = async (): Promise<{
             schemaVersion: '1.0.0', taskId: task.id, mechanism: 'ACTUAL_MUTATION', target,
             operator: 'ARITHMETIC_PLUS_TO_MINUS', testPath,
             expectedFailurePattern: 'expected -1 to be 1',
+            affectedExport: task.id === 'T-G0-DISC' ? 'lifecycleHarnessFixture' : 'lifecycleFailureFixture', originalText: 'value + 1',
           }, null, 2)}\n`,
         );
       }

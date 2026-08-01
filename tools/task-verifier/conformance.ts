@@ -25,7 +25,7 @@ type MutationEvidenceDeclaration =
   | {
       schemaVersion: '1.0.0'; taskId: string; mechanism: 'ACTUAL_MUTATION';
       target: string; operator: 'ARITHMETIC_PLUS_TO_MINUS'; testPath: string;
-      expectedFailurePattern: string;
+      expectedFailurePattern: string; affectedExport: string; originalText: string;
     }
   | {
       schemaVersion: '1.0.0'; taskId: string; mechanism: 'SEEDED_FAULT';
@@ -42,6 +42,19 @@ export interface ExecutableMutationEvidence {
   command: string;
   exitCode: number;
   outputSha256: string;
+  controlCommand?: string;
+  controlExitCode?: number;
+  controlOutputSha256?: string;
+  mutantCommand?: string;
+  mutantExitCode?: number;
+  mutantOutputSha256?: string;
+  originalSourceSha256?: string;
+  mutatedSourceSha256?: string;
+  originalNodeKind?: string;
+  originalText?: string;
+  mutatedText?: string;
+  targetSourceRange?: { start: number; end: number };
+  affectedProductionExport?: string;
   faultId?: string;
   activationEvidenceSha256?: string;
   assertionEvidenceSha256?: string;
@@ -242,7 +255,9 @@ const runActualMutation = async (
 ): Promise<ExecutableMutationEvidence> => {
   if (!declaration.expectedFailurePattern)
     throw new Error('CONFORMANCE_MUTATION_EXPECTED_FAILURE_MISSING');
-  const isolated = await mkdtemp(join(tmpdir(), 'ciag-mutant-'));
+  if (!declaration.affectedExport || !declaration.originalText)
+    throw new Error('CONFORMANCE_MUTATION_TARGET_BINDING_MISSING');
+  const isolated = await mkdtemp(join(tmpdir(), 'ciag-conformance-execution-'));
   try {
     await cp(cwd, isolated, {
       recursive: true,
@@ -251,13 +266,101 @@ const runActualMutation = async (
     await symlink(join(trustedControlPlaneRoot, 'node_modules'), join(isolated, 'node_modules'), 'dir');
     const target = join(isolated, declaration.target);
     const original = await readFile(target, 'utf8');
-    const mutated = original.replaceAll(' + ', ' - ');
+    const originalSha256 = sha256(original);
+    const sourceFile = ts.createSourceFile(target, original, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const exportedAncestor = (node: ts.Node): string | undefined => {
+      let current: ts.Node | undefined = node;
+      while (current) {
+        if (ts.isFunctionDeclaration(current) && current.name && current.modifiers?.some((item) => item.kind === ts.SyntaxKind.ExportKeyword))
+          return current.name.text;
+        if (ts.isVariableDeclaration(current) && ts.isIdentifier(current.name)) {
+          const statement = current.parent.parent;
+          if (ts.isVariableStatement(statement) && statement.modifiers?.some((item) => item.kind === ts.SyntaxKind.ExportKeyword))
+            return current.name.text;
+        }
+        current = current.parent;
+      }
+      return undefined;
+    };
+    const candidates: ts.BinaryExpression[] = [];
+    const visit = (node: ts.Node): void => {
+      if (
+        ts.isBinaryExpression(node) &&
+        node.operatorToken.kind === ts.SyntaxKind.PlusToken &&
+        node.getText(sourceFile) === declaration.originalText &&
+        exportedAncestor(node) === declaration.affectedExport
+      ) candidates.push(node);
+      node.forEachChild(visit);
+    };
+    visit(sourceFile);
+    if (candidates.length === 0)
+      throw new Error(`CONFORMANCE_MUTATION_TARGET_UNREACHABLE:${declaration.target}:${declaration.affectedExport}`);
+    if (candidates.length !== 1)
+      throw new Error(`CONFORMANCE_MUTATION_TARGET_AMBIGUOUS:${declaration.target}:${declaration.affectedExport}`);
+    const mutationNode = candidates[0]!;
+    const operatorStart = mutationNode.operatorToken.getStart(sourceFile);
+    const operatorEnd = mutationNode.operatorToken.getEnd();
+    const mutated = `${original.slice(0, operatorStart)}-${original.slice(operatorEnd)}`;
+    const mutatedText = `${mutationNode.left.getText(sourceFile)} - ${mutationNode.right.getText(sourceFile)}`;
     if (mutated === original) throw new Error(`CONFORMANCE_MUTATION_OPERATOR_NOT_APPLICABLE:${declaration.target}`);
-    await writeFile(target, mutated);
+
+    const testSource = await readFile(join(isolated, declaration.testPath), 'utf8');
+    const testFile = ts.createSourceFile(declaration.testPath, testSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const importedNames = new Set<string>();
+    for (const statement of testFile.statements) {
+      if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+      const resolved = ts.resolveModuleName(statement.moduleSpecifier.text, join(isolated, declaration.testPath), {
+        moduleResolution: ts.ModuleResolutionKind.Bundler,
+        module: ts.ModuleKind.ESNext,
+        allowImportingTsExtensions: true,
+      }, ts.sys).resolvedModule?.resolvedFileName;
+      if (!resolved || relative(isolated, resolved).replaceAll('\\', '/') !== declaration.target) continue;
+      const bindings = statement.importClause?.namedBindings;
+      if (bindings && ts.isNamedImports(bindings)) for (const element of bindings.elements) {
+        const imported = element.propertyName?.text ?? element.name.text;
+        if (imported === declaration.affectedExport) importedNames.add(element.name.text);
+      }
+      if (statement.importClause?.name && declaration.affectedExport === 'default')
+        importedNames.add(statement.importClause.name.text);
+    }
+    let outputAssertionObserved = false;
+    const productionVariables = new Set<string>();
+    const isAffectedCall = (node: ts.Node): boolean =>
+      ts.isCallExpression(node) && Boolean(rootIdentifier(node.expression) && importedNames.has(rootIdentifier(node.expression)!.text));
+    const collectProductionVariables = (node: ts.Node): void => {
+      if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer && contains(node.initializer, isAffectedCall))
+        productionVariables.add(node.name.text);
+      node.forEachChild(collectProductionVariables);
+    };
+    collectProductionVariables(testFile);
+    const findOutputAssertion = (node: ts.Node): void => {
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'expect') {
+        const argument = node.arguments[0];
+        if (argument && contains(argument, (candidate) => isAffectedCall(candidate) || (ts.isIdentifier(candidate) && productionVariables.has(candidate.text))))
+          outputAssertionObserved = true;
+      }
+      node.forEachChild(findOutputAssertion);
+    };
+    findOutputAssertion(testFile);
+    if (!outputAssertionObserved)
+      throw new Error(`CONFORMANCE_MUTATION_NOT_BEHAVIORALLY_OBSERVED:${declaration.affectedExport}`);
+
     const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
-    const result = runTrustedVitest(runtime, isolated, [declaration.testPath]);
-    if (result.exitCode === 0) throw new Error(`CONFORMANCE_MUTANT_SURVIVED:${declaration.target}`);
-    if (!result.output.includes(declaration.expectedFailurePattern))
+    const control = runTrustedVitest(runtime, isolated, [declaration.testPath]);
+    if (control.exitCode !== 0)
+      throw new Error(`CONFORMANCE_MUTATION_CONTROL_FAILED:${declaration.testPath}`);
+    await writeFile(target, mutated);
+    if (sha256(await readFile(target)) !== sha256(mutated))
+      throw new Error(`CONFORMANCE_MUTATION_MATERIALIZATION_MISMATCH:${declaration.target}`);
+    const mutant = runTrustedVitest(runtime, isolated, [declaration.testPath]);
+    await writeFile(target, original);
+    if (sha256(await readFile(target)) !== originalSha256)
+      throw new Error(`CONFORMANCE_MUTATION_CONTROL_NOT_RESTORED:${declaration.target}`);
+    if (control.command !== mutant.command)
+      throw new Error('MUTATION_CONTROL_ENVIRONMENT_MISMATCH');
+    if (mutant.exitCode === 0)
+      throw new Error(`CONFORMANCE_MUTATION_NOT_BEHAVIORALLY_OBSERVED:${declaration.target}`);
+    if (!mutant.output.includes(declaration.expectedFailurePattern))
       throw new Error(`CONFORMANCE_MUTANT_FAILED_FOR_WRONG_REASON:${declaration.target}`);
     return {
       mechanism: 'ACTUAL_MUTATION',
@@ -266,9 +369,22 @@ const runActualMutation = async (
       declarationSha256,
       mutantIdentity: sha256(mutated),
       operator: declaration.operator,
-      command: result.command,
-      exitCode: result.exitCode,
-      outputSha256: result.outputSha256,
+      command: mutant.command,
+      exitCode: mutant.exitCode,
+      outputSha256: mutant.outputSha256,
+      controlCommand: control.command,
+      controlExitCode: control.exitCode,
+      controlOutputSha256: control.outputSha256,
+      mutantCommand: mutant.command,
+      mutantExitCode: mutant.exitCode,
+      mutantOutputSha256: mutant.outputSha256,
+      originalSourceSha256: originalSha256,
+      mutatedSourceSha256: sha256(mutated),
+      originalNodeKind: ts.SyntaxKind[mutationNode.kind],
+      originalText: mutationNode.getText(sourceFile),
+      mutatedText,
+      targetSourceRange: { start: mutationNode.getStart(sourceFile), end: mutationNode.getEnd() },
+      affectedProductionExport: declaration.affectedExport,
     };
   } finally {
     await rm(isolated, { recursive: true, force: true });

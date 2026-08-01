@@ -14,6 +14,7 @@ const fixture = async (
   source: string,
   qualityGate: 'NEGATIVE_CASE' | 'SEEDED_FAULT_OR_PROPERTY' = 'SEEDED_FAULT_OR_PROPERTY',
   evidence?: Record<string, unknown>,
+  productionSource = "export const executeThing = (value: number, faultId?: 'FAULT_ADD_TWO'): number => { if (value < 0) throw new Error('invalid'); return faultId === 'FAULT_ADD_TWO' ? value + 2 : value + 1; }; export const mutationFault = (value: number): number => executeThing(value); export const seededFault = (value: number): number => executeThing(value); export const acquireLifecycleMutationLock = (value: number): number => executeThing(value); export type ProductionType = { value: number };\n",
 ) => {
   const root = mkdtempSync(join(tmpdir(), 'conformance-quality-'));
   const manifestPath = 'artifacts/conformance/T-G0-X/manifest.json';
@@ -27,7 +28,7 @@ const fixture = async (
   await mkdir(join(root, 'artifacts/conformance/T-G0-X'), { recursive: true });
   await mkdir(join(root, 'tests/task-facets'), { recursive: true });
   await mkdir(join(root, 'packages/x'), { recursive: true });
-  await writeFile(join(root, 'packages/x/index.ts'), "export const executeThing = (value: number, faultId?: 'FAULT_ADD_TWO'): number => { if (value < 0) throw new Error('invalid'); return faultId === 'FAULT_ADD_TWO' ? value + 2 : value + 1; }; export const mutationFault = (value: number): number => executeThing(value); export const seededFault = (value: number): number => executeThing(value); export const acquireLifecycleMutationLock = (value: number): number => executeThing(value); export type ProductionType = { value: number };\n");
+  await writeFile(join(root, 'packages/x/index.ts'), productionSource);
   await writeFile(join(root, manifestPath), manifest);
   await Promise.all(tests.map((path) => writeFile(join(root, path), source)));
   if (evidence)
@@ -35,12 +36,18 @@ const fixture = async (
   return { root, task };
 };
 
-const actualMutation = (expectedFailurePattern: string) => ({
+const actualMutation = (
+  expectedFailurePattern: string,
+  affectedExport = 'executeThing',
+  originalText = 'value + 1',
+) => ({
   mechanism: 'ACTUAL_MUTATION',
   target: 'packages/x/index.ts',
   operator: 'ARITHMETIC_PLUS_TO_MINUS',
   testPath: 'tests/task-facets/T-G0-X.spec.ts',
   expectedFailurePattern,
+  affectedExport,
+  originalText,
 });
 
 describe('immutable conformance test-quality gate', () => {
@@ -57,6 +64,60 @@ describe('immutable conformance test-quality gate', () => {
     expect(evidence).toHaveLength(1);
     expect(evidence[0]).toMatchObject({ mechanism: 'ACTUAL_MUTATION', operator: 'ARITHMETIC_PLUS_TO_MINUS' });
     expect(evidence[0]!.exitCode).not.toBe(0);
+    expect(evidence[0]).toMatchObject({
+      controlExitCode: 0,
+      affectedProductionExport: 'executeThing',
+      originalNodeKind: 'BinaryExpression',
+      originalText: 'value + 1',
+      mutatedText: 'value - 1',
+    });
+    expect(evidence[0]!.originalSourceSha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(evidence[0]!.mutatedSourceSha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(evidence[0]!.targetSourceRange).toMatchObject({ start: expect.any(Number), end: expect.any(Number) });
+  });
+
+  it('rejects a location-forged mutation kill that does not reach production output', async () => {
+    const source = "import { expect, it } from 'vitest'; import { executeThing } from '../../packages/x/index.js'; it('forges a kill from the copied location',()=>{ if (import.meta.url.includes('ciag-mutant-')) throw new Error('LOCATION_ONLY_KILL'); expect(executeThing(3)).toBe(6); expect(()=>executeThing(-1)).toThrow(); });\n";
+    const production = "export const executeThing = (value: number): number => { const unused = 1 + 1; void unused; if (value < 0) throw new Error('invalid'); return value * 2; };\n";
+    const { root, task } = await fixture(
+      source,
+      'SEEDED_FAULT_OR_PROPERTY',
+      actualMutation('LOCATION_ONLY_KILL', 'executeThing', '1 + 1'),
+      production,
+    );
+    await expect(assertConformanceTestQuality(task, root)).rejects.toThrow(
+      'CONFORMANCE_MUTATION_NOT_BEHAVIORALLY_OBSERVED',
+    );
+  });
+
+  it.each([
+    ['process cwd', "if (process.cwd().includes('ciag-mutant-')) throw new Error('LOCATION_ONLY_KILL');"],
+    ['environment variable', "if (process.env.CIAG_MUTANT_ACTIVE) throw new Error('ENVIRONMENT_ONLY_KILL');"],
+    ['configuration file', "if (import.meta.url.endsWith('vitest.config.mutant.ts')) throw new Error('CONFIG_ONLY_KILL');"],
+  ])('rejects a %s-only mutation detector', async (_name, detector) => {
+    const source = `import { expect, it } from 'vitest'; import { executeThing } from '../../packages/x/index.js'; it('cannot detect mutation environment',()=>{ ${detector} expect(executeThing(3)).toBe(6); expect(()=>executeThing(-1)).toThrow(); });\n`;
+    const production = "export const executeThing = (value: number): number => { const unused = value + 1; void unused; if (value < 0) throw new Error('invalid'); return value * 2; };\n";
+    const { root, task } = await fixture(source, 'SEEDED_FAULT_OR_PROPERTY', actualMutation('ONLY_KILL'), production);
+    await expect(assertConformanceTestQuality(task, root)).rejects.toThrow(
+      'CONFORMANCE_MUTATION_NOT_BEHAVIORALLY_OBSERVED',
+    );
+  });
+
+  it('rejects an unreachable mutated expression', async () => {
+    const source = "import { expect, it } from 'vitest'; import { executeThing } from '../../packages/x/index.js'; it('observes production',()=>{ expect(executeThing(3)).toBe(6); expect(()=>executeThing(-1)).toThrow(); });\n";
+    const production = "export const unreachable = (value: number): number => value + 1; export const executeThing = (value: number): number => { if (value < 0) throw new Error('invalid'); return value * 2; };\n";
+    const { root, task } = await fixture(source, 'SEEDED_FAULT_OR_PROPERTY', actualMutation('failure', 'executeThing'), production);
+    await expect(assertConformanceTestQuality(task, root)).rejects.toThrow(
+      'CONFORMANCE_MUTATION_TARGET_UNREACHABLE',
+    );
+  });
+
+  it('rejects a startup failure unrelated to a production assertion', async () => {
+    const source = "import { expect, it } from 'vitest'; import { executeThing } from '../../packages/x/index.js'; throw new Error('UNRELATED_STARTUP'); it('observes production',()=>{ expect(executeThing(1)).toBe(2); expect(()=>executeThing(-1)).toThrow(); });\n";
+    const { root, task } = await fixture(source, 'SEEDED_FAULT_OR_PROPERTY', actualMutation('UNRELATED_STARTUP'));
+    await expect(assertConformanceTestQuality(task, root)).rejects.toThrow(
+      'CONFORMANCE_MUTATION_CONTROL_FAILED',
+    );
   });
 
   it('protects immutable oracle paths from task commits', async () => {
