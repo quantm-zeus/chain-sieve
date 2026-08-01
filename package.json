@@ -30,6 +30,7 @@
     "task:acquire": "tsx tools/task-runner/cli.ts acquire",
     "task:begin": "tsx tools/task-runner/cli.ts begin",
     "task:self-review": "tsx tools/task-runner/cli.ts self-review",
+    "task:self-review-refresh": "tsx tools/task-runner/cli.ts self-review-refresh",
     "task:verify": "tsx tools/task-verifier/cli.ts task",
     "task:complete": "tsx tools/task-runner/cli.ts complete",
     "task:release": "tsx tools/task-runner/cli.ts release",

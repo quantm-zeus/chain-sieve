@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ClusterContract, TaskContract } from '@ciag/shared-schemas';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   copyPayload,
   detectZCodeApplication,
@@ -35,6 +35,7 @@ import {
   validateLaunchReceipt,
 } from '../../tools/zcode/lib/runtime.js';
 import type {
+  AgentProvider,
   ClusterRecord,
   CommandResult,
   CommandRunner,
@@ -941,6 +942,51 @@ describe('payload, receipt, desktop, GitHub, CI, and no-mutation adapters', () =
       ],
     ]);
     expect(runner.calls[1]?.cwd).toBe(root);
+  });
+
+  it('terminates cleanly after one verification correction handoff', async () => {
+    const inventory = fixture();
+    const task = activate(inventory, 'T-G0-A', 'SELF_REVIEWING', {
+      commits: 1,
+    });
+    const runner = new FakeRunner();
+    runner.responses.push({
+      status: 1,
+      stdout: '',
+      stderr: 'TaskReviewSchema parse failed',
+    });
+    const provider: AgentProvider = {
+      id: 'antigravity',
+      detect: () => ({
+        available: true,
+        mechanism: 'command',
+        command: 'antigravity',
+        detail: 'test provider',
+      }),
+      generatePayload: () => 'payload',
+      copyPayload: () => undefined,
+      openWorkspace: () => undefined,
+      renderOwnerInstruction: () => 'owner instruction',
+    };
+    const failures: string[][] = [];
+    const output = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    const outcome = await verifyAndIntegrateTask(
+      inventory,
+      task,
+      runner,
+      async () => inventory,
+      provider,
+      async (_inventory, _task, _runner, _provider, _continuing, current) => {
+        failures.push(current ?? []);
+      },
+    );
+    expect(outcome.status).toBe('TASK_CORRECTION_HANDOFF_READY');
+    expect(failures).toEqual([['TaskReviewSchema parse failed']]);
+    expect(output).toHaveBeenCalledWith('TASK_CORRECTION_HANDOFF_READY');
+    expect(output.mock.calls.flat().join(' ')).not.toContain(
+      'UNHANDLED_ORCHESTRATION_STATE',
+    );
+    output.mockRestore();
   });
 
   it('mocks existing PR lookup', () => {

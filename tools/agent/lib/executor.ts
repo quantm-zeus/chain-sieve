@@ -556,6 +556,10 @@ const resumeTask = async (
   failures: string[] = [],
 ): Promise<void> => {
   ensureProvider(provider);
+  if (failures.length > 0)
+    console.log(
+      `${task.contract.id} failed verification: ${concise(failures.join(' '))}.`,
+    );
   const generated = await leaseForTask(
     inventory,
     task,
@@ -571,9 +575,6 @@ const resumeTask = async (
     generated.payload,
   );
   if (failures.length > 0) {
-    console.log(
-      `${task.contract.id} failed verification: ${concise(failures.join(' '))}.`,
-    );
     console.log('Correction payload copied.');
   } else if (continuing) {
     console.log(`Continuing ${task.contract.id}.`);
@@ -584,6 +585,13 @@ const resumeTask = async (
     provider.renderOwnerInstruction(task.contract.id, task.contract.cluster),
   );
 };
+
+export type TaskIntegrationOutcome =
+  | { status: 'CONTINUE'; inventory: ProjectInventory }
+  | {
+      status: 'TASK_CORRECTION_HANDOFF_READY';
+      inventory: ProjectInventory;
+    };
 
 const validateVerifiedTask = async (
   inventory: ProjectInventory,
@@ -670,7 +678,8 @@ export const verifyAndIntegrateTask = async (
   runner: CommandRunner,
   rediscover: typeof discoverProject = discoverProject,
   provider: AgentProvider = new ZCodeProvider(runner),
-): Promise<ProjectInventory> => {
+  correctionHandoff: typeof resumeTask = resumeTask,
+): Promise<TaskIntegrationOutcome> => {
   assertClusterWorktree(task.cluster);
   if (task.state.state === 'VERIFYING')
     throw new ZCodeError(
@@ -698,10 +707,14 @@ export const verifyAndIntegrateTask = async (
       const same = refreshed.tasks.find(
         (candidate) => candidate.contract.id === task.contract.id,
       )!;
-      await resumeTask(refreshed, same, runner, provider, false, [
+      await correctionHandoff(refreshed, same, runner, provider, false, [
         concise(result.stderr || result.stdout),
       ]);
-      return refreshed;
+      console.log('TASK_CORRECTION_HANDOFF_READY');
+      return {
+        status: 'TASK_CORRECTION_HANDOFF_READY',
+        inventory: refreshed,
+      };
     }
     inventory = await rediscover(inventory.root, runner);
     task = inventory.tasks.find(
@@ -748,7 +761,7 @@ export const verifyAndIntegrateTask = async (
   );
   const refreshed = await rediscover(inventory.root, runner);
   await persistProjectMapping(refreshed, runner);
-  return refreshed;
+  return { status: 'CONTINUE', inventory: refreshed };
 };
 
 const reviewPackagePath = async (
@@ -1117,13 +1130,15 @@ export const executeOrchestration = async (
     return;
   }
   if (decision.action === 'VERIFY_TASK' && decision.task) {
-    inventory = await verifyAndIntegrateTask(
+    const outcome = await verifyAndIntegrateTask(
       inventory,
       decision.task,
       runner,
       discoverProject,
       options.provider,
     );
+    if (outcome.status === 'TASK_CORRECTION_HANDOFF_READY') return;
+    inventory = outcome.inventory;
     decision = decideNextAction(inventory);
     if (decision.action === 'START_TASK' && decision.task) {
       await startTask(inventory, decision.task, runner, options.provider);

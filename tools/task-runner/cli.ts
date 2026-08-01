@@ -5,6 +5,7 @@ import { loadTasks, verifyTaskContract } from '../task-verifier/verify.js';
 import { registerCurrentEvidence } from './evidence-ledger.js';
 import { loadRepairLeaseContracts } from './repair-contract.js';
 import { performTaskSelfReview } from './self-review.js';
+import { refreshTaskSelfReview } from './self-review-refresh.js';
 import {
   acquire,
   assertLease,
@@ -109,6 +110,24 @@ try {
     console.log(JSON.stringify(Object.values(state.tasks).filter((task) => task.state === 'READY' && runnable.has(task.taskId)), null, 2));
   }
   else if (!taskId) throw new Error('TASK_ID_REQUIRED');
+  else if (command === 'self-review-refresh') {
+    const targetWorktree = option('--target-worktree');
+    if (!targetWorktree) throw new Error('TARGET_WORKTREE_REQUIRED');
+    const result = await refreshTaskSelfReview(
+      taskId,
+      holder,
+      Number(option('--lease-version')),
+      targetWorktree,
+      { trustedRoot: process.cwd() },
+    );
+    console.log(
+      JSON.stringify(
+        { status: 'SELF_REVIEW_REFRESHED', result },
+        null,
+        2,
+      ),
+    );
+  }
   else if (command === 'validate') {
     const product = productTasks.find((task) => task.id === taskId);
     const repair = repairTasks.find((task) => task.id === taskId);
