@@ -1,10 +1,12 @@
 import { builtinModules } from 'node:module';
-import { readFile } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import ts from 'typescript';
 import type { TaskContract } from '@ciag/shared-schemas';
 import { sha256 } from '../prd-compiler/compiler.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
+import { resolveTrustedVerificationRuntime, runTrustedVitest } from './trusted-execution.js';
 
 interface ConformanceManifest {
   schemaVersion: '1.0.0';
@@ -16,6 +18,33 @@ interface ConformanceManifest {
   qualityGate: 'NEGATIVE_CASE' | 'SEEDED_FAULT_OR_PROPERTY';
   rejectsTrivialAssertions: true;
   requiresChangedProductionBehaviorInvocation: true;
+  evidenceDeclarationPath?: string;
+}
+
+type MutationEvidenceDeclaration =
+  | {
+      schemaVersion: '1.0.0'; taskId: string; mechanism: 'ACTUAL_MUTATION';
+      target: string; operator: 'ARITHMETIC_PLUS_TO_MINUS'; testPath: string;
+      expectedFailurePattern: string;
+    }
+  | {
+      schemaVersion: '1.0.0'; taskId: string; mechanism: 'SEEDED_FAULT';
+      target: string; faultId: string; testPath: string;
+    };
+
+export interface ExecutableMutationEvidence {
+  mechanism: 'ACTUAL_MUTATION' | 'SEEDED_FAULT';
+  target: string;
+  testPath: string;
+  declarationSha256: string;
+  mutantIdentity?: string;
+  operator?: string;
+  command: string;
+  exitCode: number;
+  outputSha256: string;
+  faultId?: string;
+  activationEvidenceSha256?: string;
+  assertionEvidenceSha256?: string;
 }
 
 export interface TestBehaviorAnalysis {
@@ -28,7 +57,6 @@ export interface TestBehaviorAnalysis {
   invokedProductionIdentifiers: string[];
   assertionsConsumingProductionOutputs: number;
   negativePaths: number;
-  executableFaultChecks: number;
   mutationTargets: string[];
 }
 
@@ -152,7 +180,6 @@ export const analyzeTestBehavior = (
   collectVariables(file);
   let assertions = 0;
   let negativePaths = 0;
-  let executableFaultChecks = 0;
   const visit = (node: ts.Node): void => {
     if (isProductionCall(node)) {
       const root = rootIdentifier((node as ts.CallExpression).expression);
@@ -168,11 +195,6 @@ export const analyzeTestBehavior = (
           negativePaths += 1;
       }
     }
-    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)) {
-      const owner = rootIdentifier(node.expression)?.text;
-      if (owner === 'fc' && node.expression.name.text === 'assert' && contains(node, isProductionCall)) executableFaultChecks += 1;
-      if (production.has(owner ?? '') && /fault|mutat|seed/i.test(node.expression.name.text)) executableFaultChecks += 1;
-    }
     node.forEachChild(visit);
   };
   visit(file);
@@ -186,8 +208,154 @@ export const analyzeTestBehavior = (
     invokedProductionIdentifiers: [...invoked].sort(),
     assertionsConsumingProductionOutputs: assertions,
     negativePaths,
-    executableFaultChecks,
     mutationTargets: [...mutationTargets].sort(),
+  };
+};
+
+const readEvidenceDeclaration = async (
+  task: TaskContract,
+  cwd: string,
+  manifest: ConformanceManifest,
+): Promise<{ value: MutationEvidenceDeclaration; sha256: string }> => {
+  const path = manifest.evidenceDeclarationPath ?? `tests/task-facets/${task.id}.conformance-evidence.json`;
+  let text: string;
+  try {
+    text = (await readTrustedFile(cwd, path, 'CONFORMANCE_EVIDENCE_DECLARATION')).toString('utf8');
+  } catch (error) {
+    throw new Error(`CONFORMANCE_HIGH_RISK_EXECUTABLE_FAULT_GATE_MISSING:${task.id}:${error instanceof Error ? error.message : String(error)}`);
+  }
+  const value = JSON.parse(text) as MutationEvidenceDeclaration;
+  if (value.schemaVersion !== '1.0.0' || value.taskId !== task.id)
+    throw new Error(`CONFORMANCE_EVIDENCE_DECLARATION_INVALID:${task.id}`);
+  if (!manifest.taskOwnedTests.includes(value.testPath))
+    throw new Error(`CONFORMANCE_EVIDENCE_TEST_NOT_OWNED:${value.testPath}`);
+  if (!manifest.productionTargets.some((target) => covers(target, value.target)))
+    throw new Error(`CONFORMANCE_EVIDENCE_TARGET_NOT_PRODUCTION:${value.target}`);
+  return { value, sha256: sha256(text) };
+};
+
+const runActualMutation = async (
+  declaration: Extract<MutationEvidenceDeclaration, { mechanism: 'ACTUAL_MUTATION' }>,
+  declarationSha256: string,
+  cwd: string,
+  trustedControlPlaneRoot: string,
+): Promise<ExecutableMutationEvidence> => {
+  if (!declaration.expectedFailurePattern)
+    throw new Error('CONFORMANCE_MUTATION_EXPECTED_FAILURE_MISSING');
+  const isolated = await mkdtemp(join(tmpdir(), 'ciag-mutant-'));
+  try {
+    await cp(cwd, isolated, {
+      recursive: true,
+      filter: (source) => !['.git', 'node_modules'].includes(source.split('/').at(-1) ?? ''),
+    });
+    await symlink(join(trustedControlPlaneRoot, 'node_modules'), join(isolated, 'node_modules'), 'dir');
+    const target = join(isolated, declaration.target);
+    const original = await readFile(target, 'utf8');
+    const mutated = original.replaceAll(' + ', ' - ');
+    if (mutated === original) throw new Error(`CONFORMANCE_MUTATION_OPERATOR_NOT_APPLICABLE:${declaration.target}`);
+    await writeFile(target, mutated);
+    const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
+    const result = runTrustedVitest(runtime, isolated, [declaration.testPath]);
+    if (result.exitCode === 0) throw new Error(`CONFORMANCE_MUTANT_SURVIVED:${declaration.target}`);
+    if (!result.output.includes(declaration.expectedFailurePattern))
+      throw new Error(`CONFORMANCE_MUTANT_FAILED_FOR_WRONG_REASON:${declaration.target}`);
+    return {
+      mechanism: 'ACTUAL_MUTATION',
+      target: declaration.target,
+      testPath: declaration.testPath,
+      declarationSha256,
+      mutantIdentity: sha256(mutated),
+      operator: declaration.operator,
+      command: result.command,
+      exitCode: result.exitCode,
+      outputSha256: result.outputSha256,
+    };
+  } finally {
+    await rm(isolated, { recursive: true, force: true });
+  }
+};
+
+const runSeededFault = async (
+  declaration: Extract<MutationEvidenceDeclaration, { mechanism: 'SEEDED_FAULT' }>,
+  declarationSha256: string,
+  cwd: string,
+  trustedControlPlaneRoot: string,
+): Promise<ExecutableMutationEvidence> => {
+  if (!declaration.faultId) throw new Error('CONFORMANCE_SEEDED_FAULT_ID_MISSING');
+  const source = (await readTrustedFile(cwd, declaration.testPath, 'CONFORMANCE_SEEDED_FAULT_TEST')).toString('utf8');
+  const file = ts.createSourceFile(declaration.testPath, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const absoluteTest = join(cwd, declaration.testPath);
+  const targetIdentifiers = new Set<string>();
+  for (const statement of file.statements) {
+    if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+    const resolved = ts.resolveModuleName(statement.moduleSpecifier.text, absoluteTest, {
+      moduleResolution: ts.ModuleResolutionKind.Bundler,
+      module: ts.ModuleKind.ESNext,
+      allowImportingTsExtensions: true,
+    }, ts.sys).resolvedModule?.resolvedFileName;
+    if (!resolved || relative(cwd, resolved).replaceAll('\\', '/') !== declaration.target) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (bindings && ts.isNamedImports(bindings))
+      for (const element of bindings.elements) targetIdentifiers.add(element.name.text);
+    if (bindings && ts.isNamespaceImport(bindings)) targetIdentifiers.add(bindings.name.text);
+    if (statement.importClause?.name) targetIdentifiers.add(statement.importClause.name.text);
+  }
+  const calls = new Map<string, { activated: boolean; node: ts.CallExpression }>();
+  const collectCalls = (node: ts.Node): void => {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer && ts.isCallExpression(node.initializer)) {
+      const owner = rootIdentifier(node.initializer.expression)?.text;
+      if (owner && targetIdentifiers.has(owner))
+        calls.set(node.name.text, {
+          activated: node.initializer.arguments.some((argument) => ts.isStringLiteral(argument) && argument.text === declaration.faultId),
+          node: node.initializer,
+        });
+    }
+    node.forEachChild(collectCalls);
+  };
+  collectCalls(file);
+  let activation: ts.CallExpression | undefined;
+  let assertion: ts.CallExpression | undefined;
+  for (const call of calls.values()) if (call.activated) activation = call.node;
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.name.text === 'toBe' && ts.isPropertyAccessExpression(node.expression.expression) &&
+      node.expression.expression.name.text === 'not'
+    ) {
+      const expectCall = (() => {
+        let expression: ts.Expression = node.expression.expression;
+        while (ts.isPropertyAccessExpression(expression)) expression = expression.expression;
+        return ts.isCallExpression(expression) && ts.isIdentifier(expression.expression) && expression.expression.text === 'expect'
+          ? expression
+          : undefined;
+      })();
+      const left = expectCall?.arguments[0];
+      const right = node.arguments[0];
+      if (left && right && ts.isIdentifier(left) && ts.isIdentifier(right)) {
+        const leftCall = calls.get(left.text);
+        const rightCall = calls.get(right.text);
+        if (leftCall && rightCall && leftCall.activated !== rightCall.activated) assertion = node;
+      }
+    }
+    node.forEachChild(visit);
+  };
+  visit(file);
+  if (!activation) throw new Error(`CONFORMANCE_SEEDED_FAULT_NOT_ACTIVATED:${declaration.faultId}`);
+  if (!assertion) throw new Error(`CONFORMANCE_SEEDED_FAULT_DIFFERENCE_NOT_ASSERTED:${declaration.faultId}`);
+  const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
+  const result = runTrustedVitest(runtime, cwd, [declaration.testPath]);
+  if (result.exitCode !== 0) throw new Error(`CONFORMANCE_SEEDED_FAULT_TEST_FAILED:${declaration.faultId}`);
+  return {
+    mechanism: 'SEEDED_FAULT',
+    target: declaration.target,
+    testPath: declaration.testPath,
+    declarationSha256,
+    command: result.command,
+    exitCode: result.exitCode,
+    outputSha256: result.outputSha256,
+    faultId: declaration.faultId,
+    activationEvidenceSha256: sha256(activation.getText(file)),
+    assertionEvidenceSha256: sha256(assertion.getText(file)),
   };
 };
 
@@ -195,9 +363,10 @@ export const assertConformanceTestQuality = async (
   task: TaskContract,
   cwd = process.cwd(),
   manifestRoot = cwd,
-): Promise<void> => {
+  trustedControlPlaneRoot = process.cwd(),
+): Promise<ExecutableMutationEvidence[]> => {
   const manifest = await readConformanceManifest(task, manifestRoot);
-  if (!manifest) return;
+  if (!manifest) return [];
   if (manifest.taskOwnedTests.length === 0) throw new Error(`CONFORMANCE_TASK_TESTS_MISSING:${task.id}`);
   const analyses = await Promise.all(manifest.taskOwnedTests.map(async (path) =>
     analyzeTestBehavior(await readFile(join(cwd, path), 'utf8'), path, cwd, manifest.productionTargets),
@@ -210,6 +379,9 @@ export const assertConformanceTestQuality = async (
   }
   if (analyses.reduce((sum, item) => sum + item.negativePaths, 0) === 0)
     throw new Error(`CONFORMANCE_NEGATIVE_CASE_MISSING:${task.id}`);
-  if (manifest.qualityGate === 'SEEDED_FAULT_OR_PROPERTY' && analyses.reduce((sum, item) => sum + item.executableFaultChecks, 0) === 0)
-    throw new Error(`CONFORMANCE_HIGH_RISK_EXECUTABLE_FAULT_GATE_MISSING:${task.id}`);
+  if (manifest.qualityGate !== 'SEEDED_FAULT_OR_PROPERTY') return [];
+  const declaration = await readEvidenceDeclaration(task, cwd, manifest);
+  return declaration.value.mechanism === 'ACTUAL_MUTATION'
+    ? [await runActualMutation(declaration.value, declaration.sha256, cwd, trustedControlPlaneRoot)]
+    : [await runSeededFault(declaration.value, declaration.sha256, cwd, trustedControlPlaneRoot)];
 };

@@ -154,7 +154,13 @@ export const persistLifecycleAuthority = async (options: {
   const runtime = join(common, 'ciag-runtime');
   const bindingPath = join(runtime, 'lifecycle-bindings', task.id, `${bindingSha256}.json`);
   await immutableWrite(bindingPath, bindingText);
-  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/policy.ts'), 'utf8')}`;
+  const verifierPolicy = (await Promise.all([
+    'tools/task-verifier/verify.ts',
+    'tools/task-verifier/attestation.ts',
+    'tools/task-verifier/policy.ts',
+    'tools/task-verifier/conformance.ts',
+    'tools/task-verifier/trusted-execution.ts',
+  ].map((path) => readFile(join(trustedRoot, path), 'utf8')))).join('\n');
   const architecturePolicy = await readFile(join(trustedRoot, 'tools/architecture-verifier/verify.ts'));
   const prohibitedPolicy = await readFile(join(trustedRoot, 'tools/architecture-verifier/cli.ts'));
   const releaseCommit = git(trustedRoot, ['rev-parse', 'harness-v1.0.1^{commit}']);
@@ -258,7 +264,13 @@ export const validateVerificationBaseline = async (trustedRoot: string, state: T
   if (await fileHash(trustedRoot, 'tasks/generated/interface-hashes.json') !== baseline.generatedInterfaceIndexSha256) throw new Error('VERIFICATION_BASELINE_INTERFACE_INDEX_DRIFT');
   if (await fileHash(trustedRoot, 'artifacts/spec/acceptance-partition.json') !== baseline.acceptancePartitionSha256) throw new Error('VERIFICATION_BASELINE_ACCEPTANCE_PARTITION_DRIFT');
   if (await fileHash(trustedRoot, 'tools/task-verifier/cli.ts') !== baseline.verifierEntrypointSha256) throw new Error('VERIFICATION_BASELINE_ENTRYPOINT_DRIFT');
-  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/policy.ts'), 'utf8')}`;
+  const verifierPolicy = (await Promise.all([
+    'tools/task-verifier/verify.ts',
+    'tools/task-verifier/attestation.ts',
+    'tools/task-verifier/policy.ts',
+    'tools/task-verifier/conformance.ts',
+    'tools/task-verifier/trusted-execution.ts',
+  ].map((path) => readFile(join(trustedRoot, path), 'utf8')))).join('\n');
   if (sha256(verifierPolicy) !== baseline.verifierPolicySha256) throw new Error('VERIFICATION_BASELINE_POLICY_DRIFT');
   if (await fileHash(trustedRoot, 'tools/architecture-verifier/verify.ts') !== baseline.architecturePolicySha256) throw new Error('VERIFICATION_BASELINE_ARCHITECTURE_DRIFT');
   if (await fileHash(trustedRoot, 'tools/architecture-verifier/cli.ts') !== baseline.prohibitedCapabilityPolicySha256) throw new Error('VERIFICATION_BASELINE_PROHIBITED_POLICY_DRIFT');

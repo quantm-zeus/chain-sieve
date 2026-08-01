@@ -194,6 +194,8 @@ describe('explicit authoritative lease lifecycle', () => {
       'tools/task-verifier/verify.ts',
       'tools/task-verifier/attestation.ts',
       'tools/task-verifier/policy.ts',
+      'tools/task-verifier/conformance.ts',
+      'tools/task-verifier/trusted-execution.ts',
       'tools/architecture-verifier/verify.ts',
       'tools/architecture-verifier/cli.ts',
     ];

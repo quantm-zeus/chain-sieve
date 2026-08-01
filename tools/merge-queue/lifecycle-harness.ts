@@ -230,10 +230,24 @@ export const runLifecycleHarness = async (): Promise<{
             `describe('${task.id} lifecycle acceptance fixture', () => {`,
             negative
               ? `  it('rejects a seeded invalid value', () => { const seededFault = -1; expect(() => ${exported}(seededFault)).toThrow('INVALID_LIFECYCLE_FIXTURE'); });`
-              : `  it('invokes changed production behavior under a real property', () => { fc.assert(fc.property(fc.nat(), (value) => { expect(${exported}(value)).toBe(value); })); });`,
+              : `  it('invokes changed production behavior under a real property', () => { fc.assert(fc.property(fc.nat(), (value) => { expect(${exported}(value)).toBe(value + 1); })); });`,
             '});',
             '',
           ].join('\n'),
+        );
+      }
+      if (task.testQualityGate === 'SEEDED_FAULT_OR_PROPERTY') {
+        const target = task.id === 'T-G0-DISC'
+          ? 'packages/cheap-monitor/src/lifecycle-harness-fixture.ts'
+          : 'packages/release-conformance/src/lifecycle-failure-fixture.ts';
+        const testPath = task.requiredTests.find((path) => !/negative/i.test(path)) ?? task.requiredTests[0]!;
+        await writeFile(
+          join(repository, `tests/task-facets/${task.id}.conformance-evidence.json`),
+          `${JSON.stringify({
+            schemaVersion: '1.0.0', taskId: task.id, mechanism: 'ACTUAL_MUTATION', target,
+            operator: 'ARITHMETIC_PLUS_TO_MINUS', testPath,
+            expectedFailurePattern: 'expected -1 to be 1',
+          }, null, 2)}\n`,
         );
       }
     }
@@ -341,7 +355,7 @@ export const runLifecycleHarness = async (): Promise<{
     await mkdir(dirname(normalPath), { recursive: true });
     await writeFile(
       normalPath,
-      "export const lifecycleHarnessFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value; };\n",
+      "export const lifecycleHarnessFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value + 1; };\n",
     );
     git(normalWorktree, [
       'add',
@@ -507,7 +521,7 @@ export const runLifecycleHarness = async (): Promise<{
     await mkdir(dirname(failurePath), { recursive: true });
     await writeFile(
       failurePath,
-      "export const lifecycleFailureFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value; };\n",
+      "export const lifecycleFailureFixture = (value: number): number => { if (value < 0) throw new Error('INVALID_LIFECYCLE_FIXTURE'); return value + 1; };\n",
     );
     git(failureWorktree, [
       'add',

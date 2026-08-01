@@ -245,9 +245,23 @@ export const verifyTask = async (
       const violations = placeholderViolations(path, text);
       if (violations.length > 0) throw new Error(`INVALID_TASK_TEST:${violations.join(',')}`);
     }
-    await assertConformanceTestQuality(task, targetWorktree, conformanceRoot);
+    const mutationEvidence = await assertConformanceTestQuality(
+      task,
+      targetWorktree,
+      conformanceRoot,
+      trustedRoot,
+    );
     const trustedRuntime = resolveTrustedVerificationRuntime(trustedRoot);
     const evidence: CommandEvidence[] = [
+      ...mutationEvidence.map((item) => {
+        const output = `${JSON.stringify(item)}\n`;
+        return {
+          command: `trusted-conformance:${item.mechanism}:${item.target}:${item.command}`,
+          exitCode: 0,
+          output,
+          outputSha256: sha256(output),
+        };
+      }),
       runTrustedVitest(trustedRuntime, targetWorktree, task.requiredTests),
       runTrustedVitest(trustedRuntime, trustedRoot, ['tests/conformance/task-oracle.spec.ts']),
       runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['architecture', '--target-root', targetWorktree]),
