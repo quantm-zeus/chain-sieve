@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-REG",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-077",
+      "facetId": "AC-077:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-077 system or integration oracle consumes. This facet does not claim full AC-077 satisfaction.",
+      "sourceAcceptanceSha256": "09aa1c66c4d58187fc5d55f7f4df3362520a235cb4a5763c2ff1b7487092df51"
+    },
+    {
+      "acceptanceId": "AC-078",
+      "facetId": "AC-078:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-078 system or integration oracle consumes. This facet does not claim full AC-078 satisfaction.",
+      "sourceAcceptanceSha256": "e911fdca061ace6a72d5c2fbc1097bca4c4aa1b44f0853d711562685b1b1dd25"
+    },
+    {
+      "acceptanceId": "AC-079",
+      "facetId": "AC-079:T-G5-REG:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-REG for FR-REG-001, FR-REG-002 that the unchanged AC-079 system or integration oracle consumes. This facet does not claim full AC-079 satisfaction.",
+      "sourceAcceptanceSha256": "4e61d0e1e435a05748dcdb0b14e8203652fb07fbf369d3a526c92a020ebb6700"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

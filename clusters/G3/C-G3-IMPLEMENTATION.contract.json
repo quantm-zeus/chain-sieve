@@ -37,13 +37,18 @@
     "FR-AGT-012"
   ],
   "acceptanceCriteria": [
-    "AC-012",
-    "AC-261",
     "AC-030",
-    "AC-032",
-    "AC-034",
     "AC-031",
-    "AC-033"
+    "AC-032",
+    "AC-033",
+    "AC-034"
+  ],
+  "integrationAcceptanceCriteria": [
+    "AC-030",
+    "AC-031",
+    "AC-032",
+    "AC-033",
+    "AC-034"
   ],
   "invariants": [
     "INV-001",
@@ -63,8 +68,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

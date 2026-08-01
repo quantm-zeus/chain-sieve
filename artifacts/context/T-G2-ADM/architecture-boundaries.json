@@ -5,7 +5,10 @@
   "allowedPaths": [
     "apps/dashboard/**",
     "apps/api/src/routes/admin/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-ADM/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-ADM/**"
+    "artifacts/context/T-G2-ADM/**",
+    "artifacts/conformance/T-G2-ADM/manifest.json"
   ],
   "writeSet": [
     "apps/dashboard/**",

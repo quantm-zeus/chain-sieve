@@ -1,0 +1,198 @@
+[
+  {
+    "id": "FR-SEC-001",
+    "sourceLine": 6482,
+    "startLine": 6480,
+    "endLine": 6484,
+    "exactText": "- **FR-MCP-011 MUST:** OAuth access tokens are audience/resource bound, short-lived, validated locally or by an approved introspection path, and never passed through to upstream providers; PKCE and exact redirect URI validation are mandatory for public/workspace authorization.\n- **FR-MCP-012 MUST:** Large resources use bounded streaming or short-lived audience-bound signed URLs, enforce byte/record limits and rights, and prevent range, redirect, path, or content-type confusion.\n- **FR-SEC-001 MUST:** High-impact actions require phishing-resistant step-up authentication, fresh authorization, CSRF protection, idempotency, reason entry, and audit; TOTP alone is not sufficient for production high-impact actions.\n- **FR-SEC-002 MUST:** Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion.\n- **FR-SEC-003 MUST:** Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability."
+  },
+  {
+    "id": "FR-SEC-002",
+    "sourceLine": 6483,
+    "startLine": 6481,
+    "endLine": 6485,
+    "exactText": "- **FR-MCP-012 MUST:** Large resources use bounded streaming or short-lived audience-bound signed URLs, enforce byte/record limits and rights, and prevent range, redirect, path, or content-type confusion.\n- **FR-SEC-001 MUST:** High-impact actions require phishing-resistant step-up authentication, fresh authorization, CSRF protection, idempotency, reason entry, and audit; TOTP alone is not sufficient for production high-impact actions.\n- **FR-SEC-002 MUST:** Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion.\n- **FR-SEC-003 MUST:** Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability.\n- **FR-SEC-004 MUST:** Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested."
+  },
+  {
+    "id": "FR-SEC-003",
+    "sourceLine": 6484,
+    "startLine": 6482,
+    "endLine": 6486,
+    "exactText": "- **FR-SEC-001 MUST:** High-impact actions require phishing-resistant step-up authentication, fresh authorization, CSRF protection, idempotency, reason entry, and audit; TOTP alone is not sufficient for production high-impact actions.\n- **FR-SEC-002 MUST:** Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion.\n- **FR-SEC-003 MUST:** Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability.\n- **FR-SEC-004 MUST:** Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested.\n- **FR-SEC-005 MUST:** Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects."
+  },
+  {
+    "id": "FR-SEC-004",
+    "sourceLine": 6485,
+    "startLine": 6483,
+    "endLine": 6487,
+    "exactText": "- **FR-SEC-002 MUST:** Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion.\n- **FR-SEC-003 MUST:** Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability.\n- **FR-SEC-004 MUST:** Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested.\n- **FR-SEC-005 MUST:** Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects.\n- **FR-SEC-006 MUST:** Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile."
+  },
+  {
+    "id": "FR-SEC-005",
+    "sourceLine": 6486,
+    "startLine": 6484,
+    "endLine": 6488,
+    "exactText": "- **FR-SEC-003 MUST:** Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability.\n- **FR-SEC-004 MUST:** Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested.\n- **FR-SEC-005 MUST:** Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects.\n- **FR-SEC-006 MUST:** Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile.\n- **FR-SEC-007 MUST:** Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist."
+  },
+  {
+    "id": "FR-SEC-006",
+    "sourceLine": 6487,
+    "startLine": 6485,
+    "endLine": 6489,
+    "exactText": "- **FR-SEC-004 MUST:** Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested.\n- **FR-SEC-005 MUST:** Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects.\n- **FR-SEC-006 MUST:** Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile.\n- **FR-SEC-007 MUST:** Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist.\n- **FR-SEC-008 MUST:** Alpha Lab imports accept only approved non-executable schemas and enforce signature, hash, producer trust, archive/path/size/complexity limits, quarantine, malware/content scanning, and no direct policy activation."
+  },
+  {
+    "id": "FR-SEC-007",
+    "sourceLine": 6488,
+    "startLine": 6486,
+    "endLine": 6490,
+    "exactText": "- **FR-SEC-005 MUST:** Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects.\n- **FR-SEC-006 MUST:** Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile.\n- **FR-SEC-007 MUST:** Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist.\n- **FR-SEC-008 MUST:** Alpha Lab imports accept only approved non-executable schemas and enforce signature, hash, producer trust, archive/path/size/complexity limits, quarantine, malware/content scanning, and no direct policy activation.\n- **FR-SEC-009 MUST:** Workspace/public mode enforces tenant isolation for rows, artifacts, cache, queues, sessions, quotas, logs, signed URLs, metrics, and model context with cross-tenant adversarial tests."
+  },
+  {
+    "id": "FR-SEC-008",
+    "sourceLine": 6489,
+    "startLine": 6487,
+    "endLine": 6491,
+    "exactText": "- **FR-SEC-006 MUST:** Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile.\n- **FR-SEC-007 MUST:** Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist.\n- **FR-SEC-008 MUST:** Alpha Lab imports accept only approved non-executable schemas and enforce signature, hash, producer trust, archive/path/size/complexity limits, quarantine, malware/content scanning, and no direct policy activation.\n- **FR-SEC-009 MUST:** Workspace/public mode enforces tenant isolation for rows, artifacts, cache, queues, sessions, quotas, logs, signed URLs, metrics, and model context with cross-tenant adversarial tests.\n- **FR-SEC-010 MUST:** Abuse controls cover request floods, expensive-query amplification, quota exhaustion, source scraping, alert harvesting, prompt attacks, resource enumeration, and market-manipulation feedback loops without weakening protected risk monitoring."
+  },
+  {
+    "id": "AC-050",
+    "sourceLine": 6561,
+    "startLine": 6559,
+    "endLine": 6563,
+    "exactText": "### 39.6 Security\n\n- **AC-050:** No route, tool, or schema supports trading, signing, wallet creation, seed, or private key.\n- **AC-051:** SSRF, prompt injection, malicious Markdown, and forged scheduler webhook tests pass.\n- **AC-052:** Secrets do not appear in model context, logs, traces, exports, or UI."
+  },
+  {
+    "id": "AC-051",
+    "sourceLine": 6562,
+    "startLine": 6560,
+    "endLine": 6564,
+    "exactText": "\n- **AC-050:** No route, tool, or schema supports trading, signing, wallet creation, seed, or private key.\n- **AC-051:** SSRF, prompt injection, malicious Markdown, and forged scheduler webhook tests pass.\n- **AC-052:** Secrets do not appear in model context, logs, traces, exports, or UI.\n- **AC-053:** MCP credentials are independently scoped and revocable."
+  },
+  {
+    "id": "AC-052",
+    "sourceLine": 6563,
+    "startLine": 6561,
+    "endLine": 6565,
+    "exactText": "- **AC-050:** No route, tool, or schema supports trading, signing, wallet creation, seed, or private key.\n- **AC-051:** SSRF, prompt injection, malicious Markdown, and forged scheduler webhook tests pass.\n- **AC-052:** Secrets do not appear in model context, logs, traces, exports, or UI.\n- **AC-053:** MCP credentials are independently scoped and revocable.\n"
+  },
+  {
+    "id": "AC-053",
+    "sourceLine": 6564,
+    "startLine": 6562,
+    "endLine": 6566,
+    "exactText": "- **AC-051:** SSRF, prompt injection, malicious Markdown, and forged scheduler webhook tests pass.\n- **AC-052:** Secrets do not appear in model context, logs, traces, exports, or UI.\n- **AC-053:** MCP credentials are independently scoped and revocable.\n\n### 39.7 Performance and recovery"
+  },
+  {
+    "id": "AC-250",
+    "sourceLine": 6774,
+    "startLine": 6772,
+    "endLine": 6776,
+    "exactText": "### 39.24 MCP transport, provider negative capability, and security\n\n- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts."
+  },
+  {
+    "id": "AC-251",
+    "sourceLine": 6775,
+    "startLine": 6773,
+    "endLine": 6777,
+    "exactText": "\n- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness."
+  },
+  {
+    "id": "AC-252",
+    "sourceLine": 6776,
+    "startLine": 6774,
+    "endLine": 6778,
+    "exactText": "- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted."
+  },
+  {
+    "id": "AC-253",
+    "sourceLine": 6777,
+    "startLine": 6775,
+    "endLine": 6779,
+    "exactText": "- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy."
+  },
+  {
+    "id": "AC-254",
+    "sourceLine": 6778,
+    "startLine": 6776,
+    "endLine": 6780,
+    "exactText": "- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path."
+  },
+  {
+    "id": "AC-255",
+    "sourceLine": 6779,
+    "startLine": 6777,
+    "endLine": 6781,
+    "exactText": "- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed."
+  },
+  {
+    "id": "AC-256",
+    "sourceLine": 6780,
+    "startLine": 6778,
+    "endLine": 6782,
+    "exactText": "- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects."
+  },
+  {
+    "id": "AC-257",
+    "sourceLine": 6781,
+    "startLine": 6779,
+    "endLine": 6783,
+    "exactText": "- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures."
+  },
+  {
+    "id": "AC-258",
+    "sourceLine": 6782,
+    "startLine": 6780,
+    "endLine": 6784,
+    "exactText": "- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures.\n"
+  },
+  {
+    "id": "AC-259",
+    "sourceLine": 6783,
+    "startLine": 6781,
+    "endLine": 6785,
+    "exactText": "- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures.\n\n### 39.25 Recovery, traceability, and release conformance"
+  },
+  {
+    "id": "AC-274",
+    "sourceLine": 6804,
+    "startLine": 6802,
+    "endLine": 6806,
+    "exactText": "- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation."
+  },
+  {
+    "id": "AC-275",
+    "sourceLine": 6805,
+    "startLine": 6803,
+    "endLine": 6807,
+    "exactText": "- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse."
+  },
+  {
+    "id": "AC-276",
+    "sourceLine": 6806,
+    "startLine": 6804,
+    "endLine": 6808,
+    "exactText": "- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate."
+  },
+  {
+    "id": "AC-277",
+    "sourceLine": 6807,
+    "startLine": 6805,
+    "endLine": 6809,
+    "exactText": "- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts."
+  },
+  {
+    "id": "AC-278",
+    "sourceLine": 6808,
+    "startLine": 6806,
+    "endLine": 6810,
+    "exactText": "- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n"
+  },
+  {
+    "id": "AC-279",
+    "sourceLine": 6809,
+    "startLine": 6807,
+    "endLine": 6811,
+    "exactText": "- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n\n---"
+  }
+]

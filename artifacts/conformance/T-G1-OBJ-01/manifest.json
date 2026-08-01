@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-OBJ-01",
+  "immutable": true,
+  "requirements": [
+    "FR-OBJ-001",
+    "FR-OBJ-002",
+    "FR-OBJ-003",
+    "FR-OBJ-004",
+    "FR-OBJ-005",
+    "FR-OBJ-006",
+    "FR-OBJ-007",
+    "FR-OBJ-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-220:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-221:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-222:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-223:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-245:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-246:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-247:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-248:T-G1-OBJ-01:INTERFACE_FACET",
+    "AC-249:T-G1-OBJ-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-OBJ-01.spec.ts",
+    "tests/task-facets/T-G1-OBJ-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-OBJ-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

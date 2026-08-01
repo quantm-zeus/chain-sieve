@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COL-01",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-110",
+      "facetId": "AC-110:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-110 system or integration oracle consumes. This facet does not claim full AC-110 satisfaction.",
+      "sourceAcceptanceSha256": "8d188368767a38c525cfff3a4c834079f23f163d4dbfc4038a24945299b87cd9"
+    },
+    {
+      "acceptanceId": "AC-111",
+      "facetId": "AC-111:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-111 system or integration oracle consumes. This facet does not claim full AC-111 satisfaction.",
+      "sourceAcceptanceSha256": "61f975a30cac0145d1b219569d026da7698287026f228552c98422c76f908d7a"
+    },
+    {
+      "acceptanceId": "AC-112",
+      "facetId": "AC-112:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-112 system or integration oracle consumes. This facet does not claim full AC-112 satisfaction.",
+      "sourceAcceptanceSha256": "da83d09eb9600dadf1ac2faa58563604c60b0c0d064fec6b97f0a8ee46ee4229"
+    },
+    {
+      "acceptanceId": "AC-113",
+      "facetId": "AC-113:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-113 system or integration oracle consumes. This facet does not claim full AC-113 satisfaction.",
+      "sourceAcceptanceSha256": "5abc68ae992f5cfebba3d62c46dc24e65e2b90a4294d100a3e7f50b9d9f8cbf4"
+    },
+    {
+      "acceptanceId": "AC-224",
+      "facetId": "AC-224:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-224 system or integration oracle consumes. This facet does not claim full AC-224 satisfaction.",
+      "sourceAcceptanceSha256": "41c0b1270321d5a04e9b45d3cfb8161fc5d6a0df788a433acb11c3327ac6e8ee"
+    },
+    {
+      "acceptanceId": "AC-225",
+      "facetId": "AC-225:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-225 system or integration oracle consumes. This facet does not claim full AC-225 satisfaction.",
+      "sourceAcceptanceSha256": "d22cb3228e7ec342a827f3ac0202e60f84d560f537183713c64060eb97440486"
+    },
+    {
+      "acceptanceId": "AC-226",
+      "facetId": "AC-226:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-226 system or integration oracle consumes. This facet does not claim full AC-226 satisfaction.",
+      "sourceAcceptanceSha256": "de3dd739c5cdae070dd33d5b9ada08bcf66b371c76084b863e501ec2d30dd86c"
+    },
+    {
+      "acceptanceId": "AC-227",
+      "facetId": "AC-227:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-227 system or integration oracle consumes. This facet does not claim full AC-227 satisfaction.",
+      "sourceAcceptanceSha256": "130b82a8639e43fbe39659941833364eb9705d15d9458dea393c4c8b685de509"
+    },
+    {
+      "acceptanceId": "AC-228",
+      "facetId": "AC-228:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-228 system or integration oracle consumes. This facet does not claim full AC-228 satisfaction.",
+      "sourceAcceptanceSha256": "b2ecf9b6734f062d2839e1d60101d4da367f62bc617fba48fcd88cdba872486d"
+    },
+    {
+      "acceptanceId": "AC-229",
+      "facetId": "AC-229:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-229 system or integration oracle consumes. This facet does not claim full AC-229 satisfaction.",
+      "sourceAcceptanceSha256": "3f54a54fbd86bbafc092710529450c51b71d91e82cfdd3886efc5335025d2fdf"
+    },
+    {
+      "acceptanceId": "AC-230",
+      "facetId": "AC-230:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-230 system or integration oracle consumes. This facet does not claim full AC-230 satisfaction.",
+      "sourceAcceptanceSha256": "7b196a365d3ea6d2e3aec66064108901b8b501098801a3f514d6c4ef4571cb41"
+    },
+    {
+      "acceptanceId": "AC-231",
+      "facetId": "AC-231:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-231 system or integration oracle consumes. This facet does not claim full AC-231 satisfaction.",
+      "sourceAcceptanceSha256": "77197deb47cc755fa0bd882efe5370e2f071435d3af8553df54d38c97f4cd117"
+    },
+    {
+      "acceptanceId": "AC-237",
+      "facetId": "AC-237:T-G0-COL-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-COL-01 for FR-COL-001, FR-COL-002, FR-COL-003, FR-COL-004, FR-COL-005, FR-COL-006, FR-COL-007, FR-COL-008 that the unchanged AC-237 system or integration oracle consumes. This facet does not claim full AC-237 satisfaction.",
+      "sourceAcceptanceSha256": "c5b0e2edde7901dd61d1a1c068352d8c828d78ca9bd6115ea8e1fce8a92c6968"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

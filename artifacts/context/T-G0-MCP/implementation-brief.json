@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-MCP",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-MCP-001",
+      "exactNormativeText": "Streamable HTTP endpoint."
+    },
+    {
+      "id": "FR-MCP-002",
+      "exactNormativeText": "Tools, resources, and prompts."
+    },
+    {
+      "id": "FR-MCP-003",
+      "exactNormativeText": "Structured output and pagination."
+    },
+    {
+      "id": "FR-MCP-004",
+      "exactNormativeText": "Per-client auth/profile/quota/revoke."
+    },
+    {
+      "id": "FR-MCP-005",
+      "exactNormativeText": "Personal bearer mode."
+    },
+    {
+      "id": "FR-MCP-008",
+      "exactNormativeText": "Every Streamable HTTP request validates a normalized `Origin` against an exact scheme-host-port allowlist when the header is present; an invalid present origin returns HTTP 403 before session creation, authentication side effects, tool execution, or resource access."
+    },
+    {
+      "id": "FR-MCP-009",
+      "exactNormativeText": "MCP transport enforces mutually tested protocol versions, content types, method semantics, session identifiers, resumable-event ownership, message size, request correlation, and per-client rate/concurrency limits."
+    },
+    {
+      "id": "FR-MCP-010",
+      "exactNormativeText": "MCP resource and tool authorization is evaluated on every call and every resource fetch; a resource URI does not grant authority beyond the requesting credential, rights policy, and entity scope."
+    }
+  ],
+  "expectedModules": [
+    "apps/api/src/mcp/**",
+    "packages/tool-core/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/mcp.ts",
+    "docs/generated/mcp-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Streamable HTTP endpoint.",
+    "Tools, resources, and prompts.",
+    "Structured output and pagination.",
+    "Per-client auth/profile/quota/revoke.",
+    "Personal bearer mode.",
+    "Every Streamable HTTP request validates a normalized `Origin` against an exact scheme-host-port allowlist when the header is present; an invalid present origin returns HTTP 403 before session creation, authentication side effects, tool execution, or resource access.",
+    "MCP transport enforces mutually tested protocol versions, content types, method semantics, session identifiers, resumable-event ownership, message size, request correlation, and per-client rate/concurrency limits.",
+    "MCP resource and tool authorization is evaluated on every call and every resource fetch; a resource URI does not grant authority beyond the requesting credential, rights policy, and entity scope."
+  ],
+  "failureAndDegradedBehavior": [
+    "Every Streamable HTTP request validates a normalized `Origin` against an exact scheme-host-port allowlist when the header is present; an invalid present origin returns HTTP 403 before session creation, authentication side effects, tool execution, or resource access."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/mcp.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

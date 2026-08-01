@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-NAR",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-NAR-001",
+      "exactNormativeText": "Versioned narrative entities, memberships, graph edges, evidence confidence, rights, temporal validity, and contradiction state are implemented."
+    },
+    {
+      "id": "FR-NAR-002",
+      "exactNormativeText": "Narrative rotation assessment combines available breadth, on-chain flow, social confirmation, price extension, and crowding while preserving missing capability and source dependence."
+    }
+  ],
+  "expectedModules": [
+    "packages/narrative-intelligence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/nar.ts",
+    "docs/generated/nar-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Versioned narrative entities, memberships, graph edges, evidence confidence, rights, temporal validity, and contradiction state are implemented.",
+    "Narrative rotation assessment combines available breadth, on-chain flow, social confirmation, price extension, and crowding while preserving missing capability and source dependence."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/nar.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

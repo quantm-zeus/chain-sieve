@@ -6,7 +6,10 @@
     "packages/cost-router/**",
     "packages/capacity-planner/**",
     "packages/quota-forecast/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -14,11 +17,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-COST-01/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-COST-01/**"
+    "artifacts/context/T-G0-COST-01/**",
+    "artifacts/conformance/T-G0-COST-01/manifest.json"
   ],
   "writeSet": [
     "packages/cost-router/**",

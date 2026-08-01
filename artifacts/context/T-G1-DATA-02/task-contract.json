@@ -31,10 +31,92 @@
     "FR-DATA-015",
     "FR-DATA-016"
   ],
-  "acceptanceCriteria": [
-    "AC-022",
-    "AC-242",
-    "AC-248"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-020",
+      "facetId": "AC-020:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-020 system or integration oracle consumes. This facet does not claim full AC-020 satisfaction.",
+      "sourceAcceptanceSha256": "e9c273b943abe8e4d2b40dd78b3b0014244631b1e11d458f8af83e19ac55d4a8"
+    },
+    {
+      "acceptanceId": "AC-021",
+      "facetId": "AC-021:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-021 system or integration oracle consumes. This facet does not claim full AC-021 satisfaction.",
+      "sourceAcceptanceSha256": "67298e625d93c0a92d73c5ccc9413e6f112f48e8cf8443cd24c13d161b02aa8e"
+    },
+    {
+      "acceptanceId": "AC-022",
+      "facetId": "AC-022:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-022 system or integration oracle consumes. This facet does not claim full AC-022 satisfaction.",
+      "sourceAcceptanceSha256": "7f3cd2c0ab955a2a53d658dfe5544c2e4817bc9efaecbe96cf51b0c032f2b855"
+    },
+    {
+      "acceptanceId": "AC-023",
+      "facetId": "AC-023:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-023 system or integration oracle consumes. This facet does not claim full AC-023 satisfaction.",
+      "sourceAcceptanceSha256": "df3cf56dd987ef32f251a0d9a3d87064635013b89dd6b5451baef32da54f8f09"
+    },
+    {
+      "acceptanceId": "AC-240",
+      "facetId": "AC-240:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-240 system or integration oracle consumes. This facet does not claim full AC-240 satisfaction.",
+      "sourceAcceptanceSha256": "58ea5e9cd8be040a8da0153a90eea72d673bccbefdcbd3ebab8d3ef4a8dfd3a1"
+    },
+    {
+      "acceptanceId": "AC-241",
+      "facetId": "AC-241:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-241 system or integration oracle consumes. This facet does not claim full AC-241 satisfaction.",
+      "sourceAcceptanceSha256": "21506718ce09f717aa53b323496282b543d1a03dda0f64e3498703fcf6c66626"
+    },
+    {
+      "acceptanceId": "AC-242",
+      "facetId": "AC-242:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-242 system or integration oracle consumes. This facet does not claim full AC-242 satisfaction.",
+      "sourceAcceptanceSha256": "1b0e2f5fea865ad80db2254788e7167585f21ac49ddff1f03f2f5c37aace0ccc"
+    },
+    {
+      "acceptanceId": "AC-243",
+      "facetId": "AC-243:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-243 system or integration oracle consumes. This facet does not claim full AC-243 satisfaction.",
+      "sourceAcceptanceSha256": "79a59cbe85e9ad12ef8011011518d95f87824d01493ac3ad6de23a198add6337"
+    },
+    {
+      "acceptanceId": "AC-244",
+      "facetId": "AC-244:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-244 system or integration oracle consumes. This facet does not claim full AC-244 satisfaction.",
+      "sourceAcceptanceSha256": "639ce740b0718cd65afa9972a290ff7fc4fa3c17a280aca3a4c752949d603f9d"
+    },
+    {
+      "acceptanceId": "AC-245",
+      "facetId": "AC-245:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-245 system or integration oracle consumes. This facet does not claim full AC-245 satisfaction.",
+      "sourceAcceptanceSha256": "01075f941c2c87b6061f4ccc4675f02a60a8c6ec5d2fcfb9d03c3fe930d104d1"
+    },
+    {
+      "acceptanceId": "AC-246",
+      "facetId": "AC-246:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-246 system or integration oracle consumes. This facet does not claim full AC-246 satisfaction.",
+      "sourceAcceptanceSha256": "758b8dc629e0bf1660640394a99a89c6e4767e592768157292978eaf28a91417"
+    },
+    {
+      "acceptanceId": "AC-247",
+      "facetId": "AC-247:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-247 system or integration oracle consumes. This facet does not claim full AC-247 satisfaction.",
+      "sourceAcceptanceSha256": "f300abb737b2e9c2e5771e2d9ec88fb715758b86e80886b6318dee294b5426f7"
+    },
+    {
+      "acceptanceId": "AC-248",
+      "facetId": "AC-248:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-248 system or integration oracle consumes. This facet does not claim full AC-248 satisfaction.",
+      "sourceAcceptanceSha256": "af6112d196d9eadefb63f55963f1e45b5419b4534fd8b8e39dc007967f52fe34"
+    },
+    {
+      "acceptanceId": "AC-249",
+      "facetId": "AC-249:T-G1-DATA-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DATA-02 for FR-DATA-015, FR-DATA-016 that the unchanged AC-249 system or integration oracle consumes. This facet does not claim full AC-249 satisfaction.",
+      "sourceAcceptanceSha256": "14835a40acbd0ce6b6ad958361cce41a44c62ac2a9e84bfd2299243abbb789cd"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -56,7 +138,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-DATA-02/**"
+    "artifacts/context/T-G1-DATA-02/**",
+    "artifacts/conformance/T-G1-DATA-02/manifest.json"
   ],
   "writeSet": [
     "packages/persistence/**",
@@ -65,7 +148,10 @@
   "allowedPaths": [
     "packages/persistence/**",
     "packages/evidence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**",
     "infra/migrations/**"
   ],
@@ -73,7 +159,9 @@
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-DATA-02/**"
   ],
   "exclusiveLocks": [
     "infra/migrations"
@@ -91,7 +179,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -101,17 +190,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-022.spec.ts",
-    "tests/negative/AC-022.negative.spec.ts",
-    "tests/acceptance/AC-242.spec.ts",
-    "tests/negative/AC-242.negative.spec.ts",
-    "tests/acceptance/AC-248.spec.ts",
-    "tests/negative/AC-248.negative.spec.ts"
+    "tests/task-facets/T-G1-DATA-02.spec.ts",
+    "tests/task-facets/T-G1-DATA-02.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-022.spec.ts tests/negative/AC-022.negative.spec.ts tests/acceptance/AC-242.spec.ts tests/negative/AC-242.negative.spec.ts tests/acceptance/AC-248.spec.ts tests/negative/AC-248.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G1-DATA-02.spec.ts tests/task-facets/T-G1-DATA-02.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -136,10 +225,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -155,5 +246,9 @@
       "line": 6424,
       "id": "FR-DATA-016"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G1-DATA-02/manifest.json",
+  "conformanceManifestSha256": "a216a66e6637725b211cf83e8a93f2307095acea022135f4b844a6a90109888a",
+  "testQualityGate": "NEGATIVE_CASE"
 }

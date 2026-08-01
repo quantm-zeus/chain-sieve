@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-DISC",
+  "immutable": true,
+  "requirements": [
+    "FR-DISC-001",
+    "FR-DISC-002",
+    "FR-DISC-003",
+    "FR-DISC-004",
+    "FR-DISC-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-110:T-G0-DISC:INTERFACE_FACET",
+    "AC-111:T-G0-DISC:INTERFACE_FACET",
+    "AC-112:T-G0-DISC:INTERFACE_FACET",
+    "AC-113:T-G0-DISC:INTERFACE_FACET",
+    "AC-224:T-G0-DISC:INTERFACE_FACET",
+    "AC-225:T-G0-DISC:INTERFACE_FACET",
+    "AC-226:T-G0-DISC:INTERFACE_FACET",
+    "AC-227:T-G0-DISC:INTERFACE_FACET",
+    "AC-228:T-G0-DISC:INTERFACE_FACET",
+    "AC-229:T-G0-DISC:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-DISC.spec.ts",
+    "tests/task-facets/T-G0-DISC.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/discovery-universe/**",
+    "packages/cheap-monitor/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-DISC/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

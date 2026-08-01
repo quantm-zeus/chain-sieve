@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/capital-flow/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-XCF/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-XCF/**"
+    "artifacts/context/T-G5-XCF/**",
+    "artifacts/conformance/T-G5-XCF/manifest.json"
   ],
   "writeSet": [
     "packages/capital-flow/**"

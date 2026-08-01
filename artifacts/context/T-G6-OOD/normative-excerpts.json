@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-OOD-001",
+    "sourceLine": 6282,
+    "startLine": 6280,
+    "endLine": 6284,
+    "exactText": "### 38.27 Out-of-Distribution and Novelty\n\n- **FR-OOD-001 MUST:** Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment.\n- **FR-OOD-002 MUST:** Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.\n- **FR-OOD-003 MUST:** `HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence."
+  },
+  {
+    "id": "FR-OOD-002",
+    "sourceLine": 6283,
+    "startLine": 6281,
+    "endLine": 6285,
+    "exactText": "\n- **FR-OOD-001 MUST:** Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment.\n- **FR-OOD-002 MUST:** Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.\n- **FR-OOD-003 MUST:** `HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.\n- **FR-OOD-004 MUST:** Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately."
+  },
+  {
+    "id": "FR-OOD-003",
+    "sourceLine": 6284,
+    "startLine": 6282,
+    "endLine": 6286,
+    "exactText": "- **FR-OOD-001 MUST:** Every calibrated model, analog, pattern, wallet reputation, and route decision receives an input-distribution applicability assessment.\n- **FR-OOD-002 MUST:** Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.\n- **FR-OOD-003 MUST:** `HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.\n- **FR-OOD-004 MUST:** Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately.\n- **FR-OOD-005 MUST:** OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware."
+  },
+  {
+    "id": "FR-OOD-004",
+    "sourceLine": 6285,
+    "startLine": 6283,
+    "endLine": 6287,
+    "exactText": "- **FR-OOD-002 MUST:** Novelty covers feature-space distance, missing-capability pattern, unseen launch/token-program structure, liquidity topology, wallet distribution, and narrative/regime combination.\n- **FR-OOD-003 MUST:** `HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.\n- **FR-OOD-004 MUST:** Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately.\n- **FR-OOD-005 MUST:** OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware.\n"
+  },
+  {
+    "id": "FR-OOD-005",
+    "sourceLine": 6286,
+    "startLine": 6284,
+    "endLine": 6288,
+    "exactText": "- **FR-OOD-003 MUST:** `HIGHLY_NOVEL` candidates cannot use calibrated probabilities from unsupported distributions; they enter bounded exploration/deep research with explicit lower confidence.\n- **FR-OOD-004 MUST:** Novelty does not equal quality or rejection; the system tracks novel-winner capture and novel-failure rates separately.\n- **FR-OOD-005 MUST:** OOD thresholds and reference datasets are versioned, point-in-time, drift-monitored, and lineage-aware.\n\n### 38.28 Multi-View Disagreement"
+  },
+  {
+    "id": "AC-180",
+    "sourceLine": 6683,
+    "startLine": 6681,
+    "endLine": 6685,
+    "exactText": "### 39.17 Novelty, disagreement, and hazards\n\n- **AC-180:** A highly novel candidate cannot receive a calibrated success probability from an inapplicable reference distribution.\n- **AC-181:** Novel candidates remain eligible for bounded exploration and are not rejected merely for OOD status.\n- **AC-182:** A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views."
+  },
+  {
+    "id": "AC-181",
+    "sourceLine": 6684,
+    "startLine": 6682,
+    "endLine": 6686,
+    "exactText": "\n- **AC-180:** A highly novel candidate cannot receive a calibrated success probability from an inapplicable reference distribution.\n- **AC-181:** Novel candidates remain eligible for bounded exploration and are not rejected merely for OOD status.\n- **AC-182:** A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views.\n- **AC-183:** Correlated views sharing one provider/evidence lineage do not count as independent consensus."
+  },
+  {
+    "id": "AC-182",
+    "sourceLine": 6685,
+    "startLine": 6683,
+    "endLine": 6687,
+    "exactText": "- **AC-180:** A highly novel candidate cannot receive a calibrated success probability from an inapplicable reference distribution.\n- **AC-181:** Novel candidates remain eligible for bounded exploration and are not rejected merely for OOD status.\n- **AC-182:** A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views.\n- **AC-183:** Correlated views sharing one provider/evidence lineage do not count as independent consensus.\n- **AC-184:** Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly."
+  },
+  {
+    "id": "AC-183",
+    "sourceLine": 6686,
+    "startLine": 6684,
+    "endLine": 6688,
+    "exactText": "- **AC-181:** Novel candidates remain eligible for bounded exploration and are not rejected merely for OOD status.\n- **AC-182:** A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views.\n- **AC-183:** Correlated views sharing one provider/evidence lineage do not count as independent consensus.\n- **AC-184:** Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly.\n- **AC-185:** A rising liquidity/creator-exit hazard shortens alert validity and produces an idempotent deterioration/risk update under policy."
+  },
+  {
+    "id": "AC-184",
+    "sourceLine": 6687,
+    "startLine": 6685,
+    "endLine": 6689,
+    "exactText": "- **AC-182:** A critical security or execution contradiction remains visible and blocks confirmed opportunity despite positive pattern/wallet/narrative views.\n- **AC-183:** Correlated views sharing one provider/evidence lineage do not count as independent consensus.\n- **AC-184:** Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly.\n- **AC-185:** A rising liquidity/creator-exit hazard shortens alert validity and produces an idempotent deterioration/risk update under policy.\n- **AC-186:** Unsupported hazard probability returns an ordinal/insufficient state rather than fabricated calibration."
+  },
+  {
+    "id": "AC-185",
+    "sourceLine": 6688,
+    "startLine": 6686,
+    "endLine": 6690,
+    "exactText": "- **AC-183:** Correlated views sharing one provider/evidence lineage do not count as independent consensus.\n- **AC-184:** Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly.\n- **AC-185:** A rising liquidity/creator-exit hazard shortens alert validity and produces an idempotent deterioration/risk update under policy.\n- **AC-186:** Unsupported hazard probability returns an ordinal/insufficient state rather than fabricated calibration.\n"
+  },
+  {
+    "id": "AC-186",
+    "sourceLine": 6689,
+    "startLine": 6687,
+    "endLine": 6691,
+    "exactText": "- **AC-184:** Failure-hazard replay uses only covariates available before each event and treats censoring/competing events correctly.\n- **AC-185:** A rising liquidity/creator-exit hazard shortens alert validity and produces an idempotent deterioration/risk update under policy.\n- **AC-186:** Unsupported hazard probability returns an ordinal/insufficient state rather than fabricated calibration.\n\n### 39.18 Scheduling, exploration, and portfolio"
+  }
+]

@@ -27,6 +27,7 @@
     "AC-268",
     "AC-269"
   ],
+  "taskAcceptanceFacets": [],
   "invariants": [
     "INV-001",
     "INV-002",
@@ -47,7 +48,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-TRACE/**"
+    "artifacts/context/T-G0-TRACE/**",
+    "artifacts/conformance/T-G0-TRACE/manifest.json"
   ],
   "writeSet": [
     "packages/requirement-manifest/**",
@@ -56,7 +58,10 @@
   "allowedPaths": [
     "packages/requirement-manifest/**",
     "packages/release-conformance/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -64,6 +69,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-TRACE/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -90,7 +97,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -114,7 +122,11 @@
   "verificationCommands": [
     {
       "command": "pnpm exec vitest run tests/acceptance/AC-265.spec.ts tests/negative/AC-265.negative.spec.ts tests/acceptance/AC-266.spec.ts tests/negative/AC-266.negative.spec.ts tests/acceptance/AC-267.spec.ts tests/negative/AC-267.negative.spec.ts tests/acceptance/AC-268.spec.ts tests/negative/AC-268.negative.spec.ts tests/acceptance/AC-269.spec.ts tests/negative/AC-269.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -139,10 +151,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -178,5 +192,9 @@
       "line": 6511,
       "id": "FR-TRACE-006"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G0-TRACE/manifest.json",
+  "conformanceManifestSha256": "7adb08498a15df72834171c54efab04401495043632c63683275e79e412836fc",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

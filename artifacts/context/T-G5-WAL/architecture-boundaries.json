@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/wallet-alpha-lineage/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-WAL/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-WAL/**"
+    "artifacts/context/T-G5-WAL/**",
+    "artifacts/conformance/T-G5-WAL/manifest.json"
   ],
   "writeSet": [
     "packages/wallet-alpha-lineage/**"

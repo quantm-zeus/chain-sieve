@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-EVAL-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EVAL-018",
+      "exactNormativeText": "Evaluation reports both raw-token count and cluster effective sample size across calendar, deployer, funder, wallet entity, launchpad, narrative, pool, source, and regime clusters, with sensitivity to alternate clustering."
+    },
+    {
+      "id": "FR-EVAL-019",
+      "exactNormativeText": "Backtest, cross-fit, forward shadow, live shadow, and active-production results are separate artifact classes; UI and exports cannot blend them into one performance curve."
+    },
+    {
+      "id": "FR-EVAL-020",
+      "exactNormativeText": "A policy with higher alert precision but lower conservative portfolio utility, worse tail loss, materially lower discovery coverage, or higher false-rejection rate cannot be declared superior without an explicit approved objective tradeoff."
+    }
+  ],
+  "expectedModules": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/eval.ts",
+    "docs/generated/eval-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Evaluation reports both raw-token count and cluster effective sample size across calendar, deployer, funder, wallet entity, launchpad, narrative, pool, source, and regime clusters, with sensitivity to alternate clustering.",
+    "Backtest, cross-fit, forward shadow, live shadow, and active-production results are separate artifact classes; UI and exports cannot blend them into one performance curve.",
+    "A policy with higher alert precision but lower conservative portfolio utility, worse tail loss, materially lower discovery coverage, or higher false-rejection rate cannot be declared superior without an explicit approved objective tradeoff."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/eval.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

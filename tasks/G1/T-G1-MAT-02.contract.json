@@ -33,9 +33,182 @@
     "FR-MAT-011",
     "FR-MAT-012"
   ],
-  "acceptanceCriteria": [
-    "AC-043",
-    "AC-127"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-040",
+      "facetId": "AC-040:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-040 system or integration oracle consumes. This facet does not claim full AC-040 satisfaction.",
+      "sourceAcceptanceSha256": "16c99d55dcb3dcd91163be3b66bec1678c9da8c98153f9ee45e0bbb315481b32"
+    },
+    {
+      "acceptanceId": "AC-041",
+      "facetId": "AC-041:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-041 system or integration oracle consumes. This facet does not claim full AC-041 satisfaction.",
+      "sourceAcceptanceSha256": "e524b965d6b9238a9a5fbbe616007ccc367fbbb6f3b85ec5467bec01dd12340a"
+    },
+    {
+      "acceptanceId": "AC-042",
+      "facetId": "AC-042:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-042 system or integration oracle consumes. This facet does not claim full AC-042 satisfaction.",
+      "sourceAcceptanceSha256": "221893115c2b45b29a8b2aa7f42fe18094164b13c6777019657c94af238114ab"
+    },
+    {
+      "acceptanceId": "AC-043",
+      "facetId": "AC-043:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-043 system or integration oracle consumes. This facet does not claim full AC-043 satisfaction.",
+      "sourceAcceptanceSha256": "cc9772eae7f9d914b9568a9f0e936fbeaade9cf643753807d86ff4310f1b4c7d"
+    },
+    {
+      "acceptanceId": "AC-044",
+      "facetId": "AC-044:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-044 system or integration oracle consumes. This facet does not claim full AC-044 satisfaction.",
+      "sourceAcceptanceSha256": "378c857bb0db12683d138147621936fa8fe9100e898f1be95edcb5399f339ac7"
+    },
+    {
+      "acceptanceId": "AC-120",
+      "facetId": "AC-120:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-120 system or integration oracle consumes. This facet does not claim full AC-120 satisfaction.",
+      "sourceAcceptanceSha256": "f651eb9c9fea9c6f91fe364140c4e9083933213a89fb04db854f5ff40b39ccbf"
+    },
+    {
+      "acceptanceId": "AC-121",
+      "facetId": "AC-121:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-121 system or integration oracle consumes. This facet does not claim full AC-121 satisfaction.",
+      "sourceAcceptanceSha256": "38de401eb152d2c7d3f55b56651555b905a84e97164ced56c3d936da13eef17d"
+    },
+    {
+      "acceptanceId": "AC-122",
+      "facetId": "AC-122:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-122 system or integration oracle consumes. This facet does not claim full AC-122 satisfaction.",
+      "sourceAcceptanceSha256": "27abeeeef23cac55a7ebc948ddfadc8ff5b4bc8e2da2f918f0b239451ffe59b8"
+    },
+    {
+      "acceptanceId": "AC-123",
+      "facetId": "AC-123:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-123 system or integration oracle consumes. This facet does not claim full AC-123 satisfaction.",
+      "sourceAcceptanceSha256": "2c6a8c741ef0203fe1cacf1e6e161f95283af91e59b0d398d7089d43618aae62"
+    },
+    {
+      "acceptanceId": "AC-124",
+      "facetId": "AC-124:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-124 system or integration oracle consumes. This facet does not claim full AC-124 satisfaction.",
+      "sourceAcceptanceSha256": "08a7195443536153a4e540f801f546102dfd0ca62f3f5f8af5dfc3ba3ff8e154"
+    },
+    {
+      "acceptanceId": "AC-125",
+      "facetId": "AC-125:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-125 system or integration oracle consumes. This facet does not claim full AC-125 satisfaction.",
+      "sourceAcceptanceSha256": "50fb7ded593b5a996f48f006bb0c0f5061e9c485469b40a1d0d0c4560ac0f9d1"
+    },
+    {
+      "acceptanceId": "AC-126",
+      "facetId": "AC-126:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-126 system or integration oracle consumes. This facet does not claim full AC-126 satisfaction.",
+      "sourceAcceptanceSha256": "6f333e259b19dc2934cd336232232769fe05173323175a728930026b1399922b"
+    },
+    {
+      "acceptanceId": "AC-127",
+      "facetId": "AC-127:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-127 system or integration oracle consumes. This facet does not claim full AC-127 satisfaction.",
+      "sourceAcceptanceSha256": "7937e8a031eebc3586ef6e4067f0b3868bfff14c2a1858a6f8f924877367ea6f"
+    },
+    {
+      "acceptanceId": "AC-128",
+      "facetId": "AC-128:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-128 system or integration oracle consumes. This facet does not claim full AC-128 satisfaction.",
+      "sourceAcceptanceSha256": "f0fa39d279920989a221b5286933879ef3b09e185acf76c567f07152873d4abd"
+    },
+    {
+      "acceptanceId": "AC-150",
+      "facetId": "AC-150:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-150 system or integration oracle consumes. This facet does not claim full AC-150 satisfaction.",
+      "sourceAcceptanceSha256": "f980db94896d2c3aa4d7af79be0da318480b65bd2908877638929f1357b4a420"
+    },
+    {
+      "acceptanceId": "AC-151",
+      "facetId": "AC-151:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-151 system or integration oracle consumes. This facet does not claim full AC-151 satisfaction.",
+      "sourceAcceptanceSha256": "f399030b5840761ebcdc4bebd5b14e921ad5dc79db2d05d4752054d8d13d3818"
+    },
+    {
+      "acceptanceId": "AC-152",
+      "facetId": "AC-152:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-152 system or integration oracle consumes. This facet does not claim full AC-152 satisfaction.",
+      "sourceAcceptanceSha256": "4b3578ad7b4d56ae715dc0f2984d86e01fb1016c122391ff9d5cbed489e9125c"
+    },
+    {
+      "acceptanceId": "AC-153",
+      "facetId": "AC-153:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-153 system or integration oracle consumes. This facet does not claim full AC-153 satisfaction.",
+      "sourceAcceptanceSha256": "a07314901100c09d849db43f90956286b923f94143769177a293e3f6765b01e4"
+    },
+    {
+      "acceptanceId": "AC-154",
+      "facetId": "AC-154:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-154 system or integration oracle consumes. This facet does not claim full AC-154 satisfaction.",
+      "sourceAcceptanceSha256": "cea223c8db76957dc6e9b7d6bede60e2cd4062e0c92b3250258d72b55d53b275"
+    },
+    {
+      "acceptanceId": "AC-240",
+      "facetId": "AC-240:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-240 system or integration oracle consumes. This facet does not claim full AC-240 satisfaction.",
+      "sourceAcceptanceSha256": "58ea5e9cd8be040a8da0153a90eea72d673bccbefdcbd3ebab8d3ef4a8dfd3a1"
+    },
+    {
+      "acceptanceId": "AC-241",
+      "facetId": "AC-241:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-241 system or integration oracle consumes. This facet does not claim full AC-241 satisfaction.",
+      "sourceAcceptanceSha256": "21506718ce09f717aa53b323496282b543d1a03dda0f64e3498703fcf6c66626"
+    },
+    {
+      "acceptanceId": "AC-242",
+      "facetId": "AC-242:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-242 system or integration oracle consumes. This facet does not claim full AC-242 satisfaction.",
+      "sourceAcceptanceSha256": "1b0e2f5fea865ad80db2254788e7167585f21ac49ddff1f03f2f5c37aace0ccc"
+    },
+    {
+      "acceptanceId": "AC-243",
+      "facetId": "AC-243:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-243 system or integration oracle consumes. This facet does not claim full AC-243 satisfaction.",
+      "sourceAcceptanceSha256": "79a59cbe85e9ad12ef8011011518d95f87824d01493ac3ad6de23a198add6337"
+    },
+    {
+      "acceptanceId": "AC-244",
+      "facetId": "AC-244:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-244 system or integration oracle consumes. This facet does not claim full AC-244 satisfaction.",
+      "sourceAcceptanceSha256": "639ce740b0718cd65afa9972a290ff7fc4fa3c17a280aca3a4c752949d603f9d"
+    },
+    {
+      "acceptanceId": "AC-245",
+      "facetId": "AC-245:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-245 system or integration oracle consumes. This facet does not claim full AC-245 satisfaction.",
+      "sourceAcceptanceSha256": "01075f941c2c87b6061f4ccc4675f02a60a8c6ec5d2fcfb9d03c3fe930d104d1"
+    },
+    {
+      "acceptanceId": "AC-246",
+      "facetId": "AC-246:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-246 system or integration oracle consumes. This facet does not claim full AC-246 satisfaction.",
+      "sourceAcceptanceSha256": "758b8dc629e0bf1660640394a99a89c6e4767e592768157292978eaf28a91417"
+    },
+    {
+      "acceptanceId": "AC-247",
+      "facetId": "AC-247:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-247 system or integration oracle consumes. This facet does not claim full AC-247 satisfaction.",
+      "sourceAcceptanceSha256": "f300abb737b2e9c2e5771e2d9ec88fb715758b86e80886b6318dee294b5426f7"
+    },
+    {
+      "acceptanceId": "AC-248",
+      "facetId": "AC-248:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-248 system or integration oracle consumes. This facet does not claim full AC-248 satisfaction.",
+      "sourceAcceptanceSha256": "af6112d196d9eadefb63f55963f1e45b5419b4534fd8b8e39dc007967f52fe34"
+    },
+    {
+      "acceptanceId": "AC-249",
+      "facetId": "AC-249:T-G1-MAT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-MAT-02 for FR-MAT-009, FR-MAT-010, FR-MAT-011, FR-MAT-012 that the unchanged AC-249 system or integration oracle consumes. This facet does not claim full AC-249 satisfaction.",
+      "sourceAcceptanceSha256": "14835a40acbd0ce6b6ad958361cce41a44c62ac2a9e84bfd2299243abbb789cd"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -57,14 +230,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-MAT-02/**"
+    "artifacts/context/T-G1-MAT-02/**",
+    "artifacts/conformance/T-G1-MAT-02/manifest.json"
   ],
   "writeSet": [
     "packages/outcome-maturity/**"
   ],
   "allowedPaths": [
     "packages/outcome-maturity/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -72,6 +249,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-MAT-02/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -90,7 +269,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -100,15 +280,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-043.spec.ts",
-    "tests/negative/AC-043.negative.spec.ts",
-    "tests/acceptance/AC-127.spec.ts",
-    "tests/negative/AC-127.negative.spec.ts"
+    "tests/task-facets/T-G1-MAT-02.spec.ts",
+    "tests/task-facets/T-G1-MAT-02.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-043.spec.ts tests/negative/AC-043.negative.spec.ts tests/acceptance/AC-127.spec.ts tests/negative/AC-127.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G1-MAT-02.spec.ts tests/task-facets/T-G1-MAT-02.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -133,10 +315,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -162,5 +346,9 @@
       "line": 6459,
       "id": "FR-MAT-012"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G1-MAT-02/manifest.json",
+  "conformanceManifestSha256": "da45534a0a985c0e5ef7b459e4d60a8626b25ab3167741fb5425620351896070",
+  "testQualityGate": "NEGATIVE_CASE"
 }

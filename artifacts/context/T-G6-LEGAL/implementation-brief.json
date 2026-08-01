@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-LEGAL",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-LEGAL-001",
+      "exactNormativeText": "Workspace/public distribution requires a current data-rights matrix proving permitted collection, caching, derived use, display, redistribution, export, retention, attribution, and model use for every active operation."
+    },
+    {
+      "id": "FR-LEGAL-002",
+      "exactNormativeText": "Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization."
+    },
+    {
+      "id": "FR-LEGAL-003",
+      "exactNormativeText": "Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited."
+    },
+    {
+      "id": "FR-LEGAL-004",
+      "exactNormativeText": "Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference."
+    },
+    {
+      "id": "FR-LEGAL-005",
+      "exactNormativeText": "Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation."
+    },
+    {
+      "id": "FR-LEGAL-006",
+      "exactNormativeText": "Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse."
+    }
+  ],
+  "expectedModules": [
+    "packages/public-claims-policy/**",
+    "packages/tenant-isolation/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/legal.ts",
+    "docs/generated/legal-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Workspace/public distribution requires a current data-rights matrix proving permitted collection, caching, derived use, display, redistribution, export, retention, attribution, and model use for every active operation.",
+    "Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization.",
+    "Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited.",
+    "Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference.",
+    "Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation.",
+    "Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/legal.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

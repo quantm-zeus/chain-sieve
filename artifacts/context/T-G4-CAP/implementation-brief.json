@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-CAP",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-CAP-001",
+      "exactNormativeText": "Machine-readable capability map gates tools, workflows, modules, and claims."
+    },
+    {
+      "id": "FR-CAP-002",
+      "exactNormativeText": "Partial/unavailable coverage is visible to users and agents."
+    },
+    {
+      "id": "FR-CAP-003",
+      "exactNormativeText": "Stale capability verification transitions to `UNVERIFIED`."
+    },
+    {
+      "id": "FR-CAP-004",
+      "exactNormativeText": "Tools, routes, workflows, modules, and policy nodes declare typed capability requirements."
+    }
+  ],
+  "expectedModules": [
+    "packages/capability-registry/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/cap.ts",
+    "docs/generated/cap-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [
+    "Partial/unavailable coverage is visible to users and agents."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/cap.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

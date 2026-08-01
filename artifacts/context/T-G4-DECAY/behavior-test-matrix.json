@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-DECAY",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-070",
+      "facetId": "AC-070:T-G4-DECAY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-DECAY for FR-DECAY-001, FR-DECAY-002, FR-DECAY-003 that the unchanged AC-070 system or integration oracle consumes. This facet does not claim full AC-070 satisfaction.",
+      "sourceAcceptanceSha256": "093eddad1bec2c0b1d5ba883659abe2f87b9075bf7107e2701b26121ed559931"
+    },
+    {
+      "acceptanceId": "AC-071",
+      "facetId": "AC-071:T-G4-DECAY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-DECAY for FR-DECAY-001, FR-DECAY-002, FR-DECAY-003 that the unchanged AC-071 system or integration oracle consumes. This facet does not claim full AC-071 satisfaction.",
+      "sourceAcceptanceSha256": "8b92ac935da656c03924426f05ec394cf5013375d141b0366fc80e3babddc34a"
+    },
+    {
+      "acceptanceId": "AC-072",
+      "facetId": "AC-072:T-G4-DECAY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-DECAY for FR-DECAY-001, FR-DECAY-002, FR-DECAY-003 that the unchanged AC-072 system or integration oracle consumes. This facet does not claim full AC-072 satisfaction.",
+      "sourceAcceptanceSha256": "fb0461215908ceda2e7be4dd6d755467c78f6954da9345820d878e4a8cfd4d3c"
+    },
+    {
+      "acceptanceId": "AC-073",
+      "facetId": "AC-073:T-G4-DECAY:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-DECAY for FR-DECAY-001, FR-DECAY-002, FR-DECAY-003 that the unchanged AC-073 system or integration oracle consumes. This facet does not claim full AC-073 satisfaction.",
+      "sourceAcceptanceSha256": "c4f9afd89a470c8fa768ceb8523987664deb08bcbc3dff3d3b595e0f9e8417db"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

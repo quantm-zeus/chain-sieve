@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-NAR",
+  "immutable": true,
+  "requirements": [
+    "FR-NAR-001",
+    "FR-NAR-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-074:T-G5-NAR:INTERFACE_FACET",
+    "AC-075:T-G5-NAR:INTERFACE_FACET",
+    "AC-076:T-G5-NAR:INTERFACE_FACET",
+    "AC-091:T-G5-NAR:INTERFACE_FACET",
+    "AC-092:T-G5-NAR:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-NAR.spec.ts",
+    "tests/task-facets/T-G5-NAR.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/narrative-intelligence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-NAR/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

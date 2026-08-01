@@ -7,15 +7,15 @@ const executableExtensions = new Set(['.ts', '.js', '.mjs', '.cjs', '.svelte', '
 const walk = async (root: string): Promise<string[]> => { const result: string[] = []; for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory()) result.push(...await walk(path)); else if (['.ts', '.svelte'].includes(extname(path))) result.push(path); } return result; };
 const ignoredDirectories = new Set(['node_modules', '.svelte-kit', 'build', 'dist', 'coverage', 'test-results', 'playwright-report']);
 const walkExecutable = async (root: string): Promise<string[]> => { const result: string[] = []; for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory() && !ignoredDirectories.has(entry.name)) result.push(...await walkExecutable(path)); else if (!entry.isDirectory() && (executableExtensions.has(extname(path)) || basename(path).startsWith('Dockerfile'))) result.push(path); } return result; };
-const sourceFiles = async (): Promise<string[]> => (await Promise.all(architectureRoots.map((root) => walk(join(process.cwd(), root))))).flat();
-const executableFiles = async (): Promise<string[]> => (await Promise.all(executableRoots.map((root) => walkExecutable(join(process.cwd(), root))))).flat();
+const sourceFiles = async (cwd: string): Promise<string[]> => (await Promise.all(architectureRoots.map((root) => walk(join(cwd, root))))).flat();
+const executableFiles = async (cwd: string): Promise<string[]> => (await Promise.all(executableRoots.map((root) => walkExecutable(join(cwd, root))))).flat();
 const imports = (text: string): string[] => [...text.matchAll(/(?:from\s+|import\s*\()['"]([^'"]+)['"]/g)].map((match) => match[1] as string);
 
-export const verifyArchitecture = async (): Promise<{ files: number; rules: number }> => {
-  const violations: string[] = []; const files = await sourceFiles();
+export const verifyArchitecture = async (cwd = process.cwd()): Promise<{ files: number; rules: number }> => {
+  const violations: string[] = []; const files = await sourceFiles(cwd);
   const packageEdges = new Map<string, Set<string>>();
   for (const file of files) {
-    const path = relative(process.cwd(), file); const text = await readFile(file, 'utf8'); violations.push(...architectureViolations(path, text));
+    const path = relative(cwd, file); const text = await readFile(file, 'utf8'); violations.push(...architectureViolations(path, text));
     const owner = /^(?:apps|packages)\/[^/]+/.exec(path)?.[0]; if (owner) { const edges = packageEdges.get(owner) ?? new Set<string>(); for (const dependency of imports(text)) { const match = /^@ciag\/([^/]+)/.exec(dependency); if (match?.[1]) edges.add(`packages/${match[1]}`); } packageEdges.set(owner, edges); }
   }
   const visit = (node: string, path: string[]): void => { if (path.includes(node)) { violations.push(`package-cycle:${[...path.slice(path.indexOf(node)), node].join('>')}`); return; } for (const dependency of packageEdges.get(node) ?? []) if (packageEdges.has(dependency)) visit(dependency, [...path, node]); };
@@ -39,17 +39,17 @@ export const architectureViolations = (path: string, text: string): string[] => 
   return violations;
 };
 
-export const scanPlaceholders = async (): Promise<{ files: number }> => {
-  const violations: string[] = []; const files = (await executableFiles()).filter((file) => relative(process.cwd(), file) !== 'tools/architecture-verifier/verify.ts');
-  for (const file of files) { const path = relative(process.cwd(), file); const text = await readFile(file, 'utf8'); violations.push(...placeholderViolations(path, text)); }
+export const scanPlaceholders = async (cwd = process.cwd()): Promise<{ files: number }> => {
+  const violations: string[] = []; const files = (await executableFiles(cwd)).filter((file) => relative(cwd, file) !== 'tools/architecture-verifier/verify.ts');
+  for (const file of files) { const path = relative(cwd, file); const text = await readFile(file, 'utf8'); violations.push(...placeholderViolations(path, text)); }
   if (violations.length > 0) throw new Error(`PLACEHOLDER_VIOLATIONS\n${violations.join('\n')}`); return { files: files.length };
 };
 
 export const placeholderViolations = (path: string, text: string): string[] => { const patterns: [string, RegExp][] = [['placeholder', /\b(?:TODO|FIXME|HACK|TEMP|NOT_IMPLEMENTED)\b/], ['empty-catch', /catch\s*\{\s*\}/], ['suppression', /@ts-ignore|eslint-disable/], ['skipped-test', /\.(?:skip|todo)\s*\(|\b(?:describe|it|test)\.(?:skip|todo)\b/], ['trivial-assertion', /expect\s*\(\s*(?:true|1)\s*\)\.toBe\s*\(\s*(?:true|1)\s*\)/]]; return patterns.filter(([, pattern]) => pattern.test(text)).map(([name]) => `${path}:${name}`); };
 
-export const scanProhibitedCapabilities = async (): Promise<{ files: number }> => {
-  const violations: string[] = []; const files = (await executableFiles()).filter((file) => { const path = relative(process.cwd(), file); return path !== 'tools/architecture-verifier/verify.ts' && !path.startsWith('packages/security/') && !path.startsWith('packages/provider-contracts/') && !path.startsWith('tests/'); });
-  for (const file of files) { const path = relative(process.cwd(), file); const text = await readFile(file, 'utf8'); violations.push(...prohibitedCapabilityViolations(path, text)); }
+export const scanProhibitedCapabilities = async (cwd = process.cwd()): Promise<{ files: number }> => {
+  const violations: string[] = []; const files = (await executableFiles(cwd)).filter((file) => { const path = relative(cwd, file); return path !== 'tools/architecture-verifier/verify.ts' && !path.startsWith('packages/security/') && !path.startsWith('packages/provider-contracts/') && !path.startsWith('tests/'); });
+  for (const file of files) { const path = relative(cwd, file); const text = await readFile(file, 'utf8'); violations.push(...prohibitedCapabilityViolations(path, text)); }
   if (violations.length > 0) throw new Error(`PROHIBITED_CAPABILITY_VIOLATIONS\n${violations.join('\n')}`); return { files: files.length };
 };
 

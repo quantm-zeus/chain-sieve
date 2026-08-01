@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-WAL",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-WAL-001",
+      "exactNormativeText": "Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization."
+    },
+    {
+      "id": "FR-WAL-002",
+      "exactNormativeText": "Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence."
+    },
+    {
+      "id": "FR-WAL-003",
+      "exactNormativeText": "Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits."
+    },
+    {
+      "id": "FR-WAL-004",
+      "exactNormativeText": "Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence."
+    },
+    {
+      "id": "FR-WAL-005",
+      "exactNormativeText": "Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate."
+    },
+    {
+      "id": "FR-WAL-006",
+      "exactNormativeText": "Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure."
+    },
+    {
+      "id": "FR-WAL-007",
+      "exactNormativeText": "Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature."
+    }
+  ],
+  "expectedModules": [
+    "packages/wallet-alpha-lineage/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/wal.ts",
+    "docs/generated/wal-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization.",
+    "Wallet entity resolution distinguishes owners, token accounts, routers, exchanges, funders, copy traders, creators, infrastructure, and uncertain links with versioned confidence.",
+    "Wallet-cohort independence discounts shared funders, synchronized acquisition, shared creator links, identical route behavior, common off-chain signal timing, and correlated exits.",
+    "Insider or creator proximity is represented separately from predictive success; insider-associated profitability cannot be promoted as organic smart-wallet evidence.",
+    "Reputation uses hierarchical shrinkage, minimum matured samples, survivorship adjustment, and staleness/decay; low-confidence profiles cannot independently promote a candidate.",
+    "Wallet lineage outputs expose evidence, unresolved identity risk, copy-trader probability, net exposure change, realized behavior, and historical failure/rug exposure.",
+    "Evaluation of wallet alpha for a token excludes that token’s own future outcome and uses asset/entity/lineage-aware cross-fitting where reputation is a learned downstream feature."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Wallet alpha profiles use point-in-time realized/executable outcomes, entry timing, liquidity, risk exposure, sample confidence, and regime/narrative specialization."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/wal.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

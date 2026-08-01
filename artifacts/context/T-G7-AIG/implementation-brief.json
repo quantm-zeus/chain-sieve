@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AIG",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AIG-001",
+      "exactNormativeText": "Every recheck decision records expected decision impact, boundary proximity, expected state change, information gap, risk urgency, candidate utility, quota cost, and expiry."
+    },
+    {
+      "id": "FR-AIG-002",
+      "exactNormativeText": "The scheduler chooses bounded provider operations/fields, not merely a cadence, and prefers cache/batch/free operations before metered free quota."
+    },
+    {
+      "id": "FR-AIG-003",
+      "exactNormativeText": "Risk monitoring, alert verification, and outcome observation reserves cannot be displaced by alpha exploration or broad scans."
+    },
+    {
+      "id": "FR-AIG-004",
+      "exactNormativeText": "Scheduler policies have starvation protection, maximum staleness, minimum critical cadence, backpressure, and deterministic fallback."
+    },
+    {
+      "id": "FR-AIG-005",
+      "exactNormativeText": "Information-gain claims are evaluated against static-cadence baselines using useful state changes per quota unit and missed-critical-event rate."
+    }
+  ],
+  "expectedModules": [
+    "packages/information-gain-scheduler/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/aig.ts",
+    "docs/generated/aig-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every recheck decision records expected decision impact, boundary proximity, expected state change, information gap, risk urgency, candidate utility, quota cost, and expiry.",
+    "The scheduler chooses bounded provider operations/fields, not merely a cadence, and prefers cache/batch/free operations before metered free quota.",
+    "Risk monitoring, alert verification, and outcome observation reserves cannot be displaced by alpha exploration or broad scans.",
+    "Scheduler policies have starvation protection, maximum staleness, minimum critical cadence, backpressure, and deterministic fallback.",
+    "Information-gain claims are evaluated against static-cadence baselines using useful state changes per quota unit and missed-critical-event rate."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/aig.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

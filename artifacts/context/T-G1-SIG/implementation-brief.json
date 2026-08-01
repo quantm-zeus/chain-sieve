@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SIG",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SIG-001",
+      "exactNormativeText": "Versioned Feature Registry."
+    },
+    {
+      "id": "FR-SIG-002",
+      "exactNormativeText": "Candidate funnel and independent vectors."
+    },
+    {
+      "id": "FR-SIG-003",
+      "exactNormativeText": "Reproducible research-priority ranking."
+    },
+    {
+      "id": "FR-SIG-004",
+      "exactNormativeText": "Diversity and exploration sample."
+    },
+    {
+      "id": "FR-SIG-005",
+      "exactNormativeText": "Candidate lifecycle/risk separation."
+    },
+    {
+      "id": "FR-SIG-006",
+      "exactNormativeText": "Adaptive rechecks operate with finite budget, information-value selection, starvation limits, and explicit expiry."
+    },
+    {
+      "id": "FR-SIG-009",
+      "exactNormativeText": "Every numeric feature defines minimum denominator/sample, stability transform, outlier/null policy, shrinkage, capped contribution, and cohort fallback."
+    }
+  ],
+  "expectedModules": [
+    "packages/signal-intelligence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/sig.ts",
+    "docs/generated/sig-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Versioned Feature Registry.",
+    "Candidate funnel and independent vectors.",
+    "Reproducible research-priority ranking.",
+    "Diversity and exploration sample.",
+    "Candidate lifecycle/risk separation.",
+    "Adaptive rechecks operate with finite budget, information-value selection, starvation limits, and explicit expiry.",
+    "Every numeric feature defines minimum denominator/sample, stability transform, outlier/null policy, shrinkage, capped contribution, and cohort fallback."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/sig.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,163 @@
+[
+  {
+    "path": "docs/generated/nb-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "migrations/g4_nb_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "packages/research-notebook/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/nb.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "telemetry/nb.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-083.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-084.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-085.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-086.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-087.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-088.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-089.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/fixtures/nb/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-083.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-084.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-085.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-086.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-087.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-088.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-089.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NB-001",
+      "FR-NB-002"
+    ]
+  }
+]

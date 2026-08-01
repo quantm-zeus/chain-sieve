@@ -22,10 +22,128 @@
     "FR-SEC-007",
     "FR-SEC-008"
   ],
-  "acceptanceCriteria": [
-    "AC-050",
-    "AC-053",
-    "AC-259"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-050",
+      "facetId": "AC-050:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-050 system or integration oracle consumes. This facet does not claim full AC-050 satisfaction.",
+      "sourceAcceptanceSha256": "46779806d92da6f5aa1d93ada5355383f0f8971604d9bee6e66287a38316f2fb"
+    },
+    {
+      "acceptanceId": "AC-051",
+      "facetId": "AC-051:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-051 system or integration oracle consumes. This facet does not claim full AC-051 satisfaction.",
+      "sourceAcceptanceSha256": "ca21b8ac907ab04e226cbe63bf7c6f29a3d6d9ab2493599bd47aa5c099c85bc4"
+    },
+    {
+      "acceptanceId": "AC-052",
+      "facetId": "AC-052:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-052 system or integration oracle consumes. This facet does not claim full AC-052 satisfaction.",
+      "sourceAcceptanceSha256": "95d1559aff40a60f93798baf7959933d7b16ae1f02f30eb380bc8e7a52daa07c"
+    },
+    {
+      "acceptanceId": "AC-053",
+      "facetId": "AC-053:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-053 system or integration oracle consumes. This facet does not claim full AC-053 satisfaction.",
+      "sourceAcceptanceSha256": "38004d95401b5d3b390ffa81adfd3cd47536ee26b83b9f30f89e59277ff32573"
+    },
+    {
+      "acceptanceId": "AC-250",
+      "facetId": "AC-250:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-250 system or integration oracle consumes. This facet does not claim full AC-250 satisfaction.",
+      "sourceAcceptanceSha256": "d51dce16ba75be6e720ba35cf41543ee249be22c48f2a0add0a70af34d6d25a3"
+    },
+    {
+      "acceptanceId": "AC-251",
+      "facetId": "AC-251:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-251 system or integration oracle consumes. This facet does not claim full AC-251 satisfaction.",
+      "sourceAcceptanceSha256": "71c624386ffd65a7c90c6a806ffb9ddbf91363c0c3deab797d64f3103502c767"
+    },
+    {
+      "acceptanceId": "AC-252",
+      "facetId": "AC-252:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-252 system or integration oracle consumes. This facet does not claim full AC-252 satisfaction.",
+      "sourceAcceptanceSha256": "02537c4c9a9c0ae44b9641e572c0aa6e648db8ad1a9ffe46ca3a3b233f25377b"
+    },
+    {
+      "acceptanceId": "AC-253",
+      "facetId": "AC-253:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-253 system or integration oracle consumes. This facet does not claim full AC-253 satisfaction.",
+      "sourceAcceptanceSha256": "0a4406bcdf963467af4d412d8c2380a43077f4ff0acbb9df1ba897f19e9b3b80"
+    },
+    {
+      "acceptanceId": "AC-254",
+      "facetId": "AC-254:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-254 system or integration oracle consumes. This facet does not claim full AC-254 satisfaction.",
+      "sourceAcceptanceSha256": "35e9ad20f3685ad72cf6e92a17594560366bca6932b7d936017a334e7f7774d3"
+    },
+    {
+      "acceptanceId": "AC-255",
+      "facetId": "AC-255:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-255 system or integration oracle consumes. This facet does not claim full AC-255 satisfaction.",
+      "sourceAcceptanceSha256": "7f3bb6eefefaac5d242dbd598c241967b279679ddb769b1df7a9bcfd2f9817eb"
+    },
+    {
+      "acceptanceId": "AC-256",
+      "facetId": "AC-256:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-256 system or integration oracle consumes. This facet does not claim full AC-256 satisfaction.",
+      "sourceAcceptanceSha256": "c2348361ed8430fbd1020784098ce0d5e732dc11c877561fc8ed992469a2c34e"
+    },
+    {
+      "acceptanceId": "AC-257",
+      "facetId": "AC-257:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-257 system or integration oracle consumes. This facet does not claim full AC-257 satisfaction.",
+      "sourceAcceptanceSha256": "ca01b708bb060d421a28825805a2b598047f56f3d5e61b35125c452402369cc1"
+    },
+    {
+      "acceptanceId": "AC-258",
+      "facetId": "AC-258:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-258 system or integration oracle consumes. This facet does not claim full AC-258 satisfaction.",
+      "sourceAcceptanceSha256": "b404db9c0809a72f852220aa52bb7b353cbf5356cd981470802bc4b17347e52b"
+    },
+    {
+      "acceptanceId": "AC-259",
+      "facetId": "AC-259:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-259 system or integration oracle consumes. This facet does not claim full AC-259 satisfaction.",
+      "sourceAcceptanceSha256": "00e08ec7f032fc552fdf540625aec774eb003226f818a62aa2b86ae26201074f"
+    },
+    {
+      "acceptanceId": "AC-274",
+      "facetId": "AC-274:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-274 system or integration oracle consumes. This facet does not claim full AC-274 satisfaction.",
+      "sourceAcceptanceSha256": "85bdeb17fb8c5e72ec380adbf23897383fa47b40b9d3c04bd04e1336fa88e080"
+    },
+    {
+      "acceptanceId": "AC-275",
+      "facetId": "AC-275:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-275 system or integration oracle consumes. This facet does not claim full AC-275 satisfaction.",
+      "sourceAcceptanceSha256": "016c7b9a86451caaaffeedefa34e3e3d3a6f5e0fec5a55d3231e9b3829cde4ee"
+    },
+    {
+      "acceptanceId": "AC-276",
+      "facetId": "AC-276:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-276 system or integration oracle consumes. This facet does not claim full AC-276 satisfaction.",
+      "sourceAcceptanceSha256": "f8f56a742c061490924476ec00f82ee91bb43173299cd2e91c5545a865959e0d"
+    },
+    {
+      "acceptanceId": "AC-277",
+      "facetId": "AC-277:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-277 system or integration oracle consumes. This facet does not claim full AC-277 satisfaction.",
+      "sourceAcceptanceSha256": "a1661e003aaca5a7492db8f3436621a68ae7128982c89fa842ad5315be15f716"
+    },
+    {
+      "acceptanceId": "AC-278",
+      "facetId": "AC-278:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-278 system or integration oracle consumes. This facet does not claim full AC-278 satisfaction.",
+      "sourceAcceptanceSha256": "0415e62e60aa5fd2895926d814e732ea4b0dd0af40f22a7671e054ca7cd515ea"
+    },
+    {
+      "acceptanceId": "AC-279",
+      "facetId": "AC-279:T-G0-SEC-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-SEC-01 for FR-SEC-001, FR-SEC-002, FR-SEC-003, FR-SEC-004, FR-SEC-005, FR-SEC-006, FR-SEC-007, FR-SEC-008 that the unchanged AC-279 system or integration oracle consumes. This facet does not claim full AC-279 satisfaction.",
+      "sourceAcceptanceSha256": "e9b0b2a55db2c3b25794ae66c6751ea60b78eac3efbd6cc8a595416b25640022"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -47,7 +165,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-SEC-01/**"
+    "artifacts/context/T-G0-SEC-01/**",
+    "artifacts/conformance/T-G0-SEC-01/manifest.json"
   ],
   "writeSet": [
     "packages/security/**",
@@ -56,7 +175,10 @@
   "allowedPaths": [
     "packages/security/**",
     "packages/tenant-isolation/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -64,6 +186,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-SEC-01/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -94,7 +218,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -104,17 +229,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-050.spec.ts",
-    "tests/negative/AC-050.negative.spec.ts",
-    "tests/acceptance/AC-053.spec.ts",
-    "tests/negative/AC-053.negative.spec.ts",
-    "tests/acceptance/AC-259.spec.ts",
-    "tests/negative/AC-259.negative.spec.ts"
+    "tests/task-facets/T-G0-SEC-01.spec.ts",
+    "tests/task-facets/T-G0-SEC-01.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-050.spec.ts tests/negative/AC-050.negative.spec.ts tests/acceptance/AC-053.spec.ts tests/negative/AC-053.negative.spec.ts tests/acceptance/AC-259.spec.ts tests/negative/AC-259.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G0-SEC-01.spec.ts tests/task-facets/T-G0-SEC-01.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -139,10 +264,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -188,5 +315,9 @@
       "line": 6489,
       "id": "FR-SEC-008"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G0-SEC-01/manifest.json",
+  "conformanceManifestSha256": "b747290cdb495b527a20bdac8ca21ed2066326291169b487b7730f0db3fb9c3c",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

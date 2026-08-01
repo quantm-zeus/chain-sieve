@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-ALAB",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-ALAB-001",
+      "exactNormativeText": "Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths."
+    },
+    {
+      "id": "FR-ALAB-002",
+      "exactNormativeText": "Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets."
+    },
+    {
+      "id": "FR-ALAB-003",
+      "exactNormativeText": "Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited."
+    },
+    {
+      "id": "FR-ALAB-004",
+      "exactNormativeText": "Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key."
+    },
+    {
+      "id": "FR-ALAB-005",
+      "exactNormativeText": "Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions."
+    },
+    {
+      "id": "FR-ALAB-006",
+      "exactNormativeText": "Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine."
+    }
+  ],
+  "expectedModules": [
+    "packages/offline-alpha-lab/**",
+    "packages/alpha-artifact-store/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/alab.ts",
+    "docs/generated/alab-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths.",
+    "Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets.",
+    "Imports accept only schema-approved data artifacts; executable code, unsafe serialization, arbitrary SQL/modules and path traversal are prohibited.",
+    "Import verifies producer identity, asymmetric signature against trusted public keys, hashes, manifest, code/dependency versions, data cutoff, evaluation, holdout, adversarial status, applicability and resource limits; production never stores the producer private key.",
+    "Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.",
+    "Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Exports are immutable, minimal-scope, rights-filtered, point-in-time manifests with hashes and no production/provider/admin secrets."
+  ],
+  "idempotencyExpectations": [
+    "Heavy alpha mining, cross-fitting, portfolio replay and adversarial sweeps execute in a bounded Offline Alpha Lab, not latency-sensitive live request paths."
+  ],
+  "observabilityExpectations": [
+    "telemetry/alab.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

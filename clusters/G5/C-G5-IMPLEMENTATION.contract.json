@@ -82,29 +82,30 @@
     "FR-XCF-002"
   ],
   "acceptanceCriteria": [
-    "AC-170",
-    "AC-174",
-    "AC-075",
-    "AC-160",
-    "AC-164",
-    "AC-168",
-    "AC-171",
-    "AC-175",
-    "AC-172",
-    "AC-176",
-    "AC-076",
-    "AC-173",
-    "AC-177",
     "AC-077",
-    "AC-079",
     "AC-078",
-    "AC-136",
-    "AC-141",
-    "AC-143",
-    "AC-161",
-    "AC-165",
-    "AC-169",
-    "AC-091"
+    "AC-079",
+    "AC-170",
+    "AC-171",
+    "AC-172",
+    "AC-173",
+    "AC-174",
+    "AC-175",
+    "AC-176",
+    "AC-177"
+  ],
+  "integrationAcceptanceCriteria": [
+    "AC-077",
+    "AC-078",
+    "AC-079",
+    "AC-170",
+    "AC-171",
+    "AC-172",
+    "AC-173",
+    "AC-174",
+    "AC-175",
+    "AC-176",
+    "AC-177"
   ],
   "invariants": [
     "INV-001",
@@ -124,8 +125,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

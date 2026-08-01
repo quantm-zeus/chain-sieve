@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/public-claims-policy/**",
     "packages/tenant-isolation/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-LEGAL/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-LEGAL/**"
+    "artifacts/context/T-G6-LEGAL/**",
+    "artifacts/conformance/T-G6-LEGAL/manifest.json"
   ],
   "writeSet": [
     "packages/public-claims-policy/**",

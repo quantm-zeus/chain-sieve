@@ -1,0 +1,142 @@
+[
+  {
+    "id": "FR-COST-001",
+    "sourceLine": 6132,
+    "startLine": 6130,
+    "endLine": 6134,
+    "exactText": "### 38.13 Free-first cost and quota\n\n- **FR-COST-001 MUST:** Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission.\n- **FR-COST-002 MUST:** `STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.\n- **FR-COST-003 MUST:** Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill."
+  },
+  {
+    "id": "FR-COST-002",
+    "sourceLine": 6133,
+    "startLine": 6131,
+    "endLine": 6135,
+    "exactText": "\n- **FR-COST-001 MUST:** Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission.\n- **FR-COST-002 MUST:** `STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.\n- **FR-COST-003 MUST:** Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.\n- **FR-COST-004 MUST:** Broad scans degrade breadth/depth before consuming protected quota."
+  },
+  {
+    "id": "FR-COST-003",
+    "sourceLine": 6134,
+    "startLine": 6132,
+    "endLine": 6136,
+    "exactText": "- **FR-COST-001 MUST:** Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission.\n- **FR-COST-002 MUST:** `STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.\n- **FR-COST-003 MUST:** Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.\n- **FR-COST-004 MUST:** Broad scans degrade breadth/depth before consuming protected quota.\n- **FR-COST-005 MUST:** Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation."
+  },
+  {
+    "id": "FR-COST-004",
+    "sourceLine": 6135,
+    "startLine": 6133,
+    "endLine": 6137,
+    "exactText": "- **FR-COST-002 MUST:** `STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.\n- **FR-COST-003 MUST:** Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.\n- **FR-COST-004 MUST:** Broad scans degrade breadth/depth before consuming protected quota.\n- **FR-COST-005 MUST:** Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.\n- **FR-COST-006 MUST:** Cost forecasts use current verified provider plan metadata and observed usage."
+  },
+  {
+    "id": "FR-COST-005",
+    "sourceLine": 6136,
+    "startLine": 6134,
+    "endLine": 6138,
+    "exactText": "- **FR-COST-003 MUST:** Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.\n- **FR-COST-004 MUST:** Broad scans degrade breadth/depth before consuming protected quota.\n- **FR-COST-005 MUST:** Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.\n- **FR-COST-006 MUST:** Cost forecasts use current verified provider plan metadata and observed usage.\n- **FR-COST-007 MUST:** Blocked cost operations are audited with candidate, caller, reason, and alternative behavior."
+  },
+  {
+    "id": "FR-COST-006",
+    "sourceLine": 6137,
+    "startLine": 6135,
+    "endLine": 6139,
+    "exactText": "- **FR-COST-004 MUST:** Broad scans degrade breadth/depth before consuming protected quota.\n- **FR-COST-005 MUST:** Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.\n- **FR-COST-006 MUST:** Cost forecasts use current verified provider plan metadata and observed usage.\n- **FR-COST-007 MUST:** Blocked cost operations are audited with candidate, caller, reason, and alternative behavior.\n- **FR-COST-008 MUST:** Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication."
+  },
+  {
+    "id": "FR-COST-007",
+    "sourceLine": 6138,
+    "startLine": 6136,
+    "endLine": 6140,
+    "exactText": "- **FR-COST-005 MUST:** Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.\n- **FR-COST-006 MUST:** Cost forecasts use current verified provider plan metadata and observed usage.\n- **FR-COST-007 MUST:** Blocked cost operations are audited with candidate, caller, reason, and alternative behavior.\n- **FR-COST-008 MUST:** Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication.\n- **FR-COST-009 MUST:** Scheduler, workflow, database, object-store, notification, and model resource budgets are forecast and independently capped."
+  },
+  {
+    "id": "FR-COST-008",
+    "sourceLine": 6139,
+    "startLine": 6137,
+    "endLine": 6141,
+    "exactText": "- **FR-COST-006 MUST:** Cost forecasts use current verified provider plan metadata and observed usage.\n- **FR-COST-007 MUST:** Blocked cost operations are audited with candidate, caller, reason, and alternative behavior.\n- **FR-COST-008 MUST:** Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication.\n- **FR-COST-009 MUST:** Scheduler, workflow, database, object-store, notification, and model resource budgets are forecast and independently capped.\n- **FR-COST-010 MUST:** Data-provider `STRICT_FREE` is independent from an explicitly configured BYOK model budget."
+  },
+  {
+    "id": "AC-100",
+    "sourceLine": 6603,
+    "startLine": 6601,
+    "endLine": 6605,
+    "exactText": "### 39.9 Free-first cost and quota\n\n- **AC-100:** In `STRICT_FREE`, attempted paid, unknown-cost, overage, auto-upgrade, or paid-fallback calls are blocked before network execution and audited.\n- **AC-101:** Broad discovery quota exhaustion reduces scan breadth or returns cache; it cannot consume protected risk/alert reserves.\n- **AC-102:** A compatible batch of token market requests produces the configured maximum safe batch utilization and one quota reservation per provider call."
+  },
+  {
+    "id": "AC-101",
+    "sourceLine": 6604,
+    "startLine": 6602,
+    "endLine": 6606,
+    "exactText": "\n- **AC-100:** In `STRICT_FREE`, attempted paid, unknown-cost, overage, auto-upgrade, or paid-fallback calls are blocked before network execution and audited.\n- **AC-101:** Broad discovery quota exhaustion reduces scan breadth or returns cache; it cannot consume protected risk/alert reserves.\n- **AC-102:** A compatible batch of token market requests produces the configured maximum safe batch utilization and one quota reservation per provider call.\n- **AC-103:** Provider plan metadata becoming unverified transitions affected operations to `UNVERIFIED`/blocked rather than assuming old free limits."
+  },
+  {
+    "id": "AC-102",
+    "sourceLine": 6605,
+    "startLine": 6603,
+    "endLine": 6607,
+    "exactText": "- **AC-100:** In `STRICT_FREE`, attempted paid, unknown-cost, overage, auto-upgrade, or paid-fallback calls are blocked before network execution and audited.\n- **AC-101:** Broad discovery quota exhaustion reduces scan breadth or returns cache; it cannot consume protected risk/alert reserves.\n- **AC-102:** A compatible batch of token market requests produces the configured maximum safe batch utilization and one quota reservation per provider call.\n- **AC-103:** Provider plan metadata becoming unverified transitions affected operations to `UNVERIFIED`/blocked rather than assuming old free limits.\n- **AC-104:** Exhausting low-priority scheduler/storage/model budgets degrades enrichment or retention according to policy without deleting frozen evidence or stopping critical risk monitoring."
+  },
+  {
+    "id": "AC-103",
+    "sourceLine": 6606,
+    "startLine": 6604,
+    "endLine": 6608,
+    "exactText": "- **AC-101:** Broad discovery quota exhaustion reduces scan breadth or returns cache; it cannot consume protected risk/alert reserves.\n- **AC-102:** A compatible batch of token market requests produces the configured maximum safe batch utilization and one quota reservation per provider call.\n- **AC-103:** Provider plan metadata becoming unverified transitions affected operations to `UNVERIFIED`/blocked rather than assuming old free limits.\n- **AC-104:** Exhausting low-priority scheduler/storage/model budgets degrades enrichment or retention according to policy without deleting frozen evidence or stopping critical risk monitoring.\n- **AC-105:** A nonzero approved BYOK model budget can run the headless agent while data-provider mode remains `STRICT_FREE` with zero paid data calls."
+  },
+  {
+    "id": "AC-104",
+    "sourceLine": 6607,
+    "startLine": 6605,
+    "endLine": 6609,
+    "exactText": "- **AC-102:** A compatible batch of token market requests produces the configured maximum safe batch utilization and one quota reservation per provider call.\n- **AC-103:** Provider plan metadata becoming unverified transitions affected operations to `UNVERIFIED`/blocked rather than assuming old free limits.\n- **AC-104:** Exhausting low-priority scheduler/storage/model budgets degrades enrichment or retention according to policy without deleting frozen evidence or stopping critical risk monitoring.\n- **AC-105:** A nonzero approved BYOK model budget can run the headless agent while data-provider mode remains `STRICT_FREE` with zero paid data calls.\n"
+  },
+  {
+    "id": "AC-105",
+    "sourceLine": 6608,
+    "startLine": 6606,
+    "endLine": 6610,
+    "exactText": "- **AC-103:** Provider plan metadata becoming unverified transitions affected operations to `UNVERIFIED`/blocked rather than assuming old free limits.\n- **AC-104:** Exhausting low-priority scheduler/storage/model budgets degrades enrichment or retention according to policy without deleting frozen evidence or stopping critical risk monitoring.\n- **AC-105:** A nonzero approved BYOK model budget can run the headless agent while data-provider mode remains `STRICT_FREE` with zero paid data calls.\n\n### 39.10 Discovery coverage"
+  },
+  {
+    "id": "AC-224",
+    "sourceLine": 6739,
+    "startLine": 6737,
+    "endLine": 6741,
+    "exactText": "- **AC-222:** Every performance view identifies population, profile, policy, execution/delay scenario, calendar range, regime coverage, raw sample size, cluster effective sample size, and uncertainty method.\n- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope."
+  },
+  {
+    "id": "AC-225",
+    "sourceLine": 6740,
+    "startLine": 6738,
+    "endLine": 6742,
+    "exactText": "- **AC-223:** Opportunity activation fails when any hard security, tradability, rights, leakage, capacity, tail-risk, or public-claim constraint fails even if weighted opportunity features are strongly positive.\n- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded."
+  },
+  {
+    "id": "AC-226",
+    "sourceLine": 6741,
+    "startLine": 6739,
+    "endLine": 6743,
+    "exactText": "- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve."
+  },
+  {
+    "id": "AC-227",
+    "sourceLine": 6742,
+    "startLine": 6740,
+    "endLine": 6744,
+    "exactText": "- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve."
+  },
+  {
+    "id": "AC-228",
+    "sourceLine": 6743,
+    "startLine": 6741,
+    "endLine": 6745,
+    "exactText": "- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve.\n"
+  },
+  {
+    "id": "AC-229",
+    "sourceLine": 6744,
+    "startLine": 6742,
+    "endLine": 6746,
+    "exactText": "- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve.\n- **AC-229:** Actual usage exceeding the capacity forecast tolerance creates an incident, recomputes admission limits, and does not silently consume paid overage or protected reserve.\n\n### 39.22 Execution adapters, route fidelity, and mature outcomes"
+  }
+]

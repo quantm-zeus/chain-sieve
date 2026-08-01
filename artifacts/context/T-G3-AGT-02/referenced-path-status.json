@@ -1,0 +1,233 @@
+[
+  {
+    "path": "docs/generated/agt-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "migrations/g3_agt_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "packages/agent-runtime/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "packages/evidence/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/agt.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "telemetry/agt.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-030.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-031.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-032.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-033.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-034.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-242.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-243.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-244.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/fixtures/agt/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-030.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-031.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-032.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-033.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-034.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-242.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-243.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-244.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AGT-009",
+      "FR-AGT-010",
+      "FR-AGT-011",
+      "FR-AGT-012"
+    ]
+  }
+]

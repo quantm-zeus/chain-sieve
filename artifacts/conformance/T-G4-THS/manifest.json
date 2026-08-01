@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-THS",
+  "immutable": true,
+  "requirements": [
+    "FR-THS-001",
+    "FR-THS-002",
+    "FR-THS-003"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-070:T-G4-THS:INTERFACE_FACET",
+    "AC-071:T-G4-THS:INTERFACE_FACET",
+    "AC-072:T-G4-THS:INTERFACE_FACET",
+    "AC-073:T-G4-THS:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-THS.spec.ts",
+    "tests/task-facets/T-G4-THS.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/thesis/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-THS/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

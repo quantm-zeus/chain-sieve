@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SOLSEC",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-130",
+      "facetId": "AC-130:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-130 system or integration oracle consumes. This facet does not claim full AC-130 satisfaction.",
+      "sourceAcceptanceSha256": "ea9853a7711d59725ecd339040bd84e2a95305529b208e39c2e9ee1cca81a08c"
+    },
+    {
+      "acceptanceId": "AC-131",
+      "facetId": "AC-131:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-131 system or integration oracle consumes. This facet does not claim full AC-131 satisfaction.",
+      "sourceAcceptanceSha256": "67ebf494fdd503a27850f7578549a059ede6901b06e6efda9718af3729d99a10"
+    },
+    {
+      "acceptanceId": "AC-132",
+      "facetId": "AC-132:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-132 system or integration oracle consumes. This facet does not claim full AC-132 satisfaction.",
+      "sourceAcceptanceSha256": "da10ace021f9f86905ef73fe2612d1de7259f10c910c885a47f60e217c37a5f8"
+    },
+    {
+      "acceptanceId": "AC-133",
+      "facetId": "AC-133:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-133 system or integration oracle consumes. This facet does not claim full AC-133 satisfaction.",
+      "sourceAcceptanceSha256": "b5f06cd7bd2ea21127a7e854238f0b82a92d5afe11afcd68f67cb5e0c252ab26"
+    },
+    {
+      "acceptanceId": "AC-134",
+      "facetId": "AC-134:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-134 system or integration oracle consumes. This facet does not claim full AC-134 satisfaction.",
+      "sourceAcceptanceSha256": "47c2674195529d3f8ba7070779242a03005322aef4327c6b7cc96a2c24512f18"
+    },
+    {
+      "acceptanceId": "AC-135",
+      "facetId": "AC-135:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-135 system or integration oracle consumes. This facet does not claim full AC-135 satisfaction.",
+      "sourceAcceptanceSha256": "bf04f986a93c324b3e2424f0746100778fdf1aad461041a2c0bb022ec0633bf2"
+    },
+    {
+      "acceptanceId": "AC-136",
+      "facetId": "AC-136:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-136 system or integration oracle consumes. This facet does not claim full AC-136 satisfaction.",
+      "sourceAcceptanceSha256": "936b29a101783b3a42140c65ed0828b27d88ed21b43287643c5213d7aed2fe26"
+    },
+    {
+      "acceptanceId": "AC-230",
+      "facetId": "AC-230:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-230 system or integration oracle consumes. This facet does not claim full AC-230 satisfaction.",
+      "sourceAcceptanceSha256": "7b196a365d3ea6d2e3aec66064108901b8b501098801a3f514d6c4ef4571cb41"
+    },
+    {
+      "acceptanceId": "AC-231",
+      "facetId": "AC-231:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-231 system or integration oracle consumes. This facet does not claim full AC-231 satisfaction.",
+      "sourceAcceptanceSha256": "77197deb47cc755fa0bd882efe5370e2f071435d3af8553df54d38c97f4cd117"
+    },
+    {
+      "acceptanceId": "AC-232",
+      "facetId": "AC-232:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-232 system or integration oracle consumes. This facet does not claim full AC-232 satisfaction.",
+      "sourceAcceptanceSha256": "69651134a992e73286c6dabe9577026d7de6260ac83d3e1a77f41804052e2c9e"
+    },
+    {
+      "acceptanceId": "AC-233",
+      "facetId": "AC-233:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-233 system or integration oracle consumes. This facet does not claim full AC-233 satisfaction.",
+      "sourceAcceptanceSha256": "1a025efb0b8e036b4f7cbb3fc1c54c5fedaad7198acb0d6e43b0c2bed5532065"
+    },
+    {
+      "acceptanceId": "AC-234",
+      "facetId": "AC-234:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-234 system or integration oracle consumes. This facet does not claim full AC-234 satisfaction.",
+      "sourceAcceptanceSha256": "72ebe7906711708673b62000a00b5030c44667207cb36c186907c7e4fac9ecfd"
+    },
+    {
+      "acceptanceId": "AC-235",
+      "facetId": "AC-235:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-235 system or integration oracle consumes. This facet does not claim full AC-235 satisfaction.",
+      "sourceAcceptanceSha256": "c5888e926d1a759343dff7166444e2c1d70b7928fec55e1110a2f2f4dc533ea0"
+    },
+    {
+      "acceptanceId": "AC-236",
+      "facetId": "AC-236:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-236 system or integration oracle consumes. This facet does not claim full AC-236 satisfaction.",
+      "sourceAcceptanceSha256": "acf19b86688a73275d7ed09e7d7c43ee8008f96c6b61cdc6898622e07510aa3c"
+    },
+    {
+      "acceptanceId": "AC-237",
+      "facetId": "AC-237:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-237 system or integration oracle consumes. This facet does not claim full AC-237 satisfaction.",
+      "sourceAcceptanceSha256": "c5b0e2edde7901dd61d1a1c068352d8c828d78ca9bd6115ea8e1fce8a92c6968"
+    },
+    {
+      "acceptanceId": "AC-238",
+      "facetId": "AC-238:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-238 system or integration oracle consumes. This facet does not claim full AC-238 satisfaction.",
+      "sourceAcceptanceSha256": "e2cee330c9fa4fe5265bd2dae4b834dfa526cb027478cc6e56b49ca583f675a7"
+    },
+    {
+      "acceptanceId": "AC-239",
+      "facetId": "AC-239:T-G1-SOLSEC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-SOLSEC for FR-SOLSEC-001, FR-SOLSEC-002, FR-SOLSEC-003, FR-SOLSEC-004, FR-SOLSEC-005, FR-SOLSEC-006 that the unchanged AC-239 system or integration oracle consumes. This facet does not claim full AC-239 satisfaction.",
+      "sourceAcceptanceSha256": "f96ccf45cee05852900230fe2cb15a1fb4e6232459fbcde5097664338a8caf16"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

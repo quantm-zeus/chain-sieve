@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-LAT",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-LAT-001",
+      "exactNormativeText": "End-to-end latency spans from event/provider availability to delivered alert."
+    },
+    {
+      "id": "FR-LAT-002",
+      "exactNormativeText": "Backtest applies historically measured or bounded latency assumptions."
+    }
+  ],
+  "expectedModules": [
+    "packages/latency-profiler/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/lat.ts",
+    "docs/generated/lat-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/lat.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

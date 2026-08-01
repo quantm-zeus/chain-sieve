@@ -30,9 +30,68 @@
   "requirements": [
     "FR-DISC-014"
   ],
-  "acceptanceCriteria": [
-    "AC-224",
-    "AC-229"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-110",
+      "facetId": "AC-110:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-110 system or integration oracle consumes. This facet does not claim full AC-110 satisfaction.",
+      "sourceAcceptanceSha256": "8d188368767a38c525cfff3a4c834079f23f163d4dbfc4038a24945299b87cd9"
+    },
+    {
+      "acceptanceId": "AC-111",
+      "facetId": "AC-111:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-111 system or integration oracle consumes. This facet does not claim full AC-111 satisfaction.",
+      "sourceAcceptanceSha256": "61f975a30cac0145d1b219569d026da7698287026f228552c98422c76f908d7a"
+    },
+    {
+      "acceptanceId": "AC-112",
+      "facetId": "AC-112:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-112 system or integration oracle consumes. This facet does not claim full AC-112 satisfaction.",
+      "sourceAcceptanceSha256": "da83d09eb9600dadf1ac2faa58563604c60b0c0d064fec6b97f0a8ee46ee4229"
+    },
+    {
+      "acceptanceId": "AC-113",
+      "facetId": "AC-113:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-113 system or integration oracle consumes. This facet does not claim full AC-113 satisfaction.",
+      "sourceAcceptanceSha256": "5abc68ae992f5cfebba3d62c46dc24e65e2b90a4294d100a3e7f50b9d9f8cbf4"
+    },
+    {
+      "acceptanceId": "AC-224",
+      "facetId": "AC-224:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-224 system or integration oracle consumes. This facet does not claim full AC-224 satisfaction.",
+      "sourceAcceptanceSha256": "41c0b1270321d5a04e9b45d3cfb8161fc5d6a0df788a433acb11c3327ac6e8ee"
+    },
+    {
+      "acceptanceId": "AC-225",
+      "facetId": "AC-225:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-225 system or integration oracle consumes. This facet does not claim full AC-225 satisfaction.",
+      "sourceAcceptanceSha256": "d22cb3228e7ec342a827f3ac0202e60f84d560f537183713c64060eb97440486"
+    },
+    {
+      "acceptanceId": "AC-226",
+      "facetId": "AC-226:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-226 system or integration oracle consumes. This facet does not claim full AC-226 satisfaction.",
+      "sourceAcceptanceSha256": "de3dd739c5cdae070dd33d5b9ada08bcf66b371c76084b863e501ec2d30dd86c"
+    },
+    {
+      "acceptanceId": "AC-227",
+      "facetId": "AC-227:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-227 system or integration oracle consumes. This facet does not claim full AC-227 satisfaction.",
+      "sourceAcceptanceSha256": "130b82a8639e43fbe39659941833364eb9705d15d9458dea393c4c8b685de509"
+    },
+    {
+      "acceptanceId": "AC-228",
+      "facetId": "AC-228:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-228 system or integration oracle consumes. This facet does not claim full AC-228 satisfaction.",
+      "sourceAcceptanceSha256": "b2ecf9b6734f062d2839e1d60101d4da367f62bc617fba48fcd88cdba872486d"
+    },
+    {
+      "acceptanceId": "AC-229",
+      "facetId": "AC-229:T-G1-DISC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-DISC-02 for FR-DISC-014 that the unchanged AC-229 system or integration oracle consumes. This facet does not claim full AC-229 satisfaction.",
+      "sourceAcceptanceSha256": "3f54a54fbd86bbafc092710529450c51b71d91e82cfdd3886efc5335025d2fdf"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -54,7 +113,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-DISC-02/**"
+    "artifacts/context/T-G1-DISC-02/**",
+    "artifacts/conformance/T-G1-DISC-02/manifest.json"
   ],
   "writeSet": [
     "packages/discovery-universe/**",
@@ -63,7 +123,10 @@
   "allowedPaths": [
     "packages/discovery-universe/**",
     "packages/cheap-monitor/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -71,6 +134,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-DISC-02/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -87,7 +152,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -97,15 +163,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-224.spec.ts",
-    "tests/negative/AC-224.negative.spec.ts",
-    "tests/acceptance/AC-229.spec.ts",
-    "tests/negative/AC-229.negative.spec.ts"
+    "tests/task-facets/T-G1-DISC-02.spec.ts",
+    "tests/task-facets/T-G1-DISC-02.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-224.spec.ts tests/negative/AC-224.negative.spec.ts tests/acceptance/AC-229.spec.ts tests/negative/AC-229.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G1-DISC-02.spec.ts tests/task-facets/T-G1-DISC-02.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -130,10 +198,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -144,5 +214,9 @@
       "line": 6444,
       "id": "FR-DISC-014"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G1-DISC-02/manifest.json",
+  "conformanceManifestSha256": "063cbde0e48da4e70c1098a2db0fa1729724a717cfea5e976feb8e003acaaf0c",
+  "testQualityGate": "NEGATIVE_CASE"
 }

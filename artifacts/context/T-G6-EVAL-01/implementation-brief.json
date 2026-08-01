@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-EVAL-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EVAL-010",
+      "exactNormativeText": "Champion, challenger, rejected, ignored, control, exploration, and missed-opportunity cases use the same universal decision/action-time algorithm and measured delivery-latency distribution; non-alert arms cannot receive an earlier counterfactual entry."
+    },
+    {
+      "id": "FR-EVAL-011",
+      "exactNormativeText": "Evaluation models evidence-acquisition and high-resolution-outcome selection using recorded design probabilities, stratification, or explicit restricted-population claims; missing-not-at-random evidence cannot be treated as random missingness."
+    },
+    {
+      "id": "FR-EVAL-012",
+      "exactNormativeText": "Policy comparisons freeze the candidate universe before outcomes, include all eligible funnel exits, and report effects of discovery, gating, ranking, research, policy, delivery, expiry, and execution separately."
+    },
+    {
+      "id": "FR-EVAL-013",
+      "exactNormativeText": "Production alpha promotion uses a pre-registered power/precision plan defining minimum mature successes, mature failures, critical-risk events, cluster effective sample size, calendar span, regime coverage, confidence/credible interval width, and minimum detectable portfolio utility."
+    },
+    {
+      "id": "FR-EVAL-014",
+      "exactNormativeText": "Repeated looks, adaptive stopping, multiple profiles, thresholds, features, prompts, models, patterns, routes, and execution scenarios use registered sequential and multiple-testing control; the best observed configuration alone is not valid proof."
+    },
+    {
+      "id": "FR-EVAL-015",
+      "exactNormativeText": "Final promotion evidence is forward shadow or untouched time-based out-of-sample evidence not previously inspected for tuning; exposed holdouts are marked exhausted and cannot be relabeled untouched."
+    },
+    {
+      "id": "FR-EVAL-016",
+      "exactNormativeText": "Negative controls include timestamp shifts, availability backdating placebo, outcome permutation, provider/source identifiers, synthetic noise, delayed-delivery placebo, and leakage scans; unexpected lift blocks promotion."
+    },
+    {
+      "id": "FR-EVAL-017",
+      "exactNormativeText": "Source-dependence sensitivity recomputes alert/portfolio results after collapsing empirically correlated evidence groups and after removing each major upstream lineage."
+    }
+  ],
+  "expectedModules": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/eval.ts",
+    "docs/generated/eval-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Champion, challenger, rejected, ignored, control, exploration, and missed-opportunity cases use the same universal decision/action-time algorithm and measured delivery-latency distribution; non-alert arms cannot receive an earlier counterfactual entry.",
+    "Evaluation models evidence-acquisition and high-resolution-outcome selection using recorded design probabilities, stratification, or explicit restricted-population claims; missing-not-at-random evidence cannot be treated as random missingness.",
+    "Policy comparisons freeze the candidate universe before outcomes, include all eligible funnel exits, and report effects of discovery, gating, ranking, research, policy, delivery, expiry, and execution separately.",
+    "Production alpha promotion uses a pre-registered power/precision plan defining minimum mature successes, mature failures, critical-risk events, cluster effective sample size, calendar span, regime coverage, confidence/credible interval width, and minimum detectable portfolio utility.",
+    "Repeated looks, adaptive stopping, multiple profiles, thresholds, features, prompts, models, patterns, routes, and execution scenarios use registered sequential and multiple-testing control; the best observed configuration alone is not valid proof.",
+    "Final promotion evidence is forward shadow or untouched time-based out-of-sample evidence not previously inspected for tuning; exposed holdouts are marked exhausted and cannot be relabeled untouched.",
+    "Negative controls include timestamp shifts, availability backdating placebo, outcome permutation, provider/source identifiers, synthetic noise, delayed-delivery placebo, and leakage scans; unexpected lift blocks promotion.",
+    "Source-dependence sensitivity recomputes alert/portfolio results after collapsing empirically correlated evidence groups and after removing each major upstream lineage."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Negative controls include timestamp shifts, availability backdating placebo, outcome permutation, provider/source identifiers, synthetic noise, delayed-delivery placebo, and leakage scans; unexpected lift blocks promotion."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/eval.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,263 @@
+[
+  {
+    "path": "docs/generated/cost-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "migrations/g0_cost_*.sql",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-DATA",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "packages/capacity-planner/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-COST-01",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "packages/cost-router/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-COST-01",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "packages/quota-forecast/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-COST-01",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/cost.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "telemetry/cost.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-100.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-101.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-102.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-103.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-104.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-105.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-224.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-225.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-226.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-227.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-228.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-229.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/fixtures/cost/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-100.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-101.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-102.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-103.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-104.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-105.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-224.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-225.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-226.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-227.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-228.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-229.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-COST-009",
+      "FR-COST-010"
+    ]
+  }
+]

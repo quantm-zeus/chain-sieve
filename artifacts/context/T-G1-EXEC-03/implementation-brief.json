@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EXEC-03",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-EXEC-017",
+      "exactNormativeText": "Production tradability evaluates base, p50-delay, p90-delay, conservative latency/adverse-selection, liquidity-drawdown, fee-volatility, route-degradation, and failed/partial-fill scenarios; the active profile declares which must pass."
+    },
+    {
+      "id": "FR-EXEC-018",
+      "exactNormativeText": "Entry and exit simulation model token transfer fees/hooks, account creation/rent when relevant, network/priority fees, aggregator and pool fees, minimum output, failed attempts, partial fills, retry latency, route capacity, and unexecutable residual inventory."
+    },
+    {
+      "id": "FR-EXEC-019",
+      "exactNormativeText": "Concurrent shadow positions sharing a pool, route, quote asset, liquidity source, deployer cluster, or correlated exit window aggregate impact and capacity; isolated fills cannot each consume the same depth."
+    },
+    {
+      "id": "FR-EXEC-020",
+      "exactNormativeText": "Quote/reference sources are evidence, not execution truth; simulation exposes uncertainty when state is incomplete or parity is weak and blocks confirmed tradability when the uncertainty bound crosses policy limits."
+    },
+    {
+      "id": "FR-EXEC-021",
+      "exactNormativeText": "Adapter deprecation, program upgrade, parity drift, or unknown extension automatically degrades affected tradability and re-evaluates active alerts/watchlists without rewriting historical simulations."
+    },
+    {
+      "id": "FR-EXEC-022",
+      "exactNormativeText": "Route selection cannot retrospectively choose a route or pool unavailable at action time, and migration routing follows only transitions known and executable at that time."
+    }
+  ],
+  "expectedModules": [
+    "packages/execution-simulator/**",
+    "packages/pool-math/**",
+    "packages/transfer-semantics/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/exec.ts",
+    "docs/generated/exec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Production tradability evaluates base, p50-delay, p90-delay, conservative latency/adverse-selection, liquidity-drawdown, fee-volatility, route-degradation, and failed/partial-fill scenarios; the active profile declares which must pass.",
+    "Entry and exit simulation model token transfer fees/hooks, account creation/rent when relevant, network/priority fees, aggregator and pool fees, minimum output, failed attempts, partial fills, retry latency, route capacity, and unexecutable residual inventory.",
+    "Concurrent shadow positions sharing a pool, route, quote asset, liquidity source, deployer cluster, or correlated exit window aggregate impact and capacity; isolated fills cannot each consume the same depth.",
+    "Quote/reference sources are evidence, not execution truth; simulation exposes uncertainty when state is incomplete or parity is weak and blocks confirmed tradability when the uncertainty bound crosses policy limits.",
+    "Adapter deprecation, program upgrade, parity drift, or unknown extension automatically degrades affected tradability and re-evaluates active alerts/watchlists without rewriting historical simulations.",
+    "Route selection cannot retrospectively choose a route or pool unavailable at action time, and migration routing follows only transitions known and executable at that time."
+  ],
+  "failureAndDegradedBehavior": [
+    "Route selection cannot retrospectively choose a route or pool unavailable at action time, and migration routing follows only transitions known and executable at that time."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/exec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

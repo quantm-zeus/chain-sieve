@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/security/**",
     "packages/tenant-isolation/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-SEC-02/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-SEC-02/**"
+    "artifacts/context/T-G0-SEC-02/**",
+    "artifacts/conformance/T-G0-SEC-02/manifest.json"
   ],
   "writeSet": [
     "packages/security/**",

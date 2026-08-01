@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-MCP",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-MCP-006",
+      "exactNormativeText": "OAuth 2.1 before public/workspace distribution."
+    },
+    {
+      "id": "FR-MCP-007",
+      "exactNormativeText": "ChatGPT Scheduled integration remains unavailable until a versioned readiness test proves background MCP access, scope, delivery, and failure isolation for the claimed account/workspace."
+    },
+    {
+      "id": "FR-MCP-011",
+      "exactNormativeText": "OAuth access tokens are audience/resource bound, short-lived, validated locally or by an approved introspection path, and never passed through to upstream providers; PKCE and exact redirect URI validation are mandatory for public/workspace authorization."
+    },
+    {
+      "id": "FR-MCP-012",
+      "exactNormativeText": "Large resources use bounded streaming or short-lived audience-bound signed URLs, enforce byte/record limits and rights, and prevent range, redirect, path, or content-type confusion."
+    }
+  ],
+  "expectedModules": [
+    "apps/api/src/mcp/**",
+    "packages/tool-core/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/mcp.ts",
+    "docs/generated/mcp-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "OAuth 2.1 before public/workspace distribution.",
+    "ChatGPT Scheduled integration remains unavailable until a versioned readiness test proves background MCP access, scope, delivery, and failure isolation for the claimed account/workspace.",
+    "OAuth access tokens are audience/resource bound, short-lived, validated locally or by an approved introspection path, and never passed through to upstream providers; PKCE and exact redirect URI validation are mandatory for public/workspace authorization.",
+    "Large resources use bounded streaming or short-lived audience-bound signed URLs, enforce byte/record limits and rights, and prevent range, redirect, path, or content-type confusion."
+  ],
+  "failureAndDegradedBehavior": [
+    "ChatGPT Scheduled integration remains unavailable until a versioned readiness test proves background MCP access, scope, delivery, and failure isolation for the claimed account/workspace."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/mcp.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

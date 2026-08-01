@@ -22,10 +22,122 @@
     "FR-MCP-009",
     "FR-MCP-010"
   ],
-  "acceptanceCriteria": [
-    "AC-002",
-    "AC-052",
-    "AC-256"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-001",
+      "facetId": "AC-001:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-001 system or integration oracle consumes. This facet does not claim full AC-001 satisfaction.",
+      "sourceAcceptanceSha256": "997053f689ea8d37e9d696581e858696514c51ff1edf5427ad34a6fcbed567d4"
+    },
+    {
+      "acceptanceId": "AC-002",
+      "facetId": "AC-002:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-002 system or integration oracle consumes. This facet does not claim full AC-002 satisfaction.",
+      "sourceAcceptanceSha256": "cc70201956ecba74e759041c72dd89fedf1df53ef13c824a1cee0757c676da36"
+    },
+    {
+      "acceptanceId": "AC-003",
+      "facetId": "AC-003:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-003 system or integration oracle consumes. This facet does not claim full AC-003 satisfaction.",
+      "sourceAcceptanceSha256": "3ca9cfcabe0268dce034e7e6ceea162925a3179cd28ac06b2679fba8db029a0c"
+    },
+    {
+      "acceptanceId": "AC-004",
+      "facetId": "AC-004:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-004 system or integration oracle consumes. This facet does not claim full AC-004 satisfaction.",
+      "sourceAcceptanceSha256": "6d3332f6e60775fba4c3e4faa6f61e74662bc2d4d3a91b2506167b543d0c32fc"
+    },
+    {
+      "acceptanceId": "AC-050",
+      "facetId": "AC-050:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-050 system or integration oracle consumes. This facet does not claim full AC-050 satisfaction.",
+      "sourceAcceptanceSha256": "46779806d92da6f5aa1d93ada5355383f0f8971604d9bee6e66287a38316f2fb"
+    },
+    {
+      "acceptanceId": "AC-051",
+      "facetId": "AC-051:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-051 system or integration oracle consumes. This facet does not claim full AC-051 satisfaction.",
+      "sourceAcceptanceSha256": "ca21b8ac907ab04e226cbe63bf7c6f29a3d6d9ab2493599bd47aa5c099c85bc4"
+    },
+    {
+      "acceptanceId": "AC-052",
+      "facetId": "AC-052:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-052 system or integration oracle consumes. This facet does not claim full AC-052 satisfaction.",
+      "sourceAcceptanceSha256": "95d1559aff40a60f93798baf7959933d7b16ae1f02f30eb380bc8e7a52daa07c"
+    },
+    {
+      "acceptanceId": "AC-053",
+      "facetId": "AC-053:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-053 system or integration oracle consumes. This facet does not claim full AC-053 satisfaction.",
+      "sourceAcceptanceSha256": "38004d95401b5d3b390ffa81adfd3cd47536ee26b83b9f30f89e59277ff32573"
+    },
+    {
+      "acceptanceId": "AC-144",
+      "facetId": "AC-144:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-144 system or integration oracle consumes. This facet does not claim full AC-144 satisfaction.",
+      "sourceAcceptanceSha256": "8c8f58a46d6d91e62c4ece924150c4e8fb4bc1cd8cebe023d97ef4cbc8307a7e"
+    },
+    {
+      "acceptanceId": "AC-250",
+      "facetId": "AC-250:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-250 system or integration oracle consumes. This facet does not claim full AC-250 satisfaction.",
+      "sourceAcceptanceSha256": "d51dce16ba75be6e720ba35cf41543ee249be22c48f2a0add0a70af34d6d25a3"
+    },
+    {
+      "acceptanceId": "AC-251",
+      "facetId": "AC-251:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-251 system or integration oracle consumes. This facet does not claim full AC-251 satisfaction.",
+      "sourceAcceptanceSha256": "71c624386ffd65a7c90c6a806ffb9ddbf91363c0c3deab797d64f3103502c767"
+    },
+    {
+      "acceptanceId": "AC-252",
+      "facetId": "AC-252:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-252 system or integration oracle consumes. This facet does not claim full AC-252 satisfaction.",
+      "sourceAcceptanceSha256": "02537c4c9a9c0ae44b9641e572c0aa6e648db8ad1a9ffe46ca3a3b233f25377b"
+    },
+    {
+      "acceptanceId": "AC-253",
+      "facetId": "AC-253:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-253 system or integration oracle consumes. This facet does not claim full AC-253 satisfaction.",
+      "sourceAcceptanceSha256": "0a4406bcdf963467af4d412d8c2380a43077f4ff0acbb9df1ba897f19e9b3b80"
+    },
+    {
+      "acceptanceId": "AC-254",
+      "facetId": "AC-254:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-254 system or integration oracle consumes. This facet does not claim full AC-254 satisfaction.",
+      "sourceAcceptanceSha256": "35e9ad20f3685ad72cf6e92a17594560366bca6932b7d936017a334e7f7774d3"
+    },
+    {
+      "acceptanceId": "AC-255",
+      "facetId": "AC-255:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-255 system or integration oracle consumes. This facet does not claim full AC-255 satisfaction.",
+      "sourceAcceptanceSha256": "7f3bb6eefefaac5d242dbd598c241967b279679ddb769b1df7a9bcfd2f9817eb"
+    },
+    {
+      "acceptanceId": "AC-256",
+      "facetId": "AC-256:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-256 system or integration oracle consumes. This facet does not claim full AC-256 satisfaction.",
+      "sourceAcceptanceSha256": "c2348361ed8430fbd1020784098ce0d5e732dc11c877561fc8ed992469a2c34e"
+    },
+    {
+      "acceptanceId": "AC-257",
+      "facetId": "AC-257:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-257 system or integration oracle consumes. This facet does not claim full AC-257 satisfaction.",
+      "sourceAcceptanceSha256": "ca01b708bb060d421a28825805a2b598047f56f3d5e61b35125c452402369cc1"
+    },
+    {
+      "acceptanceId": "AC-258",
+      "facetId": "AC-258:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-258 system or integration oracle consumes. This facet does not claim full AC-258 satisfaction.",
+      "sourceAcceptanceSha256": "b404db9c0809a72f852220aa52bb7b353cbf5356cd981470802bc4b17347e52b"
+    },
+    {
+      "acceptanceId": "AC-259",
+      "facetId": "AC-259:T-G0-MCP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G0-MCP for FR-MCP-001, FR-MCP-002, FR-MCP-003, FR-MCP-004, FR-MCP-005, FR-MCP-008, FR-MCP-009, FR-MCP-010 that the unchanged AC-259 system or integration oracle consumes. This facet does not claim full AC-259 satisfaction.",
+      "sourceAcceptanceSha256": "00e08ec7f032fc552fdf540625aec774eb003226f818a62aa2b86ae26201074f"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -47,7 +159,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-MCP/**"
+    "artifacts/context/T-G0-MCP/**",
+    "artifacts/conformance/T-G0-MCP/manifest.json"
   ],
   "writeSet": [
     "apps/api/src/mcp/**",
@@ -56,7 +169,10 @@
   "allowedPaths": [
     "apps/api/src/mcp/**",
     "packages/tool-core/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -64,6 +180,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-MCP/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -94,7 +212,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -104,17 +223,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-002.spec.ts",
-    "tests/negative/AC-002.negative.spec.ts",
-    "tests/acceptance/AC-052.spec.ts",
-    "tests/negative/AC-052.negative.spec.ts",
-    "tests/acceptance/AC-256.spec.ts",
-    "tests/negative/AC-256.negative.spec.ts"
+    "tests/task-facets/T-G0-MCP.spec.ts",
+    "tests/task-facets/T-G0-MCP.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-002.spec.ts tests/negative/AC-002.negative.spec.ts tests/acceptance/AC-052.spec.ts tests/negative/AC-052.negative.spec.ts tests/acceptance/AC-256.spec.ts tests/negative/AC-256.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G0-MCP.spec.ts tests/task-facets/T-G0-MCP.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -139,10 +258,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -188,5 +309,9 @@
       "line": 6479,
       "id": "FR-MCP-010"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G0-MCP/manifest.json",
+  "conformanceManifestSha256": "63ca964fe0887f9daf5aa5fab703128997c996698851157cd0a7a89383439c57",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

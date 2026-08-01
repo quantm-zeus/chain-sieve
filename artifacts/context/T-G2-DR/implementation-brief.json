@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-DR",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DR-003",
+      "exactNormativeText": "Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO."
+    },
+    {
+      "id": "FR-DR-004",
+      "exactNormativeText": "After recovery, the system reconciles provider calls, quota reservations, workflows, inbox/outbox, alerts, collector gaps, artifacts, and audit checkpoints before active automation resumes."
+    },
+    {
+      "id": "FR-DR-005",
+      "exactNormativeText": "If a tier cannot meet its declared recovery objective, affected capability automatically degrades and confirmed opportunity alerts are disabled until continuity is re-established."
+    },
+    {
+      "id": "FR-DR-006",
+      "exactNormativeText": "Backup retention, deletion, legal hold, geographic location, encryption, rights constraints, and restore access are versioned and audited."
+    }
+  ],
+  "expectedModules": [
+    "packages/persistence/**",
+    "packages/workflow-runtime/**",
+    "packages/release-conformance/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/dr.ts",
+    "docs/generated/dr-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO.",
+    "After recovery, the system reconciles provider calls, quota reservations, workflows, inbox/outbox, alerts, collector gaps, artifacts, and audit checkpoints before active automation resumes.",
+    "If a tier cannot meet its declared recovery objective, affected capability automatically degrades and confirmed opportunity alerts are disabled until continuity is re-established.",
+    "Backup retention, deletion, legal hold, geographic location, encryption, rights constraints, and restore access are versioned and audited."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [
+    "Destructive restore drills rebuild a clean environment, verify hashes/chains, replay migrations, restore cross-store references, re-establish collector checkpoints without hidden gaps, and measure achieved RPO/RTO."
+  ],
+  "observabilityExpectations": [
+    "telemetry/dr.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-FB",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-FB-001",
+      "exactNormativeText": "Deterministic fallback supports safe operation without model services."
+    },
+    {
+      "id": "FR-FB-002",
+      "exactNormativeText": "Fallback opportunity-alert permissions are separately approved and default disabled."
+    }
+  ],
+  "expectedModules": [
+    "packages/fallback-runtime/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/fb.ts",
+    "docs/generated/fb-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/fb.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

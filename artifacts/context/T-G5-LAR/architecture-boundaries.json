@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/liquidity-resilience/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-LAR/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-LAR/**"
+    "artifacts/context/T-G5-LAR/**",
+    "artifacts/conformance/T-G5-LAR/manifest.json"
   ],
   "writeSet": [
     "packages/liquidity-resilience/**"

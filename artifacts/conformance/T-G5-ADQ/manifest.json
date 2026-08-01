@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-ADQ",
+  "immutable": true,
+  "requirements": [
+    "FR-ADQ-001",
+    "FR-ADQ-002",
+    "FR-ADQ-003",
+    "FR-ADQ-004",
+    "FR-ADQ-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-170:T-G5-ADQ:INTERFACE_FACET",
+    "AC-171:T-G5-ADQ:INTERFACE_FACET",
+    "AC-172:T-G5-ADQ:INTERFACE_FACET",
+    "AC-173:T-G5-ADQ:INTERFACE_FACET",
+    "AC-174:T-G5-ADQ:INTERFACE_FACET",
+    "AC-175:T-G5-ADQ:INTERFACE_FACET",
+    "AC-176:T-G5-ADQ:INTERFACE_FACET",
+    "AC-177:T-G5-ADQ:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-ADQ.spec.ts",
+    "tests/task-facets/T-G5-ADQ.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/attention-diffusion/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-ADQ/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

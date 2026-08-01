@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-PROD",
+  "immutable": true,
+  "requirements": [
+    "FR-PROD-001",
+    "FR-PROD-002",
+    "FR-PROD-003",
+    "FR-PROD-004",
+    "FR-PROD-005",
+    "FR-PROD-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-144:T-G2-PROD:INTERFACE_FACET",
+    "AC-150:T-G2-PROD:INTERFACE_FACET",
+    "AC-151:T-G2-PROD:INTERFACE_FACET",
+    "AC-152:T-G2-PROD:INTERFACE_FACET",
+    "AC-153:T-G2-PROD:INTERFACE_FACET",
+    "AC-154:T-G2-PROD:INTERFACE_FACET",
+    "AC-272:T-G2-PROD:INTERFACE_FACET",
+    "AC-273:T-G2-PROD:INTERFACE_FACET",
+    "AC-274:T-G2-PROD:INTERFACE_FACET",
+    "AC-275:T-G2-PROD:INTERFACE_FACET",
+    "AC-276:T-G2-PROD:INTERFACE_FACET",
+    "AC-277:T-G2-PROD:INTERFACE_FACET",
+    "AC-278:T-G2-PROD:INTERFACE_FACET",
+    "AC-279:T-G2-PROD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G2-PROD.spec.ts",
+    "tests/task-facets/T-G2-PROD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/release-conformance/**",
+    "packages/capability-registry/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G2-PROD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

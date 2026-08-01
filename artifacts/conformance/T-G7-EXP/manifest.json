@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-EXP",
+  "immutable": true,
+  "requirements": [
+    "FR-EXP-001",
+    "FR-EXP-002",
+    "FR-EXP-003",
+    "FR-EXP-004",
+    "FR-EXP-005",
+    "FR-EXP-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-190:T-G7-EXP:INTERFACE_FACET",
+    "AC-191:T-G7-EXP:INTERFACE_FACET",
+    "AC-192:T-G7-EXP:INTERFACE_FACET",
+    "AC-193:T-G7-EXP:INTERFACE_FACET",
+    "AC-194:T-G7-EXP:INTERFACE_FACET",
+    "AC-195:T-G7-EXP:INTERFACE_FACET",
+    "AC-196:T-G7-EXP:INTERFACE_FACET",
+    "AC-197:T-G7-EXP:INTERFACE_FACET",
+    "AC-198:T-G7-EXP:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-EXP.spec.ts",
+    "tests/task-facets/T-G7-EXP.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/exploration-bandit/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-EXP/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

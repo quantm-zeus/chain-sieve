@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-FHZ",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-FHZ-001",
+      "exactNormativeText": "The service estimates horizon-specific hazards for liquidity failure, creator exit, distribution, manipulation, attention collapse, migration failure, and regime reversal when data supports them."
+    },
+    {
+      "id": "FR-FHZ-002",
+      "exactNormativeText": "Hazard outputs are calibrated survival/risk estimates or ordinal states with explicit applicability; unsupported probability claims are prohibited."
+    },
+    {
+      "id": "FR-FHZ-003",
+      "exactNormativeText": "Time-varying hazard drivers use only point-in-time covariates and account for censoring, competing risks, and event-definition versions."
+    },
+    {
+      "id": "FR-FHZ-004",
+      "exactNormativeText": "Rising critical hazard shortens validity, increases risk monitoring, can suppress confirmed opportunity alerts, and can create deterioration/risk updates."
+    },
+    {
+      "id": "FR-FHZ-005",
+      "exactNormativeText": "Hazard value is evaluated by calibration, early-warning lead time, false-alarm cost, and incremental portfolio loss reduction."
+    }
+  ],
+  "expectedModules": [
+    "packages/failure-hazard/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/fhz.ts",
+    "docs/generated/fhz-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The service estimates horizon-specific hazards for liquidity failure, creator exit, distribution, manipulation, attention collapse, migration failure, and regime reversal when data supports them.",
+    "Hazard outputs are calibrated survival/risk estimates or ordinal states with explicit applicability; unsupported probability claims are prohibited.",
+    "Time-varying hazard drivers use only point-in-time covariates and account for censoring, competing risks, and event-definition versions.",
+    "Rising critical hazard shortens validity, increases risk monitoring, can suppress confirmed opportunity alerts, and can create deterioration/risk updates.",
+    "Hazard value is evaluated by calibration, early-warning lead time, false-alarm cost, and incremental portfolio loss reduction."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Time-varying hazard drivers use only point-in-time covariates and account for censoring, competing risks, and event-definition versions."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/fhz.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

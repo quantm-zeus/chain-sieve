@@ -107,50 +107,17 @@
     "FR-TRACE-006"
   ],
   "acceptanceCriteria": [
-    "AC-110",
-    "AC-225",
-    "AC-230",
-    "AC-237",
-    "AC-111",
-    "AC-226",
-    "AC-231",
-    "AC-001",
-    "AC-004",
-    "AC-245",
-    "AC-100",
-    "AC-103",
-    "AC-101",
-    "AC-104",
-    "AC-020",
-    "AC-240",
-    "AC-246",
-    "AC-112",
-    "AC-227",
-    "AC-060",
-    "AC-062",
-    "AC-263",
-    "AC-002",
-    "AC-052",
-    "AC-256",
-    "AC-250",
-    "AC-252",
-    "AC-257",
-    "AC-270",
-    "AC-251",
-    "AC-253",
-    "AC-258",
-    "AC-271",
-    "AC-050",
-    "AC-053",
-    "AC-259",
-    "AC-051",
-    "AC-254",
-    "AC-276",
     "AC-265",
     "AC-266",
     "AC-267",
     "AC-268",
-    "AC-269"
+    "AC-269",
+    "AC-270",
+    "AC-271"
+  ],
+  "integrationAcceptanceCriteria": [
+    "AC-270",
+    "AC-271"
   ],
   "invariants": [
     "INV-001",
@@ -170,8 +137,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

@@ -1,0 +1,245 @@
+[
+  {
+    "path": "docs/generated/lms-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "migrations/g5_lms_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "packages/launch-state-intelligence/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/lms.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "telemetry/lms.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-170.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-171.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-172.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-173.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-174.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-175.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-176.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-177.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/lms/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-170.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-171.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-172.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-173.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-174.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-175.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-176.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-177.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LMS-001",
+      "FR-LMS-002",
+      "FR-LMS-003",
+      "FR-LMS-004",
+      "FR-LMS-005"
+    ]
+  }
+]

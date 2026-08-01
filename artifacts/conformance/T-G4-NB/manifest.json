@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-NB",
+  "immutable": true,
+  "requirements": [
+    "FR-NB-001",
+    "FR-NB-002"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-083:T-G4-NB:INTERFACE_FACET",
+    "AC-084:T-G4-NB:INTERFACE_FACET",
+    "AC-085:T-G4-NB:INTERFACE_FACET",
+    "AC-086:T-G4-NB:INTERFACE_FACET",
+    "AC-087:T-G4-NB:INTERFACE_FACET",
+    "AC-088:T-G4-NB:INTERFACE_FACET",
+    "AC-089:T-G4-NB:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-NB.spec.ts",
+    "tests/task-facets/T-G4-NB.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/research-notebook/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-NB/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

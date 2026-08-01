@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-NLL",
+  "immutable": true,
+  "requirements": [
+    "FR-NLL-001",
+    "FR-NLL-002",
+    "FR-NLL-003",
+    "FR-NLL-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-170:T-G5-NLL:INTERFACE_FACET",
+    "AC-171:T-G5-NLL:INTERFACE_FACET",
+    "AC-172:T-G5-NLL:INTERFACE_FACET",
+    "AC-173:T-G5-NLL:INTERFACE_FACET",
+    "AC-174:T-G5-NLL:INTERFACE_FACET",
+    "AC-175:T-G5-NLL:INTERFACE_FACET",
+    "AC-176:T-G5-NLL:INTERFACE_FACET",
+    "AC-177:T-G5-NLL:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-NLL.spec.ts",
+    "tests/task-facets/T-G5-NLL.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/leader-laggard/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-NLL/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

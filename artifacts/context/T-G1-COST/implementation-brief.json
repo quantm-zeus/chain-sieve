@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-COST",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-COST-011",
+      "exactNormativeText": "Budget policy is split into `DATA_PROVIDER`, `MODEL`, `COMPUTE_WORKFLOW`, `DATABASE_STORAGE`, `OBJECT_STORAGE_EGRESS`, and `NOTIFICATION` dimensions; “free” in one dimension cannot imply zero total cost."
+    },
+    {
+      "id": "FR-COST-012",
+      "exactNormativeText": "Every active schedule/profile combination references a versioned Sustainable Capacity Contract covering expected, peak, and failure-retry workloads for at least 30 days."
+    },
+    {
+      "id": "FR-COST-013",
+      "exactNormativeText": "The capacity contract declares candidate/event rates, operation calls and credits, streamed bytes, model tokens, workflow steps, database writes/rows, object bytes, egress, notifications, concurrency, retry allowance, protected reserves, and safety margin."
+    },
+    {
+      "id": "FR-COST-014",
+      "exactNormativeText": "Admission control forecasts the entire resolved configuration before activation and rejects or reduces workload when expected or stress consumption exceeds verified plan, rate, storage, egress, or monetary caps."
+    },
+    {
+      "id": "FR-COST-015",
+      "exactNormativeText": "Degradation order is deterministic, versioned, and preserves critical risk monitoring, alert verification, outcome observation, collector continuity, and interactive emergency reserve before social, analog, wallet-history, exploration, or broad-scan depth."
+    },
+    {
+      "id": "FR-COST-016",
+      "exactNormativeText": "Capacity forecasts are reconciled against actual consumption by operation/workload/candidate/run/module and automatically create incidents for material underestimation or reserve breach."
+    },
+    {
+      "id": "FR-COST-017",
+      "exactNormativeText": "The system reports total resource cost and marginal cost per researched candidate, mature outcome, useful alert, prevented risk event, and portfolio-utility unit without hiding owner-supplied model or infrastructure spend."
+    }
+  ],
+  "expectedModules": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/cost.ts",
+    "docs/generated/cost-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Budget policy is split into `DATA_PROVIDER`, `MODEL`, `COMPUTE_WORKFLOW`, `DATABASE_STORAGE`, `OBJECT_STORAGE_EGRESS`, and `NOTIFICATION` dimensions; “free” in one dimension cannot imply zero total cost.",
+    "Every active schedule/profile combination references a versioned Sustainable Capacity Contract covering expected, peak, and failure-retry workloads for at least 30 days.",
+    "The capacity contract declares candidate/event rates, operation calls and credits, streamed bytes, model tokens, workflow steps, database writes/rows, object bytes, egress, notifications, concurrency, retry allowance, protected reserves, and safety margin.",
+    "Admission control forecasts the entire resolved configuration before activation and rejects or reduces workload when expected or stress consumption exceeds verified plan, rate, storage, egress, or monetary caps.",
+    "Degradation order is deterministic, versioned, and preserves critical risk monitoring, alert verification, outcome observation, collector continuity, and interactive emergency reserve before social, analog, wallet-history, exploration, or broad-scan depth.",
+    "Capacity forecasts are reconciled against actual consumption by operation/workload/candidate/run/module and automatically create incidents for material underestimation or reserve breach.",
+    "The system reports total resource cost and marginal cost per researched candidate, mature outcome, useful alert, prevented risk event, and portfolio-utility unit without hiding owner-supplied model or infrastructure spend."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/cost.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

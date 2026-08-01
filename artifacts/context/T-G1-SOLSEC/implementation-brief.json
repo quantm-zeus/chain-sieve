@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SOLSEC",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SOLSEC-001",
+      "exactNormativeText": "Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers."
+    },
+    {
+      "id": "FR-SOLSEC-002",
+      "exactNormativeText": "Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable."
+    },
+    {
+      "id": "FR-SOLSEC-003",
+      "exactNormativeText": "Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed."
+    },
+    {
+      "id": "FR-SOLSEC-004",
+      "exactNormativeText": "Unknown transfer semantics block profiles requiring complete execution modeling."
+    },
+    {
+      "id": "FR-SOLSEC-005",
+      "exactNormativeText": "External security providers are independent evidence and cannot override deterministic known risk."
+    },
+    {
+      "id": "FR-SOLSEC-006",
+      "exactNormativeText": "A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence."
+    }
+  ],
+  "expectedModules": [
+    "packages/solana-security/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/solsec.ts",
+    "docs/generated/solsec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Deterministic SPL/Token-2022 program, authority, and extension analysis is independent of external security providers.",
+    "Mint, freeze, permanent-delegate, transfer-fee, transfer-hook, close, metadata/update, default-state, and non-transferable controls are versioned evidence where applicable.",
+    "Pool/LP control, migration, withdrawal authority, and liquidity-removal risk are assessed.",
+    "Unknown transfer semantics block profiles requiring complete execution modeling.",
+    "External security providers are independent evidence and cannot override deterministic known risk.",
+    "A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/solsec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

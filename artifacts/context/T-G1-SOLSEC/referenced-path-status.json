@@ -1,0 +1,484 @@
+[
+  {
+    "path": "docs/generated/solsec-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "migrations/g1_solsec_*.sql",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-DATA-01",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/solsec.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "packages/solana-security/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "telemetry/solsec.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-130.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-131.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-132.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-133.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-134.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-135.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-136.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-230.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-231.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-232.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-233.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-234.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-235.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-236.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-237.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-238.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-239.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/fixtures/solsec/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-130.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-131.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-132.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-133.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-134.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-135.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-136.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-230.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-231.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-232.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-233.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-234.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-235.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-236.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-237.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-238.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-239.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOLSEC-001",
+      "FR-SOLSEC-002",
+      "FR-SOLSEC-003",
+      "FR-SOLSEC-004",
+      "FR-SOLSEC-005",
+      "FR-SOLSEC-006"
+    ]
+  }
+]

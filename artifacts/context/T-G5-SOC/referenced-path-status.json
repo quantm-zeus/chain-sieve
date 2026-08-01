@@ -1,0 +1,143 @@
+[
+  {
+    "path": "docs/generated/soc-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "migrations/g5_soc_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/soc.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "packages/social-capability/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "telemetry/soc.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-140.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-141.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-142.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-143.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/fixtures/soc/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-140.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-141.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-142.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-143.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-SOC-001",
+      "FR-SOC-002",
+      "FR-SOC-003",
+      "FR-SOC-004"
+    ]
+  }
+]

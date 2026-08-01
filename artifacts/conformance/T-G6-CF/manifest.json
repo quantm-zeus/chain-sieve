@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-CF",
+  "immutable": true,
+  "requirements": [
+    "FR-CF-001",
+    "FR-CF-002",
+    "FR-CF-003"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-083:T-G6-CF:INTERFACE_FACET",
+    "AC-084:T-G6-CF:INTERFACE_FACET",
+    "AC-085:T-G6-CF:INTERFACE_FACET",
+    "AC-086:T-G6-CF:INTERFACE_FACET",
+    "AC-087:T-G6-CF:INTERFACE_FACET",
+    "AC-088:T-G6-CF:INTERFACE_FACET",
+    "AC-089:T-G6-CF:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-CF.spec.ts",
+    "tests/task-facets/T-G6-CF.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/counterfactual-lab/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-CF/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

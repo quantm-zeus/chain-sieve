@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SUP",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SUP-001",
+      "exactNormativeText": "Circulating supply and market cap expose source, method, excluded supply, and confidence."
+    },
+    {
+      "id": "FR-SUP-002",
+      "exactNormativeText": "Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist."
+    }
+  ],
+  "expectedModules": [
+    "packages/supply-confidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/sup.ts",
+    "docs/generated/sup-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Circulating supply and market cap expose source, method, excluded supply, and confidence.",
+    "Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/sup.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

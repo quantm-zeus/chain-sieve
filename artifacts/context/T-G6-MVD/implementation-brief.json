@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-MVD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-MVD-001",
+      "exactNormativeText": "Security, execution, market microstructure, liquidity resilience, wallet, deployer, pattern, analog, narrative, regime, novelty, and failure-hazard views remain independently inspectable."
+    },
+    {
+      "id": "FR-MVD-002",
+      "exactNormativeText": "The system emits consensus, disagreement, critical contradiction, and insufficient-independence states; it cannot conceal critical conflict inside a weighted average."
+    },
+    {
+      "id": "FR-MVD-003",
+      "exactNormativeText": "Critical security/execution contradictions block confirmed alerts; noncritical disagreement may trigger watch, skeptic, evidence acquisition, or higher monitoring cadence."
+    },
+    {
+      "id": "FR-MVD-004",
+      "exactNormativeText": "View independence and shared evidence lineage are measured so correlated provider-derived views are not counted as independent confirmation."
+    },
+    {
+      "id": "FR-MVD-005",
+      "exactNormativeText": "Disagreement resolution records which new evidence changed each view and preserves the prior state."
+    }
+  ],
+  "expectedModules": [
+    "packages/multi-view-disagreement/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/mvd.ts",
+    "docs/generated/mvd-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Security, execution, market microstructure, liquidity resilience, wallet, deployer, pattern, analog, narrative, regime, novelty, and failure-hazard views remain independently inspectable.",
+    "The system emits consensus, disagreement, critical contradiction, and insufficient-independence states; it cannot conceal critical conflict inside a weighted average.",
+    "Critical security/execution contradictions block confirmed alerts; noncritical disagreement may trigger watch, skeptic, evidence acquisition, or higher monitoring cadence.",
+    "View independence and shared evidence lineage are measured so correlated provider-derived views are not counted as independent confirmation.",
+    "Disagreement resolution records which new evidence changed each view and preserves the prior state."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/mvd.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

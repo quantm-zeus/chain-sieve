@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COST-02",
+  "immutable": true,
+  "requirements": [
+    "FR-COST-009",
+    "FR-COST-010"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-100:T-G0-COST-02:INTERFACE_FACET",
+    "AC-101:T-G0-COST-02:INTERFACE_FACET",
+    "AC-102:T-G0-COST-02:INTERFACE_FACET",
+    "AC-103:T-G0-COST-02:INTERFACE_FACET",
+    "AC-104:T-G0-COST-02:INTERFACE_FACET",
+    "AC-105:T-G0-COST-02:INTERFACE_FACET",
+    "AC-224:T-G0-COST-02:INTERFACE_FACET",
+    "AC-225:T-G0-COST-02:INTERFACE_FACET",
+    "AC-226:T-G0-COST-02:INTERFACE_FACET",
+    "AC-227:T-G0-COST-02:INTERFACE_FACET",
+    "AC-228:T-G0-COST-02:INTERFACE_FACET",
+    "AC-229:T-G0-COST-02:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-COST-02.spec.ts",
+    "tests/task-facets/T-G0-COST-02.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-COST-02/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

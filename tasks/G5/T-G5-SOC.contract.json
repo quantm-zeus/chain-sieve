@@ -68,9 +68,32 @@
     "FR-SOC-003",
     "FR-SOC-004"
   ],
-  "acceptanceCriteria": [
-    "AC-141",
-    "AC-143"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-140",
+      "facetId": "AC-140:T-G5-SOC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-SOC for FR-SOC-001, FR-SOC-002, FR-SOC-003, FR-SOC-004 that the unchanged AC-140 system or integration oracle consumes. This facet does not claim full AC-140 satisfaction.",
+      "sourceAcceptanceSha256": "4f56f4b422d75cb64898b7f6f270ae68e1d5f23de67caa48c80d1fab5927928a"
+    },
+    {
+      "acceptanceId": "AC-141",
+      "facetId": "AC-141:T-G5-SOC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-SOC for FR-SOC-001, FR-SOC-002, FR-SOC-003, FR-SOC-004 that the unchanged AC-141 system or integration oracle consumes. This facet does not claim full AC-141 satisfaction.",
+      "sourceAcceptanceSha256": "d9927386ebb717f596be5ff49be1a42f39b74e2b0a706344373fe7f91ff7f6c8"
+    },
+    {
+      "acceptanceId": "AC-142",
+      "facetId": "AC-142:T-G5-SOC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-SOC for FR-SOC-001, FR-SOC-002, FR-SOC-003, FR-SOC-004 that the unchanged AC-142 system or integration oracle consumes. This facet does not claim full AC-142 satisfaction.",
+      "sourceAcceptanceSha256": "fb66d4411cc8edbc21eb8761c68eae3df86d3b8fb6c9fd81cce5a4ecb20b34fd"
+    },
+    {
+      "acceptanceId": "AC-143",
+      "facetId": "AC-143:T-G5-SOC:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-SOC for FR-SOC-001, FR-SOC-002, FR-SOC-003, FR-SOC-004 that the unchanged AC-143 system or integration oracle consumes. This facet does not claim full AC-143 satisfaction.",
+      "sourceAcceptanceSha256": "32ec8e1b46ceaddfa1f0d414b869f168cdc64b42a12df3bc7ed7c5220efb64bd"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -92,14 +115,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G5-SOC/**"
+    "artifacts/context/T-G5-SOC/**",
+    "artifacts/conformance/T-G5-SOC/manifest.json"
   ],
   "writeSet": [
     "packages/social-capability/**"
   ],
   "allowedPaths": [
     "packages/social-capability/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -107,6 +134,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G5-SOC/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -125,7 +154,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -135,15 +165,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-141.spec.ts",
-    "tests/negative/AC-141.negative.spec.ts",
-    "tests/acceptance/AC-143.spec.ts",
-    "tests/negative/AC-143.negative.spec.ts"
+    "tests/task-facets/T-G5-SOC.spec.ts",
+    "tests/task-facets/T-G5-SOC.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-141.spec.ts tests/negative/AC-141.negative.spec.ts tests/acceptance/AC-143.spec.ts tests/negative/AC-143.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G5-SOC.spec.ts tests/task-facets/T-G5-SOC.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -168,10 +200,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -197,5 +231,9 @@
       "line": 6204,
       "id": "FR-SOC-004"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G5-SOC/manifest.json",
+  "conformanceManifestSha256": "88a611a2995909baf03c6ad95b9d1252758115a07599d3ada5dd8ec97f44ef00",
+  "testQualityGate": "NEGATIVE_CASE"
 }

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "specificationStatus": "READY",
+  "interfaces": [
+    {
+      "path": "packages/shared-schemas/src/prod.ts",
+      "source": "normative-manifest-reference"
+    },
+    {
+      "path": "docs/generated/prod-surfaces.json",
+      "source": "normative-manifest-reference"
+    }
+  ],
+  "rule": "SPECIFICATION_GAP blocks arbitrary public-contract invention."
+}

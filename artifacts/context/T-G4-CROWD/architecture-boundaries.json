@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/crowding/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-CROWD/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-CROWD/**"
+    "artifacts/context/T-G4-CROWD/**",
+    "artifacts/conformance/T-G4-CROWD/manifest.json"
   ],
   "writeSet": [
     "packages/crowding/**"

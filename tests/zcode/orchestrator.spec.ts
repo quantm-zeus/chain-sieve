@@ -114,6 +114,7 @@ const clusterContract = (
   tasks,
   requirements: tasks.map((id) => `FR-${id}`),
   acceptanceCriteria: tasks.map((id) => `AC-${id}`),
+  integrationAcceptanceCriteria: [],
   invariants: ['INV-001'],
   entryCriteria: ['dependencies complete'],
   exitCriteria: ['verified'],
@@ -347,6 +348,12 @@ describe('project-wide ZCode decision engine', () => {
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
     });
     expect(renewalRequired(task)).toBe(true);
+    const before = structuredClone(task.state);
+    expect(decideNextAction(inventory)).toMatchObject({
+      action: 'STOP',
+      reason: expect.stringContaining(`LEASE_RENEWAL_REQUIRED:pnpm agent:renew -- ${task.contract.id} --expected-lease-id ${task.state.leaseId} --expected-fencing-version ${task.state.leaseVersion} --holder ${task.state.holder}`),
+    });
+    expect(task.state).toEqual(before);
     task.state.expiresAt = future;
     expect(renewalRequired(task)).toBe(false);
   });
@@ -501,7 +508,7 @@ describe('project-wide ZCode decision engine', () => {
     expect(decideNextAction(inventory).action).toBe('REVIEW_CLUSTER');
   });
 
-  it('runs cluster verification only after review evidence exists', () => {
+  it('runs cluster verification before requesting independent review', () => {
     const inventory = fixture();
     for (const task of inventory.tasks.filter(
       (task) => task.contract.cluster === 'C-G0-IMPLEMENTATION',
@@ -615,6 +622,15 @@ describe('project-wide ZCode decision engine', () => {
       ),
     ).toEqual(['T-G0-B', 'T-G0-A']);
   });
+
+  it('excludes specification gaps from runtime selection', () => {
+    const inventory = fixture();
+    inventory.tasks.find((task) => task.contract.id === 'T-G0-B')!.contract.specificationStatus =
+      'SPECIFICATION_GAP';
+    expect(
+      runnableTasks(inventory, inventory.clusters[0]!).map((task) => task.contract.id),
+    ).toEqual(['T-G0-A']);
+  });
 });
 
 describe('graph, omission, and safety safeguards', () => {
@@ -722,6 +738,14 @@ describe('payload, receipt, desktop, GitHub, CI, and no-mutation adapters', () =
     goalSha256: hash,
     contextManifestPath: task.contextManifestPath,
     contextManifestSha256: task.contextManifestSha256,
+    taskContractPath: task.contractPath,
+    taskContractSha256: hash,
+    lifecycleBindingPath: `lifecycle-bindings/${task.contract.id}/${hash}.json`,
+    lifecycleBindingSha256: hash,
+    verificationBaselinePath: `verification-baselines/${task.contract.id}/${hash}.json`,
+    verificationBaselineSha256: hash,
+    controlPlaneCommit: commit,
+    controlPlaneTree: tree,
     failures: [],
   });
 
@@ -770,6 +794,33 @@ describe('payload, receipt, desktop, GitHub, CI, and no-mutation adapters', () =
         leaseId: value.leaseId,
         fencingVersion: value.fencingVersion,
         contextManifestSha256: value.contextManifestSha256,
+        receiptId: stored.launchReceiptId!,
+        receiptSha256: stored.launchReceiptSha256!,
+        provider: 'zcode',
+        holder: value.holder,
+        expiresAt: value.expiresAt,
+        taskBranch: task.workspaceBranch!,
+        taskWorktree: value.taskWorkspace,
+        clusterBranch: task.cluster.branch.branch,
+        clusterWorktree: task.cluster.branch.worktree,
+        baseCommit: value.baseCommit,
+        baseTree: value.baseTree,
+        release: value.release,
+        integrationTarget: task.cluster.branch.integrationTarget,
+        contextManifestPath: value.contextManifestPath,
+        ...(value.conformanceManifestPath
+          ? { conformanceManifestPath: value.conformanceManifestPath }
+          : {}),
+        contractPath: value.taskContractPath,
+        contractSha256: value.taskContractSha256,
+        lifecycleBindingPath: value.lifecycleBindingPath,
+        lifecycleBindingSha256: value.lifecycleBindingSha256,
+        verificationBaselinePath: value.verificationBaselinePath,
+        verificationBaselineSha256: value.verificationBaselineSha256,
+        pathLocks: task.contract.exclusiveLocks,
+        controlPlaneCommit: value.controlPlaneCommit,
+        controlPlaneTree: value.controlPlaneTree,
+        requireProviderNeutral: true,
       }),
     ).resolves.toBeUndefined();
   });

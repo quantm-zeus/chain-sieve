@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-MCP",
+  "immutable": true,
+  "requirements": [
+    "FR-MCP-001",
+    "FR-MCP-002",
+    "FR-MCP-003",
+    "FR-MCP-004",
+    "FR-MCP-005",
+    "FR-MCP-008",
+    "FR-MCP-009",
+    "FR-MCP-010"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-001:T-G0-MCP:INTERFACE_FACET",
+    "AC-002:T-G0-MCP:INTERFACE_FACET",
+    "AC-003:T-G0-MCP:INTERFACE_FACET",
+    "AC-004:T-G0-MCP:INTERFACE_FACET",
+    "AC-050:T-G0-MCP:INTERFACE_FACET",
+    "AC-051:T-G0-MCP:INTERFACE_FACET",
+    "AC-052:T-G0-MCP:INTERFACE_FACET",
+    "AC-053:T-G0-MCP:INTERFACE_FACET",
+    "AC-144:T-G0-MCP:INTERFACE_FACET",
+    "AC-250:T-G0-MCP:INTERFACE_FACET",
+    "AC-251:T-G0-MCP:INTERFACE_FACET",
+    "AC-252:T-G0-MCP:INTERFACE_FACET",
+    "AC-253:T-G0-MCP:INTERFACE_FACET",
+    "AC-254:T-G0-MCP:INTERFACE_FACET",
+    "AC-255:T-G0-MCP:INTERFACE_FACET",
+    "AC-256:T-G0-MCP:INTERFACE_FACET",
+    "AC-257:T-G0-MCP:INTERFACE_FACET",
+    "AC-258:T-G0-MCP:INTERFACE_FACET",
+    "AC-259:T-G0-MCP:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-MCP.spec.ts",
+    "tests/task-facets/T-G0-MCP.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "apps/api/src/mcp/**",
+    "packages/tool-core/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-MCP/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

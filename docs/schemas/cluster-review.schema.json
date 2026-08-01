@@ -4,10 +4,123 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "clusterId": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewerIdentity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewedProductCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "reviewedProductTree": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "clusterContractSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "clusterResultPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "clusterResultSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "taskAttestationHashes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resultSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "taskId",
+          "resultSha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "reviewedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+    },
+    "reviewPasses": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "const": "PASS"
+          },
+          "evidence": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "P0",
+              "P1",
+              "P2",
+              "P3"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolved": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "severity",
+          "text",
+          "resolved"
+        ],
+        "additionalProperties": false
+      }
     },
     "verdict": {
       "type": "string",
@@ -16,22 +129,25 @@
         "CHANGES_REQUIRED"
       ]
     },
-    "architecturalDiff": {
-      "type": "string"
-    },
-    "findings": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "reviewArtifactCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
     }
   },
   "required": [
     "schemaVersion",
     "clusterId",
-    "verdict",
-    "architecturalDiff",
-    "findings"
+    "reviewerIdentity",
+    "reviewedProductCommit",
+    "reviewedProductTree",
+    "clusterContractSha256",
+    "clusterResultPath",
+    "clusterResultSha256",
+    "taskAttestationHashes",
+    "reviewedAt",
+    "reviewPasses",
+    "findings",
+    "verdict"
   ],
   "additionalProperties": false
 }

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-TRD-001",
+    "sourceLine": 6189,
+    "startLine": 6187,
+    "endLine": 6191,
+    "exactText": "- **FR-SUP-001 MUST:** Circulating supply and market cap expose source, method, excluded supply, and confidence.\n- **FR-SUP-002 MUST:** Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist.\n- **FR-TRD-001 MUST:** Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.\n- **FR-TRD-002 MUST:** Economic trades use net actor deltas and avoid route/hop double counting.\n- **FR-TRD-003 MUST:** Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand."
+  },
+  {
+    "id": "FR-TRD-002",
+    "sourceLine": 6190,
+    "startLine": 6188,
+    "endLine": 6192,
+    "exactText": "- **FR-SUP-002 MUST:** Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist.\n- **FR-TRD-001 MUST:** Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.\n- **FR-TRD-002 MUST:** Economic trades use net actor deltas and avoid route/hop double counting.\n- **FR-TRD-003 MUST:** Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand.\n- **FR-TRD-004 MUST:** Economic-actor uncertainty reduces feature quality and ranking contribution."
+  },
+  {
+    "id": "FR-TRD-003",
+    "sourceLine": 6191,
+    "startLine": 6189,
+    "endLine": 6193,
+    "exactText": "- **FR-TRD-001 MUST:** Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.\n- **FR-TRD-002 MUST:** Economic trades use net actor deltas and avoid route/hop double counting.\n- **FR-TRD-003 MUST:** Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand.\n- **FR-TRD-004 MUST:** Economic-actor uncertainty reduces feature quality and ranking contribution.\n"
+  },
+  {
+    "id": "FR-TRD-004",
+    "sourceLine": 6192,
+    "startLine": 6190,
+    "endLine": 6194,
+    "exactText": "- **FR-TRD-002 MUST:** Economic trades use net actor deltas and avoid route/hop double counting.\n- **FR-TRD-003 MUST:** Arbitrage, round trips, and inventory-neutral activity are distinguished from organic demand.\n- **FR-TRD-004 MUST:** Economic-actor uncertainty reduces feature quality and ranking contribution.\n\n### 38.18 Alerts and social capability"
+  },
+  {
+    "id": "AC-130",
+    "sourceLine": 6631,
+    "startLine": 6629,
+    "endLine": 6633,
+    "exactText": "### 39.12 Solana security and economic events\n\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges."
+  },
+  {
+    "id": "AC-131",
+    "sourceLine": 6632,
+    "startLine": 6630,
+    "endLine": 6634,
+    "exactText": "\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count."
+  },
+  {
+    "id": "AC-132",
+    "sourceLine": 6633,
+    "startLine": 6631,
+    "endLine": 6635,
+    "exactText": "- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features."
+  },
+  {
+    "id": "AC-133",
+    "sourceLine": 6634,
+    "startLine": 6632,
+    "endLine": 6636,
+    "exactText": "- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile."
+  },
+  {
+    "id": "AC-134",
+    "sourceLine": 6635,
+    "startLine": 6633,
+    "endLine": 6637,
+    "exactText": "- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes."
+  },
+  {
+    "id": "AC-135",
+    "sourceLine": 6636,
+    "startLine": 6634,
+    "endLine": 6638,
+    "exactText": "- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n"
+  },
+  {
+    "id": "AC-136",
+    "sourceLine": 6637,
+    "startLine": 6635,
+    "endLine": 6639,
+    "exactText": "- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n\n### 39.13 Alerts, social, and protocol compatibility"
+  },
+  {
+    "id": "AC-233",
+    "sourceLine": 6751,
+    "startLine": 6749,
+    "endLine": 6753,
+    "exactText": "- **AC-231:** Every active protocol decoder and pool/curve adapter passes official-layout and live-chain verification, deterministic vectors, valid/adversarial property and boundary tests, upgrade-change detection, historical observed-trade parity where claimed, and live reference-quote parity within its versioned notional-specific tolerance; Jupiter observation is reconciled to underlying venue adapters rather than treated as pool-math authority.\n- **AC-232:** Missing tick/bin/curve/account state that can materially affect a fill marks state incomplete and blocks confirmed tradability rather than assuming uniform liquidity.\n- **AC-233:** Token transfer fees, transfer hooks, account creation, pool/aggregator/network/priority fees, failed attempts, partial fill, and residual inventory are included in both entry and exit net return.\n- **AC-234:** A route or pool created after `T_user_action` cannot be selected by historical execution; migration routing uses only transitions and state available at the action time.\n- **AC-235:** Base, p50 delay, p90 delay, conservative latency/adverse selection, liquidity drawdown, fee volatility, and route-degradation scenarios are recorded; active policy enforces its declared pass matrix."
+  }
+]

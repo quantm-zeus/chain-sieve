@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-OBJ-02",
+  "immutable": true,
+  "requirements": [
+    "FR-OBJ-009",
+    "FR-OBJ-010"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-220:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-221:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-222:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-223:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-245:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-246:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-247:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-248:T-G1-OBJ-02:INTERFACE_FACET",
+    "AC-249:T-G1-OBJ-02:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-OBJ-02.spec.ts",
+    "tests/task-facets/T-G1-OBJ-02.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-OBJ-02/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

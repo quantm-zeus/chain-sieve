@@ -83,10 +83,56 @@
     "FR-LEGAL-005",
     "FR-LEGAL-006"
   ],
-  "acceptanceCriteria": [
-    "AC-272",
-    "AC-274",
-    "AC-278"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-272",
+      "facetId": "AC-272:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-272 system or integration oracle consumes. This facet does not claim full AC-272 satisfaction.",
+      "sourceAcceptanceSha256": "4b5d5e60bce47498e79e50ceefd4b801b03ec521cbb7e3c8647dccddc41fd874"
+    },
+    {
+      "acceptanceId": "AC-273",
+      "facetId": "AC-273:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-273 system or integration oracle consumes. This facet does not claim full AC-273 satisfaction.",
+      "sourceAcceptanceSha256": "543965ee652abaa4cce9ddaeca811583f7bb4af16b3abda55d387926950ca67a"
+    },
+    {
+      "acceptanceId": "AC-274",
+      "facetId": "AC-274:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-274 system or integration oracle consumes. This facet does not claim full AC-274 satisfaction.",
+      "sourceAcceptanceSha256": "85bdeb17fb8c5e72ec380adbf23897383fa47b40b9d3c04bd04e1336fa88e080"
+    },
+    {
+      "acceptanceId": "AC-275",
+      "facetId": "AC-275:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-275 system or integration oracle consumes. This facet does not claim full AC-275 satisfaction.",
+      "sourceAcceptanceSha256": "016c7b9a86451caaaffeedefa34e3e3d3a6f5e0fec5a55d3231e9b3829cde4ee"
+    },
+    {
+      "acceptanceId": "AC-276",
+      "facetId": "AC-276:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-276 system or integration oracle consumes. This facet does not claim full AC-276 satisfaction.",
+      "sourceAcceptanceSha256": "f8f56a742c061490924476ec00f82ee91bb43173299cd2e91c5545a865959e0d"
+    },
+    {
+      "acceptanceId": "AC-277",
+      "facetId": "AC-277:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-277 system or integration oracle consumes. This facet does not claim full AC-277 satisfaction.",
+      "sourceAcceptanceSha256": "a1661e003aaca5a7492db8f3436621a68ae7128982c89fa842ad5315be15f716"
+    },
+    {
+      "acceptanceId": "AC-278",
+      "facetId": "AC-278:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-278 system or integration oracle consumes. This facet does not claim full AC-278 satisfaction.",
+      "sourceAcceptanceSha256": "0415e62e60aa5fd2895926d814e732ea4b0dd0af40f22a7671e054ca7cd515ea"
+    },
+    {
+      "acceptanceId": "AC-279",
+      "facetId": "AC-279:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-279 system or integration oracle consumes. This facet does not claim full AC-279 satisfaction.",
+      "sourceAcceptanceSha256": "e9b0b2a55db2c3b25794ae66c6751ea60b78eac3efbd6cc8a595416b25640022"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -108,7 +154,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-LEGAL/**"
+    "artifacts/context/T-G6-LEGAL/**",
+    "artifacts/conformance/T-G6-LEGAL/manifest.json"
   ],
   "writeSet": [
     "packages/public-claims-policy/**",
@@ -117,7 +164,10 @@
   "allowedPaths": [
     "packages/public-claims-policy/**",
     "packages/tenant-isolation/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -125,6 +175,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-LEGAL/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -151,7 +203,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -161,17 +214,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-272.spec.ts",
-    "tests/negative/AC-272.negative.spec.ts",
-    "tests/acceptance/AC-274.spec.ts",
-    "tests/negative/AC-274.negative.spec.ts",
-    "tests/acceptance/AC-278.spec.ts",
-    "tests/negative/AC-278.negative.spec.ts"
+    "tests/task-facets/T-G6-LEGAL.spec.ts",
+    "tests/task-facets/T-G6-LEGAL.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-272.spec.ts tests/negative/AC-272.negative.spec.ts tests/acceptance/AC-274.spec.ts tests/negative/AC-274.negative.spec.ts tests/acceptance/AC-278.spec.ts tests/negative/AC-278.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G6-LEGAL.spec.ts tests/task-facets/T-G6-LEGAL.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -196,10 +249,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -235,5 +290,9 @@
       "line": 6505,
       "id": "FR-LEGAL-006"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G6-LEGAL/manifest.json",
+  "conformanceManifestSha256": "1ab10f582984e7e9f5927991650c8ffe9c936d25d3c78b6a08d5e25f16bcb509",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

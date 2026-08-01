@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-ALAB",
+  "immutable": true,
+  "requirements": [
+    "FR-ALAB-001",
+    "FR-ALAB-002",
+    "FR-ALAB-003",
+    "FR-ALAB-004",
+    "FR-ALAB-005",
+    "FR-ALAB-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-214:T-G7-ALAB:INTERFACE_FACET",
+    "AC-215:T-G7-ALAB:INTERFACE_FACET",
+    "AC-216:T-G7-ALAB:INTERFACE_FACET",
+    "AC-217:T-G7-ALAB:INTERFACE_FACET",
+    "AC-218:T-G7-ALAB:INTERFACE_FACET",
+    "AC-219:T-G7-ALAB:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-ALAB.spec.ts",
+    "tests/task-facets/T-G7-ALAB.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/offline-alpha-lab/**",
+    "packages/alpha-artifact-store/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-ALAB/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

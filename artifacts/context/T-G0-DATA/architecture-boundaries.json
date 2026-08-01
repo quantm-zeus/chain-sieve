@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/persistence/**",
     "packages/evidence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**",
     "infra/migrations/**"
   ],
@@ -13,11 +16,14 @@
     "docs/spec/**",
     "artifacts/spec/**",
     "tasks/generated/**",
-    ".github/workflows/**"
+    ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-DATA/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-DATA/**"
+    "artifacts/context/T-G0-DATA/**",
+    "artifacts/conformance/T-G0-DATA/manifest.json"
   ],
   "writeSet": [
     "packages/persistence/**",

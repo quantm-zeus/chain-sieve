@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-CORE",
+  "immutable": true,
+  "requirements": [
+    "FR-CORE-001",
+    "FR-CORE-002",
+    "FR-CORE-003",
+    "FR-CORE-004",
+    "FR-CORE-005",
+    "FR-CORE-006",
+    "FR-CORE-007",
+    "FR-CORE-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-001:T-G0-CORE:INTERFACE_FACET",
+    "AC-002:T-G0-CORE:INTERFACE_FACET",
+    "AC-003:T-G0-CORE:INTERFACE_FACET",
+    "AC-004:T-G0-CORE:INTERFACE_FACET",
+    "AC-020:T-G0-CORE:INTERFACE_FACET",
+    "AC-021:T-G0-CORE:INTERFACE_FACET",
+    "AC-022:T-G0-CORE:INTERFACE_FACET",
+    "AC-023:T-G0-CORE:INTERFACE_FACET",
+    "AC-050:T-G0-CORE:INTERFACE_FACET",
+    "AC-051:T-G0-CORE:INTERFACE_FACET",
+    "AC-052:T-G0-CORE:INTERFACE_FACET",
+    "AC-053:T-G0-CORE:INTERFACE_FACET",
+    "AC-240:T-G0-CORE:INTERFACE_FACET",
+    "AC-241:T-G0-CORE:INTERFACE_FACET",
+    "AC-242:T-G0-CORE:INTERFACE_FACET",
+    "AC-243:T-G0-CORE:INTERFACE_FACET",
+    "AC-244:T-G0-CORE:INTERFACE_FACET",
+    "AC-245:T-G0-CORE:INTERFACE_FACET",
+    "AC-246:T-G0-CORE:INTERFACE_FACET",
+    "AC-247:T-G0-CORE:INTERFACE_FACET",
+    "AC-248:T-G0-CORE:INTERFACE_FACET",
+    "AC-249:T-G0-CORE:INTERFACE_FACET",
+    "AC-250:T-G0-CORE:INTERFACE_FACET",
+    "AC-251:T-G0-CORE:INTERFACE_FACET",
+    "AC-252:T-G0-CORE:INTERFACE_FACET",
+    "AC-253:T-G0-CORE:INTERFACE_FACET",
+    "AC-254:T-G0-CORE:INTERFACE_FACET",
+    "AC-255:T-G0-CORE:INTERFACE_FACET",
+    "AC-256:T-G0-CORE:INTERFACE_FACET",
+    "AC-257:T-G0-CORE:INTERFACE_FACET",
+    "AC-258:T-G0-CORE:INTERFACE_FACET",
+    "AC-259:T-G0-CORE:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-CORE.spec.ts",
+    "tests/task-facets/T-G0-CORE.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/domain/**",
+    "packages/shared-schemas/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-CORE/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

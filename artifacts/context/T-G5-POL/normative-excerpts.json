@@ -1,0 +1,58 @@
+[
+  {
+    "id": "FR-POL-001",
+    "sourceLine": 6098,
+    "startLine": 6096,
+    "endLine": 6100,
+    "exactText": "- **FR-REG-001 MUST:** Deterministic regime classification and approved route selection.\n- **FR-REG-002 MUST:** Route decision is frozen per run and has an approved fallback.\n- **FR-POL-001 MUST:** Natural language compiles only to a constrained typed policy AST.\n- **FR-POL-002 MUST:** Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.\n- **FR-POL-003 MUST:** Compiler output remains a draft until backtest/shadow review and explicit approval."
+  },
+  {
+    "id": "FR-POL-002",
+    "sourceLine": 6099,
+    "startLine": 6097,
+    "endLine": 6101,
+    "exactText": "- **FR-REG-002 MUST:** Route decision is frozen per run and has an approved fallback.\n- **FR-POL-001 MUST:** Natural language compiles only to a constrained typed policy AST.\n- **FR-POL-002 MUST:** Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.\n- **FR-POL-003 MUST:** Compiler output remains a draft until backtest/shadow review and explicit approval.\n- **FR-POL-004 MUST:** Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints."
+  },
+  {
+    "id": "FR-POL-003",
+    "sourceLine": 6100,
+    "startLine": 6098,
+    "endLine": 6102,
+    "exactText": "- **FR-POL-001 MUST:** Natural language compiles only to a constrained typed policy AST.\n- **FR-POL-002 MUST:** Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.\n- **FR-POL-003 MUST:** Compiler output remains a draft until backtest/shadow review and explicit approval.\n- **FR-POL-004 MUST:** Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints.\n- **FR-POL-005 MUST:** Approval and activation are separate audited actions; activation requires re-authentication."
+  },
+  {
+    "id": "FR-POL-004",
+    "sourceLine": 6101,
+    "startLine": 6099,
+    "endLine": 6103,
+    "exactText": "- **FR-POL-002 MUST:** Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.\n- **FR-POL-003 MUST:** Compiler output remains a draft until backtest/shadow review and explicit approval.\n- **FR-POL-004 MUST:** Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints.\n- **FR-POL-005 MUST:** Approval and activation are separate audited actions; activation requires re-authentication.\n"
+  },
+  {
+    "id": "FR-POL-005",
+    "sourceLine": 6102,
+    "startLine": 6100,
+    "endLine": 6104,
+    "exactText": "- **FR-POL-003 MUST:** Compiler output remains a draft until backtest/shadow review and explicit approval.\n- **FR-POL-004 MUST:** Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints.\n- **FR-POL-005 MUST:** Approval and activation are separate audited actions; activation requires re-authentication.\n\n### 38.11 Latency, analog, and robustness"
+  },
+  {
+    "id": "AC-077",
+    "sourceLine": 6583,
+    "startLine": 6581,
+    "endLine": 6585,
+    "exactText": "- **AC-075:** Cross-chain fixtures do not double count bridge lock/mint/release or router hops.\n- **AC-076:** Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.\n- **AC-077:** Regime route is selected only from approved active routes and remains immutable for the run.\n- **AC-078:** A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.\n- **AC-079:** Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication."
+  },
+  {
+    "id": "AC-078",
+    "sourceLine": 6584,
+    "startLine": 6582,
+    "endLine": 6586,
+    "exactText": "- **AC-076:** Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.\n- **AC-077:** Regime route is selected only from approved active routes and remains immutable for the run.\n- **AC-078:** A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.\n- **AC-079:** Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.\n- **AC-080:** Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly."
+  },
+  {
+    "id": "AC-079",
+    "sourceLine": 6585,
+    "startLine": 6583,
+    "endLine": 6587,
+    "exactText": "- **AC-077:** Regime route is selected only from approved active routes and remains immutable for the run.\n- **AC-078:** A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.\n- **AC-079:** Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.\n- **AC-080:** Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly.\n- **AC-081:** Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features."
+  }
+]

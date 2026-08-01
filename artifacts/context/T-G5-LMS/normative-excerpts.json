@@ -1,0 +1,93 @@
+[
+  {
+    "id": "FR-LMS-001",
+    "sourceLine": 6259,
+    "startLine": 6257,
+    "endLine": 6261,
+    "exactText": "### 38.24 Launch and Migration State Intelligence\n\n- **FR-LMS-001 MUST:** Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure.\n- **FR-LMS-002 MUST:** State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.\n- **FR-LMS-003 MUST:** Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited."
+  },
+  {
+    "id": "FR-LMS-002",
+    "sourceLine": 6260,
+    "startLine": 6258,
+    "endLine": 6262,
+    "exactText": "\n- **FR-LMS-001 MUST:** Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure.\n- **FR-LMS-002 MUST:** State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.\n- **FR-LMS-003 MUST:** Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.\n- **FR-LMS-004 MUST:** Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion."
+  },
+  {
+    "id": "FR-LMS-003",
+    "sourceLine": 6261,
+    "startLine": 6259,
+    "endLine": 6263,
+    "exactText": "- **FR-LMS-001 MUST:** Each supported launchpad/DEX route defines a versioned finite state machine from creation through bonding, migration, stabilization, expansion, distribution, or failure.\n- **FR-LMS-002 MUST:** State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.\n- **FR-LMS-003 MUST:** Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.\n- **FR-LMS-004 MUST:** Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion.\n- **FR-LMS-005 MUST:** Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims."
+  },
+  {
+    "id": "FR-LMS-004",
+    "sourceLine": 6262,
+    "startLine": 6260,
+    "endLine": 6264,
+    "exactText": "- **FR-LMS-002 MUST:** State transitions use deterministic provider/chain evidence, tolerate delayed aggregate providers, and preserve ambiguity when migration or pool identity is unresolved.\n- **FR-LMS-003 MUST:** Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.\n- **FR-LMS-004 MUST:** Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion.\n- **FR-LMS-005 MUST:** Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims.\n"
+  },
+  {
+    "id": "FR-LMS-005",
+    "sourceLine": 6263,
+    "startLine": 6261,
+    "endLine": 6265,
+    "exactText": "- **FR-LMS-003 MUST:** Feature thresholds, cohorts, monitoring cadence, and execution assumptions are state-specific; one global new-token threshold set is prohibited.\n- **FR-LMS-004 MUST:** Post-migration quality distinguishes bot/route burst from retained buyer breadth, liquidity survival, repeat buyers, and secondary expansion.\n- **FR-LMS-005 MUST:** Unsupported launchpads remain capability-unavailable and cannot be inferred from token names or social claims.\n\n### 38.25 Attention Diffusion Quality"
+  },
+  {
+    "id": "AC-170",
+    "sourceLine": 6672,
+    "startLine": 6670,
+    "endLine": 6674,
+    "exactText": "### 39.16 Liquidity, launch, attention, and rotation\n\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort."
+  },
+  {
+    "id": "AC-171",
+    "sourceLine": 6673,
+    "startLine": 6671,
+    "endLine": 6675,
+    "exactText": "\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state."
+  },
+  {
+    "id": "AC-172",
+    "sourceLine": 6674,
+    "startLine": 6672,
+    "endLine": 6676,
+    "exactText": "- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used."
+  },
+  {
+    "id": "AC-173",
+    "sourceLine": 6675,
+    "startLine": 6673,
+    "endLine": 6677,
+    "exactText": "- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion."
+  },
+  {
+    "id": "AC-174",
+    "sourceLine": 6676,
+    "startLine": 6674,
+    "endLine": 6678,
+    "exactText": "- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies."
+  },
+  {
+    "id": "AC-175",
+    "sourceLine": 6677,
+    "startLine": 6675,
+    "endLine": 6679,
+    "exactText": "- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates."
+  },
+  {
+    "id": "AC-176",
+    "sourceLine": 6678,
+    "startLine": 6676,
+    "endLine": 6680,
+    "exactText": "- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n"
+  },
+  {
+    "id": "AC-177",
+    "sourceLine": 6679,
+    "startLine": 6677,
+    "endLine": 6681,
+    "exactText": "- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n\n### 39.17 Novelty, disagreement, and hazards"
+  }
+]

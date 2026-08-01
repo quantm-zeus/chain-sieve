@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-WHY",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-WHY-001",
+      "exactNormativeText": "Deterministic “why now” decomposition against the previous valid evaluation."
+    },
+    {
+      "id": "FR-WHY-002",
+      "exactNormativeText": "Material changes include threshold, rank, lifecycle, risk, thesis, expiry, conflict, and capability deltas."
+    }
+  ],
+  "expectedModules": [
+    "packages/thesis/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/why.ts",
+    "docs/generated/why-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Deterministic “why now” decomposition against the previous valid evaluation.",
+    "Material changes include threshold, rank, lifecycle, risk, thesis, expiry, conflict, and capability deltas."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/why.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

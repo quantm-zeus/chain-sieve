@@ -1,0 +1,51 @@
+[
+  {
+    "id": "FR-AEP-001",
+    "sourceLine": 6367,
+    "startLine": 6365,
+    "endLine": 6369,
+    "exactText": "- **FR-ALAB-005 MUST:** Alpha Lab has no direct live-policy activation path; imported artifacts enter validating/shadow and promotion/activation are separate audited owner actions.\n- **FR-ALAB-006 MUST:** Jobs have deterministic seeds, resource ceilings, checkpoints, cancellation, reproducibility and safe failed-import quarantine.\n- **FR-AEP-001 MUST:** A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields.\n\n"
+  },
+  {
+    "id": "AC-214",
+    "sourceLine": 6723,
+    "startLine": 6721,
+    "endLine": 6725,
+    "exactText": "### 39.20 Offline Alpha Lab and agent context\n\n- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key."
+  },
+  {
+    "id": "AC-215",
+    "sourceLine": 6724,
+    "startLine": 6722,
+    "endLine": 6726,
+    "exactText": "\n- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action."
+  },
+  {
+    "id": "AC-216",
+    "sourceLine": 6725,
+    "startLine": 6723,
+    "endLine": 6727,
+    "exactText": "- **AC-214:** Alpha exports contain only permitted tables/fields and no production/provider/admin/MCP/signing secrets.\n- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy."
+  },
+  {
+    "id": "AC-217",
+    "sourceLine": 6726,
+    "startLine": 6724,
+    "endLine": 6728,
+    "exactText": "- **AC-215:** Pickle, executable module, arbitrary SQL, path traversal, zip-bomb, oversized-file and invalid-schema import fixtures fail closed and create an audit incident/quarantine record.\n- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls."
+  },
+  {
+    "id": "AC-218",
+    "sourceLine": 6727,
+    "startLine": 6725,
+    "endLine": 6729,
+    "exactText": "- **AC-216:** Invalid/revoked/untrusted producer public key, signature/hash, producer, data cutoff, dependency lock, holdout, evaluation or critical-adversarial status prevents artifact import/promotion; the production app has no producer private key.\n- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls.\n"
+  },
+  {
+    "id": "AC-219",
+    "sourceLine": 6728,
+    "startLine": 6726,
+    "endLine": 6730,
+    "exactText": "- **AC-217:** A valid imported artifact enters validating/shadow only and cannot alter live policy or become active in the same import action.\n- **AC-218:** Alpha Lab jobs enforce resource limits, deterministic manifests, checkpoint/recovery and no paid/provider network calls under the default policy.\n- **AC-219:** Agent context compression preserves critical security/execution veto, multi-view contradiction, artifact lifecycle, novelty applicability and failure-hazard fields; removing narrative prose does not remove these controls.\n\n"
+  }
+]

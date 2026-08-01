@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/adversarial-simulator/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G7-AMS/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G7-AMS/**"
+    "artifacts/context/T-G7-AMS/**",
+    "artifacts/conformance/T-G7-AMS/manifest.json"
   ],
   "writeSet": [
     "packages/adversarial-simulator/**"

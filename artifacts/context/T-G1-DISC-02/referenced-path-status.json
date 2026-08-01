@@ -1,0 +1,195 @@
+[
+  {
+    "path": "docs/generated/disc-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "migrations/g1_disc_*.sql",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-DATA-01",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "packages/cheap-monitor/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-DISC",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "packages/discovery-universe/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-DISC",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/disc.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "telemetry/disc.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-110.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-111.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-112.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-113.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-224.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-225.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-226.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-227.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-228.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-229.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/fixtures/disc/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-110.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-111.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-112.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-113.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-224.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-225.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-226.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-227.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-228.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-229.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DISC-014"
+    ]
+  }
+]

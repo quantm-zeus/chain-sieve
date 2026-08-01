@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-CROWD",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-074",
+      "facetId": "AC-074:T-G5-CROWD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-CROWD for FR-CROWD-005 that the unchanged AC-074 system or integration oracle consumes. This facet does not claim full AC-074 satisfaction.",
+      "sourceAcceptanceSha256": "3489e8882ab8d5b0b3351101d53c42cb22fb2286cdabb883e1da7a6db60fcb72"
+    },
+    {
+      "acceptanceId": "AC-075",
+      "facetId": "AC-075:T-G5-CROWD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-CROWD for FR-CROWD-005 that the unchanged AC-075 system or integration oracle consumes. This facet does not claim full AC-075 satisfaction.",
+      "sourceAcceptanceSha256": "1b91cf64e412a3491155e78fff83b45ffd1be95fe85e4af079f97d9634d74f9a"
+    },
+    {
+      "acceptanceId": "AC-076",
+      "facetId": "AC-076:T-G5-CROWD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-CROWD for FR-CROWD-005 that the unchanged AC-076 system or integration oracle consumes. This facet does not claim full AC-076 satisfaction.",
+      "sourceAcceptanceSha256": "84dafb8a04e868e4b9a9f12c875046b5eb3092c559e5f3ec6aa22d61befb9fef"
+    },
+    {
+      "acceptanceId": "AC-091",
+      "facetId": "AC-091:T-G5-CROWD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-CROWD for FR-CROWD-005 that the unchanged AC-091 system or integration oracle consumes. This facet does not claim full AC-091 satisfaction.",
+      "sourceAcceptanceSha256": "2ad7358711112121d7f7ea1f6ade0f4108cf4b562ff132b6b09e46ff9eda277f"
+    },
+    {
+      "acceptanceId": "AC-092",
+      "facetId": "AC-092:T-G5-CROWD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-CROWD for FR-CROWD-005 that the unchanged AC-092 system or integration oracle consumes. This facet does not claim full AC-092 satisfaction.",
+      "sourceAcceptanceSha256": "c7914fe4b07eade381f32708997de4e41f88fd9cce51fb0165ca03fc876b8c8a"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

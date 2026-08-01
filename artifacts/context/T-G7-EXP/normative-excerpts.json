@@ -1,0 +1,107 @@
+[
+  {
+    "id": "FR-EXP-001",
+    "sourceLine": 6314,
+    "startLine": 6312,
+    "endLine": 6316,
+    "exactText": "### 38.31 Exploration and Discovery Bandit\n\n- **FR-EXP-001 MUST:** Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads.\n- **FR-EXP-002 MUST:** Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.\n- **FR-EXP-003 MUST:** Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims."
+  },
+  {
+    "id": "FR-EXP-002",
+    "sourceLine": 6315,
+    "startLine": 6313,
+    "endLine": 6317,
+    "exactText": "\n- **FR-EXP-001 MUST:** Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads.\n- **FR-EXP-002 MUST:** Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.\n- **FR-EXP-003 MUST:** Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.\n- **FR-EXP-004 MUST:** Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling."
+  },
+  {
+    "id": "FR-EXP-003",
+    "sourceLine": 6316,
+    "startLine": 6314,
+    "endLine": 6318,
+    "exactText": "- **FR-EXP-001 MUST:** Research budget is partitioned among exploitation, uncertainty, stratified random exploration, source exploration, and protected risk/outcome workloads.\n- **FR-EXP-002 MUST:** Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.\n- **FR-EXP-003 MUST:** Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.\n- **FR-EXP-004 MUST:** Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.\n- **FR-EXP-005 MUST:** Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias."
+  },
+  {
+    "id": "FR-EXP-004",
+    "sourceLine": 6317,
+    "startLine": 6315,
+    "endLine": 6319,
+    "exactText": "- **FR-EXP-002 MUST:** Every randomized assignment stores eligibility universe, stratum, policy version, assignment probability, seed/entropy provenance, and inclusion timestamp.\n- **FR-EXP-003 MUST:** Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.\n- **FR-EXP-004 MUST:** Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.\n- **FR-EXP-005 MUST:** Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias.\n- **FR-EXP-006 MUST:** Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy."
+  },
+  {
+    "id": "FR-EXP-005",
+    "sourceLine": 6318,
+    "startLine": 6316,
+    "endLine": 6320,
+    "exactText": "- **FR-EXP-003 MUST:** Outcome-dependent, zero-probability, corrupted, or undocumented assignments cannot support universe-wide weighted claims.\n- **FR-EXP-004 MUST:** Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.\n- **FR-EXP-005 MUST:** Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias.\n- **FR-EXP-006 MUST:** Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy.\n"
+  },
+  {
+    "id": "FR-EXP-006",
+    "sourceLine": 6319,
+    "startLine": 6317,
+    "endLine": 6321,
+    "exactText": "- **FR-EXP-004 MUST:** Exploration constraints limit critical security exposure, quota, duplication, narrative concentration, and candidate count while preserving representative sampling.\n- **FR-EXP-005 MUST:** Bandit/reallocation policies remain shadow until off-policy or forward evaluation proves value without degrading coverage or creating bias.\n- **FR-EXP-006 MUST:** Exploitation cannot consume the configured minimum exploration allocation except under an audited emergency reserve policy.\n\n### 38.32 Shadow Portfolio and Decision Simulation"
+  },
+  {
+    "id": "AC-190",
+    "sourceLine": 6693,
+    "startLine": 6691,
+    "endLine": 6695,
+    "exactText": "### 39.18 Scheduling, exploration, and portfolio\n\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims."
+  },
+  {
+    "id": "AC-191",
+    "sourceLine": 6694,
+    "startLine": 6692,
+    "endLine": 6696,
+    "exactText": "\n- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy."
+  },
+  {
+    "id": "AC-192",
+    "sourceLine": 6695,
+    "startLine": 6693,
+    "endLine": 6697,
+    "exactText": "- **AC-190:** Under quota pressure, the information-gain scheduler preserves risk/verification/outcome reserves and reduces low-value scans first.\n- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction."
+  },
+  {
+    "id": "AC-193",
+    "sourceLine": 6696,
+    "startLine": 6694,
+    "endLine": 6698,
+    "exactText": "- **AC-191:** Static-cadence and adaptive-scheduler replay use identical universes and demonstrate measured information gained per quota unit without higher missed-critical-event rate before promotion.\n- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions."
+  },
+  {
+    "id": "AC-194",
+    "sourceLine": 6697,
+    "startLine": 6695,
+    "endLine": 6699,
+    "exactText": "- **AC-192:** Every exploration sample stores valid stratum and nonzero inclusion probability; corrupted assignments are excluded from weighted population claims.\n- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy."
+  },
+  {
+    "id": "AC-195",
+    "sourceLine": 6698,
+    "startLine": 6696,
+    "endLine": 6700,
+    "exactText": "- **AC-193:** Exploitation cannot reduce exploration below the configured floor without an audited emergency policy.\n- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied."
+  },
+  {
+    "id": "AC-196",
+    "sourceLine": 6699,
+    "startLine": 6697,
+    "endLine": 6701,
+    "exactText": "- **AC-194:** Shadow portfolio replay is byte-for-byte decision reproducible from frozen versions and never creates/sends/signs a transaction.\n- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity."
+  },
+  {
+    "id": "AC-197",
+    "sourceLine": 6700,
+    "startLine": 6698,
+    "endLine": 6702,
+    "exactText": "- **AC-195:** Portfolio comparisons share capital, concurrency, timestamps, candidate universe, and execution assumptions.\n- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity.\n"
+  },
+  {
+    "id": "AC-198",
+    "sourceLine": 6701,
+    "startLine": 6699,
+    "endLine": 6703,
+    "exactText": "- **AC-196:** A strategy with high per-alert success but poor capital utilization/opportunity cost can rank below a lower-frequency higher-utility strategy.\n- **AC-197:** Concurrent shadow exits from the same pool cannot each receive the full pre-exit liquidity depth; aggregate impact and fill competition are applied.\n- **AC-198:** If TP and stop/invalidation are both feasible inside one coarse interval with unknown ordering, the conservative result applies the adverse feasible order and marks ambiguity.\n\n### 39.19 Adversarial robustness, frontier, and decay"
+  }
+]

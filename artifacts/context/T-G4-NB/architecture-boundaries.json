@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/research-notebook/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-NB/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-NB/**"
+    "artifacts/context/T-G4-NB/**",
+    "artifacts/conformance/T-G4-NB/manifest.json"
   ],
   "writeSet": [
     "packages/research-notebook/**"

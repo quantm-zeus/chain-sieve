@@ -1,0 +1,30 @@
+[
+  {
+    "id": "FR-LAT-001",
+    "sourceLine": 6106,
+    "startLine": 6104,
+    "endLine": 6108,
+    "exactText": "### 38.11 Latency, analog, and robustness\n\n- **FR-LAT-001 MUST:** End-to-end latency spans from event/provider availability to delivered alert.\n- **FR-LAT-002 MUST:** Backtest applies historically measured or bounded latency assumptions.\n- **FR-ANA-001 MUST:** Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls."
+  },
+  {
+    "id": "FR-LAT-002",
+    "sourceLine": 6107,
+    "startLine": 6105,
+    "endLine": 6109,
+    "exactText": "\n- **FR-LAT-001 MUST:** End-to-end latency spans from event/provider availability to delivered alert.\n- **FR-LAT-002 MUST:** Backtest applies historically measured or bounded latency assumptions.\n- **FR-ANA-001 MUST:** Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.\n- **FR-ANA-002 MUST:** Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations."
+  },
+  {
+    "id": "AC-080",
+    "sourceLine": 6586,
+    "startLine": 6584,
+    "endLine": 6588,
+    "exactText": "- **AC-078:** A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.\n- **AC-079:** Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.\n- **AC-080:** Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly.\n- **AC-081:** Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.\n- **AC-082:** Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics."
+  },
+  {
+    "id": "AC-226",
+    "sourceLine": 6741,
+    "startLine": 6739,
+    "endLine": 6743,
+    "exactText": "- **AC-224:** The supported-program collector reconnects from a killed connection, resumes from its durable checkpoint, detects the induced slot gap, backfills or marks it unresolved, and produces no duplicate canonical event.\n- **AC-225:** A backfilled event retains its original chain time but receives no `available_at` earlier than the real retrieval time; historical replay before retrieval cannot see it.\n- **AC-226:** First-seen latency is decomposed into event-to-collector, collector-to-feature, feature-to-decision, decision-to-delivery, and provider comparison spans for the verified collector scope.\n- **AC-227:** A 30-day expected and stress capacity replay includes provider credits/rates, streamed bytes, model tokens, workflow steps, database/object growth, egress, retries, notifications, and reserves; activation is blocked when any verified ceiling is exceeded.\n- **AC-228:** Under simulated quota exhaustion, social, analog, wallet-history, exploration, and broad-scan depth degrade before collector continuity, risk monitoring, alert verification, mature outcome collection, or protected interactive reserve."
+  }
+]

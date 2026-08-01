@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COST-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-COST-009",
+      "exactNormativeText": "Scheduler, workflow, database, object-store, notification, and model resource budgets are forecast and independently capped."
+    },
+    {
+      "id": "FR-COST-010",
+      "exactNormativeText": "Data-provider `STRICT_FREE` is independent from an explicitly configured BYOK model budget."
+    }
+  ],
+  "expectedModules": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/cost.ts",
+    "docs/generated/cost-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Scheduler, workflow, database, object-store, notification, and model resource budgets are forecast and independently capped.",
+    "Data-provider `STRICT_FREE` is independent from an explicitly configured BYOK model budget."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/cost.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

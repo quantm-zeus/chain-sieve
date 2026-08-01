@@ -1,0 +1,183 @@
+[
+  {
+    "path": "docs/generated/al-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "migrations/g6_al_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "packages/active-learning/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/al.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "telemetry/al.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-083.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-084.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-085.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-086.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-087.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-088.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-089.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/fixtures/al/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-083.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-084.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-085.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-086.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-087.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-088.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-089.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-AL-001",
+      "FR-AL-002",
+      "FR-AL-003"
+    ]
+  }
+]

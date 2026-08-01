@@ -26,6 +26,7 @@ const task = (id: string, lock: string, dependencies: string[] = []): TaskContra
   dependencies,
   requirements: ['FR-X-001'],
   acceptanceCriteria: [],
+  taskAcceptanceFacets: [],
   invariants: ['INV-001'],
   adrs: ['ADR-001'],
   ownerPackages: ['packages/x'],
@@ -47,6 +48,8 @@ const task = (id: string, lock: string, dependencies: string[] = []): TaskContra
   stopConditions: ['x'],
   completionDefinition: ['x'],
   sourceReferences: [{ path: 'x', line: 1, id: 'FR-X-001' }],
+  specificationStatus: 'READY',
+  testQualityGate: 'NEGATIVE_CASE',
 });
 
 const evidence = (kind: string, commit?: string, tree?: string): EvidenceReference => ({

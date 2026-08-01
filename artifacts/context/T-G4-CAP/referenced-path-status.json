@@ -1,0 +1,203 @@
+[
+  {
+    "path": "docs/generated/cap-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "migrations/g4_cap_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "packages/capability-registry/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/cap.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "telemetry/cap.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-083.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-084.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-085.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-086.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-087.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-088.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-089.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/fixtures/cap/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-083.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-084.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-085.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-086.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-087.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-088.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-089.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-CAP-001",
+      "FR-CAP-002",
+      "FR-CAP-003",
+      "FR-CAP-004"
+    ]
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-ADM",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-ADM-001",
+      "exactNormativeText": "Overview and incidents."
+    },
+    {
+      "id": "FR-ADM-003",
+      "exactNormativeText": "Schedule/configuration control plane."
+    },
+    {
+      "id": "FR-ADM-007",
+      "exactNormativeText": "Kill switches."
+    }
+  ],
+  "expectedModules": [
+    "apps/dashboard/**",
+    "apps/api/src/routes/admin/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/adm.ts",
+    "docs/generated/adm-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/adm.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

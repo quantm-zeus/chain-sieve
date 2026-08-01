@@ -82,9 +82,50 @@
     "FR-MVD-004",
     "FR-MVD-005"
   ],
-  "acceptanceCriteria": [
-    "AC-181",
-    "AC-184"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-180",
+      "facetId": "AC-180:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-180 system or integration oracle consumes. This facet does not claim full AC-180 satisfaction.",
+      "sourceAcceptanceSha256": "2e60731aba39a7fe56f04da22700e19c7058eaddeb6c1fc1f8af380a46a22172"
+    },
+    {
+      "acceptanceId": "AC-181",
+      "facetId": "AC-181:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-181 system or integration oracle consumes. This facet does not claim full AC-181 satisfaction.",
+      "sourceAcceptanceSha256": "ca107cd3ed525fdf3c9610a9d049bb9649b26d0d2ee280e213610dfc52f1f6c8"
+    },
+    {
+      "acceptanceId": "AC-182",
+      "facetId": "AC-182:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-182 system or integration oracle consumes. This facet does not claim full AC-182 satisfaction.",
+      "sourceAcceptanceSha256": "e0be466baedd7cb689e52ecd83fea8c7d8ddc87e3c236f305832c9bd750f6317"
+    },
+    {
+      "acceptanceId": "AC-183",
+      "facetId": "AC-183:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-183 system or integration oracle consumes. This facet does not claim full AC-183 satisfaction.",
+      "sourceAcceptanceSha256": "de09e7b74268eacfccd9c142a120a24ac6183bbadd7122ee0d12e2b64e9153f8"
+    },
+    {
+      "acceptanceId": "AC-184",
+      "facetId": "AC-184:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-184 system or integration oracle consumes. This facet does not claim full AC-184 satisfaction.",
+      "sourceAcceptanceSha256": "4dff27d8e3e1b154eb4a50840950bf56a4f553a26fdbcac9d7fdb24becd68cc5"
+    },
+    {
+      "acceptanceId": "AC-185",
+      "facetId": "AC-185:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-185 system or integration oracle consumes. This facet does not claim full AC-185 satisfaction.",
+      "sourceAcceptanceSha256": "c4c7b00e9d9c8e9d914bea3ae1a477813a0e585404fad87dd6bcbd3a6dc6a78a"
+    },
+    {
+      "acceptanceId": "AC-186",
+      "facetId": "AC-186:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-186 system or integration oracle consumes. This facet does not claim full AC-186 satisfaction.",
+      "sourceAcceptanceSha256": "5c1505cbbf290080a97a2c2477886e363b87421fcd1aba32927a07ecee09fffa"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -106,14 +147,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-MVD/**"
+    "artifacts/context/T-G6-MVD/**",
+    "artifacts/conformance/T-G6-MVD/manifest.json"
   ],
   "writeSet": [
     "packages/multi-view-disagreement/**"
   ],
   "allowedPaths": [
     "packages/multi-view-disagreement/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -121,6 +166,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-MVD/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -140,7 +187,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -150,15 +198,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-181.spec.ts",
-    "tests/negative/AC-181.negative.spec.ts",
-    "tests/acceptance/AC-184.spec.ts",
-    "tests/negative/AC-184.negative.spec.ts"
+    "tests/task-facets/T-G6-MVD.spec.ts",
+    "tests/task-facets/T-G6-MVD.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-181.spec.ts tests/negative/AC-181.negative.spec.ts tests/acceptance/AC-184.spec.ts tests/negative/AC-184.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G6-MVD.spec.ts tests/task-facets/T-G6-MVD.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -183,10 +233,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -217,5 +269,9 @@
       "line": 6294,
       "id": "FR-MVD-005"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G6-MVD/manifest.json",
+  "conformanceManifestSha256": "1c78a7c6af384452f2c17c16ec1e22b827563ba4c9d42d0f4fa5d0e60332cc0d",
+  "testQualityGate": "NEGATIVE_CASE"
 }

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-DFD",
+  "immutable": true,
+  "requirements": [
+    "FR-DFD-001",
+    "FR-DFD-002",
+    "FR-DFD-003",
+    "FR-DFD-004",
+    "FR-DFD-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-160:T-G5-DFD:INTERFACE_FACET",
+    "AC-161:T-G5-DFD:INTERFACE_FACET",
+    "AC-162:T-G5-DFD:INTERFACE_FACET",
+    "AC-163:T-G5-DFD:INTERFACE_FACET",
+    "AC-164:T-G5-DFD:INTERFACE_FACET",
+    "AC-165:T-G5-DFD:INTERFACE_FACET",
+    "AC-166:T-G5-DFD:INTERFACE_FACET",
+    "AC-167:T-G5-DFD:INTERFACE_FACET",
+    "AC-168:T-G5-DFD:INTERFACE_FACET",
+    "AC-169:T-G5-DFD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-DFD.spec.ts",
+    "tests/task-facets/T-G5-DFD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/deployer-funder-dna/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-DFD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-AL",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AL-001",
+      "exactNormativeText": "Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls."
+    },
+    {
+      "id": "FR-AL-002",
+      "exactNormativeText": "Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required."
+    },
+    {
+      "id": "FR-AL-003",
+      "exactNormativeText": "Human labels do not automatically update production policy."
+    }
+  ],
+  "expectedModules": [
+    "packages/active-learning/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/al.ts",
+    "docs/generated/al-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Active-learning queue prioritizes high-value review cases using uncertainty, disagreement, expected information value, class/cluster coverage, and bias controls.",
+    "Human labels are versioned, evidence-linked, uncertainty-aware, and adjudicated when required.",
+    "Human labels do not automatically update production policy."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/al.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

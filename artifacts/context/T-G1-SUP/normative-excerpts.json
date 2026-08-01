@@ -1,0 +1,65 @@
+[
+  {
+    "id": "FR-SUP-001",
+    "sourceLine": 6187,
+    "startLine": 6185,
+    "endLine": 6189,
+    "exactText": "- **FR-SOLSEC-005 MUST:** External security providers are independent evidence and cannot override deterministic known risk.\n- **FR-SOLSEC-006 MUST:** A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence.\n- **FR-SUP-001 MUST:** Circulating supply and market cap expose source, method, excluded supply, and confidence.\n- **FR-SUP-002 MUST:** Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist.\n- **FR-TRD-001 MUST:** Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features."
+  },
+  {
+    "id": "FR-SUP-002",
+    "sourceLine": 6188,
+    "startLine": 6186,
+    "endLine": 6190,
+    "exactText": "- **FR-SOLSEC-006 MUST:** A versioned system-address registry prevents infrastructure accounts from becoming false wallet-owner/funder evidence.\n- **FR-SUP-001 MUST:** Circulating supply and market cap expose source, method, excluded supply, and confidence.\n- **FR-SUP-002 MUST:** Low-confidence market cap cannot be the sole hard-rejection reason when approved liquidity/activity fallbacks exist.\n- **FR-TRD-001 MUST:** Raw swaps, transfer routes, and aggregator hops are normalized into economic trade events before market/wallet features.\n- **FR-TRD-002 MUST:** Economic trades use net actor deltas and avoid route/hop double counting."
+  },
+  {
+    "id": "AC-130",
+    "sourceLine": 6631,
+    "startLine": 6629,
+    "endLine": 6633,
+    "exactText": "### 39.12 Solana security and economic events\n\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges."
+  },
+  {
+    "id": "AC-131",
+    "sourceLine": 6632,
+    "startLine": 6630,
+    "endLine": 6634,
+    "exactText": "\n- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count."
+  },
+  {
+    "id": "AC-132",
+    "sourceLine": 6633,
+    "startLine": 6631,
+    "endLine": 6635,
+    "exactText": "- **AC-130:** SPL and Token-2022 fixtures correctly detect supported authorities/extensions and block unknown required transfer semantics.\n- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features."
+  },
+  {
+    "id": "AC-133",
+    "sourceLine": 6634,
+    "startLine": 6632,
+    "endLine": 6636,
+    "exactText": "- **AC-131:** External provider safe/no-risk output cannot override a deterministic critical authority or transfer risk.\n- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile."
+  },
+  {
+    "id": "AC-134",
+    "sourceLine": 6635,
+    "startLine": 6633,
+    "endLine": 6637,
+    "exactText": "- **AC-132:** Known router, exchange, launchpad, fee collector, and program accounts do not create false common-funder/insider edges.\n- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes."
+  },
+  {
+    "id": "AC-135",
+    "sourceLine": 6636,
+    "startLine": 6634,
+    "endLine": 6638,
+    "exactText": "- **AC-133:** A routed swap across multiple pools produces one economic trade and no hop-volume double count.\n- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n"
+  },
+  {
+    "id": "AC-136",
+    "sourceLine": 6637,
+    "startLine": 6635,
+    "endLine": 6639,
+    "exactText": "- **AC-134:** Inventory-neutral arbitrage does not increase organic unique-buyer or demand features.\n- **AC-135:** Low-confidence circulating supply prevents market cap from acting as the sole hard gate under an approved fallback profile.\n- **AC-136:** Low-denominator growth, one-bucket entropy, robust change-point, shrinkage and cohort-fallback fixtures produce bounded deterministic features and correct quality codes.\n\n### 39.13 Alerts, social, and protocol compatibility"
+  }
+]

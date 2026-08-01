@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-SIG",
+  "immutable": true,
+  "requirements": [
+    "FR-SIG-007",
+    "FR-SIG-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-020:T-G5-SIG:INTERFACE_FACET",
+    "AC-021:T-G5-SIG:INTERFACE_FACET",
+    "AC-022:T-G5-SIG:INTERFACE_FACET",
+    "AC-023:T-G5-SIG:INTERFACE_FACET",
+    "AC-136:T-G5-SIG:INTERFACE_FACET",
+    "AC-154:T-G5-SIG:INTERFACE_FACET",
+    "AC-190:T-G5-SIG:INTERFACE_FACET",
+    "AC-191:T-G5-SIG:INTERFACE_FACET",
+    "AC-192:T-G5-SIG:INTERFACE_FACET",
+    "AC-193:T-G5-SIG:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G5-SIG.spec.ts",
+    "tests/task-facets/T-G5-SIG.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/signal-intelligence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G5-SIG/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

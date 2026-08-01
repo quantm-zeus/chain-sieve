@@ -1,0 +1,93 @@
+[
+  {
+    "id": "FR-WPI-009",
+    "sourceLine": 6227,
+    "startLine": 6225,
+    "endLine": 6229,
+    "exactText": "- **FR-WPI-007 MUST:** A pattern cannot influence confirmed alerts until forward shadow or untouched out-of-sample validation proves incremental utility after multiple-testing and clustered-uncertainty controls.\n- **FR-WPI-008 MUST:** Pattern crowding, decay, regime failure, and false-positive drift can automatically remove influence, but cannot automatically promote or reactivate a pattern.\n- **FR-WPI-009 MUST:** Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited.\n- **FR-WPI-010 MUST:** During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims.\n- **FR-WPI-011 MUST:** Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling."
+  },
+  {
+    "id": "FR-WPI-010",
+    "sourceLine": 6228,
+    "startLine": 6226,
+    "endLine": 6230,
+    "exactText": "- **FR-WPI-008 MUST:** Pattern crowding, decay, regime failure, and false-positive drift can automatically remove influence, but cannot automatically promote or reactivate a pattern.\n- **FR-WPI-009 MUST:** Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited.\n- **FR-WPI-010 MUST:** During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims.\n- **FR-WPI-011 MUST:** Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling.\n"
+  },
+  {
+    "id": "FR-WPI-011",
+    "sourceLine": 6229,
+    "startLine": 6227,
+    "endLine": 6231,
+    "exactText": "- **FR-WPI-009 MUST:** Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited.\n- **FR-WPI-010 MUST:** During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims.\n- **FR-WPI-011 MUST:** Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling.\n\n### 38.21 Wallet Alpha Lineage"
+  },
+  {
+    "id": "AC-160",
+    "sourceLine": 6659,
+    "startLine": 6657,
+    "endLine": 6661,
+    "exactText": "### 39.15 Winning pattern and alpha lineage\n\n- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven."
+  },
+  {
+    "id": "AC-161",
+    "sourceLine": 6660,
+    "startLine": 6658,
+    "endLine": 6662,
+    "exactText": "\n- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution."
+  },
+  {
+    "id": "AC-162",
+    "sourceLine": 6661,
+    "startLine": 6659,
+    "endLine": 6663,
+    "exactText": "- **AC-160:** A synthetic 10× wick with no executable exit enters `SIGNAL_SUCCESS` only and cannot enter a winning tradable cohort.\n- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high."
+  },
+  {
+    "id": "AC-163",
+    "sourceLine": 6662,
+    "startLine": 6660,
+    "endLine": 6664,
+    "exactText": "- **AC-161:** A pattern discovered on one time range is evaluated on an embargoed untouched range with no asset/deployer/lineage/window overlap.\n- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation."
+  },
+  {
+    "id": "AC-164",
+    "sourceLine": 6663,
+    "startLine": 6661,
+    "endLine": 6665,
+    "exactText": "- **AC-162:** A pattern that performs only against winners but not matched losers/random/market-beta controls remains unproven.\n- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence."
+  },
+  {
+    "id": "AC-165",
+    "sourceLine": 6664,
+    "startLine": 6662,
+    "endLine": 6666,
+    "exactText": "- **AC-163:** A current candidate match exposes temporal stage, missing/contradictory transitions, regime applicability, remaining actionability, and execution-aware outcome distribution.\n- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence."
+  },
+  {
+    "id": "AC-166",
+    "sourceLine": 6665,
+    "startLine": 6663,
+    "endLine": 6667,
+    "exactText": "- **AC-164:** Multiple-testing or clustered-confidence failure prevents pattern promotion even when in-sample return is high.\n- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision."
+  },
+  {
+    "id": "AC-167",
+    "sourceLine": 6666,
+    "startLine": 6664,
+    "endLine": 6668,
+    "exactText": "- **AC-165:** Shared funder/address-split wallets do not create false independent wallet-alpha confirmation.\n- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage."
+  },
+  {
+    "id": "AC-168",
+    "sourceLine": 6667,
+    "startLine": 6665,
+    "endLine": 6669,
+    "exactText": "- **AC-166:** Insider-associated profitable wallets are labeled separately and cannot create organic smart-wallet evidence.\n- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage.\n"
+  },
+  {
+    "id": "AC-169",
+    "sourceLine": 6668,
+    "startLine": 6666,
+    "endLine": 6670,
+    "exactText": "- **AC-167:** Unknown deployer history remains unknown; a provider `safe` label cannot erase deterministic prior rug/liquidity-removal evidence.\n- **AC-168:** Historical scoring cannot use a current full-history wallet reputation, scaler, pattern, or model artifact whose `available_at` is after the simulated decision.\n- **AC-169:** A wallet-alpha feature used to evaluate token X is generated without token X’s future outcome or entity-linked held-out leakage.\n\n### 39.16 Liquidity, launch, attention, and rotation"
+  }
+]

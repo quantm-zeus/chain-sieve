@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-LEGAL",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-272",
+      "facetId": "AC-272:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-272 system or integration oracle consumes. This facet does not claim full AC-272 satisfaction.",
+      "sourceAcceptanceSha256": "4b5d5e60bce47498e79e50ceefd4b801b03ec521cbb7e3c8647dccddc41fd874"
+    },
+    {
+      "acceptanceId": "AC-273",
+      "facetId": "AC-273:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-273 system or integration oracle consumes. This facet does not claim full AC-273 satisfaction.",
+      "sourceAcceptanceSha256": "543965ee652abaa4cce9ddaeca811583f7bb4af16b3abda55d387926950ca67a"
+    },
+    {
+      "acceptanceId": "AC-274",
+      "facetId": "AC-274:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-274 system or integration oracle consumes. This facet does not claim full AC-274 satisfaction.",
+      "sourceAcceptanceSha256": "85bdeb17fb8c5e72ec380adbf23897383fa47b40b9d3c04bd04e1336fa88e080"
+    },
+    {
+      "acceptanceId": "AC-275",
+      "facetId": "AC-275:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-275 system or integration oracle consumes. This facet does not claim full AC-275 satisfaction.",
+      "sourceAcceptanceSha256": "016c7b9a86451caaaffeedefa34e3e3d3a6f5e0fec5a55d3231e9b3829cde4ee"
+    },
+    {
+      "acceptanceId": "AC-276",
+      "facetId": "AC-276:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-276 system or integration oracle consumes. This facet does not claim full AC-276 satisfaction.",
+      "sourceAcceptanceSha256": "f8f56a742c061490924476ec00f82ee91bb43173299cd2e91c5545a865959e0d"
+    },
+    {
+      "acceptanceId": "AC-277",
+      "facetId": "AC-277:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-277 system or integration oracle consumes. This facet does not claim full AC-277 satisfaction.",
+      "sourceAcceptanceSha256": "a1661e003aaca5a7492db8f3436621a68ae7128982c89fa842ad5315be15f716"
+    },
+    {
+      "acceptanceId": "AC-278",
+      "facetId": "AC-278:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-278 system or integration oracle consumes. This facet does not claim full AC-278 satisfaction.",
+      "sourceAcceptanceSha256": "0415e62e60aa5fd2895926d814e732ea4b0dd0af40f22a7671e054ca7cd515ea"
+    },
+    {
+      "acceptanceId": "AC-279",
+      "facetId": "AC-279:T-G6-LEGAL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-LEGAL for FR-LEGAL-001, FR-LEGAL-002, FR-LEGAL-003, FR-LEGAL-004, FR-LEGAL-005, FR-LEGAL-006 that the unchanged AC-279 system or integration oracle consumes. This facet does not claim full AC-279 satisfaction.",
+      "sourceAcceptanceSha256": "e9b0b2a55db2c3b25794ae66c6751ea60b78eac3efbd6cc8a595416b25640022"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

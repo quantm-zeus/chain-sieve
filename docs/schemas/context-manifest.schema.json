@@ -57,6 +57,14 @@
         "additionalProperties": false
       }
     },
+    "conformanceManifestPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conformanceManifestSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "generatedAt": {
       "type": "string"
     }

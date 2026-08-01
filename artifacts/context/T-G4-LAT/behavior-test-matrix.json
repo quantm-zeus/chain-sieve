@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-LAT",
+  "taskLocalCriteria": [
+    {
+      "acceptanceId": "AC-080",
+      "positive": "tests/acceptance/AC-080.spec.ts",
+      "negativeOrFailure": "tests/negative/AC-080.negative.spec.ts",
+      "exactNormativeText": "Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly."
+    }
+  ],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-226",
+      "facetId": "AC-226:T-G4-LAT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-LAT for FR-LAT-001, FR-LAT-002 that the unchanged AC-226 system or integration oracle consumes. This facet does not claim full AC-226 satisfaction.",
+      "sourceAcceptanceSha256": "de3dd739c5cdae070dd33d5b9ada08bcf66b371c76084b863e501ec2d30dd86c"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

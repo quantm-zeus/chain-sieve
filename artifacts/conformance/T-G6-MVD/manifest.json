@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-MVD",
+  "immutable": true,
+  "requirements": [
+    "FR-MVD-001",
+    "FR-MVD-002",
+    "FR-MVD-003",
+    "FR-MVD-004",
+    "FR-MVD-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-180:T-G6-MVD:INTERFACE_FACET",
+    "AC-181:T-G6-MVD:INTERFACE_FACET",
+    "AC-182:T-G6-MVD:INTERFACE_FACET",
+    "AC-183:T-G6-MVD:INTERFACE_FACET",
+    "AC-184:T-G6-MVD:INTERFACE_FACET",
+    "AC-185:T-G6-MVD:INTERFACE_FACET",
+    "AC-186:T-G6-MVD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-MVD.spec.ts",
+    "tests/task-facets/T-G6-MVD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/multi-view-disagreement/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-MVD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

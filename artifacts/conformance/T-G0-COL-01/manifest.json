@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COL-01",
+  "immutable": true,
+  "requirements": [
+    "FR-COL-001",
+    "FR-COL-002",
+    "FR-COL-003",
+    "FR-COL-004",
+    "FR-COL-005",
+    "FR-COL-006",
+    "FR-COL-007",
+    "FR-COL-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-110:T-G0-COL-01:INTERFACE_FACET",
+    "AC-111:T-G0-COL-01:INTERFACE_FACET",
+    "AC-112:T-G0-COL-01:INTERFACE_FACET",
+    "AC-113:T-G0-COL-01:INTERFACE_FACET",
+    "AC-224:T-G0-COL-01:INTERFACE_FACET",
+    "AC-225:T-G0-COL-01:INTERFACE_FACET",
+    "AC-226:T-G0-COL-01:INTERFACE_FACET",
+    "AC-227:T-G0-COL-01:INTERFACE_FACET",
+    "AC-228:T-G0-COL-01:INTERFACE_FACET",
+    "AC-229:T-G0-COL-01:INTERFACE_FACET",
+    "AC-230:T-G0-COL-01:INTERFACE_FACET",
+    "AC-231:T-G0-COL-01:INTERFACE_FACET",
+    "AC-237:T-G0-COL-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G0-COL-01.spec.ts",
+    "tests/task-facets/T-G0-COL-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "apps/collector/**",
+    "packages/collector-core/**",
+    "packages/collector-solana/**",
+    "packages/program-decoders/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G0-COL-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

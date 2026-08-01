@@ -56,9 +56,56 @@
     "FR-AGT-011",
     "FR-AGT-012"
   ],
-  "acceptanceCriteria": [
-    "AC-031",
-    "AC-033"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-030",
+      "facetId": "AC-030:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-030 system or integration oracle consumes. This facet does not claim full AC-030 satisfaction.",
+      "sourceAcceptanceSha256": "16a63a2e5ee3a48e7c6e757b6d18be8a31a9285a3bec696866f623cce1681a7b"
+    },
+    {
+      "acceptanceId": "AC-031",
+      "facetId": "AC-031:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-031 system or integration oracle consumes. This facet does not claim full AC-031 satisfaction.",
+      "sourceAcceptanceSha256": "fa5f00d7e442fba08a8ee0ea19ed2d44b8b4a9e9b01eaae082e97de3f296c4cb"
+    },
+    {
+      "acceptanceId": "AC-032",
+      "facetId": "AC-032:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-032 system or integration oracle consumes. This facet does not claim full AC-032 satisfaction.",
+      "sourceAcceptanceSha256": "5bd0c4f6fdee418ba4cd3310614952c18a79af347be7e7cc742a536ccc7c7f9f"
+    },
+    {
+      "acceptanceId": "AC-033",
+      "facetId": "AC-033:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-033 system or integration oracle consumes. This facet does not claim full AC-033 satisfaction.",
+      "sourceAcceptanceSha256": "7b6e14cbeddd9c26e86a6f31b1ce6d79c1e5f23b5cc71b5153888902c7e577bf"
+    },
+    {
+      "acceptanceId": "AC-034",
+      "facetId": "AC-034:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-034 system or integration oracle consumes. This facet does not claim full AC-034 satisfaction.",
+      "sourceAcceptanceSha256": "0bd3ea4000d2699e1474e50f0a49492c911f08018978fba8eaf927ba9f6f26c5"
+    },
+    {
+      "acceptanceId": "AC-242",
+      "facetId": "AC-242:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-242 system or integration oracle consumes. This facet does not claim full AC-242 satisfaction.",
+      "sourceAcceptanceSha256": "1b0e2f5fea865ad80db2254788e7167585f21ac49ddff1f03f2f5c37aace0ccc"
+    },
+    {
+      "acceptanceId": "AC-243",
+      "facetId": "AC-243:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-243 system or integration oracle consumes. This facet does not claim full AC-243 satisfaction.",
+      "sourceAcceptanceSha256": "79a59cbe85e9ad12ef8011011518d95f87824d01493ac3ad6de23a198add6337"
+    },
+    {
+      "acceptanceId": "AC-244",
+      "facetId": "AC-244:T-G3-AGT-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G3-AGT-02 for FR-AGT-009, FR-AGT-010, FR-AGT-011, FR-AGT-012 that the unchanged AC-244 system or integration oracle consumes. This facet does not claim full AC-244 satisfaction.",
+      "sourceAcceptanceSha256": "639ce740b0718cd65afa9972a290ff7fc4fa3c17a280aca3a4c752949d603f9d"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -80,7 +127,8 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G3-AGT-02/**"
+    "artifacts/context/T-G3-AGT-02/**",
+    "artifacts/conformance/T-G3-AGT-02/manifest.json"
   ],
   "writeSet": [
     "packages/agent-runtime/**",
@@ -89,7 +137,10 @@
   "allowedPaths": [
     "packages/agent-runtime/**",
     "packages/evidence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -97,6 +148,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G3-AGT-02/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -119,7 +172,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -129,15 +183,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-031.spec.ts",
-    "tests/negative/AC-031.negative.spec.ts",
-    "tests/acceptance/AC-033.spec.ts",
-    "tests/negative/AC-033.negative.spec.ts"
+    "tests/task-facets/T-G3-AGT-02.spec.ts",
+    "tests/task-facets/T-G3-AGT-02.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-031.spec.ts tests/negative/AC-031.negative.spec.ts tests/acceptance/AC-033.spec.ts tests/negative/AC-033.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G3-AGT-02.spec.ts tests/task-facets/T-G3-AGT-02.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -162,10 +218,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -191,5 +249,9 @@
       "line": 6428,
       "id": "FR-AGT-012"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G3-AGT-02/manifest.json",
+  "conformanceManifestSha256": "8acdac84e5dd6ecc1489eb0d9283f094399caeb6008639263c9b1240c2792165",
+  "testQualityGate": "NEGATIVE_CASE"
 }

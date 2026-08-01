@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-NB",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-NB-001",
+      "exactNormativeText": "Persistent research notebooks/casebooks link notes, claims, evidence, runs, theses, outcomes, permissions, and provenance while remaining untrusted model context."
+    },
+    {
+      "id": "FR-NB-002",
+      "exactNormativeText": "Notebook content cannot modify frozen evidence or grant tool authority."
+    }
+  ],
+  "expectedModules": [
+    "packages/research-notebook/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/nb.ts",
+    "docs/generated/nb-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Persistent research notebooks/casebooks link notes, claims, evidence, runs, theses, outcomes, permissions, and provenance while remaining untrusted model context.",
+    "Notebook content cannot modify frozen evidence or grant tool authority."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/nb.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

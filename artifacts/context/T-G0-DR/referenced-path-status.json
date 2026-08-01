@@ -1,0 +1,196 @@
+[
+  {
+    "path": "docs/generated/dr-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "migrations/g0_dr_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "packages/persistence/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "packages/release-conformance/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-TRACE",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/dr.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "packages/workflow-runtime/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "telemetry/dr.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-060.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-061.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-062.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-260.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-261.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-262.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-263.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-264.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/fixtures/dr/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-060.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-061.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-062.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-260.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-261.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-262.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-263.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-264.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DR-001",
+      "FR-DR-002"
+    ]
+  }
+]

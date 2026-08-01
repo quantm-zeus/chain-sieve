@@ -1,10 +1,4 @@
-import {
-  cpSync,
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -23,9 +17,9 @@ import type {
 import {
   copyPayload,
   openZCodeWorkspace,
-} from '../../tools/zcode/lib/desktop.js';
+} from '../../tools/agent/providers/zcode-desktop.js';
 
-vi.mock('../../tools/zcode/lib/desktop.js', () => ({
+vi.mock('../../tools/agent/providers/zcode-desktop.js', () => ({
   detectZCodeApplication: vi.fn(() => '/Applications/ZCode.app'),
   copyPayload: vi.fn(),
   openZCodeWorkspace: vi.fn(),
@@ -48,8 +42,7 @@ const command = (cwd: string, executable: string, args: string[]): string => {
   return result.stdout.trim();
 };
 
-const git = (cwd: string, args: string[]): string =>
-  command(cwd, 'git', args);
+const git = (cwd: string, args: string[]): string => command(cwd, 'git', args);
 
 class LeaseBlockingRunner implements CommandRunner {
   readonly calls: Array<{ command: string; args: string[]; cwd?: string }> = [];
@@ -104,16 +97,8 @@ const createFixture = (): {
     git(root, ['rev-parse', 'HEAD']),
   ]);
   git(root, ['tag', '-f', 'harness-v999.0.0', 'HEAD']);
-  git(root, [
-    'update-ref',
-    '-d',
-    'refs/remotes/origin/task/t-g0-core',
-  ]);
-  git(root, [
-    'update-ref',
-    '-d',
-    'refs/remotes/origin/cluster/g0',
-  ]);
+  git(root, ['update-ref', '-d', 'refs/remotes/origin/task/t-g0-disc']);
+  git(root, ['update-ref', '-d', 'refs/remotes/origin/cluster/g0']);
   cpSync(
     join(sourceRoot, 'tools', 'worktree-manager'),
     join(root, 'tools', 'worktree-manager'),
@@ -136,8 +121,8 @@ const createFixture = (): {
       {
         schemaVersion: '2.0.0',
         tasks: {
-          'T-G0-CORE': {
-            taskId: 'T-G0-CORE',
+          'T-G0-DISC': {
+            taskId: 'T-G0-DISC',
             state: 'READY',
             leaseVersion: 0,
             history: [],
@@ -151,7 +136,7 @@ const createFixture = (): {
   return {
     root,
     cluster,
-    workspace: taskWorkspacePath(cluster, 'T-G0-CORE'),
+    workspace: taskWorkspacePath(cluster, 'T-G0-DISC'),
     head: git(cluster, ['rev-parse', 'HEAD']),
   };
 };
@@ -175,7 +160,7 @@ describe('ZCode START_TASK real discovery and Git boundary', () => {
     const decision = decideNextAction(inventory);
 
     expect(decision.action).toBe('START_TASK');
-    expect(decision.task?.contract.id).toBe('T-G0-CORE');
+    expect(decision.task?.contract.id).toBe('T-G0-DISC');
 
     let failure: unknown;
     try {
@@ -188,7 +173,7 @@ describe('ZCode START_TASK real discovery and Git boundary', () => {
     expect((failure as ZCodeError).code).toBe('TASK_ACQUIRE_FAILED');
     expect(runner.worktreeOutputs).toMatchObject([{ reused: false }]);
     expect(git(value.workspace, ['branch', '--show-current'])).toBe(
-      'task/t-g0-core',
+      'task/t-g0-disc',
     );
     expect(git(value.workspace, ['rev-parse', 'HEAD'])).toBe(value.head);
     expect(pnpmActions(runner)).toEqual([
@@ -217,10 +202,10 @@ describe('ZCode START_TASK real discovery and Git boundary', () => {
     ]);
     expect(
       git(value.root, ['worktree', 'list', '--porcelain']).match(
-        /branch refs\/heads\/task\/t-g0-core/g,
+        /branch refs\/heads\/task\/t-g0-disc/g,
       ),
     ).toHaveLength(1);
     expect(copyPayload).not.toHaveBeenCalled();
     expect(openZCodeWorkspace).not.toHaveBeenCalled();
-  });
+  }, 40_000);
 });

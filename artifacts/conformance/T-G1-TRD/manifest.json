@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-TRD",
+  "immutable": true,
+  "requirements": [
+    "FR-TRD-001",
+    "FR-TRD-002",
+    "FR-TRD-003",
+    "FR-TRD-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-130:T-G1-TRD:INTERFACE_FACET",
+    "AC-131:T-G1-TRD:INTERFACE_FACET",
+    "AC-132:T-G1-TRD:INTERFACE_FACET",
+    "AC-133:T-G1-TRD:INTERFACE_FACET",
+    "AC-134:T-G1-TRD:INTERFACE_FACET",
+    "AC-135:T-G1-TRD:INTERFACE_FACET",
+    "AC-136:T-G1-TRD:INTERFACE_FACET",
+    "AC-233:T-G1-TRD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-TRD.spec.ts",
+    "tests/task-facets/T-G1-TRD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/economic-trade-normalizer/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-TRD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

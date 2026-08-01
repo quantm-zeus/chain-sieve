@@ -1,0 +1,2967 @@
+{
+  "AC-001": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-002": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-003": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-004": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-010": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-011": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-012": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-013": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-014": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-020": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-021": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-022": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-023": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-030": {
+    "level": "CLUSTER",
+    "owner": "C-G3-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G3-AGT-01",
+      "T-G3-AGT-02"
+    ],
+    "participatingClusters": [
+      "C-G3-IMPLEMENTATION"
+    ]
+  },
+  "AC-031": {
+    "level": "CLUSTER",
+    "owner": "C-G3-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G3-AGT-01",
+      "T-G3-AGT-02"
+    ],
+    "participatingClusters": [
+      "C-G3-IMPLEMENTATION"
+    ]
+  },
+  "AC-032": {
+    "level": "CLUSTER",
+    "owner": "C-G3-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G3-AGT-01",
+      "T-G3-AGT-02"
+    ],
+    "participatingClusters": [
+      "C-G3-IMPLEMENTATION"
+    ]
+  },
+  "AC-033": {
+    "level": "CLUSTER",
+    "owner": "C-G3-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G3-AGT-01",
+      "T-G3-AGT-02"
+    ],
+    "participatingClusters": [
+      "C-G3-IMPLEMENTATION"
+    ]
+  },
+  "AC-034": {
+    "level": "CLUSTER",
+    "owner": "C-G3-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G3-AGT-01",
+      "T-G3-AGT-02"
+    ],
+    "participatingClusters": [
+      "C-G3-IMPLEMENTATION"
+    ]
+  },
+  "AC-040": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-041": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-042": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-043": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-044": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-050": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-051": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-052": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-053": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-060": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-061": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-062": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-063": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ADM",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-070": {
+    "level": "CLUSTER",
+    "owner": "C-G4-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G4-DECAY",
+      "T-G4-THS",
+      "T-G4-WHY"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-071": {
+    "level": "CLUSTER",
+    "owner": "C-G4-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G4-DECAY",
+      "T-G4-THS",
+      "T-G4-WHY"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-072": {
+    "level": "CLUSTER",
+    "owner": "C-G4-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G4-DECAY",
+      "T-G4-THS",
+      "T-G4-WHY"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-073": {
+    "level": "CLUSTER",
+    "owner": "C-G4-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G4-DECAY",
+      "T-G4-THS",
+      "T-G4-WHY"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-074": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CROWD",
+      "T-G5-CROWD",
+      "T-G5-NAR",
+      "T-G5-XCF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-075": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CROWD",
+      "T-G5-CROWD",
+      "T-G5-NAR",
+      "T-G5-XCF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-076": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CROWD",
+      "T-G5-CROWD",
+      "T-G5-NAR",
+      "T-G5-XCF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-077": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-POL",
+      "T-G5-REG"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-078": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-POL",
+      "T-G5-REG"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-079": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-POL",
+      "T-G5-REG"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-080": {
+    "level": "TASK",
+    "owner": "T-G4-LAT",
+    "participatingTasks": [
+      "T-G4-LAT"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-081": {
+    "level": "TASK",
+    "owner": "T-G6-ANA",
+    "participatingTasks": [
+      "T-G6-ANA"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-082": {
+    "level": "TASK",
+    "owner": "T-G6-ANA",
+    "participatingTasks": [
+      "T-G6-ANA"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-090": {
+    "level": "TASK",
+    "owner": "T-G6-ANA",
+    "participatingTasks": [
+      "T-G6-ANA"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-091": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CROWD",
+      "T-G5-CROWD",
+      "T-G5-NAR",
+      "T-G5-XCF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-092": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CROWD",
+      "T-G5-CROWD",
+      "T-G5-NAR",
+      "T-G5-XCF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-083": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-084": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-085": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-086": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-087": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-088": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-089": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G4-CAP",
+      "T-G4-FB",
+      "T-G4-NB",
+      "T-G6-AL",
+      "T-G6-CF"
+    ],
+    "participatingClusters": [
+      "C-G4-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-100": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-101": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-102": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-103": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-104": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-105": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G1-COST"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-110": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-DISC",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-111": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-DISC",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-112": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-DISC",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-113": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-DISC",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-120": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-121": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-122": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-123": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-124": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-125": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-126": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-127": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-128": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-130": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-131": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-132": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-133": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-134": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-135": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-136": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-SIG",
+      "T-G1-SOLSEC",
+      "T-G1-SUP",
+      "T-G1-TRD",
+      "T-G5-SIG",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-140": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ALERT",
+      "T-G5-SOC"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-141": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ALERT",
+      "T-G5-SOC"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-142": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ALERT",
+      "T-G5-SOC"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-143": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G2-ALERT",
+      "T-G5-SOC"
+    ],
+    "participatingClusters": [
+      "C-G2-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-144": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-MCP",
+      "T-G2-PROD",
+      "T-G6-MCP",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-150": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G2-PROD",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-151": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G2-PROD",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-152": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G2-PROD",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-153": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G2-PROD",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-154": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-SIG",
+      "T-G2-PROD",
+      "T-G5-SIG",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02",
+      "T-G6-PROD",
+      "T-G6-SIG"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-160": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-161": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-162": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-163": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-164": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-165": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-166": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-167": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-168": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-169": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G5-DFD",
+      "T-G5-WAL",
+      "T-G6-WPI-01",
+      "T-G6-WPI-02"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-170": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-171": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-172": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-173": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-174": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-175": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-176": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-177": {
+    "level": "CLUSTER",
+    "owner": "C-G5-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G5-ADQ",
+      "T-G5-LAR",
+      "T-G5-LMS",
+      "T-G5-NLL"
+    ],
+    "participatingClusters": [
+      "C-G5-IMPLEMENTATION"
+    ]
+  },
+  "AC-180": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-181": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-182": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-183": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-184": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-185": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-186": {
+    "level": "CLUSTER",
+    "owner": "C-G6-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G6-FHZ",
+      "T-G6-MVD",
+      "T-G6-OOD"
+    ],
+    "participatingClusters": [
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-190": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG",
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION",
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-191": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG",
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION",
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-192": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG",
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION",
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-193": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G1-SIG",
+      "T-G5-SIG",
+      "T-G6-SIG",
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION",
+      "C-G5-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION",
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-194": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-195": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-196": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-197": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-198": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AIG",
+      "T-G7-EXP",
+      "T-G7-SPF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-200": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-201": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-202": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-203": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-204": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-205": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-206": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-207": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-208": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-209": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-210": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-211": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-212": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-213": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-ADG",
+      "T-G7-AMS",
+      "T-G7-OF"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-214": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-215": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-216": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-217": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-218": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-219": {
+    "level": "CLUSTER",
+    "owner": "C-G7-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G7-AEP",
+      "T-G7-ALAB"
+    ],
+    "participatingClusters": [
+      "C-G7-IMPLEMENTATION"
+    ]
+  },
+  "AC-220": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-221": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-222": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-223": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-224": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-225": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-226": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02",
+      "T-G4-LAT"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-227": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-228": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-229": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G0-COST-01",
+      "T-G0-COST-02",
+      "T-G0-DISC",
+      "T-G1-COST",
+      "T-G1-DISC-01",
+      "T-G1-DISC-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-230": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-231": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-232": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-233": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC",
+      "T-G1-TRD"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-234": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-235": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-236": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-237": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-COL-01",
+      "T-G0-COL-02",
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-238": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-239": {
+    "level": "CLUSTER",
+    "owner": "C-G1-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G1-EXEC-01",
+      "T-G1-EXEC-02",
+      "T-G1-EXEC-03",
+      "T-G1-SOLSEC"
+    ],
+    "participatingClusters": [
+      "C-G1-IMPLEMENTATION"
+    ]
+  },
+  "AC-240": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-241": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-242": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G3-AGT-01",
+      "T-G3-AGT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-243": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G3-AGT-01",
+      "T-G3-AGT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-244": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G3-AGT-01",
+      "T-G3-AGT-02",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-245": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02",
+      "T-G2-ALERT",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-246": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02",
+      "T-G2-ALERT",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-247": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02",
+      "T-G2-ALERT",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-248": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02",
+      "T-G2-ALERT",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-249": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-DATA",
+      "T-G1-DATA-01",
+      "T-G1-DATA-02",
+      "T-G1-EVAL-01",
+      "T-G1-EVAL-02",
+      "T-G1-MAT-01",
+      "T-G1-MAT-02",
+      "T-G1-OBJ-01",
+      "T-G1-OBJ-02",
+      "T-G2-ALERT",
+      "T-G6-EVAL-01",
+      "T-G6-EVAL-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G1-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-250": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-251": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-252": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-253": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-254": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-255": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-256": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-257": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-258": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-259": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-CORE",
+      "T-G0-MCP",
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G6-MCP"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-260": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-261": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-262": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-263": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-264": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-DR",
+      "T-G2-ADM",
+      "T-G2-DR",
+      "T-G2-WF",
+      "T-G3-ADM",
+      "T-G4-ADM"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G3-IMPLEMENTATION",
+      "C-G4-IMPLEMENTATION"
+    ]
+  },
+  "AC-265": {
+    "level": "TASK",
+    "owner": "T-G0-TRACE",
+    "participatingTasks": [
+      "T-G0-TRACE"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-266": {
+    "level": "TASK",
+    "owner": "T-G0-TRACE",
+    "participatingTasks": [
+      "T-G0-TRACE"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-267": {
+    "level": "TASK",
+    "owner": "T-G0-TRACE",
+    "participatingTasks": [
+      "T-G0-TRACE"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-268": {
+    "level": "TASK",
+    "owner": "T-G0-TRACE",
+    "participatingTasks": [
+      "T-G0-TRACE"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-269": {
+    "level": "TASK",
+    "owner": "T-G0-TRACE",
+    "participatingTasks": [
+      "T-G0-TRACE"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-270": {
+    "level": "CLUSTER",
+    "owner": "C-G0-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-271": {
+    "level": "CLUSTER",
+    "owner": "C-G0-IMPLEMENTATION",
+    "participatingTasks": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION"
+    ]
+  },
+  "AC-272": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-273": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-PROV-01",
+      "T-G0-PROV-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-274": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-275": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-276": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-277": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-278": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  },
+  "AC-279": {
+    "level": "PROJECT",
+    "owner": "PROJECT",
+    "participatingTasks": [
+      "T-G0-SEC-01",
+      "T-G0-SEC-02",
+      "T-G2-PROD",
+      "T-G6-LEGAL",
+      "T-G6-PROD"
+    ],
+    "participatingClusters": [
+      "C-G0-IMPLEMENTATION",
+      "C-G2-IMPLEMENTATION",
+      "C-G6-IMPLEMENTATION"
+    ]
+  }
+}

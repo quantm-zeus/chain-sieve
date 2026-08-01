@@ -1,0 +1,100 @@
+[
+  {
+    "id": "FR-LEGAL-001",
+    "sourceLine": 6500,
+    "startLine": 6498,
+    "endLine": 6502,
+    "exactText": "- **FR-DR-005 MUST:** If a tier cannot meet its declared recovery objective, affected capability automatically degrades and confirmed opportunity alerts are disabled until continuity is re-established.\n- **FR-DR-006 MUST:** Backup retention, deletion, legal hold, geographic location, encryption, rights constraints, and restore access are versioned and audited.\n- **FR-LEGAL-001 MUST:** Workspace/public distribution requires a current data-rights matrix proving permitted collection, caching, derived use, display, redistribution, export, retention, attribution, and model use for every active operation.\n- **FR-LEGAL-002 MUST:** Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization.\n- **FR-LEGAL-003 MUST:** Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited."
+  },
+  {
+    "id": "FR-LEGAL-002",
+    "sourceLine": 6501,
+    "startLine": 6499,
+    "endLine": 6503,
+    "exactText": "- **FR-DR-006 MUST:** Backup retention, deletion, legal hold, geographic location, encryption, rights constraints, and restore access are versioned and audited.\n- **FR-LEGAL-001 MUST:** Workspace/public distribution requires a current data-rights matrix proving permitted collection, caching, derived use, display, redistribution, export, retention, attribution, and model use for every active operation.\n- **FR-LEGAL-002 MUST:** Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization.\n- **FR-LEGAL-003 MUST:** Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited.\n- **FR-LEGAL-004 MUST:** Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference."
+  },
+  {
+    "id": "FR-LEGAL-003",
+    "sourceLine": 6502,
+    "startLine": 6500,
+    "endLine": 6504,
+    "exactText": "- **FR-LEGAL-001 MUST:** Workspace/public distribution requires a current data-rights matrix proving permitted collection, caching, derived use, display, redistribution, export, retention, attribution, and model use for every active operation.\n- **FR-LEGAL-002 MUST:** Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization.\n- **FR-LEGAL-003 MUST:** Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited.\n- **FR-LEGAL-004 MUST:** Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference.\n- **FR-LEGAL-005 MUST:** Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation."
+  },
+  {
+    "id": "FR-LEGAL-004",
+    "sourceLine": 6503,
+    "startLine": 6501,
+    "endLine": 6505,
+    "exactText": "- **FR-LEGAL-002 MUST:** Jurisdiction, user eligibility, disclosures, privacy notice, terms, research/not-advice language, risk explanation, complaint/support, and incident communication are approved and versioned before public authorization.\n- **FR-LEGAL-003 MUST:** Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited.\n- **FR-LEGAL-004 MUST:** Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference.\n- **FR-LEGAL-005 MUST:** Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation.\n- **FR-LEGAL-006 MUST:** Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse."
+  },
+  {
+    "id": "FR-LEGAL-005",
+    "sourceLine": 6504,
+    "startLine": 6502,
+    "endLine": 6506,
+    "exactText": "- **FR-LEGAL-003 MUST:** Marketing and product claims are evidence scoped, statistically supportable, time bounded, and reviewed; “guaranteed,” “risk-free,” universal recall, or unsupported profitability claims are prohibited.\n- **FR-LEGAL-004 MUST:** Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference.\n- **FR-LEGAL-005 MUST:** Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation.\n- **FR-LEGAL-006 MUST:** Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse.\n- **FR-TRACE-001 MUST:** A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping."
+  },
+  {
+    "id": "FR-LEGAL-006",
+    "sourceLine": 6505,
+    "startLine": 6503,
+    "endLine": 6507,
+    "exactText": "- **FR-LEGAL-004 MUST:** Privacy controls support purpose limitation, data minimization, access, deletion where legally/contractually allowed, retention enforcement, human-label provenance, and restrictions on sensitive person/entity inference.\n- **FR-LEGAL-005 MUST:** Abuse and market-manipulation response covers coordinated attempts to game discovery, detectors, public alert timing, social signals, wallet reputation, or liquidity and permits rate limiting, suppression, investigation, and evidence preservation.\n- **FR-LEGAL-006 MUST:** Public rendering exposes sufficient evidence and limitations for informed use but does not disclose detector thresholds, protected source logic, or sensitive wallet/entity details that materially enable evasion or abuse.\n- **FR-TRACE-001 MUST:** A machine-readable requirement manifest is generated from this PRD and is the release-blocking source for every requirement, acceptance criterion, invariant, ADR, dependency group, implementation owner, schema, test, surface, telemetry, and activation/rollback mapping.\n- **FR-TRACE-002 MUST:** Requirement, acceptance, invariant, ADR, feature, schema, API, tool, policy, artifact, and test IDs are globally unique, stable, immutable once released, and replaced only through explicit deprecation/supersession links."
+  },
+  {
+    "id": "AC-272",
+    "sourceLine": 6802,
+    "startLine": 6800,
+    "endLine": 6804,
+    "exactText": "- **AC-270:** Expired documentation/plan/rights/schema/deprecation verification moves the affected provider operation out of active decision use until a successful official-doc and live-contract verification refreshes it.\n- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient."
+  },
+  {
+    "id": "AC-273",
+    "sourceLine": 6803,
+    "startLine": 6801,
+    "endLine": 6805,
+    "exactText": "- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness."
+  },
+  {
+    "id": "AC-274",
+    "sourceLine": 6804,
+    "startLine": 6802,
+    "endLine": 6806,
+    "exactText": "- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation."
+  },
+  {
+    "id": "AC-275",
+    "sourceLine": 6805,
+    "startLine": 6803,
+    "endLine": 6807,
+    "exactText": "- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse."
+  },
+  {
+    "id": "AC-276",
+    "sourceLine": 6806,
+    "startLine": 6804,
+    "endLine": 6808,
+    "exactText": "- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate."
+  },
+  {
+    "id": "AC-277",
+    "sourceLine": 6807,
+    "startLine": 6805,
+    "endLine": 6809,
+    "exactText": "- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts."
+  },
+  {
+    "id": "AC-278",
+    "sourceLine": 6808,
+    "startLine": 6806,
+    "endLine": 6810,
+    "exactText": "- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n"
+  },
+  {
+    "id": "AC-279",
+    "sourceLine": 6809,
+    "startLine": 6807,
+    "endLine": 6811,
+    "exactText": "- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n\n---"
+  }
+]

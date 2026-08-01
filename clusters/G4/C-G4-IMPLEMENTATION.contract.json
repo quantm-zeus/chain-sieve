@@ -51,20 +51,17 @@
     "FR-WHY-002"
   ],
   "acceptanceCriteria": [
-    "AC-013",
-    "AC-262",
-    "AC-083",
-    "AC-088",
-    "AC-074",
-    "AC-092",
-    "AC-070",
-    "AC-073",
-    "AC-084",
-    "AC-089",
     "AC-080",
-    "AC-085",
+    "AC-070",
     "AC-071",
-    "AC-072"
+    "AC-072",
+    "AC-073"
+  ],
+  "integrationAcceptanceCriteria": [
+    "AC-070",
+    "AC-071",
+    "AC-072",
+    "AC-073"
   ],
   "invariants": [
     "INV-001",
@@ -84,8 +81,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

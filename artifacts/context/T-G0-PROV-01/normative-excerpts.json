@@ -1,0 +1,156 @@
+[
+  {
+    "id": "FR-PROV-001",
+    "sourceLine": 6402,
+    "startLine": 6400,
+    "endLine": 6404,
+    "exactText": "### 38.39 Provider lifecycle, deprecation, and negative capability\n\n- **FR-PROV-001 MUST:** Every provider operation has lifecycle state `DISCOVERED`, `VERIFIED`, `ACTIVE`, `DEGRADED`, `DEPRECATED`, `BLOCKED`, or `REMOVED`, with last documentation verification, last live probe, replacement operation, sunset date, and affected features.\n- **FR-PROV-002 MUST:** Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified.\n- **FR-PROV-003 MUST:** A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved."
+  },
+  {
+    "id": "FR-PROV-002",
+    "sourceLine": 6403,
+    "startLine": 6401,
+    "endLine": 6405,
+    "exactText": "\n- **FR-PROV-001 MUST:** Every provider operation has lifecycle state `DISCOVERED`, `VERIFIED`, `ACTIVE`, `DEGRADED`, `DEPRECATED`, `BLOCKED`, or `REMOVED`, with last documentation verification, last live probe, replacement operation, sunset date, and affected features.\n- **FR-PROV-002 MUST:** Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified.\n- **FR-PROV-003 MUST:** A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved.\n- **FR-PROV-004 MUST:** Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted."
+  },
+  {
+    "id": "FR-PROV-003",
+    "sourceLine": 6404,
+    "startLine": 6402,
+    "endLine": 6406,
+    "exactText": "- **FR-PROV-001 MUST:** Every provider operation has lifecycle state `DISCOVERED`, `VERIFIED`, `ACTIVE`, `DEGRADED`, `DEPRECATED`, `BLOCKED`, or `REMOVED`, with last documentation verification, last live probe, replacement operation, sunset date, and affected features.\n- **FR-PROV-002 MUST:** Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified.\n- **FR-PROV-003 MUST:** A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved.\n- **FR-PROV-004 MUST:** Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted.\n- **FR-PROV-005 MUST:** Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy."
+  },
+  {
+    "id": "FR-PROV-004",
+    "sourceLine": 6405,
+    "startLine": 6403,
+    "endLine": 6407,
+    "exactText": "- **FR-PROV-002 MUST:** Documentation, pricing/plan, quota, rights, schema, endpoint, authentication, and deprecation verification expire after a configured TTL; expiry prevents new active use of decision-critical fields until reverified.\n- **FR-PROV-003 MUST:** A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved.\n- **FR-PROV-004 MUST:** Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted.\n- **FR-PROV-005 MUST:** Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy.\n- **FR-PROV-006 MUST:** GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests."
+  },
+  {
+    "id": "FR-PROV-005",
+    "sourceLine": 6406,
+    "startLine": 6404,
+    "endLine": 6408,
+    "exactText": "- **FR-PROV-003 MUST:** A deprecated or maintenance-only provider operation cannot remain active for a new implementation unless an explicit time-bounded migration exception and replacement plan are approved.\n- **FR-PROV-004 MUST:** Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted.\n- **FR-PROV-005 MUST:** Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy.\n- **FR-PROV-006 MUST:** GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests.\n- **FR-PROV-007 MUST:** New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source."
+  },
+  {
+    "id": "FR-PROV-006",
+    "sourceLine": 6407,
+    "startLine": 6405,
+    "endLine": 6409,
+    "exactText": "- **FR-PROV-004 MUST:** Provider SDKs, MCP servers, skills, plugins, or packages containing trading, signing, wallet, swap, transaction-building, private-key, or arbitrary-request capability are not installed or exposed wholesale; only audited read-only operation adapters are permitted.\n- **FR-PROV-005 MUST:** Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy.\n- **FR-PROV-006 MUST:** GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests.\n- **FR-PROV-007 MUST:** New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source.\n- **FR-PROV-008 MUST:** A provider response containing transaction payloads, signing requests, executable instructions, private-key fields, or unexpected write capability is rejected, quarantined, audited, and excluded from model context."
+  },
+  {
+    "id": "FR-PROV-007",
+    "sourceLine": 6408,
+    "startLine": 6406,
+    "endLine": 6410,
+    "exactText": "- **FR-PROV-005 MUST:** Each provider adapter enforces an exact allowlist of scheme, host, port, path template, HTTP method, content type, request fields, response schema, redirect policy, maximum bytes, and DNS/IP policy.\n- **FR-PROV-006 MUST:** GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests.\n- **FR-PROV-007 MUST:** New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source.\n- **FR-PROV-008 MUST:** A provider response containing transaction payloads, signing requests, executable instructions, private-key fields, or unexpected write capability is rejected, quarantined, audited, and excluded from model context.\n- **FR-PROV-009 MUST:** Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy."
+  },
+  {
+    "id": "FR-PROV-008",
+    "sourceLine": 6409,
+    "startLine": 6407,
+    "endLine": 6411,
+    "exactText": "- **FR-PROV-006 MUST:** GMGN integration is query-only; swap, quote-to-transaction, sign, submit, private-key, wallet, and trading APIs, tools, environment variables, schemas, dependencies, and routes are prohibited and covered by negative tests.\n- **FR-PROV-007 MUST:** New Helius integrations use supported raw/history operations and local supported-program decoding; deprecated enhanced-parser functionality may be retained only as non-authoritative evidence under a migration exception and never as the sole economic-event source.\n- **FR-PROV-008 MUST:** A provider response containing transaction payloads, signing requests, executable instructions, private-key fields, or unexpected write capability is rejected, quarantined, audited, and excluded from model context.\n- **FR-PROV-009 MUST:** Provider-plan or rights changes fail closed for affected storage, derived use, redistribution, caching, and export paths; previously stored restricted artifacts are quarantined or retired according to the updated rights policy.\n- **FR-PROV-010 MUST:** Provider source fingerprints capture upstream lineage, field/value fingerprints, timing behavior, outage correlation, schema characteristics, and first-seen behavior for empirical dependence analysis."
+  },
+  {
+    "id": "AC-250",
+    "sourceLine": 6774,
+    "startLine": 6772,
+    "endLine": 6776,
+    "exactText": "### 39.24 MCP transport, provider negative capability, and security\n\n- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts."
+  },
+  {
+    "id": "AC-251",
+    "sourceLine": 6775,
+    "startLine": 6773,
+    "endLine": 6777,
+    "exactText": "\n- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness."
+  },
+  {
+    "id": "AC-252",
+    "sourceLine": 6776,
+    "startLine": 6774,
+    "endLine": 6778,
+    "exactText": "- **AC-250:** A valid allowlisted MCP Origin reaches authentication; a present invalid, punycode-confused, trailing-dot, mixed-scheme, or wrong-port Origin receives HTTP 403 before session/tool/resource processing.\n- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted."
+  },
+  {
+    "id": "AC-253",
+    "sourceLine": 6777,
+    "startLine": 6775,
+    "endLine": 6779,
+    "exactText": "- **AC-251:** Unsupported MCP protocol version, invalid content type/method, oversized message, foreign session ID, or unauthorized resumable cursor fails deterministically without tool execution.\n- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy."
+  },
+  {
+    "id": "AC-254",
+    "sourceLine": 6778,
+    "startLine": 6776,
+    "endLine": 6780,
+    "exactText": "- **AC-252:** A resource URI created by one client/tenant cannot be fetched by another client/tenant lacking the original scope and rights, including through signed-URL, range, redirect, or path-confusion attempts.\n- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path."
+  },
+  {
+    "id": "AC-255",
+    "sourceLine": 6779,
+    "startLine": 6777,
+    "endLine": 6781,
+    "exactText": "- **AC-253:** OAuth tests enforce PKCE, exact redirect URI, audience/resource binding, token expiry, scope, and no upstream token passthrough before workspace/public technical readiness.\n- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed."
+  },
+  {
+    "id": "AC-256",
+    "sourceLine": 6780,
+    "startLine": 6778,
+    "endLine": 6782,
+    "exactText": "- **AC-254:** Dependency, route, tool, environment-schema, and runtime scans find no swap/bridge/order execution, transaction build/sign/submit, private-key/seed, wallet creation/import/export/custody/management, or exchange-trading path; read-only wallet intelligence routes and schemas remain permitted.\n- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects."
+  },
+  {
+    "id": "AC-257",
+    "sourceLine": 6781,
+    "startLine": 6779,
+    "endLine": 6783,
+    "exactText": "- **AC-255:** GMGN query fixtures pass while swap/private-key/transaction schemas, endpoints, tools, environment variables, or package imports fail build or runtime policy.\n- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures."
+  },
+  {
+    "id": "AC-258",
+    "sourceLine": 6782,
+    "startLine": 6780,
+    "endLine": 6784,
+    "exactText": "- **AC-256:** A deprecated Helius enhanced parser cannot be configured as the sole or authoritative economic-event decoder; supported raw transaction/history operations plus local decoding remain the normative path.\n- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures.\n"
+  },
+  {
+    "id": "AC-259",
+    "sourceLine": 6783,
+    "startLine": 6781,
+    "endLine": 6785,
+    "exactText": "- **AC-257:** SSRF fixtures covering loopback, private/link-local/metadata IPs, redirects, DNS rebinding, IPv6, encoded hosts, userinfo, mixed schemes, oversized responses, and slow streams fail closed.\n- **AC-258:** Prompt-injection strings in token metadata, social text, provider text, notebook entries, websites, and model output cannot alter tools, scopes, URLs, budgets, policies, or side effects.\n- **AC-259:** Audit mutation, deletion, insertion, reordering, or chain-break fixtures are detected by continuous verification and independently checkpointed hashes/signatures.\n\n### 39.25 Recovery, traceability, and release conformance"
+  },
+  {
+    "id": "AC-270",
+    "sourceLine": 6800,
+    "startLine": 6798,
+    "endLine": 6802,
+    "exactText": "### 39.26 Provider lifecycle, claims, and public activation\n\n- **AC-270:** Expired documentation/plan/rights/schema/deprecation verification moves the affected provider operation out of active decision use until a successful official-doc and live-contract verification refreshes it.\n- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release."
+  },
+  {
+    "id": "AC-271",
+    "sourceLine": 6801,
+    "startLine": 6799,
+    "endLine": 6803,
+    "exactText": "\n- **AC-270:** Expired documentation/plan/rights/schema/deprecation verification moves the affected provider operation out of active decision use until a successful official-doc and live-contract verification refreshes it.\n- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action."
+  },
+  {
+    "id": "AC-272",
+    "sourceLine": 6802,
+    "startLine": 6800,
+    "endLine": 6804,
+    "exactText": "- **AC-270:** Expired documentation/plan/rights/schema/deprecation verification moves the affected provider operation out of active decision use until a successful official-doc and live-contract verification refreshes it.\n- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient."
+  },
+  {
+    "id": "AC-273",
+    "sourceLine": 6803,
+    "startLine": 6801,
+    "endLine": 6805,
+    "exactText": "- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness."
+  }
+]

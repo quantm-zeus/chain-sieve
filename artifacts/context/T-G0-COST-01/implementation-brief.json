@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COST-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-COST-001",
+      "exactNormativeText": "Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission."
+    },
+    {
+      "id": "FR-COST-002",
+      "exactNormativeText": "`STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations."
+    },
+    {
+      "id": "FR-COST-003",
+      "exactNormativeText": "Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill."
+    },
+    {
+      "id": "FR-COST-004",
+      "exactNormativeText": "Broad scans degrade breadth/depth before consuming protected quota."
+    },
+    {
+      "id": "FR-COST-005",
+      "exactNormativeText": "Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation."
+    },
+    {
+      "id": "FR-COST-006",
+      "exactNormativeText": "Cost forecasts use current verified provider plan metadata and observed usage."
+    },
+    {
+      "id": "FR-COST-007",
+      "exactNormativeText": "Blocked cost operations are audited with candidate, caller, reason, and alternative behavior."
+    },
+    {
+      "id": "FR-COST-008",
+      "exactNormativeText": "Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication."
+    }
+  ],
+  "expectedModules": [
+    "packages/cost-router/**",
+    "packages/capacity-planner/**",
+    "packages/quota-forecast/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/cost.ts",
+    "docs/generated/cost-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every provider operation declares cost class, quota-unit cost, reset policy, batch capability, minimum candidate stage, reserve eligibility, and `STRICT_FREE` permission.",
+    "`STRICT_FREE` blocks paid, unknown-cost, overage, automatic-upgrade, and paid-fallback operations.",
+    "Protected reserves exist for risk monitoring, alert verification, interactive MCP, and emergency backfill.",
+    "Broad scans degrade breadth/depth before consuming protected quota.",
+    "Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation.",
+    "Cost forecasts use current verified provider plan metadata and observed usage.",
+    "Blocked cost operations are audited with candidate, caller, reason, and alternative behavior.",
+    "Paid data-provider mode requires a separate immutable policy, explicit budget, approval, activation, and re-authentication."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [
+    "Provider calls are batch-coalesced where supported and exact-cache/single-flight precede quota reservation."
+  ],
+  "observabilityExpectations": [
+    "telemetry/cost.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

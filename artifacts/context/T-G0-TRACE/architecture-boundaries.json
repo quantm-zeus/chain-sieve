@@ -5,7 +5,10 @@
   "allowedPaths": [
     "packages/requirement-manifest/**",
     "packages/release-conformance/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -13,11 +16,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G0-TRACE/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G0-TRACE/**"
+    "artifacts/context/T-G0-TRACE/**",
+    "artifacts/conformance/T-G0-TRACE/manifest.json"
   ],
   "writeSet": [
     "packages/requirement-manifest/**",

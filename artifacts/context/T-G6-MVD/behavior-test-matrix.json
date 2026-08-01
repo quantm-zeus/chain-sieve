@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-MVD",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-180",
+      "facetId": "AC-180:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-180 system or integration oracle consumes. This facet does not claim full AC-180 satisfaction.",
+      "sourceAcceptanceSha256": "2e60731aba39a7fe56f04da22700e19c7058eaddeb6c1fc1f8af380a46a22172"
+    },
+    {
+      "acceptanceId": "AC-181",
+      "facetId": "AC-181:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-181 system or integration oracle consumes. This facet does not claim full AC-181 satisfaction.",
+      "sourceAcceptanceSha256": "ca107cd3ed525fdf3c9610a9d049bb9649b26d0d2ee280e213610dfc52f1f6c8"
+    },
+    {
+      "acceptanceId": "AC-182",
+      "facetId": "AC-182:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-182 system or integration oracle consumes. This facet does not claim full AC-182 satisfaction.",
+      "sourceAcceptanceSha256": "e0be466baedd7cb689e52ecd83fea8c7d8ddc87e3c236f305832c9bd750f6317"
+    },
+    {
+      "acceptanceId": "AC-183",
+      "facetId": "AC-183:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-183 system or integration oracle consumes. This facet does not claim full AC-183 satisfaction.",
+      "sourceAcceptanceSha256": "de09e7b74268eacfccd9c142a120a24ac6183bbadd7122ee0d12e2b64e9153f8"
+    },
+    {
+      "acceptanceId": "AC-184",
+      "facetId": "AC-184:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-184 system or integration oracle consumes. This facet does not claim full AC-184 satisfaction.",
+      "sourceAcceptanceSha256": "4dff27d8e3e1b154eb4a50840950bf56a4f553a26fdbcac9d7fdb24becd68cc5"
+    },
+    {
+      "acceptanceId": "AC-185",
+      "facetId": "AC-185:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-185 system or integration oracle consumes. This facet does not claim full AC-185 satisfaction.",
+      "sourceAcceptanceSha256": "c4c7b00e9d9c8e9d914bea3ae1a477813a0e585404fad87dd6bcbd3a6dc6a78a"
+    },
+    {
+      "acceptanceId": "AC-186",
+      "facetId": "AC-186:T-G6-MVD:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-MVD for FR-MVD-001, FR-MVD-002, FR-MVD-003, FR-MVD-004, FR-MVD-005 that the unchanged AC-186 system or integration oracle consumes. This facet does not claim full AC-186 satisfaction.",
+      "sourceAcceptanceSha256": "5c1505cbbf290080a97a2c2477886e363b87421fcd1aba32927a07ecee09fffa"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

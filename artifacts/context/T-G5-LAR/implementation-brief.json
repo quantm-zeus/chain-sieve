@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-LAR",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-LAR-001",
+      "exactNormativeText": "Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events."
+    },
+    {
+      "id": "FR-LAR-002",
+      "exactNormativeText": "The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity."
+    },
+    {
+      "id": "FR-LAR-003",
+      "exactNormativeText": "A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient."
+    },
+    {
+      "id": "FR-LAR-004",
+      "exactNormativeText": "Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress."
+    },
+    {
+      "id": "FR-LAR-005",
+      "exactNormativeText": "Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience."
+    }
+  ],
+  "expectedModules": [
+    "packages/liquidity-resilience/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/lar.ts",
+    "docs/generated/lar-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Resilience is measured from economic trades, pool-state changes, price impact, depth, spread/slippage, quote inflow, liquidity changes, and recovery after deterministic stress events.",
+    "The engine distinguishes fragile pump, untested demand, absorbed sell pressure, resilient accumulation, distribution, and liquidity withdrawal with evidence and finite validity.",
+    "A resilience claim requires persistence and post-stress observation; price recovery without executable depth or independent buyers is insufficient.",
+    "Large-sale absorption tests use configured notionals and holder/cohort scenarios, including adverse pool-state and liquidity-withdrawal stress.",
+    "Low-resolution data may produce `UNTESTED` or `INSUFFICIENT_DATA` but cannot prove resilience."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/lar.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

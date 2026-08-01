@@ -1,0 +1,58 @@
+[
+  {
+    "id": "FR-SOC-001",
+    "sourceLine": 6201,
+    "startLine": 6199,
+    "endLine": 6203,
+    "exactText": "- **FR-ALERT-004 MUST:** Prior actionable alerts receive material deterioration, cancellation, or expiry updates.\n- **FR-ALERT-005 MUST:** Alert metrics and denominators are separated by alert class.\n- **FR-SOC-001 MUST:** Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.\n- **FR-SOC-002 MUST:** Missing paid social data cannot be interpreted as negative sentiment or low organic demand.\n- **FR-SOC-003 MUST:** Unauthorized scraping or private-endpoint reverse engineering is prohibited."
+  },
+  {
+    "id": "FR-SOC-002",
+    "sourceLine": 6202,
+    "startLine": 6200,
+    "endLine": 6204,
+    "exactText": "- **FR-ALERT-005 MUST:** Alert metrics and denominators are separated by alert class.\n- **FR-SOC-001 MUST:** Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.\n- **FR-SOC-002 MUST:** Missing paid social data cannot be interpreted as negative sentiment or low organic demand.\n- **FR-SOC-003 MUST:** Unauthorized scraping or private-endpoint reverse engineering is prohibited.\n- **FR-SOC-004 MUST:** The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty."
+  },
+  {
+    "id": "FR-SOC-003",
+    "sourceLine": 6203,
+    "startLine": 6201,
+    "endLine": 6205,
+    "exactText": "- **FR-SOC-001 MUST:** Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.\n- **FR-SOC-002 MUST:** Missing paid social data cannot be interpreted as negative sentiment or low organic demand.\n- **FR-SOC-003 MUST:** Unauthorized scraping or private-endpoint reverse engineering is prohibited.\n- **FR-SOC-004 MUST:** The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty.\n"
+  },
+  {
+    "id": "FR-SOC-004",
+    "sourceLine": 6204,
+    "startLine": 6202,
+    "endLine": 6206,
+    "exactText": "- **FR-SOC-002 MUST:** Missing paid social data cannot be interpreted as negative sentiment or low organic demand.\n- **FR-SOC-003 MUST:** Unauthorized scraping or private-endpoint reverse engineering is prohibited.\n- **FR-SOC-004 MUST:** The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty.\n\n### 38.19 Production readiness and activation"
+  },
+  {
+    "id": "AC-140",
+    "sourceLine": 6641,
+    "startLine": 6639,
+    "endLine": 6643,
+    "exactText": "### 39.13 Alerts, social, and protocol compatibility\n\n- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature."
+  },
+  {
+    "id": "AC-141",
+    "sourceLine": 6642,
+    "startLine": 6640,
+    "endLine": 6644,
+    "exactText": "\n- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request."
+  },
+  {
+    "id": "AC-142",
+    "sourceLine": 6643,
+    "startLine": 6641,
+    "endLine": 6645,
+    "exactText": "- **AC-140:** `EARLY_WATCH` and `CONFIRMED_OPPORTUNITY` have separate policies, content, TTL, metrics, and denominators.\n- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.\n- **AC-144:** MCP compatibility tests pass for the configured stable revision and each supported target client; draft revisions remain opt-in."
+  },
+  {
+    "id": "AC-143",
+    "sourceLine": 6644,
+    "startLine": 6642,
+    "endLine": 6646,
+    "exactText": "- **AC-141:** A material invalidation or expiry of an actionable prior alert creates an idempotent update/cancellation notification.\n- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.\n- **AC-144:** MCP compatibility tests pass for the configured stable revision and each supported target client; draft revisions remain opt-in.\n"
+  }
+]

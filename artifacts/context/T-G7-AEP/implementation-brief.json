@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AEP",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AEP-001",
+      "exactNormativeText": "A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields."
+    }
+  ],
+  "expectedModules": [
+    "packages/agent-runtime/**",
+    "packages/alpha-artifact-store/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/aep.ts",
+    "docs/generated/aep-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "A deterministic bounded Alpha Evidence Pack exposes material alpha results, lifecycle/applicability, contradictions, vetoes and evidence references to agents/alerts without allowing model omission of critical fields."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/aep.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

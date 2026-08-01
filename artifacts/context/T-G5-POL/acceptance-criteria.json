@@ -1,46 +1,91 @@
-[
-  {
-    "id": "AC-077",
-    "text": "Regime route is selected only from approved active routes and remains immutable for the run.",
-    "textSha256": "09aa1c66c4d58187fc5d55f7f4df3362520a235cb4a5763c2ff1b7487092df51",
-    "line": 6583,
-    "requirementRefs": [
-      "FR-POL-001",
-      "FR-POL-002",
-      "FR-POL-003",
-      "FR-POL-004",
-      "FR-POL-005",
-      "FR-REG-001",
-      "FR-REG-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-077.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-077.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  },
-  {
-    "id": "AC-079",
-    "text": "Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.",
-    "textSha256": "4e61d0e1e435a05748dcdb0b14e8203652fb07fbf369d3a526c92a020ebb6700",
-    "line": 6585,
-    "requirementRefs": [
-      "FR-POL-001",
-      "FR-POL-002",
-      "FR-POL-003",
-      "FR-POL-004",
-      "FR-POL-005",
-      "FR-REG-001",
-      "FR-REG-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-079.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-079.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  }
-]
+{
+  "taskLocal": [],
+  "facets": [
+    {
+      "acceptanceId": "AC-077",
+      "facetId": "AC-077:T-G5-POL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-POL for FR-POL-001, FR-POL-002, FR-POL-003, FR-POL-004, FR-POL-005 that the unchanged AC-077 system or integration oracle consumes. This facet does not claim full AC-077 satisfaction.",
+      "sourceAcceptanceSha256": "09aa1c66c4d58187fc5d55f7f4df3362520a235cb4a5763c2ff1b7487092df51"
+    },
+    {
+      "acceptanceId": "AC-078",
+      "facetId": "AC-078:T-G5-POL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-POL for FR-POL-001, FR-POL-002, FR-POL-003, FR-POL-004, FR-POL-005 that the unchanged AC-078 system or integration oracle consumes. This facet does not claim full AC-078 satisfaction.",
+      "sourceAcceptanceSha256": "e911fdca061ace6a72d5c2fbc1097bca4c4aa1b44f0853d711562685b1b1dd25"
+    },
+    {
+      "acceptanceId": "AC-079",
+      "facetId": "AC-079:T-G5-POL:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-POL for FR-POL-001, FR-POL-002, FR-POL-003, FR-POL-004, FR-POL-005 that the unchanged AC-079 system or integration oracle consumes. This facet does not claim full AC-079 satisfaction.",
+      "sourceAcceptanceSha256": "4e61d0e1e435a05748dcdb0b14e8203652fb07fbf369d3a526c92a020ebb6700"
+    }
+  ],
+  "fullCriteriaVerifiedElsewhere": [
+    {
+      "id": "AC-077",
+      "text": "Regime route is selected only from approved active routes and remains immutable for the run.",
+      "textSha256": "09aa1c66c4d58187fc5d55f7f4df3362520a235cb4a5763c2ff1b7487092df51",
+      "line": 6583,
+      "requirementRefs": [
+        "FR-POL-001",
+        "FR-POL-002",
+        "FR-POL-003",
+        "FR-POL-004",
+        "FR-POL-005",
+        "FR-REG-001",
+        "FR-REG-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-077.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-077.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-078",
+      "text": "A natural-language policy with unknown feature, ambiguous unit, unbounded query, prohibited action, or unavailable capability is rejected.",
+      "textSha256": "e911fdca061ace6a72d5c2fbc1097bca4c4aa1b44f0853d711562685b1b1dd25",
+      "line": 6584,
+      "requirementRefs": [
+        "FR-POL-001",
+        "FR-POL-002",
+        "FR-POL-003",
+        "FR-POL-004",
+        "FR-POL-005",
+        "FR-REG-001",
+        "FR-REG-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-078.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-078.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-079",
+      "text": "Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.",
+      "textSha256": "4e61d0e1e435a05748dcdb0b14e8203652fb07fbf369d3a526c92a020ebb6700",
+      "line": 6585,
+      "requirementRefs": [
+        "FR-POL-001",
+        "FR-POL-002",
+        "FR-POL-003",
+        "FR-POL-004",
+        "FR-POL-005",
+        "FR-REG-001",
+        "FR-REG-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-079.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-079.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    }
+  ]
+}

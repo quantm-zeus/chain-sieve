@@ -1,0 +1,72 @@
+[
+  {
+    "id": "FR-CF-001",
+    "sourceLine": 6111,
+    "startLine": 6109,
+    "endLine": 6113,
+    "exactText": "- **FR-ANA-002 MUST:** Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.\n- **FR-ANA-003 MUST:** Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests.\n- **FR-CF-001 MUST:** Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.\n- **FR-CF-002 MUST:** Counterfactual results cannot directly mutate active configuration.\n- **FR-CF-003 MUST:** Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score."
+  },
+  {
+    "id": "FR-CF-002",
+    "sourceLine": 6112,
+    "startLine": 6110,
+    "endLine": 6114,
+    "exactText": "- **FR-ANA-003 MUST:** Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests.\n- **FR-CF-001 MUST:** Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.\n- **FR-CF-002 MUST:** Counterfactual results cannot directly mutate active configuration.\n- **FR-CF-003 MUST:** Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score.\n"
+  },
+  {
+    "id": "FR-CF-003",
+    "sourceLine": 6113,
+    "startLine": 6111,
+    "endLine": 6115,
+    "exactText": "- **FR-CF-001 MUST:** Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.\n- **FR-CF-002 MUST:** Counterfactual results cannot directly mutate active configuration.\n- **FR-CF-003 MUST:** Fragile near-alert decisions force additional deterministic validation, reduced validity, abstention, or watch state according to policy; fragility cannot be hidden by a scalar score.\n\n### 38.12 Learning, notebook, fallback, and capability"
+  },
+  {
+    "id": "AC-083",
+    "sourceLine": 6592,
+    "startLine": 6590,
+    "endLine": 6594,
+    "exactText": "- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.\n- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions."
+  },
+  {
+    "id": "AC-084",
+    "sourceLine": 6593,
+    "startLine": 6591,
+    "endLine": 6595,
+    "exactText": "- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.\n- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking."
+  },
+  {
+    "id": "AC-085",
+    "sourceLine": 6594,
+    "startLine": 6592,
+    "endLine": 6596,
+    "exactText": "- **AC-083:** Counterfactual experiments use frozen inputs and cannot change active policy or historical decisions.\n- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert."
+  },
+  {
+    "id": "AC-086",
+    "sourceLine": 6595,
+    "startLine": 6593,
+    "endLine": 6597,
+    "exactText": "- **AC-084:** Human review labels preserve revisions, reviewer, evidence, confidence, and adjudication state.\n- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map."
+  },
+  {
+    "id": "AC-087",
+    "sourceLine": 6596,
+    "startLine": 6594,
+    "endLine": 6598,
+    "exactText": "- **AC-085:** Notebook content remains separate from evidence and cannot inject instructions or expand tool permissions.\n- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked."
+  },
+  {
+    "id": "AC-088",
+    "sourceLine": 6597,
+    "startLine": 6595,
+    "endLine": 6599,
+    "exactText": "- **AC-086:** Model outage activates deterministic fallback without stopping data collection, risk monitoring, or outcome tracking.\n- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked.\n"
+  },
+  {
+    "id": "AC-089",
+    "sourceLine": 6598,
+    "startLine": 6596,
+    "endLine": 6600,
+    "exactText": "- **AC-087:** Default fallback cannot send a high-conviction opportunity alert.\n- **AC-088:** A workflow with missing required capability is blocked, degraded, or safely rerouted according to the Capability Map.\n- **AC-089:** User-facing output never claims full coverage when a required capability is partial, unavailable, unverified, license-blocked, or quota-blocked.\n\n"
+  }
+]

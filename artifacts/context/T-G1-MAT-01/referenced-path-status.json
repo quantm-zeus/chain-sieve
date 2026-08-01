@@ -1,0 +1,901 @@
+[
+  {
+    "path": "docs/generated/mat-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "migrations/g1_mat_*.sql",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-DATA-01",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "packages/outcome-maturity/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-MAT-02",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/mat.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "telemetry/mat.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-040.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-041.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-042.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-043.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-044.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-120.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-121.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-122.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-123.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-124.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-125.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-126.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-127.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-128.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-150.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-151.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-152.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-153.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-154.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-240.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-241.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-242.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-243.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-244.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-245.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-246.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-247.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-248.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-249.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/fixtures/mat/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-040.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-041.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-042.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-043.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-044.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-120.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-121.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-122.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-123.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-124.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-125.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-126.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-127.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-128.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-150.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-151.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-152.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-153.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-154.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-240.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-241.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-242.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-243.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-244.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-245.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-246.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-247.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-248.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-249.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-MAT-001",
+      "FR-MAT-002",
+      "FR-MAT-003",
+      "FR-MAT-004",
+      "FR-MAT-005",
+      "FR-MAT-006",
+      "FR-MAT-007",
+      "FR-MAT-008"
+    ]
+  }
+]

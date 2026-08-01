@@ -59,9 +59,50 @@
     "FR-CAP-003",
     "FR-CAP-004"
   ],
-  "acceptanceCriteria": [
-    "AC-083",
-    "AC-088"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-083",
+      "facetId": "AC-083:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-083 system or integration oracle consumes. This facet does not claim full AC-083 satisfaction.",
+      "sourceAcceptanceSha256": "bb961a75b9120c85b232de2666ae4c823ef7d994188024af23e3d7c48863df73"
+    },
+    {
+      "acceptanceId": "AC-084",
+      "facetId": "AC-084:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-084 system or integration oracle consumes. This facet does not claim full AC-084 satisfaction.",
+      "sourceAcceptanceSha256": "f6222e31807887ff82b8803fd997ba052bbda1a9dfc500bd6ee38e5a28b2ac49"
+    },
+    {
+      "acceptanceId": "AC-085",
+      "facetId": "AC-085:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-085 system or integration oracle consumes. This facet does not claim full AC-085 satisfaction.",
+      "sourceAcceptanceSha256": "741af736a08e3dac050a67e2b4362880445bee31ab111838f58caef046c0b5ae"
+    },
+    {
+      "acceptanceId": "AC-086",
+      "facetId": "AC-086:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-086 system or integration oracle consumes. This facet does not claim full AC-086 satisfaction.",
+      "sourceAcceptanceSha256": "a0ea37bc3d5d11e9a4d083605a98f4756d01c15d4449108d7c08f0fe5f148097"
+    },
+    {
+      "acceptanceId": "AC-087",
+      "facetId": "AC-087:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-087 system or integration oracle consumes. This facet does not claim full AC-087 satisfaction.",
+      "sourceAcceptanceSha256": "f11af6f87b180160a2ac9b80122c30e01074dfc2c4e9a7b01753b14c74cec325"
+    },
+    {
+      "acceptanceId": "AC-088",
+      "facetId": "AC-088:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-088 system or integration oracle consumes. This facet does not claim full AC-088 satisfaction.",
+      "sourceAcceptanceSha256": "33c4851152920aa93b5082449120d0d127b0b3f172334c14affd23371df17999"
+    },
+    {
+      "acceptanceId": "AC-089",
+      "facetId": "AC-089:T-G4-CAP:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G4-CAP for FR-CAP-001, FR-CAP-002, FR-CAP-003, FR-CAP-004 that the unchanged AC-089 system or integration oracle consumes. This facet does not claim full AC-089 satisfaction.",
+      "sourceAcceptanceSha256": "ede7b6a7583f89f1c5994213fc90105e89bda337f94aadada099e7a69d2f4625"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -83,14 +124,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-CAP/**"
+    "artifacts/context/T-G4-CAP/**",
+    "artifacts/conformance/T-G4-CAP/manifest.json"
   ],
   "writeSet": [
     "packages/capability-registry/**"
   ],
   "allowedPaths": [
     "packages/capability-registry/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -98,6 +143,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-CAP/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -116,7 +163,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -126,15 +174,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-083.spec.ts",
-    "tests/negative/AC-083.negative.spec.ts",
-    "tests/acceptance/AC-088.spec.ts",
-    "tests/negative/AC-088.negative.spec.ts"
+    "tests/task-facets/T-G4-CAP.spec.ts",
+    "tests/task-facets/T-G4-CAP.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-083.spec.ts tests/negative/AC-083.negative.spec.ts tests/acceptance/AC-088.spec.ts tests/negative/AC-088.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G4-CAP.spec.ts tests/task-facets/T-G4-CAP.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -159,10 +209,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -188,5 +240,9 @@
       "line": 6127,
       "id": "FR-CAP-004"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G4-CAP/manifest.json",
+  "conformanceManifestSha256": "09ad4b33e2abd39a3a52e0226231d53b50b557b18b7bd2499f16bf7790bf5d4f",
+  "testQualityGate": "NEGATIVE_CASE"
 }

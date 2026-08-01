@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/novelty-detector/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-OOD/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-OOD/**"
+    "artifacts/context/T-G6-OOD/**",
+    "artifacts/conformance/T-G6-OOD/manifest.json"
   ],
   "writeSet": [
     "packages/novelty-detector/**"

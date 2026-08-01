@@ -1,0 +1,423 @@
+[
+  {
+    "path": "docs/generated/data-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "migrations/g0_data_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "packages/evidence/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "packages/persistence/**",
+    "status": "EXISTS",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/data.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "telemetry/data.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-020.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-021.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-022.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-023.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-240.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-241.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-242.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-243.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-244.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-245.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-246.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-247.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-248.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-249.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/fixtures/data/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-020.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-021.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-022.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-023.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-240.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-241.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-242.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-243.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-244.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-245.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-246.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-247.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-248.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-249.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DATA-001",
+      "FR-DATA-002",
+      "FR-DATA-003",
+      "FR-DATA-004",
+      "FR-DATA-005",
+      "FR-DATA-006"
+    ]
+  }
+]

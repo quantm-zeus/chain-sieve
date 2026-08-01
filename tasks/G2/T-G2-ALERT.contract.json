@@ -52,9 +52,62 @@
     "FR-ALERT-004",
     "FR-ALERT-005"
   ],
-  "acceptanceCriteria": [
-    "AC-140",
-    "AC-142"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-140",
+      "facetId": "AC-140:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-140 system or integration oracle consumes. This facet does not claim full AC-140 satisfaction.",
+      "sourceAcceptanceSha256": "4f56f4b422d75cb64898b7f6f270ae68e1d5f23de67caa48c80d1fab5927928a"
+    },
+    {
+      "acceptanceId": "AC-141",
+      "facetId": "AC-141:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-141 system or integration oracle consumes. This facet does not claim full AC-141 satisfaction.",
+      "sourceAcceptanceSha256": "d9927386ebb717f596be5ff49be1a42f39b74e2b0a706344373fe7f91ff7f6c8"
+    },
+    {
+      "acceptanceId": "AC-142",
+      "facetId": "AC-142:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-142 system or integration oracle consumes. This facet does not claim full AC-142 satisfaction.",
+      "sourceAcceptanceSha256": "fb66d4411cc8edbc21eb8761c68eae3df86d3b8fb6c9fd81cce5a4ecb20b34fd"
+    },
+    {
+      "acceptanceId": "AC-143",
+      "facetId": "AC-143:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-143 system or integration oracle consumes. This facet does not claim full AC-143 satisfaction.",
+      "sourceAcceptanceSha256": "32ec8e1b46ceaddfa1f0d414b869f168cdc64b42a12df3bc7ed7c5220efb64bd"
+    },
+    {
+      "acceptanceId": "AC-245",
+      "facetId": "AC-245:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-245 system or integration oracle consumes. This facet does not claim full AC-245 satisfaction.",
+      "sourceAcceptanceSha256": "01075f941c2c87b6061f4ccc4675f02a60a8c6ec5d2fcfb9d03c3fe930d104d1"
+    },
+    {
+      "acceptanceId": "AC-246",
+      "facetId": "AC-246:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-246 system or integration oracle consumes. This facet does not claim full AC-246 satisfaction.",
+      "sourceAcceptanceSha256": "758b8dc629e0bf1660640394a99a89c6e4767e592768157292978eaf28a91417"
+    },
+    {
+      "acceptanceId": "AC-247",
+      "facetId": "AC-247:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-247 system or integration oracle consumes. This facet does not claim full AC-247 satisfaction.",
+      "sourceAcceptanceSha256": "f300abb737b2e9c2e5771e2d9ec88fb715758b86e80886b6318dee294b5426f7"
+    },
+    {
+      "acceptanceId": "AC-248",
+      "facetId": "AC-248:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-248 system or integration oracle consumes. This facet does not claim full AC-248 satisfaction.",
+      "sourceAcceptanceSha256": "af6112d196d9eadefb63f55963f1e45b5419b4534fd8b8e39dc007967f52fe34"
+    },
+    {
+      "acceptanceId": "AC-249",
+      "facetId": "AC-249:T-G2-ALERT:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G2-ALERT for FR-ALERT-001, FR-ALERT-002, FR-ALERT-003, FR-ALERT-004, FR-ALERT-005 that the unchanged AC-249 system or integration oracle consumes. This facet does not claim full AC-249 satisfaction.",
+      "sourceAcceptanceSha256": "14835a40acbd0ce6b6ad958361cce41a44c62ac2a9e84bfd2299243abbb789cd"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -76,14 +129,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G2-ALERT/**"
+    "artifacts/context/T-G2-ALERT/**",
+    "artifacts/conformance/T-G2-ALERT/manifest.json"
   ],
   "writeSet": [
     "packages/alerts/**"
   ],
   "allowedPaths": [
     "packages/alerts/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -91,6 +148,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G2-ALERT/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -110,7 +169,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -120,15 +180,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-140.spec.ts",
-    "tests/negative/AC-140.negative.spec.ts",
-    "tests/acceptance/AC-142.spec.ts",
-    "tests/negative/AC-142.negative.spec.ts"
+    "tests/task-facets/T-G2-ALERT.spec.ts",
+    "tests/task-facets/T-G2-ALERT.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-140.spec.ts tests/negative/AC-140.negative.spec.ts tests/acceptance/AC-142.spec.ts tests/negative/AC-142.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G2-ALERT.spec.ts tests/task-facets/T-G2-ALERT.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -153,10 +215,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -187,5 +251,9 @@
       "line": 6200,
       "id": "FR-ALERT-005"
     }
-  ]
+  ],
+  "specificationStatus": "SPECIFICATION_GAP",
+  "conformanceManifestPath": "artifacts/conformance/T-G2-ALERT/manifest.json",
+  "conformanceManifestSha256": "6bebea77947c719eabb87807da097f6a9417a67d17d47295e053215ac48f74bb",
+  "testQualityGate": "NEGATIVE_CASE"
 }

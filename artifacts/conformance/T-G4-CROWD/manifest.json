@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-CROWD",
+  "immutable": true,
+  "requirements": [
+    "FR-CROWD-001",
+    "FR-CROWD-002",
+    "FR-CROWD-003",
+    "FR-CROWD-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-074:T-G4-CROWD:INTERFACE_FACET",
+    "AC-075:T-G4-CROWD:INTERFACE_FACET",
+    "AC-076:T-G4-CROWD:INTERFACE_FACET",
+    "AC-091:T-G4-CROWD:INTERFACE_FACET",
+    "AC-092:T-G4-CROWD:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G4-CROWD.spec.ts",
+    "tests/task-facets/T-G4-CROWD.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/crowding/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-CROWD/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

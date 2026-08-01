@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-DECAY",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DECAY-001",
+      "exactNormativeText": "Opportunity-window state and finite expiry."
+    },
+    {
+      "id": "FR-DECAY-002",
+      "exactNormativeText": "Expired thesis suppresses new opportunity alerts unless new material evidence creates a new thesis version."
+    },
+    {
+      "id": "FR-DECAY-003",
+      "exactNormativeText": "Decay state deterministically changes research budget, monitoring cadence, validity, and alert-update behavior under a versioned policy."
+    }
+  ],
+  "expectedModules": [
+    "packages/thesis/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/decay.ts",
+    "docs/generated/decay-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Opportunity-window state and finite expiry.",
+    "Expired thesis suppresses new opportunity alerts unless new material evidence creates a new thesis version.",
+    "Decay state deterministically changes research budget, monitoring cadence, validity, and alert-update behavior under a versioned policy."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/decay.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

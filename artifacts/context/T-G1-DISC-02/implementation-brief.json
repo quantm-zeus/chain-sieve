@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-DISC-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DISC-014",
+      "exactNormativeText": "Full-market, all-Solana, or universal-recall language is prohibited unless the exact coverage and sampling contract establishes it."
+    }
+  ],
+  "expectedModules": [
+    "packages/discovery-universe/**",
+    "packages/cheap-monitor/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/disc.ts",
+    "docs/generated/disc-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Full-market, all-Solana, or universal-recall language is prohibited unless the exact coverage and sampling contract establishes it."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/disc.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

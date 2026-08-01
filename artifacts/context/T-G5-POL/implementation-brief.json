@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-POL",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-POL-001",
+      "exactNormativeText": "Natural language compiles only to a constrained typed policy AST."
+    },
+    {
+      "id": "FR-POL-002",
+      "exactNormativeText": "Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions."
+    },
+    {
+      "id": "FR-POL-003",
+      "exactNormativeText": "Compiler output remains a draft until backtest/shadow review and explicit approval."
+    },
+    {
+      "id": "FR-POL-004",
+      "exactNormativeText": "Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints."
+    },
+    {
+      "id": "FR-POL-005",
+      "exactNormativeText": "Approval and activation are separate audited actions; activation requires re-authentication."
+    }
+  ],
+  "expectedModules": [
+    "packages/policy-compiler/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/pol.ts",
+    "docs/generated/pol-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Natural language compiles only to a constrained typed policy AST.",
+    "Compiler validates units, features, capabilities, safety, complexity, cost, and contradictions.",
+    "Compiler output remains a draft until backtest/shadow review and explicit approval.",
+    "Compiler cannot create prohibited actions, arbitrary code/SQL/URLs, or bypass safety constraints.",
+    "Approval and activation are separate audited actions; activation requires re-authentication."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/pol.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

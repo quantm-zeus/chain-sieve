@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-AMS",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AMS-001",
+      "exactNormativeText": "A versioned adversarial scenario library covers address splitting, sybil buyer breadth, routed/wash volume, liquidity spoofing/removal, creator-control obfuscation, social coordination, fake independent wallets, pattern mimicry, threshold gaming, and smart-wallet seeding."
+    },
+    {
+      "id": "FR-AMS-002",
+      "exactNormativeText": "Synthetic or transformed scenarios preserve explicit lineage and cannot contaminate real outcome training/evaluation datasets."
+    },
+    {
+      "id": "FR-AMS-003",
+      "exactNormativeText": "Every active detector/pattern/policy declares applicable adversarial tests and minimum pass criteria."
+    },
+    {
+      "id": "FR-AMS-004",
+      "exactNormativeText": "A newly failed critical adversarial test pauses affected opportunity influence until reviewed and corrected."
+    },
+    {
+      "id": "FR-AMS-005",
+      "exactNormativeText": "Tests measure detection, abstention, false confidence, alert escape, and quota-amplification risk."
+    }
+  ],
+  "expectedModules": [
+    "packages/adversarial-simulator/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/ams.ts",
+    "docs/generated/ams-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "A versioned adversarial scenario library covers address splitting, sybil buyer breadth, routed/wash volume, liquidity spoofing/removal, creator-control obfuscation, social coordination, fake independent wallets, pattern mimicry, threshold gaming, and smart-wallet seeding.",
+    "Synthetic or transformed scenarios preserve explicit lineage and cannot contaminate real outcome training/evaluation datasets.",
+    "Every active detector/pattern/policy declares applicable adversarial tests and minimum pass criteria.",
+    "A newly failed critical adversarial test pauses affected opportunity influence until reviewed and corrected.",
+    "Tests measure detection, abstention, false confidence, alert escape, and quota-amplification risk."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/ams.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

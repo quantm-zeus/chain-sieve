@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-WPI-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-WPI-001",
+      "exactNormativeText": "Historical success cohorts use fully matured execution-aware `TRADABLE_SUCCESS` labels by profile, notional, delay, and exit policy; raw peak return cannot define a winner."
+    },
+    {
+      "id": "FR-WPI-002",
+      "exactNormativeText": "Every winning cohort has matched failure, rug, untradable-winner, random-control, and market-beta comparison cohorts with versioned sampling rules."
+    },
+    {
+      "id": "FR-WPI-003",
+      "exactNormativeText": "Temporal representations preserve only features available at each historical `as_of` and support irregular observation/missingness masks without future interpolation."
+    },
+    {
+      "id": "FR-WPI-004",
+      "exactNormativeText": "Pattern mining produces versioned archetypes with defining sequences, invalidating sequences, stage definitions, sample size, uncertainty, regime coverage, cost, and lineage."
+    },
+    {
+      "id": "FR-WPI-005",
+      "exactNormativeText": "Pattern discovery and validation are separated by embargoed time splits; the same lineage, asset, deployer cluster, or overlapping outcome window cannot appear across dependent folds."
+    },
+    {
+      "id": "FR-WPI-006",
+      "exactNormativeText": "Pattern-to-universe scanning reports temporal similarity, stage, expected next transitions, contradictions, remaining actionability, and execution-aware historical outcome distribution."
+    },
+    {
+      "id": "FR-WPI-007",
+      "exactNormativeText": "A pattern cannot influence confirmed alerts until forward shadow or untouched out-of-sample validation proves incremental utility after multiple-testing and clustered-uncertainty controls."
+    },
+    {
+      "id": "FR-WPI-008",
+      "exactNormativeText": "Pattern crowding, decay, regime failure, and false-positive drift can automatically remove influence, but cannot automatically promote or reactivate a pattern."
+    }
+  ],
+  "expectedModules": [
+    "packages/winning-pattern-intelligence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/wpi.ts",
+    "docs/generated/wpi-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Historical success cohorts use fully matured execution-aware `TRADABLE_SUCCESS` labels by profile, notional, delay, and exit policy; raw peak return cannot define a winner.",
+    "Every winning cohort has matched failure, rug, untradable-winner, random-control, and market-beta comparison cohorts with versioned sampling rules.",
+    "Temporal representations preserve only features available at each historical `as_of` and support irregular observation/missingness masks without future interpolation.",
+    "Pattern mining produces versioned archetypes with defining sequences, invalidating sequences, stage definitions, sample size, uncertainty, regime coverage, cost, and lineage.",
+    "Pattern discovery and validation are separated by embargoed time splits; the same lineage, asset, deployer cluster, or overlapping outcome window cannot appear across dependent folds.",
+    "Pattern-to-universe scanning reports temporal similarity, stage, expected next transitions, contradictions, remaining actionability, and execution-aware historical outcome distribution.",
+    "A pattern cannot influence confirmed alerts until forward shadow or untouched out-of-sample validation proves incremental utility after multiple-testing and clustered-uncertainty controls.",
+    "Pattern crowding, decay, regime failure, and false-positive drift can automatically remove influence, but cannot automatically promote or reactivate a pattern."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/wpi.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

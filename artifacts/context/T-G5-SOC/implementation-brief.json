@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-SOC",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SOC-001",
+      "exactNormativeText": "Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage."
+    },
+    {
+      "id": "FR-SOC-002",
+      "exactNormativeText": "Missing paid social data cannot be interpreted as negative sentiment or low organic demand."
+    },
+    {
+      "id": "FR-SOC-003",
+      "exactNormativeText": "Unauthorized scraping or private-endpoint reverse engineering is prohibited."
+    },
+    {
+      "id": "FR-SOC-004",
+      "exactNormativeText": "The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty."
+    }
+  ],
+  "expectedModules": [
+    "packages/social-capability/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/soc.ts",
+    "docs/generated/soc-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage.",
+    "Missing paid social data cannot be interpreted as negative sentiment or low organic demand.",
+    "Unauthorized scraping or private-endpoint reverse engineering is prohibited.",
+    "The system supports aggregate or user-curated social evidence, and any ranking enrichment requires provenance, rights, coverage, identity, source-dependence, and bot/repetition uncertainty."
+  ],
+  "failureAndDegradedBehavior": [
+    "Social capability states distinguish full, aggregate, user-curated, partial, unavailable, and license-blocked coverage."
+  ],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/soc.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

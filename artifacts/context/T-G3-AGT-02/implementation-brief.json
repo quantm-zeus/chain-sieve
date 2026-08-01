@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-AGT-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AGT-009",
+      "exactNormativeText": "The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable."
+    },
+    {
+      "id": "FR-AGT-010",
+      "exactNormativeText": "A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias."
+    },
+    {
+      "id": "FR-AGT-011",
+      "exactNormativeText": "Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes."
+    },
+    {
+      "id": "FR-AGT-012",
+      "exactNormativeText": "Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope."
+    }
+  ],
+  "expectedModules": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/agt.ts",
+    "docs/generated/agt-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable.",
+    "A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.",
+    "Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes.",
+    "Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/agt.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

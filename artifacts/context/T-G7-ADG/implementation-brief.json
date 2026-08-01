@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-ADG",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-ADG-001",
+      "exactNormativeText": "Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target."
+    },
+    {
+      "id": "FR-ADG-002",
+      "exactNormativeText": "Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness."
+    },
+    {
+      "id": "FR-ADG-003",
+      "exactNormativeText": "Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it."
+    },
+    {
+      "id": "FR-ADG-004",
+      "exactNormativeText": "Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence."
+    },
+    {
+      "id": "FR-ADG-005",
+      "exactNormativeText": "Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently."
+    },
+    {
+      "id": "FR-ADG-006",
+      "exactNormativeText": "Revalidation uses forward or untouched data and records reactivation false-positive risk."
+    },
+    {
+      "id": "FR-ADG-007",
+      "exactNormativeText": "A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence."
+    }
+  ],
+  "expectedModules": [
+    "packages/alpha-governance/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/adg.ts",
+    "docs/generated/adg-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Every learned alpha artifact—pattern, wallet reputation model, deployer archetype, route, hazard model, scheduler, and frontier policy—has owner, lineage, version, activation scope, evaluation, and rollback target.",
+    "Drift monitors success, calibration, lead time, remaining upside, crowding, feature distribution, provider dependence, execution divergence, and adversarial robustness.",
+    "Lifecycle states are `DISCOVERED`, `VALIDATING`, `SHADOW`, `PROVEN`, `ACTIVE`, `DEGRADED`, `PAUSED`, `RETIRED`; only explicit approval may move an artifact into `ACTIVE` or reactivate it.",
+    "Deterministic safety thresholds can automatically degrade/pause influence; automatic retirement cannot delete history or evidence.",
+    "Multiple concurrent alpha artifacts are corrected for correlated evidence and multiple testing; aggregate performance cannot be attributed to each artifact independently.",
+    "Revalidation uses forward or untouched data and records reactivation false-positive risk.",
+    "A holdout registry records exposure and purpose; a slice inspected for tuning or selection cannot later be claimed as untouched promotion evidence."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/adg.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

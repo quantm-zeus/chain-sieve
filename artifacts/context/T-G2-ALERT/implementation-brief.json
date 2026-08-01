@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-ALERT",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-ALERT-001",
+      "exactNormativeText": "Alerts distinguish `EARLY_WATCH`, `CONFIRMED_OPPORTUNITY`, thesis strengthening/weakening, expiry, and risk."
+    },
+    {
+      "id": "FR-ALERT-002",
+      "exactNormativeText": "`EARLY_WATCH` has short TTL, explicit missing data, and no high-conviction language."
+    },
+    {
+      "id": "FR-ALERT-003",
+      "exactNormativeText": "Confirmed alerts require current tradability, security, cost, freshness, and expiry checks."
+    },
+    {
+      "id": "FR-ALERT-004",
+      "exactNormativeText": "Prior actionable alerts receive material deterioration, cancellation, or expiry updates."
+    },
+    {
+      "id": "FR-ALERT-005",
+      "exactNormativeText": "Alert metrics and denominators are separated by alert class."
+    }
+  ],
+  "expectedModules": [
+    "packages/alerts/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/alert.ts",
+    "docs/generated/alert-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/alert.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

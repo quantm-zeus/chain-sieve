@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-SOLSEC",
+  "immutable": true,
+  "requirements": [
+    "FR-SOLSEC-001",
+    "FR-SOLSEC-002",
+    "FR-SOLSEC-003",
+    "FR-SOLSEC-004",
+    "FR-SOLSEC-005",
+    "FR-SOLSEC-006"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-130:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-131:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-132:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-133:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-134:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-135:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-136:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-230:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-231:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-232:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-233:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-234:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-235:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-236:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-237:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-238:T-G1-SOLSEC:INTERFACE_FACET",
+    "AC-239:T-G1-SOLSEC:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-SOLSEC.spec.ts",
+    "tests/task-facets/T-G1-SOLSEC.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/solana-security/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-SOLSEC/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

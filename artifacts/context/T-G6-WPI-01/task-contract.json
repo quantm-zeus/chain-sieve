@@ -85,9 +85,68 @@
     "FR-WPI-007",
     "FR-WPI-008"
   ],
-  "acceptanceCriteria": [
-    "AC-162",
-    "AC-166"
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    {
+      "acceptanceId": "AC-160",
+      "facetId": "AC-160:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-160 system or integration oracle consumes. This facet does not claim full AC-160 satisfaction.",
+      "sourceAcceptanceSha256": "8f1f04f8a43172c6e7682915968733481d8fb2a8094c6e860eb459ad6ecdf1e2"
+    },
+    {
+      "acceptanceId": "AC-161",
+      "facetId": "AC-161:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-161 system or integration oracle consumes. This facet does not claim full AC-161 satisfaction.",
+      "sourceAcceptanceSha256": "378d1e2b4d8289ba6aa63e1fb132b09e133c13ac26c4004b582ecf840d887cb7"
+    },
+    {
+      "acceptanceId": "AC-162",
+      "facetId": "AC-162:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-162 system or integration oracle consumes. This facet does not claim full AC-162 satisfaction.",
+      "sourceAcceptanceSha256": "81ab201a0cc779fd306e26f4c28d58ad859720da68f80c142db8ec9d7a934230"
+    },
+    {
+      "acceptanceId": "AC-163",
+      "facetId": "AC-163:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-163 system or integration oracle consumes. This facet does not claim full AC-163 satisfaction.",
+      "sourceAcceptanceSha256": "18f29b060d5cd810542faf4ec36fdced08c7d98547368d3ee79257363fd929c4"
+    },
+    {
+      "acceptanceId": "AC-164",
+      "facetId": "AC-164:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-164 system or integration oracle consumes. This facet does not claim full AC-164 satisfaction.",
+      "sourceAcceptanceSha256": "c0f7f41a1d3d36af3877e9312bfa3070448fb9dab8ea1b45ad4c18c6fa1cc917"
+    },
+    {
+      "acceptanceId": "AC-165",
+      "facetId": "AC-165:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-165 system or integration oracle consumes. This facet does not claim full AC-165 satisfaction.",
+      "sourceAcceptanceSha256": "7fc83217492fc18d1540924b4394242fa09e4765d6a776e0298f8a7319c68080"
+    },
+    {
+      "acceptanceId": "AC-166",
+      "facetId": "AC-166:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-166 system or integration oracle consumes. This facet does not claim full AC-166 satisfaction.",
+      "sourceAcceptanceSha256": "868313a035a2d62311dc246031477f8cf222424be4108eea648abd8cadcb9cb5"
+    },
+    {
+      "acceptanceId": "AC-167",
+      "facetId": "AC-167:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-167 system or integration oracle consumes. This facet does not claim full AC-167 satisfaction.",
+      "sourceAcceptanceSha256": "d64c25b027c2ade71e42eb4e85f46942b3962da887b769ee253933b6ce87ae98"
+    },
+    {
+      "acceptanceId": "AC-168",
+      "facetId": "AC-168:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-168 system or integration oracle consumes. This facet does not claim full AC-168 satisfaction.",
+      "sourceAcceptanceSha256": "89b4cbf5dd1b4d2cbfcb6dfd4ca40916f3acdd3b5f57a854b5ba853fad40bdff"
+    },
+    {
+      "acceptanceId": "AC-169",
+      "facetId": "AC-169:T-G6-WPI-01:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G6-WPI-01 for FR-WPI-001, FR-WPI-002, FR-WPI-003, FR-WPI-004, FR-WPI-005, FR-WPI-006, FR-WPI-007, FR-WPI-008 that the unchanged AC-169 system or integration oracle consumes. This facet does not claim full AC-169 satisfaction.",
+      "sourceAcceptanceSha256": "80c2e8984ea9e9dcbd3697bac1d3b2eaf6205e02860a48f9c76ca36be2ffab09"
+    }
   ],
   "invariants": [
     "INV-001",
@@ -109,14 +168,18 @@
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G6-WPI-01/**"
+    "artifacts/context/T-G6-WPI-01/**",
+    "artifacts/conformance/T-G6-WPI-01/manifest.json"
   ],
   "writeSet": [
     "packages/winning-pattern-intelligence/**"
   ],
   "allowedPaths": [
     "packages/winning-pattern-intelligence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -124,6 +187,8 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G6-WPI-01/**",
     "infra/migrations/**"
   ],
   "exclusiveLocks": [
@@ -146,7 +211,8 @@
   "constraints": [
     "Preserve every referenced normative ID and degraded behavior.",
     "Keep product influence disabled until explicit activation gates pass.",
-    "Use point-in-time and evidence semantics where externally sourced data is involved."
+    "Use point-in-time and evidence semantics where externally sourced data is involved.",
+    "Do not modify the control-plane-owned immutable conformance oracle."
   ],
   "nonGoals": [
     "No financial execution, signing, custody, or transaction submission.",
@@ -156,15 +222,17 @@
   "degradedBehavior": "Fail closed or return NOT_AVAILABLE/INSUFFICIENT_DATA with provenance; never fabricate success.",
   "rollback": "Revert the single atomic task commit and restore the prior schema/config artifact; migrations require a forward compensating migration.",
   "requiredTests": [
-    "tests/acceptance/AC-162.spec.ts",
-    "tests/negative/AC-162.negative.spec.ts",
-    "tests/acceptance/AC-166.spec.ts",
-    "tests/negative/AC-166.negative.spec.ts"
+    "tests/task-facets/T-G6-WPI-01.spec.ts",
+    "tests/task-facets/T-G6-WPI-01.negative.spec.ts"
   ],
   "verificationCommands": [
     {
-      "command": "pnpm exec vitest run tests/acceptance/AC-162.spec.ts tests/negative/AC-162.negative.spec.ts tests/acceptance/AC-166.spec.ts tests/negative/AC-166.negative.spec.ts",
-      "expected": "all mapped positive and negative tests execute with zero skips"
+      "command": "pnpm exec vitest run tests/task-facets/T-G6-WPI-01.spec.ts tests/task-facets/T-G6-WPI-01.negative.spec.ts",
+      "expected": "all task-owned positive and negative tests execute with zero skips"
+    },
+    {
+      "command": "pnpm exec vitest run tests/conformance/task-oracle.spec.ts",
+      "expected": "immutable conformance and test-quality oracle passes"
     },
     {
       "command": "pnpm architecture:verify",
@@ -189,10 +257,12 @@
     "A source hash differs from the task contract.",
     "A dependency is not MERGED or its public interface hash changed.",
     "Required behavior exceeds a declared budget without an approved split.",
-    "A prohibited capability or activation path would be introduced."
+    "A prohibited capability or activation path would be introduced.",
+    "The implementation brief reports SPECIFICATION_GAP or an invalid reference."
   ],
   "completionDefinition": [
-    "All mapped positive and negative tests pass.",
+    "All mapped positive and negative task-owned tests pass.",
+    "The immutable conformance and test-quality oracle passes.",
     "Deterministic verifier derives PASS from repository evidence.",
     "One atomic task commit exists and architecture checks pass.",
     "Degraded, replay, rollback, and observability behavior is documented and tested."
@@ -238,5 +308,9 @@
       "line": 6226,
       "id": "FR-WPI-008"
     }
-  ]
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-G6-WPI-01/manifest.json",
+  "conformanceManifestSha256": "28e41d5c33ac2007a2bda4ddf993d5d4bde9bffaea6589971aad2c7ba73b5a07",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

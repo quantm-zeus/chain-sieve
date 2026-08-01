@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-OBJ-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-OBJ-001",
+      "exactNormativeText": "The primary production objective is the conservative lower confidence bound of net shadow-portfolio utility per capital-day under fixed capital, concurrency, execution, latency, liquidity, risk, and opportunity-cost assumptions."
+    },
+    {
+      "id": "FR-OBJ-002",
+      "exactNormativeText": "Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy."
+    },
+    {
+      "id": "FR-OBJ-003",
+      "exactNormativeText": "Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint."
+    },
+    {
+      "id": "FR-OBJ-004",
+      "exactNormativeText": "Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty."
+    },
+    {
+      "id": "FR-OBJ-005",
+      "exactNormativeText": "Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective."
+    },
+    {
+      "id": "FR-OBJ-006",
+      "exactNormativeText": "The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion."
+    },
+    {
+      "id": "FR-OBJ-007",
+      "exactNormativeText": "Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method."
+    },
+    {
+      "id": "FR-OBJ-008",
+      "exactNormativeText": "A configurable action-delay distribution includes at least p50, p90, and conservative-tail scenarios; active opportunity policy must pass its declared robust-delay gate rather than only a single favorable fixed delay."
+    }
+  ],
+  "expectedModules": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/obj.ts",
+    "docs/generated/obj-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The primary production objective is the conservative lower confidence bound of net shadow-portfolio utility per capital-day under fixed capital, concurrency, execution, latency, liquidity, risk, and opportunity-cost assumptions.",
+    "Objective comparison uses identical candidate universes, population claims, capital, time windows, execution scenarios, delay policies, data cutoffs, and correlated-exposure constraints; incomparable runs are labeled exploratory and cannot promote a policy.",
+    "Critical security, execution, rights, leakage, public-claim, capacity, and tail-risk constraints are hard constraints applied before utility optimization; no weighted score may compensate for a failed hard constraint.",
+    "Objective reports decompose gross return, execution costs, failed/partial fills, drawdown, CVaR, capital utilization, turnover, opportunity cost, concentration, shared-liquidity impact, provider/model/infrastructure cost, and uncertainty.",
+    "Per-alert precision, tradable-success rate, recall, and alerts per researched candidate remain diagnostics; none may replace portfolio utility, discovery coverage, or false-rejection measurement as the governing objective.",
+    "The objective service detects denominator gaming, selective-universe changes, reduced exploration, delayed outcome omission, horizon switching, scenario cherry-picking, and repeated holdout inspection; a detected objective-integrity failure blocks promotion.",
+    "Every objective or performance claim identifies the exact supported population, profile, policy, execution scenario, delay distribution, calendar interval, market regimes, capability state, sample size, cluster effective sample size, and uncertainty method.",
+    "A configurable action-delay distribution includes at least p50, p90, and conservative-tail scenarios; active opportunity policy must pass its declared robust-delay gate rather than only a single favorable fixed delay."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/obj.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

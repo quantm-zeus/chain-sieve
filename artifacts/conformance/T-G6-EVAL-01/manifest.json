@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-EVAL-01",
+  "immutable": true,
+  "requirements": [
+    "FR-EVAL-010",
+    "FR-EVAL-011",
+    "FR-EVAL-012",
+    "FR-EVAL-013",
+    "FR-EVAL-014",
+    "FR-EVAL-015",
+    "FR-EVAL-016",
+    "FR-EVAL-017"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-040:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-041:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-042:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-043:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-044:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-150:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-151:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-152:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-153:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-154:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-240:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-241:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-242:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-243:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-244:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-245:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-246:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-247:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-248:T-G6-EVAL-01:INTERFACE_FACET",
+    "AC-249:T-G6-EVAL-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-EVAL-01.spec.ts",
+    "tests/task-facets/T-G6-EVAL-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/evaluation/**",
+    "packages/eval-cli/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-EVAL-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

@@ -21,6 +21,14 @@ import {
 import { readTaskResult } from '../task-verifier/verify.js';
 import { validateTaskAttestation } from '../task-verifier/attestation.js';
 import { taskBranch } from '../worktree-manager/identity.js';
+import {
+  persistLifecycleAuthority,
+  readLifecycleBinding,
+  readVerificationBaseline,
+} from '../task-runner/authority.js';
+import { persistGoalAndPayload } from '../agent/lib/runtime.js';
+import { SystemCommandRunner } from '../agent/lib/system.js';
+import type { TaskRecord } from '../agent/lib/types.js';
 
 export interface QueueItem {
   taskId: string;
@@ -89,6 +97,87 @@ const taskWorktree = (taskId: string, cwd: string): string => {
   const path = block?.split('\n').find((line) => line.startsWith('worktree '))?.slice('worktree '.length);
   if (!path) throw new Error('TASK_WORKTREE_NOT_FOUND');
   return path;
+};
+
+const persistPostRebaseReceipt = async (
+  task: TaskContract,
+  target: LifecycleDocument['tasks'][string],
+  worktree: string,
+  trustedRoot: string,
+): Promise<string> => {
+  if (
+    !target.leaseId ||
+    !target.holder ||
+    !target.expiresAt ||
+    !target.baseCommit ||
+    !target.lifecycleBinding ||
+    !target.verificationBaseline
+  )
+    throw new Error('POST_REBASE_RECEIPT_BINDING_MISSING');
+  const lifecycle = await readLifecycleBinding(trustedRoot, target);
+  const baseline = await readVerificationBaseline(trustedRoot, target);
+  if (!lifecycle || !baseline) throw new Error('POST_REBASE_AUTHORITY_MISSING');
+  const clusterBranch = `cluster/${task.dependencyGroup.toLowerCase()}`;
+  const clusterWorktree = git(['rev-parse', '--show-toplevel'], trustedRoot);
+  const record = {
+    contract: task,
+    contractPath: lifecycle.contractPath,
+    contextPath: lifecycle.contextManifestPath.replace(/\/context-manifest\.json$/, ''),
+    contextManifestPath: lifecycle.contextManifestPath,
+    contextManifestSha256: lifecycle.contextManifestSha256,
+    ...(lifecycle.conformanceManifestPath
+      ? { conformanceManifestPath: lifecycle.conformanceManifestPath }
+      : {}),
+    ...(lifecycle.conformanceManifestSha256
+      ? { conformanceManifestSha256: lifecycle.conformanceManifestSha256 }
+      : {}),
+    cluster: {
+      contract: { id: task.cluster },
+      branch: { branch: clusterBranch, integrationTarget: 'main', worktree: clusterWorktree },
+    },
+    state: target,
+    workspace: worktree,
+    workspaceBranch: target.branch,
+  } as unknown as TaskRecord;
+  const runner = new SystemCommandRunner();
+  const stored = await persistGoalAndPayload(
+    trustedRoot,
+    runner,
+    {
+      task: record,
+      release: {
+        ...baseline.releaseBaseline,
+        tagObject: git(['rev-parse', `refs/tags/${baseline.releaseBaseline.tag}`], trustedRoot),
+      },
+      taskWorkspace: worktree,
+      leaseId: target.leaseId,
+      holder: target.holder,
+      fencingVersion: target.leaseVersion,
+      expiresAt: target.expiresAt,
+      baseCommit: target.baseCommit,
+      baseTree: git(['rev-parse', `${target.baseCommit}^{tree}`], worktree),
+      contextManifestPath: lifecycle.contextManifestPath,
+      contextManifestSha256: lifecycle.contextManifestSha256,
+      ...(lifecycle.conformanceManifestPath
+        ? { conformanceManifestPath: lifecycle.conformanceManifestPath }
+        : {}),
+      ...(lifecycle.conformanceManifestSha256
+        ? { conformanceManifestSha256: lifecycle.conformanceManifestSha256 }
+        : {}),
+      taskContractPath: lifecycle.contractPath,
+      taskContractSha256: lifecycle.contractSha256,
+      lifecycleBindingPath: target.lifecycleBinding.path,
+      lifecycleBindingSha256: target.lifecycleBinding.sha256,
+      verificationBaselinePath: target.verificationBaseline.path,
+      verificationBaselineSha256: target.verificationBaseline.sha256,
+      controlPlaneCommit: baseline.controlPlaneCommit,
+      controlPlaneTree: baseline.controlPlaneTree,
+      failures: ['Post-rebase evidence was invalidated; perform a fresh semantic self-review.'],
+    },
+    'antigravity',
+  );
+  if (!stored.binding.launchReceiptId) throw new Error('POST_REBASE_RECEIPT_ID_MISSING');
+  return stored.binding.launchReceiptId;
 };
 
 const assertPathLocks = (
@@ -196,6 +285,8 @@ export const processMergeQueue = async (
   let postRebaseVerification: string | undefined;
   const queueOperations = ['read-queue-item', 'validated-lease-and-fence', 'validated-path-locks', 'fetched-cluster-head'];
   if (rebaseApplied) {
+    const previousLifecycle = await readLifecycleBinding(cwd, target);
+    if (!previousLifecycle) throw new Error('PRE_REBASE_LIFECYCLE_BINDING_MISSING');
     git(['rebase', clusterBranch], worktree);
     queueOperations.push('rebased-task-branch');
     const commit = git(['rev-parse', 'HEAD'], worktree);
@@ -205,10 +296,29 @@ export const processMergeQueue = async (
     if (invalidation.records.length !== 3) throw new Error('PRE_REBASE_EVIDENCE_INVALIDATION_INCOMPLETE');
     queueOperations.push('invalidated-pre-rebase-evidence');
     resetAfterRebase(target, credential, clusterHeadBefore, commit, tree, now);
+    const authority = await persistLifecycleAuthority({
+      trustedRoot: cwd,
+      taskRoot: worktree,
+      task,
+      state: target,
+      contractPath: previousLifecycle.contractPath,
+      contextManifestPath: previousLifecycle.contextManifestPath,
+      contractMode: previousLifecycle.contractMode,
+      ...(previousLifecycle.contractMode === 'LEGACY' && previousLifecycle.conformanceManifestPath
+        ? { compatibilityConformanceManifestPath: previousLifecycle.conformanceManifestPath }
+        : {}),
+      ...(previousLifecycle.contractMode === 'LEGACY' && previousLifecycle.conformanceManifestSha256
+        ? { compatibilityConformanceManifestSha256: previousLifecycle.conformanceManifestSha256 }
+        : {}),
+    });
+    target.lifecycleBinding = authority.binding;
+    target.verificationBaseline = authority.baseline;
     await writeState(state, cwd);
+    const launchReceiptId = await persistPostRebaseReceipt(task, target, worktree, cwd);
     const review = await performTaskSelfReview(task, target, item.holder, worktree, {
       previousHeadCommit: previousHead,
       now,
+      launchReceiptId,
     });
     target.selfReviewEvidence = review.evidence;
     await registerCurrentEvidence(task.id, 'SELF_REVIEW', review.evidence, cwd);
@@ -217,8 +327,17 @@ export const processMergeQueue = async (
     queueOperations.push('generated-post-rebase-self-review');
     const verification = spawnSync(
       'pnpm',
-      ['task:verify', task.id, '--holder', item.holder, '--lease-version', String(item.fencingVersion)],
-      { cwd: worktree, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, env: process.env },
+      [
+        'task:verify',
+        task.id,
+        '--holder',
+        item.holder,
+        '--lease-version',
+        String(item.fencingVersion),
+        '--target-worktree',
+        worktree,
+      ],
+      { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, env: process.env },
     );
     if (verification.status !== 0)
       throw new Error(`POST_REBASE_TASK_VERIFICATION_FAILED:${verification.stderr || verification.stdout}`);

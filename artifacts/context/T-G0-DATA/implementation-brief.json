@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-DATA",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DATA-001",
+      "exactNormativeText": "Canonical asset/pool/migration identity."
+    },
+    {
+      "id": "FR-DATA-002",
+      "exactNormativeText": "Immutable observations and revisions."
+    },
+    {
+      "id": "FR-DATA-003",
+      "exactNormativeText": "Point-in-time `available_at` replay."
+    },
+    {
+      "id": "FR-DATA-004",
+      "exactNormativeText": "Online/offline feature consistency."
+    },
+    {
+      "id": "FR-DATA-005",
+      "exactNormativeText": "Field-level data-quality codes."
+    },
+    {
+      "id": "FR-DATA-006",
+      "exactNormativeText": "Source lineage and independence groups."
+    }
+  ],
+  "expectedModules": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/data.ts",
+    "docs/generated/data-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Canonical asset/pool/migration identity.",
+    "Immutable observations and revisions.",
+    "Point-in-time `available_at` replay.",
+    "Online/offline feature consistency.",
+    "Field-level data-quality codes.",
+    "Source lineage and independence groups."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Point-in-time `available_at` replay."
+  ],
+  "idempotencyExpectations": [
+    "Point-in-time `available_at` replay."
+  ],
+  "observabilityExpectations": [
+    "telemetry/data.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

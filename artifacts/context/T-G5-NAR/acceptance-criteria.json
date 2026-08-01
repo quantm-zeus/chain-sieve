@@ -1,26 +1,157 @@
-[
-  {
-    "id": "AC-076",
-    "text": "Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.",
-    "textSha256": "84dafb8a04e868e4b9a9f12c875046b5eb3092c559e5f3ec6aa22d61befb9fef",
-    "line": 6582,
-    "requirementRefs": [
-      "FR-CROWD-001",
-      "FR-CROWD-002",
-      "FR-CROWD-003",
-      "FR-CROWD-004",
-      "FR-CROWD-005",
-      "FR-NAR-001",
-      "FR-NAR-002",
-      "FR-XCF-001",
-      "FR-XCF-002"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-076.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-076.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "thesis-policy"
-  }
-]
+{
+  "taskLocal": [],
+  "facets": [
+    {
+      "acceptanceId": "AC-074",
+      "facetId": "AC-074:T-G5-NAR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NAR for FR-NAR-001, FR-NAR-002 that the unchanged AC-074 system or integration oracle consumes. This facet does not claim full AC-074 satisfaction.",
+      "sourceAcceptanceSha256": "3489e8882ab8d5b0b3351101d53c42cb22fb2286cdabb883e1da7a6db60fcb72"
+    },
+    {
+      "acceptanceId": "AC-075",
+      "facetId": "AC-075:T-G5-NAR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NAR for FR-NAR-001, FR-NAR-002 that the unchanged AC-075 system or integration oracle consumes. This facet does not claim full AC-075 satisfaction.",
+      "sourceAcceptanceSha256": "1b91cf64e412a3491155e78fff83b45ffd1be95fe85e4af079f97d9634d74f9a"
+    },
+    {
+      "acceptanceId": "AC-076",
+      "facetId": "AC-076:T-G5-NAR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NAR for FR-NAR-001, FR-NAR-002 that the unchanged AC-076 system or integration oracle consumes. This facet does not claim full AC-076 satisfaction.",
+      "sourceAcceptanceSha256": "84dafb8a04e868e4b9a9f12c875046b5eb3092c559e5f3ec6aa22d61befb9fef"
+    },
+    {
+      "acceptanceId": "AC-091",
+      "facetId": "AC-091:T-G5-NAR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NAR for FR-NAR-001, FR-NAR-002 that the unchanged AC-091 system or integration oracle consumes. This facet does not claim full AC-091 satisfaction.",
+      "sourceAcceptanceSha256": "2ad7358711112121d7f7ea1f6ade0f4108cf4b562ff132b6b09e46ff9eda277f"
+    },
+    {
+      "acceptanceId": "AC-092",
+      "facetId": "AC-092:T-G5-NAR:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G5-NAR for FR-NAR-001, FR-NAR-002 that the unchanged AC-092 system or integration oracle consumes. This facet does not claim full AC-092 satisfaction.",
+      "sourceAcceptanceSha256": "c7914fe4b07eade381f32708997de4e41f88fd9cce51fb0165ca03fc876b8c8a"
+    }
+  ],
+  "fullCriteriaVerifiedElsewhere": [
+    {
+      "id": "AC-074",
+      "text": "Narrative edges include confidence, valid time, evidence, algorithm version, and contradictory evidence.",
+      "textSha256": "3489e8882ab8d5b0b3351101d53c42cb22fb2286cdabb883e1da7a6db60fcb72",
+      "line": 6580,
+      "requirementRefs": [
+        "FR-CROWD-001",
+        "FR-CROWD-002",
+        "FR-CROWD-003",
+        "FR-CROWD-004",
+        "FR-CROWD-005",
+        "FR-NAR-001",
+        "FR-NAR-002",
+        "FR-XCF-001",
+        "FR-XCF-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-074.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-074.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-075",
+      "text": "Cross-chain fixtures do not double count bridge lock/mint/release or router hops.",
+      "textSha256": "1b91cf64e412a3491155e78fff83b45ffd1be95fe85e4af079f97d9634d74f9a",
+      "line": 6581,
+      "requirementRefs": [
+        "FR-CROWD-001",
+        "FR-CROWD-002",
+        "FR-CROWD-003",
+        "FR-CROWD-004",
+        "FR-CROWD-005",
+        "FR-NAR-001",
+        "FR-NAR-002",
+        "FR-XCF-001",
+        "FR-XCF-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-075.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-075.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-076",
+      "text": "Extreme crowding or modeled exit fragility is visible and can suppress an otherwise positive opportunity decision.",
+      "textSha256": "84dafb8a04e868e4b9a9f12c875046b5eb3092c559e5f3ec6aa22d61befb9fef",
+      "line": 6582,
+      "requirementRefs": [
+        "FR-CROWD-001",
+        "FR-CROWD-002",
+        "FR-CROWD-003",
+        "FR-CROWD-004",
+        "FR-CROWD-005",
+        "FR-NAR-001",
+        "FR-NAR-002",
+        "FR-XCF-001",
+        "FR-XCF-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-076.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-076.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "thesis-policy"
+    },
+    {
+      "id": "AC-091",
+      "text": "Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.",
+      "textSha256": "2ad7358711112121d7f7ea1f6ade0f4108cf4b562ff132b6b09e46ff9eda277f",
+      "line": 6590,
+      "requirementRefs": [
+        "FR-CROWD-001",
+        "FR-CROWD-002",
+        "FR-CROWD-003",
+        "FR-CROWD-004",
+        "FR-CROWD-005",
+        "FR-NAR-001",
+        "FR-NAR-002",
+        "FR-XCF-001",
+        "FR-XCF-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-091.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-091.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "advanced-analysis"
+    },
+    {
+      "id": "AC-092",
+      "text": "Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient.",
+      "textSha256": "c7914fe4b07eade381f32708997de4e41f88fd9cce51fb0165ca03fc876b8c8a",
+      "line": 6591,
+      "requirementRefs": [
+        "FR-CROWD-001",
+        "FR-CROWD-002",
+        "FR-CROWD-003",
+        "FR-CROWD-004",
+        "FR-CROWD-005",
+        "FR-NAR-001",
+        "FR-NAR-002",
+        "FR-XCF-001",
+        "FR-XCF-002"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-092.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-092.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "advanced-analysis"
+    }
+  ]
+}

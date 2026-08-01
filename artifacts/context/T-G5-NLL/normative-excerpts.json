@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-NLL-001",
+    "sourceLine": 6275,
+    "startLine": 6273,
+    "endLine": 6277,
+    "exactText": "### 38.26 Narrative Leader–Laggard Intelligence\n\n- **FR-NLL-001 MUST:** Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings.\n- **FR-NLL-002 MUST:** Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.\n- **FR-NLL-003 MUST:** Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding."
+  },
+  {
+    "id": "FR-NLL-002",
+    "sourceLine": 6276,
+    "startLine": 6274,
+    "endLine": 6278,
+    "exactText": "\n- **FR-NLL-001 MUST:** Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings.\n- **FR-NLL-002 MUST:** Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.\n- **FR-NLL-003 MUST:** Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding.\n- **FR-NLL-004 MUST:** Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates."
+  },
+  {
+    "id": "FR-NLL-003",
+    "sourceLine": 6277,
+    "startLine": 6275,
+    "endLine": 6279,
+    "exactText": "- **FR-NLL-001 MUST:** Narrative leadership is inferred from point-in-time lead/lag across capital flow, liquidity, buyer breadth, attention diffusion, price extension, and peer reaction, with uncertainty and non-causality warnings.\n- **FR-NLL-002 MUST:** Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.\n- **FR-NLL-003 MUST:** Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding.\n- **FR-NLL-004 MUST:** Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates.\n"
+  },
+  {
+    "id": "FR-NLL-004",
+    "sourceLine": 6278,
+    "startLine": 6276,
+    "endLine": 6280,
+    "exactText": "- **FR-NLL-002 MUST:** Laggard status requires confirmed candidate-level flow/buyer/liquidity improvement; lack of price appreciation alone cannot create a laggard opportunity.\n- **FR-NLL-003 MUST:** Leader–laggard comparisons control for chain, liquidity, token age, launch state, regime, security, and crowding.\n- **FR-NLL-004 MUST:** Rotations expire and reverse when leadership, capital flow, or narrative breadth deteriorates.\n\n### 38.27 Out-of-Distribution and Novelty"
+  },
+  {
+    "id": "AC-170",
+    "sourceLine": 6672,
+    "startLine": 6670,
+    "endLine": 6674,
+    "exactText": "### 39.16 Liquidity, launch, attention, and rotation\n\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort."
+  },
+  {
+    "id": "AC-171",
+    "sourceLine": 6673,
+    "startLine": 6671,
+    "endLine": 6675,
+    "exactText": "\n- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state."
+  },
+  {
+    "id": "AC-172",
+    "sourceLine": 6674,
+    "startLine": 6672,
+    "endLine": 6676,
+    "exactText": "- **AC-170:** A price rebound without persistent executable depth and independent post-stress buyers is not classified as resilient accumulation.\n- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used."
+  },
+  {
+    "id": "AC-173",
+    "sourceLine": 6675,
+    "startLine": 6673,
+    "endLine": 6677,
+    "exactText": "- **AC-171:** A token absorbing a configured sell scenario with surviving liquidity, bounded impact, and buyer recovery receives a reproducible resilience assessment.\n- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion."
+  },
+  {
+    "id": "AC-174",
+    "sourceLine": 6676,
+    "startLine": 6674,
+    "endLine": 6678,
+    "exactText": "- **AC-172:** The same market values evaluated in different launch/migration states use the correct state-specific policy and cohort.\n- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies."
+  },
+  {
+    "id": "AC-175",
+    "sourceLine": 6677,
+    "startLine": 6675,
+    "endLine": 6679,
+    "exactText": "- **AC-173:** An unresolved migration/pool identity produces `AMBIGUOUS` rather than an inferred post-migration state.\n- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates."
+  },
+  {
+    "id": "AC-176",
+    "sourceLine": 6678,
+    "startLine": 6676,
+    "endLine": 6680,
+    "exactText": "- **AC-174:** Missing X/paid-social capability does not lower attention quality; coverage is displayed and only authorized aggregate/user-curated evidence is used.\n- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n"
+  },
+  {
+    "id": "AC-177",
+    "sourceLine": 6679,
+    "startLine": 6677,
+    "endLine": 6681,
+    "exactText": "- **AC-175:** A single paid KOL/repost burst is not equivalent to independent multi-community diffusion.\n- **AC-176:** A purported laggard with no candidate-level buyer/liquidity inflow is rejected as unconfirmed even when its narrative leader rallies.\n- **AC-177:** Leader–laggard state expires or reverses when narrative breadth/capital leadership deteriorates.\n\n### 39.17 Novelty, disagreement, and hazards"
+  }
+]

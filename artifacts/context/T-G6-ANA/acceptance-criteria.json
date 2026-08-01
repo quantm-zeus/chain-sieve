@@ -1,56 +1,60 @@
-[
-  {
-    "id": "AC-081",
-    "text": "Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.",
-    "textSha256": "c3fdad72fed6f556fb38786a57e4b0bfd0a64ef43f4490b9548369a9c4bd71e5",
-    "line": 6587,
-    "requirementRefs": [
-      "FR-ANA-001",
-      "FR-ANA-002",
-      "FR-ANA-003"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-081.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-081.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "advanced-analysis"
-  },
-  {
-    "id": "AC-082",
-    "text": "Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.",
-    "textSha256": "cc1f4b91c24d87f08f82a1360cc366f5a9a7b06ecc71c975564d44dc05ede66f",
-    "line": 6588,
-    "requirementRefs": [
-      "FR-ANA-001",
-      "FR-ANA-002",
-      "FR-ANA-003"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-082.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-082.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "advanced-analysis"
-  },
-  {
-    "id": "AC-090",
-    "text": "Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.",
-    "textSha256": "680e994fa5bd66b51e8b8dffe5dc72558ea6e8b14816b6b7f99ac7188d7d7bd5",
-    "line": 6589,
-    "requirementRefs": [
-      "FR-ANA-001",
-      "FR-ANA-002",
-      "FR-ANA-003"
-    ],
-    "positiveTestRef": "tests/acceptance/AC-090.spec.ts",
-    "negativeOrFailureTestRef": "tests/negative/AC-090.negative.spec.ts",
-    "evidenceOwner": "packages/release-conformance",
-    "section": "39. Acceptance criteria",
-    "status": "PLANNED",
-    "subsection": "39.8 Advanced intelligence",
-    "testClass": "advanced-analysis"
-  }
-]
+{
+  "taskLocal": [
+    {
+      "id": "AC-081",
+      "text": "Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.",
+      "textSha256": "c3fdad72fed6f556fb38786a57e4b0bfd0a64ef43f4490b9548369a9c4bd71e5",
+      "line": 6587,
+      "requirementRefs": [
+        "FR-ANA-001",
+        "FR-ANA-002",
+        "FR-ANA-003"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-081.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-081.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "advanced-analysis"
+    },
+    {
+      "id": "AC-082",
+      "text": "Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.",
+      "textSha256": "cc1f4b91c24d87f08f82a1360cc366f5a9a7b06ecc71c975564d44dc05ede66f",
+      "line": 6588,
+      "requirementRefs": [
+        "FR-ANA-001",
+        "FR-ANA-002",
+        "FR-ANA-003"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-082.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-082.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "advanced-analysis"
+    },
+    {
+      "id": "AC-090",
+      "text": "Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.",
+      "textSha256": "680e994fa5bd66b51e8b8dffe5dc72558ea6e8b14816b6b7f99ac7188d7d7bd5",
+      "line": 6589,
+      "requirementRefs": [
+        "FR-ANA-001",
+        "FR-ANA-002",
+        "FR-ANA-003"
+      ],
+      "positiveTestRef": "tests/acceptance/AC-090.spec.ts",
+      "negativeOrFailureTestRef": "tests/negative/AC-090.negative.spec.ts",
+      "evidenceOwner": "packages/release-conformance",
+      "section": "39. Acceptance criteria",
+      "status": "PLANNED",
+      "subsection": "39.8 Advanced intelligence",
+      "testClass": "advanced-analysis"
+    }
+  ],
+  "facets": [],
+  "fullCriteriaVerifiedElsewhere": []
+}

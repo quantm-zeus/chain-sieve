@@ -1,0 +1,44 @@
+[
+  {
+    "id": "FR-ANA-001",
+    "sourceLine": 6108,
+    "startLine": 6106,
+    "endLine": 6110,
+    "exactText": "- **FR-LAT-001 MUST:** End-to-end latency spans from event/provider availability to delivered alert.\n- **FR-LAT-002 MUST:** Backtest applies historically measured or bounded latency assumptions.\n- **FR-ANA-001 MUST:** Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.\n- **FR-ANA-002 MUST:** Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.\n- **FR-ANA-003 MUST:** Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests."
+  },
+  {
+    "id": "FR-ANA-002",
+    "sourceLine": 6109,
+    "startLine": 6107,
+    "endLine": 6111,
+    "exactText": "- **FR-LAT-002 MUST:** Backtest applies historically measured or bounded latency assumptions.\n- **FR-ANA-001 MUST:** Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.\n- **FR-ANA-002 MUST:** Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.\n- **FR-ANA-003 MUST:** Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests.\n- **FR-CF-001 MUST:** Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations."
+  },
+  {
+    "id": "FR-ANA-003",
+    "sourceLine": 6110,
+    "startLine": 6108,
+    "endLine": 6112,
+    "exactText": "- **FR-ANA-001 MUST:** Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.\n- **FR-ANA-002 MUST:** Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.\n- **FR-ANA-003 MUST:** Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests.\n- **FR-CF-001 MUST:** Frozen counterfactual and sensitivity experiments support feature, provider, source-dependence, threshold, model, latency, action-time, route, and execution perturbations.\n- **FR-CF-002 MUST:** Counterfactual results cannot directly mutate active configuration."
+  },
+  {
+    "id": "AC-081",
+    "sourceLine": 6587,
+    "startLine": 6585,
+    "endLine": 6589,
+    "exactText": "- **AC-079:** Compiled policy cannot become active without validation, cost forecast, backtest/shadow artifact, diff, explicit approval, separate activation, and re-authentication.\n- **AC-080:** Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly.\n- **AC-081:** Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.\n- **AC-082:** Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.\n- **AC-090:** Historical analog replay uses the index cutoff and normalization parameters available at the simulated time."
+  },
+  {
+    "id": "AC-082",
+    "sourceLine": 6588,
+    "startLine": 6586,
+    "endLine": 6590,
+    "exactText": "- **AC-080:** Latency profiler reconstructs end-to-end spans for benchmark fixtures and attributes unknown timestamps correctly.\n- **AC-081:** Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.\n- **AC-082:** Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.\n- **AC-090:** Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.\n- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty."
+  },
+  {
+    "id": "AC-090",
+    "sourceLine": 6589,
+    "startLine": 6587,
+    "endLine": 6591,
+    "exactText": "- **AC-081:** Historical analog search excludes future states, overlapping leakage windows, and outcome-derived features.\n- **AC-082:** Low-similarity or low-sample analog queries return `INSUFFICIENT_DATA` rather than persuasive statistics.\n- **AC-090:** Historical analog replay uses the index cutoff and normalization parameters available at the simulated time.\n- **AC-091:** Low-coverage cost-basis estimation cannot independently suppress an opportunity alert and is rendered with uncertainty.\n- **AC-092:** Liquidity Stress Lite produces deterministic pool/holder stress without wallet reputation, while Full Crowding remains partial/shadow when cost-basis or cohort coverage is insufficient."
+  }
+]

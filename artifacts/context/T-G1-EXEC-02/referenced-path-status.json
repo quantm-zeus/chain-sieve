@@ -1,0 +1,651 @@
+[
+  {
+    "path": "docs/generated/exec-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "migrations/g1_exec_*.sql",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-DATA-01",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "packages/execution-simulator/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-EXEC-01",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "packages/pool-math/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-EXEC-01",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/exec.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "packages/transfer-semantics/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G1-EXEC-01",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "telemetry/exec.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-120.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-121.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-122.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-123.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-124.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-125.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-126.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-127.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-128.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-230.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-231.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-232.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-233.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-234.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-235.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-236.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-237.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-238.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-239.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/fixtures/exec/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-120.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-121.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-122.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-123.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-124.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-125.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-126.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-127.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-128.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-230.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-231.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-232.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-233.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-234.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-235.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-236.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-237.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-238.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-239.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-EXEC-009",
+      "FR-EXEC-010",
+      "FR-EXEC-011",
+      "FR-EXEC-012",
+      "FR-EXEC-013",
+      "FR-EXEC-014",
+      "FR-EXEC-015",
+      "FR-EXEC-016"
+    ]
+  }
+]

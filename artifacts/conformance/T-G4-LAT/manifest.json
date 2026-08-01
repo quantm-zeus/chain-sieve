@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-LAT",
+  "immutable": true,
+  "requirements": [
+    "FR-LAT-001",
+    "FR-LAT-002"
+  ],
+  "taskAcceptanceCriteria": [
+    "AC-080"
+  ],
+  "taskAcceptanceFacets": [
+    "AC-226:T-G4-LAT:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/acceptance/AC-080.spec.ts",
+    "tests/negative/AC-080.negative.spec.ts",
+    "tests/task-facets/T-G4-LAT.spec.ts",
+    "tests/task-facets/T-G4-LAT.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/latency-profiler/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G4-LAT/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

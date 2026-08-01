@@ -1,0 +1,289 @@
+[
+  {
+    "path": "docs/generated/dfd-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "migrations/g5_dfd_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "packages/deployer-funder-dna/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/dfd.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "telemetry/dfd.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-160.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-161.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-162.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-163.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-164.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-165.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-166.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-167.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-168.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-169.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/fixtures/dfd/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-160.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-161.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-162.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-163.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-164.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-165.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-166.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-167.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-168.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-169.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-DFD-001",
+      "FR-DFD-002",
+      "FR-DFD-003",
+      "FR-DFD-004",
+      "FR-DFD-005"
+    ]
+  }
+]

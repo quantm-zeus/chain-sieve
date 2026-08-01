@@ -243,6 +243,30 @@
         "selfReviewSha256": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "conformanceManifestPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conformanceManifestSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "lifecycleBindingSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "verificationBaselineSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "launchReceiptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launchReceiptSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
         }
       },
       "required": [
@@ -264,7 +288,11 @@
         "leaseFencingVersion",
         "verificationTimestamp",
         "selfReviewPath",
-        "selfReviewSha256"
+        "selfReviewSha256",
+        "lifecycleBindingSha256",
+        "verificationBaselineSha256",
+        "launchReceiptId",
+        "launchReceiptSha256"
       ],
       "additionalProperties": false
     },

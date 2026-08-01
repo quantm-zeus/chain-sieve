@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-EXEC-02",
+  "taskLocalCriteria": [],
+  "localFacets": [
+    {
+      "acceptanceId": "AC-120",
+      "facetId": "AC-120:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-120 system or integration oracle consumes. This facet does not claim full AC-120 satisfaction.",
+      "sourceAcceptanceSha256": "f651eb9c9fea9c6f91fe364140c4e9083933213a89fb04db854f5ff40b39ccbf"
+    },
+    {
+      "acceptanceId": "AC-121",
+      "facetId": "AC-121:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-121 system or integration oracle consumes. This facet does not claim full AC-121 satisfaction.",
+      "sourceAcceptanceSha256": "38de401eb152d2c7d3f55b56651555b905a84e97164ced56c3d936da13eef17d"
+    },
+    {
+      "acceptanceId": "AC-122",
+      "facetId": "AC-122:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-122 system or integration oracle consumes. This facet does not claim full AC-122 satisfaction.",
+      "sourceAcceptanceSha256": "27abeeeef23cac55a7ebc948ddfadc8ff5b4bc8e2da2f918f0b239451ffe59b8"
+    },
+    {
+      "acceptanceId": "AC-123",
+      "facetId": "AC-123:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-123 system or integration oracle consumes. This facet does not claim full AC-123 satisfaction.",
+      "sourceAcceptanceSha256": "2c6a8c741ef0203fe1cacf1e6e161f95283af91e59b0d398d7089d43618aae62"
+    },
+    {
+      "acceptanceId": "AC-124",
+      "facetId": "AC-124:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-124 system or integration oracle consumes. This facet does not claim full AC-124 satisfaction.",
+      "sourceAcceptanceSha256": "08a7195443536153a4e540f801f546102dfd0ca62f3f5f8af5dfc3ba3ff8e154"
+    },
+    {
+      "acceptanceId": "AC-125",
+      "facetId": "AC-125:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-125 system or integration oracle consumes. This facet does not claim full AC-125 satisfaction.",
+      "sourceAcceptanceSha256": "50fb7ded593b5a996f48f006bb0c0f5061e9c485469b40a1d0d0c4560ac0f9d1"
+    },
+    {
+      "acceptanceId": "AC-126",
+      "facetId": "AC-126:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-126 system or integration oracle consumes. This facet does not claim full AC-126 satisfaction.",
+      "sourceAcceptanceSha256": "6f333e259b19dc2934cd336232232769fe05173323175a728930026b1399922b"
+    },
+    {
+      "acceptanceId": "AC-127",
+      "facetId": "AC-127:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-127 system or integration oracle consumes. This facet does not claim full AC-127 satisfaction.",
+      "sourceAcceptanceSha256": "7937e8a031eebc3586ef6e4067f0b3868bfff14c2a1858a6f8f924877367ea6f"
+    },
+    {
+      "acceptanceId": "AC-128",
+      "facetId": "AC-128:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-128 system or integration oracle consumes. This facet does not claim full AC-128 satisfaction.",
+      "sourceAcceptanceSha256": "f0fa39d279920989a221b5286933879ef3b09e185acf76c567f07152873d4abd"
+    },
+    {
+      "acceptanceId": "AC-230",
+      "facetId": "AC-230:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-230 system or integration oracle consumes. This facet does not claim full AC-230 satisfaction.",
+      "sourceAcceptanceSha256": "7b196a365d3ea6d2e3aec66064108901b8b501098801a3f514d6c4ef4571cb41"
+    },
+    {
+      "acceptanceId": "AC-231",
+      "facetId": "AC-231:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-231 system or integration oracle consumes. This facet does not claim full AC-231 satisfaction.",
+      "sourceAcceptanceSha256": "77197deb47cc755fa0bd882efe5370e2f071435d3af8553df54d38c97f4cd117"
+    },
+    {
+      "acceptanceId": "AC-232",
+      "facetId": "AC-232:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-232 system or integration oracle consumes. This facet does not claim full AC-232 satisfaction.",
+      "sourceAcceptanceSha256": "69651134a992e73286c6dabe9577026d7de6260ac83d3e1a77f41804052e2c9e"
+    },
+    {
+      "acceptanceId": "AC-233",
+      "facetId": "AC-233:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-233 system or integration oracle consumes. This facet does not claim full AC-233 satisfaction.",
+      "sourceAcceptanceSha256": "1a025efb0b8e036b4f7cbb3fc1c54c5fedaad7198acb0d6e43b0c2bed5532065"
+    },
+    {
+      "acceptanceId": "AC-234",
+      "facetId": "AC-234:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-234 system or integration oracle consumes. This facet does not claim full AC-234 satisfaction.",
+      "sourceAcceptanceSha256": "72ebe7906711708673b62000a00b5030c44667207cb36c186907c7e4fac9ecfd"
+    },
+    {
+      "acceptanceId": "AC-235",
+      "facetId": "AC-235:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-235 system or integration oracle consumes. This facet does not claim full AC-235 satisfaction.",
+      "sourceAcceptanceSha256": "c5888e926d1a759343dff7166444e2c1d70b7928fec55e1110a2f2f4dc533ea0"
+    },
+    {
+      "acceptanceId": "AC-236",
+      "facetId": "AC-236:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-236 system or integration oracle consumes. This facet does not claim full AC-236 satisfaction.",
+      "sourceAcceptanceSha256": "acf19b86688a73275d7ed09e7d7c43ee8008f96c6b61cdc6898622e07510aa3c"
+    },
+    {
+      "acceptanceId": "AC-237",
+      "facetId": "AC-237:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-237 system or integration oracle consumes. This facet does not claim full AC-237 satisfaction.",
+      "sourceAcceptanceSha256": "c5b0e2edde7901dd61d1a1c068352d8c828d78ca9bd6115ea8e1fce8a92c6968"
+    },
+    {
+      "acceptanceId": "AC-238",
+      "facetId": "AC-238:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-238 system or integration oracle consumes. This facet does not claim full AC-238 satisfaction.",
+      "sourceAcceptanceSha256": "e2cee330c9fa4fe5265bd2dae4b834dfa526cb027478cc6e56b49ca583f675a7"
+    },
+    {
+      "acceptanceId": "AC-239",
+      "facetId": "AC-239:T-G1-EXEC-02:INTERFACE_FACET",
+      "text": "Provide only the interfaces owned by T-G1-EXEC-02 for FR-EXEC-009, FR-EXEC-010, FR-EXEC-011, FR-EXEC-012, FR-EXEC-013, FR-EXEC-014, FR-EXEC-015, FR-EXEC-016 that the unchanged AC-239 system or integration oracle consumes. This facet does not claim full AC-239 satisfaction.",
+      "sourceAcceptanceSha256": "f96ccf45cee05852900230fe2cb15a1fb4e6232459fbcde5097664338a8caf16"
+    }
+  ],
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

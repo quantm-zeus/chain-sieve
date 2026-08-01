@@ -1,0 +1,130 @@
+[
+  {
+    "path": "docs/generated/ths-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "migrations/g4_ths_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/ths.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "packages/thesis/**",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G4-DECAY",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "telemetry/ths.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-070.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-071.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-072.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-073.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/fixtures/ths/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-070.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-071.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-072.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-073.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-THS-001",
+      "FR-THS-002",
+      "FR-THS-003"
+    ]
+  }
+]

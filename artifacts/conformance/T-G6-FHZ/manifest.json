@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-FHZ",
+  "immutable": true,
+  "requirements": [
+    "FR-FHZ-001",
+    "FR-FHZ-002",
+    "FR-FHZ-003",
+    "FR-FHZ-004",
+    "FR-FHZ-005"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-180:T-G6-FHZ:INTERFACE_FACET",
+    "AC-181:T-G6-FHZ:INTERFACE_FACET",
+    "AC-182:T-G6-FHZ:INTERFACE_FACET",
+    "AC-183:T-G6-FHZ:INTERFACE_FACET",
+    "AC-184:T-G6-FHZ:INTERFACE_FACET",
+    "AC-185:T-G6-FHZ:INTERFACE_FACET",
+    "AC-186:T-G6-FHZ:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-FHZ.spec.ts",
+    "tests/task-facets/T-G6-FHZ.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/failure-hazard/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-FHZ/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "path": "docs/generated/nar-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "migrations/g5_nar_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "packages/narrative-intelligence/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/nar.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "telemetry/nar.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-074.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-075.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-076.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-091.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-092.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/fixtures/nar/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-074.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-075.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-076.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-091.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-092.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-NAR-001",
+      "FR-NAR-002"
+    ]
+  }
+]

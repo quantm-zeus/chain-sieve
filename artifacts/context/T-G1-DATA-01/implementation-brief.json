@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-DATA-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DATA-007",
+      "exactNormativeText": "Backfilled or retrospectively fetched observations store `retrieved_as_backfill`, original event coordinates, actual `fetched_at`, actual earliest system `available_at`, and the reason the record was unavailable earlier; event time cannot substitute for availability time."
+    },
+    {
+      "id": "FR-DATA-008",
+      "exactNormativeText": "Historical simulations exclude retrospective-only data from decisions before its actual availability and separately label oracle, hindsight, cross-fitted research, and realizable replay modes."
+    },
+    {
+      "id": "FR-DATA-009",
+      "exactNormativeText": "Every candidate decision stores `decision_ready_at`, `policy_decided_at`, `workflow_completed_at`, `delivery_eligible_at`, `delivered_at` when applicable, and a versioned `counterfactual_delivery_at` for non-delivered comparison arms."
+    },
+    {
+      "id": "FR-DATA-010",
+      "exactNormativeText": "Field-level availability derives from the latest valid revision that was both authorized and obtainable at the decision time; current views and historical replay use separate explicit query semantics."
+    },
+    {
+      "id": "FR-DATA-011",
+      "exactNormativeText": "Evidence acquisition states are `NOT_REQUESTED_BY_POLICY`, `REQUESTED`, `COST_BLOCKED`, `QUOTA_BLOCKED`, `RIGHTS_BLOCKED`, `UNSUPPORTED`, `PROVIDER_UNAVAILABLE`, `FAILED`, `RETURNED_EMPTY`, or `RETURNED`, and remain distinct from substantive negative evidence."
+    },
+    {
+      "id": "FR-DATA-012",
+      "exactNormativeText": "Acquisition records store policy version, candidate state, requested fields, expected value of information, estimated/actual cost, randomized assignment probability and seed when applicable, timestamps, result state, evidence IDs, and whether the evidence changed the final decision."
+    },
+    {
+      "id": "FR-DATA-013",
+      "exactNormativeText": "The system maintains declared and empirically estimated source-dependence edges with validity interval, method, evidence, confidence, and effect on effective independent-evidence count."
+    },
+    {
+      "id": "FR-DATA-014",
+      "exactNormativeText": "Empirical source dependence evaluates correlated values/errors, update timing, first-seen timing, outages, schema/rounding fingerprints, common missingness, and known upstream relationships; material dependence reduces independence credit automatically."
+    }
+  ],
+  "expectedModules": [
+    "packages/persistence/**",
+    "packages/evidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/data.ts",
+    "docs/generated/data-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Backfilled or retrospectively fetched observations store `retrieved_as_backfill`, original event coordinates, actual `fetched_at`, actual earliest system `available_at`, and the reason the record was unavailable earlier; event time cannot substitute for availability time.",
+    "Historical simulations exclude retrospective-only data from decisions before its actual availability and separately label oracle, hindsight, cross-fitted research, and realizable replay modes.",
+    "Every candidate decision stores `decision_ready_at`, `policy_decided_at`, `workflow_completed_at`, `delivery_eligible_at`, `delivered_at` when applicable, and a versioned `counterfactual_delivery_at` for non-delivered comparison arms.",
+    "Field-level availability derives from the latest valid revision that was both authorized and obtainable at the decision time; current views and historical replay use separate explicit query semantics.",
+    "Evidence acquisition states are `NOT_REQUESTED_BY_POLICY`, `REQUESTED`, `COST_BLOCKED`, `QUOTA_BLOCKED`, `RIGHTS_BLOCKED`, `UNSUPPORTED`, `PROVIDER_UNAVAILABLE`, `FAILED`, `RETURNED_EMPTY`, or `RETURNED`, and remain distinct from substantive negative evidence.",
+    "Acquisition records store policy version, candidate state, requested fields, expected value of information, estimated/actual cost, randomized assignment probability and seed when applicable, timestamps, result state, evidence IDs, and whether the evidence changed the final decision.",
+    "The system maintains declared and empirically estimated source-dependence edges with validity interval, method, evidence, confidence, and effect on effective independent-evidence count.",
+    "Empirical source dependence evaluates correlated values/errors, update timing, first-seen timing, outages, schema/rounding fingerprints, common missingness, and known upstream relationships; material dependence reduces independence credit automatically."
+  ],
+  "failureAndDegradedBehavior": [
+    "Backfilled or retrospectively fetched observations store `retrieved_as_backfill`, original event coordinates, actual `fetched_at`, actual earliest system `available_at`, and the reason the record was unavailable earlier; event time cannot substitute for availability time."
+  ],
+  "pointInTimeSemantics": [
+    "Backfilled or retrospectively fetched observations store `retrieved_as_backfill`, original event coordinates, actual `fetched_at`, actual earliest system `available_at`, and the reason the record was unavailable earlier; event time cannot substitute for availability time.",
+    "Empirical source dependence evaluates correlated values/errors, update timing, first-seen timing, outages, schema/rounding fingerprints, common missingness, and known upstream relationships; material dependence reduces independence credit automatically."
+  ],
+  "idempotencyExpectations": [
+    "Historical simulations exclude retrospective-only data from decisions before its actual availability and separately label oracle, hindsight, cross-fitted research, and realizable replay modes.",
+    "Field-level availability derives from the latest valid revision that was both authorized and obtainable at the decision time; current views and historical replay use separate explicit query semantics."
+  ],
+  "observabilityExpectations": [
+    "telemetry/data.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

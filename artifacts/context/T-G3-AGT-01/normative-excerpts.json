@@ -1,0 +1,114 @@
+[
+  {
+    "id": "FR-AGT-001",
+    "sourceLine": 6028,
+    "startLine": 6026,
+    "endLine": 6030,
+    "exactText": "### 38.4 Agent\n\n- **FR-AGT-001 MUST:** Pluggable runtime and model profiles.\n- **FR-AGT-002 MUST:** Deterministic planner and bounded tool loop.\n- **FR-AGT-003 MUST:** Structured decision with abstention."
+  },
+  {
+    "id": "FR-AGT-002",
+    "sourceLine": 6029,
+    "startLine": 6027,
+    "endLine": 6031,
+    "exactText": "\n- **FR-AGT-001 MUST:** Pluggable runtime and model profiles.\n- **FR-AGT-002 MUST:** Deterministic planner and bounded tool loop.\n- **FR-AGT-003 MUST:** Structured decision with abstention.\n- **FR-AGT-004 MUST:** Deterministic evidence validator."
+  },
+  {
+    "id": "FR-AGT-003",
+    "sourceLine": 6030,
+    "startLine": 6028,
+    "endLine": 6032,
+    "exactText": "- **FR-AGT-001 MUST:** Pluggable runtime and model profiles.\n- **FR-AGT-002 MUST:** Deterministic planner and bounded tool loop.\n- **FR-AGT-003 MUST:** Structured decision with abstention.\n- **FR-AGT-004 MUST:** Deterministic evidence validator.\n- **FR-AGT-005 MUST:** Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound."
+  },
+  {
+    "id": "FR-AGT-004",
+    "sourceLine": 6031,
+    "startLine": 6029,
+    "endLine": 6033,
+    "exactText": "- **FR-AGT-002 MUST:** Deterministic planner and bounded tool loop.\n- **FR-AGT-003 MUST:** Structured decision with abstention.\n- **FR-AGT-004 MUST:** Deterministic evidence validator.\n- **FR-AGT-005 MUST:** Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound.\n- **FR-AGT-006 MUST:** External budget and cancellation."
+  },
+  {
+    "id": "FR-AGT-005",
+    "sourceLine": 6032,
+    "startLine": 6030,
+    "endLine": 6034,
+    "exactText": "- **FR-AGT-003 MUST:** Structured decision with abstention.\n- **FR-AGT-004 MUST:** Deterministic evidence validator.\n- **FR-AGT-005 MUST:** Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound.\n- **FR-AGT-006 MUST:** External budget and cancellation.\n- **FR-AGT-007 MUST:** Original-explanation/current-re-evaluation separation."
+  },
+  {
+    "id": "FR-AGT-006",
+    "sourceLine": 6033,
+    "startLine": 6031,
+    "endLine": 6035,
+    "exactText": "- **FR-AGT-004 MUST:** Deterministic evidence validator.\n- **FR-AGT-005 MUST:** Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound.\n- **FR-AGT-006 MUST:** External budget and cancellation.\n- **FR-AGT-007 MUST:** Original-explanation/current-re-evaluation separation.\n- **FR-AGT-008 MUST:** Untrusted-content isolation."
+  },
+  {
+    "id": "FR-AGT-007",
+    "sourceLine": 6034,
+    "startLine": 6032,
+    "endLine": 6036,
+    "exactText": "- **FR-AGT-005 MUST:** Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound.\n- **FR-AGT-006 MUST:** External budget and cancellation.\n- **FR-AGT-007 MUST:** Original-explanation/current-re-evaluation separation.\n- **FR-AGT-008 MUST:** Untrusted-content isolation.\n"
+  },
+  {
+    "id": "FR-AGT-008",
+    "sourceLine": 6035,
+    "startLine": 6033,
+    "endLine": 6037,
+    "exactText": "- **FR-AGT-006 MUST:** External budget and cancellation.\n- **FR-AGT-007 MUST:** Original-explanation/current-re-evaluation separation.\n- **FR-AGT-008 MUST:** Untrusted-content isolation.\n\n### 38.5 MCP"
+  },
+  {
+    "id": "AC-030",
+    "sourceLine": 6545,
+    "startLine": 6543,
+    "endLine": 6547,
+    "exactText": "### 39.4 Agent quality\n\n- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation."
+  },
+  {
+    "id": "AC-031",
+    "sourceLine": 6546,
+    "startLine": 6544,
+    "endLine": 6548,
+    "exactText": "\n- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank."
+  },
+  {
+    "id": "AC-032",
+    "sourceLine": 6547,
+    "startLine": 6545,
+    "endLine": 6549,
+    "exactText": "- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run."
+  },
+  {
+    "id": "AC-033",
+    "sourceLine": 6548,
+    "startLine": 6546,
+    "endLine": 6550,
+    "exactText": "- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run.\n"
+  },
+  {
+    "id": "AC-034",
+    "sourceLine": 6549,
+    "startLine": 6547,
+    "endLine": 6551,
+    "exactText": "- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run.\n\n### 39.5 Evaluation"
+  },
+  {
+    "id": "AC-242",
+    "sourceLine": 6763,
+    "startLine": 6761,
+    "endLine": 6765,
+    "exactText": "- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population."
+  },
+  {
+    "id": "AC-243",
+    "sourceLine": 6764,
+    "startLine": 6762,
+    "endLine": 6766,
+    "exactText": "- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs."
+  },
+  {
+    "id": "AC-244",
+    "sourceLine": 6765,
+    "startLine": 6763,
+    "endLine": 6767,
+    "exactText": "- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed."
+  }
+]

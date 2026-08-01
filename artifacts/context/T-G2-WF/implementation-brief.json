@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G2-WF",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-WF-001",
+      "exactNormativeText": "Durable resumable workflow."
+    },
+    {
+      "id": "FR-WF-002",
+      "exactNormativeText": "Trigger inbox and at-least-once idempotency."
+    },
+    {
+      "id": "FR-WF-003",
+      "exactNormativeText": "Step checkpoint, lease, fencing, and retries."
+    },
+    {
+      "id": "FR-WF-004",
+      "exactNormativeText": "Schedule CRUD, validation, pause/resume, dry-run, run-now."
+    },
+    {
+      "id": "FR-WF-005",
+      "exactNormativeText": "Schedule reconciliation."
+    },
+    {
+      "id": "FR-WF-006",
+      "exactNormativeText": "Transactional notification outbox."
+    },
+    {
+      "id": "FR-WF-007",
+      "exactNormativeText": "Dead-letter management."
+    },
+    {
+      "id": "FR-WF-008",
+      "exactNormativeText": "Shadow mode."
+    }
+  ],
+  "expectedModules": [
+    "packages/workflow-runtime/**",
+    "apps/api/src/internal/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/wf.ts",
+    "docs/generated/wf-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/wf.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

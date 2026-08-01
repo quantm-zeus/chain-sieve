@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-ANA",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-ANA-001",
+      "exactNormativeText": "Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls."
+    },
+    {
+      "id": "FR-ANA-002",
+      "exactNormativeText": "Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations."
+    },
+    {
+      "id": "FR-ANA-003",
+      "exactNormativeText": "Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests."
+    }
+  ],
+  "expectedModules": [
+    "packages/analog-finder/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/ana.ts",
+    "docs/generated/ana-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.",
+    "Analog output includes similarity, effective sample size, outcome distribution, and confidence limitations.",
+    "Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Point-in-time historical analog search is implemented with exact leakage, temporal availability, applicability, distance-contribution, and low-similarity controls.",
+    "Analog index persists point-in-time normalization, cutoff, feature, distance, and exclusion manifests."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/ana.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

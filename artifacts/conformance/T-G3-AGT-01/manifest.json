@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-AGT-01",
+  "immutable": true,
+  "requirements": [
+    "FR-AGT-001",
+    "FR-AGT-002",
+    "FR-AGT-003",
+    "FR-AGT-004",
+    "FR-AGT-005",
+    "FR-AGT-006",
+    "FR-AGT-007",
+    "FR-AGT-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-030:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-031:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-032:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-033:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-034:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-242:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-243:T-G3-AGT-01:INTERFACE_FACET",
+    "AC-244:T-G3-AGT-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G3-AGT-01.spec.ts",
+    "tests/task-facets/T-G3-AGT-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G3-AGT-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

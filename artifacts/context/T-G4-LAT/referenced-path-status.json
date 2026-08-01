@@ -1,0 +1,83 @@
+[
+  {
+    "path": "docs/generated/lat-surfaces.json",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "migrations/g4_lat_*.sql",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "packages/latency-profiler/**",
+    "status": "EXPECTED_TO_CREATE",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "packages/shared-schemas/src/lat.ts",
+    "status": "OWNED_BY_OTHER_TASK",
+    "ownerTask": "T-G0-CORE",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "telemetry/lat.*",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-080.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "tests/acceptance/AC-226.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "tests/fixtures/lat/",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-080.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  },
+  {
+    "path": "tests/negative/AC-226.negative.spec.ts",
+    "status": "SPECIFICATION_GAP",
+    "requirementIds": [
+      "FR-LAT-001",
+      "FR-LAT-002"
+    ]
+  }
+]

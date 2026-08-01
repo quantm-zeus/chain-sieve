@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G7-SPF",
+  "immutable": true,
+  "requirements": [
+    "FR-SPF-001",
+    "FR-SPF-002",
+    "FR-SPF-003",
+    "FR-SPF-004",
+    "FR-SPF-005",
+    "FR-SPF-006",
+    "FR-SPF-007",
+    "FR-SPF-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-190:T-G7-SPF:INTERFACE_FACET",
+    "AC-191:T-G7-SPF:INTERFACE_FACET",
+    "AC-192:T-G7-SPF:INTERFACE_FACET",
+    "AC-193:T-G7-SPF:INTERFACE_FACET",
+    "AC-194:T-G7-SPF:INTERFACE_FACET",
+    "AC-195:T-G7-SPF:INTERFACE_FACET",
+    "AC-196:T-G7-SPF:INTERFACE_FACET",
+    "AC-197:T-G7-SPF:INTERFACE_FACET",
+    "AC-198:T-G7-SPF:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G7-SPF.spec.ts",
+    "tests/task-facets/T-G7-SPF.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/shadow-portfolio/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G7-SPF/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

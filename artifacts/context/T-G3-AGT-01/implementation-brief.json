@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G3-AGT-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-AGT-001",
+      "exactNormativeText": "Pluggable runtime and model profiles."
+    },
+    {
+      "id": "FR-AGT-002",
+      "exactNormativeText": "Deterministic planner and bounded tool loop."
+    },
+    {
+      "id": "FR-AGT-003",
+      "exactNormativeText": "Structured decision with abstention."
+    },
+    {
+      "id": "FR-AGT-004",
+      "exactNormativeText": "Deterministic evidence validator."
+    },
+    {
+      "id": "FR-AGT-005",
+      "exactNormativeText": "Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound."
+    },
+    {
+      "id": "FR-AGT-006",
+      "exactNormativeText": "External budget and cancellation."
+    },
+    {
+      "id": "FR-AGT-007",
+      "exactNormativeText": "Original-explanation/current-re-evaluation separation."
+    },
+    {
+      "id": "FR-AGT-008",
+      "exactNormativeText": "Untrusted-content isolation."
+    }
+  ],
+  "expectedModules": [
+    "packages/agent-runtime/**",
+    "packages/evidence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/agt.ts",
+    "docs/generated/agt-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Pluggable runtime and model profiles.",
+    "Deterministic planner and bounded tool loop.",
+    "Structured decision with abstention.",
+    "Deterministic evidence validator.",
+    "Conditional skeptic executes under the versioned trigger policy and remains independently budgeted and evidence-bound.",
+    "External budget and cancellation.",
+    "Original-explanation/current-re-evaluation separation.",
+    "Untrusted-content isolation."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/agt.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

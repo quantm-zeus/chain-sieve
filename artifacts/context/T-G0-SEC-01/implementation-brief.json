@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-SEC-01",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-SEC-001",
+      "exactNormativeText": "High-impact actions require phishing-resistant step-up authentication, fresh authorization, CSRF protection, idempotency, reason entry, and audit; TOTP alone is not sufficient for production high-impact actions."
+    },
+    {
+      "id": "FR-SEC-002",
+      "exactNormativeText": "Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion."
+    },
+    {
+      "id": "FR-SEC-003",
+      "exactNormativeText": "Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability."
+    },
+    {
+      "id": "FR-SEC-004",
+      "exactNormativeText": "Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested."
+    },
+    {
+      "id": "FR-SEC-005",
+      "exactNormativeText": "Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects."
+    },
+    {
+      "id": "FR-SEC-006",
+      "exactNormativeText": "Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile."
+    },
+    {
+      "id": "FR-SEC-007",
+      "exactNormativeText": "Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist."
+    },
+    {
+      "id": "FR-SEC-008",
+      "exactNormativeText": "Alpha Lab imports accept only approved non-executable schemas and enforce signature, hash, producer trust, archive/path/size/complexity limits, quarantine, malware/content scanning, and no direct policy activation."
+    }
+  ],
+  "expectedModules": [
+    "packages/security/**",
+    "packages/tenant-isolation/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/sec.ts",
+    "docs/generated/sec-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "High-impact actions require phishing-resistant step-up authentication, fresh authorization, CSRF protection, idempotency, reason entry, and audit; TOTP alone is not sufficient for production high-impact actions.",
+    "Audit records are append-only, hash chained or signed in batches, periodically checkpointed to an independently verifiable location, and continuously verified for gaps, reordering, mutation, or deletion.",
+    "Static analysis, dependency policy, route/tool inventory, environment-schema scanning, and runtime canaries prove absence of private-key, seed phrase, signing, transaction-building, swap, submit, bridge, custody, or exchange-trading capability.",
+    "Outbound requests enforce DNS resolution policy, private/link-local/loopback/metadata-address denial, redirect revalidation, response byte/time limits, TLS validation, and exact egress allowlists; DNS rebinding and mixed-encoding bypasses are tested.",
+    "Token metadata, social text, websites, provider text, notebooks, model output, and imported artifacts are untrusted data; they cannot alter system instructions, tool schemas, scopes, URLs, budgets, policies, or side effects.",
+    "Dependencies, container images, workflow bundles, database migrations, generated schemas, and release artifacts are pinned, hashed, scanned, SBOM-recorded, provenance-attested where supported, and reproducible from the lockfile.",
+    "Secrets use least privilege, separate environments, rotation, revocation, no model context, no logs, no client exposure, no Alpha Lab export, and incident-triggered invalidation; configuration validates that prohibited secret classes do not exist.",
+    "Alpha Lab imports accept only approved non-executable schemas and enforce signature, hash, producer trust, archive/path/size/complexity limits, quarantine, malware/content scanning, and no direct policy activation."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/sec.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

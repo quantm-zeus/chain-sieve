@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/supply-confidence/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G1-SUP/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G1-SUP/**"
+    "artifacts/context/T-G1-SUP/**",
+    "artifacts/conformance/T-G1-SUP/manifest.json"
   ],
   "writeSet": [
     "packages/supply-confidence/**"

@@ -4,7 +4,10 @@
   ],
   "allowedPaths": [
     "packages/latency-profiler/**",
-    "tests/**",
+    "tests/acceptance/**",
+    "tests/negative/**",
+    "tests/task-facets/**",
+    "tests/fixtures/**",
     "docs/implementation/**"
   ],
   "forbiddenPaths": [
@@ -12,11 +15,14 @@
     "artifacts/spec/**",
     "tasks/generated/**",
     ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-G4-LAT/**",
     "infra/migrations/**"
   ],
   "readSet": [
     "docs/spec/**",
-    "artifacts/context/T-G4-LAT/**"
+    "artifacts/context/T-G4-LAT/**",
+    "artifacts/conformance/T-G4-LAT/manifest.json"
   ],
   "writeSet": [
     "packages/latency-profiler/**"

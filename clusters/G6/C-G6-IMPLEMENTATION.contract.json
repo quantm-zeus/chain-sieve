@@ -98,35 +98,25 @@
     "FR-WPI-011"
   ],
   "acceptanceCriteria": [
-    "AC-086",
     "AC-081",
     "AC-082",
     "AC-090",
-    "AC-087",
-    "AC-044",
-    "AC-243",
-    "AC-150",
-    "AC-244",
     "AC-180",
-    "AC-183",
-    "AC-186",
-    "AC-272",
-    "AC-274",
-    "AC-278",
-    "AC-003",
-    "AC-255",
     "AC-181",
-    "AC-184",
     "AC-182",
+    "AC-183",
+    "AC-184",
     "AC-185",
-    "AC-151",
-    "AC-275",
-    "AC-279",
-    "AC-154",
-    "AC-162",
-    "AC-166",
-    "AC-163",
-    "AC-167"
+    "AC-186"
+  ],
+  "integrationAcceptanceCriteria": [
+    "AC-180",
+    "AC-181",
+    "AC-182",
+    "AC-183",
+    "AC-184",
+    "AC-185",
+    "AC-186"
   ],
   "invariants": [
     "INV-001",
@@ -146,8 +136,9 @@
   ],
   "exitCriteria": [
     "Every task is independently verified and atomically committed.",
+    "Every cluster-level integration acceptance criterion passes its immutable oracle.",
     "Cluster integration, architecture, security, migration, and replay checks pass.",
-    "Codex independent cluster review records PASS."
+    "Independent agent-neutral cluster review records PASS."
   ],
   "verificationCommands": [
     {

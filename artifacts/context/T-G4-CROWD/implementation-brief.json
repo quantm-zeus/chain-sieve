@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G4-CROWD",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-CROWD-001",
+      "exactNormativeText": "Crowding and exit-liquidity assessment for researched opportunity candidates."
+    },
+    {
+      "id": "FR-CROWD-002",
+      "exactNormativeText": "Read-only sell-depth and modeled-exit scenarios expose assumptions."
+    },
+    {
+      "id": "FR-CROWD-003",
+      "exactNormativeText": "High crowding cannot be hidden by positive wallet or social signals."
+    },
+    {
+      "id": "FR-CROWD-004",
+      "exactNormativeText": "Estimated cost basis/profitable supply exposes method, coverage, uncertainty, and excluded supply."
+    }
+  ],
+  "expectedModules": [
+    "packages/crowding/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/crowd.ts",
+    "docs/generated/crowd-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/crowd.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

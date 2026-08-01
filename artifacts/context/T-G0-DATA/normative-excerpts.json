@@ -1,0 +1,142 @@
+[
+  {
+    "id": "FR-DATA-001",
+    "sourceLine": 5998,
+    "startLine": 5996,
+    "endLine": 6000,
+    "exactText": "### 38.2 Data and signal\n\n- **FR-DATA-001 MUST:** Canonical asset/pool/migration identity.\n- **FR-DATA-002 MUST:** Immutable observations and revisions.\n- **FR-DATA-003 MUST:** Point-in-time `available_at` replay."
+  },
+  {
+    "id": "FR-DATA-002",
+    "sourceLine": 5999,
+    "startLine": 5997,
+    "endLine": 6001,
+    "exactText": "\n- **FR-DATA-001 MUST:** Canonical asset/pool/migration identity.\n- **FR-DATA-002 MUST:** Immutable observations and revisions.\n- **FR-DATA-003 MUST:** Point-in-time `available_at` replay.\n- **FR-DATA-004 MUST:** Online/offline feature consistency."
+  },
+  {
+    "id": "FR-DATA-003",
+    "sourceLine": 6000,
+    "startLine": 5998,
+    "endLine": 6002,
+    "exactText": "- **FR-DATA-001 MUST:** Canonical asset/pool/migration identity.\n- **FR-DATA-002 MUST:** Immutable observations and revisions.\n- **FR-DATA-003 MUST:** Point-in-time `available_at` replay.\n- **FR-DATA-004 MUST:** Online/offline feature consistency.\n- **FR-DATA-005 MUST:** Field-level data-quality codes."
+  },
+  {
+    "id": "FR-DATA-004",
+    "sourceLine": 6001,
+    "startLine": 5999,
+    "endLine": 6003,
+    "exactText": "- **FR-DATA-002 MUST:** Immutable observations and revisions.\n- **FR-DATA-003 MUST:** Point-in-time `available_at` replay.\n- **FR-DATA-004 MUST:** Online/offline feature consistency.\n- **FR-DATA-005 MUST:** Field-level data-quality codes.\n- **FR-DATA-006 MUST:** Source lineage and independence groups."
+  },
+  {
+    "id": "FR-DATA-005",
+    "sourceLine": 6002,
+    "startLine": 6000,
+    "endLine": 6004,
+    "exactText": "- **FR-DATA-003 MUST:** Point-in-time `available_at` replay.\n- **FR-DATA-004 MUST:** Online/offline feature consistency.\n- **FR-DATA-005 MUST:** Field-level data-quality codes.\n- **FR-DATA-006 MUST:** Source lineage and independence groups.\n- **FR-SIG-001 MUST:** Versioned Feature Registry."
+  },
+  {
+    "id": "FR-DATA-006",
+    "sourceLine": 6003,
+    "startLine": 6001,
+    "endLine": 6005,
+    "exactText": "- **FR-DATA-004 MUST:** Online/offline feature consistency.\n- **FR-DATA-005 MUST:** Field-level data-quality codes.\n- **FR-DATA-006 MUST:** Source lineage and independence groups.\n- **FR-SIG-001 MUST:** Versioned Feature Registry.\n- **FR-SIG-002 MUST:** Candidate funnel and independent vectors."
+  },
+  {
+    "id": "AC-020",
+    "sourceLine": 6538,
+    "startLine": 6536,
+    "endLine": 6540,
+    "exactText": "### 39.3 Data integrity\n\n- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests."
+  },
+  {
+    "id": "AC-021",
+    "sourceLine": 6539,
+    "startLine": 6537,
+    "endLine": 6541,
+    "exactText": "\n- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures."
+  },
+  {
+    "id": "AC-022",
+    "sourceLine": 6540,
+    "startLine": 6538,
+    "endLine": 6542,
+    "exactText": "- **AC-020:** Replay at time `T` cannot read evidence with `available_at > T`.\n- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures.\n"
+  },
+  {
+    "id": "AC-023",
+    "sourceLine": 6541,
+    "startLine": 6539,
+    "endLine": 6543,
+    "exactText": "- **AC-021:** Revisions/reorgs do not erase original observations.\n- **AC-022:** Asset/pool migration avoids double counting in fixture tests.\n- **AC-023:** Decimals and address normalization pass chain-specific golden fixtures.\n\n### 39.4 Agent quality"
+  },
+  {
+    "id": "AC-240",
+    "sourceLine": 6761,
+    "startLine": 6759,
+    "endLine": 6763,
+    "exactText": "### 39.23 Symmetric evaluation, evidence selection, and source dependence\n\n- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value."
+  },
+  {
+    "id": "AC-241",
+    "sourceLine": 6762,
+    "startLine": 6760,
+    "endLine": 6764,
+    "exactText": "\n- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity."
+  },
+  {
+    "id": "AC-242",
+    "sourceLine": 6763,
+    "startLine": 6761,
+    "endLine": 6765,
+    "exactText": "- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population."
+  },
+  {
+    "id": "AC-243",
+    "sourceLine": 6764,
+    "startLine": 6762,
+    "endLine": 6766,
+    "exactText": "- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs."
+  },
+  {
+    "id": "AC-244",
+    "sourceLine": 6765,
+    "startLine": 6763,
+    "endLine": 6767,
+    "exactText": "- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed."
+  },
+  {
+    "id": "AC-245",
+    "sourceLine": 6766,
+    "startLine": 6764,
+    "endLine": 6768,
+    "exactText": "- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then."
+  },
+  {
+    "id": "AC-246",
+    "sourceLine": 6767,
+    "startLine": 6765,
+    "endLine": 6769,
+    "exactText": "- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable."
+  },
+  {
+    "id": "AC-247",
+    "sourceLine": 6768,
+    "startLine": 6766,
+    "endLine": 6770,
+    "exactText": "- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion."
+  },
+  {
+    "id": "AC-248",
+    "sourceLine": 6769,
+    "startLine": 6767,
+    "endLine": 6771,
+    "exactText": "- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed.\n- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n"
+  },
+  {
+    "id": "AC-249",
+    "sourceLine": 6770,
+    "startLine": 6768,
+    "endLine": 6772,
+    "exactText": "- **AC-247:** A retrospective provider-dependence estimate cannot alter a frozen historical evidence count in realizable replay; it is labeled diagnostic unless the estimate was available then.\n- **AC-248:** Promotion fails below the registered mature success/failure/risk counts, cluster effective sample size, calendar/regime coverage, or interval precision even when point estimate is favorable.\n- **AC-249:** Timestamp-shift, availability-backdating placebo, outcome permutation, provider-ID predictor, synthetic-noise, delayed-delivery, and leakage controls show no unexplained material lift; any failure blocks promotion.\n\n### 39.24 MCP transport, provider negative capability, and security"
+  }
+]

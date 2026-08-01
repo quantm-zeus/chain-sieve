@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-WPI-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-WPI-009",
+      "exactNormativeText": "Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited."
+    },
+    {
+      "id": "FR-WPI-010",
+      "exactNormativeText": "During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims."
+    },
+    {
+      "id": "FR-WPI-011",
+      "exactNormativeText": "Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling."
+    }
+  ],
+  "expectedModules": [
+    "packages/winning-pattern-intelligence/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/wpi.ts",
+    "docs/generated/wpi-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "Learned upstream features and pattern inputs in historical evaluation use artifacts available at the simulated time or explicit rolling-origin/out-of-fold predictions; current full-history artifacts are prohibited.",
+    "During cold start or insufficient history, pattern outputs remain `INSUFFICIENT_HISTORY`/shadow and deterministic baseline discovery continues without fabricated archetypes or imported unverified success claims.",
+    "Every pattern evaluation states its eligible/observed population and discovery/observation coverage; results from selectively observed candidates cannot be generalized to the full market without valid inclusion modeling."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/wpi.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

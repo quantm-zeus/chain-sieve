@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-MAT-01",
+  "immutable": true,
+  "requirements": [
+    "FR-MAT-001",
+    "FR-MAT-002",
+    "FR-MAT-003",
+    "FR-MAT-004",
+    "FR-MAT-005",
+    "FR-MAT-006",
+    "FR-MAT-007",
+    "FR-MAT-008"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-040:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-041:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-042:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-043:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-044:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-120:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-121:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-122:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-123:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-124:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-125:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-126:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-127:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-128:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-150:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-151:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-152:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-153:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-154:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-240:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-241:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-242:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-243:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-244:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-245:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-246:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-247:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-248:T-G1-MAT-01:INTERFACE_FACET",
+    "AC-249:T-G1-MAT-01:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G1-MAT-01.spec.ts",
+    "tests/task-facets/T-G1-MAT-01.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/outcome-maturity/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G1-MAT-01/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

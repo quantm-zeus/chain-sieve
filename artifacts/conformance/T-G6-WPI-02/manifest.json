@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G6-WPI-02",
+  "immutable": true,
+  "requirements": [
+    "FR-WPI-009",
+    "FR-WPI-010",
+    "FR-WPI-011"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [
+    "AC-160:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-161:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-162:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-163:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-164:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-165:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-166:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-167:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-168:T-G6-WPI-02:INTERFACE_FACET",
+    "AC-169:T-G6-WPI-02:INTERFACE_FACET"
+  ],
+  "taskOwnedTests": [
+    "tests/task-facets/T-G6-WPI-02.spec.ts",
+    "tests/task-facets/T-G6-WPI-02.negative.spec.ts"
+  ],
+  "productionTargets": [
+    "packages/winning-pattern-intelligence/**"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-G6-WPI-02/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "NEGATIVE_CASE",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

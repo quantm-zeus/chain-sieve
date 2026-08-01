@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G1-OBJ-02",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-OBJ-009",
+      "exactNormativeText": "The system supports utility sensitivity to capital, notional, concurrency, route capacity, alert latency, exit policy, and risk-aversion coefficients without rewriting the frozen primary experiment."
+    },
+    {
+      "id": "FR-OBJ-010",
+      "exactNormativeText": "The product, agent, UI, API, exports, and notifications prohibit guaranteed-profit language and must state that opportunity outputs are evidence-backed research signals whose realized outcome remains uncertain."
+    }
+  ],
+  "expectedModules": [
+    "packages/objective-governance/**",
+    "packages/shadow-portfolio/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/obj.ts",
+    "docs/generated/obj-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The system supports utility sensitivity to capital, notional, concurrency, route capacity, alert latency, exit policy, and risk-aversion coefficients without rewriting the frozen primary experiment.",
+    "The product, agent, UI, API, exports, and notifications prohibit guaranteed-profit language and must state that opportunity outputs are evidence-backed research signals whose realized outcome remains uncertain."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/obj.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

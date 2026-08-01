@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "interfaces": [
+    {
+      "path": "packages/shared-schemas/src/crowd.ts",
+      "source": "normative-manifest-reference"
+    },
+    {
+      "path": "docs/generated/crowd-surfaces.json",
+      "source": "normative-manifest-reference"
+    }
+  ],
+  "rule": "SPECIFICATION_GAP blocks arbitrary public-contract invention."
+}

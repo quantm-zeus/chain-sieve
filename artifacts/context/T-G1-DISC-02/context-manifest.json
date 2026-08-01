@@ -9,8 +9,8 @@
   "files": [
     {
       "path": "task-contract.json",
-      "sha256": "e636680b8c2f89eeabed1f88a1012d9e73ddd71467eccdf8f5871a374178482d",
-      "bytes": 4509
+      "sha256": "861a4599a88e840ee06303a593302bb0d3abcf12575bd332e1a14f4e61aa404a",
+      "bytes": 9260
     },
     {
       "path": "requirements.json",
@@ -19,8 +19,33 @@
     },
     {
       "path": "acceptance-criteria.json",
-      "sha256": "8acee6e86af7c988a8cf82925a89e07da1f44d60129cff0faa309d5135487046",
-      "bytes": 3276
+      "sha256": "8690d823b36b78096b714c2a12fc7ff86cb641cfca2ddd449673f8548157fa57",
+      "bytes": 19714
+    },
+    {
+      "path": "normative-excerpts.json",
+      "sha256": "30c82ab811352ba6319a09832e0e1fb5ddf66575ec7e2a503c4145674007a09c",
+      "bytes": 10465
+    },
+    {
+      "path": "implementation-brief.json",
+      "sha256": "66d10da4ae791e0d8b241d672e017e7c239868d73ee173f10326c2832f7513de",
+      "bytes": 1080
+    },
+    {
+      "path": "interface-plan.json",
+      "sha256": "e7933f1e03f1423211828fc5f660447412260a3ad4327b6ea21e7a65e3cb1634",
+      "bytes": 386
+    },
+    {
+      "path": "behavior-test-matrix.json",
+      "sha256": "48ebedc42616952acfe88dc02b0826475ddffcb40106947bb6656c62507e179d",
+      "bytes": 4259
+    },
+    {
+      "path": "referenced-path-status.json",
+      "sha256": "a6c47d2ad1c5c4eae648980592aeb7da8ddc874d029aa6b271856240eeca5eee",
+      "bytes": 3977
     },
     {
       "path": "invariants.json",
@@ -34,8 +59,8 @@
     },
     {
       "path": "architecture-boundaries.json",
-      "sha256": "3ad491ace01c342c97bd8e5cbb8e591487ba18497390fcea266cb1e7ec7e047a",
-      "bytes": 527
+      "sha256": "774b4e12dab714e08d6691e6589e9b7b04cd660c98bbe1d34e9330f0d4c2b96e",
+      "bytes": 745
     },
     {
       "path": "dependency-outputs.json",
@@ -63,5 +88,7 @@
       "bytes": 131
     }
   ],
+  "conformanceManifestPath": "artifacts/conformance/T-G1-DISC-02/manifest.json",
+  "conformanceManifestSha256": "063cbde0e48da4e70c1098a2db0fa1729724a717cfea5e976feb8e003acaaf0c",
   "generatedAt": "2026-07-20T00:00:00Z"
 }

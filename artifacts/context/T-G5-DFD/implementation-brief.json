@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G5-DFD",
+  "specificationStatus": "READY",
+  "taskPurpose": [
+    {
+      "id": "FR-DFD-001",
+      "exactNormativeText": "The system builds point-in-time deployer, creator, mint-authority, metadata-authority, initial-funder, LP-controller, and migration-controller profiles."
+    },
+    {
+      "id": "FR-DFD-002",
+      "exactNormativeText": "Launch histories include security failures, liquidity removals, creator sales, token lifetime, peak and tradable outcomes, supply distribution, migration behavior, and entity-confidence limits."
+    },
+    {
+      "id": "FR-DFD-003",
+      "exactNormativeText": "Address splitting and indirect funding paths are analyzed through bounded graph traversal with system-address exclusions and uncertainty labels."
+    },
+    {
+      "id": "FR-DFD-004",
+      "exactNormativeText": "Deployer archetypes are descriptive evidence, never proof; critical historical abuse may suppress alerts, while repeat success may only increase research priority after independent current-token validation."
+    },
+    {
+      "id": "FR-DFD-005",
+      "exactNormativeText": "Unknown or low-coverage creator history is represented as unknown, not safe."
+    }
+  ],
+  "expectedModules": [
+    "packages/deployer-funder-dna/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/dfd.ts",
+    "docs/generated/dfd-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "The system builds point-in-time deployer, creator, mint-authority, metadata-authority, initial-funder, LP-controller, and migration-controller profiles.",
+    "Launch histories include security failures, liquidity removals, creator sales, token lifetime, peak and tradable outcomes, supply distribution, migration behavior, and entity-confidence limits.",
+    "Address splitting and indirect funding paths are analyzed through bounded graph traversal with system-address exclusions and uncertainty labels.",
+    "Deployer archetypes are descriptive evidence, never proof; critical historical abuse may suppress alerts, while repeat success may only increase research priority after independent current-token validation.",
+    "Unknown or low-coverage creator history is represented as unknown, not safe."
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "The system builds point-in-time deployer, creator, mint-authority, metadata-authority, initial-funder, LP-controller, and migration-controller profiles."
+  ],
+  "idempotencyExpectations": [],
+  "observabilityExpectations": [
+    "telemetry/dfd.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": []
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "FR-AGT-009",
+    "sourceLine": 6425,
+    "startLine": 6423,
+    "endLine": 6427,
+    "exactText": "- **FR-DATA-015 MUST:** Independence estimates are point-in-time and cannot use future provider behavior to change the evidence count of a historical decision unless the replay is explicitly labeled retrospective diagnostic.\n- **FR-DATA-016 MUST:** Provider conflicts preserve all raw observations and distinguish benign latency/rounding variance, common-upstream duplication, material disagreement, and unresolved decision-critical conflict.\n- **FR-AGT-009 MUST:** The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable.\n- **FR-AGT-010 MUST:** A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.\n- **FR-AGT-011 MUST:** Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes."
+  },
+  {
+    "id": "FR-AGT-010",
+    "sourceLine": 6426,
+    "startLine": 6424,
+    "endLine": 6428,
+    "exactText": "- **FR-DATA-016 MUST:** Provider conflicts preserve all raw observations and distinguish benign latency/rounding variance, common-upstream duplication, material disagreement, and unresolved decision-critical conflict.\n- **FR-AGT-009 MUST:** The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable.\n- **FR-AGT-010 MUST:** A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.\n- **FR-AGT-011 MUST:** Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes.\n- **FR-AGT-012 MUST:** Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope."
+  },
+  {
+    "id": "FR-AGT-011",
+    "sourceLine": 6427,
+    "startLine": 6425,
+    "endLine": 6429,
+    "exactText": "- **FR-AGT-009 MUST:** The value-of-information planner persists a decision for every eligible optional evidence family, including the reason it was requested or skipped; skipped evidence cannot be inferred as absent or unfavorable.\n- **FR-AGT-010 MUST:** A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.\n- **FR-AGT-011 MUST:** Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes.\n- **FR-AGT-012 MUST:** Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope.\n"
+  },
+  {
+    "id": "FR-AGT-012",
+    "sourceLine": 6428,
+    "startLine": 6426,
+    "endLine": 6430,
+    "exactText": "- **FR-AGT-010 MUST:** A bounded stratified randomized evidence-probe allocation samples safe candidates outside normal deep-research selection, stores nonzero inclusion probabilities, and supports inverse-probability or design-based estimates of evidence value and selection bias.\n- **FR-AGT-011 MUST:** Agent/tool-selection evaluation compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls using symmetric budgets and candidate universes.\n- **FR-AGT-012 MUST:** Model-generated tool arguments cannot broaden provider scope, URL, chain, address set, time range, output size, or cost beyond the deterministic planner authorization envelope.\n\n### 38.41 Capacity, discovery, execution, and maturity extensions"
+  },
+  {
+    "id": "AC-030",
+    "sourceLine": 6545,
+    "startLine": 6543,
+    "endLine": 6547,
+    "exactText": "### 39.4 Agent quality\n\n- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation."
+  },
+  {
+    "id": "AC-031",
+    "sourceLine": 6546,
+    "startLine": 6544,
+    "endLine": 6548,
+    "exactText": "\n- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank."
+  },
+  {
+    "id": "AC-032",
+    "sourceLine": 6547,
+    "startLine": 6545,
+    "endLine": 6549,
+    "exactText": "- **AC-030:** Invalid structured output receives at most one repair attempt and never causes an unsupported alert.\n- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run."
+  },
+  {
+    "id": "AC-033",
+    "sourceLine": 6548,
+    "startLine": 6546,
+    "endLine": 6550,
+    "exactText": "- **AC-031:** Critical security risk blocks opportunity alert.\n- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run.\n"
+  },
+  {
+    "id": "AC-034",
+    "sourceLine": 6549,
+    "startLine": 6547,
+    "endLine": 6551,
+    "exactText": "- **AC-032:** Every important claim in an automated alert passes semantic evidence validation.\n- **AC-033:** The agent can return `INSUFFICIENT_DATA` without being forced to rank.\n- **AC-034:** Explain-original uses frozen evidence; re-evaluate creates a separate current run.\n\n### 39.5 Evaluation"
+  },
+  {
+    "id": "AC-242",
+    "sourceLine": 6763,
+    "startLine": 6761,
+    "endLine": 6765,
+    "exactText": "- **AC-240:** Alerted, watched, ignored, rejected, challenger, control, and missed-opportunity candidates use the same universal decision/action-time function; a non-delivered arm never receives an earlier entry than its counterfactual delivery time.\n- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population."
+  },
+  {
+    "id": "AC-243",
+    "sourceLine": 6764,
+    "startLine": 6762,
+    "endLine": 6766,
+    "exactText": "- **AC-241:** Replaying the same frozen candidate under champion and challenger preserves discovery/evidence availability and differs only in registered policy components; hidden current-data calls fail the replay.\n- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs."
+  },
+  {
+    "id": "AC-244",
+    "sourceLine": 6765,
+    "startLine": 6763,
+    "endLine": 6767,
+    "exactText": "- **AC-242:** Evidence not requested by policy is stored as `NOT_REQUESTED_BY_POLICY`, not `RETURNED_EMPTY`, `PROVIDER_UNAVAILABLE`, or a negative feature value.\n- **AC-243:** Every randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact before outcome maturity.\n- **AC-244:** A feature learned only from selectively deep-researched candidates cannot claim full-universe lift without valid selection adjustment or an explicitly restricted population.\n- **AC-245:** Provider pairs with strongly correlated timing, values/errors, outages, and first-seen behavior receive reduced empirical independence credit despite different provider IDs.\n- **AC-246:** Removing or collapsing each major upstream lineage is included in sensitivity analysis; a policy whose alert gate depends on duplicated evidence cannot be promoted as independently confirmed."
+  }
+]

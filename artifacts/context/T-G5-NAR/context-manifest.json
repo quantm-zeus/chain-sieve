@@ -9,8 +9,8 @@
   "files": [
     {
       "path": "task-contract.json",
-      "sha256": "53b47b5e8248ca126ca4fadfda3daae218dea8bb22d25df0c5258b7174ab44d1",
-      "bytes": 5073
+      "sha256": "d24b16ab656660544e39f7c294dbe601e81c253064eb3ac1b115f0da53429109",
+      "bytes": 7981
     },
     {
       "path": "requirements.json",
@@ -19,8 +19,33 @@
     },
     {
       "path": "acceptance-criteria.json",
-      "sha256": "236c46f58349a9dd2043350aa7c4c2941cedc339b5a4aef46348a336a1cf4b20",
-      "bytes": 820
+      "sha256": "35e7a6755e96ea3ef5afff483b4017e0c524232636cc6341a3138b45fed2f0ef",
+      "bytes": 6462
+    },
+    {
+      "path": "normative-excerpts.json",
+      "sha256": "01406ea0f455d3ae4c74c4687a32f75bcb2ef41997ecf112552fc46d8c9ba2d5",
+      "bytes": 5290
+    },
+    {
+      "path": "implementation-brief.json",
+      "sha256": "ac79d69837a5700ce973d5c61d5047aedd56706e4241716a2ce2c81915dd678b",
+      "bytes": 1511
+    },
+    {
+      "path": "interface-plan.json",
+      "sha256": "da037b9adf7d48b35f46a8f804fc465f800f1a2fddc64edb432cd62fbc107cf9",
+      "bytes": 384
+    },
+    {
+      "path": "behavior-test-matrix.json",
+      "sha256": "c5ef85446625e556db69c42876a32d1033ba43dcae110fbdcfd6912b34be634a",
+      "bytes": 2270
+    },
+    {
+      "path": "referenced-path-status.json",
+      "sha256": "12ddeb1d3a35f20c8ebf8b4d233c731d03858c3adad0ce16d8d51b356a542d1b",
+      "bytes": 2602
     },
     {
       "path": "invariants.json",
@@ -34,8 +59,8 @@
     },
     {
       "path": "architecture-boundaries.json",
-      "sha256": "82289a401d95c74eeb5b5d01623d7105f01189fb7b1edc816425d8ba05cb2a79",
-      "bytes": 469
+      "sha256": "800c163d47a912209dac673aece85aebf922dd7ba29b2d9078df97ee934e141c",
+      "bytes": 679
     },
     {
       "path": "dependency-outputs.json",
@@ -44,8 +69,8 @@
     },
     {
       "path": "public-schemas.json",
-      "sha256": "454bb73bf58fbc35146ddece84a87b7859e5e6cf6af94785f318451d6249ac93",
-      "bytes": 83
+      "sha256": "d23eabf7b35109ab13ef699778b10bafa7ebcf9882369007a71efabc709b602c",
+      "bytes": 43
     },
     {
       "path": "semantic-fields.json",
@@ -63,5 +88,7 @@
       "bytes": 257
     }
   ],
+  "conformanceManifestPath": "artifacts/conformance/T-G5-NAR/manifest.json",
+  "conformanceManifestSha256": "feef7d1989d753a0ca0085de2c263a4f1a0d4af478370b15cbdfe054903a330d",
   "generatedAt": "2026-07-20T00:00:00Z"
 }

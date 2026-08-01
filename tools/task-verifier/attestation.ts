@@ -6,9 +6,15 @@ import { TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/sha
 import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.js';
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
+import {
+  readArchivedBoundTaskContract,
+  readLifecycleBinding,
+  readVerificationBaseline,
+} from '../task-runner/authority.js';
+import { readTrustedFile } from '../agent/lib/trusted-path.js';
+import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from './policy.js';
 
-export const TASK_VERIFIER_VERSION = '2.0.0';
-export const VERIFICATION_POLICY_VERSION = 'harness-task-proof-v2';
+export { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from './policy.js';
 
 type TaskResult = ReturnType<typeof TaskResultSchema.parse>;
 type CommandEvidence = TaskResult['commandEvidence'][number];
@@ -86,7 +92,7 @@ export const deriveAcceptanceMapping = async (
   cwd = process.cwd(),
 ): Promise<TaskResult['bindings']['acceptanceToTests']> => {
   const specification = await loadAndValidateSpecification();
-  return task.acceptanceCriteria.map((acceptanceId) => {
+  const taskCriteria = task.acceptanceCriteria.map((acceptanceId) => {
     const acceptance = specification.manifest.acceptanceCriteria.find((item) => item.id === acceptanceId);
     if (!acceptance) throw new Error(`UNKNOWN_ACCEPTANCE:${acceptanceId}`);
     const paths = [acceptance.positiveTestRef, acceptance.negativeOrFailureTestRef];
@@ -94,6 +100,19 @@ export const deriveAcceptanceMapping = async (
       throw new Error(`MISSING_ACCEPTANCE_MAPPING:${acceptanceId}`);
     return { acceptanceId, tests: [...new Set(paths)].map((path) => hashedPath(head, path, cwd)) };
   });
+  const facetPaths = [
+    `tests/task-facets/${task.id}.spec.ts`,
+    `tests/task-facets/${task.id}.negative.spec.ts`,
+  ];
+  const facets = task.taskAcceptanceFacets.map((facet) => {
+    if (facetPaths.some((path) => !task.requiredTests.includes(path)))
+      throw new Error(`MISSING_ACCEPTANCE_FACET_MAPPING:${facet.facetId}`);
+    return {
+      acceptanceId: facet.facetId,
+      tests: facetPaths.map((path) => hashedPath(head, path, cwd)),
+    };
+  });
+  return [...taskCriteria, ...facets];
 };
 
 export const persistCommandEvidence = async (
@@ -126,7 +145,7 @@ export const validateCommandEvidenceArtifact = async (item: CommandEvidence, cwd
   if (absolute !== root && !absolute.startsWith(`${root}/`)) throw new Error(`EVIDENCE_PATH_ESCAPE:${item.command}`);
   let output: string;
   try {
-    output = await readFile(absolute, 'utf8');
+    output = (await readTrustedFile(root, absolute, 'COMMAND_EVIDENCE_ARTIFACT')).toString('utf8');
   } catch {
     throw new Error(`MISSING_REQUIRED_TEST_ARTIFACT:${item.command}`);
   }
@@ -152,7 +171,7 @@ const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskS
   if (absolute !== root && !absolute.startsWith(`${root}/`)) throw new Error('SELF_REVIEW_PATH_ESCAPE');
   let text: string;
   try {
-    text = await readFile(absolute, 'utf8');
+    text = (await readTrustedFile(root, absolute, 'SELF_REVIEW_EVIDENCE')).toString('utf8');
   } catch {
     throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
   }
@@ -176,6 +195,13 @@ const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskS
     review.leaseFencingVersion !== result.bindings.leaseFencingVersion
   )
     throw new Error('SELF_REVIEW_LEASE_BINDING_MISMATCH');
+  if (
+    review.lifecycleBindingSha256 !== result.bindings.lifecycleBindingSha256 ||
+    review.verificationBaselineSha256 !== result.bindings.verificationBaselineSha256 ||
+    review.launchReceiptId !== result.bindings.launchReceiptId ||
+    review.launchReceiptSha256 !== result.bindings.launchReceiptSha256
+  )
+    throw new Error('SELF_REVIEW_TRUSTED_AUTHORITY_BINDING_MISMATCH');
   if (Date.parse(review.reviewedAt) > Date.parse(result.bindings.verificationTimestamp))
     throw new Error('TASK_RESULT_PREDATES_FRESH_SELF_REVIEW');
   if (
@@ -210,8 +236,55 @@ export const validateTaskAttestation = async (
   if (result.taskId !== task.id) throw new Error(`TASK_RESULT_COPIED_FROM_ANOTHER_TASK:${result.taskId}`);
   const specification = await loadAndValidateSpecification();
   const bindings = result.bindings;
-  const contractText = await readFile(join(cwd, contractPath(task)), 'utf8');
+  const lifecycleEvidence = options.state?.lifecycleBinding ?? options.state?.completedLifecycleBinding;
+  const baselineEvidence = options.state?.verificationBaseline ?? options.state?.completedVerificationBaseline;
+  if (
+    options.state &&
+    (lifecycleEvidence?.sha256 !== bindings.lifecycleBindingSha256 ||
+      baselineEvidence?.sha256 !== bindings.verificationBaselineSha256)
+  )
+    throw new Error('TASK_RESULT_TRUSTED_AUTHORITY_MISMATCH');
+  const lifecycle = options.state ? await readLifecycleBinding(cwd, options.state, true) : undefined;
+  const verificationBaseline = options.state
+    ? await readVerificationBaseline(cwd, options.state, true)
+    : undefined;
+  if (options.state && !verificationBaseline) throw new Error('TASK_RESULT_VERIFICATION_BASELINE_MISSING');
+  if (
+    verificationBaseline &&
+    (bindings.verifierVersion !== verificationBaseline.verifierVersion ||
+      bindings.verificationPolicyVersion !== verificationBaseline.verificationPolicyVersion)
+  )
+    throw new Error('TASK_RESULT_BASELINE_VERSION_MISMATCH');
+  let contractText: string;
+  try {
+    contractText = (await readTrustedFile(
+      lifecycle?.bindingRoot ?? cwd,
+      lifecycle?.contractPath ?? contractPath(task),
+      'ATTESTATION_TASK_CONTRACT',
+    )).toString('utf8');
+  } catch (error: unknown) {
+    if (!lifecycle || !options.state) throw error;
+    const archived = await readArchivedBoundTaskContract(cwd, options.state, lifecycle, error);
+    for (const [key, value] of Object.entries(archived.task))
+      if (!sameJson(value, (task as unknown as Record<string, unknown>)[key]))
+        throw new Error(`ARCHIVED_CONTRACT_TASK_ARGUMENT_MISMATCH:${key}`);
+    contractText = archived.text;
+  }
   if (sha256(contractText) !== bindings.taskContractSha256) throw new Error('WRONG_TASK_CONTRACT_HASH');
+  if (task.conformanceManifestPath && task.conformanceManifestSha256) {
+    if (
+      bindings.conformanceManifestPath !== task.conformanceManifestPath ||
+      bindings.conformanceManifestSha256 !== task.conformanceManifestSha256
+    )
+      throw new Error('CONFORMANCE_RESULT_BINDING_MISMATCH');
+    const conformanceText = (await readTrustedFile(
+      lifecycle?.conformanceBindingRoot ?? cwd,
+      task.conformanceManifestPath,
+      'ATTESTATION_CONFORMANCE_MANIFEST',
+    )).toString('utf8');
+    if (sha256(conformanceText) !== task.conformanceManifestSha256)
+      throw new Error('CONFORMANCE_RESULT_HASH_MISMATCH');
+  }
   if (bindings.prdSha256 !== specification.hashes.prd) throw new Error('WRONG_PRD_HASH');
   if (bindings.requirementManifestSha256 !== specification.hashes.requirements)
     throw new Error('WRONG_REQUIREMENT_MANIFEST_HASH');

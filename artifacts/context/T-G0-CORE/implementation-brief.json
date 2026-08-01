@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-CORE",
+  "specificationStatus": "SPECIFICATION_GAP",
+  "taskPurpose": [
+    {
+      "id": "FR-CORE-001",
+      "exactNormativeText": "Central versioned tool registry."
+    },
+    {
+      "id": "FR-CORE-002",
+      "exactNormativeText": "Exact execution pipeline from authorization to audit."
+    },
+    {
+      "id": "FR-CORE-003",
+      "exactNormativeText": "Provenance, event-time, quality, and evidence envelope."
+    },
+    {
+      "id": "FR-CORE-004",
+      "exactNormativeText": "Narrow actor/tool profiles."
+    },
+    {
+      "id": "FR-CORE-005",
+      "exactNormativeText": "Permanent prohibited-financial enforcement."
+    },
+    {
+      "id": "FR-CORE-006",
+      "exactNormativeText": "Exact cache and cross-mode single-flight."
+    },
+    {
+      "id": "FR-CORE-007",
+      "exactNormativeText": "Atomic quota reservation/commit/release."
+    },
+    {
+      "id": "FR-CORE-008",
+      "exactNormativeText": "License-policy enforcement."
+    }
+  ],
+  "expectedModules": [
+    "packages/domain/**",
+    "packages/shared-schemas/**"
+  ],
+  "expectedPublicInterfaces": [
+    "packages/shared-schemas/src/core.ts",
+    "docs/generated/core-surfaces.json"
+  ],
+  "inputOutputSemantics": [
+    "SPECIFICATION_GAP"
+  ],
+  "failureAndDegradedBehavior": [],
+  "pointInTimeSemantics": [
+    "Provenance, event-time, quality, and evidence envelope."
+  ],
+  "idempotencyExpectations": [
+    "Exact cache and cross-mode single-flight.",
+    "Atomic quota reservation/commit/release."
+  ],
+  "observabilityExpectations": [
+    "telemetry/core.*"
+  ],
+  "nonGoals": [
+    "No semantics beyond the exact normative excerpts.",
+    "No financial execution, signing, custody, transaction submission, or automatic capability activation."
+  ],
+  "specificationGaps": [
+    "Public input/output contract is not sufficiently defined by source prose."
+  ]
+}

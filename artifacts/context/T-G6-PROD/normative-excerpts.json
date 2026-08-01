@@ -1,0 +1,142 @@
+[
+  {
+    "id": "FR-PROD-007",
+    "sourceLine": 6512,
+    "startLine": 6510,
+    "endLine": 6514,
+    "exactText": "- **FR-TRACE-005 MUST:** Every production decision and alert stores the exact requirement/policy/feature/model/tool/provider/adapter/artifact versions and test/conformance release that authorized its behavior.\n- **FR-TRACE-006 MUST:** Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target.\n- **FR-PROD-007 MUST:** Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.\n- **FR-PROD-008 MUST:** Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.\n- **FR-PROD-009 MUST:** Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved."
+  },
+  {
+    "id": "FR-PROD-008",
+    "sourceLine": 6513,
+    "startLine": 6511,
+    "endLine": 6515,
+    "exactText": "- **FR-TRACE-006 MUST:** Release reports include document hash, manifest hash, migration/schema hashes, dependency/SBOM hash, conformance results, unresolved deviations, activation state, and rollback target.\n- **FR-PROD-007 MUST:** Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.\n- **FR-PROD-008 MUST:** Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.\n- **FR-PROD-009 MUST:** Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.\n- **FR-PROD-010 MUST:** Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish."
+  },
+  {
+    "id": "FR-PROD-009",
+    "sourceLine": 6514,
+    "startLine": 6512,
+    "endLine": 6516,
+    "exactText": "- **FR-PROD-007 MUST:** Code implementation, capability availability, shadow evaluation, statistical proof, active profile influence, operational readiness, and public authorization are independent persisted state dimensions.\n- **FR-PROD-008 MUST:** Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.\n- **FR-PROD-009 MUST:** Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.\n- **FR-PROD-010 MUST:** Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.\n- **FR-PROD-011 MUST:** Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe."
+  },
+  {
+    "id": "FR-PROD-010",
+    "sourceLine": 6515,
+    "startLine": 6513,
+    "endLine": 6517,
+    "exactText": "- **FR-PROD-008 MUST:** Deterministic collection/risk operation may activate only after capability, capacity, security, recovery, rights, and owner gates pass; model or alpha proof is not required for read-only collection.\n- **FR-PROD-009 MUST:** Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.\n- **FR-PROD-010 MUST:** Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.\n- **FR-PROD-011 MUST:** Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe.\n- **FR-PROD-012 MUST:** Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates."
+  },
+  {
+    "id": "FR-PROD-011",
+    "sourceLine": 6516,
+    "startLine": 6514,
+    "endLine": 6518,
+    "exactText": "- **FR-PROD-009 MUST:** Confirmed opportunity influence activates only for the exact profile, population, regime, execution/delay scenario, policy, module/artifact set, and statistical gate that was approved.\n- **FR-PROD-010 MUST:** Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.\n- **FR-PROD-011 MUST:** Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe.\n- **FR-PROD-012 MUST:** Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates.\n"
+  },
+  {
+    "id": "FR-PROD-012",
+    "sourceLine": 6517,
+    "startLine": 6515,
+    "endLine": 6519,
+    "exactText": "- **FR-PROD-010 MUST:** Public/workspace distribution requires both technical readiness and explicit rights/legal/claims/privacy/abuse authorization; technical readiness alone cannot publish.\n- **FR-PROD-011 MUST:** Any critical security, execution parity, leakage, rights, capacity, recovery, calibration, drift, adversarial, or public-claim failure automatically pauses the smallest affected scope and preserves deterministic risk monitoring where safe.\n- **FR-PROD-012 MUST:** Rollback restores a previously approved immutable configuration/artifact set, does not rewrite historical decisions, creates a new activation event, and triggers targeted re-evaluation of currently actionable candidates.\n\n## 39. Acceptance criteria"
+  },
+  {
+    "id": "AC-144",
+    "sourceLine": 6645,
+    "startLine": 6643,
+    "endLine": 6647,
+    "exactText": "- **AC-142:** Missing X/paid social capability produces `SOCIAL_UNAVAILABLE`, not a negative social feature.\n- **AC-143:** Unauthorized scraping/private endpoint adapters cannot be enabled by configuration or model request.\n- **AC-144:** MCP compatibility tests pass for the configured stable revision and each supported target client; draft revisions remain opt-in.\n\n### 39.14 Statistical integrity and production activation"
+  },
+  {
+    "id": "AC-150",
+    "sourceLine": 6649,
+    "startLine": 6647,
+    "endLine": 6651,
+    "exactText": "### 39.14 Statistical integrity and production activation\n\n- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified."
+  },
+  {
+    "id": "AC-151",
+    "sourceLine": 6650,
+    "startLine": 6648,
+    "endLine": 6652,
+    "exactText": "\n- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring."
+  },
+  {
+    "id": "AC-152",
+    "sourceLine": 6651,
+    "startLine": 6649,
+    "endLine": 6653,
+    "exactText": "- **AC-150:** Label permutation, feature-time shift, synthetic-null feature, and delayed-provider controls do not show unexplained material lift.\n- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift."
+  },
+  {
+    "id": "AC-153",
+    "sourceLine": 6652,
+    "startLine": 6650,
+    "endLine": 6654,
+    "exactText": "- **AC-151:** Cluster/block bootstrap intervals differ appropriately from naive independent-token intervals on correlated fixtures.\n- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift.\n"
+  },
+  {
+    "id": "AC-154",
+    "sourceLine": 6653,
+    "startLine": 6651,
+    "endLine": 6655,
+    "exactText": "- **AC-152:** A module can be deployed as `IMPLEMENTED` while remaining unavailable/shadow and cannot support alert claims until `AVAILABLE`; production promotion additionally requires `PROVEN` when specified.\n- **AC-153:** Best-effort free-tier degradation preserves data integrity, audit, duplicate prevention, and critical risk monitoring.\n- **AC-154:** Expected-net-utility ranking remains disabled before mature calibration; when enabled, it cannot override hard gates and automatically degrades on calibration/regime drift.\n\n"
+  },
+  {
+    "id": "AC-272",
+    "sourceLine": 6802,
+    "startLine": 6800,
+    "endLine": 6804,
+    "exactText": "- **AC-270:** Expired documentation/plan/rights/schema/deprecation verification moves the affected provider operation out of active decision use until a successful official-doc and live-contract verification refreshes it.\n- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient."
+  },
+  {
+    "id": "AC-273",
+    "sourceLine": 6803,
+    "startLine": 6801,
+    "endLine": 6805,
+    "exactText": "- **AC-271:** A provider response containing unexpected transaction payload, signing instruction, private-key field, executable code, or write capability is rejected, quarantined, audited, and excluded from evidence/model context.\n- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness."
+  },
+  {
+    "id": "AC-274",
+    "sourceLine": 6804,
+    "startLine": 6802,
+    "endLine": 6806,
+    "exactText": "- **AC-272:** Workspace/public activation remains blocked until OAuth, tenant isolation, data rights, redistribution/export, jurisdiction, disclosures, privacy, claims review, support, and abuse-response evidence all pass for the exact release.\n- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation."
+  },
+  {
+    "id": "AC-275",
+    "sourceLine": 6805,
+    "startLine": 6803,
+    "endLine": 6807,
+    "exactText": "- **AC-273:** A rights change immediately blocks newly prohibited cache, raw retention, export, redistribution, and model-use paths and identifies existing affected artifacts for quarantine/retention action.\n- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse."
+  },
+  {
+    "id": "AC-276",
+    "sourceLine": 6806,
+    "startLine": 6804,
+    "endLine": 6808,
+    "exactText": "- **AC-274:** High-impact admin actions fail without fresh phishing-resistant step-up, exact authorization, CSRF protection, idempotency key, reason, and audit; TOTP-only authentication is insufficient.\n- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate."
+  },
+  {
+    "id": "AC-277",
+    "sourceLine": 6807,
+    "startLine": 6805,
+    "endLine": 6809,
+    "exactText": "- **AC-275:** Cross-tenant row, artifact, cache, queue, session, quota, log, metric, signed-URL, and model-context fixtures prove isolation before workspace/public readiness.\n- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts."
+  },
+  {
+    "id": "AC-278",
+    "sourceLine": 6808,
+    "startLine": 6806,
+    "endLine": 6810,
+    "exactText": "- **AC-276:** Marketing/UI/API/export text containing guaranteed-profit, risk-free, universal-recall, calibrated-probability-without-calibration, or unsupported performance language fails content-policy validation.\n- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n"
+  },
+  {
+    "id": "AC-279",
+    "sourceLine": 6809,
+    "startLine": 6807,
+    "endLine": 6811,
+    "exactText": "- **AC-277:** Public output exposes evidence, timestamps, execution assumptions, limitations, and disclaimer but redacts protected detector thresholds and sensitive entity details capable of enabling evasion or abuse.\n- **AC-278:** A failed critical security, parity, leakage, rights, capacity, recovery, calibration, adversarial, or claims gate pauses only the smallest affected scope, records the reason, and does not auto-reactivate.\n- **AC-279:** Rollback restores a previously approved immutable configuration/artifact set, creates a new activation event, preserves all historical decisions, and re-evaluates currently actionable candidates before resuming alerts.\n\n---"
+  }
+]
