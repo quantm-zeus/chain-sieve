@@ -26,6 +26,7 @@ import {
 import { readLifecycleBinding, validateVerificationBaseline } from '../task-runner/authority.js';
 import { validateLaunchReceipt } from '../agent/lib/runtime.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
+import { readTrustedFile } from '../agent/lib/trusted-path.js';
 
 export interface CommandEvidence { command: string; exitCode: number; output: string; outputSha256: string }
 export const deriveEvidenceVerdict = (requiredCommands: string[], evidence: CommandEvidence[]): 'PASS' => { for (const command of requiredCommands) { const item = evidence.find((candidate) => candidate.command === command); if (!item) throw new Error(`MISSING_COMMAND_EVIDENCE:${command}`); if (item.exitCode !== 0) throw new Error(`COMMAND_FAILED:${command}`); if (sha256(item.output) !== item.outputSha256) throw new Error(`FORGED_COMMAND_EVIDENCE:${command}`); if (/^(?:PASS|ok|true)$/i.test(item.output.trim())) throw new Error(`UNSUBSTANTIATED_COMMAND_EVIDENCE:${command}`); } return 'PASS'; };
@@ -96,7 +97,7 @@ export const verifyTask = async (
   const lifecycle = await readLifecycleBinding(trustedRoot, target);
   if (!lifecycle) throw new Error('LIFECYCLE_BINDING_MISSING');
   const baseline = await validateVerificationBaseline(trustedRoot, target);
-  const contractText = await readFile(join(lifecycle.bindingRoot, lifecycle.contractPath), 'utf8');
+  const contractText = (await readTrustedFile(lifecycle.bindingRoot, lifecycle.contractPath, 'VERIFIER_TASK_CONTRACT')).toString('utf8');
   if (sha256(contractText) !== lifecycle.contractSha256 || lifecycle.contractSha256 !== baseline.taskContractSha256)
     throw new Error('TRUSTED_TASK_CONTRACT_BINDING_MISMATCH');
   const boundTask = TaskContractSchema.parse(JSON.parse(contractText));
@@ -115,7 +116,7 @@ export const verifyTask = async (
         }
       : boundTask;
   if (task.id !== taskId || task.cluster !== lifecycle.clusterId) throw new Error('TRUSTED_TASK_CONTRACT_ID_MISMATCH');
-  const contextText = await readFile(join(lifecycle.bindingRoot, lifecycle.contextManifestPath), 'utf8');
+  const contextText = (await readTrustedFile(lifecycle.bindingRoot, lifecycle.contextManifestPath, 'VERIFIER_CONTEXT_MANIFEST')).toString('utf8');
   if (
     sha256(contextText) !== lifecycle.contextManifestSha256 ||
     lifecycle.contextManifestSha256 !== baseline.contextManifestSha256
@@ -137,10 +138,11 @@ export const verifyTask = async (
       task.conformanceManifestSha256 !== baseline.conformanceManifestSha256
     )
       throw new Error('TRUSTED_TASK_CONFORMANCE_BINDING_MISMATCH');
-    const conformanceText = await readFile(
-      join(lifecycle.conformanceBindingRoot ?? lifecycle.bindingRoot, task.conformanceManifestPath!),
-      'utf8',
-    );
+    const conformanceText = (await readTrustedFile(
+      lifecycle.conformanceBindingRoot ?? lifecycle.bindingRoot,
+      task.conformanceManifestPath!,
+      'VERIFIER_CONFORMANCE_MANIFEST',
+    )).toString('utf8');
     if (sha256(conformanceText) !== task.conformanceManifestSha256)
       throw new Error('TRUSTED_TASK_CONFORMANCE_HASH_MISMATCH');
   }
@@ -172,7 +174,7 @@ export const verifyTask = async (
   const reviewTree = git(['rev-parse', 'HEAD^{tree}'], targetWorktree);
   if (!target.selfReviewEvidence) throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
   const reviewPath = join(runtimeRoot(trustedRoot), 'reviews', taskId, `${commit}.review.json`);
-  const reviewText = await readFile(reviewPath, 'utf8');
+  const reviewText = (await readTrustedFile(runtimeRoot(trustedRoot), reviewPath, 'TASK_SELF_REVIEW')).toString('utf8');
   const review = TaskReviewSchema.parse(JSON.parse(reviewText));
   if (
     !target.leaseId ||
@@ -239,7 +241,7 @@ export const verifyTask = async (
     for (const path of task.requiredTests) {
       if (!path.startsWith('tests/') || path.includes('..')) throw new Error(`UNSAFE_TEST_PATH:${path}`);
       await access(join(targetWorktree, path));
-      const text = await readFile(join(targetWorktree, path), 'utf8');
+      const text = (await readTrustedFile(targetWorktree, path, 'TASK_TEST_FILE')).toString('utf8');
       const violations = placeholderViolations(path, text);
       if (violations.length > 0) throw new Error(`INVALID_TASK_TEST:${violations.join(',')}`);
     }

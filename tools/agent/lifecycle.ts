@@ -8,6 +8,7 @@ import {
   type EvidenceReference, type TaskLifecycleState,
 } from '../task-runner/state.js';
 import { loadTasks } from '../task-verifier/verify.js';
+import { readTrustedFile } from './lib/trusted-path.js';
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
 const option = (name: string): string | undefined => {
@@ -28,7 +29,8 @@ const writeImmutable = async (path: string, content: string): Promise<void> => {
 const receiptEvidence = async (root: string, taskId: string, kind: 'renewals' | 'recoveries', requestSha256: string, value: Record<string, unknown>): Promise<{ evidence: EvidenceReference; document: Record<string, unknown> }> => {
   const path = join(runtimeRoot(root), kind, taskId, `${requestSha256}.json`);
   let content = `${JSON.stringify(value, null, 2)}\n`;
-  try { content = await readFile(path, 'utf8'); } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
+  try { content = (await readTrustedFile(runtimeRoot(root), path, 'RECOVERY_RECEIPT')).toString('utf8'); }
+  catch (error: unknown) { if (!(error instanceof Error) || !error.message.endsWith(':ENOENT')) throw error; }
   await writeImmutable(path, content);
   return { evidence: { path: relative(runtimeRoot(root), path), sha256: sha256(content), status: 'CURRENT' }, document: JSON.parse(content) as Record<string, unknown> };
 };

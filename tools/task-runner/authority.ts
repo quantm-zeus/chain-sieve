@@ -4,6 +4,7 @@ import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { TaskContractSchema, type TaskContract } from '@ciag/shared-schemas';
 import type { EvidenceReference, TaskState } from './state.js';
+import { canonicalTrustedDirectory, readTrustedFile } from '../agent/lib/trusted-path.js';
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
 const git = (cwd: string, args: string[]): string => {
@@ -90,10 +91,10 @@ export const validateRecoveryWorkspace = async (options: {
     throw new Error('RECOVERY_BRANCH_MISMATCH');
   if (git(worktree, ['rev-parse', 'HEAD']) !== options.expectedBaseCommit)
     throw new Error('RECOVERY_BASE_MISMATCH');
-  const contractText = await readFile(join(worktree, options.contractPath), 'utf8');
+  const contractText = (await readTrustedFile(worktree, options.contractPath, 'RECOVERY_CONTRACT')).toString('utf8');
   if (sha256(contractText) !== options.expectedContractSha256)
     throw new Error('RECOVERY_LEGACY_CONTRACT_DRIFT');
-  const contextManifestText = await readFile(join(worktree, options.contextManifestPath), 'utf8');
+  const contextManifestText = (await readTrustedFile(worktree, options.contextManifestPath, 'RECOVERY_CONTEXT_MANIFEST')).toString('utf8');
   if (sha256(contextManifestText) !== options.expectedContextManifestSha256)
     throw new Error('RECOVERY_LEGACY_CONTEXT_DRIFT');
   const hashes = await computeWorkingCopyHashes(worktree);
@@ -104,7 +105,8 @@ export const validateRecoveryWorkspace = async (options: {
   return { contractText, contextManifestText };
 };
 
-const fileHash = async (root: string, path: string): Promise<string> => sha256(await readFile(join(root, path)));
+const fileHash = async (root: string, path: string): Promise<string> =>
+  sha256(await readTrustedFile(root, path, 'CONTROL_PLANE_AUTHORITY_FILE'));
 
 export const persistLifecycleAuthority = async (options: {
   trustedRoot: string;
@@ -145,7 +147,8 @@ export const persistLifecycleAuthority = async (options: {
   };
   const bindingText = `${JSON.stringify(bindingDocument, null, 2)}\n`;
   const bindingSha256 = sha256(bindingText);
-  const runtime = join(commonRoot(trustedRoot), 'ciag-runtime');
+  const common = await canonicalTrustedDirectory(commonRoot(trustedRoot), 'AUTHORITY_GIT_COMMON_DIRECTORY');
+  const runtime = join(common, 'ciag-runtime');
   const bindingPath = join(runtime, 'lifecycle-bindings', task.id, `${bindingSha256}.json`);
   await immutableWrite(bindingPath, bindingText);
   const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}`;
@@ -185,8 +188,9 @@ export const readLifecycleBinding = async (
 ): Promise<LifecycleBindingDocument | undefined> => {
   const evidence = state.lifecycleBinding ?? (includeCompleted ? state.completedLifecycleBinding : undefined);
   if (!evidence) return undefined;
-  const path = join(commonRoot(root), 'ciag-runtime', evidence.path);
-  const text = await readFile(path, 'utf8');
+  const common = await canonicalTrustedDirectory(commonRoot(root), 'LIFECYCLE_GIT_COMMON_DIRECTORY');
+  const runtime = join(common, 'ciag-runtime');
+  const text = (await readTrustedFile(runtime, evidence.path, 'LIFECYCLE_BINDING')).toString('utf8');
   if (sha256(text) !== evidence.sha256) throw new Error('LIFECYCLE_BINDING_HASH_MISMATCH');
   return JSON.parse(text) as LifecycleBindingDocument;
 };
@@ -200,7 +204,7 @@ export const readBoundTaskContract = async (
   if (!binding) return undefined;
   let text: string;
   try {
-    text = await readFile(join(binding.bindingRoot, binding.contractPath), 'utf8');
+    text = (await readTrustedFile(binding.bindingRoot, binding.contractPath, 'BOUND_TASK_CONTRACT')).toString('utf8');
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || !state.commit) throw error;
     const result = spawnSync('git', ['show', `${state.commit}:${binding.contractPath}`], {
@@ -224,8 +228,9 @@ export const readVerificationBaseline = async (
 ): Promise<VerificationBaselineDocument | undefined> => {
   const evidence = state.verificationBaseline ?? (includeCompleted ? state.completedVerificationBaseline : undefined);
   if (!evidence) return undefined;
-  const path = join(commonRoot(root), 'ciag-runtime', evidence.path);
-  const text = await readFile(path, 'utf8');
+  const common = await canonicalTrustedDirectory(commonRoot(root), 'BASELINE_GIT_COMMON_DIRECTORY');
+  const runtime = join(common, 'ciag-runtime');
+  const text = (await readTrustedFile(runtime, evidence.path, 'VERIFICATION_BASELINE')).toString('utf8');
   if (sha256(text) !== evidence.sha256) throw new Error('VERIFICATION_BASELINE_HASH_MISMATCH');
   return JSON.parse(text) as VerificationBaselineDocument;
 };

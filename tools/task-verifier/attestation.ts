@@ -7,6 +7,7 @@ import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.j
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
 import { readLifecycleBinding } from '../task-runner/authority.js';
+import { readTrustedFile } from '../agent/lib/trusted-path.js';
 
 export const TASK_VERIFIER_VERSION = '2.0.0';
 export const VERIFICATION_POLICY_VERSION = 'harness-task-proof-v2';
@@ -140,7 +141,7 @@ export const validateCommandEvidenceArtifact = async (item: CommandEvidence, cwd
   if (absolute !== root && !absolute.startsWith(`${root}/`)) throw new Error(`EVIDENCE_PATH_ESCAPE:${item.command}`);
   let output: string;
   try {
-    output = await readFile(absolute, 'utf8');
+    output = (await readTrustedFile(root, absolute, 'COMMAND_EVIDENCE_ARTIFACT')).toString('utf8');
   } catch {
     throw new Error(`MISSING_REQUIRED_TEST_ARTIFACT:${item.command}`);
   }
@@ -166,7 +167,7 @@ const validateSelfReview = async (result: TaskResult, cwd: string, state?: TaskS
   if (absolute !== root && !absolute.startsWith(`${root}/`)) throw new Error('SELF_REVIEW_PATH_ESCAPE');
   let text: string;
   try {
-    text = await readFile(absolute, 'utf8');
+    text = (await readTrustedFile(root, absolute, 'SELF_REVIEW_EVIDENCE')).toString('utf8');
   } catch {
     throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
   }
@@ -242,10 +243,11 @@ export const validateTaskAttestation = async (
   const lifecycle = options.state ? await readLifecycleBinding(cwd, options.state, true) : undefined;
   let contractText: string;
   try {
-    contractText = await readFile(
-      lifecycle ? join(lifecycle.bindingRoot, lifecycle.contractPath) : join(cwd, contractPath(task)),
-      'utf8',
-    );
+    contractText = (await readTrustedFile(
+      lifecycle?.bindingRoot ?? cwd,
+      lifecycle?.contractPath ?? contractPath(task),
+      'ATTESTATION_TASK_CONTRACT',
+    )).toString('utf8');
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || !lifecycle) throw error;
     const archived = spawnSync('git', ['show', `${bindings.headCommitSha}:${lifecycle.contractPath}`], {
@@ -262,10 +264,11 @@ export const validateTaskAttestation = async (
       bindings.conformanceManifestSha256 !== task.conformanceManifestSha256
     )
       throw new Error('CONFORMANCE_RESULT_BINDING_MISMATCH');
-    const conformanceText = await readFile(
-      join(lifecycle?.conformanceBindingRoot ?? cwd, task.conformanceManifestPath),
-      'utf8',
-    );
+    const conformanceText = (await readTrustedFile(
+      lifecycle?.conformanceBindingRoot ?? cwd,
+      task.conformanceManifestPath,
+      'ATTESTATION_CONFORMANCE_MANIFEST',
+    )).toString('utf8');
     if (sha256(conformanceText) !== task.conformanceManifestSha256)
       throw new Error('CONFORMANCE_RESULT_HASH_MISMATCH');
   }

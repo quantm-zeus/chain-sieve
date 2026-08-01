@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import type {
   CommandRunner,
@@ -8,6 +8,11 @@ import type {
   ProjectInventory,
 } from './types.js';
 import { ZCodeError } from './errors.js';
+import {
+  canonicalTrustedDirectory,
+  listTrustedDirectory,
+  readTrustedFile,
+} from './trusted-path.js';
 
 export const sha256 = (value: string | Buffer): string =>
   createHash('sha256').update(value).digest('hex');
@@ -272,18 +277,22 @@ export const validateLaunchReceipt = async (
     requireProviderNeutral?: boolean;
   },
 ): Promise<void> => {
-  const runtimes = [
-    agentRuntimeRoot(root, runner),
-    legacyZCodeRuntimeRoot(root, runner),
-  ];
+  const common = await canonicalTrustedDirectory(
+    gitCommonDirectory(root, runner),
+    'GIT_COMMON_DIRECTORY',
+  );
+  const runtimes = [join(common, 'ciag-runtime', 'agent'), join(common, 'ciag-runtime', 'zcode')];
   const candidates: Array<{ raw: string; runtime: string }> = [];
   for (const runtime of runtimes) {
     const directory = join(runtime, 'launch-receipts', binding.taskId);
-    for (const file of await readdir(directory).catch(() => [])) {
-      if (!file.endsWith('.json')) continue;
+    const discovered = await listTrustedDirectory(common, directory, 'LAUNCH_RECEIPT_ROOT');
+    for (const entry of discovered.entries) {
+      if (!entry.name.endsWith('.json')) continue;
+      if (!entry.isFile())
+        throw new ZCodeError('TRUSTED_PATH_CONTAINMENT', `LAUNCH_RECEIPT_CANDIDATE:${entry.name}`);
       candidates.push({
-        raw: await readFile(join(directory, file), 'utf8'),
-        runtime,
+        raw: (await readTrustedFile(discovered.canonicalDirectory!, entry.name, 'LAUNCH_RECEIPT_CANDIDATE')).toString('utf8'),
+        runtime: await canonicalTrustedDirectory(runtime, 'AGENT_RUNTIME_ROOT'),
       });
     }
   }
@@ -375,11 +384,15 @@ export const validateLaunchReceipt = async (
   if (!receipt.goalPath || !receipt.goalSha256)
     throw new ZCodeError('LAUNCH_RECEIPT_GOAL_BINDING_MISSING');
   const expectedGoalRoot = join(selected.runtime, 'goals', binding.taskId);
-  const canonicalGoalPath = await realpath(receipt.goalPath).catch(() => resolve(receipt.goalPath!));
-  const canonicalGoalRoot = await realpath(expectedGoalRoot).catch(() => resolve(expectedGoalRoot));
-  if (!canonicalGoalPath.startsWith(`${canonicalGoalRoot}/`))
-    throw new ZCodeError('LAUNCH_RECEIPT_GOAL_PATH_INVALID');
-  const goal = await readFile(receipt.goalPath);
+  let goal: Buffer;
+  try {
+    goal = await readTrustedFile(expectedGoalRoot, receipt.goalPath, 'LAUNCH_RECEIPT_GOAL');
+  } catch (error) {
+    throw new ZCodeError(
+      'LAUNCH_RECEIPT_GOAL_PATH_INVALID',
+      error instanceof Error ? error.message : String(error),
+    );
+  }
   if (sha256(goal) !== receipt.goalSha256)
     throw new ZCodeError('LAUNCH_RECEIPT_GOAL_HASH_MISMATCH');
   if (receipt.schemaVersion === '2.0.0') {

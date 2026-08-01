@@ -1,8 +1,8 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
 import { mkdtempSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AntigravityProvider } from '../../tools/agent/providers/antigravity.js';
 import { ZCodeProvider } from '../../tools/agent/providers/zcode.js';
@@ -189,5 +189,75 @@ describe('provider-neutral agent adapters', () => {
     runner.responses.set('git:rev-parse:--git-common-dir', { status: 0, stdout: '.git\n', stderr: '' });
     await expect(validateLaunchReceipt(root, runner, { taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value.leaseId, fencingVersion: value.fencingVersion, contextManifestSha256: value.contextManifestSha256 })).resolves.toBeUndefined();
     expect(await readFile(receiptPath, 'utf8')).toContain('T-G0-CORE');
+  });
+
+  it.each([
+    ['provider-neutral v2', 'agent', '2.0.0'],
+    ['legacy ZCode v1', 'zcode', '1.0.0'],
+  ] as const)('rejects an escaped %s receipt task directory', async (_name, runtimeName, schemaVersion) => {
+    const root = mkdtempSync(join(tmpdir(), `agent-${runtimeName}-receipt-root-`));
+    const outside = mkdtempSync(join(tmpdir(), `agent-${runtimeName}-outside-`));
+    const receiptParent = join(root, `.git/ciag-runtime/${runtimeName}/launch-receipts`);
+    await mkdir(receiptParent, { recursive: true });
+    await writeFile(join(outside, 'escaped.json'), `${JSON.stringify({ schemaVersion })}\n`);
+    await symlink(outside, join(receiptParent, 'T-G0-CORE'));
+    const runner = new Runner();
+    runner.responses.set('git:rev-parse:--git-common-dir', { status: 0, stdout: '.git\n', stderr: '' });
+    const value = binding();
+    await expect(validateLaunchReceipt(root, runner, {
+      taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value.leaseId,
+      fencingVersion: value.fencingVersion, contextManifestSha256: value.contextManifestSha256,
+    })).rejects.toThrow('TRUSTED_PATH_CONTAINMENT:LAUNCH_RECEIPT_ROOT:SYMLINK_DIRECTORY');
+  });
+
+  it.each([
+    ['relative receipt symlink', 'relative'],
+    ['absolute receipt symlink', 'absolute'],
+    ['nested receipt symlink chain', 'chain'],
+  ])('rejects a %s without following it', async (_name, mode) => {
+    const root = mkdtempSync(join(tmpdir(), 'agent-receipt-link-'));
+    const outside = mkdtempSync(join(tmpdir(), 'agent-receipt-link-outside-'));
+    const directory = join(root, '.git/ciag-runtime/agent/launch-receipts/T-G0-CORE');
+    await mkdir(directory, { recursive: true });
+    const outsideReceipt = join(outside, 'outside.json');
+    await writeFile(outsideReceipt, '{}\n');
+    if (mode === 'relative') await symlink(relative(directory, outsideReceipt), join(directory, 'relative.json'));
+    if (mode === 'absolute') await symlink(outsideReceipt, join(directory, 'absolute.json'));
+    if (mode === 'chain') {
+      await symlink(relative(directory, outsideReceipt), join(directory, 'second.json'));
+      await symlink('second.json', join(directory, 'first.json'));
+    }
+    const runner = new Runner();
+    runner.responses.set('git:rev-parse:--git-common-dir', { status: 0, stdout: '.git\n', stderr: '' });
+    const value = binding();
+    await expect(validateLaunchReceipt(root, runner, {
+      taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value.leaseId,
+      fencingVersion: value.fencingVersion, contextManifestSha256: value.contextManifestSha256,
+    })).rejects.toThrow('TRUSTED_PATH_CONTAINMENT:LAUNCH_RECEIPT_ROOT:SYMLINK_ENTRY');
+  });
+
+  it.each([
+    ['ordinary outside path', (root: string) => join(root, '.git/ciag-runtime/goal-outside/goal.md')],
+    ['common lexical prefix outside the root', (root: string) => join(root, '.git/ciag-runtime/zcode/goals/T-G0-CORE-escape/goal.md')],
+  ])('rejects a goal-path escape through %s', async (_name, escapedGoal) => {
+    const root = mkdtempSync(join(tmpdir(), 'agent-goal-escape-'));
+    const value = binding();
+    const goalPath = escapedGoal(root);
+    const goal = 'escaped goal\n';
+    const receiptDirectory = join(root, '.git/ciag-runtime/zcode/launch-receipts/T-G0-CORE');
+    await mkdir(receiptDirectory, { recursive: true });
+    await mkdir(join(goalPath, '..'), { recursive: true });
+    await writeFile(goalPath, goal);
+    await writeFile(join(receiptDirectory, 'escaped.json'), `${JSON.stringify({
+      schemaVersion: '1.0.0', taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION',
+      leaseId: value.leaseId, fencingVersion: value.fencingVersion,
+      contextManifestSha256: value.contextManifestSha256, goalPath, goalSha256: sha256(goal),
+    })}\n`);
+    const runner = new Runner();
+    runner.responses.set('git:rev-parse:--git-common-dir', { status: 0, stdout: '.git\n', stderr: '' });
+    await expect(validateLaunchReceipt(root, runner, {
+      taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value.leaseId,
+      fencingVersion: value.fencingVersion, contextManifestSha256: value.contextManifestSha256,
+    })).rejects.toThrow('LAUNCH_RECEIPT_GOAL_PATH_INVALID:TRUSTED_PATH_CONTAINMENT');
   });
 });

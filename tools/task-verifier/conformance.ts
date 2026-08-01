@@ -4,6 +4,7 @@ import { join, relative } from 'node:path';
 import ts from 'typescript';
 import type { TaskContract } from '@ciag/shared-schemas';
 import { sha256 } from '../prd-compiler/compiler.js';
+import { readTrustedFile } from '../agent/lib/trusted-path.js';
 
 interface ConformanceManifest {
   schemaVersion: '1.0.0';
@@ -43,7 +44,7 @@ export const readConformanceManifest = async (
   cwd = process.cwd(),
 ): Promise<ConformanceManifest | undefined> => {
   if (!task.conformanceManifestPath || !task.conformanceManifestSha256) return undefined;
-  const text = await readFile(join(cwd, task.conformanceManifestPath), 'utf8');
+  const text = (await readTrustedFile(cwd, task.conformanceManifestPath, 'CONFORMANCE_MANIFEST')).toString('utf8');
   if (sha256(text) !== task.conformanceManifestSha256)
     throw new Error(`CONFORMANCE_MANIFEST_HASH_MISMATCH:${task.id}`);
   const manifest = JSON.parse(text) as ConformanceManifest;
