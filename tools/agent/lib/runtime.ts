@@ -217,7 +217,7 @@ export const persistGoalAndPayload = async (
   payloadFactory: (binding: PayloadBinding) => string = generatePayload,
 ): Promise<{ binding: PayloadBinding; payload: string }> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const launchReceiptId = `${provider}-${sha256(`${binding.task.contract.id}:${binding.leaseId}:${binding.fencingVersion}:${binding.controlPlaneCommit}`).slice(0, 32)}`;
+  const launchReceiptId = `${provider}-${sha256(`${binding.task.contract.id}:${binding.leaseId}:${binding.fencingVersion}:${binding.controlPlaneCommit}:${sha256(JSON.stringify(binding.failures))}`).slice(0, 32)}`;
   const receiptBound = { ...binding, launchReceiptId };
   const initialGoal = generateGoal(receiptBound);
   const goalSha256 = sha256(initialGoal);

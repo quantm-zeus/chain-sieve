@@ -826,6 +826,29 @@ describe('payload, receipt, desktop, GitHub, CI, and no-mutation adapters', () =
     ).resolves.toBeUndefined();
   });
 
+  it('uses a distinct immutable receipt for a correction payload', async () => {
+    const inventory = fixture();
+    const root = mkdtempSync(join(tmpdir(), 'zcode-correction-receipt-'));
+    mkdirSync(join(root, '.git'), { recursive: true });
+    const runner = new FakeRunner();
+    runner.responses.push(
+      { status: 0, stdout: '.git\n', stderr: '' },
+      { status: 0, stdout: '.git\n', stderr: '' },
+    );
+    const value = binding(inventory, inventory.tasks[0]!);
+    const initial = await persistGoalAndPayload(root, runner, value);
+    const correction = await persistGoalAndPayload(root, runner, {
+      ...value,
+      failures: ['TASK_LINE_BUDGET_EXCEEDED'],
+    });
+    expect(correction.binding.launchReceiptId).not.toBe(
+      initial.binding.launchReceiptId,
+    );
+    expect(readFileSync(correction.binding.goalPath, 'utf8')).toContain(
+      'TASK_LINE_BUDGET_EXCEEDED',
+    );
+  });
+
   it('rejects forged or stale launch evidence', async () => {
     const inventory = fixture();
     const root = mkdtempSync(join(tmpdir(), 'zcode-forged-'));
