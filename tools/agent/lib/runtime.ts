@@ -41,6 +41,72 @@ export const legacyZCodeRuntimeRoot = (
 /** @deprecated Read-only compatibility name. New evidence is stored under agent/. */
 export const zcodeRuntimeRoot = agentRuntimeRoot;
 
+export interface LaunchReceiptCandidate {
+  receiptId?: string;
+  raw: string;
+  sha256: string;
+  runtime: string;
+  value: Record<string, unknown>;
+}
+
+export const listLaunchReceiptCandidates = async (
+  root: string,
+  runner: CommandRunner,
+  taskId: string,
+): Promise<LaunchReceiptCandidate[]> => {
+  const common = await canonicalTrustedDirectory(
+    gitCommonDirectory(root, runner),
+    'GIT_COMMON_DIRECTORY',
+  );
+  const runtimes = [
+    join(common, 'ciag-runtime', 'agent'),
+    join(common, 'ciag-runtime', 'zcode'),
+  ];
+  const candidates: LaunchReceiptCandidate[] = [];
+  for (const runtime of runtimes) {
+    const directory = join(runtime, 'launch-receipts', taskId);
+    const discovered = await listTrustedDirectory(
+      common,
+      directory,
+      'LAUNCH_RECEIPT_ROOT',
+    );
+    for (const entry of discovered.entries) {
+      if (!entry.name.endsWith('.json')) continue;
+      if (!entry.isFile())
+        throw new ZCodeError(
+          'TRUSTED_PATH_CONTAINMENT',
+          `LAUNCH_RECEIPT_CANDIDATE:${entry.name}`,
+        );
+      const raw = (
+        await readTrustedFile(
+          discovered.canonicalDirectory!,
+          entry.name,
+          'LAUNCH_RECEIPT_CANDIDATE',
+        )
+      ).toString('utf8');
+      let value: Record<string, unknown>;
+      try {
+        value = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        value = {};
+      }
+      candidates.push({
+        ...(typeof value.receiptId === 'string'
+          ? { receiptId: value.receiptId }
+          : {}),
+        raw,
+        sha256: sha256(raw),
+        runtime: await canonicalTrustedDirectory(
+          runtime,
+          'AGENT_RUNTIME_ROOT',
+        ),
+        value,
+      });
+    }
+  }
+  return candidates;
+};
+
 const writeImmutable = async (path: string, content: string): Promise<void> => {
   await mkdir(dirname(path), { recursive: true });
   try {
@@ -277,45 +343,18 @@ export const validateLaunchReceipt = async (
     requireProviderNeutral?: boolean;
   },
 ): Promise<void> => {
-  const common = await canonicalTrustedDirectory(
-    gitCommonDirectory(root, runner),
-    'GIT_COMMON_DIRECTORY',
+  const candidates = await listLaunchReceiptCandidates(
+    root,
+    runner,
+    binding.taskId,
   );
-  const runtimes = [join(common, 'ciag-runtime', 'agent'), join(common, 'ciag-runtime', 'zcode')];
-  const candidates: Array<{ raw: string; runtime: string }> = [];
-  for (const runtime of runtimes) {
-    const directory = join(runtime, 'launch-receipts', binding.taskId);
-    const discovered = await listTrustedDirectory(common, directory, 'LAUNCH_RECEIPT_ROOT');
-    for (const entry of discovered.entries) {
-      if (!entry.name.endsWith('.json')) continue;
-      if (!entry.isFile())
-        throw new ZCodeError('TRUSTED_PATH_CONTAINMENT', `LAUNCH_RECEIPT_CANDIDATE:${entry.name}`);
-      candidates.push({
-        raw: (await readTrustedFile(discovered.canonicalDirectory!, entry.name, 'LAUNCH_RECEIPT_CANDIDATE')).toString('utf8'),
-        runtime: await canonicalTrustedDirectory(runtime, 'AGENT_RUNTIME_ROOT'),
-      });
-    }
-  }
-  const selected = candidates.find(({ raw }) => {
-    try {
-      const value = JSON.parse(raw) as {
-        taskId?: string;
-        clusterId?: string;
-        leaseId?: string;
-        fencingVersion?: number;
-        receiptId?: string;
-      };
-      return (
-        value.taskId === binding.taskId &&
-        value.clusterId === binding.clusterId &&
-        value.leaseId === binding.leaseId &&
-        value.fencingVersion === binding.fencingVersion &&
-        (!binding.receiptId || value.receiptId === binding.receiptId)
-      );
-    } catch {
-      return false;
-    }
-  });
+  const selected = candidates.find(({ value }) =>
+    value.taskId === binding.taskId &&
+    value.clusterId === binding.clusterId &&
+    value.leaseId === binding.leaseId &&
+    value.fencingVersion === binding.fencingVersion &&
+    (!binding.receiptId || value.receiptId === binding.receiptId),
+  );
   if (!selected)
     throw new ZCodeError('LAUNCH_RECEIPT_MISSING', binding.taskId);
   const receipt = JSON.parse(selected.raw) as {

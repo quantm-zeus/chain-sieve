@@ -69,6 +69,42 @@ export const assertTrustedTargetPaths = (changed: string[]): void => {
       throw new Error(`UNTRUSTED_CONTROL_PLANE_CHANGE:${path}`);
 };
 
+export const readBoundTaskReview = async (
+  trustedRoot: string,
+  evidence: EvidenceReference,
+  binding: {
+    taskId: string;
+    baseCommit: string;
+    commit: string;
+    tree: string;
+  },
+): Promise<{
+  review: ReturnType<typeof TaskReviewSchema.parse>;
+  text: string;
+}> => {
+  const reviewText = (
+    await readTrustedFile(
+      runtimeRoot(trustedRoot),
+      evidence.path,
+      'TASK_SELF_REVIEW',
+    )
+  ).toString('utf8');
+  if (sha256(reviewText) !== evidence.sha256)
+    throw new Error('SELF_REVIEW_HASH_MISMATCH');
+  const review = TaskReviewSchema.parse(JSON.parse(reviewText));
+  if (
+    evidence.status !== 'CURRENT' ||
+    evidence.commit !== binding.commit ||
+    evidence.tree !== binding.tree ||
+    review.taskId !== binding.taskId ||
+    review.reviewedBaseCommit !== binding.baseCommit ||
+    review.reviewedCommit !== binding.commit ||
+    review.reviewedTree !== binding.tree
+  )
+    throw new Error('SELF_REVIEW_BINDING_MISMATCH');
+  return { review, text: reviewText };
+};
+
 const worktreeForBranch = (root: string, branch: string): string => {
   const block = git(['worktree', 'list', '--porcelain'], root)
     .split('\n\n')
@@ -96,7 +132,9 @@ export const verifyTask = async (
   const targetWorktree = authorizedWorktree;
   const lifecycle = await readLifecycleBinding(trustedRoot, target);
   if (!lifecycle) throw new Error('LIFECYCLE_BINDING_MISSING');
-  const baseline = await validateVerificationBaseline(trustedRoot, target);
+  const baseline = await validateVerificationBaseline(trustedRoot, target, {
+    allowTrustedControlPlaneAdvance: true,
+  });
   const contractText = (await readTrustedFile(lifecycle.bindingRoot, lifecycle.contractPath, 'VERIFIER_TASK_CONTRACT')).toString('utf8');
   if (sha256(contractText) !== lifecycle.contractSha256 || lifecycle.contractSha256 !== baseline.taskContractSha256)
     throw new Error('TRUSTED_TASK_CONTRACT_BINDING_MISMATCH');
@@ -173,9 +211,11 @@ export const verifyTask = async (
   const reviewCommit = commit;
   const reviewTree = git(['rev-parse', 'HEAD^{tree}'], targetWorktree);
   if (!target.selfReviewEvidence) throw new Error('SELF_REVIEW_EVIDENCE_MISSING');
-  const reviewPath = join(runtimeRoot(trustedRoot), 'reviews', taskId, `${commit}.review.json`);
-  const reviewText = (await readTrustedFile(runtimeRoot(trustedRoot), reviewPath, 'TASK_SELF_REVIEW')).toString('utf8');
-  const review = TaskReviewSchema.parse(JSON.parse(reviewText));
+  const { review, text: reviewText } = await readBoundTaskReview(
+    trustedRoot,
+    target.selfReviewEvidence,
+    { taskId, baseCommit: base, commit: reviewCommit, tree: reviewTree },
+  );
   if (
     !target.leaseId ||
     !target.holder ||
@@ -336,7 +376,7 @@ export const verifyTask = async (
       dependencyInterfaceHashes: task.interfaceHashes, verifierVersion: baseline.verifierVersion,
       verificationPolicyVersion: baseline.verificationPolicyVersion, leaseId: target.leaseId,
       leaseFencingVersion: target.leaseVersion, verificationTimestamp: new Date().toISOString(),
-      selfReviewPath: `reviews/${taskId}/${commit}.review.json`, selfReviewSha256: sha256(reviewText),
+      selfReviewPath: target.selfReviewEvidence.path, selfReviewSha256: sha256(reviewText),
       conformanceManifestPath: task.conformanceManifestPath, conformanceManifestSha256: task.conformanceManifestSha256,
       lifecycleBindingSha256: target.lifecycleBinding.sha256, verificationBaselineSha256: target.verificationBaseline.sha256,
       launchReceiptId: review.launchReceiptId, launchReceiptSha256: review.launchReceiptSha256,

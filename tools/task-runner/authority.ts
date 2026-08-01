@@ -330,28 +330,66 @@ export const readVerificationBaseline = async (
   return value as VerificationBaselineDocument;
 };
 
-export const validateVerificationBaseline = async (trustedRoot: string, state: TaskState): Promise<VerificationBaselineDocument> => {
+export const validateVerificationBaseline = async (
+  trustedRoot: string,
+  state: TaskState,
+  options: { allowTrustedControlPlaneAdvance?: boolean } = {},
+): Promise<VerificationBaselineDocument> => {
   const baseline = await readVerificationBaseline(trustedRoot, state);
   if (!baseline || !state.lifecycleBinding) throw new Error('VERIFICATION_BASELINE_MISSING');
   if (baseline.verifierVersion !== TASK_VERIFIER_VERSION) throw new Error('VERIFICATION_BASELINE_VERIFIER_VERSION_MISMATCH');
   if (baseline.verificationPolicyVersion !== VERIFICATION_POLICY_VERSION) throw new Error('VERIFICATION_BASELINE_POLICY_VERSION_MISMATCH');
   if (baseline.lifecycleBindingSha256 !== state.lifecycleBinding.sha256) throw new Error('VERIFICATION_BASELINE_LIFECYCLE_MISMATCH');
   if (git(trustedRoot, ['status', '--porcelain']) !== '') throw new Error('TRUSTED_CONTROL_PLANE_DIRTY');
-  if (git(trustedRoot, ['rev-parse', 'HEAD']) !== baseline.controlPlaneCommit || git(trustedRoot, ['rev-parse', 'HEAD^{tree}']) !== baseline.controlPlaneTree)
-    throw new Error('TRUSTED_CONTROL_PLANE_COMMIT_MISMATCH');
+  const currentCommit = git(trustedRoot, ['rev-parse', 'HEAD']);
+  const currentTree = git(trustedRoot, ['rev-parse', 'HEAD^{tree}']);
+  const exactControlPlane =
+    currentCommit === baseline.controlPlaneCommit &&
+    currentTree === baseline.controlPlaneTree;
+  if (!exactControlPlane) {
+    if (!options.allowTrustedControlPlaneAdvance)
+      throw new Error('TRUSTED_CONTROL_PLANE_COMMIT_MISMATCH');
+    if (git(trustedRoot, ['branch', '--show-current']) !== 'main')
+      throw new Error('TRUSTED_CONTROL_PLANE_MAIN_REQUIRED');
+    const ancestor = spawnSync(
+      'git',
+      ['merge-base', '--is-ancestor', baseline.controlPlaneCommit, currentCommit],
+      { cwd: trustedRoot },
+    );
+    if (ancestor.status !== 0)
+      throw new Error('TRUSTED_CONTROL_PLANE_BASELINE_NOT_ANCESTOR');
+    if (
+      git(trustedRoot, [
+        'rev-parse',
+        `${baseline.controlPlaneCommit}^{tree}`,
+      ]) !== baseline.controlPlaneTree
+    )
+      throw new Error('TRUSTED_CONTROL_PLANE_BASELINE_TREE_MISMATCH');
+  }
   if (await fileHash(trustedRoot, 'docs/spec/SHA256SUMS') !== baseline.sourceHashManifestSha256) throw new Error('VERIFICATION_BASELINE_SOURCE_HASH_DRIFT');
   if (await fileHash(trustedRoot, 'tasks/generated/interface-hashes.json') !== baseline.generatedInterfaceIndexSha256) throw new Error('VERIFICATION_BASELINE_INTERFACE_INDEX_DRIFT');
   if (await fileHash(trustedRoot, 'artifacts/spec/acceptance-partition.json') !== baseline.acceptancePartitionSha256) throw new Error('VERIFICATION_BASELINE_ACCEPTANCE_PARTITION_DRIFT');
-  if (await fileHash(trustedRoot, 'tools/task-verifier/cli.ts') !== baseline.verifierEntrypointSha256) throw new Error('VERIFICATION_BASELINE_ENTRYPOINT_DRIFT');
+  const controlPlaneFile = async (path: string): Promise<string> => {
+    if (exactControlPlane) return readFile(join(trustedRoot, path), 'utf8');
+    const result = spawnSync(
+      'git',
+      ['show', `${baseline.controlPlaneCommit}:${path}`],
+      { cwd: trustedRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+    );
+    if (result.status !== 0)
+      throw new Error(`TRUSTED_CONTROL_PLANE_BASELINE_FILE_MISSING:${path}`);
+    return result.stdout;
+  };
+  if (sha256(await controlPlaneFile('tools/task-verifier/cli.ts')) !== baseline.verifierEntrypointSha256) throw new Error('VERIFICATION_BASELINE_ENTRYPOINT_DRIFT');
   const verifierPolicy = (await Promise.all([
     'tools/task-verifier/verify.ts',
     'tools/task-verifier/attestation.ts',
     'tools/task-verifier/policy.ts',
     'tools/task-verifier/conformance.ts',
     'tools/task-verifier/trusted-execution.ts',
-  ].map((path) => readFile(join(trustedRoot, path), 'utf8')))).join('\n');
+  ].map((path) => controlPlaneFile(path)))).join('\n');
   if (sha256(verifierPolicy) !== baseline.verifierPolicySha256) throw new Error('VERIFICATION_BASELINE_POLICY_DRIFT');
-  if (await fileHash(trustedRoot, 'tools/architecture-verifier/verify.ts') !== baseline.architecturePolicySha256) throw new Error('VERIFICATION_BASELINE_ARCHITECTURE_DRIFT');
-  if (await fileHash(trustedRoot, 'tools/architecture-verifier/cli.ts') !== baseline.prohibitedCapabilityPolicySha256) throw new Error('VERIFICATION_BASELINE_PROHIBITED_POLICY_DRIFT');
+  if (sha256(await controlPlaneFile('tools/architecture-verifier/verify.ts')) !== baseline.architecturePolicySha256) throw new Error('VERIFICATION_BASELINE_ARCHITECTURE_DRIFT');
+  if (sha256(await controlPlaneFile('tools/architecture-verifier/cli.ts')) !== baseline.prohibitedCapabilityPolicySha256) throw new Error('VERIFICATION_BASELINE_PROHIBITED_POLICY_DRIFT');
   return baseline;
 };
