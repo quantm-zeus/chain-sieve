@@ -1,12 +1,16 @@
 import { builtinModules } from 'node:module';
-import { cp, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { readFile, writeFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import ts from 'typescript';
 import type { TaskContract } from '@ciag/shared-schemas';
 import { sha256 } from '../prd-compiler/compiler.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
-import { resolveTrustedVerificationRuntime, runTrustedVitest } from './trusted-execution.js';
+import {
+  materializeVerificationTarget,
+  resolveTrustedVerificationRuntime,
+  runTrustedVitest,
+  runTrustedVitestInMaterializedTarget,
+} from './trusted-execution.js';
 
 interface ConformanceManifest {
   schemaVersion: '1.0.0';
@@ -257,13 +261,12 @@ const runActualMutation = async (
     throw new Error('CONFORMANCE_MUTATION_EXPECTED_FAILURE_MISSING');
   if (!declaration.affectedExport || !declaration.originalText)
     throw new Error('CONFORMANCE_MUTATION_TARGET_BINDING_MISSING');
-  const isolated = await mkdtemp(join(tmpdir(), 'ciag-conformance-execution-'));
+  const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
+  const materialized = materializeVerificationTarget(runtime, cwd, {
+    approvedInputs: [declaration.target, declaration.testPath],
+  });
+  const isolated = materialized.root;
   try {
-    await cp(cwd, isolated, {
-      recursive: true,
-      filter: (source) => !['.git', 'node_modules'].includes(source.split('/').at(-1) ?? ''),
-    });
-    await symlink(join(trustedControlPlaneRoot, 'node_modules'), join(isolated, 'node_modules'), 'dir');
     const target = join(isolated, declaration.target);
     const original = await readFile(target, 'utf8');
     const originalSha256 = sha256(original);
@@ -345,14 +348,13 @@ const runActualMutation = async (
     if (!outputAssertionObserved)
       throw new Error(`CONFORMANCE_MUTATION_NOT_BEHAVIORALLY_OBSERVED:${declaration.affectedExport}`);
 
-    const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
-    const control = runTrustedVitest(runtime, isolated, [declaration.testPath]);
+    const control = runTrustedVitestInMaterializedTarget(runtime, isolated, [declaration.testPath]);
     if (control.exitCode !== 0)
       throw new Error(`CONFORMANCE_MUTATION_CONTROL_FAILED:${declaration.testPath}`);
     await writeFile(target, mutated);
     if (sha256(await readFile(target)) !== sha256(mutated))
       throw new Error(`CONFORMANCE_MUTATION_MATERIALIZATION_MISMATCH:${declaration.target}`);
-    const mutant = runTrustedVitest(runtime, isolated, [declaration.testPath]);
+    const mutant = runTrustedVitestInMaterializedTarget(runtime, isolated, [declaration.testPath]);
     await writeFile(target, original);
     if (sha256(await readFile(target)) !== originalSha256)
       throw new Error(`CONFORMANCE_MUTATION_CONTROL_NOT_RESTORED:${declaration.target}`);
@@ -387,7 +389,7 @@ const runActualMutation = async (
       affectedProductionExport: declaration.affectedExport,
     };
   } finally {
-    await rm(isolated, { recursive: true, force: true });
+    materialized.cleanup();
   }
 };
 

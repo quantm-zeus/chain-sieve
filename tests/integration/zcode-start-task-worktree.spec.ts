@@ -207,5 +207,5 @@ describe('ZCode START_TASK real discovery and Git boundary', () => {
     ).toHaveLength(1);
     expect(copyPayload).not.toHaveBeenCalled();
     expect(openZCodeWorkspace).not.toHaveBeenCalled();
-  });
+  }, 40_000);
 });

@@ -252,6 +252,21 @@ export const verifyTask = async (
       trustedRoot,
     );
     const trustedRuntime = resolveTrustedVerificationRuntime(trustedRoot);
+    const contractPackagePaths = [...new Set([
+      ...task.ownerPackages,
+      ...[...task.allowedPaths, ...task.readSet, ...task.writeSet]
+        .filter((path) => path.startsWith('packages/'))
+        .map((path) => path.split('/').slice(0, 2).join('/')),
+    ])];
+    const workspaceAliases = Object.fromEntries((await Promise.all(contractPackagePaths.map(async (packagePath) => {
+      const manifestPath = join(trustedRoot, packagePath, 'package.json');
+      let manifest: { name?: string; exports?: string };
+      try { manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as { name?: string; exports?: string }; }
+      catch { return undefined; }
+      if (!manifest.name || !manifest.exports || !manifest.exports.startsWith('./') || manifest.exports.includes('..'))
+        throw new Error(`TRUSTED_WORKSPACE_ALIAS_INVALID:${packagePath}`);
+      return [manifest.name, join(packagePath, manifest.exports)] as const;
+    }))).filter((item): item is readonly [string, string] => Boolean(item)));
     const evidence: CommandEvidence[] = [
       ...mutationEvidence.map((item) => {
         const output = `${JSON.stringify(item)}\n`;
@@ -262,7 +277,15 @@ export const verifyTask = async (
           outputSha256: sha256(output),
         };
       }),
-      runTrustedVitest(trustedRuntime, targetWorktree, task.requiredTests),
+      runTrustedVitest(trustedRuntime, targetWorktree, task.requiredTests, {
+        approvedInputs: [
+          ...[...task.allowedPaths, ...task.readSet, ...task.writeSet].filter((path) => !path.startsWith('tests/')),
+          ...task.requiredTests,
+          'tests/fixtures/**',
+          'tasks/generated/interface-hashes.json',
+        ],
+        workspaceAliases,
+      }),
       runTrustedVitest(trustedRuntime, trustedRoot, ['tests/conformance/task-oracle.spec.ts']),
       runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['architecture', '--target-root', targetWorktree]),
       runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['placeholders', '--target-root', targetWorktree]),
