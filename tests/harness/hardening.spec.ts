@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import {
   buildImplementationBrief,
@@ -84,5 +84,24 @@ describe('context, acceptance partition, and specification hardening', () => {
     expect(gaps).toHaveLength(13);
     expect(queue.ready.some((taskId) => gaps.some((item) => item.taskId === taskId))).toBe(false);
     expect(gaps.some((item) => item.taskId === 'T-G0-CORE')).toBe(true);
+  });
+
+  it('keeps all 2,439 path references exactly classified', async () => {
+    const statuses: string[] = [];
+    for (const taskId of (await readdir('artifacts/context')).filter((name) => /^T-G[0-7]-/.test(name))) {
+      const path = `artifacts/context/${taskId}/referenced-path-status.json`;
+      const references = JSON.parse(await readFile(path, 'utf8')) as Array<{ status: string }>;
+      statuses.push(...references.map((item) => item.status));
+    }
+    expect(statuses).toHaveLength(2_439);
+    expect(statuses.reduce<Record<string, number>>((counts, status) => {
+      counts[status] = (counts[status] ?? 0) + 1;
+      return counts;
+    }, {})).toEqual({
+      OWNED_BY_OTHER_TASK: 187,
+      SPECIFICATION_GAP: 2_188,
+      EXISTS: 33,
+      EXPECTED_TO_CREATE: 31,
+    });
   });
 });

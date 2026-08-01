@@ -19,12 +19,13 @@ import {
 } from './hardening.js';
 
 const ROOT = resolve(process.cwd());
-const COMPILE_LOCK = join(ROOT, 'node_modules/.cache/ciag-prd-compile.lock');
 const SPEC = join(ROOT, 'docs/spec');
 const PRD = join(SPEC, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md');
 const MANIFEST = join(SPEC, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json');
 const AUDIT = join(SPEC, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.audit.json');
 export const SOURCE_PATHS = { prd: PRD, requirements: MANIFEST, audit: AUDIT } as const;
+export interface CompilerOptions { sourceRoot?: string; outputRoot?: string }
+const compilerLock = (root: string): string => join(root, 'node_modules/.cache/ciag-prd-compile.lock');
 
 const RequirementSchema = z.object({ id: z.string(), text: z.string(), textSha256: z.string(), line: z.number(), family: z.string(), dependencyGroup: z.string(), owner: z.string(), normativeLevel: z.string(), acceptanceCriteria: z.array(z.string()), implementationRefs: z.array(z.string()), schemaRefs: z.array(z.string()), persistenceRefs: z.array(z.string()), apiToolUiRefs: z.array(z.string()), testRefs: z.array(z.string()), fixtureRefs: z.array(z.string()), telemetryRefs: z.array(z.string()), securityRightsCostControls: z.array(z.string()), activationGateRefs: z.array(z.string()), rollbackRefs: z.array(z.string()) }).passthrough();
 const AcceptanceSchema = z.object({ id: z.string(), text: z.string(), textSha256: z.string(), line: z.number(), requirementRefs: z.array(z.string()), positiveTestRef: z.string(), negativeOrFailureTestRef: z.string() }).passthrough();
@@ -35,8 +36,8 @@ type OutputMap = Map<string, string>;
 
 export const sha256 = (value: string | Uint8Array): string => createHash('sha256').update(value).digest('hex');
 const pause = async (milliseconds: number): Promise<void> => new Promise((resolvePause) => setTimeout(resolvePause, milliseconds));
-export const waitForCompilerIdle = async (): Promise<void> => { for (let attempt = 0; attempt < 400; attempt += 1) { try { const info = await stat(COMPILE_LOCK); if (Date.now() - info.mtimeMs > 120_000) { await rm(COMPILE_LOCK, { recursive: true, force: true }); continue; } } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return; throw error; } await pause(25); } throw new Error('PRD_COMPILER_LOCK_TIMEOUT'); };
-const acquireCompilerLock = async (): Promise<void> => { await mkdir(dirname(COMPILE_LOCK), { recursive: true }); for (let attempt = 0; attempt < 400; attempt += 1) { try { await mkdir(COMPILE_LOCK); await writeFile(join(COMPILE_LOCK, 'owner.json'), `${JSON.stringify({ pid: process.pid, acquiredAt: new Date().toISOString() })}\n`); return; } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error; await waitForCompilerIdle(); } } throw new Error('PRD_COMPILER_LOCK_TIMEOUT'); };
+export const waitForCompilerIdle = async (root = ROOT): Promise<void> => { const lock = compilerLock(resolve(root)); for (let attempt = 0; attempt < 400; attempt += 1) { try { const info = await stat(lock); if (Date.now() - info.mtimeMs > 120_000) { await rm(lock, { recursive: true, force: true }); continue; } } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return; throw error; } await pause(25); } throw new Error('PRD_COMPILER_LOCK_TIMEOUT'); };
+const acquireCompilerLock = async (root: string): Promise<void> => { const lock = compilerLock(root); await mkdir(dirname(lock), { recursive: true }); for (let attempt = 0; attempt < 400; attempt += 1) { try { await mkdir(lock); await writeFile(join(lock, 'owner.json'), `${JSON.stringify({ pid: process.pid, acquiredAt: new Date().toISOString() })}\n`); return; } catch (error: unknown) { if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error; await waitForCompilerIdle(root); } } throw new Error('PRD_COMPILER_LOCK_TIMEOUT'); };
 const json = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
 const unique = <T>(values: T[]): T[] => [...new Set(values)];
 const idSet = <T extends { id: string }>(values: T[], label: string): Set<string> => { const ids = values.map((value) => value.id); const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index); if (duplicates.length > 0) throw new Error(`DUPLICATE_${label}_IDS:${unique(duplicates).join(',')}`); return new Set(ids); };
@@ -44,8 +45,13 @@ const safeId = (value: string): string => value.toUpperCase().replace(/^FR-/, ''
 
 export interface ValidatedSpecification { manifest: Manifest; prd: string; audit: Record<string, unknown>; hashes: SourceHashes; issues: string[] }
 
-export const loadAndValidateSpecification = async (): Promise<ValidatedSpecification> => {
-  const [prd, manifestText, auditText] = await Promise.all([readFile(PRD, 'utf8'), readFile(MANIFEST, 'utf8'), readFile(AUDIT, 'utf8')]);
+export const loadAndValidateSpecification = async (sourceRoot = ROOT): Promise<ValidatedSpecification> => {
+  const specRoot = join(resolve(sourceRoot), 'docs/spec');
+  const [prd, manifestText, auditText] = await Promise.all([
+    readFile(join(specRoot, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md'), 'utf8'),
+    readFile(join(specRoot, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json'), 'utf8'),
+    readFile(join(specRoot, 'crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.audit.json'), 'utf8'),
+  ]);
   const manifest = ManifestSchema.parse(JSON.parse(manifestText));
   const audit = z.record(z.string(), z.unknown()).parse(JSON.parse(auditText));
   const hashes = { prd: sha256(prd), requirements: sha256(manifestText), audit: sha256(auditText) };
@@ -200,14 +206,14 @@ export const validateGeneratedGoalCommands = (goal: string, scripts: Record<stri
   return commands.map((command) => `pnpm ${command.script}${command.args ? ` ${command.args}` : ''}`);
 };
 
-const fixedBaselinePaths = (): string[] => {
-  const result = spawnSync('git', ['ls-tree', '-r', '--name-only', 'harness-v1.0.1'], { cwd: ROOT, encoding: 'utf8' });
+const fixedBaselinePaths = (sourceRoot: string): string[] => {
+  const result = spawnSync('git', ['ls-tree', '-r', '--name-only', 'harness-v1.0.1'], { cwd: sourceRoot, encoding: 'utf8' });
   if (result.status !== 0) throw new Error(`CONFORMANCE_BASELINE_UNAVAILABLE:${result.stderr.trim()}`);
   return result.stdout.split('\n').filter(Boolean).sort();
 };
 
-const buildOutputs = async (spec: ValidatedSpecification): Promise<OutputMap> => {
-  const outputs: OutputMap = new Map(); const baselinePaths = fixedBaselinePaths(); const { tasks, acceptancePartition } = makeTasks(spec, baselinePaths); const clusters = makeClusters(spec, tasks, acceptancePartition); const api = extractApi(spec.prd); const persistence = extractPersistence(spec.prd);
+const buildOutputs = async (spec: ValidatedSpecification, sourceRoot: string): Promise<OutputMap> => {
+  const outputs: OutputMap = new Map(); const baselinePaths = fixedBaselinePaths(sourceRoot); const { tasks, acceptancePartition } = makeTasks(spec, baselinePaths); const clusters = makeClusters(spec, tasks, acceptancePartition); const api = extractApi(spec.prd); const persistence = extractPersistence(spec.prd);
   const requirementTaskMap = Object.fromEntries(spec.manifest.requirements.map((requirement) => [requirement.id, tasks.filter((task) => task.requirements.includes(requirement.id)).map((task) => task.id)]));
   const acceptanceTaskMap = Object.fromEntries(acceptancePartition.map((assignment) => [assignment.acceptanceId, [assignment.owner]]));
   const coverage = { requirements: { total: spec.manifest.requirements.length, mapped: Object.values(requirementTaskMap).filter((ids) => ids.length > 0).length }, acceptanceCriteria: { total: spec.manifest.acceptanceCriteria.length, mapped: Object.values(acceptanceTaskMap).filter((ids) => ids.length > 0).length } };
@@ -234,7 +240,7 @@ const buildOutputs = async (spec: ValidatedSpecification): Promise<OutputMap> =>
     for (const [path, content] of contextFiles) add(`artifacts/context/${task.id}/${path}`, content); add(`artifacts/context/${task.id}/context-manifest.json`, manifest);
   }
   for (const cluster of clusters) { add(`clusters/${cluster.group}/${cluster.id}.contract.json`, cluster); add(`clusters/${cluster.group}/${cluster.id}.agent-goal.md`, goalMarkdown(cluster, 'agent-goal')); add(`clusters/${cluster.group}/${cluster.id}.codex-review.md`, goalMarkdown(cluster, 'codex-review')); add(`clusters/${cluster.group}/${cluster.id}.agent-fix-goal.md`, goalMarkdown(cluster, 'agent-fix-goal')); }
-  const packageManifest = z.object({ scripts: z.record(z.string(), z.string()) }).parse(JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8')));
+  const packageManifest = z.object({ scripts: z.record(z.string(), z.string()) }).parse(JSON.parse(await readFile(join(sourceRoot, 'package.json'), 'utf8')));
   for (const [path, content] of outputs) if (path.endsWith('.agent-goal.md') || path.endsWith('.agent-fix-goal.md') || path.endsWith('.codex-review.md')) validateGeneratedGoalCommands(content, packageManifest.scripts);
   const taskGraph = { nodes: tasks.map((task) => ({ id: task.id, group: task.dependencyGroup, cluster: task.cluster })), edges: tasks.flatMap((task) => task.dependencies.map((dependency) => ({ from: dependency, to: task.id }))) };
   const clusterGraph = { nodes: clusters.map((cluster) => ({ id: cluster.id, group: cluster.group })), edges: clusters.flatMap((cluster) => cluster.dependencies.map((dependency) => ({ from: dependency, to: cluster.id }))) };
@@ -250,6 +256,6 @@ const buildOutputs = async (spec: ValidatedSpecification): Promise<OutputMap> =>
 
 const generatedRoots = ['artifacts/spec', 'artifacts/conformance', 'tasks/G0', 'tasks/G1', 'tasks/G2', 'tasks/G3', 'tasks/G4', 'tasks/G5', 'tasks/G6', 'tasks/G7', 'tasks/generated', 'clusters/G0', 'clusters/G1', 'clusters/G2', 'clusters/G3', 'clusters/G4', 'clusters/G5', 'clusters/G6', 'clusters/G7', 'docs/schemas'];
 const generatedContextRoots = (outputs: OutputMap): string[] => unique([...outputs.keys()].filter((path) => path.startsWith('artifacts/context/T-G')).map((path) => path.split('/').slice(0, 3).join('/')));
-const listGeneratedFiles = async (root: string): Promise<string[]> => { const files: string[] = []; for (const entry of await readdir(join(ROOT, root), { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory()) files.push(...await listGeneratedFiles(path)); else files.push(path); } return files; };
-export const compile = async (): Promise<{ files: number; aggregateHash: string; tasks: number; clusters: number }> => { await acquireCompilerLock(); try { const spec = await loadAndValidateSpecification(); const outputs = await buildOutputs(spec); for (const root of generatedRoots) await rm(join(ROOT, root), { recursive: true, force: true }); for (const entry of await readdir(join(ROOT, 'artifacts/context'), { withFileTypes: true }).catch(() => [])) if (entry.isDirectory() && /^T-G[0-7]-/.test(entry.name)) await rm(join(ROOT, 'artifacts/context', entry.name), { recursive: true, force: true }); for (const [path, content] of outputs) { const target = join(ROOT, path); await mkdir(dirname(target), { recursive: true }); await writeFile(target, content); } const hashes = [...outputs].map(([path, content]) => `${path}:${sha256(content)}`).sort(); return { files: outputs.size, aggregateHash: sha256(hashes.join('\n')), tasks: [...outputs.keys()].filter((path) => path.endsWith('.contract.json') && path.startsWith('tasks/G')).length, clusters: [...outputs.keys()].filter((path) => path.endsWith('.contract.json') && path.startsWith('clusters/G')).length }; } finally { await rm(COMPILE_LOCK, { recursive: true, force: true }); } };
-export const driftCheck = async (): Promise<{ files: number; aggregateHash: string }> => { await acquireCompilerLock(); try { const spec = await loadAndValidateSpecification(); const outputs = await buildOutputs(spec); const drift: string[] = []; for (const [path, expected] of outputs) { try { const actual = await readFile(join(ROOT, path), 'utf8'); if (actual !== expected) drift.push(path); } catch { drift.push(path); } } const actualGenerated = (await Promise.all([...generatedRoots, ...generatedContextRoots(outputs)].map(listGeneratedFiles))).flat(); for (const path of actualGenerated) if (!outputs.has(path)) drift.push(`UNEXPECTED:${path}`); if (drift.length > 0) throw new Error(`GENERATED_DRIFT:${drift.sort().join(',')}`); return { files: outputs.size, aggregateHash: sha256([...outputs].map(([path, content]) => `${path}:${sha256(content)}`).sort().join('\n')) }; } finally { await rm(COMPILE_LOCK, { recursive: true, force: true }); } };
+const listGeneratedFiles = async (outputRoot: string, root: string): Promise<string[]> => { const files: string[] = []; for (const entry of await readdir(join(outputRoot, root), { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory()) files.push(...await listGeneratedFiles(outputRoot, path)); else files.push(path); } return files; };
+export const compile = async (options: CompilerOptions = {}): Promise<{ files: number; aggregateHash: string; tasks: number; clusters: number }> => { const sourceRoot = resolve(options.sourceRoot ?? ROOT); const outputRoot = resolve(options.outputRoot ?? sourceRoot); const lock = compilerLock(outputRoot); await acquireCompilerLock(outputRoot); try { const spec = await loadAndValidateSpecification(sourceRoot); const outputs = await buildOutputs(spec, sourceRoot); for (const root of generatedRoots) await rm(join(outputRoot, root), { recursive: true, force: true }); for (const entry of await readdir(join(outputRoot, 'artifacts/context'), { withFileTypes: true }).catch(() => [])) if (entry.isDirectory() && /^T-G[0-7]-/.test(entry.name)) await rm(join(outputRoot, 'artifacts/context', entry.name), { recursive: true, force: true }); for (const [path, content] of outputs) { const target = join(outputRoot, path); await mkdir(dirname(target), { recursive: true }); await writeFile(target, content); } const hashes = [...outputs].map(([path, content]) => `${path}:${sha256(content)}`).sort(); return { files: outputs.size, aggregateHash: sha256(hashes.join('\n')), tasks: [...outputs.keys()].filter((path) => path.endsWith('.contract.json') && path.startsWith('tasks/G')).length, clusters: [...outputs.keys()].filter((path) => path.endsWith('.contract.json') && path.startsWith('clusters/G')).length }; } finally { await rm(lock, { recursive: true, force: true }); } };
+export const driftCheck = async (options: CompilerOptions = {}): Promise<{ files: number; aggregateHash: string }> => { const sourceRoot = resolve(options.sourceRoot ?? ROOT); const outputRoot = resolve(options.outputRoot ?? sourceRoot); const lock = compilerLock(outputRoot); await acquireCompilerLock(outputRoot); try { const spec = await loadAndValidateSpecification(sourceRoot); const outputs = await buildOutputs(spec, sourceRoot); const drift: string[] = []; for (const [path, expected] of outputs) { try { const actual = await readFile(join(outputRoot, path), 'utf8'); if (actual !== expected) drift.push(path); } catch { drift.push(path); } } const actualGenerated = (await Promise.all([...generatedRoots, ...generatedContextRoots(outputs)].map((root) => listGeneratedFiles(outputRoot, root)))).flat(); for (const path of actualGenerated) if (!outputs.has(path)) drift.push(`UNEXPECTED:${path}`); if (drift.length > 0) throw new Error(`GENERATED_DRIFT:${drift.sort().join(',')}`); return { files: outputs.size, aggregateHash: sha256([...outputs].map(([path, content]) => `${path}:${sha256(content)}`).sort().join('\n')) }; } finally { await rm(lock, { recursive: true, force: true }); } };
