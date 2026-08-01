@@ -335,8 +335,10 @@ const createFixture = async (): Promise<Fixture> => {
     clusterWorktree,
     taskWorktree,
     release: {
-      ...baseline.releaseBaseline,
+      tag: baseline.releaseBaseline.tag,
       tagObject: git(root, ['rev-parse', 'refs/tags/harness-v1.0.1']),
+      commit: baseline.releaseBaseline.commit,
+      tree: baseline.releaseBaseline.tree,
     },
     integrationTarget: 'main',
     leaseId: 'T-G0-CORE:3:recovery:current',

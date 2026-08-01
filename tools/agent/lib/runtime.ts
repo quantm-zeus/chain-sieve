@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import type {
   CommandRunner,
   AgentProviderId,
@@ -461,7 +462,7 @@ export const validateLaunchReceipt = async (
     for (const [actual, expected, name] of comparisons)
       if ((binding.requireProviderNeutral || expected !== undefined) && actual !== expected)
         throw new ZCodeError(`LAUNCH_RECEIPT_${name}_MISMATCH`);
-    if (binding.release && JSON.stringify(receipt.release) !== JSON.stringify(binding.release))
+    if (binding.release && !isDeepStrictEqual(receipt.release, binding.release))
       throw new ZCodeError('LAUNCH_RECEIPT_RELEASE_MISMATCH');
     if (binding.pathLocks && JSON.stringify(receipt.pathLocks) !== JSON.stringify(binding.pathLocks))
       throw new ZCodeError('LAUNCH_RECEIPT_LOCK_MISMATCH');
