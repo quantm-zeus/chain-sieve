@@ -2,9 +2,10 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { TaskContractSchema } from '@ciag/shared-schemas';
-import { persistLifecycleAuthority, validateRecoveryWorkspace, validateVerificationBaseline } from '../task-runner/authority.js';
+import { persistLifecycleAuthority, validateRecoveryWorkspace } from '../task-runner/authority.js';
 import {
-  acquireLifecycleMutationLock, readState, recoverExpiredLease, renewValidLease, runtimeRoot, writeState,
+  AGENT_LEASE_TTL_MINUTES, acquireLifecycleMutationLock, assertAgentLeaseTtlMinutes, readState,
+  recoverExpiredLease, renewValidLease, runtimeRoot, writeState,
   type EvidenceReference, type TaskLifecycleState,
 } from '../task-runner/state.js';
 import { loadTasks } from '../task-verifier/verify.js';
@@ -16,6 +17,45 @@ const option = (name: string): string | undefined => {
   return index >= 0 ? process.argv[index + 1] : undefined;
 };
 const required = (name: string): string => option(name) ?? (() => { throw new Error(`OPTION_REQUIRED:${name}`); })();
+const ttlMinutesOption = (): number => {
+  const raw = option('--ttl-minutes');
+  if (raw === undefined) {
+    if (process.argv.includes('--ttl-minutes')) throw new Error('LEASE_TTL_MINUTES_INTEGER_REQUIRED');
+    return AGENT_LEASE_TTL_MINUTES.default;
+  }
+  if (!/^[0-9]+$/.test(raw)) throw new Error('LEASE_TTL_MINUTES_INTEGER_REQUIRED');
+  return assertAgentLeaseTtlMinutes(Number(raw));
+};
+const recoveryCommitExpectations = (): {
+  expectedLifecycleBaseCommit: string;
+  expectedTaskHeadCommit: string;
+  expectedTaskHeadTree: string;
+  compatibilityMode: 'EXPLICIT' | 'LEGACY_EQUAL_BASE_AND_HEAD';
+} => {
+  const legacy = option('--expected-base-commit');
+  const lifecycle = option('--expected-lifecycle-base-commit');
+  const head = option('--expected-task-head-commit');
+  const tree = option('--expected-task-head-tree');
+  if (legacy) {
+    if (lifecycle || head) throw new Error('RECOVERY_COMMIT_OPTIONS_CONFLICT');
+    if (!tree) throw new Error('OPTION_REQUIRED:--expected-task-head-tree');
+    return {
+      expectedLifecycleBaseCommit: legacy,
+      expectedTaskHeadCommit: legacy,
+      expectedTaskHeadTree: tree,
+      compatibilityMode: 'LEGACY_EQUAL_BASE_AND_HEAD',
+    };
+  }
+  if (!lifecycle) throw new Error('OPTION_REQUIRED:--expected-lifecycle-base-commit');
+  if (!head) throw new Error('OPTION_REQUIRED:--expected-task-head-commit');
+  if (!tree) throw new Error('OPTION_REQUIRED:--expected-task-head-tree');
+  return {
+    expectedLifecycleBaseCommit: lifecycle,
+    expectedTaskHeadCommit: head,
+    expectedTaskHeadTree: tree,
+    compatibilityMode: 'EXPLICIT',
+  };
+};
 const rawArguments = process.argv.slice(2);
 const argumentsAfterSeparator = rawArguments[0] === '--' ? rawArguments.slice(1) : rawArguments;
 const writeImmutable = async (path: string, content: string): Promise<void> => {
@@ -62,16 +102,17 @@ try {
     const holder = required('--holder');
     const expectedLeaseId = required('--expected-lease-id');
     const expectedFencingVersion = Number(required('--expected-fencing-version'));
+    const ttlMinutes = ttlMinutesOption();
     const target = state.tasks[taskId];
     if (!target) throw new Error('TASK_NOT_FOUND');
-    const request = { schemaVersion: '1.0.0', action: 'RENEW_VALID_LEASE', taskId, expectedLeaseId, expectedFencingVersion, holder };
+    const request = { schemaVersion: '1.1.0', action: 'RENEW_VALID_LEASE', taskId, expectedLeaseId, expectedFencingVersion, holder, ttlMinutes };
     const requestSha256 = sha256(JSON.stringify(request));
     const requestedAt = new Date();
-    const receiptRecord = await receiptEvidence(root, taskId, 'renewals', requestSha256, { ...request, requestSha256, operationAt: requestedAt.toISOString(), previousLeaseId: expectedLeaseId, previousFencingVersion: expectedFencingVersion, newLeaseId: `${taskId}:${expectedFencingVersion + 1}:${requestedAt.getTime()}`, newFencingVersion: expectedFencingVersion + 1 });
+    const receiptRecord = await receiptEvidence(root, taskId, 'renewals', requestSha256, { ...request, requestSha256, operationAt: requestedAt.toISOString(), ttlMilliseconds: ttlMinutes * 60_000, expiresAt: new Date(requestedAt.getTime() + ttlMinutes * 60_000).toISOString(), previousLeaseId: expectedLeaseId, previousFencingVersion: expectedFencingVersion, newLeaseId: `${taskId}:${expectedFencingVersion + 1}:${requestedAt.getTime()}`, newFencingVersion: expectedFencingVersion + 1 });
     const operationAt = new Date(String(receiptRecord.document.operationAt));
-    const lease = renewValidLease(state, { taskId, expectedLeaseId, expectedFencingVersion, holder, requestSha256, receipt: receiptRecord.evidence }, operationAt);
+    const lease = renewValidLease(state, { taskId, expectedLeaseId, expectedFencingVersion, holder, ttlMinutes, requestSha256, receipt: receiptRecord.evidence }, operationAt);
     await writeState(state, root);
-    console.log(JSON.stringify({ action: 'RENEW_VALID_LEASE', idempotentRequest: requestSha256, lease, receipt: receiptRecord.evidence }, null, 2));
+    console.log(JSON.stringify({ action: 'RENEW_VALID_LEASE', idempotentRequest: requestSha256, ttlMinutes, expiresAt: lease.expiresAt, lease, receipt: receiptRecord.evidence }, null, 2));
   } else if (command === 'recover') {
     const taskId = commandArguments[0] ?? '';
     const expectedExpiredLeaseId = required('--expected-expired-lease-id');
@@ -80,7 +121,8 @@ try {
     const expectedTaskState = required('--expected-task-state') as TaskLifecycleState;
     const expectedTaskBranch = required('--expected-task-branch');
     const expectedTaskWorktree = required('--expected-task-worktree');
-    const expectedBaseCommit = required('--expected-base-commit');
+    const { expectedLifecycleBaseCommit, expectedTaskHeadCommit, expectedTaskHeadTree, compatibilityMode } = recoveryCommitExpectations();
+    const ttlMinutes = ttlMinutesOption();
     const expectedTracked = required('--expected-tracked-work-sha256');
     const expectedUntracked = required('--expected-untracked-work-sha256');
     const expectedContract = required('--expected-legacy-contract-sha256');
@@ -90,23 +132,33 @@ try {
     const generated = tasks.find((item) => item.id === taskId);
     if (!generated) throw new Error('TASK_NOT_FOUND');
     const legacyContractPath = contractPath(generated.dependencyGroup, taskId);
-    const { contractText: legacyContractText } = await validateRecoveryWorkspace({
+    const workspaceExpectation = {
       taskWorktree: expectedTaskWorktree,
       expectedBranch: expectedTaskBranch,
-      expectedBaseCommit,
+      expectedTaskHeadCommit,
+      expectedTaskHeadTree,
       expectedTrackedWorkSha256: expectedTracked,
       expectedUntrackedWorkSha256: expectedUntracked,
       contractPath: legacyContractPath,
       expectedContractSha256: expectedContract,
       contextManifestPath: contextPath(taskId),
       expectedContextManifestSha256: expectedContext,
-    });
+    };
+    const { contractText: legacyContractText } = await validateRecoveryWorkspace(workspaceExpectation);
     const legacyTask = TaskContractSchema.parse(JSON.parse(legacyContractText));
-    const request = { schemaVersion: '1.0.0', action: 'RECOVER_EXPIRED_LEASE', taskId, expectedExpiredLeaseId, expectedFencingVersion, expectedHolder, expectedTaskState, expectedTaskBranch, expectedTaskWorktree, expectedBaseCommit, expectedTracked, expectedUntracked, expectedContract, expectedContext };
+    const request = { schemaVersion: '1.1.0', action: 'RECOVER_EXPIRED_LEASE', taskId, expectedExpiredLeaseId, expectedFencingVersion, expectedHolder, expectedTaskState, expectedTaskBranch, expectedTaskWorktree, expectedLifecycleBaseCommit, expectedTaskHeadCommit, expectedTaskHeadTree, expectedTracked, expectedUntracked, expectedContract, expectedContext, ttlMinutes, compatibilityMode };
     const requestSha256 = sha256(JSON.stringify(request));
-    const authority = target.lifecycleBinding && target.verificationBaseline
-      ? await validateVerificationBaseline(root, target).then(() => ({ binding: target.lifecycleBinding!, baseline: target.verificationBaseline! }))
-      : await persistLifecycleAuthority({
+    if (
+      target.recovery &&
+      target.recovery.requestSha256 !== requestSha256 &&
+      target.recovery.previousLeaseId === expectedExpiredLeaseId &&
+      target.recovery.previousFencingVersion === expectedFencingVersion
+    )
+      throw new Error('RECOVERY_REQUEST_CONFLICT');
+    const previousVerificationBaseline = target.verificationBaseline
+      ? structuredClone(target.verificationBaseline)
+      : undefined;
+    const authority = await persistLifecycleAuthority({
       trustedRoot: root,
       taskRoot: expectedTaskWorktree,
       task: legacyTask,
@@ -121,15 +173,17 @@ try {
         ? { compatibilityConformanceManifestSha256: generated.conformanceManifestSha256 }
         : {}),
     });
+    if (target.lifecycleBinding && target.lifecycleBinding.sha256 !== authority.binding.sha256)
+      throw new Error('RECOVERY_LIFECYCLE_AUTHORITY_MISMATCH');
+    await validateRecoveryWorkspace(workspaceExpectation);
     const requestedAt = new Date();
-    const receiptRecord = await receiptEvidence(root, taskId, 'recoveries', requestSha256, { ...request, requestSha256, operationAt: requestedAt.toISOString(), oldCredentialState: 'PERMANENTLY_EXPIRED', newLeaseId: `${taskId}:${expectedFencingVersion + 1}:recovery:${requestSha256.slice(0, 16)}`, newFencingVersion: expectedFencingVersion + 1, lifecycleBindingSha256: authority.binding.sha256, verificationBaselineSha256: authority.baseline.sha256 });
+    const receiptRecord = await receiptEvidence(root, taskId, 'recoveries', requestSha256, { ...request, requestSha256, operationAt: requestedAt.toISOString(), ttlMilliseconds: ttlMinutes * 60_000, expiresAt: new Date(requestedAt.getTime() + ttlMinutes * 60_000).toISOString(), oldCredentialState: 'PERMANENTLY_EXPIRED', newLeaseId: `${taskId}:${expectedFencingVersion + 1}:recovery:${requestSha256.slice(0, 16)}`, newFencingVersion: expectedFencingVersion + 1, lifecycleBindingSha256: authority.binding.sha256, previousVerificationBaselineSha256: previousVerificationBaseline?.sha256, verificationBaselineSha256: authority.baseline.sha256 });
     const operationAt = new Date(String(receiptRecord.document.operationAt));
-    target.lifecycleBinding = authority.binding;
-    target.verificationBaseline = authority.baseline;
     const taskContracts = tasks.map((item) => item.id === taskId ? legacyTask : item);
-    const lease = recoverExpiredLease(state, taskContracts, { taskId, expectedExpiredLeaseId, expectedFencingVersion, expectedHolder, expectedTaskState, expectedTaskBranch, expectedTaskWorktree, expectedBaseCommit, requestSha256, receipt: receiptRecord.evidence }, operationAt);
+    const lease = recoverExpiredLease(state, taskContracts, { taskId, expectedExpiredLeaseId, expectedFencingVersion, expectedHolder, expectedTaskState, expectedTaskBranch, expectedTaskWorktree, expectedLifecycleBaseCommit, expectedTaskHeadCommit, expectedTaskHeadTree, ttlMinutes, requestSha256, receipt: receiptRecord.evidence, ...(previousVerificationBaseline ? { previousVerificationBaseline } : {}), resultingVerificationBaseline: authority.baseline }, operationAt);
+    target.lifecycleBinding = authority.binding;
     await writeState(state, root);
-    console.log(JSON.stringify({ action: 'RECOVER_EXPIRED_LEASE', idempotentRequest: requestSha256, lease, receipt: receiptRecord.evidence, authority }, null, 2));
+    console.log(JSON.stringify({ action: 'RECOVER_EXPIRED_LEASE', idempotentRequest: requestSha256, compatibilityMode, ttlMinutes, expiresAt: lease.expiresAt, lease, receipt: receiptRecord.evidence, authority }, null, 2));
   } else throw new Error(`UNKNOWN_LIFECYCLE_COMMAND:${command ?? ''}`);
 } catch (error) {
   console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) }));

@@ -96,14 +96,14 @@ describe('complete task lifecycle and fenced leases', () => {
       worktreeValid: true,
       at: new Date('2026-01-01T00:00:03Z'),
     });
+    const commit = '2'.repeat(40);
+    const tree = '3'.repeat(40);
     transition(target, ['IMPLEMENTING'], 'SELF_REVIEWING', {
       command: 'task:self-review',
       credential,
-      evidence: evidence('implementation'),
+      evidence: evidence('implementation', commit, tree),
       at: new Date('2026-01-01T00:00:04Z'),
     });
-    const commit = '2'.repeat(40);
-    const tree = '3'.repeat(40);
     transition(target, ['SELF_REVIEWING'], 'VERIFYING', {
       command: 'task:verify',
       credential,
