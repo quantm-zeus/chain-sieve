@@ -15,7 +15,7 @@ import {
   writeState,
   type EvidenceReference,
 } from '../task-runner/state.js';
-import { deriveAcceptanceMapping, deriveChangedFiles, deriveRequirementMapping, persistCommandEvidence, TASK_VERIFIER_VERSION, validateTaskAttestation, VERIFICATION_POLICY_VERSION } from './attestation.js';
+import { deriveAcceptanceMapping, deriveChangedFiles, deriveRequirementMapping, persistCommandEvidence, validateTaskAttestation } from './attestation.js';
 import { verifyRuntimeBaseline } from './runtime-baseline.js';
 import { taskBranch } from '../worktree-manager/identity.js';
 import {
@@ -27,12 +27,12 @@ import { readLifecycleBinding, validateVerificationBaseline } from '../task-runn
 import { validateLaunchReceipt } from '../agent/lib/runtime.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
+import { resolveTrustedVerificationRuntime, runTrustedTsx, runTrustedVitest } from './trusted-execution.js';
 
 export interface CommandEvidence { command: string; exitCode: number; output: string; outputSha256: string }
 export const deriveEvidenceVerdict = (requiredCommands: string[], evidence: CommandEvidence[]): 'PASS' => { for (const command of requiredCommands) { const item = evidence.find((candidate) => candidate.command === command); if (!item) throw new Error(`MISSING_COMMAND_EVIDENCE:${command}`); if (item.exitCode !== 0) throw new Error(`COMMAND_FAILED:${command}`); if (sha256(item.output) !== item.outputSha256) throw new Error(`FORGED_COMMAND_EVIDENCE:${command}`); if (/^(?:PASS|ok|true)$/i.test(item.output.trim())) throw new Error(`UNSUBSTANTIATED_COMMAND_EVIDENCE:${command}`); } return 'PASS'; };
 
 const git = (args: string[], cwd = process.cwd(), allowFailure = false): string => { const result = spawnSync('git', args, { cwd, encoding: 'utf8' }); if (result.status !== 0 && !allowFailure) throw new Error(`GIT_FAILED:${args.join(':')}:${result.stderr.trim()}`); return result.stdout.trim(); };
-const run = (command: string, args: string[], cwd = process.cwd()): CommandEvidence => { const result = spawnSync(command, args, { cwd, encoding: 'utf8', env: process.env, maxBuffer: 32 * 1024 * 1024 }); const output = `${result.stdout ?? ''}${result.stderr ?? ''}`; return { command: [command, ...args].join(' '), exitCode: result.status ?? 1, output, outputSha256: sha256(output) }; };
 const covers = (pattern: string, path: string): boolean => pattern.endsWith('/**') ? path === pattern.slice(0, -3) || path.startsWith(pattern.slice(0, -2)) : pattern === path;
 export const resultPath = (taskId: string, cwd = process.cwd()): string =>
   join(runtimeRoot(cwd), 'results', `${taskId}.result.json`);
@@ -246,17 +246,16 @@ export const verifyTask = async (
       if (violations.length > 0) throw new Error(`INVALID_TASK_TEST:${violations.join(',')}`);
     }
     await assertConformanceTestQuality(task, targetWorktree, conformanceRoot);
-    const trustedTsx = (path: string, args: string[] = []): [string, string[]] => ['pnpm', ['exec', 'tsx', join(trustedRoot, path), ...args]];
-    const commands: Array<[string, string[]]> = [
-      ['pnpm', ['exec', 'vitest', 'run', ...task.requiredTests]],
-      ['pnpm', ['exec', 'vitest', 'run', 'tests/conformance/task-oracle.spec.ts']],
-      trustedTsx('tools/architecture-verifier/cli.ts', ['architecture']),
-      trustedTsx('tools/architecture-verifier/cli.ts', ['placeholders']),
-      trustedTsx('tools/architecture-verifier/cli.ts', ['prohibited']),
-      trustedTsx('tools/task-verifier/cli.ts', ['spec:verify']),
-      trustedTsx('tools/prd-compiler/cli.ts', ['drift-check']),
+    const trustedRuntime = resolveTrustedVerificationRuntime(trustedRoot);
+    const evidence: CommandEvidence[] = [
+      runTrustedVitest(trustedRuntime, targetWorktree, task.requiredTests),
+      runTrustedVitest(trustedRuntime, trustedRoot, ['tests/conformance/task-oracle.spec.ts']),
+      runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['architecture', '--target-root', targetWorktree]),
+      runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['placeholders', '--target-root', targetWorktree]),
+      runTrustedTsx(trustedRuntime, 'tools/architecture-verifier/cli.ts', ['prohibited', '--target-root', targetWorktree]),
+      runTrustedTsx(trustedRuntime, 'tools/task-verifier/cli.ts', ['spec:verify']),
+      runTrustedTsx(trustedRuntime, 'tools/prd-compiler/cli.ts', ['drift-check']),
     ];
-    const evidence = commands.map(([command, args]) => run(command, args, targetWorktree));
     deriveEvidenceVerdict(evidence.map((item) => item.command), evidence);
     const changedFiles = deriveChangedFiles(base, commit, targetWorktree);
     const commandEvidence = await persistCommandEvidence(taskId, commit, evidence, trustedRoot);
@@ -267,9 +266,9 @@ export const verifyTask = async (
       baseCommitSha: base, headCommitSha: commit, headTreeSha: reviewTree, changedFiles,
       requirementToCode: deriveRequirementMapping(task, changedFiles, commit, targetWorktree),
       acceptanceToTests: await deriveAcceptanceMapping(task, commit, targetWorktree),
-      requiredTestArtifacts: commandEvidence.filter((item) => item.command.includes('vitest run')),
-      dependencyInterfaceHashes: task.interfaceHashes, verifierVersion: TASK_VERIFIER_VERSION,
-      verificationPolicyVersion: VERIFICATION_POLICY_VERSION, leaseId: target.leaseId,
+      requiredTestArtifacts: commandEvidence.filter((item) => item.command.includes('vitest.mjs run')),
+      dependencyInterfaceHashes: task.interfaceHashes, verifierVersion: baseline.verifierVersion,
+      verificationPolicyVersion: baseline.verificationPolicyVersion, leaseId: target.leaseId,
       leaseFencingVersion: target.leaseVersion, verificationTimestamp: new Date().toISOString(),
       selfReviewPath: `reviews/${taskId}/${commit}.review.json`, selfReviewSha256: sha256(reviewText),
       conformanceManifestPath: task.conformanceManifestPath, conformanceManifestSha256: task.conformanceManifestSha256,

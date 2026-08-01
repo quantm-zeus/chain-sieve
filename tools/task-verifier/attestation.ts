@@ -6,11 +6,11 @@ import { TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/sha
 import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.js';
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
-import { readLifecycleBinding } from '../task-runner/authority.js';
+import { readLifecycleBinding, readVerificationBaseline } from '../task-runner/authority.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
+import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from './policy.js';
 
-export const TASK_VERIFIER_VERSION = '2.0.0';
-export const VERIFICATION_POLICY_VERSION = 'harness-task-proof-v2';
+export { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from './policy.js';
 
 type TaskResult = ReturnType<typeof TaskResultSchema.parse>;
 type CommandEvidence = TaskResult['commandEvidence'][number];
@@ -241,6 +241,16 @@ export const validateTaskAttestation = async (
   )
     throw new Error('TASK_RESULT_TRUSTED_AUTHORITY_MISMATCH');
   const lifecycle = options.state ? await readLifecycleBinding(cwd, options.state, true) : undefined;
+  const verificationBaseline = options.state
+    ? await readVerificationBaseline(cwd, options.state, true)
+    : undefined;
+  if (options.state && !verificationBaseline) throw new Error('TASK_RESULT_VERIFICATION_BASELINE_MISSING');
+  if (
+    verificationBaseline &&
+    (bindings.verifierVersion !== verificationBaseline.verifierVersion ||
+      bindings.verificationPolicyVersion !== verificationBaseline.verificationPolicyVersion)
+  )
+    throw new Error('TASK_RESULT_BASELINE_VERSION_MISMATCH');
   let contractText: string;
   try {
     contractText = (await readTrustedFile(

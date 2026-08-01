@@ -20,7 +20,7 @@ import {
 } from './state.js';
 import { productValidationInput, validateLifecycleContract, type LifecycleValidationInput } from './validator.js';
 import { taskBranch } from '../worktree-manager/identity.js';
-import { persistLifecycleAuthority } from './authority.js';
+import { persistLifecycleAuthority, validateVerificationBaseline } from './authority.js';
 
 const option = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -145,13 +145,15 @@ try {
     const lease = acquire(state, tasks, taskId, holder, new Date(), 900_000, git(['rev-parse', 'HEAD']), branch);
     const product = productTasks.find((task) => task.id === taskId);
     if (product) {
+      const authorityRoot = trustedRoot();
       const authority = await persistLifecycleAuthority({
-        trustedRoot: trustedRoot(), taskRoot: process.cwd(), task: product,
+        trustedRoot: authorityRoot, taskRoot: process.cwd(), task: product,
         state: state.tasks[taskId]!, contractPath: `tasks/${product.dependencyGroup}/${product.id}.contract.json`,
         contextManifestPath: `artifacts/context/${product.id}/context-manifest.json`, contractMode: 'GENERATED',
       });
       state.tasks[taskId]!.lifecycleBinding = authority.binding;
       state.tasks[taskId]!.verificationBaseline = authority.baseline;
+      await validateVerificationBaseline(authorityRoot, state.tasks[taskId]!);
     }
     await writeState(state);
     console.log(JSON.stringify(lease, null, 2));

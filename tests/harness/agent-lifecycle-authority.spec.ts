@@ -1,13 +1,18 @@
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   computeWorkingCopyHashes,
+  persistLifecycleAuthority,
+  readVerificationBaseline,
   validateRecoveryWorkspace,
+  validateVerificationBaseline,
 } from '../../tools/task-runner/authority.js';
 import { sha256 } from '../../tools/prd-compiler/compiler.js';
+import { TaskContractSchema } from '@ciag/shared-schemas';
+import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from '../../tools/task-verifier/policy.js';
 import {
   acquireLifecycleMutationLock,
   recoverExpiredLease,
@@ -15,6 +20,7 @@ import {
   runtimeRoot,
   transition,
   type LifecycleDocument,
+  type TaskState,
 } from '../../tools/task-runner/state.js';
 
 const receipt = { path: 'receipts/request.json', sha256: 'a'.repeat(64), status: 'CURRENT' as const };
@@ -169,6 +175,90 @@ describe('explicit authoritative lease lifecycle', () => {
     await expect(validateRecoveryWorkspace({ ...expected, expectedContextManifestSha256: '5'.repeat(64) })).rejects.toThrow('RECOVERY_LEGACY_CONTEXT_DRIFT');
     await mkdir(join(root, 'nested'), { recursive: true });
     await expect(validateRecoveryWorkspace({ ...expected, taskWorktree: join(root, 'nested') })).rejects.toThrow('RECOVERY_WORKTREE_MISMATCH');
+  });
+
+  it('persists a recovery-capable baseline with explicit trusted verifier and policy versions', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chain-sieve-versioned-baseline-'));
+    temporary.push(root);
+    execFileSync('git', ['init', '-b', 'main'], { cwd: root });
+    execFileSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: root });
+    execFileSync('git', ['config', 'user.name', 'Baseline Test'], { cwd: root });
+    const task = TaskContractSchema.parse(JSON.parse(await readFile('tasks/G0/T-G0-CORE.contract.json', 'utf8')));
+    const required = [
+      'tasks/G0/T-G0-CORE.contract.json',
+      'artifacts/context/T-G0-CORE/context-manifest.json',
+      'docs/spec/SHA256SUMS',
+      'tasks/generated/interface-hashes.json',
+      'artifacts/spec/acceptance-partition.json',
+      'tools/task-verifier/cli.ts',
+      'tools/task-verifier/verify.ts',
+      'tools/task-verifier/attestation.ts',
+      'tools/task-verifier/policy.ts',
+      'tools/architecture-verifier/verify.ts',
+      'tools/architecture-verifier/cli.ts',
+    ];
+    for (const path of required) {
+      await mkdir(join(root, path, '..'), { recursive: true });
+      await writeFile(join(root, path), await readFile(path));
+    }
+    execFileSync('git', ['add', '.'], { cwd: root });
+    execFileSync('git', ['commit', '-m', 'trusted baseline'], { cwd: root });
+    execFileSync('git', ['tag', 'harness-v1.0.1'], { cwd: root });
+    const baseCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const state: TaskState = { taskId: task.id, state: 'IMPLEMENTING', leaseVersion: 1, baseCommit };
+    const authority = await persistLifecycleAuthority({
+      trustedRoot: root,
+      taskRoot: root,
+      task,
+      state,
+      contractPath: 'tasks/G0/T-G0-CORE.contract.json',
+      contextManifestPath: 'artifacts/context/T-G0-CORE/context-manifest.json',
+      contractMode: 'LEGACY',
+    });
+    state.lifecycleBinding = authority.binding;
+    state.verificationBaseline = authority.baseline;
+    const baseline = await validateVerificationBaseline(root, state);
+    expect(baseline).toMatchObject({
+      schemaVersion: '1.1.0',
+      verifierVersion: TASK_VERIFIER_VERSION,
+      verificationPolicyVersion: VERIFICATION_POLICY_VERSION,
+      controlPlaneCommit: baseCommit,
+    });
+  });
+
+  it.each([
+    ['missing verifier version', { verificationPolicyVersion: VERIFICATION_POLICY_VERSION }, 'VERIFICATION_BASELINE_VERIFIER_VERSION_MISSING'],
+    ['empty verifier version', { verifierVersion: '', verificationPolicyVersion: VERIFICATION_POLICY_VERSION }, 'VERIFICATION_BASELINE_VERIFIER_VERSION_MISSING'],
+    ['missing policy version', { verifierVersion: TASK_VERIFIER_VERSION }, 'VERIFICATION_BASELINE_POLICY_VERSION_MISSING'],
+    ['empty policy version', { verifierVersion: TASK_VERIFIER_VERSION, verificationPolicyVersion: '' }, 'VERIFICATION_BASELINE_POLICY_VERSION_MISSING'],
+  ])('rejects a baseline with %s', async (_name, fields, error) => {
+    const root = await mkdtemp(join(tmpdir(), 'chain-sieve-invalid-baseline-'));
+    temporary.push(root);
+    execFileSync('git', ['init', '-b', 'main'], { cwd: root });
+    const text = `${JSON.stringify({ schemaVersion: '1.1.0', taskId: 'T-G0-CORE', ...fields })}\n`;
+    const path = join(root, '.git/ciag-runtime/verification-baselines/T-G0-CORE/baseline.json');
+    await mkdir(join(path, '..'), { recursive: true });
+    await writeFile(path, text);
+    const state = expired().tasks['T-G0-CORE']!;
+    state.verificationBaseline = { path: 'verification-baselines/T-G0-CORE/baseline.json', sha256: sha256(text), status: 'CURRENT' };
+    await expect(readVerificationBaseline(root, state)).rejects.toThrow(error);
+  });
+
+  it.each([
+    ['wrong verifier version', { verifierVersion: 'wrong', verificationPolicyVersion: VERIFICATION_POLICY_VERSION }, 'VERIFICATION_BASELINE_VERIFIER_VERSION_MISMATCH'],
+    ['wrong policy version', { verifierVersion: TASK_VERIFIER_VERSION, verificationPolicyVersion: 'wrong' }, 'VERIFICATION_BASELINE_POLICY_VERSION_MISMATCH'],
+  ])('rejects a baseline with %s', async (_name, fields, error) => {
+    const root = await mkdtemp(join(tmpdir(), 'chain-sieve-wrong-baseline-'));
+    temporary.push(root);
+    execFileSync('git', ['init', '-b', 'main'], { cwd: root });
+    const text = `${JSON.stringify({ schemaVersion: '1.1.0', taskId: 'T-G0-CORE', ...fields })}\n`;
+    const path = join(root, '.git/ciag-runtime/verification-baselines/T-G0-CORE/baseline.json');
+    await mkdir(join(path, '..'), { recursive: true });
+    await writeFile(path, text);
+    const state = expired().tasks['T-G0-CORE']!;
+    state.lifecycleBinding = { path: 'binding.json', sha256: 'a'.repeat(64), status: 'CURRENT' };
+    state.verificationBaseline = { path: 'verification-baselines/T-G0-CORE/baseline.json', sha256: sha256(text), status: 'CURRENT' };
+    await expect(validateVerificationBaseline(root, state)).rejects.toThrow(error);
   });
 
   it('serializes authoritative mutations and permits a retry after lock release', async () => {

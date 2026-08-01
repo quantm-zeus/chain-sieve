@@ -5,6 +5,7 @@ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { TaskContractSchema, type TaskContract } from '@ciag/shared-schemas';
 import type { EvidenceReference, TaskState } from './state.js';
 import { canonicalTrustedDirectory, readTrustedFile } from '../agent/lib/trusted-path.js';
+import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from '../task-verifier/policy.js';
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
 const git = (cwd: string, args: string[]): string => {
@@ -43,8 +44,10 @@ export interface LifecycleBindingDocument {
 }
 
 export interface VerificationBaselineDocument {
-  schemaVersion: '1.0.0';
+  schemaVersion: '1.1.0';
   taskId: string;
+  verifierVersion: string;
+  verificationPolicyVersion: string;
   lifecycleBindingSha256: string;
   taskContractSha256: string;
   contextManifestSha256: string;
@@ -151,12 +154,15 @@ export const persistLifecycleAuthority = async (options: {
   const runtime = join(common, 'ciag-runtime');
   const bindingPath = join(runtime, 'lifecycle-bindings', task.id, `${bindingSha256}.json`);
   await immutableWrite(bindingPath, bindingText);
-  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}`;
+  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/policy.ts'), 'utf8')}`;
   const architecturePolicy = await readFile(join(trustedRoot, 'tools/architecture-verifier/verify.ts'));
   const prohibitedPolicy = await readFile(join(trustedRoot, 'tools/architecture-verifier/cli.ts'));
   const releaseCommit = git(trustedRoot, ['rev-parse', 'harness-v1.0.1^{commit}']);
   const baselineDocument: VerificationBaselineDocument = {
-    schemaVersion: '1.0.0', taskId: task.id, lifecycleBindingSha256: bindingSha256,
+    schemaVersion: '1.1.0', taskId: task.id,
+    verifierVersion: TASK_VERIFIER_VERSION,
+    verificationPolicyVersion: VERIFICATION_POLICY_VERSION,
+    lifecycleBindingSha256: bindingSha256,
     taskContractSha256: contractSha256, contextManifestSha256,
     ...(bindingDocument.conformanceManifestSha256
       ? { conformanceManifestSha256: bindingDocument.conformanceManifestSha256 }
@@ -232,12 +238,18 @@ export const readVerificationBaseline = async (
   const runtime = join(common, 'ciag-runtime');
   const text = (await readTrustedFile(runtime, evidence.path, 'VERIFICATION_BASELINE')).toString('utf8');
   if (sha256(text) !== evidence.sha256) throw new Error('VERIFICATION_BASELINE_HASH_MISMATCH');
-  return JSON.parse(text) as VerificationBaselineDocument;
+  const value = JSON.parse(text) as Partial<VerificationBaselineDocument>;
+  if (!value.verifierVersion) throw new Error('VERIFICATION_BASELINE_VERIFIER_VERSION_MISSING');
+  if (!value.verificationPolicyVersion) throw new Error('VERIFICATION_BASELINE_POLICY_VERSION_MISSING');
+  if (value.schemaVersion !== '1.1.0') throw new Error('VERIFICATION_BASELINE_SCHEMA_VERSION_INVALID');
+  return value as VerificationBaselineDocument;
 };
 
 export const validateVerificationBaseline = async (trustedRoot: string, state: TaskState): Promise<VerificationBaselineDocument> => {
   const baseline = await readVerificationBaseline(trustedRoot, state);
   if (!baseline || !state.lifecycleBinding) throw new Error('VERIFICATION_BASELINE_MISSING');
+  if (baseline.verifierVersion !== TASK_VERIFIER_VERSION) throw new Error('VERIFICATION_BASELINE_VERIFIER_VERSION_MISMATCH');
+  if (baseline.verificationPolicyVersion !== VERIFICATION_POLICY_VERSION) throw new Error('VERIFICATION_BASELINE_POLICY_VERSION_MISMATCH');
   if (baseline.lifecycleBindingSha256 !== state.lifecycleBinding.sha256) throw new Error('VERIFICATION_BASELINE_LIFECYCLE_MISMATCH');
   if (git(trustedRoot, ['status', '--porcelain']) !== '') throw new Error('TRUSTED_CONTROL_PLANE_DIRTY');
   if (git(trustedRoot, ['rev-parse', 'HEAD']) !== baseline.controlPlaneCommit || git(trustedRoot, ['rev-parse', 'HEAD^{tree}']) !== baseline.controlPlaneTree)
@@ -246,7 +258,7 @@ export const validateVerificationBaseline = async (trustedRoot: string, state: T
   if (await fileHash(trustedRoot, 'tasks/generated/interface-hashes.json') !== baseline.generatedInterfaceIndexSha256) throw new Error('VERIFICATION_BASELINE_INTERFACE_INDEX_DRIFT');
   if (await fileHash(trustedRoot, 'artifacts/spec/acceptance-partition.json') !== baseline.acceptancePartitionSha256) throw new Error('VERIFICATION_BASELINE_ACCEPTANCE_PARTITION_DRIFT');
   if (await fileHash(trustedRoot, 'tools/task-verifier/cli.ts') !== baseline.verifierEntrypointSha256) throw new Error('VERIFICATION_BASELINE_ENTRYPOINT_DRIFT');
-  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}`;
+  const verifierPolicy = `${await readFile(join(trustedRoot, 'tools/task-verifier/verify.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/attestation.ts'), 'utf8')}\n${await readFile(join(trustedRoot, 'tools/task-verifier/policy.ts'), 'utf8')}`;
   if (sha256(verifierPolicy) !== baseline.verifierPolicySha256) throw new Error('VERIFICATION_BASELINE_POLICY_DRIFT');
   if (await fileHash(trustedRoot, 'tools/architecture-verifier/verify.ts') !== baseline.architecturePolicySha256) throw new Error('VERIFICATION_BASELINE_ARCHITECTURE_DRIFT');
   if (await fileHash(trustedRoot, 'tools/architecture-verifier/cli.ts') !== baseline.prohibitedCapabilityPolicySha256) throw new Error('VERIFICATION_BASELINE_PROHIBITED_POLICY_DRIFT');

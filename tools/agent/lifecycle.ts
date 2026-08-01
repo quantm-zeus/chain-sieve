@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { TaskContractSchema } from '@ciag/shared-schemas';
-import { persistLifecycleAuthority, validateRecoveryWorkspace } from '../task-runner/authority.js';
+import { persistLifecycleAuthority, validateRecoveryWorkspace, validateVerificationBaseline } from '../task-runner/authority.js';
 import {
   acquireLifecycleMutationLock, readState, recoverExpiredLease, renewValidLease, runtimeRoot, writeState,
   type EvidenceReference, type TaskLifecycleState,
@@ -104,7 +104,9 @@ try {
     const legacyTask = TaskContractSchema.parse(JSON.parse(legacyContractText));
     const request = { schemaVersion: '1.0.0', action: 'RECOVER_EXPIRED_LEASE', taskId, expectedExpiredLeaseId, expectedFencingVersion, expectedHolder, expectedTaskState, expectedTaskBranch, expectedTaskWorktree, expectedBaseCommit, expectedTracked, expectedUntracked, expectedContract, expectedContext };
     const requestSha256 = sha256(JSON.stringify(request));
-    const authority = target.lifecycleBinding && target.verificationBaseline ? { binding: target.lifecycleBinding, baseline: target.verificationBaseline } : await persistLifecycleAuthority({
+    const authority = target.lifecycleBinding && target.verificationBaseline
+      ? await validateVerificationBaseline(root, target).then(() => ({ binding: target.lifecycleBinding!, baseline: target.verificationBaseline! }))
+      : await persistLifecycleAuthority({
       trustedRoot: root,
       taskRoot: expectedTaskWorktree,
       task: legacyTask,

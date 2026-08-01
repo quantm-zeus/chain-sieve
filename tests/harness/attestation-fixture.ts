@@ -129,7 +129,14 @@ export const createAttestationFixture =
     )}\n`;
     const lifecycleBindingSha256 = sha256(lifecycleBindingText);
     await put(runtimeRoot(root), 'lifecycle-binding.json', lifecycleBindingText);
-    const verificationBaselineSha256 = 'e'.repeat(64);
+    const verificationBaselineText = `${JSON.stringify({
+      schemaVersion: '1.1.0',
+      taskId: task.id,
+      verifierVersion: TASK_VERIFIER_VERSION,
+      verificationPolicyVersion: VERIFICATION_POLICY_VERSION,
+    }, null, 2)}\n`;
+    const verificationBaselineSha256 = sha256(verificationBaselineText);
+    await put(runtimeRoot(root), 'verification-baseline.json', verificationBaselineText);
     const launchReceiptId = 'antigravity-fixture';
     const launchReceiptSha256 = 'd'.repeat(64);
     const mandatoryPassNames = [
