@@ -1,10 +1,15 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 import { TaskContractSchema, type TaskContract } from '@ciag/shared-schemas';
 import type { EvidenceReference, TaskState } from './state.js';
-import { canonicalTrustedDirectory, readTrustedFile } from '../agent/lib/trusted-path.js';
+import {
+  canonicalTrustedDirectory,
+  isTrustedPathFilesystemError,
+  readTrustedFile,
+  TrustedPathError,
+} from '../agent/lib/trusted-path.js';
 import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from '../task-verifier/policy.js';
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
@@ -218,19 +223,71 @@ export const readBoundTaskContract = async (
   try {
     text = (await readTrustedFile(binding.bindingRoot, binding.contractPath, 'BOUND_TASK_CONTRACT')).toString('utf8');
   } catch (error: unknown) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || !state.commit) throw error;
-    const result = spawnSync('git', ['show', `${state.commit}:${binding.contractPath}`], {
-      cwd: root,
-      encoding: 'utf8',
-    });
-    if (result.status !== 0) throw new Error('COMPLETED_LIFECYCLE_CONTRACT_MISSING');
-    text = result.stdout;
+    const archived = await readArchivedBoundTaskContract(root, state, binding, error);
+    text = archived.text;
   }
   if (sha256(text) !== binding.contractSha256) throw new Error('LIFECYCLE_CONTRACT_HASH_MISMATCH');
   const task = TaskContractSchema.parse(JSON.parse(text));
   if (task.id !== state.taskId || task.cluster !== binding.clusterId)
     throw new Error('LIFECYCLE_CONTRACT_ID_MISMATCH');
   return task;
+};
+
+const completedBindingStates = new Set(['MERGED', 'INTEGRATION_FAILED', 'REVERTED_AFTER_INTEGRATION_FAILURE']);
+const canonicalRepositoryPath = (path: string): string => {
+  if (!path || isAbsolute(path) || path.includes('\\') || path.includes('\0'))
+    throw new Error('ARCHIVED_CONTRACT_PATH_INVALID');
+  const normalized = posix.normalize(path);
+  if (normalized !== path || normalized === '..' || normalized.startsWith('../') || normalized.startsWith('/'))
+    throw new Error('ARCHIVED_CONTRACT_PATH_INVALID');
+  return normalized;
+};
+
+export const readArchivedBoundTaskContract = async (
+  root: string,
+  state: TaskState,
+  binding: LifecycleBindingDocument,
+  missingError: unknown,
+): Promise<{ text: string; task: TaskContract }> => {
+  const originalRoot = resolve(binding.bindingRoot);
+  const missingOriginalRoot =
+    isTrustedPathFilesystemError(missingError, 'ENOENT') &&
+    missingError instanceof TrustedPathError &&
+    missingError.operation === 'LSTAT_DIRECTORY' &&
+    missingError.requestedPath === originalRoot &&
+    missingError.trustedRoot === originalRoot;
+  const completed =
+    !state.lifecycleBinding &&
+    Boolean(state.completedLifecycleBinding) &&
+    completedBindingStates.has(state.state) &&
+    state.leaseState === 'COMPLETED';
+  if (!completed || !missingOriginalRoot) throw missingError;
+  if (!state.commit || !/^[a-f0-9]{40}$/.test(state.commit))
+    throw new Error('ARCHIVED_CONTRACT_BOUND_COMMIT_INVALID');
+  const contractPath = canonicalRepositoryPath(binding.contractPath);
+  if (!/^[a-f0-9]{64}$/.test(binding.contractSha256))
+    throw new Error('ARCHIVED_CONTRACT_BOUND_HASH_INVALID');
+  if (!['LEGACY', 'GENERATED'].includes(binding.contractMode))
+    throw new Error('ARCHIVED_CONTRACT_MODE_INVALID');
+  const commitCheck = spawnSync('git', ['cat-file', '-e', `${state.commit}^{commit}`], { cwd: root });
+  if (commitCheck.status !== 0) throw new Error('ARCHIVED_CONTRACT_BOUND_COMMIT_MISSING');
+  const resolvedCommit = git(root, ['rev-parse', `${state.commit}^{commit}`]);
+  if (resolvedCommit !== state.commit) throw new Error('ARCHIVED_CONTRACT_BOUND_COMMIT_MISMATCH');
+  const result = spawnSync('git', ['show', `${state.commit}:${contractPath}`], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  if (result.status !== 0) throw new Error('ARCHIVED_CONTRACT_BOUND_BLOB_MISSING');
+  const text = result.stdout;
+  if (sha256(text) !== binding.contractSha256) throw new Error('ARCHIVED_CONTRACT_HASH_MISMATCH');
+  const task = TaskContractSchema.parse(JSON.parse(text));
+  if (task.id !== binding.taskId || task.id !== state.taskId)
+    throw new Error('ARCHIVED_CONTRACT_TASK_ID_MISMATCH');
+  if (task.cluster !== binding.clusterId) throw new Error('ARCHIVED_CONTRACT_CLUSTER_ID_MISMATCH');
+  if (JSON.stringify(task.sourceHashes) !== JSON.stringify(binding.sourceHashes))
+    throw new Error('ARCHIVED_CONTRACT_SOURCE_HASH_MISMATCH');
+  return { text, task };
 };
 
 export const readVerificationBaseline = async (

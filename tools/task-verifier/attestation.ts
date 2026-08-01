@@ -6,7 +6,11 @@ import { TaskResultSchema, TaskReviewSchema, type TaskContract } from '@ciag/sha
 import { loadAndValidateSpecification, sha256 } from '../prd-compiler/compiler.js';
 import { assertEvidenceCurrent } from '../task-runner/evidence-ledger.js';
 import { runtimeRoot, type TaskState } from '../task-runner/state.js';
-import { readLifecycleBinding, readVerificationBaseline } from '../task-runner/authority.js';
+import {
+  readArchivedBoundTaskContract,
+  readLifecycleBinding,
+  readVerificationBaseline,
+} from '../task-runner/authority.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
 import { TASK_VERIFIER_VERSION, VERIFICATION_POLICY_VERSION } from './policy.js';
 
@@ -259,13 +263,12 @@ export const validateTaskAttestation = async (
       'ATTESTATION_TASK_CONTRACT',
     )).toString('utf8');
   } catch (error: unknown) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || !lifecycle) throw error;
-    const archived = spawnSync('git', ['show', `${bindings.headCommitSha}:${lifecycle.contractPath}`], {
-      cwd,
-      encoding: 'utf8',
-    });
-    if (archived.status !== 0) throw new Error('COMPLETED_LIFECYCLE_CONTRACT_MISSING');
-    contractText = archived.stdout;
+    if (!lifecycle || !options.state) throw error;
+    const archived = await readArchivedBoundTaskContract(cwd, options.state, lifecycle, error);
+    for (const [key, value] of Object.entries(archived.task))
+      if (!sameJson(value, (task as unknown as Record<string, unknown>)[key]))
+        throw new Error(`ARCHIVED_CONTRACT_TASK_ARGUMENT_MISMATCH:${key}`);
+    contractText = archived.text;
   }
   if (sha256(contractText) !== bindings.taskContractSha256) throw new Error('WRONG_TASK_CONTRACT_HASH');
   if (task.conformanceManifestPath && task.conformanceManifestSha256) {
