@@ -10,6 +10,7 @@ import {
   resolveTrustedVerificationRuntime,
   runTrustedVitest,
   runTrustedVitestInMaterializedTarget,
+  trustedWorkspaceMaterialization,
 } from './trusted-execution.js';
 
 interface ConformanceManifest {
@@ -398,7 +399,7 @@ const runActualMutation = async (
   if (!declaration.affectedExport || !declaration.originalText)
     throw new Error('CONFORMANCE_MUTATION_TARGET_BINDING_MISSING');
   const runtime = resolveTrustedVerificationRuntime(trustedControlPlaneRoot);
-  const workspaceAliases = Object.fromEntries(
+  const declaredWorkspaceAliases = Object.fromEntries(
     (
       await Promise.all(
         [
@@ -431,12 +432,20 @@ const runActualMutation = async (
       )
     ).filter((item): item is readonly [string, string] => Boolean(item)),
   );
+  const workspaceMaterialization = trustedWorkspaceMaterialization(
+    trustedControlPlaneRoot,
+    cwd,
+    [...productionTargets, declaration.testPath],
+  );
+  const workspaceAliases = {
+    ...workspaceMaterialization.aliases,
+    ...declaredWorkspaceAliases,
+  };
   const materialized = materializeVerificationTarget(runtime, cwd, {
     approvedInputs: [
       ...productionTargets,
       declaration.testPath,
-      'tools/**',
-      'packages/**',
+      ...workspaceMaterialization.approvedInputs,
       'tests/fixtures/**',
     ],
   });
