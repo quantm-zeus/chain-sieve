@@ -5,9 +5,9 @@ import { invalidateCurrentEvidence, runtimeRoot, type EvidenceReference, type Ta
 
 export interface EvidenceStatusRecord extends EvidenceReference {
   taskId: string;
-  kind: 'SELF_REVIEW' | 'TASK_RESULT' | 'VERIFICATION';
+  kind: 'IMPLEMENTATION' | 'SELF_REVIEW' | 'TASK_RESULT' | 'VERIFICATION';
   invalidatedAt?: string;
-  reason?: 'CLUSTER_HEAD_ADVANCED';
+  reason?: 'CLUSTER_HEAD_ADVANCED' | 'SELF_REVIEW_CORRECTION';
 }
 
 interface EvidenceLedger {
@@ -44,6 +44,55 @@ export const registerCurrentEvidence = async (
   const ledger = await readLedger(cwd);
   ledger.records.push({ taskId, kind, ...evidence });
   await writeLedger(cwd, ledger);
+};
+
+export const replaceCorrectedEvidence = async (
+  taskId: string,
+  previous: {
+    implementation: EvidenceReference;
+    selfReview: EvidenceReference;
+  },
+  current: {
+    implementation: EvidenceReference;
+    selfReview: EvidenceReference;
+  },
+  cwd = process.cwd(),
+  now = new Date(),
+): Promise<{ previous: EvidenceStatusRecord[]; current: EvidenceStatusRecord[] }> => {
+  const ledger = await readLedger(cwd);
+  const invalidatedAt = now.toISOString();
+  const stale = (
+    kind: EvidenceStatusRecord['kind'],
+    evidence: EvidenceReference,
+  ): EvidenceStatusRecord => ({
+    taskId,
+    kind,
+    ...evidence,
+    status: 'STALE',
+    invalidatedAt,
+    reason: 'SELF_REVIEW_CORRECTION',
+  });
+  const previousRecords = [
+    stale('IMPLEMENTATION', previous.implementation),
+    stale('SELF_REVIEW', previous.selfReview),
+  ];
+  for (const record of previousRecords) {
+    const existing = ledger.records.find(
+      (item) =>
+        item.taskId === taskId &&
+        item.kind === record.kind &&
+        item.sha256 === record.sha256,
+    );
+    if (existing) Object.assign(existing, record);
+    else ledger.records.push(record);
+  }
+  const currentRecords: EvidenceStatusRecord[] = [
+    { taskId, kind: 'IMPLEMENTATION', ...current.implementation },
+    { taskId, kind: 'SELF_REVIEW', ...current.selfReview },
+  ];
+  ledger.records.push(...currentRecords);
+  await writeLedger(cwd, ledger);
+  return { previous: previousRecords, current: currentRecords };
 };
 
 export const invalidateRebaseEvidence = async (

@@ -17,6 +17,7 @@ import {
 import { afterEach, describe, expect, it } from 'vitest';
 import type { LaunchReceiptCandidate } from '../../tools/agent/lib/runtime.js';
 import { sha256 } from '../../tools/prd-compiler/compiler.js';
+import { correctTaskSelfReview } from '../../tools/task-runner/self-review-correct.js';
 import {
   LegacyTaskReviewSchema,
   refreshTaskSelfReview,
@@ -116,6 +117,7 @@ interface Fixture {
   statePath: string;
   state: Record<string, unknown>;
   receiptPath: string;
+  previousReceiptPath: string;
   legacyTask: TaskContract;
 }
 
@@ -315,7 +317,8 @@ const createFixture = async (): Promise<Fixture> => {
   const oldReviewPath = `reviews/T-G0-CORE/${commit}.review.json`;
   await put(runtime, oldReviewPath, oldReviewText);
 
-  const goal = 'trusted launch goal\n';
+  const goal =
+    'trusted correction launch goal\n- Correction required: TASK_LINE_BUDGET_EXCEEDED\n';
   const goalSha = sha256(goal);
   const goalPath = join(
     runtime,
@@ -371,6 +374,36 @@ const createFixture = async (): Promise<Fixture> => {
     `${receiptId}.json`,
   );
   await put('/', receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+  const previousGoal = 'trusted previous implementation launch goal\n';
+  const previousGoalSha = sha256(previousGoal);
+  const previousGoalPath = join(
+    runtime,
+    'agent/goals/T-G0-CORE',
+    `${previousGoalSha}.md`,
+  );
+  await put('/', previousGoalPath, previousGoal);
+  const previousReceiptCore = {
+    ...receiptCore,
+    receiptId: 'antigravity-previous',
+    leaseId: 'T-G0-CORE:2:legacy',
+    fencingVersion: 2,
+    expiresAt: '2020-01-01T00:00:00.000Z',
+    goalPath: previousGoalPath,
+    goalSha256: previousGoalSha,
+  };
+  const previousReceipt = {
+    ...previousReceiptCore,
+    receiptHash: sha256(JSON.stringify(previousReceiptCore)),
+  };
+  const previousReceiptPath = join(
+    runtime,
+    'agent/launch-receipts/T-G0-CORE/antigravity-previous.json',
+  );
+  await put(
+    '/',
+    previousReceiptPath,
+    `${JSON.stringify(previousReceipt, null, 2)}\n`,
+  );
 
   const state = {
     schemaVersion: '2.0.0',
@@ -439,6 +472,7 @@ const createFixture = async (): Promise<Fixture> => {
     statePath,
     state,
     receiptPath,
+    previousReceiptPath,
     legacyTask,
   };
 };
@@ -449,6 +483,86 @@ const checks = async () => ({
   architecture: 'trusted architecture checks passed',
   acceptance: 'trusted legacy acceptance checks passed',
 });
+
+const bindCurrentPreviousReview = async (fixture: Fixture): Promise<void> => {
+  const state = JSON.parse(await readFile(fixture.statePath, 'utf8'));
+  const target = state.tasks['T-G0-CORE'];
+  const legacyReview = JSON.parse(fixture.oldReviewText);
+  const previousReceiptText = await readFile(fixture.previousReceiptPath, 'utf8');
+  const review = TaskReviewSchema.parse({
+    ...legacyReview,
+    lifecycleBindingSha256: target.lifecycleBinding.sha256,
+    verificationBaselineSha256: target.verificationBaseline.sha256,
+    launchReceiptId: 'antigravity-previous',
+    launchReceiptSha256: sha256(previousReceiptText),
+  });
+  const reviewText = `${JSON.stringify(review, null, 2)}\n`;
+  await writeFile(
+    join(runtimeRoot(fixture.root), fixture.oldReviewPath),
+    reviewText,
+  );
+  target.selfReviewEvidence.sha256 = sha256(reviewText);
+  target.recovery = {
+    previousLeaseId: review.leaseId,
+    previousFencingVersion: review.leaseFencingVersion,
+    previousExpiresAt: '2020-01-01T00:00:00.000Z',
+    resultingLeaseId: target.leaseId,
+    resultingFencingVersion: target.leaseVersion,
+    previousVerificationBaseline: target.verificationBaseline,
+    resultingVerificationBaseline: target.verificationBaseline,
+  };
+  await writeFile(fixture.statePath, `${JSON.stringify(state, null, 2)}\n`);
+  await put(
+    runtimeRoot(fixture.root),
+    'evidence-status.json',
+    `${JSON.stringify(
+      {
+        schemaVersion: '1.0.0',
+        records: [
+          {
+            taskId: 'T-G0-CORE',
+            kind: 'SELF_REVIEW',
+            ...target.selfReviewEvidence,
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+};
+
+const amendCorrection = async (
+  fixture: Fixture,
+  content = 'export const value = 3;\n',
+): Promise<{ commit: string; tree: string }> => {
+  await put(fixture.taskWorktree, 'packages/domain/src/index.ts', content);
+  git(fixture.taskWorktree, ['add', 'packages/domain/src/index.ts']);
+  git(fixture.taskWorktree, ['commit', '--amend', '--no-edit']);
+  return {
+    commit: git(fixture.taskWorktree, ['rev-parse', 'HEAD']),
+    tree: git(fixture.taskWorktree, ['rev-parse', 'HEAD^{tree}']),
+  };
+};
+
+const correction = (
+  fixture: Fixture,
+  expectedPreviousCommit = fixture.commit,
+  failureCode = 'TASK_LINE_BUDGET_EXCEEDED',
+) =>
+  correctTaskSelfReview(
+    'T-G0-CORE',
+    'zcode-orchestrator',
+    3,
+    fixture.taskWorktree,
+    expectedPreviousCommit,
+    failureCode,
+    {
+      trustedRoot: fixture.root,
+      now: new Date('2030-01-01T00:01:00.000Z'),
+      dependencies: { runChecks: checks },
+    },
+  );
 
 describe('trusted self-review refresh', () => {
   it('rejects a legacy review under the normal current schema', async () => {
@@ -611,5 +725,185 @@ describe('trusted self-review refresh', () => {
         },
       ),
     ).rejects.toThrow('LAUNCH_RECEIPT_INTERNAL_HASH_MISMATCH');
+  });
+});
+
+describe('trusted self-review correction', () => {
+  it('accepts one amended atomic HEAD, stales prior evidence, and leaves root verification ready', async () => {
+    const fixture = await createFixture();
+    await bindCurrentPreviousReview(fixture);
+    const amended = await amendCorrection(fixture);
+    const productBefore = await readFile(
+      join(fixture.taskWorktree, 'packages/domain/src/index.ts'),
+      'utf8',
+    );
+    const beforeState = JSON.parse(await readFile(fixture.statePath, 'utf8'));
+    const beforeTarget = beforeState.tasks['T-G0-CORE'];
+
+    const result = await correction(fixture);
+
+    expect(result).toMatchObject({
+      commit: amended.commit,
+      tree: amended.tree,
+      state: 'SELF_REVIEWING',
+      failureCode: 'TASK_LINE_BUDGET_EXCEEDED',
+      previousImplementation: { status: 'STALE', commit: fixture.commit },
+      previousReview: { status: 'STALE', commit: fixture.commit },
+      implementationEvidence: { status: 'CURRENT', commit: amended.commit },
+      selfReviewEvidence: { status: 'CURRENT', commit: amended.commit },
+      launchReceiptId: 'antigravity-current',
+    });
+    const afterState = JSON.parse(await readFile(fixture.statePath, 'utf8'));
+    const afterTarget = afterState.tasks['T-G0-CORE'];
+    expect(afterTarget).toMatchObject({
+      state: 'SELF_REVIEWING',
+      commit: amended.commit,
+      tree: amended.tree,
+      implementationEvidence: result.implementationEvidence,
+      selfReviewEvidence: result.selfReviewEvidence,
+    });
+    for (const key of [
+      'baseCommit',
+      'leaseId',
+      'leaseVersion',
+      'holder',
+      'expiresAt',
+      'branch',
+      'worktree',
+      'lifecycleBinding',
+      'verificationBaseline',
+      'recovery',
+    ])
+      expect(afterTarget[key]).toEqual(beforeTarget[key]);
+    const ledger = JSON.parse(
+      await readFile(join(runtimeRoot(fixture.root), 'evidence-status.json'), 'utf8'),
+    );
+    expect(ledger.records).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: 'IMPLEMENTATION',
+          commit: fixture.commit,
+          status: 'STALE',
+          reason: 'SELF_REVIEW_CORRECTION',
+        }),
+        expect.objectContaining({
+          kind: 'SELF_REVIEW',
+          commit: fixture.commit,
+          status: 'STALE',
+          reason: 'SELF_REVIEW_CORRECTION',
+        }),
+        expect.objectContaining({
+          kind: 'IMPLEMENTATION',
+          commit: amended.commit,
+          status: 'CURRENT',
+        }),
+        expect.objectContaining({
+          kind: 'SELF_REVIEW',
+          commit: amended.commit,
+          status: 'CURRENT',
+        }),
+      ]),
+    );
+    const bound = await readBoundTaskReview(
+      fixture.root,
+      result.selfReviewEvidence,
+      {
+        taskId: 'T-G0-CORE',
+        baseCommit: fixture.baseCommit,
+        commit: amended.commit,
+        tree: amended.tree,
+      },
+    );
+    expect(bound.review).toMatchObject({
+      schemaVersion: '2.0.0',
+      launchReceiptId: 'antigravity-current',
+      rebase: {
+        previousHeadCommit: fixture.commit,
+        semanticChangesDetected: true,
+      },
+    });
+    expect(git(fixture.taskWorktree, ['rev-list', '--count', `${fixture.baseCommit}..HEAD`])).toBe(
+      '1',
+    );
+    expect(git(fixture.taskWorktree, ['status', '--porcelain'])).toBe('');
+    expect(git(fixture.taskWorktree, ['rev-parse', 'HEAD'])).toBe(amended.commit);
+    expect(
+      await readFile(
+        join(fixture.taskWorktree, 'packages/domain/src/index.ts'),
+        'utf8',
+      ),
+    ).toBe(productBefore);
+  });
+
+  it('rejects an unchanged implementation HEAD', async () => {
+    const fixture = await createFixture();
+    await bindCurrentPreviousReview(fixture);
+    await expect(correction(fixture)).rejects.toThrow(
+      'SELF_REVIEW_CORRECTION_HEAD_UNCHANGED',
+    );
+  });
+
+  it('rejects a second commit instead of one amended atomic commit', async () => {
+    const fixture = await createFixture();
+    await bindCurrentPreviousReview(fixture);
+    await put(
+      fixture.taskWorktree,
+      'packages/domain/src/index.ts',
+      'export const value = 3;\n',
+    );
+    git(fixture.taskWorktree, ['add', 'packages/domain/src/index.ts']);
+    git(fixture.taskWorktree, ['commit', '-m', 'second correction commit']);
+    await expect(correction(fixture)).rejects.toThrow('TASK_COMMIT_NOT_ATOMIC');
+  });
+
+  it('rejects the wrong supplied previous commit', async () => {
+    const fixture = await createFixture();
+    await bindCurrentPreviousReview(fixture);
+    await amendCorrection(fixture);
+    await expect(correction(fixture, '9'.repeat(40))).rejects.toThrow(
+      'PREVIOUS_TASK_COMMIT_BINDING_MISMATCH',
+    );
+  });
+
+  it.each(['wrong receipt', 'wrong failure code'])(
+    'rejects %s correction binding',
+    async (scenario) => {
+      const fixture = await createFixture();
+      await bindCurrentPreviousReview(fixture);
+      await amendCorrection(fixture);
+      if (scenario === 'wrong receipt') {
+        const receipt = JSON.parse(await readFile(fixture.receiptPath, 'utf8'));
+        receipt.receiptHash = '0'.repeat(64);
+        await writeFile(
+          fixture.receiptPath,
+          `${JSON.stringify(receipt, null, 2)}\n`,
+        );
+      }
+      await expect(
+        correction(
+          fixture,
+          fixture.commit,
+          scenario === 'wrong failure code'
+            ? 'TASK_WRONG_FAILURE'
+            : 'TASK_LINE_BUDGET_EXCEEDED',
+        ),
+      ).rejects.toThrow(
+        scenario === 'wrong receipt'
+          ? 'LAUNCH_RECEIPT_INTERNAL_HASH_MISMATCH'
+          : 'SELF_REVIEW_CORRECTION_RECEIPT_MATCH_COUNT:0',
+      );
+    },
+  );
+
+  it('rejects an amended correction whose recomputed lines exceed budget', async () => {
+    const fixture = await createFixture();
+    await bindCurrentPreviousReview(fixture);
+    await amendCorrection(
+      fixture,
+      `${Array.from({ length: 1001 }, (_, index) => `export const value${index} = ${index};`).join('\n')}\n`,
+    );
+    await expect(correction(fixture)).rejects.toThrow(
+      'TASK_LINE_BUDGET_EXCEEDED',
+    );
   });
 });
