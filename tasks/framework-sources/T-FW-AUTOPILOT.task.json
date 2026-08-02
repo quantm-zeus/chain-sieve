@@ -28,8 +28,8 @@
     "tools/merge-queue/**",
     "tools/worktree-manager/**"
   ],
-  "writeSet": ["tools/agent/**", "tools/autopilot/**", "tests/harness/autopilot*.spec.ts", "package.json", "docs/implementation/autopilot.md"],
-  "allowedPaths": ["tools/agent/**", "tools/autopilot/**", "tests/harness/autopilot*.spec.ts", "package.json", "docs/implementation/autopilot.md"],
+  "writeSet": ["tools/agent/**", "tools/autopilot/**", "tests/harness/autopilot.spec.ts", "tests/harness/autopilot.conformance-evidence.json", "package.json", "docs/implementation/autopilot.md"],
+  "allowedPaths": ["tools/agent/**", "tools/autopilot/**", "tests/harness/autopilot.spec.ts", "tests/harness/autopilot.conformance-evidence.json", "package.json", "docs/implementation/autopilot.md"],
   "forbiddenPaths": ["docs/spec/**", "artifacts/spec/**", "tasks/**", "clusters/**", ".github/workflows/**", "tests/conformance/**", "artifacts/conformance/T-FW-AUTOPILOT/**", "infra/migrations/**", "pnpm-lock.yaml"],
   "exclusiveLocks": ["tools/agent", "tools/autopilot", "package.json"],
   "deliverables": ["pnpm autopilot", "headless Codex provider", "provider-neutral corrections", "process lock", "focused autopilot tests"],

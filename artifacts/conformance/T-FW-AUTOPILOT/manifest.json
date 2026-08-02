@@ -16,7 +16,8 @@
   "productionTargets": [
     "tools/agent/**",
     "tools/autopilot/**",
-    "tests/harness/autopilot*.spec.ts",
+    "tests/harness/autopilot.spec.ts",
+    "tests/harness/autopilot.conformance-evidence.json",
     "package.json",
     "docs/implementation/autopilot.md"
   ],
@@ -27,5 +28,6 @@
   ],
   "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
   "rejectsTrivialAssertions": true,
-  "requiresChangedProductionBehaviorInvocation": true
+  "requiresChangedProductionBehaviorInvocation": true,
+  "evidenceDeclarationPath": "tests/harness/autopilot.conformance-evidence.json"
 }

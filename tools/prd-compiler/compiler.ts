@@ -199,7 +199,7 @@ const loadFrameworkTask = async (
     'utf8',
   );
   const source = JSON.parse(sourceText) as Record<string, unknown>;
-  const conformance = buildConformanceManifest({
+  const builtConformance = buildConformanceManifest({
     taskId: String(source.id),
     riskLevel: String(source.riskLevel),
     requirements: source.requirements as string[],
@@ -208,6 +208,9 @@ const loadFrameworkTask = async (
     requiredTests: source.requiredTests as string[],
     productionTargets: source.writeSet as string[],
   });
+  const conformanceValue = JSON.parse(builtConformance.content) as Record<string, unknown>;
+  conformanceValue.evidenceDeclarationPath = 'tests/harness/autopilot.conformance-evidence.json';
+  const conformance = { content: json(conformanceValue), sha256: sha256(json(conformanceValue)) };
   const task = TaskContractSchema.parse({
     ...source,
     sourceHashes: spec.hashes,
