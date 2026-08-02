@@ -73,13 +73,13 @@ describe('context, acceptance partition, and specification hardening', () => {
       ready: string[];
       blocked: Array<{ taskId: string; reason: string }>;
     };
-    expect(queue.counts).toEqual({ total: 84, implementationReady: 71, specificationGap: 13 });
+    expect(queue.counts).toEqual({ total: 85, implementationReady: 72, specificationGap: 13 });
     const scheduled = [
       ...queue.ready,
       ...queue.blocked.map((item) => item.taskId),
     ];
-    expect(new Set(scheduled).size).toBe(84);
-    expect(scheduled).toHaveLength(84);
+    expect(new Set(scheduled).size).toBe(85);
+    expect(scheduled).toHaveLength(85);
     const gaps = queue.blocked.filter((item) => item.reason === 'SPECIFICATION_GAP');
     expect(gaps).toHaveLength(13);
     expect(queue.ready.some((taskId) => gaps.some((item) => item.taskId === taskId))).toBe(false);
