@@ -601,7 +601,7 @@ const validateVerifiedTask = async (
   const state = task.state;
   if (!state.leaseId || state.leaseVersion < 1)
     throw new ZCodeError('VERIFIED_TASK_LEASE_MISSING');
-  if (!state.baseCommit || !state.holder || !state.branch)
+  if (!state.baseCommit || !state.holder || !state.branch || !state.expiresAt)
     throw new ZCodeError('VERIFIED_TASK_BINDING_INCOMPLETE');
   const result = await readTaskResult(task.contract.id, task.workspace);
   const lifecycle = await readLifecycleBinding(inventory.root, state);
@@ -625,10 +625,14 @@ const validateVerifiedTask = async (
     ...(task.conformanceManifestSha256
       ? { conformanceManifestSha256: task.conformanceManifestSha256 }
       : {}),
+    ...(task.conformanceManifestPath
+      ? { conformanceManifestPath: task.conformanceManifestPath }
+      : {}),
     receiptId: result.bindings.launchReceiptId,
     receiptSha256: result.bindings.launchReceiptSha256,
     provider,
     holder: state.holder,
+    expiresAt: state.expiresAt,
     taskBranch: state.branch,
     taskWorktree: task.workspace,
     clusterBranch: task.cluster.branch.branch,

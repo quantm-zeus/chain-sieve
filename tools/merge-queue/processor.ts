@@ -257,7 +257,7 @@ export const processMergeQueue = async (
   const cwd = options.cwd ?? process.cwd();
   const now = options.now ?? new Date();
   const queue = await readQueue(cwd);
-  const item = queue.items.find((candidate) => candidate.status === 'QUEUED');
+  const item = queue.items.find((candidate) => candidate.status === 'QUEUED' || candidate.status === 'PROCESSING');
   if (!item) throw new Error('MERGE_QUEUE_EMPTY');
   const task = tasks.find((candidate) => candidate.id === item.taskId);
   if (!task) throw new Error('TASK_NOT_FOUND');
