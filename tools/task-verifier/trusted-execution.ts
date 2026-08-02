@@ -149,6 +149,10 @@ const blockedDirectoryNames = new Set([
   '.npm',
   '.cache',
   '.bin',
+  '.svelte-kit',
+  '.next',
+  'coverage',
+  'dist',
 ]);
 const blockedFile = (path: string): boolean => {
   const name = path.split('/').at(-1) ?? '';
