@@ -9,6 +9,7 @@ import {
   type LaunchReceiptCandidate,
 } from '../agent/lib/runtime.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
+import type { AgentProviderId } from '../agent/lib/types.js';
 import { readTrustedFile } from '../agent/lib/trusted-path.js';
 import { sha256 } from '../prd-compiler/compiler.js';
 import {
@@ -138,18 +139,27 @@ export const selectSelfReviewCorrectionReceipt = async (
     fencingVersion: number;
     holder: string;
     taskWorktree: string;
+    previousCommit: string;
   },
   failureCode: string,
 ): Promise<LaunchReceiptCandidate> => {
   const bound = candidates.filter(
-    ({ value }) =>
-      value.schemaVersion === '2.0.0' &&
+    ({ value }) => {
+      const correction = value.correction as { previousCommit?: unknown; failureCodes?: unknown } | undefined;
+      const correctionBound = correction
+        ? correction.previousCommit === binding.previousCommit &&
+          Array.isArray(correction.failureCodes) &&
+          correction.failureCodes.includes(failureCode)
+        : value.provider === 'antigravity';
+      return value.schemaVersion === '2.0.0' &&
       value.taskId === binding.taskId &&
       value.leaseId === binding.leaseId &&
       value.fencingVersion === binding.fencingVersion &&
       value.holder === binding.holder &&
       value.taskWorktree === binding.taskWorktree &&
-      value.provider === 'antigravity',
+      correctionBound &&
+      ['antigravity', 'codex', 'zcode'].includes(String(value.provider));
+    },
   );
   const matches: LaunchReceiptCandidate[] = [];
   for (const candidate of bound) {
@@ -333,7 +343,7 @@ const validateBoundReceipt = async (
     leaseId: string;
     fencingVersion: number;
     expiresAt: string;
-    provider: 'antigravity' | 'zcode';
+    provider: AgentProviderId;
     baselineEvidence: EvidenceReference;
     baseline: VerificationBaselineDocument;
     allowHistoricalExpiry?: boolean;
@@ -478,6 +488,8 @@ export const correctTaskSelfReview = async (
       'antigravity-',
     )
       ? 'antigravity'
+      : previous.review.launchReceiptId.startsWith('codex-')
+        ? 'codex'
       : previous.review.launchReceiptId.startsWith('zcode-')
         ? 'zcode'
         : undefined;
@@ -526,7 +538,8 @@ export const correctTaskSelfReview = async (
       targetWorktree,
     );
     if (changedFiles.length === 0) throw new Error('TASK_DIFF_EMPTY');
-    assertTrustedTargetPaths(changedFiles.map((file) => file.path));
+    if (task.dependencyGroup !== 'FW')
+      assertTrustedTargetPaths(changedFiles.map((file) => file.path));
     if (changedFiles.length > task.complexityBudget.maxFiles)
       throw new Error('TASK_FILE_BUDGET_EXCEEDED');
     for (const file of changedFiles) {
@@ -565,11 +578,15 @@ export const correctTaskSelfReview = async (
         fencingVersion: target.leaseVersion,
         holder,
         taskWorktree: targetWorktree,
+        previousCommit: expectedPreviousCommit,
       },
       failureCode,
     );
     if (!correctionReceipt.receiptId)
       throw new Error('SELF_REVIEW_CORRECTION_RECEIPT_ID_MISSING');
+    const correctionProvider = correctionReceipt.value.provider;
+    if (!['antigravity', 'codex', 'zcode'].includes(String(correctionProvider)))
+      throw new Error('SELF_REVIEW_CORRECTION_RECEIPT_PROVIDER_UNBOUND');
     await validateBoundReceipt(
       trustedRoot,
       targetWorktree,
@@ -583,7 +600,7 @@ export const correctTaskSelfReview = async (
         leaseId: target.leaseId,
         fencingVersion: target.leaseVersion,
         expiresAt: target.expiresAt,
-        provider: 'antigravity',
+        provider: correctionProvider as AgentProviderId,
         baselineEvidence: target.verificationBaseline,
         baseline,
       },
