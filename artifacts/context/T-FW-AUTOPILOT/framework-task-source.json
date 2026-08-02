@@ -32,7 +32,14 @@
   "allowedPaths": ["tools/agent/**", "tools/autopilot/**", "tests/harness/autopilot.spec.ts", "tests/harness/autopilot.conformance-evidence.json", "package.json", "docs/implementation/autopilot.md"],
   "forbiddenPaths": ["docs/spec/**", "artifacts/spec/**", "tasks/**", "clusters/**", ".github/workflows/**", "tests/conformance/**", "artifacts/conformance/T-FW-AUTOPILOT/**", "infra/migrations/**", "pnpm-lock.yaml"],
   "exclusiveLocks": ["tools/agent", "tools/autopilot", "package.json"],
-  "deliverables": ["pnpm autopilot", "headless Codex provider", "provider-neutral corrections", "process lock", "focused autopilot tests"],
+  "deliverables": [
+    "tools/autopilot/** @requirement FW-AUTOPILOT-001",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-002",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-003",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-004",
+    "tools/agent/**",
+    "tests/harness/autopilot.spec.ts"
+  ],
   "constraints": [
     "Use Codex CLI as the autonomous default provider.",
     "Never use clipboard, AppleScript, simulated input, mouse automation, or Antigravity UI automation.",

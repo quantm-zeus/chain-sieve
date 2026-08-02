@@ -1,11 +1,12 @@
 {
   "specificationStatus": "READY",
   "deliverables": [
-    "pnpm autopilot",
-    "headless Codex provider",
-    "provider-neutral corrections",
-    "process lock",
-    "focused autopilot tests"
+    "tools/autopilot/** @requirement FW-AUTOPILOT-001",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-002",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-003",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-004",
+    "tools/agent/**",
+    "tests/harness/autopilot.spec.ts"
   ],
   "constraints": [
     "Use Codex CLI as the autonomous default provider.",
