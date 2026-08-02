@@ -262,6 +262,8 @@ export const verifyTask = async (
   if (!receiptExpiry) throw new Error('SELF_REVIEW_LEASE_EXPIRY_BINDING_MISSING');
   const provider = review.launchReceiptId.startsWith('antigravity-')
     ? 'antigravity'
+    : review.launchReceiptId.startsWith('codex-')
+      ? 'codex'
     : review.launchReceiptId.startsWith('zcode-')
       ? 'zcode'
       : undefined;

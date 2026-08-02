@@ -172,7 +172,7 @@ export interface PayloadBinding {
   failures: string[];
 }
 
-export type AgentProviderId = 'antigravity' | 'zcode';
+export type AgentProviderId = 'antigravity' | 'codex' | 'zcode';
 
 export interface ProviderDetection {
   available: boolean;

@@ -300,6 +300,14 @@ export const persistGoalAndPayload = async (
       ? { conformanceManifestSha256: binding.conformanceManifestSha256 }
       : {}),
     pathLocks: binding.task.contract.exclusiveLocks,
+    ...(binding.failures.length > 0
+      ? {
+          correction: {
+            previousCommit: binding.task.workspaceHead,
+            failureCodes: [...new Set(binding.failures.flatMap((failure) => failure.match(/[A-Z][A-Z0-9_]{2,}/g) ?? []))],
+          },
+        }
+      : {}),
   };
   const receipt = { ...receiptCore, receiptHash: sha256(JSON.stringify(receiptCore)) };
   const receiptText = `${JSON.stringify(receipt, null, 2)}\n`;

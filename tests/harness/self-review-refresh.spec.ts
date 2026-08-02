@@ -17,7 +17,10 @@ import {
 import { afterEach, describe, expect, it } from 'vitest';
 import type { LaunchReceiptCandidate } from '../../tools/agent/lib/runtime.js';
 import { sha256 } from '../../tools/prd-compiler/compiler.js';
-import { correctTaskSelfReview } from '../../tools/task-runner/self-review-correct.js';
+import {
+  correctTaskSelfReview,
+  selectSelfReviewCorrectionReceipt,
+} from '../../tools/task-runner/self-review-correct.js';
 import {
   LegacyTaskReviewSchema,
   refreshTaskSelfReview,
@@ -729,6 +732,28 @@ describe('trusted self-review refresh', () => {
 });
 
 describe('trusted self-review correction', () => {
+  it('selects the provider that performed a precisely bound correction', async () => {
+    const runtime = await mkdtemp(join(tmpdir(), 'ciag-codex-correction-'));
+    temporary.push(runtime);
+    const goalRoot = join(runtime, 'goals/T-G0-CORE');
+    await mkdir(goalRoot, { recursive: true });
+    const goal = '- Correction required: TASK_LINE_BUDGET_EXCEEDED\n';
+    const goalPath = join(goalRoot, 'goal.md');
+    await writeFile(goalPath, goal);
+    const value = {
+      schemaVersion: '2.0.0', taskId: 'T-G0-CORE', leaseId: 'lease-4', fencingVersion: 4,
+      holder: 'agent-orchestrator', taskWorktree: '/tmp/task', provider: 'codex', goalPath,
+      goalSha256: sha256(goal), correction: { previousCommit: 'a'.repeat(40), failureCodes: ['TASK_LINE_BUDGET_EXCEEDED'] },
+    };
+    const raw = `${JSON.stringify(value)}\n`;
+    const selected = await selectSelfReviewCorrectionReceipt(
+      [{ receiptId: 'codex-current', raw, sha256: sha256(raw), runtime, value }],
+      { taskId: 'T-G0-CORE', leaseId: 'lease-4', fencingVersion: 4, holder: 'agent-orchestrator', taskWorktree: '/tmp/task', previousCommit: 'a'.repeat(40) },
+      'TASK_LINE_BUDGET_EXCEEDED',
+    );
+    expect(selected.value.provider).toBe('codex');
+  });
+
   it('accepts one amended atomic HEAD, stales prior evidence, and leaves root verification ready', async () => {
     const fixture = await createFixture();
     await bindCurrentPreviousReview(fixture);
