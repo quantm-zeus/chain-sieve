@@ -105,10 +105,11 @@ const createFixture = (): {
     { recursive: true },
   );
   if (git(root, ['status', '--porcelain']) !== '') {
-    git(root, ['add', 'tools/worktree-manager']);
+    git(root, ['add', '-A']);
     git(root, ['commit', '-q', '-m', 'fixture: current worktree manager']);
   }
   git(root, ['branch', '-f', 'cluster/g0', 'HEAD']);
+  git(root, ['branch', '-f', 'cluster/fw', 'HEAD']);
   const cluster = `${root}-worktrees/g0`;
   mkdirSync(dirname(cluster), { recursive: true });
   git(root, ['worktree', 'add', '-q', cluster, 'cluster/g0']);
@@ -121,6 +122,12 @@ const createFixture = (): {
       {
         schemaVersion: '2.0.0',
         tasks: {
+          'T-FW-AUTOPILOT': {
+            taskId: 'T-FW-AUTOPILOT',
+            state: 'MERGED',
+            leaseVersion: 0,
+            history: [],
+          },
           'T-G0-DISC': {
             taskId: 'T-G0-DISC',
             state: 'READY',
