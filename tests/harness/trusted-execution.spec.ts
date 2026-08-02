@@ -1,4 +1,12 @@
-import { access, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import {
+  access,
+  copyFile,
+  mkdir,
+  mkdtemp,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -17,7 +25,310 @@ afterEach(async () =>
   ),
 );
 
+interface WorkspaceFixtureOptions {
+  rootDependencies?: Record<string, string>;
+  rootDependencySection?:
+    | 'dependencies'
+    | 'devDependencies'
+    | 'peerDependencies'
+    | 'optionalDependencies';
+  importerDependencies?: Record<string, string>;
+  duplicateSharedPackage?: boolean;
+}
+
+const workspaceFixture = async (
+  options: WorkspaceFixtureOptions = {},
+): Promise<{
+  trusted: string;
+  target: string;
+  runtime: ReturnType<typeof resolveTrustedVerificationRuntime>;
+}> => {
+  const trusted = await mkdtemp(
+    join(tmpdir(), 'chain-sieve-trusted-workspace-'),
+  );
+  const target = await mkdtemp(join(tmpdir(), 'chain-sieve-workspace-target-'));
+  temporary.push(trusted, target);
+  await symlink(
+    join(process.cwd(), 'node_modules'),
+    join(trusted, 'node_modules'),
+    'dir',
+  );
+  await copyFile(
+    join(process.cwd(), 'vitest.config.ts'),
+    join(trusted, 'vitest.config.ts'),
+  );
+  await writeFile(
+    join(trusted, 'pnpm-workspace.yaml'),
+    "packages:\n  - 'packages/*'\n",
+  );
+  await writeFile(
+    join(trusted, 'package.json'),
+    `${JSON.stringify({
+      name: 'trusted-fixture-root',
+      type: 'module',
+      [options.rootDependencySection ?? 'dependencies']:
+        options.rootDependencies,
+    })}\n`,
+  );
+  const packages = [
+    {
+      path: 'packages/shared',
+      manifest: {
+        name: '@ciag/shared-schemas',
+        type: 'module',
+        exports: './src/index.ts',
+      },
+      source: 'export interface WorkspaceMarker { value: number }\n',
+    },
+    {
+      path: 'packages/domain',
+      manifest: {
+        name: '@ciag/domain',
+        type: 'module',
+        exports: './src/index.ts',
+      },
+      source: 'export const workspaceValue = 1;\n',
+    },
+    {
+      path: 'packages/importer',
+      manifest: {
+        name: '@ciag/importer',
+        type: 'module',
+        exports: './src/index.ts',
+        dependencies: options.importerDependencies,
+      },
+      source: 'export const importerValue = 1;\n',
+    },
+  ];
+  if (options.duplicateSharedPackage)
+    packages.push({
+      path: 'packages/shared-copy',
+      manifest: {
+        name: '@ciag/shared-schemas',
+        type: 'module',
+        exports: './src/index.ts',
+      },
+      source: 'export interface WorkspaceMarker { duplicate: true }\n',
+    });
+  for (const item of packages) {
+    await mkdir(join(trusted, item.path, 'src'), { recursive: true });
+    await writeFile(
+      join(trusted, item.path, 'package.json'),
+      `${JSON.stringify(item.manifest)}\n`,
+    );
+    await writeFile(join(trusted, item.path, 'src/index.ts'), item.source);
+  }
+  return {
+    trusted,
+    target,
+    runtime: resolveTrustedVerificationRuntime(trusted),
+  };
+};
+
+const writeWorkspaceTest = async (
+  target: string,
+  path: string,
+  specifier: string,
+): Promise<void> => {
+  await mkdir(join(target, path, '..'), { recursive: true });
+  await writeFile(
+    join(target, path),
+    `import type { WorkspaceMarker } from ${JSON.stringify(specifier)}; import { expect, it } from 'vitest'; it('audits workspace resolution', () => { const value: WorkspaceMarker = { value: 1 }; expect(value.value).toBe(1); });\n`,
+  );
+};
+
 describe('trusted verification executable and dependency resolution', () => {
+  it.each([
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies',
+  ] as const)(
+    'accepts a root workspace import declared in %s',
+    async (section) => {
+      const fixture = await workspaceFixture({
+        rootDependencies: { '@ciag/shared-schemas': 'workspace:*' },
+        rootDependencySection: section,
+      });
+      await writeWorkspaceTest(
+        fixture.target,
+        'tests/workspace.spec.ts',
+        '@ciag/shared-schemas',
+      );
+      const result = runTrustedVitest(fixture.runtime, fixture.target, [
+        'tests/workspace.spec.ts',
+      ]);
+      expect(result.exitCode, result.output).toBe(0);
+      expect(result.resolutionManifest).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            specifier: '@ciag/shared-schemas',
+            classification: 'TRUSTED_WORKSPACE_DEPENDENCY',
+          }),
+        ]),
+      );
+    },
+  );
+
+  it('accepts a workspace import declared by the owning package', async () => {
+    const fixture = await workspaceFixture({
+      importerDependencies: { '@ciag/shared-schemas': 'workspace:*' },
+    });
+    await mkdir(join(fixture.target, 'packages/importer/src'), {
+      recursive: true,
+    });
+    await writeFile(
+      join(fixture.target, 'packages/importer/src/consumer.ts'),
+      "import type { WorkspaceMarker } from '@ciag/shared-schemas'; export const marker: WorkspaceMarker = { value: 1 };\n",
+    );
+    await mkdir(join(fixture.target, 'tests'), { recursive: true });
+    await writeFile(
+      join(fixture.target, 'tests/workspace.spec.ts'),
+      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(true).toBe(true));\n",
+    );
+    const result = runTrustedVitest(fixture.runtime, fixture.target, [
+      'tests/workspace.spec.ts',
+    ]);
+    expect(result.exitCode, result.output).toBe(0);
+  });
+
+  it('rejects an undeclared workspace import from an owning package', async () => {
+    const fixture = await workspaceFixture();
+    await mkdir(join(fixture.target, 'packages/importer/src'), {
+      recursive: true,
+    });
+    await writeFile(
+      join(fixture.target, 'packages/importer/src/consumer.ts'),
+      "import type { WorkspaceMarker } from '@ciag/shared-schemas'; export const marker: WorkspaceMarker = { value: 1 };\n",
+    );
+    await mkdir(join(fixture.target, 'tests'), { recursive: true });
+    await writeFile(
+      join(fixture.target, 'tests/workspace.spec.ts'),
+      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(true).toBe(true));\n",
+    );
+    expect(() =>
+      runTrustedVitest(fixture.runtime, fixture.target, [
+        'tests/workspace.spec.ts',
+      ]),
+    ).toThrow('UNTRUSTED_WORKSPACE_IMPORT_UNDECLARED');
+  });
+
+  it('rejects an unknown @ciag package', async () => {
+    const fixture = await workspaceFixture({
+      rootDependencies: { '@ciag/unknown': 'workspace:*' },
+    });
+    await writeWorkspaceTest(
+      fixture.target,
+      'tests/workspace.spec.ts',
+      '@ciag/unknown',
+    );
+    expect(() =>
+      runTrustedVitest(fixture.runtime, fixture.target, [
+        'tests/workspace.spec.ts',
+      ]),
+    ).toThrow('UNTRUSTED_BARE_IMPORT_UNRESOLVED:@ciag/unknown');
+  });
+
+  it('rejects an ambiguous duplicate workspace package identity', async () => {
+    const fixture = await workspaceFixture({
+      rootDependencies: { '@ciag/shared-schemas': 'workspace:*' },
+      duplicateSharedPackage: true,
+    });
+    await writeWorkspaceTest(
+      fixture.target,
+      'tests/workspace.spec.ts',
+      '@ciag/shared-schemas',
+    );
+    expect(() =>
+      runTrustedVitest(fixture.runtime, fixture.target, [
+        'tests/workspace.spec.ts',
+      ]),
+    ).toThrow('UNTRUSTED_WORKSPACE_PACKAGE_AMBIGUOUS');
+  });
+
+  it('rejects workspace alias package-name spoofing', async () => {
+    const fixture = await workspaceFixture({
+      rootDependencies: { '@ciag/shared-schemas': 'workspace:*' },
+    });
+    await writeWorkspaceTest(
+      fixture.target,
+      'tests/workspace.spec.ts',
+      '@ciag/shared-schemas',
+    );
+    expect(() =>
+      runTrustedVitest(
+        fixture.runtime,
+        fixture.target,
+        ['tests/workspace.spec.ts'],
+        {
+          workspaceAliases: {
+            '@ciag/shared-schemas': 'packages/domain/src/index.ts',
+          },
+        },
+      ),
+    ).toThrow('UNTRUSTED_WORKSPACE_ALIAS_IDENTITY_MISMATCH');
+  });
+
+  it('rejects a workspace package symlink outside the trusted repository', async () => {
+    const fixture = await workspaceFixture({
+      rootDependencies: { '@ciag/escaped': 'workspace:*' },
+    });
+    const outside = await mkdtemp(
+      join(tmpdir(), 'chain-sieve-workspace-escape-'),
+    );
+    temporary.push(outside);
+    await mkdir(join(outside, 'src'), { recursive: true });
+    await writeFile(
+      join(outside, 'package.json'),
+      `${JSON.stringify({ name: '@ciag/escaped', exports: './src/index.ts' })}\n`,
+    );
+    await writeFile(
+      join(outside, 'src/index.ts'),
+      'export type Escaped = true;\n',
+    );
+    await symlink(outside, join(fixture.trusted, 'packages/escaped'), 'dir');
+    await writeWorkspaceTest(
+      fixture.target,
+      'tests/workspace.spec.ts',
+      '@ciag/escaped',
+    );
+    expect(() =>
+      runTrustedVitest(fixture.runtime, fixture.target, [
+        'tests/workspace.spec.ts',
+      ]),
+    ).toThrow('UNTRUSTED_WORKSPACE_PACKAGE_ESCAPE');
+  });
+
+  it('accepts the T-G0-DATA shared fixture imports declared at the root', async () => {
+    const fixture = await workspaceFixture({
+      rootDependencies: {
+        '@ciag/shared-schemas': 'workspace:*',
+        '@ciag/domain': 'workspace:*',
+      },
+    });
+    await mkdir(join(fixture.target, 'tests/fixtures/core'), {
+      recursive: true,
+    });
+    await writeFile(
+      join(fixture.target, 'tests/fixtures/core/index.ts'),
+      "import type { WorkspaceMarker } from '@ciag/shared-schemas'; import { workspaceValue } from '@ciag/domain'; export const sharedFixture: WorkspaceMarker = { value: workspaceValue };\n",
+    );
+    await mkdir(join(fixture.target, 'tests'), { recursive: true });
+    await writeFile(
+      join(fixture.target, 'tests/workspace.spec.ts'),
+      "import { expect, it } from 'vitest'; it('keeps the shared fixture available', () => expect(true).toBe(true));\n",
+    );
+    const result = runTrustedVitest(fixture.runtime, fixture.target, [
+      'tests/workspace.spec.ts',
+    ]);
+    expect(result.exitCode, result.output).toBe(0);
+    expect(
+      result.resolutionManifest?.filter((entry) =>
+        entry.importer.startsWith('tests/fixtures/core/'),
+      ),
+    ).toHaveLength(2);
+  });
+
   it('reproduces execution of a malicious task-local fast-check package', async () => {
     const target = await mkdtemp(
       join(tmpdir(), 'chain-sieve-untrusted-fast-check-'),

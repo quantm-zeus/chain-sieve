@@ -20,6 +20,7 @@ import { sha256 } from '../prd-compiler/compiler.js';
 export type ResolutionClassification =
   | 'TRUSTED_RUNTIME'
   | 'TRUSTED_THIRD_PARTY_DEPENDENCY'
+  | 'TRUSTED_WORKSPACE_DEPENDENCY'
   | 'MATERIALIZED_TASK_SOURCE'
   | 'MATERIALIZED_TASK_TEST'
   | 'APPROVED_FIXTURE';
@@ -230,6 +231,176 @@ const sourceFiles = (root: string): string[] => {
   return files.sort();
 };
 
+interface PackageManifest {
+  name?: string;
+  exports?: string;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+}
+
+interface TrustedWorkspacePackage {
+  name: string;
+  relativeRoot: string;
+  entry: string | undefined;
+  manifest: PackageManifest;
+}
+
+const workspacePattern = (pattern: string): RegExp => {
+  const segments = pattern.replace(/^\.\//, '').split('/');
+  const expression = segments
+    .map((segment) => {
+      if (segment === '**') return '(?:[^/]+/)*[^/]*';
+      return segment
+        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+        .replaceAll('*', '[^/]*')
+        .replaceAll('?', '[^/]');
+    })
+    .join('/');
+  return new RegExp(`^${expression}$`);
+};
+
+const readWorkspacePatterns = (trustedRoot: string): string[] => {
+  const workspacePath = trustedFile(
+    trustedRoot,
+    join(trustedRoot, 'pnpm-workspace.yaml'),
+    'pnpm-workspace',
+  );
+  const lines = readFileSync(workspacePath, 'utf8').split(/\r?\n/);
+  const patterns: string[] = [];
+  let packages = false;
+  for (const raw of lines) {
+    const line = raw.replace(/\s+#.*$/, '').trimEnd();
+    if (!line.trim()) continue;
+    if (!line.startsWith(' ') && !line.startsWith('\t')) {
+      packages = line.trim() === 'packages:';
+      continue;
+    }
+    if (!packages) continue;
+    const match = /^\s*-\s*(?:'([^']+)'|"([^"]+)"|([^\s]+))\s*$/.exec(line);
+    if (!match) throw new Error('TRUSTED_PNPM_WORKSPACE_CONFIG_UNSUPPORTED');
+    const pattern = match[1] ?? match[2] ?? match[3];
+    if (!pattern || isAbsolute(pattern) || pattern.split('/').includes('..'))
+      throw new Error(
+        `TRUSTED_PNPM_WORKSPACE_PATTERN_INVALID:${pattern ?? ''}`,
+      );
+    patterns.push(pattern);
+  }
+  if (patterns.length === 0)
+    throw new Error('TRUSTED_PNPM_WORKSPACE_PACKAGES_MISSING');
+  return patterns;
+};
+
+const workspaceDirectories = (trustedRoot: string): string[] => {
+  const paths: string[] = [];
+  const walk = (directory: string, prefix = ''): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (blockedDirectoryNames.has(entry.name)) continue;
+      const path = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) {
+        paths.push(path);
+        walk(join(directory, entry.name), path);
+      } else if (entry.isSymbolicLink()) paths.push(path);
+    }
+  };
+  walk(trustedRoot);
+  return paths;
+};
+
+const readPackageManifest = (
+  trustedRoot: string,
+  relativeRoot: string,
+): { root: string; manifest: PackageManifest } => {
+  const lexicalRoot = join(trustedRoot, relativeRoot);
+  const root = realpathSync(lexicalRoot);
+  if (!contained(trustedRoot, root))
+    throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_ESCAPE:${relativeRoot}`);
+  const manifestPath = trustedFile(
+    trustedRoot,
+    join(root, 'package.json'),
+    `workspace-manifest:${relativeRoot || '.'}`,
+  );
+  let manifest: PackageManifest;
+  try {
+    manifest = JSON.parse(
+      readFileSync(manifestPath, 'utf8'),
+    ) as PackageManifest;
+  } catch {
+    throw new Error(
+      `TRUSTED_WORKSPACE_MANIFEST_INVALID:${relativeRoot || '.'}`,
+    );
+  }
+  return { root, manifest };
+};
+
+const trustedWorkspacePackages = (
+  trustedRoot: string,
+): Map<string, TrustedWorkspacePackage[]> => {
+  const positives: RegExp[] = [];
+  const negatives: RegExp[] = [];
+  for (const rawPattern of readWorkspacePatterns(trustedRoot)) {
+    const negative = rawPattern.startsWith('!');
+    const pattern = negative ? rawPattern.slice(1) : rawPattern;
+    (negative ? negatives : positives).push(workspacePattern(pattern));
+  }
+  const matches = workspaceDirectories(trustedRoot).filter(
+    (path) =>
+      positives.some((pattern) => pattern.test(path)) &&
+      !negatives.some((pattern) => pattern.test(path)),
+  );
+  const packages = new Map<string, TrustedWorkspacePackage[]>();
+  for (const relativeRoot of matches) {
+    let loaded: ReturnType<typeof readPackageManifest>;
+    try {
+      loaded = readPackageManifest(trustedRoot, relativeRoot);
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith('ENOENT:'))
+        continue;
+      throw error;
+    }
+    const { root, manifest } = loaded;
+    if (!manifest.name) continue;
+    let entry: string | undefined;
+    if (manifest.exports !== undefined) {
+      if (
+        !manifest.exports.startsWith('./') ||
+        manifest.exports.split('/').includes('..')
+      )
+        throw new Error(
+          `TRUSTED_WORKSPACE_PACKAGE_ENTRY_INVALID:${manifest.name}`,
+        );
+      const canonicalEntry = realpathSync(join(root, manifest.exports));
+      if (!contained(trustedRoot, canonicalEntry))
+        throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_ESCAPE:${manifest.name}`);
+      entry = relative(trustedRoot, canonicalEntry).replaceAll('\\', '/');
+    }
+    const item = {
+      name: manifest.name,
+      relativeRoot,
+      entry,
+      manifest,
+    };
+    packages.set(manifest.name, [...(packages.get(manifest.name) ?? []), item]);
+  }
+  return packages;
+};
+
+const importedPackageName = (specifier: string): string => {
+  const parts = specifier.split('/');
+  return specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0]!;
+};
+
+const declaredDependencies = (manifest: PackageManifest): Set<string> =>
+  new Set(
+    [
+      manifest.dependencies,
+      manifest.devDependencies,
+      manifest.peerDependencies,
+      manifest.optionalDependencies,
+    ].flatMap((dependencies) => Object.keys(dependencies ?? {})),
+  );
+
 const classifyMaterializedPath = (
   root: string,
   resolvedPath: string,
@@ -304,6 +475,44 @@ const auditMaterializedResolution = (
   const trustedRequire = createRequire(
     join(runtime.trustedRoot, 'package.json'),
   );
+  const workspacePackages = trustedWorkspacePackages(runtime.trustedRoot);
+  const rootManifest = readPackageManifest(runtime.trustedRoot, '').manifest;
+  const uniqueWorkspacePackage = (
+    name: string,
+  ): TrustedWorkspacePackage | undefined => {
+    const candidates = workspacePackages.get(name) ?? [];
+    if (candidates.length > 1)
+      throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_AMBIGUOUS:${name}`);
+    return candidates[0];
+  };
+  for (const [name, alias] of Object.entries(workspaceAliases)) {
+    const workspacePackage = uniqueWorkspacePackage(name);
+    if (!workspacePackage)
+      throw new Error(`UNTRUSTED_WORKSPACE_ALIAS_UNKNOWN:${name}`);
+    if (!workspacePackage.entry)
+      throw new Error(`TRUSTED_WORKSPACE_PACKAGE_ENTRY_INVALID:${name}`);
+    const normalizedAlias = alias.replace(/^\.\//, '').replaceAll('\\', '/');
+    if (normalizedAlias !== workspacePackage.entry)
+      throw new Error(`UNTRUSTED_WORKSPACE_ALIAS_IDENTITY_MISMATCH:${name}`);
+  }
+  const importerManifest = (importer: string): PackageManifest => {
+    const owners = [...workspacePackages.values()]
+      .flat()
+      .filter(
+        (workspacePackage) =>
+          importer === workspacePackage.relativeRoot ||
+          importer.startsWith(`${workspacePackage.relativeRoot}/`),
+      )
+      .sort(
+        (left, right) => right.relativeRoot.length - left.relativeRoot.length,
+      );
+    if (
+      owners.length > 1 &&
+      owners[0]!.relativeRoot === owners[1]!.relativeRoot
+    )
+      throw new Error(`UNTRUSTED_IMPORTER_PACKAGE_AMBIGUOUS:${importer}`);
+    return owners[0]?.manifest ?? rootManifest;
+  };
   const compilerOptions: ts.CompilerOptions = {
     moduleResolution: ts.ModuleResolutionKind.Bundler,
     module: ts.ModuleKind.ESNext,
@@ -325,20 +534,50 @@ const auditMaterializedResolution = (
       });
       return;
     }
-    const alias = workspaceAliases[specifier];
-    if (alias) {
-      const resolvedAlias = realpathSync(join(root, alias));
-      if (!contained(root, resolvedAlias))
-        throw new Error(`UNTRUSTED_WORKSPACE_ALIAS_ESCAPE:${specifier}`);
-      manifest.push({
-        importer,
-        specifier,
-        resolved: relative(root, resolvedAlias).replaceAll('\\', '/'),
-        classification: classifyMaterializedPath(root, resolvedAlias, tests),
-      });
-      return;
-    }
     if (!specifier.startsWith('.') && !specifier.startsWith('/')) {
+      const packageName = importedPackageName(specifier);
+      const workspacePackage = uniqueWorkspacePackage(packageName);
+      if (workspacePackage) {
+        if (specifier !== workspacePackage.name)
+          throw new Error(`UNTRUSTED_WORKSPACE_IMPORT_SUBPATH:${specifier}`);
+        if (!declaredDependencies(importerManifest(importer)).has(packageName))
+          throw new Error(
+            `UNTRUSTED_WORKSPACE_IMPORT_UNDECLARED:${importer}:${specifier}`,
+          );
+        if (!workspacePackage.entry)
+          throw new Error(
+            `TRUSTED_WORKSPACE_PACKAGE_ENTRY_INVALID:${specifier}`,
+          );
+        const alias = workspaceAliases[specifier];
+        if (alias) {
+          const resolvedAlias = realpathSync(join(root, alias));
+          if (!contained(root, resolvedAlias))
+            throw new Error(`UNTRUSTED_WORKSPACE_ALIAS_ESCAPE:${specifier}`);
+          manifest.push({
+            importer,
+            specifier,
+            resolved: relative(root, resolvedAlias).replaceAll('\\', '/'),
+            classification: classifyMaterializedPath(
+              root,
+              resolvedAlias,
+              tests,
+            ),
+          });
+          return;
+        }
+        const resolvedWorkspace = realpathSync(
+          join(runtime.trustedRoot, workspacePackage.entry),
+        );
+        if (!contained(runtime.trustedRoot, resolvedWorkspace))
+          throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_ESCAPE:${specifier}`);
+        manifest.push({
+          importer,
+          specifier,
+          resolved: workspacePackage.entry,
+          classification: 'TRUSTED_WORKSPACE_DEPENDENCY',
+        });
+        return;
+      }
       let resolvedDependency: string;
       try {
         resolvedDependency = realpathSync(trustedRequire.resolve(specifier));
