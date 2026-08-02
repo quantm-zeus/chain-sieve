@@ -382,6 +382,14 @@ describe('explicit authoritative lease lifecycle', () => {
         },
       },
     };
+    const generatedTask = TaskContractSchema.parse(JSON.parse(contractText));
+    const generatedAuthority = await persistLifecycleAuthority({
+      trustedRoot, taskRoot: taskWorktree, task: generatedTask,
+      state: state.tasks['T-G0-CORE']!, contractPath: 'tasks/G0/T-G0-CORE.contract.json',
+      contextManifestPath: 'artifacts/context/T-G0-CORE/context-manifest.json', contractMode: 'GENERATED',
+    });
+    state.tasks['T-G0-CORE']!.lifecycleBinding = generatedAuthority.binding;
+    state.tasks['T-G0-CORE']!.verificationBaseline = generatedAuthority.baseline;
     await mkdir(runtimeRoot(trustedRoot), { recursive: true });
     await writeFile(join(runtimeRoot(trustedRoot), 'task-state.json'), `${JSON.stringify(state, null, 2)}\n`);
     const emptyHash = sha256('');
@@ -414,6 +422,7 @@ describe('explicit authoritative lease lifecycle', () => {
     const second = JSON.parse(execFileSync(process.execPath, args, { cwd: trustedRoot, encoding: 'utf8' })) as typeof first;
     expect(second).toEqual(first);
     expect(first.ttlMinutes).toBe(120);
+    expect(JSON.parse(await readFile(join(runtimeRoot(trustedRoot), generatedAuthority.binding.path), 'utf8'))).toMatchObject({ contractMode: 'GENERATED' });
     expect(Date.parse(first.expiresAt) - Date.parse(JSON.parse(await readFile(join(runtimeRoot(trustedRoot), first.receipt.path), 'utf8')).operationAt as string)).toBe(120 * 60_000);
     const receiptDocument = JSON.parse(await readFile(join(runtimeRoot(trustedRoot), first.receipt.path), 'utf8')) as Record<string, unknown>;
     expect(receiptDocument).toMatchObject({

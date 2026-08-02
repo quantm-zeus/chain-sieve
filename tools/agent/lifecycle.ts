@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { TaskContractSchema } from '@ciag/shared-schemas';
-import { persistLifecycleAuthority, validateRecoveryWorkspace } from '../task-runner/authority.js';
+import { persistLifecycleAuthority, readLifecycleBinding, validateRecoveryWorkspace } from '../task-runner/authority.js';
 import {
   AGENT_LEASE_TTL_MINUTES, acquireLifecycleMutationLock, assertAgentLeaseTtlMinutes, readState,
   recoverExpiredLease, renewValidLease, runtimeRoot, writeState,
@@ -158,6 +158,8 @@ try {
     const previousVerificationBaseline = target.verificationBaseline
       ? structuredClone(target.verificationBaseline)
       : undefined;
+    const existingLifecycle = await readLifecycleBinding(root, target);
+    const contractMode = existingLifecycle?.contractMode ?? 'LEGACY';
     const authority = await persistLifecycleAuthority({
       trustedRoot: root,
       taskRoot: expectedTaskWorktree,
@@ -165,11 +167,11 @@ try {
       state: target,
       contractPath: legacyContractPath,
       contextManifestPath: contextPath(taskId),
-      contractMode: 'LEGACY',
-      ...(generated.conformanceManifestPath
+      contractMode,
+      ...(contractMode === 'LEGACY' && generated.conformanceManifestPath
         ? { compatibilityConformanceManifestPath: generated.conformanceManifestPath }
         : {}),
-      ...(generated.conformanceManifestSha256
+      ...(contractMode === 'LEGACY' && generated.conformanceManifestSha256
         ? { compatibilityConformanceManifestSha256: generated.conformanceManifestSha256 }
         : {}),
     });
