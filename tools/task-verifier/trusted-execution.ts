@@ -511,6 +511,17 @@ export const trustedWorkspaceMaterialization = (
     const workspacePackage = candidates[0]!;
     if (!workspacePackage.entry)
       throw new Error(`TRUSTED_WORKSPACE_PACKAGE_ENTRY_INVALID:${name}`);
+    try {
+      const sourcePackageRoot = realpathSync(
+        join(canonicalSourceRoot, workspacePackage.relativeRoot),
+      );
+      if (!contained(canonicalSourceRoot, sourcePackageRoot))
+        throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_ESCAPE:${name}`);
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith('ENOENT:'))
+        continue;
+      throw error;
+    }
     approvedInputs.push(`${workspacePackage.relativeRoot}/**`);
     aliases[name] = workspacePackage.entry;
     for (const dependency of declaredDependencies(workspacePackage.manifest))
@@ -876,7 +887,7 @@ export const runTrustedVitest = (
       '--sequence.seed=424242',
       ...testFiles,
     ]);
-  const materializedOptions: TrustedVitestOptions = options.approvedInputs
+  const requestedOptions: TrustedVitestOptions = options.approvedInputs
     ? options
     : {
         ...options,
@@ -887,6 +898,24 @@ export const runTrustedVitest = (
           'tests/fixtures/**',
         ],
       };
+  const closure = trustedWorkspaceMaterialization(
+    runtime.trustedRoot,
+    canonicalTarget,
+    requestedOptions.approvedInputs!,
+  );
+  const materializedOptions: TrustedVitestOptions = {
+    ...requestedOptions,
+    approvedInputs: [
+      ...new Set([
+        ...requestedOptions.approvedInputs!,
+        ...closure.approvedInputs,
+      ]),
+    ],
+    workspaceAliases: {
+      ...closure.aliases,
+      ...requestedOptions.workspaceAliases,
+    },
+  };
   const materialized = materializeVerificationTarget(
     runtime,
     canonicalTarget,
@@ -897,7 +926,7 @@ export const runTrustedVitest = (
       runtime,
       materialized.root,
       testFiles,
-      options,
+      materializedOptions,
     );
   } finally {
     materialized.cleanup();
