@@ -300,6 +300,7 @@ export const verifyTask = async (
     controlPlaneCommit: reviewBaseline.controlPlaneCommit,
     controlPlaneTree: reviewBaseline.controlPlaneTree,
     requireProviderNeutral: true,
+    allowHistoricalExpiry: reviewUsesRecoveredLease,
   });
   const credential = currentLeaseCredential(target);
   transition(target, ['SELF_REVIEWING'], 'VERIFYING', { command: 'trusted-root:task:verify', credential, evidence: target.selfReviewEvidence, currentCommit: reviewCommit, currentTree: reviewTree });
