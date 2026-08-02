@@ -74,14 +74,15 @@
     "package.json"
   ],
   "interfaceHashes": {
-    "framework-task-source": "48ef8de9ea548baa448fdd29cf716b8d0339b5481607ff51b71a8b50db8aac04"
+    "framework-task-source": "4b83a09de8e56846e28028ce458e6a47394b23ed9824f98f36b41dc76f0ca522"
   },
   "deliverables": [
-    "pnpm autopilot",
-    "headless Codex provider",
-    "provider-neutral corrections",
-    "process lock",
-    "focused autopilot tests"
+    "tools/autopilot/** @requirement FW-AUTOPILOT-001",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-002",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-003",
+    "tools/autopilot/** @requirement FW-AUTOPILOT-004",
+    "tools/agent/**",
+    "tests/harness/autopilot.spec.ts"
   ],
   "constraints": [
     "Use Codex CLI as the autonomous default provider.",
