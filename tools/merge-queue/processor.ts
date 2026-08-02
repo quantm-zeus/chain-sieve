@@ -80,14 +80,13 @@ export const retryRevertedIntegration = async (
   };
   if (audit.taskId !== task.id || audit.taskCommit !== target.commit)
     throw new Error('INTEGRATION_FAILURE_AUDIT_MISMATCH');
-  if (
-    git(['rev-parse', 'HEAD'], cwd) !== audit.revertCommit ||
-    git(['rev-parse', 'HEAD^{tree}'], cwd) !== audit.restoredTree
-  )
+  if (git(['merge-base', audit.revertCommit, 'HEAD'], cwd) !== audit.revertCommit)
     throw new Error('INTEGRATION_RETRY_CLUSTER_HEAD_MISMATCH');
   git(['revert', '--no-edit', audit.revertCommit], cwd);
-  if (git(['rev-parse', 'HEAD^{tree}'], cwd) !== target.tree)
-    throw new Error('INTEGRATION_RETRY_TREE_MISMATCH');
+  const retryCommit = git(['rev-parse', 'HEAD'], cwd);
+  const retryPatch = git(['diff', '--binary', `${retryCommit}^`, retryCommit], cwd);
+  const taskPatch = git(['diff', '--binary', `${audit.taskCommit}^`, audit.taskCommit], cwd);
+  if (retryPatch !== taskPatch) throw new Error('INTEGRATION_RETRY_PATCH_MISMATCH');
   const integration = verifyPostMergeIntegration(cwd);
   if (integration.status !== 'PASS') {
     git(['revert', '--no-edit', 'HEAD'], cwd);
