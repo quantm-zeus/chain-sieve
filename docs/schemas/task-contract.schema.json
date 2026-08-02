@@ -8,7 +8,7 @@
     },
     "id": {
       "type": "string",
-      "pattern": "^T-G[0-7]-[A-Z0-9-]+$"
+      "pattern": "^T-(?:G[0-7]|FW)-[A-Z0-9-]+$"
     },
     "title": {
       "type": "string",
@@ -39,11 +39,11 @@
     },
     "dependencyGroup": {
       "type": "string",
-      "pattern": "^G[0-7]$"
+      "pattern": "^(?:G[0-7]|FW)$"
     },
     "cluster": {
       "type": "string",
-      "pattern": "^C-G[0-7]-[A-Z0-9-]+$"
+      "pattern": "^C-(?:G[0-7]|FW)-[A-Z0-9-]+$"
     },
     "riskLevel": {
       "type": "string",

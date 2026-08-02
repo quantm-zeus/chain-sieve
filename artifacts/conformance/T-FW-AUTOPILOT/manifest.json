@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-FW-AUTOPILOT",
+  "immutable": true,
+  "requirements": [
+    "FW-AUTOPILOT-001",
+    "FW-AUTOPILOT-002",
+    "FW-AUTOPILOT-003",
+    "FW-AUTOPILOT-004"
+  ],
+  "taskAcceptanceCriteria": [],
+  "taskAcceptanceFacets": [],
+  "taskOwnedTests": [
+    "tests/harness/autopilot.spec.ts"
+  ],
+  "productionTargets": [
+    "tools/agent/**",
+    "tools/autopilot/**",
+    "tests/harness/autopilot*.spec.ts",
+    "package.json",
+    "docs/implementation/autopilot.md"
+  ],
+  "requiredOracle": "tests/conformance/task-oracle.spec.ts",
+  "protectedPaths": [
+    "artifacts/conformance/T-FW-AUTOPILOT/**",
+    "tests/conformance/**"
+  ],
+  "qualityGate": "SEEDED_FAULT_OR_PROPERTY",
+  "rejectsTrivialAssertions": true,
+  "requiresChangedProductionBehaviorInvocation": true
+}

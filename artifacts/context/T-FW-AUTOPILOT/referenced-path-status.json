@@ -1,0 +1,22 @@
+[
+  {
+    "path": "tools/agent/**",
+    "status": "VALID_REFERENCE"
+  },
+  {
+    "path": "tools/autopilot/**",
+    "status": "VALID_REFERENCE"
+  },
+  {
+    "path": "tests/harness/autopilot*.spec.ts",
+    "status": "VALID_REFERENCE"
+  },
+  {
+    "path": "package.json",
+    "status": "VALID_REFERENCE"
+  },
+  {
+    "path": "docs/implementation/autopilot.md",
+    "status": "VALID_REFERENCE"
+  }
+]

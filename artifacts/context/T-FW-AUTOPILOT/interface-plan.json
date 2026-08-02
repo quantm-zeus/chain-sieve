@@ -1,0 +1,6 @@
+{
+  "interfaces": [
+    "pnpm autopilot"
+  ],
+  "provider": "codex-cli"
+}

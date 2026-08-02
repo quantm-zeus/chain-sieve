@@ -1,0 +1,17 @@
+{
+  "specificationStatus": "READY",
+  "deliverables": [
+    "pnpm autopilot",
+    "headless Codex provider",
+    "provider-neutral corrections",
+    "process lock",
+    "focused autopilot tests"
+  ],
+  "constraints": [
+    "Use Codex CLI as the autonomous default provider.",
+    "Never use clipboard, AppleScript, simulated input, mouse automation, or Antigravity UI automation.",
+    "Bind corrections to task, holder, lease, fencing version, worktree, previous commit, and failure code.",
+    "Limit automatic product correction rounds to three.",
+    "Do not weaken lifecycle, verifier, receipt, path, or capability controls."
+  ]
+}

@@ -55,7 +55,9 @@
     "packages/thesis",
     "packages/wallet-alpha-lineage",
     "packages/winning-pattern-intelligence",
-    "packages/workflow-runtime"
+    "packages/workflow-runtime",
+    "tools/agent",
+    "tools/autopilot"
   ],
   "prohibitedCapabilities": [
     "financial-execution",

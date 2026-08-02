@@ -1,0 +1,12 @@
+{
+  "taskId": "T-FW-AUTOPILOT",
+  "requiredBehaviorClasses": [
+    "positive",
+    "negative",
+    "degraded",
+    "replay",
+    "recovery",
+    "rollback",
+    "observability"
+  ]
+}

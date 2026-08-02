@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "T-FW-AUTOPILOT",
+  "title": "One-command autonomous task orchestrator",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencyGroup": "FW",
+  "cluster": "C-FW-AUTOPILOT",
+  "riskLevel": "HIGH",
+  "autonomyLevel": "REVIEW_REQUIRED",
+  "dependencies": [],
+  "requirements": [
+    "FW-AUTOPILOT-001",
+    "FW-AUTOPILOT-002",
+    "FW-AUTOPILOT-003",
+    "FW-AUTOPILOT-004"
+  ],
+  "acceptanceCriteria": [],
+  "taskAcceptanceFacets": [],
+  "invariants": [
+    "INV-001",
+    "INV-044"
+  ],
+  "adrs": [
+    "ADR-001"
+  ],
+  "ownerPackages": [
+    "tools/autopilot",
+    "tools/agent"
+  ],
+  "readSet": [
+    "docs/spec/**",
+    "artifacts/context/T-FW-AUTOPILOT/**",
+    "artifacts/conformance/T-FW-AUTOPILOT/manifest.json",
+    "tools/agent/**",
+    "tools/task-runner/**",
+    "tools/task-verifier/**",
+    "tools/merge-queue/**",
+    "tools/worktree-manager/**"
+  ],
+  "writeSet": [
+    "tools/agent/**",
+    "tools/autopilot/**",
+    "tests/harness/autopilot*.spec.ts",
+    "package.json",
+    "docs/implementation/autopilot.md"
+  ],
+  "allowedPaths": [
+    "tools/agent/**",
+    "tools/autopilot/**",
+    "tests/harness/autopilot*.spec.ts",
+    "package.json",
+    "docs/implementation/autopilot.md"
+  ],
+  "forbiddenPaths": [
+    "docs/spec/**",
+    "artifacts/spec/**",
+    "tasks/**",
+    "clusters/**",
+    ".github/workflows/**",
+    "tests/conformance/**",
+    "artifacts/conformance/T-FW-AUTOPILOT/**",
+    "infra/migrations/**",
+    "pnpm-lock.yaml"
+  ],
+  "exclusiveLocks": [
+    "tools/agent",
+    "tools/autopilot",
+    "package.json"
+  ],
+  "interfaceHashes": {
+    "framework-task-source": "c808cf6d335033855254402ad8eee1572ea0bed98df3f68acee96c210206af95"
+  },
+  "deliverables": [
+    "pnpm autopilot",
+    "headless Codex provider",
+    "provider-neutral corrections",
+    "process lock",
+    "focused autopilot tests"
+  ],
+  "constraints": [
+    "Use Codex CLI as the autonomous default provider.",
+    "Never use clipboard, AppleScript, simulated input, mouse automation, or Antigravity UI automation.",
+    "Bind corrections to task, holder, lease, fencing version, worktree, previous commit, and failure code.",
+    "Limit automatic product correction rounds to three.",
+    "Do not weaken lifecycle, verifier, receipt, path, or capability controls."
+  ],
+  "nonGoals": [
+    "No product implementation.",
+    "No automatic capability activation.",
+    "No invented Antigravity model setting."
+  ],
+  "degradedBehavior": "Fail closed with a stable error code, release no authority implicitly, and preserve resumable state.",
+  "rollback": "Revert the single framework-task commit; existing manual lifecycle commands remain available.",
+  "requiredTests": [
+    "tests/harness/autopilot.spec.ts"
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm exec vitest run tests/harness/autopilot.spec.ts",
+      "expected": "focused autopilot tests pass"
+    },
+    {
+      "command": "pnpm architecture:verify",
+      "expected": "architecture controls pass"
+    },
+    {
+      "command": "pnpm prohibited-capabilities:scan",
+      "expected": "no prohibited executable capability"
+    }
+  ],
+  "complexityBudget": {
+    "maxFiles": 14,
+    "maxChangedLines": 1800,
+    "maxCyclomaticComplexity": 12
+  },
+  "changeBudget": {
+    "maxMigrations": 0,
+    "maxPublicInterfaces": 4,
+    "requiresSplitAboveBudget": true
+  },
+  "stopConditions": [
+    "The framework task source hash differs from the compiled contract.",
+    "A product task remains active during framework bootstrap.",
+    "A requested provider lacks a supported headless prompt-and-wait interface.",
+    "Implementation would weaken trusted verification or lease fencing."
+  ],
+  "completionDefinition": [
+    "One command discovers, resumes, verifies, corrects, merges, cleans, and continues tasks.",
+    "Lease renewal and recovery require no owner intervention.",
+    "Codex CLI runs headlessly and correction rounds stop after three.",
+    "Dry-run/status smoke testing starts no product implementation.",
+    "One atomic task commit passes trusted verification."
+  ],
+  "sourceReferences": [
+    {
+      "path": "tasks/framework-sources/T-FW-AUTOPILOT.task.json",
+      "line": 1,
+      "id": "T-FW-AUTOPILOT"
+    }
+  ],
+  "specificationStatus": "READY",
+  "conformanceManifestPath": "artifacts/conformance/T-FW-AUTOPILOT/manifest.json",
+  "conformanceManifestSha256": "a868796df5ecd25852634b9409284b254b3d99d764e3762e7651715209d2a9f7",
+  "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
+}

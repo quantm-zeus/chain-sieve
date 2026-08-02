@@ -170,13 +170,14 @@ export const productValidationInput = async (
   const rawAcceptanceMap = JSON.parse(
     await readFile(join(cwd, 'tasks/generated/acceptance-task-map.json'), 'utf8'),
   ) as Record<string, string[]>;
-  const requirementMap = Object.fromEntries(
+  const frameworkTask = task.dependencyGroup === 'FW';
+  const requirementMap = frameworkTask ? Object.fromEntries(task.requirements.map((id) => [id, task.id])) : Object.fromEntries(
     Object.entries(rawRequirementMap).map(([id, owners]) => {
       if (owners.length !== 1) throw new Error(`REQUIREMENT_OWNERSHIP_NOT_UNIQUE:${id}`);
       return [id, owners[0]!];
     }),
   );
-  const acceptanceMap = Object.fromEntries(
+  const acceptanceMap = frameworkTask ? Object.fromEntries(task.acceptanceCriteria.map((id) => [id, task.id])) : Object.fromEntries(
     Object.entries(rawAcceptanceMap).map(([id, owners]) => {
       if (owners.length !== 1) throw new Error(`ACCEPTANCE_CRITERION_OWNERSHIP_NOT_UNIQUE:${id}`);
       return [id, owners[0]!];

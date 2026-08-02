@@ -1,7 +1,8 @@
 {
   "schemaVersion": "2.0.0",
-  "generatedFrom": "3bf31531be6ec62e6ea9e409e11d3bea0f339e18cf0c55ae84047ed29dc3b9f3",
+  "generatedFrom": "1dbf6319428b32d19194857767d3b861e9b5d8689048645f1a2fe8626afa710c",
   "ready": [
+    "T-FW-AUTOPILOT",
     "T-G0-COL-01",
     "T-G0-COL-02",
     "T-G0-COST-01",
@@ -3440,8 +3441,8 @@
     }
   ],
   "counts": {
-    "total": 84,
-    "implementationReady": 71,
+    "total": 85,
+    "implementationReady": 72,
     "specificationGap": 13
   }
 }

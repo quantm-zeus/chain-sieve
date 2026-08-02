@@ -595,7 +595,7 @@ const coverage = async (
           { level: 'TASK' as const, owner: owners[0]! },
         ]),
       );
-  for (const task of tasks) {
+  for (const task of tasks.filter((candidate) => candidate.dependencyGroup !== 'FW')) {
     for (const id of task.requirements)
       requirementOwners.set(id, (requirementOwners.get(id) ?? 0) + 1);
   }
