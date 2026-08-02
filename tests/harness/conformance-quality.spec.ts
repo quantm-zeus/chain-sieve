@@ -168,6 +168,8 @@ describe('immutable conformance test-quality gate', () => {
       async (target) => {
         await mkdir(join(target, 'packages/y'), { recursive: true });
         await writeFile(join(target, 'packages/y/helper.ts'), 'export const identity = (value: number): number => value;\n');
+        await mkdir(join(target, 'apps/dashboard/.svelte-kit/generated'), { recursive: true });
+        await writeFile(join(target, 'apps/dashboard/.svelte-kit/generated/app.js'), 'export const generated = import(dynamicPath);\n');
       },
     );
     await expect(assertConformanceTestQuality(task, root)).resolves.toMatchObject([
