@@ -342,6 +342,7 @@ export const validateLaunchReceipt = async (
     controlPlaneCommit?: string;
     controlPlaneTree?: string;
     requireProviderNeutral?: boolean;
+    allowHistoricalExpiry?: boolean;
   },
 ): Promise<void> => {
   const candidates = await listLaunchReceiptCandidates(
@@ -466,7 +467,11 @@ export const validateLaunchReceipt = async (
       throw new ZCodeError('LAUNCH_RECEIPT_RELEASE_MISMATCH');
     if (binding.pathLocks && JSON.stringify(receipt.pathLocks) !== JSON.stringify(binding.pathLocks))
       throw new ZCodeError('LAUNCH_RECEIPT_LOCK_MISMATCH');
-    if (!receipt.expiresAt || Date.parse(receipt.expiresAt) <= Date.now())
+    if (
+      !receipt.expiresAt ||
+      (!binding.allowHistoricalExpiry &&
+        Date.parse(receipt.expiresAt) <= Date.now())
+    )
       throw new ZCodeError('LAUNCH_RECEIPT_EXPIRED');
   }
 };

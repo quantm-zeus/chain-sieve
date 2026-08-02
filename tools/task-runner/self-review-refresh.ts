@@ -160,7 +160,7 @@ const trustedWorkspaceAliases = async (
   );
 };
 
-const runTrustedSelfReviewChecks = async (
+export const runTrustedSelfReviewChecks = async (
   trustedRoot: string,
   targetWorktree: string,
   task: TaskContract,

@@ -5,6 +5,7 @@ import { loadTasks, verifyTaskContract } from '../task-verifier/verify.js';
 import { registerCurrentEvidence } from './evidence-ledger.js';
 import { loadRepairLeaseContracts } from './repair-contract.js';
 import { performTaskSelfReview } from './self-review.js';
+import { correctTaskSelfReview } from './self-review-correct.js';
 import { refreshTaskSelfReview } from './self-review-refresh.js';
 import {
   acquire,
@@ -110,6 +111,27 @@ try {
     console.log(JSON.stringify(Object.values(state.tasks).filter((task) => task.state === 'READY' && runnable.has(task.taskId)), null, 2));
   }
   else if (!taskId) throw new Error('TASK_ID_REQUIRED');
+  else if (command === 'self-review-correct') {
+    const targetWorktree = option('--target-worktree');
+    if (!targetWorktree) throw new Error('TARGET_WORKTREE_REQUIRED');
+    const expectedPreviousCommit = option('--expected-previous-commit');
+    if (!expectedPreviousCommit)
+      throw new Error('EXPECTED_PREVIOUS_COMMIT_REQUIRED');
+    const failureCode = option('--failure-code');
+    if (!failureCode) throw new Error('CORRECTION_FAILURE_CODE_REQUIRED');
+    const result = await correctTaskSelfReview(
+      taskId,
+      holder,
+      Number(option('--lease-version')),
+      targetWorktree,
+      expectedPreviousCommit,
+      failureCode,
+      { trustedRoot: process.cwd() },
+    );
+    console.log(
+      JSON.stringify({ status: 'TASK_SELF_REVIEW_CORRECTED', result }, null, 2),
+    );
+  }
   else if (command === 'self-review-refresh') {
     const targetWorktree = option('--target-worktree');
     if (!targetWorktree) throw new Error('TARGET_WORKTREE_REQUIRED');
