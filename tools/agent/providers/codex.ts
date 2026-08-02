@@ -37,7 +37,7 @@ export class CodexProvider implements AgentProvider {
   executePayload(workspace: string, payload: string) {
     return this.runner.run(
       'codex',
-      ['--ask-for-approval', 'never', 'exec', '--cd', workspace, '--sandbox', 'danger-full-access', '--color', 'never', '-'],
+      ['exec', '--cd', workspace, '--sandbox', 'danger-full-access', '--ask-for-approval', 'never', '--color', 'never', '-'],
       { cwd: workspace, input: payload },
     );
   }
