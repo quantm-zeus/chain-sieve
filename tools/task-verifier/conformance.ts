@@ -432,7 +432,7 @@ const runActualMutation = async (
     ).filter((item): item is readonly [string, string] => Boolean(item)),
   );
   const materialized = materializeVerificationTarget(runtime, cwd, {
-    approvedInputs: [...productionTargets, declaration.testPath],
+    approvedInputs: ['**'],
   });
   const isolated = materialized.root;
   try {

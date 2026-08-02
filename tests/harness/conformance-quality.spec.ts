@@ -154,6 +154,27 @@ describe('immutable conformance test-quality gate', () => {
     });
   });
 
+  it('materializes transitive repository imports used by a mutation control', async () => {
+    const source =
+      "import { expect, it } from 'vitest'; import { executeThing } from '../../packages/x/index.js'; it('observes transitive production',()=>{ expect(executeThing(2)).toBe(3); expect(()=>executeThing(-1)).toThrow(); });\n";
+    const production =
+      "import { identity } from '../y/helper.js'; export const executeThing = (value: number): number => { if (value < 0) throw new Error('invalid'); return identity(value) + 1; };\n";
+    const { root, task } = await fixture(
+      source,
+      'SEEDED_FAULT_OR_PROPERTY',
+      actualMutation('expected 1 to be 3', 'executeThing', 'identity(value) + 1'),
+      production,
+      ['packages/x/**'],
+      async (target) => {
+        await mkdir(join(target, 'packages/y'), { recursive: true });
+        await writeFile(join(target, 'packages/y/helper.ts'), 'export const identity = (value: number): number => value;\n');
+      },
+    );
+    await expect(assertConformanceTestQuality(task, root)).resolves.toMatchObject([
+      { controlExitCode: 0, mutantExitCode: 1 },
+    ]);
+  });
+
   it('runs mutation controls against materialized workspace package entries', async () => {
     const source =
       "import { describe, expect, it } from 'vitest'; import { workspaceOnlyValue } from '@ciag/evidence'; import { executeThing } from '../../packages/x/index.js'; describe('workspace control', () => { it('observes the mutant', () => expect(executeThing(workspaceOnlyValue)).toBe(2)); it('keeps a negative path', () => expect(() => executeThing(-1)).toThrow()); });\n";
