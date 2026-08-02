@@ -36,7 +36,7 @@ describe('one-command autopilot', () => {
     expect(provider.executePayload!('/repo/task', 'bound goal')).toMatchObject({ status: 0 });
     expect(runner.calls.at(-1)).toEqual({
       command: 'codex',
-      args: ['exec', '--cd', '/repo/task', '--sandbox', 'danger-full-access', '--ask-for-approval', 'never', '--color', 'never', '-'],
+      args: ['--ask-for-approval', 'never', 'exec', '--cd', '/repo/task', '--sandbox', 'danger-full-access', '--color', 'never', '-'],
       cwd: '/repo/task',
       input: 'bound goal',
     });
