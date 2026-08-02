@@ -44,14 +44,16 @@
   "writeSet": [
     "tools/agent/**",
     "tools/autopilot/**",
-    "tests/harness/autopilot*.spec.ts",
+    "tests/harness/autopilot.spec.ts",
+    "tests/harness/autopilot.conformance-evidence.json",
     "package.json",
     "docs/implementation/autopilot.md"
   ],
   "allowedPaths": [
     "tools/agent/**",
     "tools/autopilot/**",
-    "tests/harness/autopilot*.spec.ts",
+    "tests/harness/autopilot.spec.ts",
+    "tests/harness/autopilot.conformance-evidence.json",
     "package.json",
     "docs/implementation/autopilot.md"
   ],
@@ -72,7 +74,7 @@
     "package.json"
   ],
   "interfaceHashes": {
-    "framework-task-source": "c808cf6d335033855254402ad8eee1572ea0bed98df3f68acee96c210206af95"
+    "framework-task-source": "48ef8de9ea548baa448fdd29cf716b8d0339b5481607ff51b71a8b50db8aac04"
   },
   "deliverables": [
     "pnpm autopilot",
@@ -144,6 +146,6 @@
   ],
   "specificationStatus": "READY",
   "conformanceManifestPath": "artifacts/conformance/T-FW-AUTOPILOT/manifest.json",
-  "conformanceManifestSha256": "a868796df5ecd25852634b9409284b254b3d99d764e3762e7651715209d2a9f7",
+  "conformanceManifestSha256": "62ca077aed0bf20b5bbd7cbf3284aaad8f7a21f43ba5f4b0a59155c350a325d8",
   "testQualityGate": "SEEDED_FAULT_OR_PROPERTY"
 }

@@ -9,13 +9,13 @@
   "files": [
     {
       "path": "task-contract.json",
-      "sha256": "999c3005be122f2e11dd50d1f5540ac3eb915e4504e1aa099c1edc5ced548d79",
-      "bytes": 4745
+      "sha256": "d48e62e229a5991af2a9f3d5bc2182510e08b48fe3feb70b2e1ef102101c0b7f",
+      "bytes": 4857
     },
     {
       "path": "framework-task-source.json",
-      "sha256": "c808cf6d335033855254402ad8eee1572ea0bed98df3f68acee96c210206af95",
-      "bytes": 3885
+      "sha256": "48ef8de9ea548baa448fdd29cf716b8d0339b5481607ff51b71a8b50db8aac04",
+      "bytes": 3989
     },
     {
       "path": "requirements.json",
@@ -49,16 +49,16 @@
     },
     {
       "path": "referenced-path-status.json",
-      "sha256": "3dfe17811a0987331b126f0cd74149980af871cc809eaced219453b63f5d9f89",
-      "bytes": 396
+      "sha256": "e7660fbc9a4b7bc35573eb5da27e44d5e005556abb21b54f5331fe04bf177eb6",
+      "bytes": 501
     },
     {
       "path": "dependency-outputs.json",
-      "sha256": "2964871b269efdedddceae39a5487918cde95c1cb77b8a5c57da5de54bdd7ce7",
+      "sha256": "451071b6d8672d983e73ffe694cec8852df03d03ca487cafb92780bc40dba6a3",
       "bytes": 149
     }
   ],
   "conformanceManifestPath": "artifacts/conformance/T-FW-AUTOPILOT/manifest.json",
-  "conformanceManifestSha256": "a868796df5ecd25852634b9409284b254b3d99d764e3762e7651715209d2a9f7",
+  "conformanceManifestSha256": "62ca077aed0bf20b5bbd7cbf3284aaad8f7a21f43ba5f4b0a59155c350a325d8",
   "generatedAt": "2026-07-20T00:00:00Z"
 }

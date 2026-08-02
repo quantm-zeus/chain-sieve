@@ -8,7 +8,11 @@
     "status": "VALID_REFERENCE"
   },
   {
-    "path": "tests/harness/autopilot*.spec.ts",
+    "path": "tests/harness/autopilot.spec.ts",
+    "status": "VALID_REFERENCE"
+  },
+  {
+    "path": "tests/harness/autopilot.conformance-evidence.json",
     "status": "VALID_REFERENCE"
   },
   {
