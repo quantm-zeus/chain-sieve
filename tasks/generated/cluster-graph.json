@@ -1,6 +1,10 @@
 {
   "nodes": [
     {
+      "id": "C-FW-AUTOPILOT",
+      "group": "FW"
+    },
+    {
       "id": "C-G0-IMPLEMENTATION",
       "group": "G0"
     },

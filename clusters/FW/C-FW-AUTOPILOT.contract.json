@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "C-FW-AUTOPILOT",
+  "group": "FW",
+  "title": "Autopilot framework implementation",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "dependencies": [],
+  "tasks": [
+    "T-FW-AUTOPILOT"
+  ],
+  "requirements": [
+    "FW-AUTOPILOT-001",
+    "FW-AUTOPILOT-002",
+    "FW-AUTOPILOT-003",
+    "FW-AUTOPILOT-004"
+  ],
+  "acceptanceCriteria": [],
+  "integrationAcceptanceCriteria": [],
+  "invariants": [
+    "INV-001",
+    "INV-044"
+  ],
+  "entryCriteria": [
+    "No product task has an active lease.",
+    "The framework source compiles without drift."
+  ],
+  "exitCriteria": [
+    "The framework task is independently verified and atomically committed.",
+    "The framework cluster is merged to main through review."
+  ],
+  "verificationCommands": [
+    {
+      "command": "pnpm cluster:verify C-FW-AUTOPILOT",
+      "expected": "exit 0"
+    },
+    {
+      "command": "pnpm harness:verify",
+      "expected": "exit 0"
+    }
+  ],
+  "rollback": "Revert the framework task commit; retain the manual lifecycle commands."
+}

@@ -184,7 +184,7 @@ describe('trusted verification executable and dependency resolution', () => {
     await mkdir(join(fixture.target, 'tests'), { recursive: true });
     await writeFile(
       join(fixture.target, 'tests/workspace.spec.ts'),
-      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(true).toBe(true));\n",
+      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(typeof it).toBe('function'));\n",
     );
     const result = runTrustedVitest(fixture.runtime, fixture.target, [
       'tests/workspace.spec.ts',
@@ -204,7 +204,7 @@ describe('trusted verification executable and dependency resolution', () => {
     await mkdir(join(fixture.target, 'tests'), { recursive: true });
     await writeFile(
       join(fixture.target, 'tests/workspace.spec.ts'),
-      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(true).toBe(true));\n",
+      "import { expect, it } from 'vitest'; it('audits a package import', () => expect(typeof it).toBe('function'));\n",
     );
     expect(() =>
       runTrustedVitest(fixture.runtime, fixture.target, [
@@ -316,7 +316,7 @@ describe('trusted verification executable and dependency resolution', () => {
     await mkdir(join(fixture.target, 'tests'), { recursive: true });
     await writeFile(
       join(fixture.target, 'tests/workspace.spec.ts'),
-      "import { expect, it } from 'vitest'; it('keeps the shared fixture available', () => expect(true).toBe(true));\n",
+      "import { expect, it } from 'vitest'; import { sharedFixture } from './fixtures/core/index.js'; it('keeps the shared fixture available', () => expect(typeof sharedFixture).toBe('object'));\n",
     );
     const result = runTrustedVitest(fixture.runtime, fixture.target, [
       'tests/workspace.spec.ts',

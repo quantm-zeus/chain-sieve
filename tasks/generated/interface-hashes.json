@@ -1,4 +1,7 @@
 {
+  "T-FW-AUTOPILOT": {
+    "framework-task-source": "c808cf6d335033855254402ad8eee1572ea0bed98df3f68acee96c210206af95"
+  },
   "T-G0-COL-01": {
     "apps/collector:contract": "02bf7b358dd821db4dfce908be0945e8bc5ef6b00c3abe793cb06b4e2dc7ad3f"
   },

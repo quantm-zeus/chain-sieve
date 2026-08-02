@@ -1,6 +1,11 @@
 {
   "nodes": [
     {
+      "id": "T-FW-AUTOPILOT",
+      "group": "FW",
+      "cluster": "C-FW-AUTOPILOT"
+    },
+    {
       "id": "T-G0-COL-01",
       "group": "G0",
       "cluster": "C-G0-IMPLEMENTATION"

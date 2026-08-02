@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-FW-AUTOPILOT",
+  "sourceHashes": {
+    "prd": "baa521d9c67e67a86d7ddb111c793b67462ed4c7acc89cec34ab9f5ade077299",
+    "requirements": "e0f9f1284473fe097fde591138d16984ae8580feaf13333e22594717eec690ff",
+    "audit": "ab4be13b6aeac998f13daa89ae08f4b9f5d6280b4018bd171b7b128b412a47f8"
+  },
+  "files": [
+    {
+      "path": "task-contract.json",
+      "sha256": "999c3005be122f2e11dd50d1f5540ac3eb915e4504e1aa099c1edc5ced548d79",
+      "bytes": 4745
+    },
+    {
+      "path": "framework-task-source.json",
+      "sha256": "c808cf6d335033855254402ad8eee1572ea0bed98df3f68acee96c210206af95",
+      "bytes": 3885
+    },
+    {
+      "path": "requirements.json",
+      "sha256": "7c061ed04e011625dc60091b05a3ffba90dda014e3a4169ed95ada5656ac240a",
+      "bytes": 323
+    },
+    {
+      "path": "acceptance-criteria.json",
+      "sha256": "c826d45e65228a301fbfe79e294f360a06024ca445b9e5345b7c64f1f598ef4f",
+      "bytes": 38
+    },
+    {
+      "path": "normative-excerpts.json",
+      "sha256": "4d3bac9a590ca8aa7d15a8230cfcd1181d68cab171615ebc6e73e12baee7c7f2",
+      "bytes": 67
+    },
+    {
+      "path": "implementation-brief.json",
+      "sha256": "2d9f008f00c2a30eb29d6c805c63f75ceb78da19eac101405fea1cc9982ee146",
+      "bytes": 637
+    },
+    {
+      "path": "interface-plan.json",
+      "sha256": "7a7142528c331165ba2f33d323f960cadd26a6b77ed60d60d2570a9c025fe250",
+      "bytes": 74
+    },
+    {
+      "path": "behavior-test-matrix.json",
+      "sha256": "b9b3b27ae7c4a18bbf21655fc5f6896988ef568c7d216550b88c6438f903a2cd",
+      "bytes": 183
+    },
+    {
+      "path": "referenced-path-status.json",
+      "sha256": "3dfe17811a0987331b126f0cd74149980af871cc809eaced219453b63f5d9f89",
+      "bytes": 396
+    },
+    {
+      "path": "dependency-outputs.json",
+      "sha256": "2964871b269efdedddceae39a5487918cde95c1cb77b8a5c57da5de54bdd7ce7",
+      "bytes": 149
+    }
+  ],
+  "conformanceManifestPath": "artifacts/conformance/T-FW-AUTOPILOT/manifest.json",
+  "conformanceManifestSha256": "a868796df5ecd25852634b9409284b254b3d99d764e3762e7651715209d2a9f7",
+  "generatedAt": "2026-07-20T00:00:00Z"
+}

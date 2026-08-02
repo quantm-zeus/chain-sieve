@@ -16,11 +16,11 @@ const GitShaSchema = z.string().regex(/^[a-f0-9]{40,64}$/);
 
 export const TaskContractSchema = z.object({
   schemaVersion: z.literal('1.0.0'),
-  id: z.string().regex(/^T-G[0-7]-[A-Z0-9-]+$/),
+  id: z.string().regex(/^T-(?:G[0-7]|FW)-[A-Z0-9-]+$/),
   title: z.string().min(1),
   sourceHashes: SourceHashesSchema,
-  dependencyGroup: z.string().regex(/^G[0-7]$/),
-  cluster: z.string().regex(/^C-G[0-7]-[A-Z0-9-]+$/),
+  dependencyGroup: z.string().regex(/^(?:G[0-7]|FW)$/),
+  cluster: z.string().regex(/^C-(?:G[0-7]|FW)-[A-Z0-9-]+$/),
   riskLevel: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
   autonomyLevel: z.enum(['AUTONOMOUS', 'REVIEW_REQUIRED', 'OWNER_APPROVAL_REQUIRED']),
   dependencies: IdList,

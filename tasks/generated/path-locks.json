@@ -1,4 +1,9 @@
 {
+  "T-FW-AUTOPILOT": [
+    "tools/agent",
+    "tools/autopilot",
+    "package.json"
+  ],
   "T-G0-COL-01": [
     "apps/collector/public-api"
   ],
