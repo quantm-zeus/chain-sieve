@@ -405,6 +405,130 @@ const declaredDependencies = (manifest: PackageManifest): Set<string> =>
     ].flatMap((dependencies) => Object.keys(dependencies ?? {})),
   );
 
+export interface TrustedWorkspaceMaterialization {
+  approvedInputs: string[];
+  aliases: Record<string, string>;
+}
+
+export const trustedWorkspaceMaterialization = (
+  trustedRoot: string,
+  sourceRoot: string,
+  sourceRoots: string[],
+): TrustedWorkspaceMaterialization => {
+  const workspace = trustedWorkspacePackages(trustedRoot);
+  const canonicalSourceRoot = realpathSync(sourceRoot);
+  const requested = new Set<string>();
+  const transitiveInputs = new Set<string>();
+  const inspected = new Set<string>();
+  const inspect = (absolute: string): void => {
+    const canonical = realpathSync(absolute);
+    if (!contained(canonicalSourceRoot, canonical))
+      throw new Error(`UNTRUSTED_WORKSPACE_SOURCE_ESCAPE:${absolute}`);
+    if (inspected.has(canonical)) return;
+    inspected.add(canonical);
+    const source = ts.createSourceFile(
+      canonical,
+      readFileSync(canonical, 'utf8'),
+      ts.ScriptTarget.Latest,
+      true,
+    );
+    const visit = (node: ts.Node): void => {
+      if (
+        (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+        node.moduleSpecifier &&
+        ts.isStringLiteral(node.moduleSpecifier)
+      ) {
+        const specifier = node.moduleSpecifier.text;
+        if (specifier.startsWith('.')) {
+          const lexical = resolve(dirname(canonical), specifier);
+          const withoutExtension = lexical.replace(/\.[cm]?[jt]s$/, '');
+          const candidates = [
+            lexical,
+            ...['.ts', '.tsx', '.mts', '.cts'].map(
+              (extension) => `${withoutExtension}${extension}`,
+            ),
+            ...['index.ts', 'index.tsx', 'index.mts', 'index.cts'].map((name) =>
+              join(lexical, name),
+            ),
+          ].filter(
+            (candidate, index, values) => values.indexOf(candidate) === index,
+          );
+          const matches = candidates.filter((candidate) => {
+            try {
+              return lstatSync(candidate).isFile();
+            } catch {
+              return false;
+            }
+          });
+          if (matches.length === 1) {
+            const resolvedImport = realpathSync(matches[0]!);
+            if (!contained(canonicalSourceRoot, resolvedImport))
+              throw new Error(`UNTRUSTED_WORKSPACE_SOURCE_ESCAPE:${specifier}`);
+            transitiveInputs.add(
+              relative(canonicalSourceRoot, resolvedImport).replaceAll(
+                '\\',
+                '/',
+              ),
+            );
+            inspect(resolvedImport);
+          }
+        } else if (!specifier.startsWith('/')) {
+          const name = importedPackageName(specifier);
+          if (workspace.has(name)) requested.add(name);
+        }
+      }
+      node.forEachChild(visit);
+    };
+    visit(source);
+  };
+  for (const rawRoot of sourceRoots) {
+    const relativeRoot = rawRoot.replace(/\/\*\*$/, '').replace(/^\.\//, '');
+    let canonical: string;
+    try {
+      canonical = realpathSync(join(canonicalSourceRoot, relativeRoot));
+    } catch {
+      continue;
+    }
+    if (!contained(canonicalSourceRoot, canonical))
+      throw new Error(`UNTRUSTED_WORKSPACE_SOURCE_ESCAPE:${rawRoot}`);
+    const stat = lstatSync(canonical);
+    if (stat.isFile() && /\.(?:[cm]?[jt]sx?)$/.test(canonical))
+      inspect(canonical);
+    else if (stat.isDirectory())
+      for (const path of sourceFiles(canonical)) inspect(join(canonical, path));
+  }
+  const approvedInputs: string[] = [...transitiveInputs];
+  const aliases: Record<string, string> = {};
+  const visited = new Set<string>();
+  const queue = [...requested];
+  while (queue.length > 0) {
+    const name = queue.shift()!;
+    if (visited.has(name)) continue;
+    visited.add(name);
+    const candidates = workspace.get(name) ?? [];
+    if (candidates.length !== 1)
+      throw new Error(`UNTRUSTED_WORKSPACE_PACKAGE_AMBIGUOUS:${name}`);
+    const workspacePackage = candidates[0]!;
+    if (!workspacePackage.entry)
+      throw new Error(`TRUSTED_WORKSPACE_PACKAGE_ENTRY_INVALID:${name}`);
+    approvedInputs.push(`${workspacePackage.relativeRoot}/**`);
+    aliases[name] = workspacePackage.entry;
+    for (const dependency of declaredDependencies(workspacePackage.manifest))
+      if (workspace.has(dependency) && !visited.has(dependency))
+        queue.push(dependency);
+  }
+  return {
+    approvedInputs: [
+      ...new Set([...approvedInputs, ...transitiveInputs]),
+    ].sort(),
+    aliases: Object.fromEntries(
+      Object.entries(aliases).sort(([left], [right]) =>
+        left.localeCompare(right),
+      ),
+    ),
+  };
+};
+
 const classifyMaterializedPath = (
   root: string,
   resolvedPath: string,
