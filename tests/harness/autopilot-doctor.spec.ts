@@ -56,7 +56,8 @@ const rootWithPolicy = async (): Promise<string> => {
 class DoctorRunner implements CommandRunner {
   constructor(private readonly fail = '') {}
 
-  run(command: string, args: string[], _options: CommandOptions = {}) {
+  run(command: string, args: string[], options?: CommandOptions) {
+    void options;
     const key = `${command} ${args.join(' ')}`;
     if (this.fail && key.includes(this.fail))
       return { status: 1, stdout: '', stderr: 'denied' };
