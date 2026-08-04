@@ -9,6 +9,8 @@ import type {
   TaskLaunchBinding,
 } from '../lib/types.js';
 
+export const ANTIGRAVITY_AUTOPILOT_MODEL = 'Gemini 3.6 Flash (High)' as const;
+
 const APPLICATIONS = [
   {
     path: '/Applications/Antigravity IDE.app',
@@ -55,13 +57,21 @@ export class AntigravityProvider implements AgentProvider {
   ) {}
 
   detect(): ProviderDetection {
+    const cli = commandPath(this.runner, 'agy');
+    if (cli)
+      return (this.detection = {
+        available: true,
+        mechanism: 'command',
+        command: cli,
+        detail: 'agy CLI headless prompt command',
+      });
     const ide = commandPath(this.runner, 'agy-ide');
     if (ide)
       return (this.detection = {
         available: true,
         mechanism: 'command',
         command: ide,
-        detail: 'agy-ide workspace command',
+        detail: 'agy-ide workspace command without headless execution',
       });
     const application = (
       this.options.applicationCandidates ?? APPLICATIONS
@@ -74,19 +84,11 @@ export class AntigravityProvider implements AgentProvider {
         bundleIdentifier: application.bundleIdentifier,
         detail: `macOS application ${application.bundleIdentifier}`,
       });
-    const cli = commandPath(this.runner, 'agy');
-    if (cli)
-      return (this.detection = {
-        available: true,
-        mechanism: 'command',
-        command: cli,
-        detail: 'agy CLI workspace command',
-      });
     return (this.detection = {
       available: false,
       mechanism: 'missing',
       detail:
-        'No agy-ide/agy command or Antigravity macOS application was detected.',
+        'No agy CLI, agy-ide command, or Antigravity macOS application was detected.',
     });
   }
 
@@ -94,7 +96,29 @@ export class AntigravityProvider implements AgentProvider {
     const conformance = binding.conformanceManifestSha256
       ? ` Immutable conformance manifest: ${binding.conformanceManifestPath} (SHA-256 ${binding.conformanceManifestSha256}).`
       : '';
-    return `Use the chainsieve-task project skill. Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Do not invoke the merge queue or start another task. Use Gemini 3.6 Flash when that model is configured in Antigravity; model selection is an owner IDE setting when the installed launcher exposes no supported model flag.`;
+    return `Use the chainsieve-task project skill. Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Do not invoke the merge queue or start another task.`;
+  }
+
+  executePayload(workspace: string, payload: string) {
+    const cli = commandPath(this.runner, 'agy');
+    if (!cli)
+      throw new AgentError(
+        'ANTIGRAVITY_HEADLESS_MISSING',
+        'Install the agy CLI; agy-ide alone cannot provide a blocking headless run.',
+      );
+    return this.runner.run(
+      'agy',
+      [
+        '--model',
+        ANTIGRAVITY_AUTOPILOT_MODEL,
+        '--mode=accept-edits',
+        '-p',
+        payload,
+        '--cwd',
+        workspace,
+      ],
+      { cwd: workspace },
+    );
   }
 
   copyPayload(payload: string): void {
@@ -112,7 +136,7 @@ export class AntigravityProvider implements AgentProvider {
         ? this.runner.run(
             detection.command,
             detection.command.endsWith('agy')
-              ? ['open', workspace]
+              ? ['--cwd', workspace]
               : ['--new-window', workspace],
           )
         : this.runner.run('open', [
@@ -127,6 +151,6 @@ export class AntigravityProvider implements AgentProvider {
   }
 
   renderOwnerInstruction(taskId: string, clusterId: string): string {
-    return `Task ${taskId} in ${clusterId} is ready in Antigravity. Press Cmd+V, then Enter.`;
+    return `Antigravity completed its headless run for ${taskId} in ${clusterId}.`;
   }
 }
