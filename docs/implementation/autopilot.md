@@ -19,11 +19,21 @@ The doctor fails closed unless the root checkout is clean and on `main`, Node 22
 
 Run `pnpm autopilot` from the repository root. It selects canonical worktrees, manages fenced leases, runs the provider headlessly with bounded command execution, performs trusted verification and bounded corrections, integrates and cleans tasks, and continues through the authoritative queue.
 
+The default Antigravity model is the CLI model slug `gpt-oss-120b-medium`. Override it only with another exact value returned by `agy models`:
+
+```sh
+export CHAINSIEVE_ANTIGRAVITY_MODEL="<exact-model-slug>"
+pnpm autopilot -- --doctor
+pnpm autopilot
+```
+
 The default task launch is equivalent to:
 
 ```sh
-agy --model "Gemini 3.6 Flash (High)" --mode=accept-edits -p "<immutable task payload>" --cwd "<canonical task worktree>"
+agy --model "gpt-oss-120b-medium" --mode=accept-edits -p "<immutable task payload>"
 ```
+
+The canonical task worktree is supplied as the subprocess working directory, not as an `agy --cwd` argument.
 
 The implementation or review model may modify only its assigned working tree. The trusted root control plane owns all authoritative Git and GitHub operations: scope validation, commits, resets, force-with-lease, pushes, pull requests and merges. Specification resolution and CI repair are rejected when their changed paths cross the machine-enforced allowlists.
 
