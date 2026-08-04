@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "mode": "FULL_AUTONOMY",
+  "humanReviewRequired": false,
+  "humanApprovalRequired": false,
+  "automatedIndependentReviewRequired": true,
+  "deterministicVerificationRequired": true,
+  "allowAutonomousSpecificationResolution": true,
+  "allowAutonomousCiRepair": true,
+  "allowAutonomousMerge": true,
+  "safeDefaults": {
+    "liveTradingEnabled": false,
+    "externalWriteCapabilitiesEnabled": false,
+    "secretMaterializationEnabled": false,
+    "irreversibleMigrationsEnabled": false
+  },
+  "limits": {
+    "taskCorrectionRounds": 3,
+    "clusterCiCorrectionRounds": 5,
+    "infrastructureRetryRounds": 3
+  }
+}
