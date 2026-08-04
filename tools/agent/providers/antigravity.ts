@@ -10,7 +10,7 @@ import type {
 } from '../lib/types.js';
 
 export const ANTIGRAVITY_AUTOPILOT_MODEL = 'Gemini 3.6 Flash (High)' as const;
-const ANTIGRAVITY_TIMEOUT_MS = 2 * 60 * 60_000;
+const ANTIGRAVITY_TIMEOUT_MS = 90 * 60_000;
 
 const APPLICATIONS = [
   {
@@ -42,7 +42,9 @@ const commandPath = (
   runner: CommandRunner,
   command: string,
 ): string | undefined => {
-  const result = runner.run('which', [command], { timeoutMilliseconds: 10_000 });
+  const result = runner.run('which', [command], {
+    timeoutMilliseconds: 10_000,
+  });
   return result.status === 0 && result.stdout.trim()
     ? result.stdout.trim()
     : undefined;
