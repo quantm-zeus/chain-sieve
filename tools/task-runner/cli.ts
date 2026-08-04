@@ -9,6 +9,8 @@ import { correctTaskSelfReview } from './self-review-correct.js';
 import { refreshTaskSelfReview } from './self-review-refresh.js';
 import {
   acquire,
+  AGENT_LEASE_TTL_MINUTES,
+  assertAgentLeaseTtlMinutes,
   assertLease,
   currentLeaseCredential,
   markReady,
@@ -20,9 +22,16 @@ import {
   writeState,
   type EvidenceReference,
 } from './state.js';
-import { productValidationInput, validateLifecycleContract, type LifecycleValidationInput } from './validator.js';
+import {
+  productValidationInput,
+  validateLifecycleContract,
+  type LifecycleValidationInput,
+} from './validator.js';
 import { taskBranch } from '../worktree-manager/identity.js';
-import { persistLifecycleAuthority, validateVerificationBaseline } from './authority.js';
+import {
+  persistLifecycleAuthority,
+  validateVerificationBaseline,
+} from './authority.js';
 
 const option = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -34,7 +43,10 @@ const git = (args: string[]): string => {
   return result.stdout.trim();
 };
 const trustedRoot = (): string => {
-  if (process.env.CIAG_LIFECYCLE_HARNESS === '1' && process.env.CIAG_TRUSTED_CONTROL_PLANE)
+  if (
+    process.env.CIAG_LIFECYCLE_HARNESS === '1' &&
+    process.env.CIAG_TRUSTED_CONTROL_PLANE
+  )
     return process.env.CIAG_TRUSTED_CONTROL_PLANE;
   const blocks = git(['worktree', 'list', '--porcelain']).split('\n\n');
   for (const block of blocks) {
@@ -65,13 +77,21 @@ const repairValidationInput = async (
   const specification = await loadAndValidateSpecification();
   const contractText = await readFile(repair.contractPath, 'utf8');
   const findings = JSON.parse(
-    await readFile(`artifacts/context/${repair.id}/attestation-findings.json`, 'utf8'),
+    await readFile(
+      `artifacts/context/${repair.id}/attestation-findings.json`,
+      'utf8',
+    ),
   ) as { findings: Array<{ id: string }> };
   const obligations = JSON.parse(
-    await readFile(`artifacts/context/${repair.id}/proof-obligations.json`, 'utf8'),
+    await readFile(
+      `artifacts/context/${repair.id}/proof-obligations.json`,
+      'utf8',
+    ),
   ) as { requiredScenarios: string[] };
   const requirements = findings.findings.map((finding) => finding.id);
-  const acceptanceCriteria = obligations.requiredScenarios.map((scenario) => `SCENARIO-${scenario}`);
+  const acceptanceCriteria = obligations.requiredScenarios.map(
+    (scenario) => `SCENARIO-${scenario}`,
+  );
   return {
     ...repair,
     contractPath: repair.contractPath,
@@ -80,8 +100,12 @@ const repairValidationInput = async (
     expectedSourceHashes: specification.hashes,
     requirements,
     acceptanceCriteria,
-    requirementOwners: Object.fromEntries(requirements.map((id) => [id, repair.id])),
-    acceptanceOwners: Object.fromEntries(acceptanceCriteria.map((id) => [id, repair.id])),
+    requirementOwners: Object.fromEntries(
+      requirements.map((id) => [id, repair.id]),
+    ),
+    acceptanceOwners: Object.fromEntries(
+      acceptanceCriteria.map((id) => [id, repair.id]),
+    ),
     allowedPaths: yamlList(contractText, 'allowed_paths'),
     forbiddenPaths: yamlList(contractText, 'forbidden_paths'),
     requiredCommands: yamlList(contractText, 'required_commands'),
@@ -105,12 +129,24 @@ try {
   const repairTasks = await loadRepairLeaseContracts();
   const tasks = [...productTasks, ...repairTasks];
   const state = await readState(tasks);
-  if (command === 'list') console.log(JSON.stringify(Object.values(state.tasks), null, 2));
+  if (command === 'list')
+    console.log(JSON.stringify(Object.values(state.tasks), null, 2));
   else if (command === 'ready') {
-    const runnable = new Set(productTasks.filter((task) => task.specificationStatus === 'READY').map((task) => task.id));
-    console.log(JSON.stringify(Object.values(state.tasks).filter((task) => task.state === 'READY' && runnable.has(task.taskId)), null, 2));
-  }
-  else if (!taskId) throw new Error('TASK_ID_REQUIRED');
+    const runnable = new Set(
+      productTasks
+        .filter((task) => task.specificationStatus === 'READY')
+        .map((task) => task.id),
+    );
+    console.log(
+      JSON.stringify(
+        Object.values(state.tasks).filter(
+          (task) => task.state === 'READY' && runnable.has(task.taskId),
+        ),
+        null,
+        2,
+      ),
+    );
+  } else if (!taskId) throw new Error('TASK_ID_REQUIRED');
   else if (command === 'self-review-correct') {
     const targetWorktree = option('--target-worktree');
     if (!targetWorktree) throw new Error('TARGET_WORKTREE_REQUIRED');
@@ -129,10 +165,13 @@ try {
       { trustedRoot: process.cwd() },
     );
     console.log(
-      JSON.stringify({ status: 'TASK_SELF_REVIEW_CORRECTED', result }, null, 2),
+      JSON.stringify(
+        { status: 'TASK_SELF_REVIEW_CORRECTED', result },
+        null,
+        2,
+      ),
     );
-  }
-  else if (command === 'self-review-refresh') {
+  } else if (command === 'self-review-refresh') {
     const targetWorktree = option('--target-worktree');
     if (!targetWorktree) throw new Error('TARGET_WORKTREE_REQUIRED');
     const result = await refreshTaskSelfReview(
@@ -143,14 +182,9 @@ try {
       { trustedRoot: process.cwd() },
     );
     console.log(
-      JSON.stringify(
-        { status: 'SELF_REVIEW_REFRESHED', result },
-        null,
-        2,
-      ),
+      JSON.stringify({ status: 'SELF_REVIEW_REFRESHED', result }, null, 2),
     );
-  }
-  else if (command === 'validate') {
+  } else if (command === 'validate') {
     const product = productTasks.find((task) => task.id === taskId);
     const repair = repairTasks.find((task) => task.id === taskId);
     if (!product && !repair) throw new Error('TASK_NOT_FOUND');
@@ -160,19 +194,32 @@ try {
       target.state = 'BLOCKED';
       target.blockedReason = 'SPECIFICATION_GAP';
       target.history ??= [];
-      target.history.push({ from, to: 'BLOCKED', at: new Date().toISOString(), command: 'task:validate:specification-gap' });
+      target.history.push({
+        from,
+        to: 'BLOCKED',
+        at: new Date().toISOString(),
+        command: 'task:validate:specification-gap',
+      });
       await writeState(state);
-      console.log(JSON.stringify({ status: 'BLOCKED', reason: 'SPECIFICATION_GAP', taskId }, null, 2));
+      console.log(
+        JSON.stringify(
+          { status: 'BLOCKED', reason: 'SPECIFICATION_GAP', taskId },
+          null,
+          2,
+        ),
+      );
     } else {
-    if (product) await verifyTaskContract(taskId);
-    const specification = await loadAndValidateSpecification();
-    const input = product
-      ? await productValidationInput(product, specification.hashes)
-      : await repairValidationInput(repair!);
-    const { evidence, artifact } = await validateLifecycleContract(input);
-    markValidated(state.tasks[taskId]!, evidence);
-    await writeState(state);
-    console.log(JSON.stringify({ status: 'VALIDATED', artifact, evidence }, null, 2));
+      if (product) await verifyTaskContract(taskId);
+      const specification = await loadAndValidateSpecification();
+      const input = product
+        ? await productValidationInput(product, specification.hashes)
+        : await repairValidationInput(repair!);
+      const { evidence, artifact } = await validateLifecycleContract(input);
+      markValidated(state.tasks[taskId]!, evidence);
+      await writeState(state);
+      console.log(
+        JSON.stringify({ status: 'VALIDATED', artifact, evidence }, null, 2),
+      );
     }
   } else if (command === 'mark-ready') {
     markReady(state, tasks, taskId);
@@ -183,18 +230,37 @@ try {
     const expected = repair?.approvedBranch ?? taskBranch(taskId);
     const branch = git(['branch', '--show-current']);
     if (branch !== expected) throw new Error(`TASK_BRANCH_REQUIRED:${expected}`);
-    const lease = acquire(state, tasks, taskId, holder, new Date(), 900_000, git(['rev-parse', 'HEAD']), branch);
+    const ttlMinutes = assertAgentLeaseTtlMinutes(
+      Number(option('--ttl-minutes') ?? AGENT_LEASE_TTL_MINUTES.default),
+    );
+    const lease = acquire(
+      state,
+      tasks,
+      taskId,
+      holder,
+      new Date(),
+      ttlMinutes * 60_000,
+      git(['rev-parse', 'HEAD']),
+      branch,
+    );
     const product = productTasks.find((task) => task.id === taskId);
     if (product) {
       const authorityRoot = trustedRoot();
       const authority = await persistLifecycleAuthority({
-        trustedRoot: authorityRoot, taskRoot: process.cwd(), task: product,
-        state: state.tasks[taskId]!, contractPath: `tasks/${product.dependencyGroup}/${product.id}.contract.json`,
-        contextManifestPath: `artifacts/context/${product.id}/context-manifest.json`, contractMode: 'GENERATED',
+        trustedRoot: authorityRoot,
+        taskRoot: process.cwd(),
+        task: product,
+        state: state.tasks[taskId]!,
+        contractPath: `tasks/${product.dependencyGroup}/${product.id}.contract.json`,
+        contextManifestPath: `artifacts/context/${product.id}/context-manifest.json`,
+        contractMode: 'GENERATED',
       });
       state.tasks[taskId]!.lifecycleBinding = authority.binding;
       state.tasks[taskId]!.verificationBaseline = authority.baseline;
-      await validateVerificationBaseline(authorityRoot, state.tasks[taskId]!);
+      await validateVerificationBaseline(
+        authorityRoot,
+        state.tasks[taskId]!,
+      );
     }
     await writeState(state);
     console.log(JSON.stringify(lease, null, 2));
@@ -208,12 +274,17 @@ try {
       );
     } else if (command === 'begin') {
       const expected =
-        repairTasks.find((task) => task.id === taskId)?.approvedBranch ?? taskBranch(taskId);
+        repairTasks.find((task) => task.id === taskId)?.approvedBranch ??
+        taskBranch(taskId);
       const branch = git(['branch', '--show-current']);
-      if (branch !== expected || target.branch !== expected) throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
-      if (git(['status', '--porcelain']) !== '') throw new Error('DIRTY_WORKTREE');
-      if (git(['rev-parse', 'HEAD']) !== target.baseCommit) throw new Error('TASK_BASE_COMMIT_MISMATCH');
-      if (!repairTasks.some((task) => task.id === taskId)) await verifyTaskContract(taskId);
+      if (branch !== expected || target.branch !== expected)
+        throw new Error(`TASK_BRANCH_MISMATCH:${branch}`);
+      if (git(['status', '--porcelain']) !== '')
+        throw new Error('DIRTY_WORKTREE');
+      if (git(['rev-parse', 'HEAD']) !== target.baseCommit)
+        throw new Error('TASK_BASE_COMMIT_MISMATCH');
+      if (!repairTasks.some((task) => task.id === taskId))
+        await verifyTaskContract(taskId);
       target.worktree = git(['rev-parse', '--show-toplevel']);
       transition(target, ['LEASED'], 'IMPLEMENTING', {
         command: 'task:begin',
@@ -241,13 +312,20 @@ try {
       });
       await writeState(state);
       const launchReceiptId = option('--launch-receipt-id');
-      const review = await performTaskSelfReview(task, target, holder, process.cwd(), { ...(launchReceiptId ? { launchReceiptId } : {}) });
+      const review = await performTaskSelfReview(
+        task,
+        target,
+        holder,
+        process.cwd(),
+        { ...(launchReceiptId ? { launchReceiptId } : {}) },
+      );
       target.selfReviewEvidence = review.evidence;
       await registerCurrentEvidence(taskId, 'SELF_REVIEW', review.evidence);
       await writeState(state);
       console.log(JSON.stringify({ ...target, selfReview: review }, null, 2));
     } else if (command === 'complete') {
-      if (target.state !== 'VERIFIED' || !target.commit) throw new Error('INDEPENDENT_VERIFICATION_REQUIRED');
+      if (target.state !== 'VERIFIED' || !target.commit)
+        throw new Error('INDEPENDENT_VERIFICATION_REQUIRED');
       console.log(JSON.stringify(target, null, 2));
     } else if (command === 'release') {
       releaseLease(target, credential);
@@ -257,6 +335,11 @@ try {
     } else throw new Error(`UNKNOWN_COMMAND:${command}`);
   }
 } catch (error) {
-  console.error(JSON.stringify({ status: 'FAIL', error: error instanceof Error ? error.message : String(error) }));
+  console.error(
+    JSON.stringify({
+      status: 'FAIL',
+      error: error instanceof Error ? error.message : String(error),
+    }),
+  );
   process.exitCode = 1;
 }
