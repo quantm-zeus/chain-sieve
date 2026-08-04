@@ -24,6 +24,7 @@ const provider = (): AgentProviderId | undefined => {
 
 try {
   const runner = new SystemCommandRunner();
+  const selectedProvider = provider();
   const result = await runAutopilot(
     value('--root') ?? findRepositoryRoot(),
     runner,
@@ -33,7 +34,7 @@ try {
       ...(value('--max-cycles')
         ? { maxCycles: Number(value('--max-cycles')) }
         : {}),
-      ...(provider() ? { providerId: provider() } : {}),
+      ...(selectedProvider ? { providerId: selectedProvider } : {}),
     },
   );
   console.log(result);
