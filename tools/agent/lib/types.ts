@@ -121,14 +121,17 @@ export interface CommandResult {
   status: number;
   stdout: string;
   stderr: string;
+  timedOut?: boolean;
+}
+
+export interface CommandOptions {
+  cwd?: string;
+  input?: string;
+  timeoutMilliseconds?: number;
 }
 
 export interface CommandRunner {
-  run(
-    command: string,
-    args: string[],
-    options?: { cwd?: string; input?: string },
-  ): CommandResult;
+  run(command: string, args: string[], options?: CommandOptions): CommandResult;
 }
 
 export interface PullRequestState {

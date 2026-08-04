@@ -1,4 +1,7 @@
-import type { CommandRunner } from '../agent/lib/types.js';
+import type {
+  AgentProviderId,
+  CommandRunner,
+} from '../agent/lib/types.js';
 import { loadAutonomyPolicy } from './policy.js';
 
 export interface DoctorCheck {
@@ -15,23 +18,62 @@ const commandCheck = (
   cwd: string,
   validate: (output: string) => boolean = () => true,
 ): DoctorCheck => {
-  const result = runner.run(command, args, { cwd });
+  const result = runner.run(command, args, { cwd, timeoutMilliseconds: 30_000 });
   const output = `${result.stdout}\n${result.stderr}`.trim();
   return result.status === 0 && validate(output)
     ? { name, status: 'PASS', detail: output.split('\n')[0] ?? 'ok' }
     : {
         name,
         status: 'FAIL',
-        detail: output.split('\n').filter(Boolean).slice(-1)[0] ?? `${command} failed`,
+        detail:
+          output.split('\n').filter(Boolean).slice(-1)[0] ??
+          `${command} failed`,
       };
+};
+
+const providerChecks = (
+  root: string,
+  runner: CommandRunner,
+  provider: AgentProviderId,
+): DoctorCheck[] => {
+  if (provider === 'antigravity')
+    return [
+      commandCheck(runner, 'antigravity-cli', 'agy', ['--version'], root),
+      commandCheck(
+        runner,
+        'antigravity-headless-flags',
+        'agy',
+        ['--help'],
+        root,
+        (output) =>
+          ['--model', '--mode', '--cwd', '-p'].every((flag) =>
+            output.includes(flag),
+          ),
+      ),
+    ];
+  if (provider === 'codex')
+    return [
+      commandCheck(runner, 'codex-cli', 'codex', ['--version'], root),
+      commandCheck(
+        runner,
+        'codex-headless-flags',
+        'codex',
+        ['exec', '--help'],
+        root,
+        (output) =>
+          ['--cd', '--sandbox'].every((flag) => output.includes(flag)),
+      ),
+    ];
+  return [commandCheck(runner, 'zcode-cli', 'zcode', ['--version'], root)];
 };
 
 export const runAutopilotDoctor = async (
   root: string,
   runner: CommandRunner,
+  provider: AgentProviderId = 'antigravity',
 ): Promise<DoctorCheck[]> => {
   await loadAutonomyPolicy(root);
-  const checks: DoctorCheck[] = [
+  return [
     commandCheck(runner, 'git-root', 'git', ['rev-parse', '--show-toplevel'], root),
     commandCheck(
       runner,
@@ -57,17 +99,15 @@ export const runAutopilotDoctor = async (
       root,
       (output) => /^v22\./.test(output.trim()),
     ),
-    commandCheck(runner, 'pnpm', 'pnpm', ['--version'], root),
-    commandCheck(runner, 'antigravity-cli', 'agy', ['--version'], root),
     commandCheck(
       runner,
-      'antigravity-headless-flags',
-      'agy',
-      ['--help'],
+      'pnpm-10.13.1',
+      'pnpm',
+      ['--version'],
       root,
-      (output) =>
-        ['--model', '--mode', '--cwd', '-p'].every((flag) => output.includes(flag)),
+      (output) => output.trim() === '10.13.1',
     ),
+    ...providerChecks(root, runner, provider),
     commandCheck(runner, 'github-auth', 'gh', ['auth', 'status'], root),
     commandCheck(
       runner,
@@ -78,29 +118,42 @@ export const runAutopilotDoctor = async (
     ),
     commandCheck(
       runner,
+      'github-write-access',
+      'gh',
+      ['api', 'repos/{owner}/{repo}', '--jq', '.permissions.push'],
+      root,
+      (output) => output.trim() === 'true',
+    ),
+    commandCheck(
+      runner,
       'origin-reachable',
       'git',
       ['fetch', '--dry-run', 'origin'],
       root,
     ),
   ];
-  return checks;
 };
 
 export const assertAutopilotDoctor = async (
   root: string,
   runner: CommandRunner,
+  provider: AgentProviderId = 'antigravity',
 ): Promise<DoctorCheck[]> => {
-  const checks = await runAutopilotDoctor(root, runner);
+  const checks = await runAutopilotDoctor(root, runner, provider);
   const failed = checks.filter((check) => check.status === 'FAIL');
   if (failed.length > 0)
     throw new Error(
-      `AUTOPILOT_DOCTOR_FAILED:${failed.map((check) => `${check.name}:${check.detail}`).join('|')}`,
+      `AUTOPILOT_DOCTOR_FAILED:${failed
+        .map((check) => `${check.name}:${check.detail}`)
+        .join('|')}`,
     );
   return checks;
 };
 
 export const renderDoctor = (checks: DoctorCheck[]): string =>
   checks
-    .map((check) => `${check.status === 'PASS' ? '✓' : '✗'} ${check.name}: ${check.detail}`)
+    .map(
+      (check) =>
+        `${check.status === 'PASS' ? '✓' : '✗'} ${check.name}: ${check.detail}`,
+    )
     .join('\n');

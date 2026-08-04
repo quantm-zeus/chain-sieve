@@ -7,7 +7,10 @@ import {
   AntigravityProvider,
 } from '../../tools/agent/providers/antigravity.js';
 import { CodexProvider } from '../../tools/agent/providers/codex.js';
-import type { CommandRunner } from '../../tools/agent/lib/types.js';
+import type {
+  CommandOptions,
+  CommandRunner,
+} from '../../tools/agent/lib/types.js';
 import {
   ANTIGRAVITY_MODEL_STATUS,
   correctionRoundAllowed,
@@ -32,15 +35,12 @@ class RecordingRunner implements CommandRunner {
     args: string[];
     cwd?: string;
     input?: string;
+    timeoutMilliseconds?: number;
   }> = [];
 
   constructor(private readonly common = '/tmp/ciag-autopilot-common') {}
 
-  run(
-    command: string,
-    args: string[],
-    options: { cwd?: string; input?: string } = {},
-  ) {
+  run(command: string, args: string[], options: CommandOptions = {}) {
     this.calls.push({ command, args, ...options });
     if (command === 'which' && args[0] === 'agy')
       return { status: 0, stdout: '/usr/local/bin/agy\n', stderr: '' };
@@ -55,7 +55,7 @@ class RecordingRunner implements CommandRunner {
 }
 
 describe('one-command autopilot', () => {
-  it('uses Antigravity CLI with Gemini 3.6 Flash High as the blocking headless default', () => {
+  it('uses Antigravity CLI with Gemini 3.6 Flash High as the bounded headless default', () => {
     const runner = new RecordingRunner();
     const provider = new AntigravityProvider(runner, {
       applicationCandidates: [],
@@ -80,10 +80,11 @@ describe('one-command autopilot', () => {
         '/repo/task',
       ],
       cwd: '/repo/task',
+      timeoutMilliseconds: 5_400_000,
     });
   });
 
-  it('keeps Codex as an explicit blocking fallback with the global approval option', () => {
+  it('keeps Codex as an explicit bounded fallback with global approval disabled', () => {
     const runner = new RecordingRunner();
     const provider = new CodexProvider(runner);
     expect(provider.executePayload('/repo/task', 'bound goal')).toMatchObject({
@@ -105,6 +106,7 @@ describe('one-command autopilot', () => {
       ],
       cwd: '/repo/task',
       input: 'bound goal',
+      timeoutMilliseconds: 5_400_000,
     });
   });
 

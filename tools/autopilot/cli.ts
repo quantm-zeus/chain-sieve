@@ -2,7 +2,10 @@ import { errorCode } from '../agent/lib/errors.js';
 import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
-import { runAutopilot } from './autopilot.js';
+import {
+  DEFAULT_AUTONOMOUS_PROVIDER,
+  runAutopilot,
+} from './autopilot.js';
 import {
   assertAutopilotDoctor,
   renderDoctor,
@@ -15,9 +18,8 @@ const value = (name: string): string | undefined => {
   return index < 0 ? undefined : process.argv[index + 1];
 };
 
-const provider = (): AgentProviderId | undefined => {
-  const selected = value('--provider');
-  if (selected === undefined) return undefined;
+const provider = (): AgentProviderId => {
+  const selected = value('--provider') ?? DEFAULT_AUTONOMOUS_PROVIDER;
   if (
     selected !== 'antigravity' &&
     selected !== 'codex' &&
@@ -30,20 +32,20 @@ const provider = (): AgentProviderId | undefined => {
 try {
   const runner = new SystemCommandRunner();
   const root = value('--root') ?? findRepositoryRoot();
+  const selectedProvider = provider();
   if (has('--doctor')) {
-    const checks = await runAutopilotDoctor(root, runner);
+    const checks = await runAutopilotDoctor(root, runner, selectedProvider);
     console.log(renderDoctor(checks));
     if (checks.some((check) => check.status === 'FAIL')) process.exitCode = 1;
   } else {
-    await assertAutopilotDoctor(root, runner);
-    const selectedProvider = provider();
+    await assertAutopilotDoctor(root, runner, selectedProvider);
     const result = await runAutopilot(root, runner, {
       dryRun: has('--dry-run') || has('--status'),
       issueReceiptOnly: has('--issue-receipt-only'),
+      providerId: selectedProvider,
       ...(value('--max-cycles')
         ? { maxCycles: Number(value('--max-cycles')) }
         : {}),
-      ...(selectedProvider ? { providerId: selectedProvider } : {}),
     });
     console.log(result);
   }

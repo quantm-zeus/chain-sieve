@@ -31,11 +31,29 @@ export const DEFAULT_AUTONOMOUS_PROVIDER = 'antigravity' as const;
 export const MAX_PRODUCT_CORRECTION_ROUNDS = 3;
 export const ANTIGRAVITY_MODEL_STATUS =
   'GEMINI_3_6_FLASH_HIGH_ENFORCED_BY_CLI' as const;
-// FW-AUTOPILOT-001: one command owns discovery, execution, verification, merge, and continuation.
-// FW-AUTOPILOT-002: lease renewal and exact-state recovery remain invisible to the owner.
-// FW-AUTOPILOT-003: corrections retain strict bindings and product work stops after bounded rounds.
-// FW-AUTOPILOT-004: Antigravity is headless by default; Codex is an explicit fallback only.
-// FW-AUTOPILOT-005: the committed full-autonomy policy preauthorizes machine-gated work.
+const AGENT_TIMEOUT_MS = 2 * 60 * 60_000;
+const CI_WAIT_TIMEOUT_MS = 90 * 60_000;
+const SPEC_ALLOWED_PREFIXES = [
+  'docs/spec/',
+  'docs/adr/',
+  'tasks/',
+  'clusters/',
+  'artifacts/context/',
+  'artifacts/spec/',
+];
+const CONTROL_PLANE_PREFIXES = [
+  '.github/',
+  'config/',
+  'tools/autopilot/',
+  'tools/agent/',
+  'tools/task-runner/',
+  'tools/task-verifier/',
+  'tools/cluster-verifier/',
+  'tools/merge-queue/',
+  'tools/worktree-manager/',
+  'docs/schemas/',
+];
+
 export const correctionRoundAllowed = (completedRounds: number): boolean =>
   completedRounds + 1 <= MAX_PRODUCT_CORRECTION_ROUNDS;
 
@@ -45,19 +63,126 @@ const sleep = async (milliseconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 const requireSuccess = (result: CommandResult, code: string): string => {
   if (result.status !== 0)
-    throw new Error(`${code}:${(result.stderr || result.stdout).trim()}`);
+    throw new Error(
+      `${code}:${result.timedOut ? 'TIMEOUT:' : ''}${(result.stderr || result.stdout).trim()}`,
+    );
   return result.stdout.trim();
 };
 const pnpm = (runner: CommandRunner, root: string, args: string[]): string =>
   requireSuccess(
-    runner.run('pnpm', ['--silent', ...args], { cwd: root }),
+    runner.run('pnpm', ['--silent', ...args], {
+      cwd: root,
+      timeoutMilliseconds: AGENT_TIMEOUT_MS,
+    }),
     `AUTOPILOT_COMMAND_FAILED:${args.join(':')}`,
   );
 const git = (runner: CommandRunner, cwd: string, args: string[]): string =>
   requireSuccess(
-    runner.run('git', args, { cwd }),
+    runner.run('git', args, { cwd, timeoutMilliseconds: 120_000 }),
     `AUTOPILOT_GIT_FAILED:${args.join(':')}`,
   );
+const gh = (runner: CommandRunner, cwd: string, args: string[]): string =>
+  requireSuccess(
+    runner.run('gh', args, { cwd, timeoutMilliseconds: 120_000 }),
+    `AUTOPILOT_GITHUB_FAILED:${args.join(':')}`,
+  );
+
+interface PersistentAutopilotState {
+  schemaVersion: '1.0.0';
+  ciRepairRounds: Record<string, number>;
+  infrastructureFailures: Record<string, number>;
+}
+
+const statePath = (root: string, runner: CommandRunner): string =>
+  join(agentRuntimeRoot(root, runner), 'autopilot-state.json');
+const readPersistentState = async (
+  root: string,
+  runner: CommandRunner,
+): Promise<PersistentAutopilotState> => {
+  try {
+    const parsed = JSON.parse(
+      await readFile(statePath(root, runner), 'utf8'),
+    ) as PersistentAutopilotState;
+    if (
+      parsed.schemaVersion !== '1.0.0' ||
+      !parsed.ciRepairRounds ||
+      !parsed.infrastructureFailures
+    )
+      throw new Error('invalid');
+    return parsed;
+  } catch {
+    return {
+      schemaVersion: '1.0.0',
+      ciRepairRounds: {},
+      infrastructureFailures: {},
+    };
+  }
+};
+const writePersistentState = async (
+  root: string,
+  runner: CommandRunner,
+  state: PersistentAutopilotState,
+): Promise<void> => {
+  await mkdir(agentRuntimeRoot(root, runner), { recursive: true });
+  await writeFile(statePath(root, runner), `${JSON.stringify(state, null, 2)}\n`, {
+    mode: 0o600,
+  });
+};
+const withInfrastructureRetry = async <T>(
+  root: string,
+  runner: CommandRunner,
+  policy: AutonomyPolicy,
+  state: PersistentAutopilotState,
+  key: string,
+  operation: () => Promise<T>,
+): Promise<T> => {
+  let last: unknown;
+  for (
+    let attempt = state.infrastructureFailures[key] ?? 0;
+    attempt < policy.limits.infrastructureRetryRounds;
+    attempt += 1
+  ) {
+    try {
+      const value = await operation();
+      delete state.infrastructureFailures[key];
+      await writePersistentState(root, runner, state);
+      return value;
+    } catch (error) {
+      last = error;
+      state.infrastructureFailures[key] = attempt + 1;
+      await writePersistentState(root, runner, state);
+      if (attempt + 1 < policy.limits.infrastructureRetryRounds)
+        await sleep(Math.min(60_000, 2_000 * 2 ** attempt));
+    }
+  }
+  throw last;
+};
+
+const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
+  git(runner, cwd, ['status', '--porcelain=v1'])
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => line.slice(3).trim().split(' -> ').at(-1)!)
+    .filter(Boolean)
+    .sort();
+const assertOnlyPaths = (
+  paths: string[],
+  allowed: (path: string) => boolean,
+  code: string,
+): void => {
+  const invalid = paths.filter((path) => !allowed(path));
+  if (paths.length === 0) throw new Error(`${code}:NO_CHANGES`);
+  if (invalid.length > 0) throw new Error(`${code}:${invalid.join(',')}`);
+};
+const executeAgent = (
+  provider: AgentProvider,
+  workspace: string,
+  prompt: string,
+  code: string,
+): void => {
+  if (!provider.executePayload) throw new Error(`${code}:NO_HEADLESS_EXECUTOR`);
+  requireSuccess(provider.executePayload(workspace, prompt), code);
+};
 
 const ensureLease = async (
   root: string,
@@ -74,7 +199,7 @@ const ensureLease = async (
   )
     return;
   const remaining = Date.parse(state.expiresAt) - Date.now();
-  if (remaining > 10 * 60_000) return;
+  if (remaining > 20 * 60_000) return;
   if (remaining > 0) {
     const alreadyRenewed =
       state.renewal?.resultingLeaseId === state.leaseId &&
@@ -103,8 +228,6 @@ const ensureLease = async (
   const tree = git(runner, workspace, ['rev-parse', 'HEAD^{tree}']);
   const contractPath = `tasks/${task.contract.dependencyGroup}/${task.contract.id}.contract.json`;
   const contextPath = `artifacts/context/${task.contract.id}/context-manifest.json`;
-  const contractHash = hash(await readFile(join(workspace, contractPath)));
-  const contextHash = hash(await readFile(join(workspace, contextPath)));
   pnpm(runner, root, [
     'agent:recover',
     '--',
@@ -132,9 +255,9 @@ const ensureLease = async (
     '--expected-untracked-work-sha256',
     hashes.untracked,
     '--expected-legacy-contract-sha256',
-    contractHash,
+    hash(await readFile(join(workspace, contractPath))),
     '--expected-legacy-context-sha256',
-    contextHash,
+    hash(await readFile(join(workspace, contextPath))),
     '--ttl-minutes',
     '120',
   ]);
@@ -162,16 +285,12 @@ export const correctionReceiptMatches = (
     (!binding.taskId || value.taskId === binding.taskId) &&
     (!binding.holder || value.holder === binding.holder) &&
     (!binding.leaseId || value.leaseId === binding.leaseId) &&
-    (!binding.fencingVersion ||
-      value.fencingVersion === binding.fencingVersion) &&
+    (!binding.fencingVersion || value.fencingVersion === binding.fencingVersion) &&
     (!binding.worktree || value.taskWorktree === binding.worktree) &&
-    (!binding.previousCommit ||
-      correction.previousCommit === binding.previousCommit) &&
-    (!binding.failureCode ||
-      correction.failureCodes.includes(binding.failureCode))
+    (!binding.previousCommit || correction.previousCommit === binding.previousCommit) &&
+    (!binding.failureCode || correction.failureCodes.includes(binding.failureCode))
   );
 };
-
 const correctionReceipts = async (
   root: string,
   runner: CommandRunner,
@@ -187,7 +306,6 @@ const correctionReceipts = async (
         worktree: task.workspace,
       }),
   );
-
 const bindCompletedCorrection = async (
   root: string,
   runner: CommandRunner,
@@ -208,8 +326,7 @@ const bindCompletedCorrection = async (
   const failureCode = (
     candidate?.value.correction as { failureCodes?: string[] } | undefined
   )?.failureCodes?.[0];
-  if (!failureCode)
-    throw new Error('AUTOPILOT_CORRECTION_RECEIPT_MISSING');
+  if (!failureCode) throw new Error('AUTOPILOT_CORRECTION_RECEIPT_MISSING');
   pnpm(runner, root, [
     'task:self-review-correct',
     task.contract.id,
@@ -237,43 +354,73 @@ interface PullRequestCheck {
 interface PullRequestProbe {
   number: number;
   url: string;
+  state?: string;
+  mergeStateStatus?: string;
   statusCheckRollup?: PullRequestCheck[];
 }
-
-const failedClusterPullRequest = (
-  runner: CommandRunner,
-  root: string,
-  cluster: ClusterRecord,
-): { number: number; url: string; failures: string[] } | undefined => {
-  const result = runner.run(
-    'gh',
-    [
-      'pr',
-      'list',
-      '--head',
-      cluster.branch.branch,
-      '--base',
-      cluster.branch.integrationTarget,
-      '--state',
-      'open',
-      '--limit',
-      '1',
-      '--json',
-      'number,url,statusCheckRollup',
-    ],
-    { cwd: root },
-  );
-  if (result.status !== 0) return undefined;
-  const pr = (JSON.parse(result.stdout) as PullRequestProbe[])[0];
-  if (!pr) return undefined;
-  const failures = (pr.statusCheckRollup ?? [])
+const checkValue = (check: PullRequestCheck): string =>
+  String(check.conclusion ?? check.state ?? check.status ?? '').toUpperCase();
+const failedChecks = (pr: PullRequestProbe): string[] =>
+  (pr.statusCheckRollup ?? [])
     .filter((check) =>
       ['FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT', 'ACTION_REQUIRED'].includes(
-        String(check.conclusion ?? check.state ?? check.status ?? '').toUpperCase(),
+        checkValue(check),
       ),
     )
     .map((check) => check.name ?? check.context ?? 'unnamed-check');
-  return failures.length > 0 ? { number: pr.number, url: pr.url, failures } : undefined;
+const pendingChecks = (pr: PullRequestProbe): boolean =>
+  (pr.statusCheckRollup ?? []).length === 0 ||
+  (pr.statusCheckRollup ?? []).some(
+    (check) => !['SUCCESS', 'NEUTRAL', 'SKIPPED'].includes(checkValue(check)),
+  );
+const findPullRequest = (
+  runner: CommandRunner,
+  root: string,
+  head: string,
+  base: string,
+  state = 'open',
+): PullRequestProbe | undefined => {
+  const values = JSON.parse(
+    gh(runner, root, [
+      'pr',
+      'list',
+      '--head',
+      head,
+      '--base',
+      base,
+      '--state',
+      state,
+      '--limit',
+      '1',
+      '--json',
+      'number,url,state,mergeStateStatus,statusCheckRollup',
+    ]),
+  ) as PullRequestProbe[];
+  return values[0];
+};
+const waitForPullRequest = async (
+  runner: CommandRunner,
+  root: string,
+  number: number,
+  pollMilliseconds: number,
+): Promise<PullRequestProbe> => {
+  const deadline = Date.now() + CI_WAIT_TIMEOUT_MS;
+  for (;;) {
+    const pr = JSON.parse(
+      gh(runner, root, [
+        'pr',
+        'view',
+        String(number),
+        '--json',
+        'number,url,state,mergeStateStatus,statusCheckRollup',
+      ]),
+    ) as PullRequestProbe;
+    if (pr.state === 'MERGED') return pr;
+    if (pr.state === 'CLOSED') throw new Error(`AUTOPILOT_PR_CLOSED:${pr.url}`);
+    if (failedChecks(pr).length > 0 || !pendingChecks(pr)) return pr;
+    if (Date.now() >= deadline) throw new Error(`AUTOPILOT_CI_TIMEOUT:${pr.url}`);
+    await sleep(pollMilliseconds);
+  }
 };
 
 const repairClusterCi = async (
@@ -285,96 +432,135 @@ const repairClusterCi = async (
   round: number,
 ): Promise<void> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const resultPath = join(
-    runtime,
-    'cluster-results',
-    `${cluster.contract.id}.result.json`,
+  const resultPath = join(runtime, 'cluster-results', `${cluster.contract.id}.result.json`);
+  if (!existsSync(resultPath)) throw new Error('AUTOPILOT_CLUSTER_RESULT_REQUIRED_FOR_REPAIR');
+  const result = JSON.parse(await readFile(resultPath, 'utf8')) as {
+    headCommitSha: string;
+    headTreeSha: string;
+  };
+  const remoteHead = git(runner, root, [
+    'rev-parse',
+    `refs/remotes/origin/${cluster.branch.branch}`,
+  ]);
+  git(runner, cluster.branch.worktree, ['reset', '--hard', result.headCommitSha]);
+  await rm(
+    join(
+      cluster.branch.worktree,
+      'artifacts',
+      'reviews',
+      'clusters',
+      `${cluster.contract.id}.review.json`,
+    ),
+    { force: true },
   );
-  const result = existsSync(resultPath)
-    ? (JSON.parse(await readFile(resultPath, 'utf8')) as {
-        headCommitSha?: string;
-        headTreeSha?: string;
-      })
-    : undefined;
-  const repairSessionId = randomUUID();
-  const receiptPath = join(
-    runtime,
-    'ci-repair-sessions',
-    `${cluster.contract.id}.${repairSessionId}.json`,
-  );
-  await mkdir(join(runtime, 'ci-repair-sessions'), { recursive: true });
+  await rm(resultPath, { force: true });
+  const sessionId = randomUUID();
+  const directory = join(runtime, 'ci-repair-sessions');
+  await mkdir(directory, { recursive: true });
+  const core = {
+    schemaVersion: '2.0.0',
+    sessionId,
+    provider: provider.id,
+    clusterId: cluster.contract.id,
+    pullRequest: failure.url,
+    failedChecks: failure.failures,
+    round,
+    frozenProductCommit: result.headCommitSha,
+    frozenProductTree: result.headTreeSha,
+    expectedRemoteHead: remoteHead,
+    createdAt: new Date().toISOString(),
+  };
   await writeFile(
-    receiptPath,
-    `${JSON.stringify(
-      {
-        schemaVersion: '1.0.0',
-        sessionId: repairSessionId,
-        clusterId: cluster.contract.id,
-        pullRequest: failure.url,
-        failedChecks: failure.failures,
-        round,
-        frozenProductCommit: result?.headCommitSha,
-        frozenProductTree: result?.headTreeSha,
-        createdAt: new Date().toISOString(),
-      },
-      null,
-      2,
-    )}\n`,
+    join(directory, `${cluster.contract.id}.${sessionId}.json`),
+    `${JSON.stringify({ ...core, receiptHash: hash(JSON.stringify(core)) }, null, 2)}\n`,
     { mode: 0o600 },
   );
-  const prompt = `You are an isolated ChainSieve cluster CI repair session ${repairSessionId}. Work only in ${cluster.branch.worktree} on ${cluster.branch.branch}. Inspect pull request ${failure.url} and download the complete logs for failed checks: ${failure.failures.join(', ')}. The previous independent review and cluster result are stale after any source correction. Before editing, read ${receiptPath}. Reset the branch to the frozen product commit ${result?.headCommitSha ?? 'recorded in the cluster result'} so the old review-only commit is removed, using force-with-lease only when pushing the repaired branch. Remove the stale cluster review artifact and the stale runtime cluster result. Repair only the concrete CI failures, run focused checks, and create one atomic repair commit. Do not forge task, cluster, review, or CI evidence. Push the branch and stop; the root autopilot will independently regenerate the cluster result, start a fresh review session, and re-evaluate CI.`;
-  requireSuccess(
-    provider.executePayload!(cluster.branch.worktree, prompt),
+  executeAgent(
+    provider,
+    cluster.branch.worktree,
+    `You are isolated CI repair session ${sessionId}. Inspect pull request ${failure.url} and complete logs for ${failure.failures.join(', ')}. Modify only the minimum product source or product tests needed. Do not modify control-plane, workflow, policy, verifier, specification, generated contract, review, or runtime evidence. Do not run git reset, git commit, git push, or gh. Leave valid changes uncommitted and stop.`,
     'AUTOPILOT_CLUSTER_CI_REPAIR_FAILED',
   );
-  if (existsSync(resultPath)) await rm(resultPath, { force: true });
+  const paths = changedPaths(runner, cluster.branch.worktree);
+  assertOnlyPaths(
+    paths,
+    (path) => !CONTROL_PLANE_PREFIXES.some((prefix) => path.startsWith(prefix)),
+    'AUTOPILOT_CLUSTER_CI_REPAIR_SCOPE',
+  );
+  pnpm(runner, cluster.branch.worktree, ['lint']);
+  pnpm(runner, cluster.branch.worktree, ['typecheck']);
+  git(runner, cluster.branch.worktree, ['add', '--', ...paths]);
+  git(runner, cluster.branch.worktree, [
+    'commit',
+    '-m',
+    `fix(${cluster.contract.id}): repair CI round ${round}`,
+  ]);
+  git(runner, cluster.branch.worktree, [
+    'push',
+    `--force-with-lease=${cluster.branch.branch}:${remoteHead}`,
+    'origin',
+    `HEAD:${cluster.branch.branch}`,
+  ]);
 };
 
 const reviewCluster = async (
   root: string,
   runner: CommandRunner,
   provider: AgentProvider,
+  inventory: ProjectInventory,
   cluster: ClusterRecord,
 ): Promise<void> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const reviewPath = join(
+  const productCommit = cluster.worktreeHead ?? cluster.branchHead;
+  if (!productCommit) throw new Error('AUTOPILOT_REVIEW_PRODUCT_COMMIT_MISSING');
+  const productTree = git(runner, cluster.branch.worktree, [
+    'rev-parse',
+    `${productCommit}^{tree}`,
+  ]);
+  const sessionId = randomUUID();
+  const identity = `${provider.id}-independent-${sessionId}`;
+  const holders = cluster.contract.tasks
+    .map((id) => inventory.tasks.find((task) => task.contract.id === id)?.state.holder)
+    .filter((holder): holder is string => Boolean(holder));
+  const directory = join(runtime, 'review-sessions');
+  await mkdir(directory, { recursive: true });
+  const core = {
+    schemaVersion: '2.0.0',
+    sessionId,
+    reviewerIdentity: identity,
+    provider: provider.id,
+    clusterId: cluster.contract.id,
+    productCommit,
+    productTree,
+    implementationHolders: holders,
+    createdAt: new Date().toISOString(),
+  };
+  const receiptPath = join(directory, `${cluster.contract.id}.${sessionId}.json`);
+  await writeFile(
+    receiptPath,
+    `${JSON.stringify({ ...core, receiptHash: hash(JSON.stringify(core)) }, null, 2)}\n`,
+    { mode: 0o600 },
+  );
+  const instructions = join(
     runtime,
     'cluster-reviews',
     `${cluster.contract.id}.review-instructions.md`,
   );
-  const sessionId = randomUUID();
-  const identity = `antigravity-independent-${sessionId}`;
-  const receiptDirectory = join(runtime, 'review-sessions');
-  const receiptPath = join(
-    receiptDirectory,
-    `${cluster.contract.id}.${sessionId}.json`,
-  );
-  await mkdir(receiptDirectory, { recursive: true });
-  await writeFile(
-    receiptPath,
-    `${JSON.stringify(
-      {
-        schemaVersion: '1.0.0',
-        sessionId,
-        reviewerIdentity: identity,
-        clusterId: cluster.contract.id,
-        productCommit: cluster.worktreeHead ?? cluster.branchHead,
-        productTree: cluster.worktreeHead
-          ? git(runner, cluster.branch.worktree, ['rev-parse', 'HEAD^{tree}'])
-          : undefined,
-        implementationHolders: cluster.contract.tasks,
-        createdAt: new Date().toISOString(),
-      },
-      null,
-      2,
-    )}\n`,
-    { mode: 0o600 },
-  );
-  const prompt = `Read and obey ${reviewPath}. This is independent review session ${sessionId}; use reviewerIdentity exactly ${identity}. Read only the frozen diff, contracts, result evidence, and tests needed for review. Do not reuse implementation-session reasoning. Create the exact review artifact, commit only that artifact, and stop. The machine verifier will reject stale bindings or unresolved P0/P1 findings. Review session receipt: ${receiptPath}.`;
-  requireSuccess(
-    provider.executePayload!(cluster.branch.worktree, prompt),
+  executeAgent(
+    provider,
+    cluster.branch.worktree,
+    `Read and obey ${instructions}. Independent review session ${sessionId}; reviewerIdentity ${identity}. Review frozen commit ${productCommit} and tree ${productTree}. Create only the review JSON artifact and leave it uncommitted. Do not modify product, tests, contracts, manifests, result, policy, workflow or verifier. Do not invoke git commit, git push or gh. Receipt: ${receiptPath}.`,
     'AUTOPILOT_CLUSTER_REVIEW_FAILED',
   );
+  const expected = `artifacts/reviews/clusters/${cluster.contract.id}.review.json`;
+  const paths = changedPaths(runner, cluster.branch.worktree);
+  assertOnlyPaths(paths, (path) => path === expected, 'AUTOPILOT_CLUSTER_REVIEW_SCOPE');
+  git(runner, cluster.branch.worktree, ['add', '--', expected]);
+  git(runner, cluster.branch.worktree, [
+    'commit',
+    '-m',
+    `review(${cluster.contract.id}): independent machine review`,
+  ]);
 };
 
 const resolveSpecificationGap = async (
@@ -383,6 +569,7 @@ const resolveSpecificationGap = async (
   provider: AgentProvider,
   inventory: ProjectInventory,
   policy: AutonomyPolicy,
+  pollMilliseconds: number,
 ): Promise<boolean> => {
   if (!policy.allowAutonomousSpecificationResolution) return false;
   const task = inventory.tasks.find(
@@ -396,25 +583,80 @@ const resolveSpecificationGap = async (
   const worktree = join(inventory.worktreeRoot, `spec-${slug}`);
   if (!existsSync(worktree)) {
     await mkdir(inventory.worktreeRoot, { recursive: true });
-    const branchExists =
+    const exists =
       runner.run('git', ['show-ref', '--verify', `refs/heads/${branch}`], {
         cwd: root,
       }).status === 0;
     git(
       runner,
       root,
-      branchExists
+      exists
         ? ['worktree', 'add', worktree, branch]
         : ['worktree', 'add', '-b', branch, worktree, 'main'],
     );
   }
   pnpm(runner, worktree, ['install', '--frozen-lockfile']);
-  const sessionId = randomUUID();
-  const prompt = `You are ChainSieve autonomous specification resolver ${sessionId}. Resolve only specification gap ${task.contract.id} for cluster ${task.contract.cluster} in ${worktree}. The repository owner has committed FULL_AUTONOMY policy at config/autonomy-policy.json and will not provide human review. Read the gap task context, PRD, requirements, audit, ADRs, dependency interfaces, and safe-default policy. Choose the narrowest reversible specification that satisfies existing product intent. Never enable live trading, external writes, secret materialization, or irreversible migrations. Do not implement product functionality in this session. Update only authoritative specification/ADR/source files and deterministic generated contracts/context/conformance artifacts required to change this task from SPECIFICATION_GAP to READY. Run pnpm prd:compile, spec:verify, prd:drift-check, requirements:coverage, architecture:verify, and focused compiler tests. Create one atomic specification commit, push ${branch}, create or update a pull request to main, wait for all required GitHub checks, repair specification-only failures, and merge only after every required check passes. Then stop.`;
-  requireSuccess(
-    provider.executePayload!(worktree, prompt),
+  executeAgent(
+    provider,
+    worktree,
+    `Resolve only specification gap ${task.contract.id} for cluster ${task.contract.cluster}. Choose the narrowest reversible specification consistent with existing sources. Never enable live trading, external writes, secrets or irreversible migrations. Modify only specification/ADR sources and deterministic generated tasks, clusters, contexts and spec artifacts. Do not modify product source, workflow, policy, package scripts, verifier or control plane. Do not run git commit, git push or gh. Leave changes uncommitted and stop.`,
     'AUTOPILOT_SPECIFICATION_RESOLUTION_FAILED',
   );
+  const paths = changedPaths(runner, worktree);
+  assertOnlyPaths(
+    paths,
+    (path) => SPEC_ALLOWED_PREFIXES.some((prefix) => path.startsWith(prefix)),
+    'AUTOPILOT_SPECIFICATION_SCOPE',
+  );
+  for (const args of [
+    ['prd:compile'],
+    ['spec:verify'],
+    ['prd:drift-check'],
+    ['requirements:coverage'],
+    ['architecture:verify'],
+  ])
+    pnpm(runner, worktree, args);
+  git(runner, worktree, ['add', '--', ...changedPaths(runner, worktree)]);
+  git(runner, worktree, [
+    'commit',
+    '-m',
+    `spec(${task.contract.id}): resolve specification gap`,
+  ]);
+  git(runner, worktree, ['push', '-u', 'origin', branch]);
+  let pr = findPullRequest(runner, root, branch, 'main');
+  if (!pr) {
+    gh(runner, root, [
+      'pr',
+      'create',
+      '--head',
+      branch,
+      '--base',
+      'main',
+      '--title',
+      `spec(${task.contract.id}): resolve autonomous gap`,
+      '--body',
+      `Machine-generated reversible specification amendment for ${task.contract.id}.`,
+    ]);
+    pr = findPullRequest(runner, root, branch, 'main');
+  }
+  if (!pr) throw new Error('AUTOPILOT_SPECIFICATION_PR_MISSING');
+  const completed = await waitForPullRequest(runner, root, pr.number, pollMilliseconds);
+  const failures = failedChecks(completed);
+  if (failures.length > 0)
+    throw new Error(`AUTOPILOT_SPECIFICATION_CI_FAILED:${failures.join(',')}`);
+  if (completed.mergeStateStatus !== 'CLEAN')
+    throw new Error(
+      `AUTOPILOT_SPECIFICATION_PR_NOT_CLEAN:${completed.mergeStateStatus ?? 'UNKNOWN'}`,
+    );
+  if (!policy.allowAutonomousMerge)
+    throw new Error('AUTOPILOT_AUTONOMOUS_MERGE_DISABLED');
+  gh(runner, root, [
+    'pr',
+    'merge',
+    String(pr.number),
+    '--merge',
+    '--delete-branch=false',
+  ]);
   git(runner, root, ['fetch', 'origin', '--prune']);
   git(runner, root, ['pull', '--ff-only', 'origin', 'main']);
   git(runner, task.cluster.branch.worktree, [
@@ -422,21 +664,47 @@ const resolveSpecificationGap = async (
     '--no-edit',
     'refs/remotes/origin/main',
   ]);
-  git(runner, task.cluster.branch.worktree, [
-    'push',
-    'origin',
-    task.cluster.branch.branch,
-  ]);
-  pnpm(runner, task.cluster.branch.worktree, [
-    'task:validate',
-    task.contract.id,
-  ]);
-  pnpm(runner, task.cluster.branch.worktree, [
-    'task:mark-ready',
-    task.contract.id,
-  ]);
+  git(runner, task.cluster.branch.worktree, ['push', 'origin', task.cluster.branch.branch]);
+  pnpm(runner, task.cluster.branch.worktree, ['task:validate', task.contract.id]);
+  pnpm(runner, task.cluster.branch.worktree, ['task:mark-ready', task.contract.id]);
   git(runner, root, ['worktree', 'remove', '--force', worktree]);
   return true;
+};
+
+const waitForMainCi = async (
+  root: string,
+  runner: CommandRunner,
+  commit: string,
+  pollMilliseconds: number,
+): Promise<void> => {
+  const deadline = Date.now() + CI_WAIT_TIMEOUT_MS;
+  for (;;) {
+    const runs = JSON.parse(
+      gh(runner, root, [
+        'run',
+        'list',
+        '--commit',
+        commit,
+        '--workflow',
+        'CI',
+        '--limit',
+        '1',
+        '--json',
+        'databaseId,status,conclusion,url',
+      ]),
+    ) as Array<{ databaseId: number; status: string; conclusion?: string }>;
+    const run = runs[0];
+    if (run?.status === 'completed') {
+      if (run.conclusion !== 'success')
+        throw new Error(
+          `AUTOPILOT_FINAL_MAIN_CI_FAILED:${run.databaseId}:${run.conclusion}`,
+        );
+      return;
+    }
+    if (Date.now() >= deadline)
+      throw new Error(`AUTOPILOT_FINAL_MAIN_CI_TIMEOUT:${commit}`);
+    await sleep(pollMilliseconds);
+  }
 };
 
 export interface AutopilotOptions {
@@ -461,7 +729,8 @@ export const runAutopilot = async (
   let decision = decideNextAction(inventory);
   if (options.dryRun) return renderDryRun(inventory, decision, provider.id);
   const release = await acquireAutopilotLock(root, runner);
-  const ciRepairRounds = new Map<string, number>();
+  const persistent = await readPersistentState(root, runner);
+  const pollMilliseconds = options.pollMilliseconds ?? 15_000;
   try {
     if (options.issueReceiptOnly) {
       const task = inventory.activeTask;
@@ -499,53 +768,71 @@ export const runAutopilot = async (
           provider,
           inventory,
           policy,
+          pollMilliseconds,
         ))
       )
         continue;
       if (decision.action === 'CORRECT_TASK' && decision.task) {
-        const rounds = (
-          await correctionReceipts(root, runner, decision.task)
-        ).length;
-        if (
-          decision.task.contract.dependencyGroup !== 'FW' &&
-          rounds >= policy.limits.taskCorrectionRounds
-        )
+        const rounds = (await correctionReceipts(root, runner, decision.task)).length;
+        if (rounds >= policy.limits.taskCorrectionRounds)
           throw new Error(
             `AUTOPILOT_CORRECTION_LIMIT:${decision.task.contract.id}:${rounds}`,
           );
       }
+      if (decision.action === 'CREATE_CLUSTER_PR' && !policy.allowAutonomousMerge)
+        throw new Error('AUTOPILOT_AUTONOMOUS_MERGE_DISABLED');
       const reviewing =
         decision.action === 'REVIEW_CLUSTER' ? decision.cluster : undefined;
       const integrating =
         decision.action === 'CREATE_CLUSTER_PR' ? decision.cluster : undefined;
-      await executeOrchestration(root, runner, {
-        dryRun: false,
-        provider,
-      });
-      if (reviewing) await reviewCluster(root, runner, provider, reviewing);
+      await withInfrastructureRetry(
+        root,
+        runner,
+        policy,
+        persistent,
+        `orchestration:${decision.action}`,
+        async () => {
+          await executeOrchestration(root, runner, { dryRun: false, provider });
+        },
+      );
+      if (reviewing)
+        await reviewCluster(root, runner, provider, inventory, reviewing);
       if (integrating && policy.allowAutonomousCiRepair) {
-        const failure = failedClusterPullRequest(runner, root, integrating);
-        if (failure) {
-          const round = (ciRepairRounds.get(integrating.contract.id) ?? 0) + 1;
-          if (round > policy.limits.clusterCiCorrectionRounds)
-            throw new Error(
-              `AUTOPILOT_CLUSTER_CI_REPAIR_LIMIT:${integrating.contract.id}:${round - 1}`,
+        const pr = findPullRequest(
+          runner,
+          root,
+          integrating.branch.branch,
+          integrating.branch.integrationTarget,
+        );
+        if (pr) {
+          const failures = failedChecks(pr);
+          if (failures.length > 0) {
+            const round =
+              (persistent.ciRepairRounds[integrating.contract.id] ?? 0) + 1;
+            if (round > policy.limits.clusterCiCorrectionRounds)
+              throw new Error(
+                `AUTOPILOT_CLUSTER_CI_REPAIR_LIMIT:${integrating.contract.id}:${round - 1}`,
+              );
+            persistent.ciRepairRounds[integrating.contract.id] = round;
+            await writePersistentState(root, runner, persistent);
+            await repairClusterCi(
+              root,
+              runner,
+              provider,
+              integrating,
+              { number: pr.number, url: pr.url, failures },
+              round,
             );
-          ciRepairRounds.set(integrating.contract.id, round);
-          await repairClusterCi(
-            root,
-            runner,
-            provider,
-            integrating,
-            failure,
-            round,
-          );
-          continue;
+            continue;
+          }
         }
       }
-      if (decision.action === 'COMPLETE_PROJECT') return 'AUTOPILOT_COMPLETE';
-      if (decision.action === 'CREATE_CLUSTER_PR')
-        await sleep(options.pollMilliseconds ?? 15_000);
+      if (decision.action === 'COMPLETE_PROJECT') {
+        const head = git(runner, root, ['rev-parse', 'HEAD']);
+        await waitForMainCi(root, runner, head, pollMilliseconds);
+        return 'AUTOPILOT_COMPLETE';
+      }
+      if (decision.action === 'CREATE_CLUSTER_PR') await sleep(pollMilliseconds);
     }
     return 'AUTOPILOT_CYCLE_LIMIT';
   } finally {
