@@ -21,8 +21,17 @@ interface GhPullRequest {
   }>;
 }
 
+interface RequiredCheck {
+  name: string;
+  state?: string;
+  bucket?: string;
+}
+
 const runJson = <T>(runner: CommandRunner, root: string, args: string[]): T => {
-  const result = runner.run('gh', args, { cwd: root });
+  const result = runner.run('gh', args, {
+    cwd: root,
+    timeoutMilliseconds: 120_000,
+  });
   if (result.status !== 0)
     throw new ZCodeError('GITHUB_COMMAND_FAILED', args.join(' '), [
       result.stderr,
@@ -30,34 +39,44 @@ const runJson = <T>(runner: CommandRunner, root: string, args: string[]): T => {
   return JSON.parse(result.stdout) as T;
 };
 
-const checkState = (
-  check: NonNullable<GhPullRequest['statusCheckRollup']>[number],
-): 'PENDING' | 'PASS' | 'FAIL' => {
-  const value = (
-    check.conclusion ??
-    check.state ??
-    check.status ??
-    ''
-  ).toUpperCase();
-  if (['SUCCESS', 'NEUTRAL', 'SKIPPED'].includes(value)) return 'PASS';
+const checkState = (value: string): 'PENDING' | 'PASS' | 'FAIL' => {
+  const normalized = value.toUpperCase();
+  if (['SUCCESS', 'PASS', 'NEUTRAL', 'SKIPPED'].includes(normalized))
+    return 'PASS';
   if (
-    ['FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT', 'ACTION_REQUIRED'].includes(
-      value,
-    )
+    [
+      'FAIL',
+      'FAILURE',
+      'ERROR',
+      'CANCELLED',
+      'TIMED_OUT',
+      'ACTION_REQUIRED',
+    ].includes(normalized)
   )
     return 'FAIL';
   return 'PENDING';
 };
 
-const normalize = (pr: GhPullRequest): PullRequestState => ({
+const normalize = (
+  pr: GhPullRequest,
+  requiredChecks?: RequiredCheck[],
+): PullRequestState => ({
   number: pr.number,
   url: pr.url,
   state: pr.state,
-  checks: (pr.statusCheckRollup ?? []).map((check) => ({
-    name: check.name ?? check.context ?? check.__typename ?? 'unnamed-check',
-    state: checkState(check),
-    required: true,
-  })),
+  checks: requiredChecks
+    ? requiredChecks.map((check) => ({
+        name: check.name,
+        state: checkState(check.bucket ?? check.state ?? ''),
+        required: true,
+      }))
+    : (pr.statusCheckRollup ?? []).map((check) => ({
+        name: check.name ?? check.context ?? check.__typename ?? 'unnamed-check',
+        state: checkState(
+          check.conclusion ?? check.state ?? check.status ?? '',
+        ),
+        required: false,
+      })),
   ...(pr.mergeCommit?.oid ? { mergeCommit: pr.mergeCommit.oid } : {}),
 });
 
@@ -110,7 +129,7 @@ export const createClusterPullRequest = (
       '--body',
       body,
     ],
-    { cwd: root },
+    { cwd: root, timeoutMilliseconds: 120_000 },
   );
   if (result.status !== 0)
     throw new ZCodeError('CLUSTER_PR_CREATE_FAILED', result.stderr.trim());
@@ -131,8 +150,22 @@ export const refreshPullRequest = (
     '--json',
     'number,url,state,mergeCommit,mergeStateStatus,statusCheckRollup',
   ]);
+  let required: RequiredCheck[] | undefined;
+  const checks = runner.run(
+    'gh',
+    [
+      'pr',
+      'checks',
+      String(number),
+      '--required',
+      '--json',
+      'name,state,bucket',
+    ],
+    { cwd: root, timeoutMilliseconds: 120_000 },
+  );
+  if (checks.status === 0) required = JSON.parse(checks.stdout) as RequiredCheck[];
   return {
-    ...normalize(pr),
+    ...normalize(pr, required),
     mergeStateStatus: pr.mergeStateStatus ?? 'UNKNOWN',
   };
 };
@@ -142,15 +175,16 @@ export const classifyPullRequest = (
 ): 'MERGED' | 'FAILED' | 'PENDING' | 'READY' | 'CLOSED' => {
   if (pr.state === 'MERGED') return 'MERGED';
   if (pr.state === 'CLOSED') return 'CLOSED';
+  if (['DIRTY', 'BLOCKED'].includes(pr.mergeStateStatus ?? '')) return 'FAILED';
   if (pr.checks.length === 0) return 'PENDING';
   if (pr.checks.some((check) => check.required && check.state === 'FAIL'))
     return 'FAILED';
   if (
     pr.checks.some((check) => check.required && check.state === 'PENDING') ||
-    (pr.mergeStateStatus !== undefined && pr.mergeStateStatus !== 'CLEAN')
+    ['BEHIND', 'UNKNOWN', 'UNSTABLE'].includes(pr.mergeStateStatus ?? '')
   )
     return 'PENDING';
-  return 'READY';
+  return pr.mergeStateStatus === 'CLEAN' ? 'READY' : 'PENDING';
 };
 
 export const mergePullRequest = (
@@ -158,10 +192,28 @@ export const mergePullRequest = (
   root: string,
   number: number,
 ): void => {
+  const repository = runJson<{
+    mergeCommitAllowed: boolean;
+    squashMergeAllowed: boolean;
+    rebaseMergeAllowed: boolean;
+  }>(runner, root, [
+    'repo',
+    'view',
+    '--json',
+    'mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed',
+  ]);
+  const method = repository.mergeCommitAllowed
+    ? '--merge'
+    : repository.squashMergeAllowed
+      ? '--squash'
+      : repository.rebaseMergeAllowed
+        ? '--rebase'
+        : undefined;
+  if (!method) throw new ZCodeError('CLUSTER_PR_NO_ALLOWED_MERGE_METHOD');
   const result = runner.run(
     'gh',
-    ['pr', 'merge', String(number), '--merge', '--delete-branch=false'],
-    { cwd: root },
+    ['pr', 'merge', String(number), method, '--delete-branch=false'],
+    { cwd: root, timeoutMilliseconds: 120_000 },
   );
   if (result.status !== 0)
     throw new ZCodeError('CLUSTER_PR_MERGE_FAILED', result.stderr.trim());
