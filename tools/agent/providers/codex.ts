@@ -15,14 +15,24 @@ export class CodexProvider implements AgentProvider {
     const result = this.runner.run('which', ['codex']);
     const command = result.stdout.trim();
     return result.status === 0 && command
-      ? { available: true, mechanism: 'command', command, detail: 'Codex CLI headless exec' }
-      : { available: false, mechanism: 'missing', detail: 'codex executable was not found on PATH' };
+      ? {
+          available: true,
+          mechanism: 'command',
+          command,
+          detail: 'Codex CLI headless exec',
+        }
+      : {
+          available: false,
+          mechanism: 'missing',
+          detail: 'codex executable was not found on PATH',
+        };
   }
 
   generatePayload(binding: TaskLaunchBinding): string {
-    const correction = binding.failures.length > 0
-      ? ` This is a correction round. Fix only: ${binding.failures.join(' ')} Amend the existing single task commit and stop; the root autopilot will bind corrected self-review evidence.`
-      : ' Complete the task through its one atomic commit and supported self-review command, then stop.';
+    const correction =
+      binding.failures.length > 0
+        ? ` This is a correction round. Fix only: ${binding.failures.join(' ')} Amend the existing single task commit and stop; the root autopilot will bind corrected self-review evidence.`
+        : ' Complete the task through its one atomic commit and supported self-review command, then stop.';
     return `Use the chainsieve-task project skill. Read and obey ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Operate autonomously without asking the owner for commands, worktree selection, or lease handling.${correction}`;
   }
 
@@ -37,7 +47,18 @@ export class CodexProvider implements AgentProvider {
   executePayload(workspace: string, payload: string) {
     return this.runner.run(
       'codex',
-      ['exec', '--cd', workspace, '--sandbox', 'danger-full-access', '--ask-for-approval', 'never', '--color', 'never', '-'],
+      [
+        '--ask-for-approval',
+        'never',
+        'exec',
+        '--cd',
+        workspace,
+        '--sandbox',
+        'danger-full-access',
+        '--color',
+        'never',
+        '-',
+      ],
       { cwd: workspace, input: payload },
     );
   }
