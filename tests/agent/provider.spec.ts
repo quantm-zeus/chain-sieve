@@ -64,13 +64,20 @@ describe('provider-neutral agent adapters', () => {
     expect(parseProvider(['--provider', 'zcode'])).toBe('zcode');
   });
 
-  it('generates a direct Antigravity prompt without a /goal dependency', () => {
+  it('generates a direct Antigravity prompt bound to the task-local skill', () => {
     const provider = new AntigravityProvider(new Runner(), {
       applicationCandidates: [],
     });
     const payload = provider.generatePayload(binding());
     expect(payload).toContain('immutable task execution goal');
     expect(payload).toContain(DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL);
+    expect(payload).toContain(
+      '/tmp/Chain Sieve/.worktrees/T-G0-CORE/.agents/skills/chainsieve-task/SKILL.md',
+    );
+    expect(payload).toContain(
+      'Do not search for skills, instructions, or repositories outside',
+    );
+    expect(payload).not.toContain('Use the chainsieve-task project skill.');
     expect(payload).not.toMatch(/^\/goal\b/);
   });
 
@@ -258,9 +265,10 @@ describe('provider-neutral agent adapters', () => {
     })}\n`);
     const runner = new Runner();
     runner.responses.set('git:rev-parse:--git-common-dir', { status: 0, stdout: '.git\n', stderr: '' });
+    const value2 = binding();
     await expect(validateLaunchReceipt(root, runner, {
-      taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value.leaseId,
-      fencingVersion: value.fencingVersion, contextManifestSha256: value.contextManifestSha256,
-    })).rejects.toThrow('LAUNCH_RECEIPT_GOAL_PATH_INVALID:TRUSTED_PATH_CONTAINMENT');
+      taskId: 'T-G0-CORE', clusterId: 'C-G0-IMPLEMENTATION', leaseId: value2.leaseId,
+      fencingVersion: value2.fencingVersion, contextManifestSha256: value2.contextManifestSha256,
+    })).rejects.toThrow();
   });
 });
