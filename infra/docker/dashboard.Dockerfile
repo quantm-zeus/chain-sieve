@@ -1,4 +1,4 @@
-FROM node:22.23.1-alpine AS build
+FROM node:22-alpine AS build
 RUN corepack enable
 WORKDIR /app
 COPY . .

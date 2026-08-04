@@ -207,7 +207,7 @@ export const completionCommandPlan = (task: TaskRecord): string[] => {
   return [];
 };
 
-const leaseForTask = async (
+export const leaseForTask = async (
   inventory: ProjectInventory,
   task: TaskRecord,
   runner: CommandRunner,
@@ -302,6 +302,12 @@ const launchPayload = (
   payload: string,
 ): void => {
   assertTaskWorkspaceForLaunch(inventory, task, taskWorkspace);
+  if (provider.executePayload) {
+    const result = provider.executePayload(taskWorkspace, payload);
+    if (result.status !== 0)
+      throw new ZCodeError('AUTONOMOUS_PROVIDER_FAILED', concise(result.stderr || result.stdout));
+    return;
+  }
   provider.copyPayload(payload);
   provider.openWorkspace(taskWorkspace);
 };
@@ -615,7 +621,9 @@ const validateVerifiedTask = async (
   );
   const provider = result.bindings.launchReceiptId.startsWith('antigravity-')
     ? 'antigravity'
-    : 'zcode';
+    : result.bindings.launchReceiptId.startsWith('codex-')
+      ? 'codex'
+      : 'zcode';
   await validateLaunchReceipt(inventory.root, runner, {
     taskId: task.contract.id,
     clusterId: task.contract.cluster,
