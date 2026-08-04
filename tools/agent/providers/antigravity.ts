@@ -106,7 +106,14 @@ export class AntigravityProvider implements AgentProvider {
     const conformance = binding.conformanceManifestSha256
       ? ` Immutable conformance manifest: ${binding.conformanceManifestPath} (SHA-256 ${binding.conformanceManifestSha256}).`
       : '';
-    return `Use the chainsieve-task project skill. Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Never ask the owner to renew, approve, review, push, merge, or choose a task. Do not invoke the merge queue or start another task. The launcher enforces ${resolveAntigravityAutopilotModel()}.`;
+    const taskSkillPath = join(
+      binding.taskWorkspace,
+      '.agents',
+      'skills',
+      'chainsieve-task',
+      'SKILL.md',
+    );
+    return `Read and obey the exact ChainSieve task skill at "${taskSkillPath}". Do not search for skills, instructions, or repositories outside "${binding.taskWorkspace}". Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Treat the immutable task contract and context manifest as the only authority for required tests and repository paths. Do not invent conventional test paths such as tests/task-facets/${binding.task.contract.id}.spec.ts when they are not explicitly listed. A missing non-required path is absent evidence, not permission to scan outside the task worktree. Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Never ask the owner to renew, approve, review, push, merge, or choose a task. Do not invoke the merge queue or start another task. The launcher enforces ${resolveAntigravityAutopilotModel()}.`;
   }
 
   executePayload(workspace: string, payload: string) {
