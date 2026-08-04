@@ -1,12 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import {
-  mkdir,
-  readFile,
-  readdir,
-  rm,
-  writeFile,
-} from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { discoverProject } from '../agent/lib/discovery.js';
 import { decideNextAction } from '../agent/lib/engine.js';
@@ -99,16 +93,15 @@ interface PersistentAutopilotState {
   infrastructureFailures: Record<string, number>;
 }
 
-const persistentStatePath = (root: string, runner: CommandRunner): string =>
+const statePath = (root: string, runner: CommandRunner): string =>
   join(agentRuntimeRoot(root, runner), 'autopilot-state.json');
-
 const readPersistentState = async (
   root: string,
   runner: CommandRunner,
 ): Promise<PersistentAutopilotState> => {
   try {
     const parsed = JSON.parse(
-      await readFile(persistentStatePath(root, runner), 'utf8'),
+      await readFile(statePath(root, runner), 'utf8'),
     ) as PersistentAutopilotState;
     if (
       parsed.schemaVersion !== '1.0.0' ||
@@ -125,17 +118,16 @@ const readPersistentState = async (
     };
   }
 };
-
 const writePersistentState = async (
   root: string,
   runner: CommandRunner,
   state: PersistentAutopilotState,
 ): Promise<void> => {
-  const path = persistentStatePath(root, runner);
-  await mkdir(join(agentRuntimeRoot(root, runner)), { recursive: true });
-  await writeFile(path, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
+  await mkdir(agentRuntimeRoot(root, runner), { recursive: true });
+  await writeFile(statePath(root, runner), `${JSON.stringify(state, null, 2)}\n`, {
+    mode: 0o600,
+  });
 };
-
 const withInfrastructureRetry = async <T>(
   root: string,
   runner: CommandRunner,
@@ -173,7 +165,6 @@ const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
     .map((line) => line.slice(3).trim().split(' -> ').at(-1)!)
     .filter(Boolean)
     .sort();
-
 const assertOnlyPaths = (
   paths: string[],
   allowed: (path: string) => boolean,
@@ -181,10 +172,8 @@ const assertOnlyPaths = (
 ): void => {
   const invalid = paths.filter((path) => !allowed(path));
   if (paths.length === 0) throw new Error(`${code}:NO_CHANGES`);
-  if (invalid.length > 0)
-    throw new Error(`${code}:${invalid.join(',')}`);
+  if (invalid.length > 0) throw new Error(`${code}:${invalid.join(',')}`);
 };
-
 const executeAgent = (
   provider: AgentProvider,
   workspace: string,
@@ -239,8 +228,6 @@ const ensureLease = async (
   const tree = git(runner, workspace, ['rev-parse', 'HEAD^{tree}']);
   const contractPath = `tasks/${task.contract.dependencyGroup}/${task.contract.id}.contract.json`;
   const contextPath = `artifacts/context/${task.contract.id}/context-manifest.json`;
-  const contractHash = hash(await readFile(join(workspace, contractPath)));
-  const contextHash = hash(await readFile(join(workspace, contextPath)));
   pnpm(runner, root, [
     'agent:recover',
     '--',
@@ -268,9 +255,9 @@ const ensureLease = async (
     '--expected-untracked-work-sha256',
     hashes.untracked,
     '--expected-legacy-contract-sha256',
-    contractHash,
+    hash(await readFile(join(workspace, contractPath))),
     '--expected-legacy-context-sha256',
-    contextHash,
+    hash(await readFile(join(workspace, contextPath))),
     '--ttl-minutes',
     '120',
   ]);
@@ -298,16 +285,12 @@ export const correctionReceiptMatches = (
     (!binding.taskId || value.taskId === binding.taskId) &&
     (!binding.holder || value.holder === binding.holder) &&
     (!binding.leaseId || value.leaseId === binding.leaseId) &&
-    (!binding.fencingVersion ||
-      value.fencingVersion === binding.fencingVersion) &&
+    (!binding.fencingVersion || value.fencingVersion === binding.fencingVersion) &&
     (!binding.worktree || value.taskWorktree === binding.worktree) &&
-    (!binding.previousCommit ||
-      correction.previousCommit === binding.previousCommit) &&
-    (!binding.failureCode ||
-      correction.failureCodes.includes(binding.failureCode))
+    (!binding.previousCommit || correction.previousCommit === binding.previousCommit) &&
+    (!binding.failureCode || correction.failureCodes.includes(binding.failureCode))
   );
 };
-
 const correctionReceipts = async (
   root: string,
   runner: CommandRunner,
@@ -323,7 +306,6 @@ const correctionReceipts = async (
         worktree: task.workspace,
       }),
   );
-
 const bindCompletedCorrection = async (
   root: string,
   runner: CommandRunner,
@@ -344,8 +326,7 @@ const bindCompletedCorrection = async (
   const failureCode = (
     candidate?.value.correction as { failureCodes?: string[] } | undefined
   )?.failureCodes?.[0];
-  if (!failureCode)
-    throw new Error('AUTOPILOT_CORRECTION_RECEIPT_MISSING');
+  if (!failureCode) throw new Error('AUTOPILOT_CORRECTION_RECEIPT_MISSING');
   pnpm(runner, root, [
     'task:self-review-correct',
     task.contract.id,
@@ -377,7 +358,6 @@ interface PullRequestProbe {
   mergeStateStatus?: string;
   statusCheckRollup?: PullRequestCheck[];
 }
-
 const checkValue = (check: PullRequestCheck): string =>
   String(check.conclusion ?? check.state ?? check.status ?? '').toUpperCase();
 const failedChecks = (pr: PullRequestProbe): string[] =>
@@ -393,7 +373,6 @@ const pendingChecks = (pr: PullRequestProbe): boolean =>
   (pr.statusCheckRollup ?? []).some(
     (check) => !['SUCCESS', 'NEUTRAL', 'SKIPPED'].includes(checkValue(check)),
   );
-
 const findPullRequest = (
   runner: CommandRunner,
   root: string,
@@ -419,7 +398,6 @@ const findPullRequest = (
   ) as PullRequestProbe[];
   return values[0];
 };
-
 const waitForPullRequest = async (
   runner: CommandRunner,
   root: string,
@@ -438,11 +416,9 @@ const waitForPullRequest = async (
       ]),
     ) as PullRequestProbe;
     if (pr.state === 'MERGED') return pr;
-    if (pr.state === 'CLOSED')
-      throw new Error(`AUTOPILOT_PR_CLOSED:${pr.url}`);
+    if (pr.state === 'CLOSED') throw new Error(`AUTOPILOT_PR_CLOSED:${pr.url}`);
     if (failedChecks(pr).length > 0 || !pendingChecks(pr)) return pr;
-    if (Date.now() >= deadline)
-      throw new Error(`AUTOPILOT_CI_TIMEOUT:${pr.url}`);
+    if (Date.now() >= deadline) throw new Error(`AUTOPILOT_CI_TIMEOUT:${pr.url}`);
     await sleep(pollMilliseconds);
   }
 };
@@ -456,13 +432,8 @@ const repairClusterCi = async (
   round: number,
 ): Promise<void> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const resultPath = join(
-    runtime,
-    'cluster-results',
-    `${cluster.contract.id}.result.json`,
-  );
-  if (!existsSync(resultPath))
-    throw new Error('AUTOPILOT_CLUSTER_RESULT_REQUIRED_FOR_REPAIR');
+  const resultPath = join(runtime, 'cluster-results', `${cluster.contract.id}.result.json`);
+  if (!existsSync(resultPath)) throw new Error('AUTOPILOT_CLUSTER_RESULT_REQUIRED_FOR_REPAIR');
   const result = JSON.parse(await readFile(resultPath, 'utf8')) as {
     headCommitSha: string;
     headTreeSha: string;
@@ -484,8 +455,8 @@ const repairClusterCi = async (
   );
   await rm(resultPath, { force: true });
   const sessionId = randomUUID();
-  const receiptDirectory = join(runtime, 'ci-repair-sessions');
-  await mkdir(receiptDirectory, { recursive: true });
+  const directory = join(runtime, 'ci-repair-sessions');
+  await mkdir(directory, { recursive: true });
   const core = {
     schemaVersion: '2.0.0',
     sessionId,
@@ -500,14 +471,14 @@ const repairClusterCi = async (
     createdAt: new Date().toISOString(),
   };
   await writeFile(
-    join(receiptDirectory, `${cluster.contract.id}.${sessionId}.json`),
+    join(directory, `${cluster.contract.id}.${sessionId}.json`),
     `${JSON.stringify({ ...core, receiptHash: hash(JSON.stringify(core)) }, null, 2)}\n`,
     { mode: 0o600 },
   );
   executeAgent(
     provider,
     cluster.branch.worktree,
-    `You are isolated CI repair session ${sessionId}. Inspect pull request ${failure.url} and the complete logs for failed checks ${failure.failures.join(', ')}. Work only in ${cluster.branch.worktree}. Modify the minimum product source or product tests needed to repair those concrete failures. Do not modify any control-plane, workflow, policy, verifier, generated specification, contract, review artifact, or runtime evidence file. Do not run git reset, git commit, git push, gh pr merge, or rewrite history. Leave all valid changes uncommitted and stop.`,
+    `You are isolated CI repair session ${sessionId}. Inspect pull request ${failure.url} and complete logs for ${failure.failures.join(', ')}. Modify only the minimum product source or product tests needed. Do not modify control-plane, workflow, policy, verifier, specification, generated contract, review, or runtime evidence. Do not run git reset, git commit, git push, or gh. Leave valid changes uncommitted and stop.`,
     'AUTOPILOT_CLUSTER_CI_REPAIR_FAILED',
   );
   const paths = changedPaths(runner, cluster.branch.worktree);
@@ -540,27 +511,19 @@ const reviewCluster = async (
   cluster: ClusterRecord,
 ): Promise<void> => {
   const runtime = agentRuntimeRoot(root, runner);
-  const reviewPath = join(
-    runtime,
-    'cluster-reviews',
-    `${cluster.contract.id}.review-instructions.md`,
-  );
-  const sessionId = randomUUID();
-  const identity = `${provider.id}-independent-${sessionId}`;
   const productCommit = cluster.worktreeHead ?? cluster.branchHead;
   if (!productCommit) throw new Error('AUTOPILOT_REVIEW_PRODUCT_COMMIT_MISSING');
   const productTree = git(runner, cluster.branch.worktree, [
     'rev-parse',
     `${productCommit}^{tree}`,
   ]);
-  const implementationHolders = cluster.contract.tasks
-    .map(
-      (taskId) =>
-        inventory.tasks.find((task) => task.contract.id === taskId)?.state.holder,
-    )
+  const sessionId = randomUUID();
+  const identity = `${provider.id}-independent-${sessionId}`;
+  const holders = cluster.contract.tasks
+    .map((id) => inventory.tasks.find((task) => task.contract.id === id)?.state.holder)
     .filter((holder): holder is string => Boolean(holder));
-  const receiptDirectory = join(runtime, 'review-sessions');
-  await mkdir(receiptDirectory, { recursive: true });
+  const directory = join(runtime, 'review-sessions');
+  await mkdir(directory, { recursive: true });
   const core = {
     schemaVersion: '2.0.0',
     sessionId,
@@ -569,31 +532,29 @@ const reviewCluster = async (
     clusterId: cluster.contract.id,
     productCommit,
     productTree,
-    implementationHolders,
+    implementationHolders: holders,
     createdAt: new Date().toISOString(),
   };
-  const receiptPath = join(
-    receiptDirectory,
-    `${cluster.contract.id}.${sessionId}.json`,
-  );
+  const receiptPath = join(directory, `${cluster.contract.id}.${sessionId}.json`);
   await writeFile(
     receiptPath,
     `${JSON.stringify({ ...core, receiptHash: hash(JSON.stringify(core)) }, null, 2)}\n`,
     { mode: 0o600 },
   );
+  const instructions = join(
+    runtime,
+    'cluster-reviews',
+    `${cluster.contract.id}.review-instructions.md`,
+  );
   executeAgent(
     provider,
     cluster.branch.worktree,
-    `Read and obey ${reviewPath}. This is independent review session ${sessionId}. Use reviewerIdentity exactly ${identity}. Review only the frozen product commit ${productCommit} and tree ${productTree}. Create the exact review JSON artifact but do not commit it. Do not change product source, tests, contracts, generated manifests, cluster result, policy, workflow, or verifier. Do not invoke git commit, git push, or gh. Leave only the review artifact uncommitted and stop. Trusted receipt: ${receiptPath}.`,
+    `Read and obey ${instructions}. Independent review session ${sessionId}; reviewerIdentity ${identity}. Review frozen commit ${productCommit} and tree ${productTree}. Create only the review JSON artifact and leave it uncommitted. Do not modify product, tests, contracts, manifests, result, policy, workflow or verifier. Do not invoke git commit, git push or gh. Receipt: ${receiptPath}.`,
     'AUTOPILOT_CLUSTER_REVIEW_FAILED',
   );
   const expected = `artifacts/reviews/clusters/${cluster.contract.id}.review.json`;
   const paths = changedPaths(runner, cluster.branch.worktree);
-  assertOnlyPaths(
-    paths,
-    (path) => path === expected,
-    'AUTOPILOT_CLUSTER_REVIEW_SCOPE',
-  );
+  assertOnlyPaths(paths, (path) => path === expected, 'AUTOPILOT_CLUSTER_REVIEW_SCOPE');
   git(runner, cluster.branch.worktree, ['add', '--', expected]);
   git(runner, cluster.branch.worktree, [
     'commit',
@@ -622,14 +583,14 @@ const resolveSpecificationGap = async (
   const worktree = join(inventory.worktreeRoot, `spec-${slug}`);
   if (!existsSync(worktree)) {
     await mkdir(inventory.worktreeRoot, { recursive: true });
-    const branchExists =
+    const exists =
       runner.run('git', ['show-ref', '--verify', `refs/heads/${branch}`], {
         cwd: root,
       }).status === 0;
     git(
       runner,
       root,
-      branchExists
+      exists
         ? ['worktree', 'add', worktree, branch]
         : ['worktree', 'add', '-b', branch, worktree, 'main'],
     );
@@ -638,7 +599,7 @@ const resolveSpecificationGap = async (
   executeAgent(
     provider,
     worktree,
-    `You are autonomous specification resolver ${randomUUID()}. Resolve only specification gap ${task.contract.id} for cluster ${task.contract.cluster}. Choose the narrowest reversible specification consistent with existing PRD, requirements, audit, ADRs and dependency interfaces. Never enable live trading, external writes, secret materialization or irreversible migrations. Modify only authoritative specification/ADR files and their deterministic generated task, cluster, context and specification artifacts. Do not modify product source, workflow, policy, package scripts, verifier or control-plane code. Do not run git commit, git push, gh pr create or gh pr merge. Leave valid changes uncommitted and stop.`,
+    `Resolve only specification gap ${task.contract.id} for cluster ${task.contract.cluster}. Choose the narrowest reversible specification consistent with existing sources. Never enable live trading, external writes, secrets or irreversible migrations. Modify only specification/ADR sources and deterministic generated tasks, clusters, contexts and spec artifacts. Do not modify product source, workflow, policy, package scripts, verifier or control plane. Do not run git commit, git push or gh. Leave changes uncommitted and stop.`,
     'AUTOPILOT_SPECIFICATION_RESOLUTION_FAILED',
   );
   const paths = changedPaths(runner, worktree);
@@ -647,11 +608,14 @@ const resolveSpecificationGap = async (
     (path) => SPEC_ALLOWED_PREFIXES.some((prefix) => path.startsWith(prefix)),
     'AUTOPILOT_SPECIFICATION_SCOPE',
   );
-  pnpm(runner, worktree, ['prd:compile']);
-  pnpm(runner, worktree, ['spec:verify']);
-  pnpm(runner, worktree, ['prd:drift-check']);
-  pnpm(runner, worktree, ['requirements:coverage']);
-  pnpm(runner, worktree, ['architecture:verify']);
+  for (const args of [
+    ['prd:compile'],
+    ['spec:verify'],
+    ['prd:drift-check'],
+    ['requirements:coverage'],
+    ['architecture:verify'],
+  ])
+    pnpm(runner, worktree, args);
   git(runner, worktree, ['add', '--', ...changedPaths(runner, worktree)]);
   git(runner, worktree, [
     'commit',
@@ -671,22 +635,15 @@ const resolveSpecificationGap = async (
       '--title',
       `spec(${task.contract.id}): resolve autonomous gap`,
       '--body',
-      `Machine-generated reversible specification amendment for ${task.contract.id}. Product source and capability activation are excluded.`,
+      `Machine-generated reversible specification amendment for ${task.contract.id}.`,
     ]);
     pr = findPullRequest(runner, root, branch, 'main');
   }
   if (!pr) throw new Error('AUTOPILOT_SPECIFICATION_PR_MISSING');
-  const completed = await waitForPullRequest(
-    runner,
-    root,
-    pr.number,
-    pollMilliseconds,
-  );
+  const completed = await waitForPullRequest(runner, root, pr.number, pollMilliseconds);
   const failures = failedChecks(completed);
   if (failures.length > 0)
-    throw new Error(
-      `AUTOPILOT_SPECIFICATION_CI_FAILED:${failures.join(',')}`,
-    );
+    throw new Error(`AUTOPILOT_SPECIFICATION_CI_FAILED:${failures.join(',')}`);
   if (completed.mergeStateStatus !== 'CLEAN')
     throw new Error(
       `AUTOPILOT_SPECIFICATION_PR_NOT_CLEAN:${completed.mergeStateStatus ?? 'UNKNOWN'}`,
@@ -707,19 +664,9 @@ const resolveSpecificationGap = async (
     '--no-edit',
     'refs/remotes/origin/main',
   ]);
-  git(runner, task.cluster.branch.worktree, [
-    'push',
-    'origin',
-    task.cluster.branch.branch,
-  ]);
-  pnpm(runner, task.cluster.branch.worktree, [
-    'task:validate',
-    task.contract.id,
-  ]);
-  pnpm(runner, task.cluster.branch.worktree, [
-    'task:mark-ready',
-    task.contract.id,
-  ]);
+  git(runner, task.cluster.branch.worktree, ['push', 'origin', task.cluster.branch.branch]);
+  pnpm(runner, task.cluster.branch.worktree, ['task:validate', task.contract.id]);
+  pnpm(runner, task.cluster.branch.worktree, ['task:mark-ready', task.contract.id]);
   git(runner, root, ['worktree', 'remove', '--force', worktree]);
   return true;
 };
@@ -745,12 +692,7 @@ const waitForMainCi = async (
         '--json',
         'databaseId,status,conclusion,url',
       ]),
-    ) as Array<{
-      databaseId: number;
-      status: string;
-      conclusion?: string;
-      url?: string;
-    }>;
+    ) as Array<{ databaseId: number; status: string; conclusion?: string }>;
     const run = runs[0];
     if (run?.status === 'completed') {
       if (run.conclusion !== 'success')
@@ -831,18 +773,13 @@ export const runAutopilot = async (
       )
         continue;
       if (decision.action === 'CORRECT_TASK' && decision.task) {
-        const rounds = (
-          await correctionReceipts(root, runner, decision.task)
-        ).length;
+        const rounds = (await correctionReceipts(root, runner, decision.task)).length;
         if (rounds >= policy.limits.taskCorrectionRounds)
           throw new Error(
             `AUTOPILOT_CORRECTION_LIMIT:${decision.task.contract.id}:${rounds}`,
           );
       }
-      if (
-        decision.action === 'CREATE_CLUSTER_PR' &&
-        !policy.allowAutonomousMerge
-      )
+      if (decision.action === 'CREATE_CLUSTER_PR' && !policy.allowAutonomousMerge)
         throw new Error('AUTOPILOT_AUTONOMOUS_MERGE_DISABLED');
       const reviewing =
         decision.action === 'REVIEW_CLUSTER' ? decision.cluster : undefined;
@@ -855,10 +792,7 @@ export const runAutopilot = async (
         persistent,
         `orchestration:${decision.action}`,
         async () => {
-          await executeOrchestration(root, runner, {
-            dryRun: false,
-            provider,
-          });
+          await executeOrchestration(root, runner, { dryRun: false, provider });
         },
       );
       if (reviewing)
@@ -898,8 +832,7 @@ export const runAutopilot = async (
         await waitForMainCi(root, runner, head, pollMilliseconds);
         return 'AUTOPILOT_COMPLETE';
       }
-      if (decision.action === 'CREATE_CLUSTER_PR')
-        await sleep(pollMilliseconds);
+      if (decision.action === 'CREATE_CLUSTER_PR') await sleep(pollMilliseconds);
     }
     return 'AUTOPILOT_CYCLE_LIMIT';
   } finally {
