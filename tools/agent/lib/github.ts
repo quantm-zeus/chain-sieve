@@ -175,14 +175,13 @@ export const classifyPullRequest = (
 ): 'MERGED' | 'FAILED' | 'PENDING' | 'READY' | 'CLOSED' => {
   if (pr.state === 'MERGED') return 'MERGED';
   if (pr.state === 'CLOSED') return 'CLOSED';
-  if (['DIRTY', 'BLOCKED'].includes(pr.mergeStateStatus ?? '')) return 'FAILED';
   if (pr.checks.length === 0) return 'PENDING';
   if (pr.checks.some((check) => check.required && check.state === 'FAIL'))
     return 'FAILED';
-  if (
-    pr.checks.some((check) => check.required && check.state === 'PENDING') ||
-    ['BEHIND', 'UNKNOWN', 'UNSTABLE'].includes(pr.mergeStateStatus ?? '')
-  )
+  if (pr.checks.some((check) => check.required && check.state === 'PENDING'))
+    return 'PENDING';
+  if (['DIRTY', 'BLOCKED'].includes(pr.mergeStateStatus ?? '')) return 'FAILED';
+  if (['BEHIND', 'UNKNOWN', 'UNSTABLE'].includes(pr.mergeStateStatus ?? ''))
     return 'PENDING';
   return pr.mergeStateStatus === 'CLEAN' ? 'READY' : 'PENDING';
 };
