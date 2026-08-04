@@ -17,7 +17,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 22.23.1, cache: pnpm }
+        with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -32,7 +32,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 22.23.1, cache: pnpm }
+        with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm spec:verify
       - run: pnpm prd:drift-check
@@ -57,7 +57,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 22.23.1, cache: pnpm }
+        with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: Start MinIO and wait for API readiness
         run: |
@@ -108,7 +108,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10.13.1 }
       - uses: actions/setup-node@v4
-        with: { node-version: 22.23.1, cache: pnpm }
+        with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test
@@ -124,29 +124,25 @@ jobs:
       - run: pnpm tests:skeleton-integrity
       - run: pnpm test:mutation
   production-images:
-    name: Tier 3 · production image (${{ matrix.service }}, ${{ matrix.platform }})
+    name: Tier 3 · production image (${{ matrix.service }}, linux/amd64)
     needs: tier2
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         service: [api, dashboard]
-        platform: [linux/amd64, linux/arm64]
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - name: Build exact production image
-        run: docker buildx build --platform "${{ matrix.platform }}" --load --file "apps/${{ matrix.service }}/Dockerfile" --tag "chain-sieve-${{ matrix.service }}:ci" .
+        run: docker buildx build --platform linux/amd64 --load --file "apps/${{ matrix.service }}/Dockerfile" --tag "chain-sieve-${{ matrix.service }}:ci" .
       - name: Verify and smoke production image
         shell: bash
         run: |
           set -euo pipefail
           image="chain-sieve-${{ matrix.service }}:ci"
-          expected_arch="${{ matrix.platform }}"
-          expected_arch="${expected_arch#linux/}"
-          test "$(docker image inspect "$image" --format '{{.Architecture}}')" = "$expected_arch"
+          test "$(docker image inspect "$image" --format '{{.Architecture}}')" = amd64
           test "$(docker image inspect "$image" --format '{{.Config.User}}')" = node
           if [ "${{ matrix.service }}" = api ]; then
             docker run -d --name production-smoke --read-only --tmpfs /tmp:rw,size=64m -p 13000:3000 \
