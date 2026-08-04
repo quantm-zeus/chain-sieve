@@ -80,7 +80,7 @@ describe('one-command autopilot', () => {
         '/repo/task',
       ],
       cwd: '/repo/task',
-      timeoutMilliseconds: 7_200_000,
+      timeoutMilliseconds: 5_400_000,
     });
   });
 
