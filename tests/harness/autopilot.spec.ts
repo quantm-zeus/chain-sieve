@@ -36,6 +36,7 @@ class RecordingRunner implements CommandRunner {
     cwd?: string;
     input?: string;
     timeoutMilliseconds?: number;
+    streamOutput?: boolean;
   }> = [];
 
   constructor(private readonly common = '/tmp/ciag-autopilot-common') {}
@@ -79,6 +80,7 @@ describe('one-command autopilot', () => {
       ],
       cwd: '/repo/task',
       timeoutMilliseconds: 5_400_000,
+      streamOutput: true,
     });
   });
 

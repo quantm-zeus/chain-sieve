@@ -125,7 +125,11 @@ export class AntigravityProvider implements AgentProvider {
         '-p',
         payload,
       ],
-      { cwd: workspace, timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS },
+      {
+        cwd: workspace,
+        timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS,
+        streamOutput: true,
+      },
     );
   }
 

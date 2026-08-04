@@ -18,6 +18,7 @@ export class SystemCommandRunner implements CommandRunner {
       maxBuffer: 64 * 1024 * 1024,
       timeout,
       killSignal: 'SIGTERM',
+      ...(options.streamOutput ? { stdio: 'inherit' as const } : {}),
     });
     const timedOut =
       result.error instanceof Error &&
@@ -25,10 +26,15 @@ export class SystemCommandRunner implements CommandRunner {
       result.error.code === 'ETIMEDOUT';
     return {
       status: result.status ?? 1,
-      stdout: result.stdout ?? '',
+      stdout: typeof result.stdout === 'string' ? result.stdout : '',
       stderr:
-        result.stderr ??
-        (result.error ? result.error.message : timedOut ? 'command timed out' : ''),
+        typeof result.stderr === 'string'
+          ? result.stderr
+          : result.error
+            ? result.error.message
+            : timedOut
+              ? 'command timed out'
+              : '',
       ...(timedOut ? { timedOut: true } : {}),
     };
   }
