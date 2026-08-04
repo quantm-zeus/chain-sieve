@@ -74,7 +74,7 @@ class DoctorRunner implements CommandRunner {
     if (key === 'agy models')
       return {
         status: 0,
-        stdout: 'Gemini 3.6 Flash (High)\nGemini 3.1 Pro (High)\n',
+        stdout: 'gemini-3.1-pro-high\ngpt-oss-120b-medium\n',
         stderr: '',
       };
     if (key === 'codex exec --help')
