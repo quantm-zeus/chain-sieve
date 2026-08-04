@@ -2,7 +2,7 @@ import type {
   AgentProviderId,
   CommandRunner,
 } from '../agent/lib/types.js';
-import { ANTIGRAVITY_AUTOPILOT_MODEL } from '../agent/providers/antigravity.js';
+import { resolveAntigravityAutopilotModel } from '../agent/providers/antigravity.js';
 import { loadAutonomyPolicy } from './policy.js';
 
 export interface DoctorCheck {
@@ -46,7 +46,8 @@ const providerChecks = (
   runner: CommandRunner,
   provider: AgentProviderId,
 ): DoctorCheck[] => {
-  if (provider === 'antigravity')
+  if (provider === 'antigravity') {
+    const model = resolveAntigravityAutopilotModel();
     return [
       commandCheck(
         runner,
@@ -62,9 +63,15 @@ const providerChecks = (
         'agy',
         ['models'],
         root,
-        (output) => output.includes(ANTIGRAVITY_AUTOPILOT_MODEL),
+        (output) =>
+          output
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .includes(model),
       ),
     ];
+  }
   if (provider === 'codex')
     return [
       commandCheck(runner, 'codex-cli', 'codex', ['--version'], root),

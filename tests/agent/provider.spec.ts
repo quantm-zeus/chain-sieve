@@ -4,7 +4,10 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { AntigravityProvider } from '../../tools/agent/providers/antigravity.js';
+import {
+  DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
+  AntigravityProvider,
+} from '../../tools/agent/providers/antigravity.js';
 import { ZCodeProvider } from '../../tools/agent/providers/zcode.js';
 import {
   DEFAULT_AGENT_PROVIDER,
@@ -67,7 +70,7 @@ describe('provider-neutral agent adapters', () => {
     });
     const payload = provider.generatePayload(binding());
     expect(payload).toContain('immutable task execution goal');
-    expect(payload).toContain('Gemini 3.6 Flash');
+    expect(payload).toContain(DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL);
     expect(payload).not.toMatch(/^\/goal\b/);
   });
 

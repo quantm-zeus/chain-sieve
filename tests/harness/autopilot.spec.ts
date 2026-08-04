@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
-  ANTIGRAVITY_AUTOPILOT_MODEL,
+  DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
   AntigravityProvider,
 } from '../../tools/agent/providers/antigravity.js';
 import { CodexProvider } from '../../tools/agent/providers/codex.js';
@@ -55,7 +55,7 @@ class RecordingRunner implements CommandRunner {
 }
 
 describe('one-command autopilot', () => {
-  it('uses Antigravity CLI with Gemini 3.6 Flash High as the bounded headless default', () => {
+  it('uses the available Antigravity CLI model as the bounded headless default', () => {
     const runner = new RecordingRunner();
     const provider = new AntigravityProvider(runner, {
       applicationCandidates: [],
@@ -72,7 +72,7 @@ describe('one-command autopilot', () => {
       command: 'agy',
       args: [
         '--model',
-        ANTIGRAVITY_AUTOPILOT_MODEL,
+        DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
         '--mode=accept-edits',
         '-p',
         'bound goal',
