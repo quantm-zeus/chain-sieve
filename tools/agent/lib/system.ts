@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import type { CommandOptions, CommandRunner } from './types.js';
 
 const DEFAULT_TIMEOUT_MS = 30 * 60_000;
+type StreamingCommandOptions = CommandOptions & { streamOutput?: boolean };
 
 export class SystemCommandRunner implements CommandRunner {
   run(
@@ -10,6 +11,8 @@ export class SystemCommandRunner implements CommandRunner {
     options: CommandOptions = {},
   ): { status: number; stdout: string; stderr: string; timedOut?: boolean } {
     const timeout = options.timeoutMilliseconds ?? DEFAULT_TIMEOUT_MS;
+    const streamOutput =
+      (options as StreamingCommandOptions).streamOutput === true;
     const result = spawnSync(command, args, {
       ...(options.cwd ? { cwd: options.cwd } : {}),
       ...(options.input === undefined ? {} : { input: options.input }),
@@ -18,6 +21,7 @@ export class SystemCommandRunner implements CommandRunner {
       maxBuffer: 64 * 1024 * 1024,
       timeout,
       killSignal: 'SIGTERM',
+      ...(streamOutput ? { stdio: 'inherit' as const } : {}),
     });
     const timedOut =
       result.error instanceof Error &&
@@ -25,10 +29,15 @@ export class SystemCommandRunner implements CommandRunner {
       result.error.code === 'ETIMEDOUT';
     return {
       status: result.status ?? 1,
-      stdout: result.stdout ?? '',
+      stdout: typeof result.stdout === 'string' ? result.stdout : '',
       stderr:
-        result.stderr ??
-        (result.error ? result.error.message : timedOut ? 'command timed out' : ''),
+        typeof result.stderr === 'string'
+          ? result.stderr
+          : result.error
+            ? result.error.message
+            : timedOut
+              ? 'command timed out'
+              : '',
       ...(timedOut ? { timedOut: true } : {}),
     };
   }
