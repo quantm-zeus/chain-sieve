@@ -12,7 +12,7 @@
     "format": "tsx tools/task-verifier/format.ts write",
     "format:check": "tsx tools/task-verifier/format.ts check",
     "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @ciag/dashboard check",
-    "test": "vitest run",
+    "test": "tsx tools/autopilot/ensure-test-main-ref.ts && vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:system": "vitest run tests/system",
