@@ -3,7 +3,11 @@ import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
 import { runAutopilot } from './autopilot.js';
-import { renderDoctor, runAutopilotDoctor } from './doctor.js';
+import {
+  assertAutopilotDoctor,
+  renderDoctor,
+  runAutopilotDoctor,
+} from './doctor.js';
 
 const has = (value: string): boolean => process.argv.includes(value);
 const value = (name: string): string | undefined => {
@@ -31,6 +35,7 @@ try {
     console.log(renderDoctor(checks));
     if (checks.some((check) => check.status === 'FAIL')) process.exitCode = 1;
   } else {
+    await assertAutopilotDoctor(root, runner);
     const selectedProvider = provider();
     const result = await runAutopilot(root, runner, {
       dryRun: has('--dry-run') || has('--status'),
