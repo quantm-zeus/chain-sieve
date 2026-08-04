@@ -84,7 +84,7 @@ describe('one-command autopilot', () => {
     });
   });
 
-  it('keeps Codex as an explicit blocking fallback with the global approval option', () => {
+  it('keeps Codex as an explicit bounded fallback with global approval disabled', () => {
     const runner = new RecordingRunner();
     const provider = new CodexProvider(runner);
     expect(provider.executePayload('/repo/task', 'bound goal')).toMatchObject({
@@ -106,6 +106,7 @@ describe('one-command autopilot', () => {
       ],
       cwd: '/repo/task',
       input: 'bound goal',
+      timeoutMilliseconds: 5_400_000,
     });
   });
 
