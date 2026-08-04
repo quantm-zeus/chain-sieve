@@ -69,10 +69,12 @@ class DoctorRunner implements CommandRunner {
       return { status: 0, stdout: 'v22.23.1\n', stderr: '' };
     if (key === 'pnpm --version')
       return { status: 0, stdout: '10.13.1\n', stderr: '' };
-    if (key === 'agy --help')
+    if (key === 'agy --version')
+      return { status: 0, stdout: '1.1.10\n', stderr: '' };
+    if (key === 'agy models')
       return {
         status: 0,
-        stdout: '--model MODEL --mode MODE --cwd PATH -p PROMPT\n',
+        stdout: 'Gemini 3.6 Flash (High)\nGemini 3.1 Pro (High)\n',
         stderr: '',
       };
     if (key === 'codex exec --help')
@@ -107,6 +109,10 @@ describe('autopilot full autonomy doctor', () => {
     );
     expect(checks).toHaveLength(11);
     expect(checks.every((check) => check.status === 'PASS')).toBe(true);
+    expect(
+      checks.find((check) => check.name === 'antigravity-model-access')
+        ?.status,
+    ).toBe('PASS');
     await expect(
       assertAutopilotDoctor(root, new DoctorRunner(), 'antigravity'),
     ).resolves.toHaveLength(11);
@@ -132,6 +138,17 @@ describe('autopilot full autonomy doctor', () => {
         'antigravity',
       ),
     ).rejects.toThrow('AUTOPILOT_DOCTOR_FAILED:github-auth');
+  });
+
+  it('fails closed when the configured Antigravity model is unavailable', async () => {
+    const root = await rootWithPolicy();
+    await expect(
+      assertAutopilotDoctor(
+        root,
+        new DoctorRunner('agy models'),
+        'antigravity',
+      ),
+    ).rejects.toThrow('AUTOPILOT_DOCTOR_FAILED:antigravity-model-access');
   });
 
   it('rejects malformed, unbounded, or dangerous policy values', async () => {
