@@ -1,7 +1,11 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import { hostname } from 'node:os';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import type { CommandRunner } from '../agent/lib/types.js';
 import { agentRuntimeRoot } from '../agent/lib/runtime.js';
+
+const LOCK_TTL_MS = 6 * 60 * 60_000;
 
 const processAlive = (pid: number): boolean => {
   try {
@@ -9,6 +13,31 @@ const processAlive = (pid: number): boolean => {
     return true;
   } catch (error) {
     return (error as NodeJS.ErrnoException).code !== 'ESRCH';
+  }
+};
+
+interface LockOwner {
+  pid: number;
+  host: string;
+  token: string;
+  acquiredAt: string;
+}
+
+const readOwner = async (path: string): Promise<LockOwner | undefined> => {
+  try {
+    const value = JSON.parse(
+      await readFile(join(path, 'owner.json'), 'utf8'),
+    ) as Partial<LockOwner>;
+    if (
+      !Number.isInteger(value.pid) ||
+      typeof value.host !== 'string' ||
+      typeof value.token !== 'string' ||
+      typeof value.acquiredAt !== 'string'
+    )
+      return undefined;
+    return value as LockOwner;
+  } catch {
+    return undefined;
   }
 };
 
@@ -22,11 +51,31 @@ export const acquireAutopilotLock = async (
     await mkdir(path, { recursive: false });
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
-    const owner = JSON.parse(await readFile(join(path, 'owner.json'), 'utf8')) as { pid?: number };
-    if (owner.pid && processAlive(owner.pid)) throw new Error(`AUTOPILOT_ALREADY_RUNNING:${owner.pid}`);
-    await rm(path, { recursive: true });
+    const owner = await readOwner(path);
+    const fresh =
+      owner && Date.now() - Date.parse(owner.acquiredAt) <= LOCK_TTL_MS;
+    if (
+      owner &&
+      fresh &&
+      owner.host === hostname() &&
+      processAlive(owner.pid)
+    )
+      throw new Error(`AUTOPILOT_ALREADY_RUNNING:${owner.pid}`);
+    await rm(path, { recursive: true, force: true });
     await mkdir(path);
   }
-  await writeFile(join(path, 'owner.json'), `${JSON.stringify({ pid: process.pid, acquiredAt: new Date().toISOString() })}\n`, { mode: 0o600 });
-  return async () => rm(path, { recursive: true });
+  const owner: LockOwner = {
+    pid: process.pid,
+    host: hostname(),
+    token: randomUUID(),
+    acquiredAt: new Date().toISOString(),
+  };
+  const temporary = join(path, `owner.${owner.token}.tmp`);
+  await writeFile(temporary, `${JSON.stringify(owner)}\n`, { mode: 0o600 });
+  await rename(temporary, join(path, 'owner.json'));
+  return async () => {
+    const current = await readOwner(path);
+    if (current?.token === owner.token)
+      await rm(path, { recursive: true, force: true });
+  };
 };
