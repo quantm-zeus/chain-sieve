@@ -166,9 +166,9 @@ describe('one-command autopilot', () => {
     );
   });
 
-  it('reports that the selected Antigravity model is enforced by the CLI launch', () => {
+  it('reports the Antigravity model enforced by the CLI launch', () => {
     expect(ANTIGRAVITY_MODEL_STATUS).toBe(
-      'ANTIGRAVITY_MODEL_ENFORCED_BY_CLI',
+      'GEMINI_3_6_FLASH_HIGH_ENFORCED_BY_CLI',
     );
   });
 });
