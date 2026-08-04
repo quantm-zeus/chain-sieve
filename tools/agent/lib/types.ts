@@ -128,6 +128,7 @@ export interface CommandOptions {
   cwd?: string;
   input?: string;
   timeoutMilliseconds?: number;
+  streamOutput?: boolean;
 }
 
 export interface CommandRunner {
