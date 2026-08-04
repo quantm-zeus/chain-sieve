@@ -24,29 +24,51 @@ export interface AutonomyPolicy {
   };
 }
 
-const positiveInteger = (value: unknown): value is number =>
-  Number.isInteger(value) && Number(value) > 0;
+const boundedInteger = (
+  value: unknown,
+  minimum: number,
+  maximum: number,
+): value is number =>
+  Number.isInteger(value) &&
+  Number(value) >= minimum &&
+  Number(value) <= maximum;
+
+const exactBoolean = (value: unknown): value is boolean =>
+  value === true || value === false;
 
 export const loadAutonomyPolicy = async (
   root: string,
 ): Promise<AutonomyPolicy> => {
-  const path = join(root, 'config', 'autonomy-policy.json');
-  const parsed = JSON.parse(await readFile(path, 'utf8')) as Partial<AutonomyPolicy>;
-  if (
-    parsed.schemaVersion !== '1.0.0' ||
-    parsed.mode !== 'FULL_AUTONOMY' ||
-    parsed.humanReviewRequired !== false ||
-    parsed.humanApprovalRequired !== false ||
-    parsed.automatedIndependentReviewRequired !== true ||
-    parsed.deterministicVerificationRequired !== true ||
-    parsed.safeDefaults?.liveTradingEnabled !== false ||
-    parsed.safeDefaults.externalWriteCapabilitiesEnabled !== false ||
-    parsed.safeDefaults.secretMaterializationEnabled !== false ||
-    parsed.safeDefaults.irreversibleMigrationsEnabled !== false ||
-    !positiveInteger(parsed.limits?.taskCorrectionRounds) ||
-    !positiveInteger(parsed.limits.clusterCiCorrectionRounds) ||
-    !positiveInteger(parsed.limits.infrastructureRetryRounds)
-  )
+  try {
+    const path = join(root, 'config', 'autonomy-policy.json');
+    const parsed = JSON.parse(
+      await readFile(path, 'utf8'),
+    ) as Partial<AutonomyPolicy>;
+    const safe = parsed.safeDefaults;
+    const limits = parsed.limits;
+    if (
+      parsed.schemaVersion !== '1.0.0' ||
+      parsed.mode !== 'FULL_AUTONOMY' ||
+      parsed.humanReviewRequired !== false ||
+      parsed.humanApprovalRequired !== false ||
+      parsed.automatedIndependentReviewRequired !== true ||
+      parsed.deterministicVerificationRequired !== true ||
+      !exactBoolean(parsed.allowAutonomousSpecificationResolution) ||
+      !exactBoolean(parsed.allowAutonomousCiRepair) ||
+      !exactBoolean(parsed.allowAutonomousMerge) ||
+      safe?.liveTradingEnabled !== false ||
+      safe.externalWriteCapabilitiesEnabled !== false ||
+      safe.secretMaterializationEnabled !== false ||
+      safe.irreversibleMigrationsEnabled !== false ||
+      !boundedInteger(limits?.taskCorrectionRounds, 1, 20) ||
+      !boundedInteger(limits.clusterCiCorrectionRounds, 1, 20) ||
+      !boundedInteger(limits.infrastructureRetryRounds, 1, 10)
+    )
+      throw new Error('AUTONOMY_POLICY_INVALID');
+    return parsed as AutonomyPolicy;
+  } catch (error) {
+    if (error instanceof Error && error.message === 'AUTONOMY_POLICY_INVALID')
+      throw error;
     throw new Error('AUTONOMY_POLICY_INVALID');
-  return parsed as AutonomyPolicy;
+  }
 };
