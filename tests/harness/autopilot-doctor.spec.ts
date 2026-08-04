@@ -55,7 +55,8 @@ class DoctorRunner implements CommandRunner {
 
   run(command: string, args: string[]) {
     const key = `${command} ${args.join(' ')}`;
-    if (key.includes(this.fail)) return { status: 1, stdout: '', stderr: 'denied' };
+    if (this.fail && key.includes(this.fail))
+      return { status: 1, stdout: '', stderr: 'denied' };
     if (key === 'git branch --show-current')
       return { status: 0, stdout: 'main\n', stderr: '' };
     if (key === 'git status --porcelain=v1')
