@@ -10,6 +10,7 @@ import type {
 } from '../lib/types.js';
 
 export const ANTIGRAVITY_AUTOPILOT_MODEL = 'Gemini 3.6 Flash (High)' as const;
+const ANTIGRAVITY_TIMEOUT_MS = 2 * 60 * 60_000;
 
 const APPLICATIONS = [
   {
@@ -41,7 +42,7 @@ const commandPath = (
   runner: CommandRunner,
   command: string,
 ): string | undefined => {
-  const result = runner.run('which', [command]);
+  const result = runner.run('which', [command], { timeoutMilliseconds: 10_000 });
   return result.status === 0 && result.stdout.trim()
     ? result.stdout.trim()
     : undefined;
@@ -96,7 +97,7 @@ export class AntigravityProvider implements AgentProvider {
     const conformance = binding.conformanceManifestSha256
       ? ` Immutable conformance manifest: ${binding.conformanceManifestPath} (SHA-256 ${binding.conformanceManifestSha256}).`
       : '';
-    return `Use the chainsieve-task project skill. Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Do not invoke the merge queue or start another task. The launcher enforces ${ANTIGRAVITY_AUTOPILOT_MODEL}.`;
+    return `Use the chainsieve-task project skill. Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Never ask the owner to renew, approve, review, push, merge, or choose a task. Do not invoke the merge queue or start another task. The launcher enforces ${ANTIGRAVITY_AUTOPILOT_MODEL}.`;
   }
 
   executePayload(workspace: string, payload: string) {
@@ -117,7 +118,7 @@ export class AntigravityProvider implements AgentProvider {
         '--cwd',
         workspace,
       ],
-      { cwd: workspace },
+      { cwd: workspace, timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS },
     );
   }
 
