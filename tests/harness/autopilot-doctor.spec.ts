@@ -105,11 +105,11 @@ describe('autopilot full autonomy doctor', () => {
       new DoctorRunner(),
       'antigravity',
     );
-    expect(checks).toHaveLength(12);
+    expect(checks).toHaveLength(11);
     expect(checks.every((check) => check.status === 'PASS')).toBe(true);
     await expect(
       assertAutopilotDoctor(root, new DoctorRunner(), 'antigravity'),
-    ).resolves.toHaveLength(12);
+    ).resolves.toHaveLength(11);
   });
 
   it('checks the selected provider instead of requiring Antigravity', async () => {
