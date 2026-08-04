@@ -117,8 +117,6 @@ export class AntigravityProvider implements AgentProvider {
         '--mode=accept-edits',
         '-p',
         payload,
-        '--cwd',
-        workspace,
       ],
       { cwd: workspace, timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS },
     );
@@ -138,9 +136,8 @@ export class AntigravityProvider implements AgentProvider {
       detection.mechanism === 'command' && detection.command
         ? this.runner.run(
             detection.command,
-            detection.command.endsWith('agy')
-              ? ['--cwd', workspace]
-              : ['--new-window', workspace],
+            detection.command.endsWith('agy') ? [] : ['--new-window', workspace],
+            detection.command.endsWith('agy') ? { cwd: workspace } : undefined,
           )
         : this.runner.run('open', [
             '-b',

@@ -76,8 +76,6 @@ describe('one-command autopilot', () => {
         '--mode=accept-edits',
         '-p',
         'bound goal',
-        '--cwd',
-        '/repo/task',
       ],
       cwd: '/repo/task',
       timeoutMilliseconds: 5_400_000,
