@@ -109,6 +109,15 @@ describe('explicit authoritative lease lifecycle', () => {
     expect(state.tasks['T-G0-CORE']!.tree).toBeUndefined();
   });
 
+  it('recovers LEASED task with undefined target.worktree and binds expected worktree', () => {
+    const state = expired();
+    state.tasks['T-G0-CORE']!.state = 'LEASED';
+    delete state.tasks['T-G0-CORE']!.worktree;
+    const lease = recoverExpiredLease(state, tasks, { ...recovery(), expectedTaskState: 'LEASED' }, new Date('2026-08-01T00:00:00.000Z'));
+    expect(lease.fencingVersion).toBe(2);
+    expect(state.tasks['T-G0-CORE']!.worktree).toBe('/tmp/task/T-G0-CORE');
+  });
+
   it('recovers SELF_REVIEWING with lifecycle base A and task HEAD/tree B', () => {
     const state = selfReviewing();
     delete state.tasks['T-G0-CORE']!.commit;
