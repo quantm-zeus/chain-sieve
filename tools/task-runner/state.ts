@@ -607,7 +607,9 @@ export const recoverExpiredLease = (
   if (target.holder !== expectation.expectedHolder) throw new Error('RECOVERY_EXPECTED_HOLDER_MISMATCH');
   if (target.state !== expectation.expectedTaskState) throw new Error('RECOVERY_EXPECTED_STATE_MISMATCH');
   if (target.branch !== expectation.expectedTaskBranch) throw new Error('RECOVERY_EXPECTED_BRANCH_MISMATCH');
-  if (target.worktree !== expectation.expectedTaskWorktree) throw new Error('RECOVERY_EXPECTED_WORKTREE_MISMATCH');
+  if (target.worktree && target.worktree !== expectation.expectedTaskWorktree)
+    throw new Error('RECOVERY_EXPECTED_WORKTREE_MISMATCH');
+  target.worktree ??= expectation.expectedTaskWorktree;
   if (target.baseCommit !== expectation.expectedLifecycleBaseCommit)
     throw new Error('RECOVERY_EXPECTED_LIFECYCLE_BASE_MISMATCH');
   let bindLegacyTaskHead = false;

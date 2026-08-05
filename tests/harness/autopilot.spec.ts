@@ -16,6 +16,7 @@ import {
   correctionRoundAllowed,
   correctionReceiptMatches,
   DEFAULT_AUTONOMOUS_PROVIDER,
+  formatPnpmCommandTag,
   MAX_PRODUCT_CORRECTION_ROUNDS,
 } from '../../tools/autopilot/autopilot.js';
 import { acquireAutopilotLock } from '../../tools/autopilot/lock.js';
@@ -172,5 +173,19 @@ describe('one-command autopilot', () => {
     expect(ANTIGRAVITY_MODEL_STATUS).toBe(
       'GEMINI_3_6_FLASH_HIGH_ENFORCED_BY_CLI',
     );
+  });
+
+  it('formats pnpm command tags concisely without exposing long argument lists', () => {
+    expect(
+      formatPnpmCommandTag([
+        'agent:recover',
+        '--',
+        'T-G0-SEC-01',
+        '--expected-expired-lease-id',
+        'T-G0-SEC-01:2:1785856641331',
+      ]),
+    ).toBe('agent:recover');
+    expect(formatPnpmCommandTag(['--', 'agent:renew'])).toBe('agent:renew');
+    expect(formatPnpmCommandTag(['task:validate', 'T-G0-SEC-01'])).toBe('task:validate');
   });
 });

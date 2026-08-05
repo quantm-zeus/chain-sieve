@@ -68,13 +68,18 @@ const requireSuccess = (result: CommandResult, code: string): string => {
     );
   return result.stdout.trim();
 };
+export const formatPnpmCommandTag = (args: string[]): string => {
+  const first = args.find((a) => a !== '--');
+  return first ?? 'unknown';
+};
+
 const pnpm = (runner: CommandRunner, root: string, args: string[]): string =>
   requireSuccess(
     runner.run('pnpm', ['--silent', ...args], {
       cwd: root,
       timeoutMilliseconds: AGENT_TIMEOUT_MS,
     }),
-    `AUTOPILOT_COMMAND_FAILED:${args.join(':')}`,
+    `AUTOPILOT_COMMAND_FAILED:${formatPnpmCommandTag(args)}`,
   );
 const git = (runner: CommandRunner, cwd: string, args: string[]): string =>
   requireSuccess(
