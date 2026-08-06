@@ -14,7 +14,7 @@ export class SystemCommandRunner implements CommandRunner {
       ...(options.cwd ? { cwd: options.cwd } : {}),
       ...(options.input === undefined ? {} : { input: options.input }),
       encoding: 'utf8',
-      env: process.env,
+      env: { ...process.env, ...options.environment },
       maxBuffer: 64 * 1024 * 1024,
       timeout,
       killSignal: 'SIGTERM',
