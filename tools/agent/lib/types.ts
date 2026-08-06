@@ -129,6 +129,7 @@ export interface CommandOptions {
   input?: string;
   timeoutMilliseconds?: number;
   streamOutput?: boolean;
+  environment?: NodeJS.ProcessEnv;
 }
 
 export interface CommandRunner {
@@ -176,7 +177,11 @@ export interface PayloadBinding {
   failures: string[];
 }
 
-export type AgentProviderId = 'antigravity' | 'codex' | 'zcode';
+export type AgentProviderId =
+  | 'antigravity'
+  | 'claude-deepseek'
+  | 'codex'
+  | 'zcode';
 
 export interface ProviderDetection {
   available: boolean;
