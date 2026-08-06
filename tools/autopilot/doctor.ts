@@ -3,6 +3,11 @@ import type {
   CommandRunner,
 } from '../agent/lib/types.js';
 import { resolveAntigravityAutopilotModel } from '../agent/providers/antigravity.js';
+import {
+  DEEPSEEK_ANTHROPIC_BASE_URL,
+  resolveClaudeDeepSeekModel,
+  resolveClaudeDeepSeekToken,
+} from '../agent/providers/claude-deepseek.js';
 import { loadAutonomyPolicy } from './policy.js';
 
 export interface DoctorCheck {
@@ -31,6 +36,17 @@ const commandCheck = (
           `${command} failed`,
       };
 };
+
+const environmentCheck = (
+  name: string,
+  valid: boolean,
+  passDetail: string,
+  failDetail: string,
+): DoctorCheck => ({
+  name,
+  status: valid ? 'PASS' : 'FAIL',
+  detail: valid ? passDetail : failDetail,
+});
 
 const supportedAntigravityVersion = (output: string): boolean => {
   const match = output.trim().match(/^(\d+)\.(\d+)\.(\d+)/);
@@ -69,6 +85,40 @@ const providerChecks = (
             .map((line) => line.trim())
             .filter(Boolean)
             .includes(model),
+      ),
+    ];
+  }
+  if (provider === 'claude-deepseek') {
+    const tokenConfigured = Boolean(resolveClaudeDeepSeekToken());
+    const model = resolveClaudeDeepSeekModel();
+    return [
+      commandCheck(runner, 'claude-code-cli', 'claude', ['--version'], root),
+      commandCheck(
+        runner,
+        'claude-code-headless-flags',
+        'claude',
+        ['--help'],
+        root,
+        (output) =>
+          [
+            '--print',
+            '--output-format',
+            '--allowedTools',
+            '--disallowedTools',
+            '--permission-mode',
+          ].every((flag) => output.includes(flag)),
+      ),
+      environmentCheck(
+        'deepseek-api-key',
+        tokenConfigured,
+        'DeepSeek credential is configured without exposing its value',
+        'Set DEEPSEEK_API_KEY or ANTHROPIC_AUTH_TOKEN',
+      ),
+      environmentCheck(
+        'deepseek-anthropic-endpoint',
+        true,
+        `${DEEPSEEK_ANTHROPIC_BASE_URL} using ${model}`,
+        'DeepSeek Anthropic endpoint is unavailable',
       ),
     ];
   }
