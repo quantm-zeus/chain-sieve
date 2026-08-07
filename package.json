@@ -62,6 +62,7 @@
     "agent:migrate": "tsx tools/agent/lifecycle.ts migrate",
     "antigravity": "pnpm agent -- --provider antigravity",
     "claude-deepseek": "pnpm agent -- --provider claude-deepseek",
+    "muse": "pnpm agent -- --provider muse",
     "zcode": "pnpm agent -- --provider zcode",
     "zcode:status": "pnpm agent:status",
     "zcode:g0": "pnpm agent -- --provider zcode"

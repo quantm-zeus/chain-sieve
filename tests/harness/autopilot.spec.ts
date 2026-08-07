@@ -155,6 +155,10 @@ describe('one-command autopilot', () => {
       failureCode: 'VERIFY_FAILED',
     };
     expect(correctionReceiptMatches(value, binding)).toBe(true);
+    expect(correctionReceiptMatches({ ...value, provider: 'muse' }, binding)).toBe(true);
+    expect(
+      correctionReceiptMatches({ ...value, provider: 'claude-deepseek' }, binding),
+    ).toBe(true);
     expect(
       correctionReceiptMatches(value, {
         ...binding,

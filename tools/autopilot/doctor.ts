@@ -8,6 +8,14 @@ import {
   resolveClaudeDeepSeekModel,
   resolveClaudeDeepSeekToken,
 } from '../agent/providers/claude-deepseek.js';
+import {
+  MUSE_ARGS_ENV,
+  MUSE_PERMISSION_ENV,
+  MUSE_PERMISSION_PREAPPROVED,
+  musePermissionConfigured,
+  parseMuseArgs,
+  resolveMuseCommand,
+} from '../agent/providers/muse.js';
 import { loadAutonomyPolicy } from './policy.js';
 
 export interface DoctorCheck {
@@ -55,6 +63,27 @@ const supportedAntigravityVersion = (output: string): boolean => {
   const minor = Number(match[2]);
   const patch = Number(match[3]);
   return major === 1 && (minor > 1 || (minor === 1 && patch >= 1));
+};
+
+const museArgsConfigured = (): DoctorCheck => {
+  try {
+    const args = parseMuseArgs();
+    return environmentCheck(
+      'muse-headless-launch',
+      true,
+      `${args.length} configured argument(s); prompt binding present`,
+      '',
+    );
+  } catch (error) {
+    return environmentCheck(
+      'muse-headless-launch',
+      false,
+      '',
+      error instanceof Error
+        ? error.message
+        : `Set ${MUSE_ARGS_ENV} to a JSON string array`,
+    );
+  }
 };
 
 const providerChecks = (
@@ -135,6 +164,20 @@ const providerChecks = (
           ['--cd', '--sandbox'].every((flag) => output.includes(flag)),
       ),
     ];
+  if (provider === 'muse') {
+    const command = resolveMuseCommand();
+    return [
+      commandCheck(runner, 'muse-code-cli', command, ['--version'], root),
+      commandCheck(runner, 'muse-code-help', command, ['--help'], root),
+      museArgsConfigured(),
+      environmentCheck(
+        'muse-permissions',
+        musePermissionConfigured(),
+        'Muse permissions are preapproved for the configured headless invocation',
+        `Configure Muse Code permissions once, then set ${MUSE_PERMISSION_ENV}=${MUSE_PERMISSION_PREAPPROVED}`,
+      ),
+    ];
+  }
   return [commandCheck(runner, 'zcode-cli', 'zcode', ['--version'], root)];
 };
 

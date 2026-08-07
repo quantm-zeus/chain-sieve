@@ -28,6 +28,7 @@ import {
 } from './paths.js';
 import type {
   AgentProvider,
+  AgentProviderId,
   ClusterRecord,
   CommandResult,
   CommandRunner,
@@ -140,10 +141,8 @@ const ensureProvider = (provider: AgentProvider): void => {
   const detection = provider.detect();
   if (!detection.available)
     throw new ZCodeError(
-      provider.id === 'antigravity'
-        ? 'ANTIGRAVITY_MISSING'
-        : 'ZCODE_APPLICATION_MISSING',
-      detection.detail,
+      'AGENT_PROVIDER_UNAVAILABLE',
+      `${provider.id}:${detection.detail}`,
     );
 };
 
@@ -599,6 +598,17 @@ export type TaskIntegrationOutcome =
       inventory: ProjectInventory;
     };
 
+export const providerFromLaunchReceiptId = (
+  receiptId: string,
+): AgentProviderId => {
+  if (receiptId.startsWith('antigravity-')) return 'antigravity';
+  if (receiptId.startsWith('claude-deepseek-')) return 'claude-deepseek';
+  if (receiptId.startsWith('codex-')) return 'codex';
+  if (receiptId.startsWith('muse-')) return 'muse';
+  if (receiptId.startsWith('zcode-')) return 'zcode';
+  throw new ZCodeError('UNKNOWN_LAUNCH_RECEIPT_PROVIDER', receiptId);
+};
+
 const validateVerifiedTask = async (
   inventory: ProjectInventory,
   task: TaskRecord,
@@ -619,11 +629,7 @@ const validateVerifiedTask = async (
     'TASK_BASE_TREE_UNAVAILABLE',
     'git rev-parse base^{tree}',
   );
-  const provider = result.bindings.launchReceiptId.startsWith('antigravity-')
-    ? 'antigravity'
-    : result.bindings.launchReceiptId.startsWith('codex-')
-      ? 'codex'
-      : 'zcode';
+  const provider = providerFromLaunchReceiptId(result.bindings.launchReceiptId);
   await validateLaunchReceipt(inventory.root, runner, {
     taskId: task.contract.id,
     clusterId: task.contract.cluster,
@@ -796,7 +802,7 @@ The cluster result already freezes the reviewed product commit and tree. Write t
 
 \`artifacts/reviews/clusters/${cluster.contract.id}.review.json\`
 
-The file must conform to \`docs/schemas/cluster-review.schema.json\` and bind the exact product commit, product tree, cluster contract hash, cluster result path/hash, and every task attestation hash. Record \`PASS\` only when there is no unresolved P0/P1 finding. Commit only that exact review artifact in one commit whose direct parent is the reviewed product commit. Omit \`reviewArtifactCommit\` inside that commit because a commit cannot contain its own hash; the trusted validator derives the review commit from Git and verifies its parent and artifact-only diff. Do not modify product source, contracts, tests, generated manifests, or the cluster result. Then run \`pnpm agent\` again from the root repository.
+The file must conform to \`docs/schemas/cluster-review.schema.json\` and bind the exact product commit, product tree, cluster contract hash, cluster result path/hash, and every task attestation hash. Record \`PASS\` only when there is no unresolved P0/P1 finding. Commit only that exact review artifact in one commit whose direct parent is the reviewed product commit. Omit \`reviewArtifactCommit\` inside that commit because a commit cannot contain its own hash; the trusted validator derives the review commit from Git and verifies its parent and artifact-only diff. Do not modify product source, contracts, tests, generated manifests, or the cluster result. Then stop; in FULL_AUTONOMY mode the root control plane continues automatically.
 `;
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, text, { mode: 0o600 });
@@ -892,7 +898,7 @@ const integrateCluster = async (
     console.log(
       `Cluster ${cluster.contract.id} pull request created: ${pr.url}`,
     );
-    console.log('CI is pending. Run pnpm agent again after checks update.');
+    console.log('CI is pending. Autonomous mode will keep polling.');
     return undefined;
   }
   if (pr.state === 'MERGED') {
@@ -914,9 +920,7 @@ const integrateCluster = async (
     console.log(
       `Cluster ${cluster.contract.id} CI failed: ${failed.map((check) => check.name).join(', ')}.`,
     );
-    console.log(
-      `Inspect ${refreshed.url}, repair only the exact failures, then run pnpm agent again.`,
-    );
+    console.log('Autonomous mode will repair the exact CI failures and retry.');
     return undefined;
   }
   const pending = refreshed.checks.filter(
@@ -924,7 +928,7 @@ const integrateCluster = async (
   );
   if (classification === 'PENDING' || pending.length > 0) {
     console.log(`Cluster ${cluster.contract.id} CI is pending.`);
-    console.log('Run pnpm agent again after checks update.');
+    console.log('Autonomous mode will keep polling until checks resolve.');
     return undefined;
   }
   mergePullRequest(runner, inventory.root, refreshed.number);
@@ -1161,9 +1165,7 @@ export const executeOrchestration = async (
     assertClusterWorktree(decision.cluster);
     const path = await reviewPackagePath(inventory, decision.cluster, runner);
     console.log(`Independent cluster review required: ${path}`);
-    console.log(
-      'Record and commit PASS review evidence, then run pnpm agent again.',
-    );
+    console.log('Autonomous mode will run the independent provider review.');
     return;
   }
   if (decision.action === 'VERIFY_CLUSTER' && decision.cluster) {

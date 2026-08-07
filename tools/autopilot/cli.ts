@@ -22,7 +22,9 @@ const provider = (): AgentProviderId => {
   const selected = value('--provider') ?? DEFAULT_AUTONOMOUS_PROVIDER;
   if (
     selected !== 'antigravity' &&
+    selected !== 'claude-deepseek' &&
     selected !== 'codex' &&
+    selected !== 'muse' &&
     selected !== 'zcode'
   )
     throw new Error(`UNKNOWN_AGENT_PROVIDER:${selected}`);
