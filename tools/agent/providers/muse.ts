@@ -58,8 +58,11 @@ export const parseMuseArgs = (
       `${MUSE_ARGS_ENV} must be a non-empty JSON string array.`,
     );
   const args = parsed as string[];
-  const promptTokens = args.filter((arg) => arg.includes(MUSE_PROMPT_TOKEN));
-  if (promptTokens.length !== 1)
+  const promptBindings = args.reduce(
+    (count, arg) => count + arg.split(MUSE_PROMPT_TOKEN).length - 1,
+    0,
+  );
+  if (promptBindings !== 1)
     throw new AgentError(
       'MUSE_HEADLESS_PROMPT_BINDING_INVALID',
       `${MUSE_ARGS_ENV} must contain ${MUSE_PROMPT_TOKEN} exactly once.`,
