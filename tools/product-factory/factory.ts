@@ -213,7 +213,12 @@ const auditProduct = async (
   provider: AgentProvider,
 ): Promise<ProductConvergenceReport> => {
   const productCommit = git(runner, root, ['rev-parse', 'HEAD']);
-  const workspace = await createDetachedWorktree(root, runner, 'convergence-audit', productCommit);
+  const workspace = await createDetachedWorktree(
+    root,
+    runner,
+    'convergence-audit',
+    productCommit,
+  );
   const relativeReport = 'artifacts/convergence/product-convergence.json';
   try {
     executeAgent(
@@ -282,6 +287,42 @@ const waitForPullRequest = async (
 const correctionBranch = (round: number, commit: string): string =>
   `autonomy/product-convergence-${round}-${commit.slice(0, 8)}`;
 
+const commitCorrection = (
+  runner: CommandRunner,
+  workspace: string,
+  paths: string[],
+  message: string,
+): void => {
+  git(runner, workspace, ['add', '--', ...paths]);
+  git(runner, workspace, ['commit', '-m', message]);
+};
+
+const repairCorrectionCi = (
+  runner: CommandRunner,
+  provider: AgentProvider,
+  workspace: string,
+  branch: string,
+  failures: string[],
+  repairRound: number,
+): void => {
+  executeAgent(
+    provider,
+    workspace,
+    `The product-convergence pull request failed CI checks: ${failures.join(', ')}. Reproduce the failing behavior locally and repair it. Preserve the completed product convergence changes. Modify only apps/**, packages/**, tests/**, and docs/operations/**. Do not modify normative PRD/spec/ADR authority, generated tasks or clusters, artifacts, config, workflows, tools/control-plane, manifests, lockfiles, migrations, or secrets. Do not weaken tests. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave the repair uncommitted and stop.`,
+    'PRODUCT_FACTORY_CORRECTION_CI_AGENT_FAILED',
+  );
+  const paths = changedPaths(runner, workspace);
+  assertProductCorrectionScope(paths);
+  runDeterministicConvergenceChecks(workspace, runner);
+  commitCorrection(
+    runner,
+    workspace,
+    paths,
+    `fix(product): repair convergence CI round ${repairRound}`,
+  );
+  git(runner, workspace, ['push', 'origin', `HEAD:${branch}`]);
+};
+
 const applyProductCorrection = async (
   root: string,
   runner: CommandRunner,
@@ -308,49 +349,68 @@ const applyProductCorrection = async (
     const paths = changedPaths(runner, workspace);
     assertProductCorrectionScope(paths);
     runDeterministicConvergenceChecks(workspace, runner);
-    git(runner, workspace, ['add', '--', ...paths]);
-    git(runner, workspace, [
-      'commit',
-      '-m',
-      `fix(product): converge PRD round ${round}`,
-    ]);
-    git(runner, workspace, ['push', '-u', 'origin', branch]);
-    const created = JSON.parse(
-      gh(runner, root, [
-        'pr',
-        'create',
-        '--head',
-        branch,
-        '--base',
-        'main',
-        '--title',
-        `fix(product): converge PRD round ${round}`,
-        '--body',
-        `Autonomous product-convergence correction generated from an independent Muse audit of ${frozenMain}. Normative specs and control-plane files are unchanged.`,
-        '--json',
-        'number,url',
-      ]),
-    ) as { number: number; url: string };
-    const completed = await waitForPullRequest(
-      root,
+    commitCorrection(
       runner,
-      created.number,
-      pollMilliseconds,
+      workspace,
+      paths,
+      `fix(product): converge PRD round ${round}`,
     );
-    const failures = failedChecks(completed);
-    if (failures.length > 0)
-      throw new Error(`PRODUCT_FACTORY_CORRECTION_CI_FAILED:${failures.join(',')}`);
-    if (completed.mergeStateStatus !== 'CLEAN')
-      throw new Error(
-        `PRODUCT_FACTORY_CORRECTION_PR_NOT_CLEAN:${completed.mergeStateStatus ?? 'UNKNOWN'}`,
-      );
+    git(runner, workspace, ['push', '-u', 'origin', branch]);
     gh(runner, root, [
       'pr',
-      'merge',
-      String(created.number),
-      '--merge',
-      '--delete-branch',
+      'create',
+      '--head',
+      branch,
+      '--base',
+      'main',
+      '--title',
+      `fix(product): converge PRD round ${round}`,
+      '--body',
+      `Autonomous product-convergence correction generated from an independent Muse audit of ${frozenMain}. Normative specs and control-plane files are unchanged.`,
     ]);
+    const created = JSON.parse(
+      gh(runner, root, ['pr', 'view', branch, '--json', 'number,url']),
+    ) as { number: number; url: string };
+    for (
+      let repairRound = 0;
+      repairRound <= MAX_PRODUCT_CORRECTION_ROUNDS;
+      repairRound += 1
+    ) {
+      const completed = await waitForPullRequest(
+        root,
+        runner,
+        created.number,
+        pollMilliseconds,
+      );
+      const failures = failedChecks(completed);
+      if (failures.length > 0) {
+        if (repairRound >= MAX_PRODUCT_CORRECTION_ROUNDS)
+          throw new Error(
+            `PRODUCT_FACTORY_CORRECTION_CI_LIMIT:${failures.join(',')}`,
+          );
+        repairCorrectionCi(
+          runner,
+          provider,
+          workspace,
+          branch,
+          failures,
+          repairRound + 1,
+        );
+        continue;
+      }
+      if (completed.mergeStateStatus !== 'CLEAN')
+        throw new Error(
+          `PRODUCT_FACTORY_CORRECTION_PR_NOT_CLEAN:${completed.mergeStateStatus ?? 'UNKNOWN'}`,
+        );
+      gh(runner, root, [
+        'pr',
+        'merge',
+        String(created.number),
+        '--merge',
+        '--delete-branch',
+      ]);
+      break;
+    }
   } finally {
     await removeWorktree(root, runner, workspace);
   }
