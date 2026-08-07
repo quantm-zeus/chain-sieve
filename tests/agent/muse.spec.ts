@@ -70,10 +70,15 @@ describe('Muse Code provider', () => {
     expect(createProvider('muse', runner)).toBeInstanceOf(MuseProvider);
   });
 
-  it('requires a single explicit prompt binding in the one-time headless config', () => {
+  it('requires exactly one explicit prompt binding in the one-time headless config', () => {
     expect(() => parseMuseArgs({})).toThrow('MUSE_HEADLESS_ARGS_MISSING');
     expect(() =>
       parseMuseArgs({ [MUSE_ARGS_ENV]: '["--headless"]' }),
+    ).toThrow('MUSE_HEADLESS_PROMPT_BINDING_INVALID');
+    expect(() =>
+      parseMuseArgs({
+        [MUSE_ARGS_ENV]: '["--goal={prompt}:{prompt}"]',
+      }),
     ).toThrow('MUSE_HEADLESS_PROMPT_BINDING_INVALID');
     expect(
       parseMuseArgs({
