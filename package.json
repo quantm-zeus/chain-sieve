@@ -58,6 +58,7 @@
     "agent:renew": "tsx tools/agent/lifecycle.ts renew",
     "agent:recover": "tsx tools/agent/lifecycle.ts recover",
     "autopilot": "tsx tools/autopilot/cli.ts",
+    "product:autopilot": "tsx tools/product-factory/cli.ts",
     "agent:migration-check": "tsx tools/agent/lifecycle.ts migration-check",
     "agent:migrate": "tsx tools/agent/lifecycle.ts migrate",
     "antigravity": "pnpm agent -- --provider antigravity",
