@@ -53,6 +53,13 @@ const CONTROL_PLANE_PREFIXES = [
   'tools/worktree-manager/',
   'docs/schemas/',
 ];
+const CORRECTION_RECEIPT_PROVIDERS = new Set<AgentProviderId>([
+  'antigravity',
+  'claude-deepseek',
+  'codex',
+  'muse',
+  'zcode',
+]);
 
 export const correctionRoundAllowed = (completedRounds: number): boolean =>
   completedRounds + 1 <= MAX_PRODUCT_CORRECTION_ROUNDS;
@@ -284,7 +291,7 @@ export const correctionReceiptMatches = (
     | { previousCommit?: unknown; failureCodes?: unknown }
     | undefined;
   return (
-    ['antigravity', 'codex', 'zcode'].includes(String(value.provider)) &&
+    CORRECTION_RECEIPT_PROVIDERS.has(String(value.provider) as AgentProviderId) &&
     typeof correction?.previousCommit === 'string' &&
     Array.isArray(correction.failureCodes) &&
     (!binding.taskId || value.taskId === binding.taskId) &&
