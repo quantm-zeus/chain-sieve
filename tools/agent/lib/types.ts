@@ -181,6 +181,7 @@ export type AgentProviderId =
   | 'antigravity'
   | 'claude-deepseek'
   | 'codex'
+  | 'muse'
   | 'zcode';
 
 export interface ProviderDetection {
