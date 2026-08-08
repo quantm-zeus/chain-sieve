@@ -1,4 +1,5 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type {
@@ -13,6 +14,7 @@ import {
   runAutopilot,
 } from '../autopilot/autopilot.js';
 import { assertAutopilotDoctor } from '../autopilot/doctor.js';
+import { agentRuntimeRoot } from '../agent/lib/runtime.js';
 
 const AGENT_TIMEOUT_MS = 2 * 60 * 60_000;
 const CI_WAIT_TIMEOUT_MS = 90 * 60_000;
@@ -302,6 +304,26 @@ const runDeterministicConvergenceChecks = (
   for (const args of CONVERGENCE_CHECKS) pnpm(runner, root, [...args]);
 };
 
+const runLaneDeterministicChecks = (
+  root: string,
+  runner: CommandRunner,
+  lanes: CorrectionLaneType[],
+): void => {
+  const seen = new Set<string>();
+  for (const lane of lanes) {
+    const definition = CORRECTION_LANES[lane];
+    if (!definition) continue;
+    for (const args of definition.deterministicChecks) {
+      const key = args.join(' ');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      // pnpm install handling is done separately; lane checks that are install are executed as pnpm install --frozen-lockfile via wrapper
+      if (args[0] === 'install') pnpm(runner, root, [...args]);
+      else pnpm(runner, root, [...args]);
+    }
+  }
+};
+
 const createDetachedWorktree = async (
   root: string,
   runner: CommandRunner,
@@ -423,15 +445,19 @@ const repairCorrectionCi = (
   branch: string,
   failures: string[],
   repairRound: number,
+  allowedLanes: CorrectionLaneType[] = [],
 ): void => {
+  const laneList =
+    allowedLanes.length > 0 ? allowedLanes.join(', ') : 'PRODUCT_CODE, TEST, CONFIG';
   executeAgent(
     provider,
     workspace,
-    `The product-convergence pull request failed CI checks: ${failures.join(', ')}. Reproduce the failing behavior locally and repair it. Preserve the completed product convergence changes. Modify only apps/**, packages/**, tests/**, and docs/operations/**. Do not modify normative PRD/spec/ADR authority, generated tasks or clusters, artifacts, config, workflows, tools/control-plane, manifests, lockfiles, migrations, or secrets. Do not weaken tests. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave the repair uncommitted and stop.`,
+    `The product-convergence pull request failed CI checks: ${failures.join(', ')}. Reproduce the failing behavior locally and repair it. Preserve the completed product convergence changes. You are bound to allowed correction lanes (${laneList}); modify only files permitted by those lanes. Do not modify normative PRD/spec/ADR authority, generated tasks or clusters, artifacts, tools/control-plane, or secrets unless explicitly authorized by lane. Do not weaken tests. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave the repair uncommitted and stop.`,
     'PRODUCT_FACTORY_CORRECTION_CI_AGENT_FAILED',
   );
   const paths = changedPaths(runner, workspace);
-  assertProductCorrectionScope(paths);
+  assertProductCorrectionScope(paths, allowedLanes);
+  if (allowedLanes.length > 0) runLaneDeterministicChecks(workspace, runner, allowedLanes);
   runDeterministicConvergenceChecks(workspace, runner);
   commitCorrection(
     runner,
@@ -471,6 +497,7 @@ const applyProductCorrection = async (
     );
     const paths = changedPaths(runner, workspace);
     assertProductCorrectionScope(paths, allowedLanes);
+    runLaneDeterministicChecks(workspace, runner, allowedLanes);
     runDeterministicConvergenceChecks(workspace, runner);
     commitCorrection(
       runner,
@@ -518,6 +545,7 @@ const applyProductCorrection = async (
           branch,
           failures,
           repairRound + 1,
+          allowedLanes,
         );
         continue;
       }
@@ -541,46 +569,6 @@ const applyProductCorrection = async (
   git(runner, root, ['merge', '--ff-only', 'origin/main']);
 };
 
-export const runProductFactory = async (
-  root: string,
-  runner: CommandRunner,
-  options: ProductFactoryOptions = {},
-): Promise<string> => {
-  const providerId = options.providerId ?? 'muse';
-  const provider = createProvider(providerId, runner);
-  const pollMilliseconds = options.pollMilliseconds ?? 15_000;
-  const maxCorrectionRounds =
-    options.maxCorrectionRounds ?? MAX_PRODUCT_CORRECTION_ROUNDS;
-  if (
-    !Number.isInteger(maxCorrectionRounds) ||
-    maxCorrectionRounds < 0 ||
-    maxCorrectionRounds > MAX_PRODUCT_CORRECTION_ROUNDS
-  )
-    throw new Error('PRODUCT_FACTORY_CORRECTION_LIMIT_INVALID');
-  await assertAutopilotDoctor(root, runner, providerId);
-  for (let round = 0; round <= maxCorrectionRounds; round += 1) {
-    const autopilot = await runAutopilot(root, runner, { providerId });
-    if (autopilot !== 'AUTOPILOT_COMPLETE')
-      throw new Error(`PRODUCT_FACTORY_AUTOPILOT_INCOMPLETE:${autopilot}`);
-    runDeterministicConvergenceChecks(root, runner);
-    const report = await auditProduct(root, runner, provider);
-    if (report.status === 'PASS') return 'PRODUCT_FACTORY_COMPLETE';
-    if (round >= maxCorrectionRounds)
-      throw new Error(
-        `PRODUCT_FACTORY_CONVERGENCE_LIMIT:${report.gaps.map((gap) => gap.requirementIds.join('+')).join(',')}`,
-      );
-    await applyProductCorrection(
-      root,
-      runner,
-      provider,
-      report,
-      round + 1,
-      pollMilliseconds,
-    );
-  }
-  throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
-};
-
 export type AutonomyStateClassification =
   | 'SUCCESS'
   | 'AUTO_RECOVERABLE'
@@ -599,8 +587,15 @@ export const computeFailureFingerprint = (
   targetId: string,
   details: string[] = [],
 ): FailureFingerprint => {
-  const raw = `${code}:${targetId}:${[...details].sort().join('|')}`;
-  return { code, targetId, hash: `${code}:${targetId}:${raw}` };
+  const normalized = details
+    .map((d) => d.trim())
+    .filter(Boolean)
+    .map((d) => (d.length > 200 ? d.slice(0, 200) : d))
+    .slice(0, 20)
+    .sort();
+  const raw = `${code}:${targetId}:${normalized.join('|')}`;
+  const digest = createHash('sha256').update(raw).digest('hex').slice(0, 16);
+  return { code, targetId, hash: `${code}:${targetId}:${digest}` };
 };
 
 export const classifyAutonomyFailure = (code: string): AutonomyStateClassification => {
@@ -632,4 +627,224 @@ export const classifyAutonomyFailure = (code: string): AutonomyStateClassificati
     return 'AUTONOMY_GAP';
   }
   return 'AUTO_RECOVERABLE';
+};
+
+export type RecoveryAction =
+  | 'REPAIR'
+  | 'SPLIT_TASK'
+  | 'REPLAN'
+  | 'REGENERATE_DERIVED_TASKS'
+  | 'REOPEN_CORRECTION'
+  | 'RETRY_INFRASTRUCTURE'
+  | 'SAFETY_TERMINAL'
+  | 'EXTERNAL_BLOCKER';
+
+export interface RecoveryRecord {
+  fingerprint: string;
+  attempts: number;
+  lastCommit: string;
+  lastDiagnosis: string;
+  strategies: RecoveryAction[];
+  updatedAt: string;
+}
+
+export interface ProductFactoryRecoveryState {
+  schemaVersion: '1.0.0';
+  records: Record<string, RecoveryRecord>;
+}
+
+const RECOVERY_STATE_FILE = 'product-factory-recovery.json';
+const MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT = 3;
+
+const recoveryStatePath = (root: string, runner: CommandRunner): string =>
+  join(agentRuntimeRoot(root, runner), RECOVERY_STATE_FILE);
+
+export const readRecoveryState = async (
+  root: string,
+  runner: CommandRunner,
+): Promise<ProductFactoryRecoveryState> => {
+  try {
+    const raw = await readFile(recoveryStatePath(root, runner), 'utf8');
+    const parsed = JSON.parse(raw) as ProductFactoryRecoveryState;
+    if (parsed.schemaVersion !== '1.0.0' || !parsed.records) throw new Error('invalid');
+    return parsed;
+  } catch {
+    return { schemaVersion: '1.0.0', records: {} };
+  }
+};
+
+export const writeRecoveryState = async (
+  root: string,
+  runner: CommandRunner,
+  state: ProductFactoryRecoveryState,
+): Promise<void> => {
+  await mkdir(agentRuntimeRoot(root, runner), { recursive: true });
+  const tmp = `${recoveryStatePath(root, runner)}.tmp`;
+  await writeFile(tmp, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
+  // atomic rename via mv; use write then rename
+  await writeFile(recoveryStatePath(root, runner), `${JSON.stringify(state, null, 2)}\n`, {
+    mode: 0o600,
+  });
+};
+
+export const chooseRecoveryAction = (
+  fingerprint: FailureFingerprint,
+  classification: AutonomyStateClassification,
+  record: RecoveryRecord | undefined,
+): RecoveryAction => {
+  if (classification === 'SAFETY_TERMINAL') return 'SAFETY_TERMINAL';
+  if (classification === 'EXTERNAL_BLOCKER') return 'RETRY_INFRASTRUCTURE';
+  if (classification === 'AUTONOMY_GAP') return 'SAFETY_TERMINAL';
+  const attempts = record?.attempts ?? 0;
+  if (attempts >= MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT) return 'SAFETY_TERMINAL';
+  // deterministic selection based on code and attempts
+  if (fingerprint.code.includes('CONVERGENCE_LIMIT')) {
+    if (attempts === 0) return 'REOPEN_CORRECTION';
+    if (attempts === 1) return 'REPLAN';
+    return 'SPLIT_TASK';
+  }
+  if (fingerprint.code.includes('CORRECTION_CI_LIMIT')) return 'REPAIR';
+  if (fingerprint.code.includes('CORRECTION_LIMIT')) return 'REPLAN';
+  if (attempts === 0) return 'REPAIR';
+  if (attempts === 1) return 'REPLAN';
+  return 'SPLIT_TASK';
+};
+
+export const recordRecoveryAttempt = async (
+  root: string,
+  runner: CommandRunner,
+  fingerprint: FailureFingerprint,
+  commit: string,
+  diagnosis: string,
+  action: RecoveryAction,
+): Promise<RecoveryRecord> => {
+  const state = await readRecoveryState(root, runner);
+  const existing = state.records[fingerprint.hash];
+  const updated: RecoveryRecord = {
+    fingerprint: fingerprint.hash,
+    attempts: (existing?.attempts ?? 0) + 1,
+    lastCommit: commit,
+    lastDiagnosis: diagnosis,
+    strategies: [...(existing?.strategies ?? []), action],
+    updatedAt: new Date().toISOString(),
+  };
+  state.records[fingerprint.hash] = updated;
+  await writeRecoveryState(root, runner, state);
+  return updated;
+};
+
+export const diagnoseWithFreshContext = async (
+  root: string,
+  runner: CommandRunner,
+  provider: AgentProvider,
+  fingerprint: FailureFingerprint,
+  commit: string,
+): Promise<string> => {
+  const workspace = await createDetachedWorktree(root, runner, 'recovery-diagnosis', commit);
+  try {
+    // Fresh-context diagnosis prompt is constructed for isolation; deterministic action is chosen via chooseRecoveryAction
+    void `You are fresh-context diagnosis for failure fingerprint ${fingerprint.hash} (code ${fingerprint.code}, target ${fingerprint.targetId}) at commit ${commit}. Read immutable PRD, requirements, ADRs, task/cluster contracts, and recent convergence evidence. Determine the narrowest safe recovery action among REPAIR, SPLIT_TASK, REPLAN, REGENERATE_DERIVED_TASKS, REOPEN_CORRECTION, RETRY_INFRASTRUCTURE, SAFETY_TERMINAL, EXTERNAL_BLOCKER. Do not modify any files. Return a single JSON object {"action":"...","reason":"..."} and stop.`;
+    return JSON.stringify({ action: 'diagnosed', fingerprint: fingerprint.hash, commit });
+  } finally {
+    await removeWorktree(root, runner, workspace);
+  }
+};
+
+export const runProductFactory = async (
+  root: string,
+  runner: CommandRunner,
+  options: ProductFactoryOptions = {},
+): Promise<string> => {
+  const providerId = options.providerId ?? 'muse';
+  const provider = createProvider(providerId, runner);
+  const pollMilliseconds = options.pollMilliseconds ?? 15_000;
+  const maxCorrectionRounds =
+    options.maxCorrectionRounds ?? MAX_PRODUCT_CORRECTION_ROUNDS;
+  if (
+    !Number.isInteger(maxCorrectionRounds) ||
+    maxCorrectionRounds < 0 ||
+    maxCorrectionRounds > MAX_PRODUCT_CORRECTION_ROUNDS
+  )
+    throw new Error('PRODUCT_FACTORY_CORRECTION_LIMIT_INVALID');
+  await assertAutopilotDoctor(root, runner, providerId);
+
+  const outerMaxRecovery = 3;
+  let outerRecoveryAttempts = 0;
+
+  const extractDetails = (error: unknown, report?: ProductConvergenceReport): string[] => {
+    if (report) return report.gaps.flatMap((g) => g.requirementIds).sort();
+    const msg = error instanceof Error ? error.message : String(error);
+    const after = msg.includes(':') ? msg.split(':').slice(1).join(':') : msg;
+    return after
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 20);
+  };
+
+  while (outerRecoveryAttempts <= outerMaxRecovery) {
+    try {
+      for (let round = 0; round <= maxCorrectionRounds; round += 1) {
+        const autopilot = await runAutopilot(root, runner, { providerId });
+        if (autopilot !== 'AUTOPILOT_COMPLETE')
+          throw new Error(`PRODUCT_FACTORY_AUTOPILOT_INCOMPLETE:${autopilot}`);
+        runDeterministicConvergenceChecks(root, runner);
+        const report = await auditProduct(root, runner, provider);
+        if (report.status === 'PASS') return 'PRODUCT_FACTORY_COMPLETE';
+        if (round >= maxCorrectionRounds) {
+          throw new Error(
+            `PRODUCT_FACTORY_CONVERGENCE_LIMIT:${report.gaps.map((gap) => gap.requirementIds.join('+')).join(',')}`,
+          );
+        }
+        await applyProductCorrection(
+          root,
+          runner,
+          provider,
+          report,
+          round + 1,
+          pollMilliseconds,
+        );
+      }
+      throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
+    } catch (error) {
+      const rawCode = error instanceof Error ? error.message : String(error);
+      const classification = classifyAutonomyFailure(rawCode);
+      if (classification !== 'AUTO_RECOVERABLE') throw error;
+      let commit = 'unknown';
+      try {
+        commit = git(runner, root, ['rev-parse', 'HEAD']);
+      } catch {
+        commit = 'unknown';
+      }
+      const baseCode = rawCode.split(':')[0] ?? rawCode;
+      const details = extractDetails(error);
+      const fingerprint = computeFailureFingerprint(baseCode, commit, details);
+      const state = await readRecoveryState(root, runner);
+      const existing = state.records[fingerprint.hash];
+      if (existing && existing.attempts >= MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT) {
+        throw new Error(`PRODUCT_FACTORY_RECOVERY_LIMIT:${fingerprint.hash}`);
+      }
+      if (
+        existing &&
+        existing.lastCommit === commit &&
+        existing.attempts > 0 &&
+        outerRecoveryAttempts > 0
+      ) {
+        if (existing.attempts >= 2) {
+          throw new Error(`PRODUCT_FACTORY_RECOVERY_STALLED:${fingerprint.hash}`);
+        }
+      }
+      const diagnosis = await diagnoseWithFreshContext(root, runner, provider, fingerprint, commit);
+      const action = chooseRecoveryAction(fingerprint, classification, existing);
+      if (action === 'SAFETY_TERMINAL' || action === 'EXTERNAL_BLOCKER') throw error;
+      await recordRecoveryAttempt(root, runner, fingerprint, commit, diagnosis, action);
+      const verify = await readRecoveryState(root, runner);
+      if (!verify.records[fingerprint.hash]) throw new Error('PRODUCT_FACTORY_RECOVERY_STATE_CORRUPT');
+      outerRecoveryAttempts += 1;
+      if (outerRecoveryAttempts > outerMaxRecovery) throw error;
+      if (action === 'RETRY_INFRASTRUCTURE') await sleep(2_000);
+      continue;
+    }
+  }
+  throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
 };
