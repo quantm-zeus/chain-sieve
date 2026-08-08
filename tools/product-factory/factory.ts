@@ -24,6 +24,106 @@ const PRODUCT_CORRECTION_PREFIXES = [
   'docs/operations/',
 ] as const;
 
+export type CorrectionLaneType =
+  | 'PRODUCT_CODE'
+  | 'TEST'
+  | 'DEPENDENCY'
+  | 'MIGRATION'
+  | 'CONFIG'
+  | 'SPECIFICATION'
+  | 'GENERATED_CONTRACT'
+  | 'INFRASTRUCTURE';
+
+export interface CorrectionLaneDefinition {
+  type: CorrectionLaneType;
+  allowedPrefixes: string[];
+  allowedExactFiles?: string[];
+  forbiddenPrefixes: string[];
+  deterministicChecks: string[][];
+}
+
+export const CORRECTION_LANES: Record<CorrectionLaneType, CorrectionLaneDefinition> = {
+  PRODUCT_CODE: {
+    type: 'PRODUCT_CODE',
+    allowedPrefixes: ['apps/', 'packages/'],
+    forbiddenPrefixes: ['tests/', 'docs/spec/', '.github/', 'tools/'],
+    deterministicChecks: [
+      ['build'],
+      ['lint'],
+      ['typecheck'],
+      ['test'],
+      ['architecture:verify'],
+      ['placeholders:scan'],
+      ['prohibited-capabilities:scan'],
+    ],
+  },
+  TEST: {
+    type: 'TEST',
+    allowedPrefixes: ['tests/'],
+    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
+    deterministicChecks: [['lint'], ['typecheck'], ['test'], ['harness:verify']],
+  },
+  DEPENDENCY: {
+    type: 'DEPENDENCY',
+    allowedPrefixes: ['apps/', 'packages/'],
+    allowedExactFiles: ['package.json', 'pnpm-lock.yaml'],
+    forbiddenPrefixes: ['docs/spec/', '.github/', 'tools/'],
+    deterministicChecks: [['install', '--frozen-lockfile'], ['build'], ['typecheck'], ['test']],
+  },
+  MIGRATION: {
+    type: 'MIGRATION',
+    allowedPrefixes: ['drizzle/', 'packages/persistence/src/db/migrations/'],
+    forbiddenPrefixes: ['docs/spec/', 'apps/'],
+    deterministicChecks: [['migration:verify'], ['build'], ['typecheck'], ['test']],
+  },
+  CONFIG: {
+    type: 'CONFIG',
+    allowedPrefixes: ['config/', 'docs/operations/'],
+    forbiddenPrefixes: ['docs/spec/', 'apps/', 'packages/'],
+    deterministicChecks: [['build'], ['lint'], ['typecheck'], ['test'], ['placeholders:scan']],
+  },
+  SPECIFICATION: {
+    type: 'SPECIFICATION',
+    allowedPrefixes: ['docs/spec/', 'docs/adr/', 'tasks/', 'clusters/', 'artifacts/spec/'],
+    forbiddenPrefixes: ['apps/', 'packages/', 'tests/'],
+    deterministicChecks: [['prd:compile'], ['spec:verify'], ['prd:drift-check'], ['requirements:coverage']],
+  },
+  GENERATED_CONTRACT: {
+    type: 'GENERATED_CONTRACT',
+    allowedPrefixes: ['tasks/', 'clusters/', 'artifacts/context/'],
+    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
+    deterministicChecks: [['spec:verify'], ['prd:drift-check']],
+  },
+  INFRASTRUCTURE: {
+    type: 'INFRASTRUCTURE',
+    allowedPrefixes: ['.github/', 'config/', 'docs/operations/'],
+    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
+    deterministicChecks: [['build'], ['lint'], ['typecheck']],
+  },
+};
+
+export const pathMatchesLane = (path: string, laneType: CorrectionLaneType): boolean => {
+  const lane = CORRECTION_LANES[laneType];
+  if (!lane) return false;
+  const isForbidden = lane.forbiddenPrefixes.some((prefix) => path.startsWith(prefix));
+  if (isForbidden) return false;
+  const matchesPrefix = lane.allowedPrefixes.some((prefix) => path.startsWith(prefix));
+  const matchesExact = lane.allowedExactFiles?.includes(path) ?? false;
+  return matchesPrefix || matchesExact;
+};
+
+export const classifyPathLane = (path: string): CorrectionLaneType => {
+  if (path === 'package.json' || path === 'pnpm-lock.yaml' || path.endsWith('/package.json'))
+    return 'DEPENDENCY';
+  if (path.startsWith('drizzle/') || path.includes('/migrations/')) return 'MIGRATION';
+  if (path.startsWith('tests/')) return 'TEST';
+  if (path.startsWith('config/') || path.startsWith('docs/operations/')) return 'CONFIG';
+  if (path.startsWith('docs/spec/') || path.startsWith('docs/adr/')) return 'SPECIFICATION';
+  if (path.startsWith('tasks/') || path.startsWith('clusters/')) return 'GENERATED_CONTRACT';
+  if (path.startsWith('.github/')) return 'INFRASTRUCTURE';
+  return 'PRODUCT_CODE';
+};
+
 const CONVERGENCE_CHECKS = [
   ['build'],
   ['lint'],
@@ -45,6 +145,15 @@ export interface ProductConvergenceGap {
   evidence: string[];
   suggestedPaths: string[];
 }
+
+export const classifyGapLanes = (gap: ProductConvergenceGap): CorrectionLaneType[] => {
+  const lanes = new Set<CorrectionLaneType>();
+  for (const path of gap.suggestedPaths) {
+    lanes.add(classifyPathLane(path));
+  }
+  if (lanes.size === 0) lanes.add('PRODUCT_CODE');
+  return Array.from(lanes);
+};
 
 export interface ProductConvergenceReport {
   schemaVersion: '1.0.0';
@@ -127,12 +236,22 @@ const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
     .filter(Boolean)
     .sort();
 
-export const isProductCorrectionPath = (path: string): boolean =>
-  PRODUCT_CORRECTION_PREFIXES.some((prefix) => path.startsWith(prefix));
+export const isProductCorrectionPath = (
+  path: string,
+  allowedLanes?: CorrectionLaneType[],
+): boolean => {
+  if (allowedLanes && allowedLanes.length > 0) {
+    return allowedLanes.some((lane) => pathMatchesLane(path, lane));
+  }
+  return PRODUCT_CORRECTION_PREFIXES.some((prefix) => path.startsWith(prefix));
+};
 
-const assertProductCorrectionScope = (paths: string[]): void => {
+export const assertProductCorrectionScope = (
+  paths: string[],
+  allowedLanes?: CorrectionLaneType[],
+): void => {
   if (paths.length === 0) throw new Error('PRODUCT_FACTORY_CORRECTION_NO_CHANGES');
-  const invalid = paths.filter((path) => !isProductCorrectionPath(path));
+  const invalid = paths.filter((path) => !isProductCorrectionPath(path, allowedLanes));
   if (invalid.length > 0)
     throw new Error(`PRODUCT_FACTORY_CORRECTION_SCOPE:${invalid.join(',')}`);
 };
@@ -338,16 +457,20 @@ const applyProductCorrection = async (
   const workspace = await mkdtemp(join(tmpdir(), 'chainsieve-product-correction-'));
   await rm(workspace, { recursive: true, force: true });
   git(runner, root, ['worktree', 'add', '-b', branch, workspace, frozenMain]);
+  const gapLanes = report.gaps.flatMap((gap) => classifyGapLanes(gap));
+  const allowedLanes: CorrectionLaneType[] = Array.from(
+    new Set<CorrectionLaneType>(['PRODUCT_CODE', 'TEST', 'CONFIG', ...gapLanes]),
+  );
   try {
     pnpm(runner, workspace, ['install', '--frozen-lockfile']);
     executeAgent(
       provider,
       workspace,
-      `You are product correction round ${round} for frozen main ${frozenMain}. The independent convergence verifier found these normative product gaps:\n${JSON.stringify(report.gaps, null, 2)}\nRepair every listed gap with the smallest coherent implementation. You may modify only apps/**, packages/**, tests/**, and docs/operations/**. The immutable PRD, docs/spec, accepted ADR authority, generated tasks/clusters, artifacts, config, workflows, tools/control-plane, dependency manifests, lockfiles, migrations, and secrets are forbidden. Do not weaken tests or requirements. Add or strengthen tests proving each corrected behavior. Run relevant tests and self-review the complete diff. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave valid changes uncommitted and stop.`,
+      `You are product correction round ${round} for frozen main ${frozenMain}. The independent convergence verifier found these normative product gaps:\n${JSON.stringify(report.gaps, null, 2)}\nRepair every listed gap with the smallest coherent implementation within allowed correction lanes (${allowedLanes.join(', ')}). The immutable PRD, docs/spec, accepted ADR authority, generated tasks/clusters, workflows, tools/control-plane, and secrets are forbidden unless explicitly authorized. Do not weaken tests or requirements. Add or strengthen tests proving each corrected behavior. Run relevant tests and self-review the complete diff. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave valid changes uncommitted and stop.`,
       'PRODUCT_FACTORY_CORRECTION_AGENT_FAILED',
     );
     const paths = changedPaths(runner, workspace);
-    assertProductCorrectionScope(paths);
+    assertProductCorrectionScope(paths, allowedLanes);
     runDeterministicConvergenceChecks(workspace, runner);
     commitCorrection(
       runner,
@@ -456,4 +579,57 @@ export const runProductFactory = async (
     );
   }
   throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
+};
+
+export type AutonomyStateClassification =
+  | 'SUCCESS'
+  | 'AUTO_RECOVERABLE'
+  | 'SAFETY_TERMINAL'
+  | 'EXTERNAL_BLOCKER'
+  | 'AUTONOMY_GAP';
+
+export interface FailureFingerprint {
+  code: string;
+  targetId: string;
+  hash: string;
+}
+
+export const computeFailureFingerprint = (
+  code: string,
+  targetId: string,
+  details: string[] = [],
+): FailureFingerprint => {
+  const raw = `${code}:${targetId}:${[...details].sort().join('|')}`;
+  return { code, targetId, hash: `${code}:${targetId}:${raw}` };
+};
+
+export const classifyAutonomyFailure = (code: string): AutonomyStateClassification => {
+  if (code.startsWith('AUTOPILOT_COMPLETE') || code.startsWith('PRODUCT_FACTORY_COMPLETE')) {
+    return 'SUCCESS';
+  }
+  if (
+    code.includes('NO_HEADLESS_EXECUTOR') ||
+    code.includes('AUTONOMOUS_MERGE_DISABLED') ||
+    code.includes('PROHIBITED_CAPABILITY') ||
+    code.includes('SECRET_EXPOSURE') ||
+    code.includes('SPECIFICATION_DRIFT')
+  ) {
+    return 'SAFETY_TERMINAL';
+  }
+  if (
+    code.includes('GITHUB_FAILED') ||
+    code.includes('PR_CLOSED') ||
+    code.includes('CI_TIMEOUT') ||
+    code.includes('FINAL_MAIN_CI_FAILED')
+  ) {
+    return 'EXTERNAL_BLOCKER';
+  }
+  if (
+    code.includes('CORRECTION_SCOPE') ||
+    code.includes('CONVERGENCE_AUDIT_SCOPE') ||
+    code.includes('CONVERGENCE_REPORT_INVALID')
+  ) {
+    return 'AUTONOMY_GAP';
+  }
+  return 'AUTO_RECOVERABLE';
 };
