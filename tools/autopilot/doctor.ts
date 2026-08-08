@@ -219,7 +219,12 @@ export const runAutopilotDoctor = async (
       'pnpm',
       ['--version'],
       root,
-      (output) => output.trim() === '10.13.1',
+      (output) =>
+        output
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .some((line) => line === '10.13.1' || /^10\.13\.1\b/.test(line)),
     ),
     ...providerChecks(root, runner, provider),
     commandCheck(runner, 'github-auth', 'gh', ['auth', 'status'], root),
