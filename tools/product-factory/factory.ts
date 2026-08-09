@@ -1,5 +1,4 @@
-import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type {
@@ -14,7 +13,34 @@ import {
   runAutopilot,
 } from '../autopilot/autopilot.js';
 import { assertAutopilotDoctor } from '../autopilot/doctor.js';
-import { agentRuntimeRoot } from '../agent/lib/runtime.js';
+import {
+  CORRECTION_LANES,
+  FORBIDDEN_CONTROL_PLANE_EXACT,
+  FORBIDDEN_CONTROL_PLANE_PREFIXES,
+  changedPaths,
+  classifyAutonomyFailure,
+  classifyPathLane,
+  computeFailureFingerprint,
+  pathMatchesLane,
+  type AutonomyStateClassification,
+  type CorrectionLaneDefinition,
+  type CorrectionLaneType,
+  type FailureFingerprint,
+  type RecoveryAction,
+} from './recovery-contract.js';
+
+export {
+  CORRECTION_LANES,
+  classifyAutonomyFailure,
+  classifyPathLane,
+  computeFailureFingerprint,
+  pathMatchesLane,
+  type AutonomyStateClassification,
+  type CorrectionLaneDefinition,
+  type CorrectionLaneType,
+  type FailureFingerprint,
+  type RecoveryAction,
+};
 
 const AGENT_TIMEOUT_MS = 2 * 60 * 60_000;
 const CI_WAIT_TIMEOUT_MS = 90 * 60_000;
@@ -25,106 +51,6 @@ const PRODUCT_CORRECTION_PREFIXES = [
   'tests/',
   'docs/operations/',
 ] as const;
-
-export type CorrectionLaneType =
-  | 'PRODUCT_CODE'
-  | 'TEST'
-  | 'DEPENDENCY'
-  | 'MIGRATION'
-  | 'CONFIG'
-  | 'SPECIFICATION'
-  | 'GENERATED_CONTRACT'
-  | 'INFRASTRUCTURE';
-
-export interface CorrectionLaneDefinition {
-  type: CorrectionLaneType;
-  allowedPrefixes: string[];
-  allowedExactFiles?: string[];
-  forbiddenPrefixes: string[];
-  deterministicChecks: string[][];
-}
-
-export const CORRECTION_LANES: Record<CorrectionLaneType, CorrectionLaneDefinition> = {
-  PRODUCT_CODE: {
-    type: 'PRODUCT_CODE',
-    allowedPrefixes: ['apps/', 'packages/'],
-    forbiddenPrefixes: ['tests/', 'docs/spec/', '.github/', 'tools/'],
-    deterministicChecks: [
-      ['build'],
-      ['lint'],
-      ['typecheck'],
-      ['test'],
-      ['architecture:verify'],
-      ['placeholders:scan'],
-      ['prohibited-capabilities:scan'],
-    ],
-  },
-  TEST: {
-    type: 'TEST',
-    allowedPrefixes: ['tests/'],
-    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
-    deterministicChecks: [['lint'], ['typecheck'], ['test'], ['harness:verify']],
-  },
-  DEPENDENCY: {
-    type: 'DEPENDENCY',
-    allowedPrefixes: ['apps/', 'packages/'],
-    allowedExactFiles: ['package.json', 'pnpm-lock.yaml'],
-    forbiddenPrefixes: ['docs/spec/', '.github/', 'tools/'],
-    deterministicChecks: [['install', '--frozen-lockfile'], ['build'], ['typecheck'], ['test']],
-  },
-  MIGRATION: {
-    type: 'MIGRATION',
-    allowedPrefixes: ['drizzle/', 'packages/persistence/src/db/migrations/'],
-    forbiddenPrefixes: ['docs/spec/', 'apps/'],
-    deterministicChecks: [['migration:verify'], ['build'], ['typecheck'], ['test']],
-  },
-  CONFIG: {
-    type: 'CONFIG',
-    allowedPrefixes: ['config/', 'docs/operations/'],
-    forbiddenPrefixes: ['docs/spec/', 'apps/', 'packages/'],
-    deterministicChecks: [['build'], ['lint'], ['typecheck'], ['test'], ['placeholders:scan']],
-  },
-  SPECIFICATION: {
-    type: 'SPECIFICATION',
-    allowedPrefixes: ['docs/spec/', 'docs/adr/', 'tasks/', 'clusters/', 'artifacts/spec/'],
-    forbiddenPrefixes: ['apps/', 'packages/', 'tests/'],
-    deterministicChecks: [['prd:compile'], ['spec:verify'], ['prd:drift-check'], ['requirements:coverage']],
-  },
-  GENERATED_CONTRACT: {
-    type: 'GENERATED_CONTRACT',
-    allowedPrefixes: ['tasks/', 'clusters/', 'artifacts/context/'],
-    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
-    deterministicChecks: [['spec:verify'], ['prd:drift-check']],
-  },
-  INFRASTRUCTURE: {
-    type: 'INFRASTRUCTURE',
-    allowedPrefixes: ['.github/', 'config/', 'docs/operations/'],
-    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/'],
-    deterministicChecks: [['build'], ['lint'], ['typecheck']],
-  },
-};
-
-export const pathMatchesLane = (path: string, laneType: CorrectionLaneType): boolean => {
-  const lane = CORRECTION_LANES[laneType];
-  if (!lane) return false;
-  const isForbidden = lane.forbiddenPrefixes.some((prefix) => path.startsWith(prefix));
-  if (isForbidden) return false;
-  const matchesPrefix = lane.allowedPrefixes.some((prefix) => path.startsWith(prefix));
-  const matchesExact = lane.allowedExactFiles?.includes(path) ?? false;
-  return matchesPrefix || matchesExact;
-};
-
-export const classifyPathLane = (path: string): CorrectionLaneType => {
-  if (path === 'package.json' || path === 'pnpm-lock.yaml' || path.endsWith('/package.json'))
-    return 'DEPENDENCY';
-  if (path.startsWith('drizzle/') || path.includes('/migrations/')) return 'MIGRATION';
-  if (path.startsWith('tests/')) return 'TEST';
-  if (path.startsWith('config/') || path.startsWith('docs/operations/')) return 'CONFIG';
-  if (path.startsWith('docs/spec/') || path.startsWith('docs/adr/')) return 'SPECIFICATION';
-  if (path.startsWith('tasks/') || path.startsWith('clusters/')) return 'GENERATED_CONTRACT';
-  if (path.startsWith('.github/')) return 'INFRASTRUCTURE';
-  return 'PRODUCT_CODE';
-};
 
 const CONVERGENCE_CHECKS = [
   ['build'],
@@ -230,18 +156,16 @@ const executeAgent = (
   requireSuccess(provider.executePayload(workspace, prompt), code);
 };
 
-const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
-  git(runner, cwd, ['status', '--porcelain=v1'])
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => line.slice(3).trim().split(' -> ').at(-1)!)
-    .filter(Boolean)
-    .sort();
-
 export const isProductCorrectionPath = (
   path: string,
   allowedLanes?: CorrectionLaneType[],
 ): boolean => {
+  if (
+    FORBIDDEN_CONTROL_PLANE_PREFIXES.some((prefix) => path.startsWith(prefix)) ||
+    FORBIDDEN_CONTROL_PLANE_EXACT.includes(path)
+  ) {
+    return false;
+  }
   if (allowedLanes && allowedLanes.length > 0) {
     return allowedLanes.some((lane) => pathMatchesLane(path, lane));
   }
@@ -317,9 +241,7 @@ const runLaneDeterministicChecks = (
       const key = args.join(' ');
       if (seen.has(key)) continue;
       seen.add(key);
-      // pnpm install handling is done separately; lane checks that are install are executed as pnpm install --frozen-lockfile via wrapper
-      if (args[0] === 'install') pnpm(runner, root, [...args]);
-      else pnpm(runner, root, [...args]);
+      pnpm(runner, root, [...args]);
     }
   }
 };
@@ -569,187 +491,6 @@ const applyProductCorrection = async (
   git(runner, root, ['merge', '--ff-only', 'origin/main']);
 };
 
-export type AutonomyStateClassification =
-  | 'SUCCESS'
-  | 'AUTO_RECOVERABLE'
-  | 'SAFETY_TERMINAL'
-  | 'EXTERNAL_BLOCKER'
-  | 'AUTONOMY_GAP';
-
-export interface FailureFingerprint {
-  code: string;
-  targetId: string;
-  hash: string;
-}
-
-export const computeFailureFingerprint = (
-  code: string,
-  targetId: string,
-  details: string[] = [],
-): FailureFingerprint => {
-  const normalized = details
-    .map((d) => d.trim())
-    .filter(Boolean)
-    .map((d) => (d.length > 200 ? d.slice(0, 200) : d))
-    .slice(0, 20)
-    .sort();
-  const raw = `${code}:${targetId}:${normalized.join('|')}`;
-  const digest = createHash('sha256').update(raw).digest('hex').slice(0, 16);
-  return { code, targetId, hash: `${code}:${targetId}:${digest}` };
-};
-
-export const classifyAutonomyFailure = (code: string): AutonomyStateClassification => {
-  if (code.startsWith('AUTOPILOT_COMPLETE') || code.startsWith('PRODUCT_FACTORY_COMPLETE')) {
-    return 'SUCCESS';
-  }
-  if (
-    code.includes('NO_HEADLESS_EXECUTOR') ||
-    code.includes('AUTONOMOUS_MERGE_DISABLED') ||
-    code.includes('PROHIBITED_CAPABILITY') ||
-    code.includes('SECRET_EXPOSURE') ||
-    code.includes('SPECIFICATION_DRIFT')
-  ) {
-    return 'SAFETY_TERMINAL';
-  }
-  if (
-    code.includes('GITHUB_FAILED') ||
-    code.includes('PR_CLOSED') ||
-    code.includes('CI_TIMEOUT') ||
-    code.includes('FINAL_MAIN_CI_FAILED')
-  ) {
-    return 'EXTERNAL_BLOCKER';
-  }
-  if (
-    code.includes('CORRECTION_SCOPE') ||
-    code.includes('CONVERGENCE_AUDIT_SCOPE') ||
-    code.includes('CONVERGENCE_REPORT_INVALID')
-  ) {
-    return 'AUTONOMY_GAP';
-  }
-  return 'AUTO_RECOVERABLE';
-};
-
-export type RecoveryAction =
-  | 'REPAIR'
-  | 'SPLIT_TASK'
-  | 'REPLAN'
-  | 'REGENERATE_DERIVED_TASKS'
-  | 'REOPEN_CORRECTION'
-  | 'RETRY_INFRASTRUCTURE'
-  | 'SAFETY_TERMINAL'
-  | 'EXTERNAL_BLOCKER';
-
-export interface RecoveryRecord {
-  fingerprint: string;
-  attempts: number;
-  lastCommit: string;
-  lastDiagnosis: string;
-  strategies: RecoveryAction[];
-  updatedAt: string;
-}
-
-export interface ProductFactoryRecoveryState {
-  schemaVersion: '1.0.0';
-  records: Record<string, RecoveryRecord>;
-}
-
-const RECOVERY_STATE_FILE = 'product-factory-recovery.json';
-const MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT = 3;
-
-const recoveryStatePath = (root: string, runner: CommandRunner): string =>
-  join(agentRuntimeRoot(root, runner), RECOVERY_STATE_FILE);
-
-export const readRecoveryState = async (
-  root: string,
-  runner: CommandRunner,
-): Promise<ProductFactoryRecoveryState> => {
-  try {
-    const raw = await readFile(recoveryStatePath(root, runner), 'utf8');
-    const parsed = JSON.parse(raw) as ProductFactoryRecoveryState;
-    if (parsed.schemaVersion !== '1.0.0' || !parsed.records) throw new Error('invalid');
-    return parsed;
-  } catch {
-    return { schemaVersion: '1.0.0', records: {} };
-  }
-};
-
-export const writeRecoveryState = async (
-  root: string,
-  runner: CommandRunner,
-  state: ProductFactoryRecoveryState,
-): Promise<void> => {
-  await mkdir(agentRuntimeRoot(root, runner), { recursive: true });
-  const tmp = `${recoveryStatePath(root, runner)}.tmp`;
-  await writeFile(tmp, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
-  // atomic rename via mv; use write then rename
-  await writeFile(recoveryStatePath(root, runner), `${JSON.stringify(state, null, 2)}\n`, {
-    mode: 0o600,
-  });
-};
-
-export const chooseRecoveryAction = (
-  fingerprint: FailureFingerprint,
-  classification: AutonomyStateClassification,
-  record: RecoveryRecord | undefined,
-): RecoveryAction => {
-  if (classification === 'SAFETY_TERMINAL') return 'SAFETY_TERMINAL';
-  if (classification === 'EXTERNAL_BLOCKER') return 'RETRY_INFRASTRUCTURE';
-  if (classification === 'AUTONOMY_GAP') return 'SAFETY_TERMINAL';
-  const attempts = record?.attempts ?? 0;
-  if (attempts >= MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT) return 'SAFETY_TERMINAL';
-  // deterministic selection based on code and attempts
-  if (fingerprint.code.includes('CONVERGENCE_LIMIT')) {
-    if (attempts === 0) return 'REOPEN_CORRECTION';
-    if (attempts === 1) return 'REPLAN';
-    return 'SPLIT_TASK';
-  }
-  if (fingerprint.code.includes('CORRECTION_CI_LIMIT')) return 'REPAIR';
-  if (fingerprint.code.includes('CORRECTION_LIMIT')) return 'REPLAN';
-  if (attempts === 0) return 'REPAIR';
-  if (attempts === 1) return 'REPLAN';
-  return 'SPLIT_TASK';
-};
-
-export const recordRecoveryAttempt = async (
-  root: string,
-  runner: CommandRunner,
-  fingerprint: FailureFingerprint,
-  commit: string,
-  diagnosis: string,
-  action: RecoveryAction,
-): Promise<RecoveryRecord> => {
-  const state = await readRecoveryState(root, runner);
-  const existing = state.records[fingerprint.hash];
-  const updated: RecoveryRecord = {
-    fingerprint: fingerprint.hash,
-    attempts: (existing?.attempts ?? 0) + 1,
-    lastCommit: commit,
-    lastDiagnosis: diagnosis,
-    strategies: [...(existing?.strategies ?? []), action],
-    updatedAt: new Date().toISOString(),
-  };
-  state.records[fingerprint.hash] = updated;
-  await writeRecoveryState(root, runner, state);
-  return updated;
-};
-
-export const diagnoseWithFreshContext = async (
-  root: string,
-  runner: CommandRunner,
-  provider: AgentProvider,
-  fingerprint: FailureFingerprint,
-  commit: string,
-): Promise<string> => {
-  const workspace = await createDetachedWorktree(root, runner, 'recovery-diagnosis', commit);
-  try {
-    // Fresh-context diagnosis prompt is constructed for isolation; deterministic action is chosen via chooseRecoveryAction
-    void `You are fresh-context diagnosis for failure fingerprint ${fingerprint.hash} (code ${fingerprint.code}, target ${fingerprint.targetId}) at commit ${commit}. Read immutable PRD, requirements, ADRs, task/cluster contracts, and recent convergence evidence. Determine the narrowest safe recovery action among REPAIR, SPLIT_TASK, REPLAN, REGENERATE_DERIVED_TASKS, REOPEN_CORRECTION, RETRY_INFRASTRUCTURE, SAFETY_TERMINAL, EXTERNAL_BLOCKER. Do not modify any files. Return a single JSON object {"action":"...","reason":"..."} and stop.`;
-    return JSON.stringify({ action: 'diagnosed', fingerprint: fingerprint.hash, commit });
-  } finally {
-    await removeWorktree(root, runner, workspace);
-  }
-};
-
 export const runProductFactory = async (
   root: string,
   runner: CommandRunner,
@@ -766,85 +507,29 @@ export const runProductFactory = async (
     maxCorrectionRounds > MAX_PRODUCT_CORRECTION_ROUNDS
   )
     throw new Error('PRODUCT_FACTORY_CORRECTION_LIMIT_INVALID');
+
   await assertAutopilotDoctor(root, runner, providerId);
 
-  const outerMaxRecovery = 3;
-  let outerRecoveryAttempts = 0;
-
-  const extractDetails = (error: unknown, report?: ProductConvergenceReport): string[] => {
-    if (report) return report.gaps.flatMap((g) => g.requirementIds).sort();
-    const msg = error instanceof Error ? error.message : String(error);
-    const after = msg.includes(':') ? msg.split(':').slice(1).join(':') : msg;
-    return after
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .slice(0, 20);
-  };
-
-  while (outerRecoveryAttempts <= outerMaxRecovery) {
-    try {
-      for (let round = 0; round <= maxCorrectionRounds; round += 1) {
-        const autopilot = await runAutopilot(root, runner, { providerId });
-        if (autopilot !== 'AUTOPILOT_COMPLETE')
-          throw new Error(`PRODUCT_FACTORY_AUTOPILOT_INCOMPLETE:${autopilot}`);
-        runDeterministicConvergenceChecks(root, runner);
-        const report = await auditProduct(root, runner, provider);
-        if (report.status === 'PASS') return 'PRODUCT_FACTORY_COMPLETE';
-        if (round >= maxCorrectionRounds) {
-          throw new Error(
-            `PRODUCT_FACTORY_CONVERGENCE_LIMIT:${report.gaps.map((gap) => gap.requirementIds.join('+')).join(',')}`,
-          );
-        }
-        await applyProductCorrection(
-          root,
-          runner,
-          provider,
-          report,
-          round + 1,
-          pollMilliseconds,
-        );
-      }
-      throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
-    } catch (error) {
-      const rawCode = error instanceof Error ? error.message : String(error);
-      const classification = classifyAutonomyFailure(rawCode);
-      if (classification !== 'AUTO_RECOVERABLE') throw error;
-      let commit = 'unknown';
-      try {
-        commit = git(runner, root, ['rev-parse', 'HEAD']);
-      } catch {
-        commit = 'unknown';
-      }
-      const baseCode = rawCode.split(':')[0] ?? rawCode;
-      const details = extractDetails(error);
-      const fingerprint = computeFailureFingerprint(baseCode, commit, details);
-      const state = await readRecoveryState(root, runner);
-      const existing = state.records[fingerprint.hash];
-      if (existing && existing.attempts >= MAX_RECOVERY_ATTEMPTS_PER_FINGERPRINT) {
-        throw new Error(`PRODUCT_FACTORY_RECOVERY_LIMIT:${fingerprint.hash}`);
-      }
-      if (
-        existing &&
-        existing.lastCommit === commit &&
-        existing.attempts > 0 &&
-        outerRecoveryAttempts > 0
-      ) {
-        if (existing.attempts >= 2) {
-          throw new Error(`PRODUCT_FACTORY_RECOVERY_STALLED:${fingerprint.hash}`);
-        }
-      }
-      const diagnosis = await diagnoseWithFreshContext(root, runner, provider, fingerprint, commit);
-      const action = chooseRecoveryAction(fingerprint, classification, existing);
-      if (action === 'SAFETY_TERMINAL' || action === 'EXTERNAL_BLOCKER') throw error;
-      await recordRecoveryAttempt(root, runner, fingerprint, commit, diagnosis, action);
-      const verify = await readRecoveryState(root, runner);
-      if (!verify.records[fingerprint.hash]) throw new Error('PRODUCT_FACTORY_RECOVERY_STATE_CORRUPT');
-      outerRecoveryAttempts += 1;
-      if (outerRecoveryAttempts > outerMaxRecovery) throw error;
-      if (action === 'RETRY_INFRASTRUCTURE') await sleep(2_000);
-      continue;
+  for (let round = 0; round <= maxCorrectionRounds; round += 1) {
+    const autopilot = await runAutopilot(root, runner, { providerId });
+    if (autopilot !== 'AUTOPILOT_COMPLETE')
+      throw new Error(`PRODUCT_FACTORY_AUTOPILOT_INCOMPLETE:${autopilot}`);
+    runDeterministicConvergenceChecks(root, runner);
+    const report = await auditProduct(root, runner, provider);
+    if (report.status === 'PASS') return 'PRODUCT_FACTORY_COMPLETE';
+    if (round >= maxCorrectionRounds) {
+      throw new Error(
+        `PRODUCT_FACTORY_CONVERGENCE_LIMIT:${report.gaps.map((gap) => gap.requirementIds.join('+')).join(',')}`,
+      );
     }
+    await applyProductCorrection(
+      root,
+      runner,
+      provider,
+      report,
+      round + 1,
+      pollMilliseconds,
+    );
   }
   throw new Error('PRODUCT_FACTORY_CONVERGENCE_LIMIT');
 };

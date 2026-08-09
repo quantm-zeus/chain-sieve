@@ -15,8 +15,10 @@ import {
   parseSupervisorRecoveryDiagnosis,
   readSupervisorRecoveryState,
   recoveryLanesForAction,
+  runSupervisedProductFactory,
   writeSupervisorRecoveryState,
 } from '../../tools/product-factory/recovery-supervisor.js';
+import { computeFailureFingerprint } from '../../tools/product-factory/recovery-contract.js';
 
 const ok = (stdout = ''): CommandResult => ({
   status: 0,
@@ -28,8 +30,20 @@ class RuntimeRunner implements CommandRunner {
   constructor(private readonly root: string) {}
 
   run(command: string, args: string[], _options?: CommandOptions): CommandResult {
+    const key = `${command} ${args.join(' ')}`;
+    if (command === 'which') return ok('/usr/bin/muse\n');
+    if (key === 'git branch --show-current') return ok('main\n');
+    if (key === 'node --version') return ok('v22.23.1\n');
+    if (key === 'pnpm --version') return ok('10.13.1\n');
+    if (key === 'muse --version') return ok('muse-code beta\n');
+    if (key === 'muse --help') return ok('Muse Code help\n');
+    if (key.startsWith('gh api repos/')) return ok('true\n');
+    if (command === 'pnpm' && args[0] === 'autopilot' && args.length === 1) {
+      return { status: 1, stdout: '', stderr: 'RELEASE_BASELINE_NOT_FOUND' };
+    }
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
+    if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
     if (args[0] === 'worktree' && args[1] === 'add') {
       const workspace = args[3];
       if (!workspace) return { status: 1, stdout: '', stderr: 'workspace missing' };
@@ -128,7 +142,7 @@ describe('product factory recovery supervisor diagnosis', () => {
   });
 });
 
-describe('product factory recovery supervisor policy', () => {
+describe('product factory recovery supervisor policy & authority (Requirements D, E)', () => {
   it('retries transient infrastructure failures but fails closed for permanent blockers', () => {
     expect(isTransientExternalBlocker('PRODUCT_FACTORY_GITHUB_FAILED:temporary 502')).toBe(true);
     expect(isTransientExternalBlocker('PRODUCT_FACTORY_CI_TIMEOUT:https://example.test')).toBe(true);
@@ -136,7 +150,7 @@ describe('product factory recovery supervisor policy', () => {
     expect(isTransientExternalBlocker('GITHUB_AUTH_FAILED')).toBe(false);
   });
 
-  it('narrows requested lanes to the authority of each recovery action', () => {
+  it('narrows requested lanes to the authority of each recovery action and strips forbidden lanes (Requirement E)', () => {
     expect(
       recoveryLanesForAction('REPAIR', [
         'PRODUCT_CODE',
@@ -152,7 +166,7 @@ describe('product factory recovery supervisor policy', () => {
   });
 });
 
-describe('product factory recovery supervisor durable state', () => {
+describe('product factory recovery supervisor durable state & attempt bounds (Requirements G, H)', () => {
   it('atomically replaces durable recovery state and leaves no temp file behind', async () => {
     const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-state-'));
     mkdirSync(join(root, '.git'), { recursive: true });
@@ -184,6 +198,45 @@ describe('product factory recovery supervisor durable state', () => {
       ).toBe('1.0.0');
     } finally {
       await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('bounces same fingerprint when max attempts are reached without invoking model (Requirement H)', async () => {
+    const root = process.cwd();
+    const commit = 'ab68083ee116665c40e804447fa2e0cd87be1ccf';
+    const runner = new RuntimeRunner(root);
+    const fp = computeFailureFingerprint(
+      'RELEASE_BASELINE_NOT_FOUND',
+      commit,
+      ['RELEASE_BASELINE_NOT_FOUND'],
+    );
+    const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+    const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+    process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
+    process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
+    try {
+      await writeSupervisorRecoveryState(root, runner, {
+        schemaVersion: '1.0.0',
+        records: {
+          [fp.hash]: {
+            fingerprint: fp.hash,
+            attempts: 3,
+            lastCommit: commit,
+            lastAction: 'REPAIR',
+            lastReason: 'already attempted 3 times',
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      await expect(
+        runSupervisedProductFactory(root, runner, { providerId: 'muse' }),
+      ).rejects.toThrow('PRODUCT_FACTORY_SUPERVISOR_RECOVERY_LIMIT');
+    } finally {
+      if (oldEnvArgs === undefined) delete process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+      else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
+      if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+      else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
     }
   });
 });
