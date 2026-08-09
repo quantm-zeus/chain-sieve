@@ -98,8 +98,7 @@ export const selectMaintenanceProvider = (
   if (
     detection.available &&
     detection.mechanism === 'command' &&
-    detection.command &&
-    antigravity.executePayload
+    detection.command
   )
     return antigravity;
   return semanticProvider;
