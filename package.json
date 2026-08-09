@@ -55,6 +55,7 @@
     "merge-queue:process": "tsx tools/merge-queue/cli.ts process",
     "agent": "tsx tools/agent/orchestrator.ts",
     "agent:status": "tsx tools/agent/status.ts",
+    "product:status": "tsx tools/agent/status.ts --watch",
     "agent:renew": "tsx tools/agent/lifecycle.ts renew",
     "agent:recover": "tsx tools/agent/lifecycle.ts recover",
     "autopilot": "tsx tools/autopilot/cli.ts",
