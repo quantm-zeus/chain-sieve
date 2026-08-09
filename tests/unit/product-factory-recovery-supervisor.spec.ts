@@ -15,6 +15,7 @@ import {
   parseSupervisorRecoveryDiagnosis,
   readSupervisorRecoveryState,
   recoveryLanesForAction,
+  runSupervisedProductFactory,
   writeSupervisorRecoveryState,
 } from '../../tools/product-factory/recovery-supervisor.js';
 
@@ -30,6 +31,7 @@ class RuntimeRunner implements CommandRunner {
   run(command: string, args: string[], _options?: CommandOptions): CommandResult {
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
+    if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
     if (args[0] === 'worktree' && args[1] === 'add') {
       const workspace = args[3];
       if (!workspace) return { status: 1, stdout: '', stderr: 'workspace missing' };
@@ -128,7 +130,7 @@ describe('product factory recovery supervisor diagnosis', () => {
   });
 });
 
-describe('product factory recovery supervisor policy', () => {
+describe('product factory recovery supervisor policy & authority (Requirements D, E)', () => {
   it('retries transient infrastructure failures but fails closed for permanent blockers', () => {
     expect(isTransientExternalBlocker('PRODUCT_FACTORY_GITHUB_FAILED:temporary 502')).toBe(true);
     expect(isTransientExternalBlocker('PRODUCT_FACTORY_CI_TIMEOUT:https://example.test')).toBe(true);
@@ -136,7 +138,7 @@ describe('product factory recovery supervisor policy', () => {
     expect(isTransientExternalBlocker('GITHUB_AUTH_FAILED')).toBe(false);
   });
 
-  it('narrows requested lanes to the authority of each recovery action', () => {
+  it('narrows requested lanes to the authority of each recovery action and strips forbidden lanes (Requirement E)', () => {
     expect(
       recoveryLanesForAction('REPAIR', [
         'PRODUCT_CODE',
@@ -152,7 +154,7 @@ describe('product factory recovery supervisor policy', () => {
   });
 });
 
-describe('product factory recovery supervisor durable state', () => {
+describe('product factory recovery supervisor durable state & attempt bounds (Requirements G, H)', () => {
   it('atomically replaces durable recovery state and leaves no temp file behind', async () => {
     const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-state-'));
     mkdirSync(join(root, '.git'), { recursive: true });
@@ -182,6 +184,35 @@ describe('product factory recovery supervisor durable state', () => {
           await readFile(join(runtime, 'product-factory-supervisor-recovery.json'), 'utf8'),
         ).schemaVersion,
       ).toBe('1.0.0');
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('bounces same fingerprint when max attempts are reached without invoking model (Requirement H)', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-bounds-'));
+    mkdirSync(join(root, '.git'), { recursive: true });
+    const runner = new RuntimeRunner(root);
+    const fpHash = 'AUTOPILOT_CORRECTION_LIMIT:ab68083ee116665c40e804447fa2e0cd87be1ccf:1234567890abcdef';
+    try {
+      await writeSupervisorRecoveryState(root, runner, {
+        schemaVersion: '1.0.0',
+        records: {
+          [fpHash]: {
+            fingerprint: fpHash,
+            attempts: 3,
+            lastCommit: 'ab68083ee116665c40e804447fa2e0cd87be1ccf',
+            lastAction: 'REPAIR',
+            lastReason: 'already attempted 3 times',
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      // Attempting runSupervisedProductFactory with same failing fingerprint must throw limit immediately
+      await expect(
+        runSupervisedProductFactory(root, runner, { providerId: 'muse' }),
+      ).rejects.toThrow('PRODUCT_FACTORY_SUPERVISOR_RECOVERY_LIMIT');
     } finally {
       await rm(root, { recursive: true, force: true });
     }

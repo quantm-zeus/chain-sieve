@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { CommandOptions, CommandResult, CommandRunner } from '../../tools/agent/lib/types.js';
 import {
   classifyAutonomyFailure,
   classifyGapLanes,
@@ -7,7 +8,15 @@ import {
   isProductCorrectionPath,
   parseConvergenceReport,
   pathMatchesLane,
+  runProductFactory,
 } from '../../tools/product-factory/factory.js';
+import { parsePorcelainLine } from '../../tools/product-factory/recovery-contract.js';
+
+const ok = (stdout = ''): CommandResult => ({
+  status: 0,
+  stdout,
+  stderr: '',
+});
 
 describe('product factory convergence contract', () => {
   it('accepts a commit-bound PASS report with no gaps', () => {
@@ -96,7 +105,7 @@ describe('product factory convergence contract', () => {
   });
 });
 
-describe('product factory correction scope', () => {
+describe('product factory correction scope and control plane safety', () => {
   it('allows product, tests, and operational docs only', () => {
     expect(isProductCorrectionPath('apps/api/src/index.ts')).toBe(true);
     expect(isProductCorrectionPath('packages/domain/src/model.ts')).toBe(true);
@@ -104,10 +113,11 @@ describe('product factory correction scope', () => {
     expect(isProductCorrectionPath('docs/operations/runbook.md')).toBe(true);
   });
 
-  it('rejects normative and control-plane paths', () => {
+  it('rejects normative and control-plane paths including tools/** and config/autonomy-policy.json', () => {
     expect(isProductCorrectionPath('docs/spec/requirements.json')).toBe(false);
     expect(isProductCorrectionPath('tasks/G1/T-1.contract.json')).toBe(false);
     expect(isProductCorrectionPath('tools/autopilot/autopilot.ts')).toBe(false);
+    expect(isProductCorrectionPath('tools/product-factory/factory.ts')).toBe(false);
     expect(isProductCorrectionPath('.github/workflows/ci.yml')).toBe(false);
     expect(isProductCorrectionPath('config/autonomy-policy.json')).toBe(false);
     expect(isProductCorrectionPath('package.json')).toBe(false);
@@ -132,6 +142,8 @@ describe('typed correction lanes and failure classification', () => {
     expect(pathMatchesLane('docs/spec/requirements.json', 'DEPENDENCY')).toBe(false);
     expect(pathMatchesLane('drizzle/0001_init.sql', 'MIGRATION')).toBe(true);
     expect(pathMatchesLane('apps/api/src/index.ts', 'MIGRATION')).toBe(false);
+    expect(pathMatchesLane('tools/product-factory/factory.ts', 'PRODUCT_CODE')).toBe(false);
+    expect(pathMatchesLane('config/autonomy-policy.json', 'CONFIG')).toBe(false);
   });
 
   it('classifies gap suggested paths into allowed lanes', () => {
@@ -156,5 +168,33 @@ describe('typed correction lanes and failure classification', () => {
     expect(classifyAutonomyFailure('AUTONOMOUS_MERGE_DISABLED')).toBe('SAFETY_TERMINAL');
     expect(classifyAutonomyFailure('PRODUCT_FACTORY_CI_TIMEOUT:https://github.com/...')).toBe('EXTERNAL_BLOCKER');
     expect(classifyAutonomyFailure('PRODUCT_FACTORY_CORRECTION_SCOPE:invalid/path')).toBe('AUTONOMY_GAP');
+  });
+});
+
+describe('porcelain path parsing (Requirement F)', () => {
+  it('exact extraction for tracked, staged, untracked, added, and renamed records without slicing errors', () => {
+    expect(parsePorcelainLine(' M tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine('M  tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine('?? tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine('A  tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine('R  old.ts -> tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine(' "tools/product-factory/factory.ts"')).toBe('tools/product-factory/factory.ts');
+  });
+});
+
+describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)', () => {
+  class FailingRunner implements CommandRunner {
+    run(command: string, args: string[], _options?: CommandOptions): CommandResult {
+      if (command === 'git' && args[0] === 'status') return ok();
+      if (command === 'git' && args[0] === 'rev-parse') return ok('deadbeef\n');
+      if (command === 'pnpm' && args.includes('autopilot:doctor')) return ok();
+      if (command === 'pnpm' && args.includes('autopilot')) return { status: 1, stdout: '', stderr: 'AUTOPILOT_CORRECTION_LIMIT:T-1:3' };
+      return ok();
+    }
+  }
+
+  it('runProductFactory throws failures directly upward without catching or diagnosing internally', async () => {
+    const runner = new FailingRunner();
+    await expect(runProductFactory('/dummy', runner, { providerId: 'muse' })).rejects.toThrow('PRODUCT_FACTORY_CHECK_FAILED');
   });
 });

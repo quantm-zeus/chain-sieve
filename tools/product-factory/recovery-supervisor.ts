@@ -10,17 +10,17 @@ import type {
 } from '../agent/lib/types.js';
 import { createProvider } from '../agent/providers/index.js';
 import { loadAutonomyPolicy } from '../autopilot/policy.js';
+import { runProductFactory, type ProductFactoryOptions } from './factory.js';
 import {
   CORRECTION_LANES,
+  changedPaths,
   classifyAutonomyFailure,
   computeFailureFingerprint,
   pathMatchesLane,
-  runProductFactory,
   type CorrectionLaneType,
   type FailureFingerprint,
-  type ProductFactoryOptions,
   type RecoveryAction,
-} from './factory.js';
+} from './recovery-contract.js';
 
 const AGENT_TIMEOUT_MS = 2 * 60 * 60_000;
 const CI_WAIT_TIMEOUT_MS = 90 * 60_000;
@@ -131,14 +131,6 @@ const executeAgent = (
   if (!provider.executePayload) throw new Error(`${code}:NO_HEADLESS_EXECUTOR`);
   requireSuccess(provider.executePayload(workspace, prompt), code);
 };
-
-const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
-  git(runner, cwd, ['status', '--porcelain=v1'])
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => line.slice(3).trim().split(' -> ').at(-1)!)
-    .filter(Boolean)
-    .sort();
 
 const createDetachedWorktree = async (
   root: string,
