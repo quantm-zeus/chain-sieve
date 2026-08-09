@@ -15,6 +15,10 @@ import {
   resolveMuseCommand,
 } from '../../tools/agent/providers/muse.js';
 import {
+  classifyAgentWork,
+  shouldRouteMusePayloadToMaintenance,
+} from '../../tools/agent/providers/routing.js';
+import {
   createProvider,
   parseProvider,
 } from '../../tools/agent/providers/index.js';
@@ -38,6 +42,20 @@ class Runner implements CommandRunner {
       return { status: 0, stdout: `${args[0]}\n`, stderr: '' };
     }
     return { status: 0, stdout: '', stderr: '' };
+  }
+}
+
+class NoAntigravityRunner extends Runner {
+  override run(
+    command: string,
+    args: string[],
+    options: CommandOptions = {},
+  ): CommandResult {
+    if (command === 'which' && args[0] === 'agy') {
+      this.calls.push({ command, args, options });
+      return { status: 1, stdout: '', stderr: 'not found' };
+    }
+    return super.run(command, args, options);
   }
 }
 
@@ -147,7 +165,7 @@ describe('Muse Code provider', () => {
     expect(launch.command).toBe('/custom/bin/muse');
   });
 
-  it('runs headlessly in the task workspace after one-time permission setup', () => {
+  it('runs semantic task payloads through Muse', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
@@ -174,5 +192,86 @@ describe('Muse Code provider', () => {
       streamOutput: true,
     });
   });
+
+  it('keeps provider-bound cluster CI repair on Muse', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    const payload =
+      'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.';
+    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
+    expect(runner.calls.at(-1)!.command).toBe('muse');
+  });
+
+  it('routes recovery PR CI repair to Antigravity when agy is available', () => {
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    const payload =
+      'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.';
+    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
+    const launch = runner.calls.at(-1)!;
+    expect(launch.command).toBe('agy');
+    expect(launch.args).toContain('--mode=accept-edits');
+    expect(launch.args).toContain(payload);
+  });
+
+  it('routes mechanical recovery diagnosis to Antigravity but keeps convergence diagnosis on Muse', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    const mechanical =
+      'You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: PRODUCT_FACTORY_CHECK_FAILED:test:ENOTDIR .git/ciag-runtime. Fingerprint: fp. Frozen commit: abc.';
+    provider.executePayload('/tmp/worktree', mechanical);
+    expect(runner.calls.at(-1)!.command).toBe('agy');
+
+    const semantic =
+      'You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: PRODUCT_FACTORY_CONVERGENCE_LIMIT:REQ-1. Fingerprint: fp2. Frozen commit: abc.';
+    provider.executePayload('/tmp/worktree', semantic);
+    expect(runner.calls.at(-1)!.command).toBe('muse');
+  });
+
+  it('falls back to Muse for maintenance work when agy is unavailable', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    const runner = new NoAntigravityRunner();
+    const provider = new MuseProvider(runner);
+    provider.executePayload(
+      '/tmp/worktree',
+      'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.',
+    );
+    expect(runner.calls.at(-1)!.command).toBe('muse');
+  });
 });
 
+describe('hybrid agent routing policy', () => {
+  it('classifies deterministic tooling failures as maintenance and semantic convergence as Muse work', () => {
+    expect(classifyAgentWork('PRODUCT_FACTORY_CHECK_FAILED:test:ENOTDIR')).toBe(
+      'MAINTENANCE',
+    );
+    expect(classifyAgentWork('AUTOPILOT_CI_FAILED:Tier 0')).toBe('MAINTENANCE');
+    expect(classifyAgentWork('PRODUCT_FACTORY_CONVERGENCE_LIMIT:REQ-42')).toBe(
+      'SEMANTIC',
+    );
+  });
+
+  it('does not route ordinary implementation, independent review, or provider-bound cluster CI prompts away from Muse', () => {
+    expect(shouldRouteMusePayloadToMaintenance('Implement task T-1 from its immutable contract.')).toBe(
+      false,
+    );
+    expect(
+      shouldRouteMusePayloadToMaintenance(
+        'Independent review session 1. Review frozen product commit and return PASS or FAIL.',
+      ),
+    ).toBe(false);
+    expect(
+      shouldRouteMusePayloadToMaintenance(
+        'You are isolated CI repair session session-1. Inspect failed checks.',
+      ),
+    ).toBe(false);
+  });
+});
