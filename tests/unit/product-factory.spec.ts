@@ -195,7 +195,9 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
       if (key === 'muse --help') return ok('Muse Code help\n');
       if (key.startsWith('gh api repos/')) return ok('true\n');
       if (command === 'git' && args[0] === 'rev-parse') return ok('deadbeef\n');
-      if (command === 'pnpm' && args.includes('autopilot')) return { status: 1, stdout: '', stderr: 'AUTOPILOT_CORRECTION_LIMIT:T-1:3' };
+      if (command === 'pnpm' && args[0] === 'autopilot' && args.length === 1) {
+        return { status: 1, stdout: '', stderr: 'PRODUCT_FACTORY_CHECK_FAILED:autopilot' };
+      }
       return ok();
     }
   }

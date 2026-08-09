@@ -10,7 +10,6 @@ import type {
   CommandRunner,
 } from '../../tools/agent/lib/types.js';
 import {
-  computeFailureFingerprint,
   diagnoseSupervisorRecovery,
   isTransientExternalBlocker,
   parseSupervisorRecoveryDiagnosis,
@@ -19,6 +18,7 @@ import {
   runSupervisedProductFactory,
   writeSupervisorRecoveryState,
 } from '../../tools/product-factory/recovery-supervisor.js';
+import { computeFailureFingerprint } from '../../tools/product-factory/recovery-contract.js';
 
 const ok = (stdout = ''): CommandResult => ({
   status: 0,
@@ -38,7 +38,9 @@ class RuntimeRunner implements CommandRunner {
     if (key === 'muse --version') return ok('muse-code beta\n');
     if (key === 'muse --help') return ok('Muse Code help\n');
     if (key.startsWith('gh api repos/')) return ok('true\n');
-    if (key.startsWith('pnpm --silent autopilot')) return { status: 1, stdout: '', stderr: 'PRODUCT_FACTORY_CHECK_FAILED:autopilot' };
+    if (command === 'pnpm' && args[0] === 'autopilot' && args.length === 1) {
+      return { status: 1, stdout: '', stderr: 'PRODUCT_FACTORY_CHECK_FAILED:autopilot' };
+    }
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
     if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
