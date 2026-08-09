@@ -99,6 +99,18 @@ const supervisorConfig = (call: Runner['calls'][number]) =>
     hardTimeoutMilliseconds?: number;
   };
 
+const supervisedLaunch = (runner: Runner): Runner['calls'][number] => {
+  const launch = [...runner.calls]
+    .reverse()
+    .find(
+      (call) =>
+        call.command === process.execPath &&
+        call.args[0]?.includes('muse-supervisor.mjs'),
+    );
+  if (!launch) throw new Error('TEST_MUSE_SUPERVISOR_LAUNCH_MISSING');
+  return launch;
+};
+
 const originalCommand = process.env[MUSE_COMMAND_ENV];
 const originalArgs = process.env[MUSE_ARGS_ENV];
 const originalPermission = process.env[MUSE_PERMISSION_ENV];
@@ -191,9 +203,7 @@ describe('Muse Code provider', () => {
     expect(provider.executePayload('/tmp/worktree', 'test goal')).toMatchObject({
       status: 0,
     });
-    const launch = runner.calls.at(-1)!;
-    expect(launch.command).toBe(process.execPath);
-    expect(launch.args[0]).toContain('muse-supervisor.mjs');
+    const launch = supervisedLaunch(runner);
     expect(supervisorConfig(launch).command).toBe('/custom/bin/muse');
   });
 
@@ -214,9 +224,8 @@ describe('Muse Code provider', () => {
     expect(provider.executePayload(taskBinding.taskWorkspace, payload)).toMatchObject({
       status: 0,
     });
-    const launch = runner.calls.at(-1)!;
+    const launch = supervisedLaunch(runner);
     const config = supervisorConfig(launch);
-    expect(launch.command).toBe(process.execPath);
     expect(config.command).toBe('muse');
     expect(config.args).toContain('--headless');
     expect(config.args).toContain('--approve-all');
@@ -240,9 +249,7 @@ describe('Muse Code provider', () => {
     const payload =
       'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.';
     expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
-    const launch = runner.calls.at(-1)!;
-    expect(launch.command).toBe(process.execPath);
-    expect(supervisorConfig(launch).command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
   });
 
   it('routes recovery PR CI repair to Antigravity when agy is available', () => {
@@ -271,8 +278,7 @@ describe('Muse Code provider', () => {
     const semantic =
       'You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: PRODUCT_FACTORY_CONVERGENCE_LIMIT:REQ-1. Fingerprint: fp2. Frozen commit: abc.';
     provider.executePayload('/tmp/worktree', semantic);
-    expect(runner.calls.at(-1)!.command).toBe(process.execPath);
-    expect(supervisorConfig(runner.calls.at(-1)!).command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
   });
 
   it('falls back to supervised Muse for maintenance work when agy is unavailable', () => {
@@ -285,8 +291,7 @@ describe('Muse Code provider', () => {
       '/tmp/worktree',
       'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.',
     );
-    expect(runner.calls.at(-1)!.command).toBe(process.execPath);
-    expect(supervisorConfig(runner.calls.at(-1)!).command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
   });
 });
 
