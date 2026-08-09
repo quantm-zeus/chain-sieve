@@ -27,35 +27,75 @@ const provider = (): AgentProviderId => {
   return selected;
 };
 
-const MAX_MAINTENANCE_RESUMES_PER_PROCESS = 12;
+const MAX_MAINTENANCE_GENERATIONS = 12;
+const MAINTENANCE_GENERATION_ENV = 'CHAINSIEVE_MAINTENANCE_GENERATION';
+const CHILD_TIMEOUT_MS = 7 * 24 * 60 * 60_000;
+
+const maintenanceGeneration = (): number => {
+  const raw = process.env[MAINTENANCE_GENERATION_ENV]?.trim() ?? '0';
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 0)
+    throw new Error(`PRODUCT_FACTORY_MAINTENANCE_GENERATION_INVALID:${raw}`);
+  return parsed;
+};
 
 try {
   const runner = new SystemCommandRunner();
   const root = value('--root') ?? findRepositoryRoot();
   const providerId = provider();
+  const maxProductCorrections = value('--max-product-corrections');
   const options = {
     providerId,
-    ...(value('--max-product-corrections')
-      ? { maxCorrectionRounds: Number(value('--max-product-corrections')) }
+    ...(maxProductCorrections
+      ? { maxCorrectionRounds: Number(maxProductCorrections) }
       : {}),
   };
 
-  for (let maintenanceResume = 0; ; maintenanceResume += 1) {
-    try {
-      const result = await runSupervisedProductFactory(root, runner, options);
-      console.log(result);
-      break;
-    } catch (error) {
-      const failure = normalizeMaintenanceFailure(error);
-      if (!isAutonomousMaintenanceEligible(failure)) throw error;
-      if (maintenanceResume >= MAX_MAINTENANCE_RESUMES_PER_PROCESS)
-        throw new Error(
-          `PRODUCT_FACTORY_MAINTENANCE_GLOBAL_LIMIT:${maintenanceResume}:${failure}`,
-        );
-      console.error(`CHAINSIEVE_AUTO_MAINTENANCE_TRIGGER:${failure}`);
-      await runAutonomousMaintenance(root, runner, failure, { providerId });
-      console.log('CHAINSIEVE_AUTO_MAINTENANCE_RESUME');
-    }
+  try {
+    const result = await runSupervisedProductFactory(root, runner, options);
+    console.log(result);
+  } catch (error) {
+    const failure = normalizeMaintenanceFailure(error);
+    if (!isAutonomousMaintenanceEligible(failure)) throw error;
+
+    const generation = maintenanceGeneration();
+    if (generation >= MAX_MAINTENANCE_GENERATIONS)
+      throw new Error(
+        `PRODUCT_FACTORY_MAINTENANCE_GLOBAL_LIMIT:${generation}:${failure}`,
+      );
+
+    console.error(`CHAINSIEVE_AUTO_MAINTENANCE_TRIGGER:${failure}`);
+    await runAutonomousMaintenance(root, runner, failure, { providerId });
+
+    const childArgs = [
+      '--silent',
+      'exec',
+      'tsx',
+      'tools/product-factory/cli.ts',
+      '--root',
+      root,
+      '--provider',
+      providerId,
+      ...(maxProductCorrections
+        ? ['--max-product-corrections', maxProductCorrections]
+        : []),
+    ];
+    console.log(
+      `CHAINSIEVE_AUTO_MAINTENANCE_REEXEC:${generation + 1}:${MAX_MAINTENANCE_GENERATIONS}`,
+    );
+    const resumed = runner.run('pnpm', childArgs, {
+      cwd: root,
+      timeoutMilliseconds: CHILD_TIMEOUT_MS,
+      streamOutput: true,
+      environment: {
+        [MAINTENANCE_GENERATION_ENV]: String(generation + 1),
+      },
+    });
+    if (resumed.status !== 0)
+      throw new Error(
+        `PRODUCT_FACTORY_MAINTENANCE_REEXEC_FAILED:${resumed.timedOut ? 'TIMEOUT' : resumed.status}:${resumed.stderr || resumed.stdout}`,
+      );
+    console.log('CHAINSIEVE_AUTO_MAINTENANCE_RESUME_COMPLETE');
   }
 } catch (error) {
   console.error(errorCode(error));
