@@ -1,6 +1,6 @@
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { agentRuntimeRoot } from '../agent/lib/runtime.js';
+import { gitCommonDirectory } from '../agent/lib/runtime.js';
 import type { CommandResult, CommandRunner } from '../agent/lib/types.js';
 
 const FRAMEWORK_TASK_ID = 'T-FW-AUTOPILOT';
@@ -65,7 +65,7 @@ const isAncestor = (
   }).status === 0;
 
 const lifecyclePath = (root: string, runner: CommandRunner): string =>
-  join(agentRuntimeRoot(root, runner), STATE_FILE);
+  join(gitCommonDirectory(root, runner), 'ciag-runtime', STATE_FILE);
 
 const readLifecycleStore = async (
   root: string,
