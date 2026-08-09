@@ -20,6 +20,32 @@ export CHAINSIEVE_MUSE_PERMISSION_MODE='preapproved'
 
 The Muse model is deliberately **not** granted GitHub merge authority. It may edit, test, self-review, and create the task-local atomic commit according to the immutable task contract. The root ChainSieve control plane owns task integration, cluster review evidence, push, pull request creation, CI polling, CI repair commits, and merge. This is still zero-touch from the operator's perspective while preserving deterministic lifecycle and evidence checks.
 
+## Liveness and spend guard
+
+Every Muse launch is supervised by ChainSieve instead of being allowed to remain an opaque two-hour child process. The supervisor watches repository/lifecycle progress while streaming Muse output and applies five independent controls:
+
+- a 30-minute hard wall for one Muse invocation;
+- repeated provider-retry detection, including `retrying meta model stream`, rate-limit, overload, and transient-upstream signals;
+- a retry-storm circuit breaker only when those retry signals coincide with stalled repository progress;
+- a durable cooldown record under the Git common runtime directory so an outer retry cannot immediately pay for the same unhealthy provider loop again;
+- task checkpoint observation: once `SELF_REVIEWING` or a later durable lifecycle state is visible, a lingering Muse process is terminated because the trusted control plane already has what it needs to continue.
+
+A clean task worktree containing exactly one commit above its bound base is also recoverable. If lifecycle state is still `IMPLEMENTING`, ChainSieve reuses the current lease/receipt and runs the deterministic `task:self-review` transition instead of launching another Muse session just to rediscover work that is already committed. Dirty worktrees and multi-commit task results are never auto-reconciled.
+
+The defaults can be tightened or relaxed without changing source:
+
+```bash
+export CHAINSIEVE_MUSE_HARD_TIMEOUT_MS=1800000
+export CHAINSIEVE_MUSE_RETRY_STORM_LIMIT=8
+export CHAINSIEVE_MUSE_RETRY_STALL_MS=120000
+export CHAINSIEVE_MUSE_COMMIT_GRACE_MS=480000
+export CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN_MS=900000
+```
+
+Do not treat wall-clock supervision as exact token accounting. ChainSieve does not currently receive an authoritative per-request token/cost stream from the configured Muse CLI, so it deliberately does not invent a token budget from stdout. If the provider exposes trusted structured usage in a future version, add a provider-level token/spend limit in addition to these liveness controls.
+
+Useful journal markers are `CHAINSIEVE_MUSE_SUPERVISED_START`, `CHAINSIEVE_MUSE_PROGRESS`, `CHAINSIEVE_MUSE_RETRY_SIGNAL`, `CHAINSIEVE_MUSE_CIRCUIT_OPEN`, `CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN`, `CHAINSIEVE_MUSE_CHECKPOINT_OBSERVED`, `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE`, and `CHAINSIEVE_TASK_CHECKPOINT_RECONCILED`.
+
 ## Preflight
 
 Run once after configuring Muse:
