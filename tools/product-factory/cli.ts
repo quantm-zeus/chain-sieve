@@ -39,6 +39,10 @@ const maintenanceGeneration = (): number => {
   return parsed;
 };
 
+const isEvidenceFreeFailure = (failure: string): boolean =>
+  failure.startsWith('PRODUCT_FACTORY_UNKNOWN_FAILURE:') ||
+  failure.includes('AUTOPILOT_INFRASTRUCTURE_RETRY_EXHAUSTED');
+
 try {
   const runner = new SystemCommandRunner();
   const root = value('--root') ?? findRepositoryRoot();
@@ -56,6 +60,7 @@ try {
     console.log(result);
   } catch (error) {
     const failure = normalizeMaintenanceFailure(error);
+    if (isEvidenceFreeFailure(failure)) throw new Error(failure);
     if (!isAutonomousMaintenanceEligible(failure)) throw error;
 
     const generation = maintenanceGeneration();
