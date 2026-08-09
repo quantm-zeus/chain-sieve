@@ -164,7 +164,8 @@ export const classifyAutonomyFailure = (code: string): AutonomyStateClassificati
     normalized.includes('GITHUB_FAILED') ||
     normalized.includes('PR_CLOSED') ||
     normalized.includes('CI_TIMEOUT') ||
-    normalized.includes('FINAL_MAIN_CI_FAILED')
+    normalized.includes('FINAL_MAIN_CI_FAILED') ||
+    normalized.includes('INFRASTRUCTURE_RETRY_EXHAUSTED')
   ) {
     return 'EXTERNAL_BLOCKER';
   }
