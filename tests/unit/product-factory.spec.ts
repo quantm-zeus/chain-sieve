@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { CommandOptions, CommandResult, CommandRunner } from '../../tools/agent/lib/types.js';
+import type { CommandResult, CommandRunner } from '../../tools/agent/lib/types.js';
 import {
   classifyAutonomyFailure,
   classifyGapLanes,
@@ -184,7 +184,7 @@ describe('porcelain path parsing (Requirement F)', () => {
 
 describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)', () => {
   class FailingRunner implements CommandRunner {
-    run(command: string, args: string[], _options?: CommandOptions): CommandResult {
+    run(command: string, args: string[]): CommandResult {
       if (command === 'git' && args[0] === 'status') return ok();
       if (command === 'git' && args[0] === 'rev-parse') return ok('deadbeef\n');
       if (command === 'pnpm' && args.includes('autopilot:doctor')) return ok();
