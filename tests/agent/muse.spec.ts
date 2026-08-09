@@ -193,11 +193,23 @@ describe('Muse Code provider', () => {
     });
   });
 
-  it('routes isolated CI repair to Antigravity when agy is available', () => {
+  it('keeps provider-bound cluster CI repair on Muse', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
     const runner = new Runner();
     const provider = new MuseProvider(runner);
     const payload =
       'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.';
+    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
+    expect(runner.calls.at(-1)!.command).toBe('muse');
+  });
+
+  it('routes recovery PR CI repair to Antigravity when agy is available', () => {
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    const payload =
+      'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.';
     expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
     const launch = runner.calls.at(-1)!;
     expect(launch.command).toBe('agy');
@@ -247,13 +259,18 @@ describe('hybrid agent routing policy', () => {
     );
   });
 
-  it('does not route ordinary implementation or independent review prompts away from Muse', () => {
+  it('does not route ordinary implementation, independent review, or provider-bound cluster CI prompts away from Muse', () => {
     expect(shouldRouteMusePayloadToMaintenance('Implement task T-1 from its immutable contract.')).toBe(
       false,
     );
     expect(
       shouldRouteMusePayloadToMaintenance(
         'Independent review session 1. Review frozen product commit and return PASS or FAIL.',
+      ),
+    ).toBe(false);
+    expect(
+      shouldRouteMusePayloadToMaintenance(
+        'You are isolated CI repair session session-1. Inspect failed checks.',
       ),
     ).toBe(false);
   });
