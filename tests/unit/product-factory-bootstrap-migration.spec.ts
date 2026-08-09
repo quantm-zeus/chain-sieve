@@ -3,7 +3,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type {
-  CommandOptions,
   CommandResult,
   CommandRunner,
 } from '../../tools/agent/lib/types.js';
@@ -19,11 +18,7 @@ class BootstrapRunner implements CommandRunner {
     private readonly g0Head = '29bbd83bde714c61c25f4bcd23c0a23264b39171',
   ) {}
 
-  run(
-    command: string,
-    args: string[],
-    _options?: CommandOptions,
-  ): CommandResult {
+  run(command: string, args: string[]): CommandResult {
     this.calls.push(`${command} ${args.join(' ')}`);
     if (command !== 'git') return ok();
     if (args[0] === 'branch' && args[1] === '--show-current') return ok('main\n');
