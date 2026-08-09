@@ -1,7 +1,3 @@
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { mkdtempSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CommandResult, CommandRunner } from '../../tools/agent/lib/types.js';
 import {
@@ -21,37 +17,6 @@ const ok = (stdout = ''): CommandResult => ({
   stdout,
   stderr: '',
 });
-
-const writeTestAutonomyPolicy = (root: string) => {
-  mkdirSync(join(root, 'config'), { recursive: true });
-  mkdirSync(join(root, 'docs', 'spec'), { recursive: true });
-  writeFileSync(join(root, 'docs', 'spec', 'SHA256SUMS'), 'hash\n');
-  writeFileSync(
-    join(root, 'config', 'autonomy-policy.json'),
-    JSON.stringify({
-      schemaVersion: '1.0.0',
-      mode: 'FULL_AUTONOMY',
-      humanReviewRequired: false,
-      humanApprovalRequired: false,
-      automatedIndependentReviewRequired: true,
-      deterministicVerificationRequired: true,
-      allowAutonomousSpecificationResolution: true,
-      allowAutonomousCiRepair: true,
-      allowAutonomousMerge: true,
-      safeDefaults: {
-        liveTradingEnabled: false,
-        externalWriteCapabilitiesEnabled: false,
-        secretMaterializationEnabled: false,
-        irreversibleMigrationsEnabled: false,
-      },
-      limits: {
-        taskCorrectionRounds: 3,
-        clusterCiCorrectionRounds: 5,
-        infrastructureRetryRounds: 3,
-      },
-    }),
-  );
-};
 
 describe('product factory convergence contract', () => {
   it('accepts a commit-bound PASS report with no gaps', () => {
@@ -236,13 +201,12 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
   }
 
   it('runProductFactory throws failures directly upward without catching or diagnosing internally', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'chainsieve-factory-test-'));
+    const root = process.cwd();
     const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
     const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
     process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
     process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
     try {
-      writeTestAutonomyPolicy(root);
       const runner = new DoctorPassingFailingRunner();
       await expect(runProductFactory(root, runner, { providerId: 'muse' })).rejects.toThrow('PRODUCT_FACTORY_CHECK_FAILED');
     } finally {
@@ -250,7 +214,6 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
       else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
       if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
       else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
-      rmSync(root, { recursive: true, force: true });
     }
   });
 });

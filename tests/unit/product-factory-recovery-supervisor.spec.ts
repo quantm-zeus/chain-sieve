@@ -10,6 +10,7 @@ import type {
   CommandRunner,
 } from '../../tools/agent/lib/types.js';
 import {
+  computeFailureFingerprint,
   diagnoseSupervisorRecovery,
   isTransientExternalBlocker,
   parseSupervisorRecoveryDiagnosis,
@@ -25,37 +26,6 @@ const ok = (stdout = ''): CommandResult => ({
   stderr: '',
 });
 
-const writeTestAutonomyPolicy = (root: string) => {
-  mkdirSync(join(root, 'config'), { recursive: true });
-  mkdirSync(join(root, 'docs', 'spec'), { recursive: true });
-  writeFileSync(join(root, 'docs', 'spec', 'SHA256SUMS'), 'hash\n');
-  writeFileSync(
-    join(root, 'config', 'autonomy-policy.json'),
-    JSON.stringify({
-      schemaVersion: '1.0.0',
-      mode: 'FULL_AUTONOMY',
-      humanReviewRequired: false,
-      humanApprovalRequired: false,
-      automatedIndependentReviewRequired: true,
-      deterministicVerificationRequired: true,
-      allowAutonomousSpecificationResolution: true,
-      allowAutonomousCiRepair: true,
-      allowAutonomousMerge: true,
-      safeDefaults: {
-        liveTradingEnabled: false,
-        externalWriteCapabilitiesEnabled: false,
-        secretMaterializationEnabled: false,
-        irreversibleMigrationsEnabled: false,
-      },
-      limits: {
-        taskCorrectionRounds: 3,
-        clusterCiCorrectionRounds: 5,
-        infrastructureRetryRounds: 3,
-      },
-    }),
-  );
-};
-
 class RuntimeRunner implements CommandRunner {
   constructor(private readonly root: string) {}
 
@@ -68,6 +38,7 @@ class RuntimeRunner implements CommandRunner {
     if (key === 'muse --version') return ok('muse-code beta\n');
     if (key === 'muse --help') return ok('Muse Code help\n');
     if (key.startsWith('gh api repos/')) return ok('true\n');
+    if (key.startsWith('pnpm --silent autopilot')) return { status: 1, stdout: '', stderr: 'PRODUCT_FACTORY_CHECK_FAILED:autopilot' };
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
     if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
@@ -229,11 +200,10 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
   });
 
   it('bounces same fingerprint when max attempts are reached without invoking model (Requirement H)', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-bounds-'));
-    mkdirSync(join(root, '.git'), { recursive: true });
-    writeTestAutonomyPolicy(root);
+    const root = process.cwd();
+    const commit = 'ab68083ee116665c40e804447fa2e0cd87be1ccf';
     const runner = new RuntimeRunner(root);
-    const fpHash = 'AUTOPILOT_CORRECTION_LIMIT:ab68083ee116665c40e804447fa2e0cd87be1ccf:1234567890abcdef';
+    const fp = computeFailureFingerprint('PRODUCT_FACTORY_CHECK_FAILED', commit, ['autopilot']);
     const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
     const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
     process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
@@ -242,10 +212,10 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
       await writeSupervisorRecoveryState(root, runner, {
         schemaVersion: '1.0.0',
         records: {
-          [fpHash]: {
-            fingerprint: fpHash,
+          [fp.hash]: {
+            fingerprint: fp.hash,
             attempts: 3,
-            lastCommit: 'ab68083ee116665c40e804447fa2e0cd87be1ccf',
+            lastCommit: commit,
             lastAction: 'REPAIR',
             lastReason: 'already attempted 3 times',
             updatedAt: new Date().toISOString(),
@@ -261,7 +231,6 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
       else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
       if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
       else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
-      await rm(root, { recursive: true, force: true });
     }
   });
 });
