@@ -233,7 +233,7 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
     const fpHash = 'AUTOPILOT_CORRECTION_LIMIT:ab68083ee116665c40e804447fa2e0cd87be1ccf:1234567890abcdef';
     const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
     const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
-    process.env.CHAINSIEVE_MUSE_ARGS_JSON = '["-y"]';
+    process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
     process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
     try {
       await writeSupervisorRecoveryState(root, runner, {

@@ -236,7 +236,7 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
     const root = mkdtempSync(join(tmpdir(), 'chainsieve-factory-test-'));
     const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
     const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
-    process.env.CHAINSIEVE_MUSE_ARGS_JSON = '["-y"]';
+    process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
     process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
     try {
       writeTestAutonomyPolicy(root);
