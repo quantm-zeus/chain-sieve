@@ -76,10 +76,17 @@ const readLifecycleStore = async (
       await readFile(lifecyclePath(root, runner), 'utf8'),
     ) as LifecycleStore;
     if (parsed.schemaVersion !== '2.0.0' || !parsed.tasks)
-      throw new Error('invalid');
+      throw new Error('PRODUCT_FACTORY_BOOTSTRAP_LIFECYCLE_STATE_INVALID');
     return parsed;
-  } catch {
-    return { schemaVersion: '2.0.0', tasks: {} };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT')
+      return { schemaVersion: '2.0.0', tasks: {} };
+    if (
+      error instanceof Error &&
+      error.message === 'PRODUCT_FACTORY_BOOTSTRAP_LIFECYCLE_STATE_INVALID'
+    )
+      throw error;
+    throw new Error('PRODUCT_FACTORY_BOOTSTRAP_LIFECYCLE_STATE_INVALID');
   }
 };
 
