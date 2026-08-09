@@ -17,6 +17,23 @@ export const resolveAntigravityAutopilotModel = (
 ): string =>
   environment[ANTIGRAVITY_MODEL_ENV]?.trim() ||
   DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL;
+
+export const DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT = '60m' as const;
+export const ANTIGRAVITY_PRINT_TIMEOUT_ENV =
+  'CHAINSIEVE_ANTIGRAVITY_PRINT_TIMEOUT' as const;
+export const resolveAntigravityPrintTimeout = (
+  environment: NodeJS.ProcessEnv = process.env,
+): string => {
+  const configured = environment[ANTIGRAVITY_PRINT_TIMEOUT_ENV]?.trim();
+  if (!configured) return DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT;
+  if (!/^(?:\d+(?:\.\d+)?(?:ms|s|m|h))+$/.test(configured))
+    throw new AgentError(
+      'ANTIGRAVITY_PRINT_TIMEOUT_INVALID',
+      `${ANTIGRAVITY_PRINT_TIMEOUT_ENV} must be a Go duration such as 20m, 60m, or 1h30m.`,
+    );
+  return configured;
+};
+
 const ANTIGRAVITY_TIMEOUT_MS = 90 * 60_000;
 
 const APPLICATIONS = [
@@ -129,6 +146,8 @@ export class AntigravityProvider implements AgentProvider {
         '--model',
         resolveAntigravityAutopilotModel(),
         '--mode=accept-edits',
+        '--print-timeout',
+        resolveAntigravityPrintTimeout(),
         '-p',
         payload,
       ],

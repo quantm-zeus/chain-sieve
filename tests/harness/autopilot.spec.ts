@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
+  DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
   AntigravityProvider,
 } from '../../tools/agent/providers/antigravity.js';
 import { CodexProvider } from '../../tools/agent/providers/codex.js';
@@ -76,6 +77,8 @@ describe('one-command autopilot', () => {
         '--model',
         DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
         '--mode=accept-edits',
+        '--print-timeout',
+        DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
         '-p',
         'bound goal',
       ],
