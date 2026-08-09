@@ -20,6 +20,64 @@ export CHAINSIEVE_MUSE_PERMISSION_MODE='preapproved'
 
 The Muse model is deliberately **not** granted GitHub merge authority. It may edit, test, self-review, and create the task-local atomic commit according to the immutable task contract. The root ChainSieve control plane owns task integration, cluster review evidence, push, pull request creation, CI polling, CI repair commits, and merge. This is still zero-touch from the operator's perspective while preserving deterministic lifecycle and evidence checks.
 
+## Liveness and spend guard
+
+Every Muse launch is supervised by ChainSieve instead of being allowed to remain an opaque two-hour child process. The supervisor watches repository/lifecycle progress while streaming Muse output and applies five independent controls:
+
+- a 30-minute hard wall for one Muse invocation;
+- repeated provider-retry detection, including `retrying meta model stream`, rate-limit, overload, and transient-upstream signals;
+- a retry-storm circuit breaker only when those retry signals coincide with stalled repository progress;
+- a durable cooldown record under the Git common runtime directory so an outer retry cannot immediately pay for the same unhealthy provider loop again;
+- task checkpoint observation: once `SELF_REVIEWING` or a later durable lifecycle state is visible, a lingering Muse process is terminated because the trusted control plane already has what it needs to continue.
+
+A clean task worktree containing exactly one commit above its bound base is also recoverable. If lifecycle state is still `IMPLEMENTING`, ChainSieve reuses the current lease/receipt and runs the deterministic `task:self-review` transition instead of launching another Muse session just to rediscover work that is already committed. Dirty worktrees and multi-commit task results are never auto-reconciled.
+
+The defaults can be tightened or relaxed without changing source:
+
+```bash
+export CHAINSIEVE_MUSE_HARD_TIMEOUT_MS=1800000
+export CHAINSIEVE_MUSE_RETRY_STORM_LIMIT=8
+export CHAINSIEVE_MUSE_RETRY_STALL_MS=120000
+export CHAINSIEVE_MUSE_COMMIT_GRACE_MS=480000
+export CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN_MS=900000
+```
+
+Do not treat wall-clock supervision as exact token accounting. ChainSieve does not currently receive an authoritative per-request token/cost stream from the configured Muse CLI, so it deliberately does not invent a token budget from stdout. If the provider exposes trusted structured usage in a future version, add a provider-level token/spend limit in addition to these liveness controls.
+
+Useful journal markers are `CHAINSIEVE_MUSE_SUPERVISED_START`, `CHAINSIEVE_MUSE_PROGRESS`, `CHAINSIEVE_MUSE_RETRY_SIGNAL`, `CHAINSIEVE_MUSE_CIRCUIT_OPEN`, `CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN`, `CHAINSIEVE_MUSE_CHECKPOINT_OBSERVED`, `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE`, and `CHAINSIEVE_TASK_CHECKPOINT_RECONCILED`.
+
+## Live progress and diagnostics
+
+A separate read-only status process can inspect the same authoritative Git/lifecycle state without interfering with the running product factory:
+
+```bash
+pnpm product:status
+```
+
+The command refreshes every five seconds and reports total task/cluster completion percentages, lifecycle-state counts, normative requirement and acceptance-criterion coverage, the inferred current phase and next control-plane action, current task and cluster branch/head/worktree state, commits from the bound base, changed paths, lease/fencing/expiry details, the last lifecycle transition, root checkout state, and active Muse/Antigravity/product-factory processes. It is safe to run from a second SSH session while the systemd service is active. Stop the status display with Ctrl+C; that does not stop the service.
+
+For one snapshot instead of a watch loop:
+
+```bash
+pnpm agent:status
+```
+
+For machine-readable automation/debugging:
+
+```bash
+pnpm agent:status -- --json
+```
+
+The product-factory entrypoint also emits single-line JSON journal events prefixed with `CHAINSIEVE_EVENT:` for start, bootstrap migration, supervised-run start, failures, maintenance start/merge, re-exec start/failure/complete, successful product completion, and terminal errors. These events contain timestamps, severity, PID, provider/generation context, and bounded error text, so `journalctl` can show both human-oriented legacy markers and structured diagnostic events.
+
+Useful journal commands:
+
+```bash
+sudo journalctl -u chainsieve-product.service -b -f
+sudo journalctl -u chainsieve-product.service -b --no-pager | grep 'CHAINSIEVE_EVENT:'
+sudo journalctl -u chainsieve-product.service -b --no-pager | grep -E 'CHAINSIEVE_(EVENT|MUSE|TASK_CHECKPOINT|AUTO_MAINTENANCE)'
+```
+
 ## Preflight
 
 Run once after configuring Muse:

@@ -2,6 +2,7 @@ import { errorCode } from '../agent/lib/errors.js';
 import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
+import { emitTelemetry, telemetryError } from '../observability/progress.js';
 import { runBootstrapCompatibilityMigrations } from './bootstrap-migration.js';
 import {
   isAutonomousMaintenanceEligible,
@@ -49,6 +50,7 @@ try {
   const root = value('--root') ?? findRepositoryRoot();
   const providerId = provider();
   const maxProductCorrections = value('--max-product-corrections');
+  const generation = maintenanceGeneration();
   const options = {
     providerId,
     ...(maxProductCorrections
@@ -56,24 +58,58 @@ try {
       : {}),
   };
 
+  emitTelemetry('PRODUCT_FACTORY_START', {
+    root,
+    provider: providerId,
+    maintenanceGeneration: generation,
+    maxProductCorrections: maxProductCorrections ?? 'default',
+  });
+
+  emitTelemetry('PRODUCT_FACTORY_BOOTSTRAP_MIGRATION_START', { root });
   await runBootstrapCompatibilityMigrations(root, runner);
+  emitTelemetry('PRODUCT_FACTORY_BOOTSTRAP_MIGRATION_COMPLETE', { root });
 
   try {
+    emitTelemetry('PRODUCT_FACTORY_SUPERVISED_RUN_START', {
+      provider: providerId,
+      maintenanceGeneration: generation,
+    });
     const result = await runSupervisedProductFactory(root, runner, options);
+    emitTelemetry('PRODUCT_FACTORY_COMPLETE', { result, provider: providerId });
     console.log(result);
   } catch (error) {
     const failure = normalizeMaintenanceFailure(error);
+    emitTelemetry(
+      'PRODUCT_FACTORY_FAILURE',
+      {
+        failure,
+        provider: providerId,
+        maintenanceGeneration: generation,
+      },
+      'error',
+    );
     if (isEvidenceFreeFailure(failure)) throw new Error(failure);
     if (!isAutonomousMaintenanceEligible(failure)) throw error;
 
-    const generation = maintenanceGeneration();
     if (generation >= MAX_MAINTENANCE_GENERATIONS)
       throw new Error(
         `PRODUCT_FACTORY_MAINTENANCE_GLOBAL_LIMIT:${generation}:${failure}`,
       );
 
     console.error(`CHAINSIEVE_AUTO_MAINTENANCE_TRIGGER:${failure}`);
-    await runAutonomousMaintenance(root, runner, failure, { providerId });
+    emitTelemetry('PRODUCT_FACTORY_MAINTENANCE_START', {
+      failure,
+      generation,
+      nextGeneration: generation + 1,
+      maxGenerations: MAX_MAINTENANCE_GENERATIONS,
+    }, 'warn');
+    const maintenanceCommit = await runAutonomousMaintenance(root, runner, failure, {
+      providerId,
+    });
+    emitTelemetry('PRODUCT_FACTORY_MAINTENANCE_MERGED', {
+      maintenanceCommit,
+      generation,
+    });
 
     const childArgs = [
       '--silent',
@@ -91,6 +127,10 @@ try {
     console.log(
       `CHAINSIEVE_AUTO_MAINTENANCE_REEXEC:${generation + 1}:${MAX_MAINTENANCE_GENERATIONS}`,
     );
+    emitTelemetry('PRODUCT_FACTORY_REEXEC_START', {
+      generation: generation + 1,
+      maxGenerations: MAX_MAINTENANCE_GENERATIONS,
+    });
     const resumed = runner.run('pnpm', childArgs, {
       cwd: root,
       timeoutMilliseconds: CHILD_TIMEOUT_MS,
@@ -99,13 +139,28 @@ try {
         [MAINTENANCE_GENERATION_ENV]: String(generation + 1),
       },
     });
-    if (resumed.status !== 0)
+    if (resumed.status !== 0) {
+      emitTelemetry(
+        'PRODUCT_FACTORY_REEXEC_FAILED',
+        {
+          generation: generation + 1,
+          status: resumed.status,
+          timedOut: resumed.timedOut ?? false,
+          error: telemetryError(resumed.stderr || resumed.stdout || 'no-command-output'),
+        },
+        'error',
+      );
       throw new Error(
         `PRODUCT_FACTORY_MAINTENANCE_REEXEC_FAILED:${resumed.timedOut ? 'TIMEOUT' : resumed.status}:${resumed.stderr || resumed.stdout}`,
       );
+    }
     console.log('CHAINSIEVE_AUTO_MAINTENANCE_RESUME_COMPLETE');
+    emitTelemetry('PRODUCT_FACTORY_REEXEC_COMPLETE', {
+      generation: generation + 1,
+    });
   }
 } catch (error) {
+  emitTelemetry('PRODUCT_FACTORY_TERMINAL_ERROR', { error: telemetryError(error) }, 'error');
   console.error(errorCode(error));
   process.exitCode = 1;
 }

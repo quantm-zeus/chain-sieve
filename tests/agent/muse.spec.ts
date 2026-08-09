@@ -9,11 +9,20 @@ import {
   MUSE_ARGS_ENV,
   MUSE_COMMAND_ENV,
   MUSE_PERMISSION_ENV,
+  MUSE_SUPERVISOR_CONFIG_ENV,
   MuseProvider,
   buildMuseArgs,
   parseMuseArgs,
   resolveMuseCommand,
 } from '../../tools/agent/providers/muse.js';
+import {
+  DEFAULT_MUSE_HARD_TIMEOUT_MS,
+  MUSE_HARD_TIMEOUT_ENV,
+  MUSE_RETRY_STORM_LIMIT_ENV,
+  museLifecycleIsDurableCheckpoint,
+  museOutputIsRetrySignal,
+  resolveMuseSupervision,
+} from '../../tools/agent/providers/muse-supervision.js';
 import {
   classifyAgentWork,
   shouldRouteMusePayloadToMaintenance,
@@ -74,17 +83,46 @@ const binding = (): PayloadBinding =>
       'artifacts/context/T-G0-MUSE-01/context-manifest.json',
     contextManifestSha256: 'b'.repeat(64),
     baseCommit: '1'.repeat(40),
+    launchReceiptId: 'muse-receipt-1',
     failures: [],
   }) as unknown as PayloadBinding;
+
+const supervisorConfig = (call: Runner['calls'][number]) =>
+  JSON.parse(
+    call.options.environment?.[MUSE_SUPERVISOR_CONFIG_ENV] ?? '{}',
+  ) as {
+    command?: string;
+    args?: string[];
+    workspace?: string;
+    taskId?: string;
+    baseCommit?: string;
+    hardTimeoutMilliseconds?: number;
+  };
+
+const supervisedLaunch = (runner: Runner): Runner['calls'][number] => {
+  const launch = [...runner.calls]
+    .reverse()
+    .find(
+      (call) =>
+        call.command === process.execPath &&
+        call.args[0]?.includes('muse-supervisor.mjs'),
+    );
+  if (!launch) throw new Error('TEST_MUSE_SUPERVISOR_LAUNCH_MISSING');
+  return launch;
+};
 
 const originalCommand = process.env[MUSE_COMMAND_ENV];
 const originalArgs = process.env[MUSE_ARGS_ENV];
 const originalPermission = process.env[MUSE_PERMISSION_ENV];
+const originalHardTimeout = process.env[MUSE_HARD_TIMEOUT_ENV];
+const originalRetryLimit = process.env[MUSE_RETRY_STORM_LIMIT_ENV];
 
 beforeEach(() => {
   delete process.env[MUSE_COMMAND_ENV];
   delete process.env[MUSE_ARGS_ENV];
   delete process.env[MUSE_PERMISSION_ENV];
+  delete process.env[MUSE_HARD_TIMEOUT_ENV];
+  delete process.env[MUSE_RETRY_STORM_LIMIT_ENV];
 });
 
 afterEach(() => {
@@ -94,6 +132,10 @@ afterEach(() => {
   else process.env[MUSE_ARGS_ENV] = originalArgs;
   if (originalPermission === undefined) delete process.env[MUSE_PERMISSION_ENV];
   else process.env[MUSE_PERMISSION_ENV] = originalPermission;
+  if (originalHardTimeout === undefined) delete process.env[MUSE_HARD_TIMEOUT_ENV];
+  else process.env[MUSE_HARD_TIMEOUT_ENV] = originalHardTimeout;
+  if (originalRetryLimit === undefined) delete process.env[MUSE_RETRY_STORM_LIMIT_ENV];
+  else process.env[MUSE_RETRY_STORM_LIMIT_ENV] = originalRetryLimit;
 });
 
 describe('Muse Code provider', () => {
@@ -151,49 +193,54 @@ describe('Muse Code provider', () => {
     expect(resolveMuseCommand()).toBe('muse');
   });
 
-  it('supports explicit absolute command representation in dedicated test without breaking mock', () => {
+  it('wraps an explicit Muse command in the liveness supervisor', () => {
     process.env[MUSE_COMMAND_ENV] = '/custom/bin/muse';
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
     const runner = new Runner();
     const provider = new MuseProvider(runner);
-    expect(provider.executePayload(binding().taskWorkspace, 'test goal')).toMatchObject({
+    expect(provider.executePayload('/tmp/worktree', 'test goal')).toMatchObject({
       status: 0,
     });
-    const launch = runner.calls.at(-1)!;
-    expect(launch.command).toBe('/custom/bin/muse');
+    const launch = supervisedLaunch(runner);
+    expect(supervisorConfig(launch).command).toBe('/custom/bin/muse');
   });
 
-  it('runs semantic task payloads through Muse', () => {
+  it('runs semantic task payloads through bounded supervised Muse', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
     const runner = new Runner();
     const provider = new MuseProvider(runner);
-    const payload = provider.generatePayload(binding());
+    const taskBinding = binding();
+    const payload = provider.generatePayload(taskBinding);
     expect(payload).toContain(
       '/tmp/Chain Sieve/.worktrees/T-G0-MUSE-01/.agents/skills/chainsieve-task/SKILL.md',
     );
     expect(payload).toContain('perform a complete self-review');
     expect(payload).toContain('Never ask the human owner');
     expect(payload).toContain('Never push, merge, rebase, reset, clean, invoke gh');
-    expect(provider.executePayload(binding().taskWorkspace, payload)).toMatchObject({
+    expect(provider.executePayload(taskBinding.taskWorkspace, payload)).toMatchObject({
       status: 0,
     });
-    const launch = runner.calls.at(-1)!;
-    expect(launch.command).toBe('muse');
-    expect(launch.args).toContain('--headless');
-    expect(launch.args).toContain('--approve-all');
-    expect(launch.args.join(' ')).toContain('T-G0-MUSE-01');
+    const launch = supervisedLaunch(runner);
+    const config = supervisorConfig(launch);
+    expect(config.command).toBe('muse');
+    expect(config.args).toContain('--headless');
+    expect(config.args).toContain('--approve-all');
+    expect(config.args?.join(' ')).toContain('T-G0-MUSE-01');
+    expect(config.taskId).toBe('T-G0-MUSE-01');
+    expect(config.baseCommit).toBe(taskBinding.baseCommit);
+    expect(config.hardTimeoutMilliseconds).toBe(DEFAULT_MUSE_HARD_TIMEOUT_MS);
     expect(launch.options).toMatchObject({
-      cwd: binding().taskWorkspace,
-      timeoutMilliseconds: 7_200_000,
+      cwd: taskBinding.taskWorkspace,
+      timeoutMilliseconds: DEFAULT_MUSE_HARD_TIMEOUT_MS + 60_000,
       streamOutput: true,
     });
   });
 
-  it('keeps provider-bound cluster CI repair on Muse', () => {
+  it('keeps provider-bound cluster CI repair on supervised Muse', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
@@ -202,7 +249,7 @@ describe('Muse Code provider', () => {
     const payload =
       'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.';
     expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
-    expect(runner.calls.at(-1)!.command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
   });
 
   it('routes recovery PR CI repair to Antigravity when agy is available', () => {
@@ -217,7 +264,7 @@ describe('Muse Code provider', () => {
     expect(launch.args).toContain(payload);
   });
 
-  it('routes mechanical recovery diagnosis to Antigravity but keeps convergence diagnosis on Muse', () => {
+  it('routes mechanical recovery diagnosis to Antigravity but keeps convergence diagnosis on supervised Muse', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
@@ -231,10 +278,10 @@ describe('Muse Code provider', () => {
     const semantic =
       'You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: PRODUCT_FACTORY_CONVERGENCE_LIMIT:REQ-1. Fingerprint: fp2. Frozen commit: abc.';
     provider.executePayload('/tmp/worktree', semantic);
-    expect(runner.calls.at(-1)!.command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
   });
 
-  it('falls back to Muse for maintenance work when agy is unavailable', () => {
+  it('falls back to supervised Muse for maintenance work when agy is unavailable', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
@@ -244,7 +291,35 @@ describe('Muse Code provider', () => {
       '/tmp/worktree',
       'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.',
     );
-    expect(runner.calls.at(-1)!.command).toBe('muse');
+    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
+  });
+});
+
+describe('Muse liveness policy', () => {
+  it('uses bounded defaults and validates overrides', () => {
+    expect(resolveMuseSupervision({}).hardTimeoutMilliseconds).toBe(
+      DEFAULT_MUSE_HARD_TIMEOUT_MS,
+    );
+    expect(
+      resolveMuseSupervision({
+        [MUSE_HARD_TIMEOUT_ENV]: String(20 * 60_000),
+        [MUSE_RETRY_STORM_LIMIT_ENV]: '5',
+      }),
+    ).toMatchObject({
+      hardTimeoutMilliseconds: 20 * 60_000,
+      retryStormLimit: 5,
+    });
+    expect(() =>
+      resolveMuseSupervision({ [MUSE_HARD_TIMEOUT_ENV]: '1000' }),
+    ).toThrow('MUSE_SUPERVISION_CONFIG_INVALID');
+  });
+
+  it('recognizes retry storms and durable lifecycle checkpoints', () => {
+    expect(museOutputIsRetrySignal('muse: retrying meta model stream')).toBe(true);
+    expect(museOutputIsRetrySignal('normal implementation progress')).toBe(false);
+    expect(museLifecycleIsDurableCheckpoint('SELF_REVIEWING')).toBe(true);
+    expect(museLifecycleIsDurableCheckpoint('MERGED')).toBe(true);
+    expect(museLifecycleIsDurableCheckpoint('IMPLEMENTING')).toBe(false);
   });
 });
 
