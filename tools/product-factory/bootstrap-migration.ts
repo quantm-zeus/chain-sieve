@@ -202,8 +202,7 @@ const normalizeLegacyG0Branch = (
   store: LifecycleStore,
 ): boolean => {
   if (!g0LifecycleIsPristine(store)) return false;
-  if (branchAttachedToWorktree(runner, root, G0_BRANCH))
-    throw new Error('PRODUCT_FACTORY_BOOTSTRAP_MIGRATION_G0_WORKTREE_ACTIVE');
+  if (branchAttachedToWorktree(runner, root, G0_BRANCH)) return false;
 
   git(runner, root, ['fetch', 'origin', '--prune']);
   const head = git(runner, root, ['rev-parse', 'HEAD']);
