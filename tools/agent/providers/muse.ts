@@ -4,6 +4,7 @@ import { AgentError } from '../lib/errors.js';
 import { reconcileCommittedTaskCheckpoint } from '../lib/task-checkpoint.js';
 import type {
   AgentProvider,
+  CommandResult,
   CommandRunner,
   ProviderDetection,
   TaskLaunchBinding,
@@ -103,7 +104,7 @@ const supervisorPath = (): string =>
 
 export class MuseProvider implements AgentProvider {
   readonly id = 'muse' as const;
-  private pendingTaskBinding?: TaskLaunchBinding;
+  private pendingTaskBinding: TaskLaunchBinding | undefined;
 
   constructor(private readonly runner: CommandRunner) {}
 
@@ -142,7 +143,7 @@ export class MuseProvider implements AgentProvider {
     return `Read and obey the exact ChainSieve task skill at "${taskSkillPath}". Do not search for skills, instructions, or repositories outside "${binding.taskWorkspace}". Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance}${failures} Treat the immutable task contract and context manifest as the only authority for required tests and repository paths. Preserve valid existing work. Implement exactly this task, run every task-authorized validation, perform a complete self-review, fix every issue found by that self-review, and create exactly one atomic task commit. Never ask the human owner for review, approval, permission, task selection, lease renewal, pushing, merging, or decisions. Never push, merge, rebase, reset, clean, invoke gh, invoke the merge queue, or start another task. When the task is complete, terminate successfully. The autonomous ChainSieve control plane will immediately verify, integrate, invoke correction if needed, perform independent cluster review, repair CI, merge, and continue to the next task without human handoff.`;
   }
 
-  executePayload(workspace: string, payload: string) {
+  executePayload(workspace: string, payload: string): CommandResult {
     if (shouldRouteMusePayloadToMaintenance(payload)) {
       const maintenance = selectMaintenanceProvider(this.runner, this);
       if (maintenance !== this && maintenance.executePayload) {
@@ -177,25 +178,29 @@ export class MuseProvider implements AgentProvider {
     console.log(
       `CHAINSIEVE_MUSE_SUPERVISED_START:${binding?.task.contract.id ?? 'semantic-session'}`,
     );
-    const result = this.runner.run(process.execPath, [supervisorPath()], {
-      cwd: workspace,
-      timeoutMilliseconds: supervision.hardTimeoutMilliseconds + 60_000,
-      streamOutput: true,
-      environment: {
-        [MUSE_SUPERVISOR_CONFIG_ENV]: JSON.stringify({
-          command,
-          args,
-          workspace,
-          ...(binding
-            ? {
-                taskId: binding.task.contract.id,
-                baseCommit: binding.baseCommit,
-              }
-            : {}),
-          ...supervision,
-        }),
+    const result: CommandResult = this.runner.run(
+      process.execPath,
+      [supervisorPath()],
+      {
+        cwd: workspace,
+        timeoutMilliseconds: supervision.hardTimeoutMilliseconds + 60_000,
+        streamOutput: true,
+        environment: {
+          [MUSE_SUPERVISOR_CONFIG_ENV]: JSON.stringify({
+            command,
+            args,
+            workspace,
+            ...(binding
+              ? {
+                  taskId: binding.task.contract.id,
+                  baseCommit: binding.baseCommit,
+                }
+              : {}),
+            ...supervision,
+          }),
+        },
       },
-    });
+    );
 
     if (
       binding &&
