@@ -80,6 +80,23 @@ export const formatPnpmCommandTag = (args: string[]): string => {
   return first ?? 'unknown';
 };
 
+export const infrastructureRetryKey = (
+  action: string,
+  targetId: string,
+  targetVersion: string,
+): string => `orchestration:${action}:${targetId}:${targetVersion}`;
+
+export const assertInfrastructureRetryBudget = (
+  key: string,
+  consumedAttempts: number,
+  limit: number,
+): void => {
+  if (consumedAttempts >= limit)
+    throw new Error(
+      `AUTOPILOT_INFRASTRUCTURE_RETRY_EXHAUSTED:${key}:${consumedAttempts}/${limit}`,
+    );
+};
+
 const pnpm = (runner: CommandRunner, root: string, args: string[]): string =>
   requireSuccess(
     runner.run('pnpm', ['--silent', ...args], {
@@ -148,9 +165,15 @@ const withInfrastructureRetry = async <T>(
   key: string,
   operation: () => Promise<T>,
 ): Promise<T> => {
+  const startAttempt = state.infrastructureFailures[key] ?? 0;
+  assertInfrastructureRetryBudget(
+    key,
+    startAttempt,
+    policy.limits.infrastructureRetryRounds,
+  );
   let last: unknown;
   for (
-    let attempt = state.infrastructureFailures[key] ?? 0;
+    let attempt = startAttempt;
     attempt < policy.limits.infrastructureRetryRounds;
     attempt += 1
   ) {
@@ -167,7 +190,10 @@ const withInfrastructureRetry = async <T>(
         await sleep(Math.min(60_000, 2_000 * 2 ** attempt));
     }
   }
-  throw last;
+  if (last instanceof Error) throw last;
+  throw new Error(
+    `AUTOPILOT_INFRASTRUCTURE_RETRY_FAILED:${key}:${String(last)}`,
+  );
 };
 
 const changedPaths = (runner: CommandRunner, cwd: string): string[] =>
@@ -797,12 +823,22 @@ export const runAutopilot = async (
         decision.action === 'REVIEW_CLUSTER' ? decision.cluster : undefined;
       const integrating =
         decision.action === 'CREATE_CLUSTER_PR' ? decision.cluster : undefined;
+      const retryTask = decision.task ?? decision.nextTask;
+      const retryCluster =
+        decision.cluster ?? decision.nextCluster ?? retryTask?.cluster;
+      const retryTarget =
+        retryTask?.contract.id ?? retryCluster?.contract.id ?? 'project';
+      const retryVersion =
+        retryTask?.workspaceHead ??
+        retryCluster?.worktreeHead ??
+        retryCluster?.branchHead ??
+        inventory.rootHead;
       await withInfrastructureRetry(
         root,
         runner,
         policy,
         persistent,
-        `orchestration:${decision.action}`,
+        infrastructureRetryKey(decision.action, retryTarget, retryVersion),
         async () => {
           await executeOrchestration(root, runner, { dryRun: false, provider });
         },
