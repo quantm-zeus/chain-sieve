@@ -27,6 +27,8 @@ const ok = (stdout = ''): CommandResult => ({
 
 const writeTestAutonomyPolicy = (root: string) => {
   mkdirSync(join(root, 'config'), { recursive: true });
+  mkdirSync(join(root, 'docs', 'spec'), { recursive: true });
+  writeFileSync(join(root, 'docs', 'spec', 'SHA256SUMS'), 'hash\n');
   writeFileSync(
     join(root, 'config', 'autonomy-policy.json'),
     JSON.stringify({
@@ -59,6 +61,7 @@ class RuntimeRunner implements CommandRunner {
 
   run(command: string, args: string[], _options?: CommandOptions): CommandResult {
     const key = `${command} ${args.join(' ')}`;
+    if (command === 'which') return ok('/usr/bin/muse\n');
     if (key === 'git branch --show-current') return ok('main\n');
     if (key === 'node --version') return ok('v22.23.1\n');
     if (key === 'pnpm --version') return ok('10.13.1\n');

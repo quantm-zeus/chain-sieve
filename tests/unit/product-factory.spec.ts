@@ -24,6 +24,8 @@ const ok = (stdout = ''): CommandResult => ({
 
 const writeTestAutonomyPolicy = (root: string) => {
   mkdirSync(join(root, 'config'), { recursive: true });
+  mkdirSync(join(root, 'docs', 'spec'), { recursive: true });
+  writeFileSync(join(root, 'docs', 'spec', 'SHA256SUMS'), 'hash\n');
   writeFileSync(
     join(root, 'config', 'autonomy-policy.json'),
     JSON.stringify({
@@ -219,6 +221,7 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
   class DoctorPassingFailingRunner implements CommandRunner {
     run(command: string, args: string[]): CommandResult {
       const key = `${command} ${args.join(' ')}`;
+      if (command === 'which') return ok('/usr/bin/muse\n');
       if (key === 'git branch --show-current') return ok('main\n');
       if (key === 'git status --porcelain=v1') return ok('');
       if (key === 'node --version') return ok('v22.23.1\n');
