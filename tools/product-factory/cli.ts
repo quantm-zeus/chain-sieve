@@ -2,7 +2,7 @@ import { errorCode } from '../agent/lib/errors.js';
 import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
-import { runProductFactory } from './factory.js';
+import { runSupervisedProductFactory } from './recovery-supervisor.js';
 
 const value = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -25,7 +25,7 @@ const provider = (): AgentProviderId => {
 try {
   const runner = new SystemCommandRunner();
   const root = value('--root') ?? findRepositoryRoot();
-  const result = await runProductFactory(root, runner, {
+  const result = await runSupervisedProductFactory(root, runner, {
     providerId: provider(),
     ...(value('--max-product-corrections')
       ? { maxCorrectionRounds: Number(value('--max-product-corrections')) }
