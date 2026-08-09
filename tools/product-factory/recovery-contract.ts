@@ -140,31 +140,39 @@ export const computeFailureFingerprint = (
 };
 
 export const classifyAutonomyFailure = (code: string): AutonomyStateClassification => {
-  if (code.startsWith('AUTOPILOT_COMPLETE') || code.startsWith('PRODUCT_FACTORY_COMPLETE')) {
+  const normalized = code.trim();
+  if (
+    normalized.length === 0 ||
+    /^(?:undefined|null)$/i.test(normalized) ||
+    normalized.includes('PRODUCT_FACTORY_UNKNOWN_FAILURE')
+  ) {
+    return 'AUTONOMY_GAP';
+  }
+  if (normalized.startsWith('AUTOPILOT_COMPLETE') || normalized.startsWith('PRODUCT_FACTORY_COMPLETE')) {
     return 'SUCCESS';
   }
   if (
-    code.includes('NO_HEADLESS_EXECUTOR') ||
-    code.includes('AUTONOMOUS_MERGE_DISABLED') ||
-    code.includes('PROHIBITED_CAPABILITY') ||
-    code.includes('SECRET_EXPOSURE') ||
-    code.includes('SPECIFICATION_DRIFT')
+    normalized.includes('NO_HEADLESS_EXECUTOR') ||
+    normalized.includes('AUTONOMOUS_MERGE_DISABLED') ||
+    normalized.includes('PROHIBITED_CAPABILITY') ||
+    normalized.includes('SECRET_EXPOSURE') ||
+    normalized.includes('SPECIFICATION_DRIFT')
   ) {
     return 'SAFETY_TERMINAL';
   }
   if (
-    code.includes('GITHUB_FAILED') ||
-    code.includes('PR_CLOSED') ||
-    code.includes('CI_TIMEOUT') ||
-    code.includes('FINAL_MAIN_CI_FAILED')
+    normalized.includes('GITHUB_FAILED') ||
+    normalized.includes('PR_CLOSED') ||
+    normalized.includes('CI_TIMEOUT') ||
+    normalized.includes('FINAL_MAIN_CI_FAILED')
   ) {
     return 'EXTERNAL_BLOCKER';
   }
   if (
-    code.includes('CORRECTION_SCOPE') ||
-    code.includes('CONVERGENCE_AUDIT_SCOPE') ||
-    code.includes('CONVERGENCE_REPORT_INVALID') ||
-    code.includes('RECOVERY_SCOPE')
+    normalized.includes('CORRECTION_SCOPE') ||
+    normalized.includes('CONVERGENCE_AUDIT_SCOPE') ||
+    normalized.includes('CONVERGENCE_REPORT_INVALID') ||
+    normalized.includes('RECOVERY_SCOPE')
   ) {
     return 'AUTONOMY_GAP';
   }
