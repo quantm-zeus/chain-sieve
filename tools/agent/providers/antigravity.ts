@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { AgentError } from '../lib/errors.js';
 import type {
   AgentProvider,
+  CommandResult,
   CommandRunner,
   ProviderDetection,
   TaskLaunchBinding,
@@ -35,6 +36,9 @@ export const resolveAntigravityPrintTimeout = (
 };
 
 const ANTIGRAVITY_TIMEOUT_MS = 90 * 60_000;
+export const ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS = 3;
+export const ANTIGRAVITY_TRANSIENT_FAILURE_WINDOW_MS = 2 * 60_000;
+const DEFAULT_TRANSIENT_RETRY_DELAY_MS = 60_000;
 
 const APPLICATIONS = [
   {
@@ -60,6 +64,7 @@ export interface AntigravityAdapterOptions {
     path: string;
     bundleIdentifier: string;
   }>;
+  transientRetryDelayMilliseconds?: number;
 }
 
 const commandPath = (
@@ -73,6 +78,21 @@ const commandPath = (
     ? result.stdout.trim()
     : undefined;
 };
+
+const waitSynchronously = (milliseconds: number): void => {
+  if (milliseconds <= 0) return;
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+};
+
+export const antigravityFailureIsTransient = (
+  result: CommandResult,
+  elapsedMilliseconds: number,
+): boolean =>
+  result.status !== 0 &&
+  !result.timedOut &&
+  elapsedMilliseconds <= ANTIGRAVITY_TRANSIENT_FAILURE_WINDOW_MS &&
+  result.stdout.trim() === '' &&
+  result.stderr.trim() === '';
 
 export class AntigravityProvider implements AgentProvider {
   readonly id = 'antigravity' as const;
@@ -133,30 +153,60 @@ export class AntigravityProvider implements AgentProvider {
     return `Read and obey the exact ChainSieve task skill at "${taskSkillPath}". Do not search for skills, instructions, or repositories outside "${binding.taskWorkspace}". Load and obey the complete immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}). Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, lease ${binding.leaseId}, holder ${binding.holder}, fencing version ${binding.fencingVersion}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and the receipt-bound base commit before changing source.${conformance} Treat the immutable task contract and context manifest as the only authority for required tests and repository paths. Do not invent conventional test paths such as tests/task-facets/${binding.task.contract.id}.spec.ts when they are not explicitly listed. A missing non-required path is absent evidence, not permission to scan outside the task worktree. Preserve valid existing work. Complete exactly this task through its one atomic commit and self-review, then stop so the root control plane can run the authoritative provider-independent verifier. Never ask the owner to renew, approve, review, push, merge, or choose a task. Do not invoke the merge queue or start another task. The launcher enforces ${resolveAntigravityAutopilotModel()}.`;
   }
 
-  executePayload(workspace: string, payload: string) {
+  executePayload(workspace: string, payload: string): CommandResult {
     const cli = commandPath(this.runner, 'agy');
     if (!cli)
       throw new AgentError(
         'ANTIGRAVITY_HEADLESS_MISSING',
         'Install the agy CLI; agy-ide alone cannot provide a blocking headless run.',
       );
-    return this.runner.run(
-      'agy',
-      [
-        '--model',
-        resolveAntigravityAutopilotModel(),
-        '--mode=accept-edits',
-        '--print-timeout',
-        resolveAntigravityPrintTimeout(),
-        '-p',
-        payload,
-      ],
-      {
-        cwd: workspace,
-        timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS,
-        streamOutput: true,
-      },
-    );
+
+    let last: CommandResult = {
+      status: 1,
+      stdout: '',
+      stderr: 'Antigravity did not execute.',
+    };
+    for (
+      let attempt = 1;
+      attempt <= ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS;
+      attempt += 1
+    ) {
+      const startedAt = Date.now();
+      last = this.runner.run(
+        'agy',
+        [
+          '--model',
+          resolveAntigravityAutopilotModel(),
+          '--mode=accept-edits',
+          '--print-timeout',
+          resolveAntigravityPrintTimeout(),
+          '-p',
+          payload,
+        ],
+        {
+          cwd: workspace,
+          timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS,
+          streamOutput: true,
+        },
+      );
+      if (last.status === 0) return last;
+
+      const elapsed = Date.now() - startedAt;
+      if (
+        attempt >= ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS ||
+        !antigravityFailureIsTransient(last, elapsed)
+      )
+        return last;
+
+      console.error(
+        `CHAINSIEVE_ANTIGRAVITY_TRANSIENT_RETRY:${attempt}/${ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS}`,
+      );
+      waitSynchronously(
+        this.options.transientRetryDelayMilliseconds ??
+          DEFAULT_TRANSIENT_RETRY_DELAY_MS,
+      );
+    }
+    return last;
   }
 
   copyPayload(payload: string): void {
