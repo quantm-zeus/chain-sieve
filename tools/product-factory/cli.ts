@@ -2,6 +2,7 @@ import { errorCode } from '../agent/lib/errors.js';
 import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
+import { runBootstrapCompatibilityMigrations } from './bootstrap-migration.js';
 import {
   isAutonomousMaintenanceEligible,
   normalizeMaintenanceFailure,
@@ -54,6 +55,8 @@ try {
       ? { maxCorrectionRounds: Number(maxProductCorrections) }
       : {}),
   };
+
+  await runBootstrapCompatibilityMigrations(root, runner);
 
   try {
     const result = await runSupervisedProductFactory(root, runner, options);
