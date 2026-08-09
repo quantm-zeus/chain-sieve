@@ -196,7 +196,7 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
       if (key.startsWith('gh api repos/')) return ok('true\n');
       if (command === 'git' && args[0] === 'rev-parse') return ok('deadbeef\n');
       if (command === 'pnpm' && args[0] === 'autopilot' && args.length === 1) {
-        return { status: 1, stdout: '', stderr: 'PRODUCT_FACTORY_CHECK_FAILED:autopilot' };
+        return { status: 1, stdout: '', stderr: 'AUTOPILOT_CORRECTION_LIMIT:T-1:3' };
       }
       return ok();
     }
@@ -210,7 +210,7 @@ describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)'
     process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
     try {
       const runner = new DoctorPassingFailingRunner();
-      await expect(runProductFactory(root, runner, { providerId: 'muse' })).rejects.toThrow('PRODUCT_FACTORY_CHECK_FAILED');
+      await expect(runProductFactory(root, runner, { providerId: 'muse' })).rejects.toThrow('RELEASE_BASELINE_NOT_FOUND');
     } finally {
       if (oldEnvArgs === undefined) delete process.env.CHAINSIEVE_MUSE_ARGS_JSON;
       else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;

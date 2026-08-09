@@ -38,7 +38,9 @@ class RuntimeRunner implements CommandRunner {
     if (key === 'muse --version') return ok('muse-code beta\n');
     if (key === 'muse --help') return ok('Muse Code help\n');
     if (key.startsWith('gh api repos/')) return ok('true\n');
-    if (command === 'pnpm') return { status: 1, stdout: '', stderr: 'AUTOPILOT_CORRECTION_LIMIT:T-1:3' };
+    if (command === 'pnpm' && args[0] === 'autopilot' && args.length === 1) {
+      return { status: 1, stdout: '', stderr: 'RELEASE_BASELINE_NOT_FOUND' };
+    }
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
     if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
@@ -203,7 +205,11 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
     const root = process.cwd();
     const commit = 'ab68083ee116665c40e804447fa2e0cd87be1ccf';
     const runner = new RuntimeRunner(root);
-    const fp = computeFailureFingerprint('AUTOPILOT_CORRECTION_LIMIT', commit, ['T-1:3']);
+    const fp = computeFailureFingerprint(
+      'RELEASE_BASELINE_NOT_FOUND',
+      commit,
+      ['RELEASE_BASELINE_NOT_FOUND'],
+    );
     const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
     const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
     process.env.CHAINSIEVE_MUSE_ARGS_JSON = JSON.stringify(['--non-interactive', '{prompt}']);
