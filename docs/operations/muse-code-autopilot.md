@@ -46,6 +46,38 @@ Do not treat wall-clock supervision as exact token accounting. ChainSieve does n
 
 Useful journal markers are `CHAINSIEVE_MUSE_SUPERVISED_START`, `CHAINSIEVE_MUSE_PROGRESS`, `CHAINSIEVE_MUSE_RETRY_SIGNAL`, `CHAINSIEVE_MUSE_CIRCUIT_OPEN`, `CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN`, `CHAINSIEVE_MUSE_CHECKPOINT_OBSERVED`, `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE`, and `CHAINSIEVE_TASK_CHECKPOINT_RECONCILED`.
 
+## Live progress and diagnostics
+
+A separate read-only status process can inspect the same authoritative Git/lifecycle state without interfering with the running product factory:
+
+```bash
+pnpm product:status
+```
+
+The command refreshes every five seconds and reports total task/cluster completion percentages, lifecycle-state counts, normative requirement and acceptance-criterion coverage, the inferred current phase and next control-plane action, current task and cluster branch/head/worktree state, commits from the bound base, changed paths, lease/fencing/expiry details, the last lifecycle transition, root checkout state, and active Muse/Antigravity/product-factory processes. It is safe to run from a second SSH session while the systemd service is active. Stop the status display with Ctrl+C; that does not stop the service.
+
+For one snapshot instead of a watch loop:
+
+```bash
+pnpm agent:status
+```
+
+For machine-readable automation/debugging:
+
+```bash
+pnpm agent:status -- --json
+```
+
+The product-factory entrypoint also emits single-line JSON journal events prefixed with `CHAINSIEVE_EVENT:` for start, bootstrap migration, supervised-run start, failures, maintenance start/merge, re-exec start/failure/complete, successful product completion, and terminal errors. These events contain timestamps, severity, PID, provider/generation context, and bounded error text, so `journalctl` can show both human-oriented legacy markers and structured diagnostic events.
+
+Useful journal commands:
+
+```bash
+sudo journalctl -u chainsieve-product.service -b -f
+sudo journalctl -u chainsieve-product.service -b --no-pager | grep 'CHAINSIEVE_EVENT:'
+sudo journalctl -u chainsieve-product.service -b --no-pager | grep -E 'CHAINSIEVE_(EVENT|MUSE|TASK_CHECKPOINT|AUTO_MAINTENANCE)'
+```
+
 ## Preflight
 
 Run once after configuring Muse:
