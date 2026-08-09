@@ -6,6 +6,10 @@ import type {
   ProviderDetection,
   TaskLaunchBinding,
 } from '../lib/types.js';
+import {
+  selectMaintenanceProvider,
+  shouldRouteMusePayloadToMaintenance,
+} from './routing.js';
 
 export const MUSE_COMMAND_ENV = 'CHAINSIEVE_MUSE_COMMAND' as const;
 export const MUSE_ARGS_ENV = 'CHAINSIEVE_MUSE_ARGS_JSON' as const;
@@ -127,6 +131,14 @@ export class MuseProvider implements AgentProvider {
   }
 
   executePayload(workspace: string, payload: string) {
+    if (shouldRouteMusePayloadToMaintenance(payload)) {
+      const maintenance = selectMaintenanceProvider(this.runner, this);
+      if (maintenance !== this && maintenance.executePayload) {
+        console.log(`CHAINSIEVE_AGENT_ROUTE:MAINTENANCE:${maintenance.id}`);
+        return maintenance.executePayload(workspace, payload);
+      }
+    }
+
     const command = resolveMuseCommand();
     if (!commandPath(this.runner, command))
       throw new AgentError(
