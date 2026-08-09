@@ -1,11 +1,14 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
+import process from 'node:process';
+import { clearInterval, setInterval, setTimeout } from 'node:timers';
 
 const raw = process.env.CHAINSIEVE_MUSE_SUPERVISOR_CONFIG;
 if (!raw) throw new Error('MUSE_SUPERVISOR_CONFIG_MISSING');
 const config = JSON.parse(raw);
 
+const emit = (message) => process.stderr.write(`${message}\n`);
 const startedAt = Date.now();
 let lastWorkspaceProgressAt = startedAt;
 let retrySignals = 0;
@@ -62,7 +65,7 @@ if (
   existingCircuit?.retryAfter &&
   Date.parse(existingCircuit.retryAfter) > Date.now()
 ) {
-  console.error(
+  emit(
     `CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN:${existingCircuit.retryAfter}:${existingCircuit.reason ?? 'unknown'}`,
   );
   process.exit(75);
@@ -122,7 +125,7 @@ const forward = (stream, target) => {
     for (const line of lines) {
       if (retrySignal(line)) {
         retrySignals += 1;
-        console.error(
+        emit(
           `CHAINSIEVE_MUSE_RETRY_SIGNAL:${config.taskId ?? 'semantic-session'}:${retrySignals}`,
         );
       }
@@ -136,7 +139,7 @@ const stop = (exitCode, marker, circuitReason) => {
   if (stopping) return;
   stopping = true;
   if (circuitReason) writeCircuit(circuitReason);
-  console.error(marker);
+  emit(marker);
   child.kill('SIGTERM');
   const force = setTimeout(() => child.kill('SIGKILL'), 10_000);
   force.unref();
@@ -150,9 +153,7 @@ const monitor = setInterval(() => {
     lastFingerprint = fingerprint;
     lastWorkspaceProgressAt = now;
     retrySignals = 0;
-    console.error(
-      `CHAINSIEVE_MUSE_PROGRESS:${config.taskId ?? 'semantic-session'}`,
-    );
+    emit(`CHAINSIEVE_MUSE_PROGRESS:${config.taskId ?? 'semantic-session'}`);
   }
 
   const state = lifecycleState();
@@ -201,13 +202,13 @@ monitor.unref();
 
 child.on('error', (error) => {
   clearInterval(monitor);
-  console.error(`MUSE_SUPERVISOR_CHILD_ERROR:${error.message}`);
+  emit(`MUSE_SUPERVISOR_CHILD_ERROR:${error.message}`);
   process.exit(1);
 });
 
 child.on('close', (code, signal) => {
   if (stopping) return;
   clearInterval(monitor);
-  if (signal) console.error(`MUSE_SUPERVISOR_CHILD_SIGNAL:${signal}`);
+  if (signal) emit(`MUSE_SUPERVISOR_CHILD_SIGNAL:${signal}`);
   process.exit(code ?? 1);
 });
