@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { isAbsolute, join, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 const raw = process.env.CHAINSIEVE_MUSE_SUPERVISOR_CONFIG;
 if (!raw) throw new Error('MUSE_SUPERVISOR_CONFIG_MISSING');
@@ -27,6 +27,46 @@ const commonGitDirectory = () => {
   if (!value) return undefined;
   return resolve(config.workspace, isAbsolute(value) ? value : join(config.workspace, value));
 };
+
+const circuitPath = () => {
+  const common = commonGitDirectory();
+  if (!common) return undefined;
+  return join(common, 'ciag-runtime', 'agent', 'muse-circuit.json');
+};
+
+const readCircuit = () => {
+  const path = circuitPath();
+  if (!path || !existsSync(path)) return undefined;
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return undefined;
+  }
+};
+
+const writeCircuit = (reason) => {
+  const path = circuitPath();
+  if (!path) return;
+  const openedAt = new Date().toISOString();
+  const retryAfter = new Date(Date.now() + config.circuitCooldownMilliseconds).toISOString();
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(
+    path,
+    `${JSON.stringify({ schemaVersion: '1.0.0', openedAt, retryAfter, reason }, null, 2)}\n`,
+    { mode: 0o600 },
+  );
+};
+
+const existingCircuit = readCircuit();
+if (
+  existingCircuit?.retryAfter &&
+  Date.parse(existingCircuit.retryAfter) > Date.now()
+) {
+  console.error(
+    `CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN:${existingCircuit.retryAfter}:${existingCircuit.reason ?? 'unknown'}`,
+  );
+  process.exit(75);
+}
 
 const lifecycleState = () => {
   if (!config.taskId) return undefined;
@@ -92,9 +132,10 @@ const forward = (stream, target) => {
 forward(child.stdout, process.stdout);
 forward(child.stderr, process.stderr);
 
-const stop = (exitCode, marker) => {
+const stop = (exitCode, marker, circuitReason) => {
   if (stopping) return;
   stopping = true;
+  if (circuitReason) writeCircuit(circuitReason);
   console.error(marker);
   child.kill('SIGTERM');
   const force = setTimeout(() => child.kill('SIGKILL'), 10_000);
@@ -143,6 +184,7 @@ const monitor = setInterval(() => {
     stop(
       75,
       `CHAINSIEVE_MUSE_CIRCUIT_OPEN:${config.taskId ?? 'semantic-session'}:retry-storm:${retrySignals}`,
+      'retry-storm',
     );
     return;
   }
@@ -151,6 +193,7 @@ const monitor = setInterval(() => {
     stop(
       76,
       `CHAINSIEVE_MUSE_CIRCUIT_OPEN:${config.taskId ?? 'semantic-session'}:hard-timeout`,
+      'hard-timeout',
     );
   }
 }, 5_000);
