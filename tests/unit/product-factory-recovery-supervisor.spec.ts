@@ -1,8 +1,9 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { gitCommonDirectory } from '../../tools/agent/lib/runtime.js';
 import type {
   AgentProvider,
   CommandOptions,
@@ -18,7 +19,10 @@ import {
   runSupervisedProductFactory,
   writeSupervisorRecoveryState,
 } from '../../tools/product-factory/recovery-supervisor.js';
-import { computeFailureFingerprint } from '../../tools/product-factory/recovery-contract.js';
+import {
+  computeFailureFingerprint,
+  pathMatchesLane,
+} from '../../tools/product-factory/recovery-contract.js';
 
 const ok = (stdout = ''): CommandResult => ({
   status: 0,
@@ -27,7 +31,10 @@ const ok = (stdout = ''): CommandResult => ({
 });
 
 class RuntimeRunner implements CommandRunner {
-  constructor(private readonly root: string) {}
+  constructor(
+    private readonly root: string,
+    private readonly customGitCommonDir?: string,
+  ) {}
 
   run(command: string, args: string[], _options?: CommandOptions): CommandResult {
     const key = `${command} ${args.join(' ')}`;
@@ -42,7 +49,9 @@ class RuntimeRunner implements CommandRunner {
       return { status: 1, stdout: '', stderr: 'RELEASE_BASELINE_NOT_FOUND' };
     }
     if (command !== 'git') return ok();
-    if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
+    if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') {
+      return ok(`${this.customGitCommonDir ?? '.git'}\n`);
+    }
     if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
     if (args[0] === 'worktree' && args[1] === 'add') {
       const workspace = args[3];
@@ -53,9 +62,12 @@ class RuntimeRunner implements CommandRunner {
     if (args[0] === 'worktree' && args[1] === 'remove') return ok();
     if (args[0] === 'status') {
       const cwd = _options?.cwd ?? this.root;
-      return existsSync(join(cwd, '.chainsieve-recovery-diagnosis.json'))
-        ? ok('?? .chainsieve-recovery-diagnosis.json\n')
-        : ok();
+      const diagnosisExists = existsSync(join(cwd, '.chainsieve-recovery-diagnosis.json'));
+      const museExists = existsSync(join(cwd, 'tools/agent/providers/muse.ts'));
+      const lines: string[] = [];
+      if (diagnosisExists) lines.push('?? .chainsieve-recovery-diagnosis.json');
+      if (museExists) lines.push('?? tools/agent/providers/muse.ts');
+      return ok(lines.length ? lines.join('\n') + '\n' : '');
     }
     return ok();
   }
@@ -64,6 +76,7 @@ class RuntimeRunner implements CommandRunner {
 const providerWriting = (
   value: unknown,
   calls: { count: number },
+  extraFile?: string,
 ): AgentProvider => ({
   id: 'muse',
   detect: () => ({ available: true, mechanism: 'command', detail: 'test' }),
@@ -77,6 +90,11 @@ const providerWriting = (
       join(workspace, '.chainsieve-recovery-diagnosis.json'),
       `${JSON.stringify(value)}\n`,
     );
+    if (extraFile) {
+      const extraPath = join(workspace, extraFile);
+      mkdirSync(dirname(extraPath), { recursive: true });
+      writeFileSync(extraPath, 'illegal modification\n');
+    }
     return ok();
   },
 });
@@ -140,6 +158,41 @@ describe('product factory recovery supervisor diagnosis', () => {
       await rm(root, { recursive: true, force: true });
     }
   });
+
+  it('rejects recovery diagnosis that modifies control-plane files like tools/agent/providers/muse.ts', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-scope-test-'));
+    mkdirSync(join(root, '.git'), { recursive: true });
+    const calls = { count: 0 };
+    try {
+      await expect(
+        diagnoseSupervisorRecovery(
+          root,
+          new RuntimeRunner(root),
+          providerWriting(
+            {
+              action: 'REPAIR',
+              reason: 'attempting illegal provider modification',
+              evidence: [],
+              target: 'T-99',
+              constraints: [],
+              allowedLanes: ['PRODUCT_CODE'],
+            },
+            calls,
+            'tools/agent/providers/muse.ts',
+          ),
+          {
+            code: 'AUTOPILOT_CORRECTION_LIMIT',
+            targetId: 'commit',
+            hash: 'AUTOPILOT_CORRECTION_LIMIT:commit:scope',
+          },
+          'deadbeef',
+          'AUTOPILOT_CORRECTION_LIMIT:T-99:3',
+        ),
+      ).rejects.toThrow('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_SCOPE');
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('product factory recovery supervisor policy & authority (Requirements D, E)', () => {
@@ -164,13 +217,43 @@ describe('product factory recovery supervisor policy & authority (Requirements D
     ]);
     expect(recoveryLanesForAction('RETRY_INFRASTRUCTURE', ['PRODUCT_CODE'])).toEqual([]);
   });
+
+  it('strictly rejects tools/agent/providers/muse.ts across all recovery lanes', () => {
+    const lanes = [
+      'PRODUCT_CODE',
+      'TEST',
+      'DEPENDENCY',
+      'MIGRATION',
+      'CONFIG',
+      'SPECIFICATION',
+      'GENERATED_CONTRACT',
+      'INFRASTRUCTURE',
+    ] as const;
+    for (const lane of lanes) {
+      expect(pathMatchesLane('tools/agent/providers/muse.ts', lane)).toBe(false);
+    }
+  });
 });
 
 describe('product factory recovery supervisor durable state & attempt bounds (Requirements G, H)', () => {
-  it('atomically replaces durable recovery state and leaves no temp file behind', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-state-'));
+  it('correctly resolves git common dir for both absolute and relative mock outputs', async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-common-dir-'));
+    const realGitDir = join(tempDir, '.git');
+    mkdirSync(realGitDir, { recursive: true });
+    try {
+      const runnerRel = new RuntimeRunner(tempDir, '.git');
+      const runnerAbs = new RuntimeRunner(tempDir, realGitDir);
+      expect(gitCommonDirectory(tempDir, runnerRel)).toBe(realGitDir);
+      expect(gitCommonDirectory(tempDir, runnerAbs)).toBe(realGitDir);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('atomically replaces durable recovery state and leaves no temp file behind with relative git common dir', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-state-rel-'));
     mkdirSync(join(root, '.git'), { recursive: true });
-    const runner = new RuntimeRunner(root);
+    const runner = new RuntimeRunner(root, '.git');
     try {
       await writeSupervisorRecoveryState(root, runner, {
         schemaVersion: '1.0.0',
@@ -201,8 +284,49 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
     }
   });
 
+  it('atomically replaces durable recovery state and leaves no temp file behind with absolute git common dir', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-state-abs-'));
+    const absGit = join(root, '.git');
+    mkdirSync(absGit, { recursive: true });
+    const runner = new RuntimeRunner(root, absGit);
+    try {
+      await writeSupervisorRecoveryState(root, runner, {
+        schemaVersion: '1.0.0',
+        records: {
+          fp: {
+            fingerprint: 'fp',
+            attempts: 1,
+            lastCommit: 'abc',
+            lastAction: 'REPAIR',
+            lastReason: 'test',
+            updatedAt: '2026-08-09T00:00:00.000Z',
+          },
+        },
+      });
+      const restored = await readSupervisorRecoveryState(root, runner);
+      expect(restored.records.fp?.attempts).toBe(1);
+      const runtime = join(absGit, 'ciag-runtime', 'agent');
+      expect(
+        readdirSync(runtime).filter((name) => name.includes('product-factory-supervisor-recovery.json.') && name.endsWith('.tmp')),
+      ).toEqual([]);
+      expect(
+        JSON.parse(
+          await readFile(join(runtime, 'product-factory-supervisor-recovery.json'), 'utf8'),
+        ).schemaVersion,
+      ).toBe('1.0.0');
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   it('bounces same fingerprint when max attempts are reached without invoking model (Requirement H)', async () => {
-    const root = process.cwd();
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-max-attempts-'));
+    mkdirSync(join(root, '.git'), { recursive: true });
+    for (const dir of ['config', 'docs/spec', 'tasks', 'clusters', 'artifacts']) {
+      if (existsSync(join(process.cwd(), dir))) {
+        cpSync(join(process.cwd(), dir), join(root, dir), { recursive: true });
+      }
+    }
     const commit = 'ab68083ee116665c40e804447fa2e0cd87be1ccf';
     const runner = new RuntimeRunner(root);
     const fp = computeFailureFingerprint(
@@ -237,6 +361,9 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
       else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
       if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
       else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
+      await rm(root, { recursive: true, force: true });
     }
   });
 });
+
+

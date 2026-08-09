@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type {
   CommandOptions,
   CommandResult,
@@ -7,10 +7,12 @@ import type {
 } from '../../tools/agent/lib/types.js';
 import {
   MUSE_ARGS_ENV,
+  MUSE_COMMAND_ENV,
   MUSE_PERMISSION_ENV,
   MuseProvider,
   buildMuseArgs,
   parseMuseArgs,
+  resolveMuseCommand,
 } from '../../tools/agent/providers/muse.js';
 import {
   createProvider,
@@ -30,8 +32,11 @@ class Runner implements CommandRunner {
     options: CommandOptions = {},
   ): CommandResult {
     this.calls.push({ command, args, options });
-    if (command === 'which' && args[0] === 'muse')
-      return { status: 0, stdout: '/usr/local/bin/muse\n', stderr: '' };
+    if (command === 'which' && args[0]) {
+      if (args[0] === 'missing-muse')
+        return { status: 1, stdout: '', stderr: 'not found' };
+      return { status: 0, stdout: `${args[0]}\n`, stderr: '' };
+    }
     return { status: 0, stdout: '', stderr: '' };
   }
 }
@@ -54,9 +59,19 @@ const binding = (): PayloadBinding =>
     failures: [],
   }) as unknown as PayloadBinding;
 
+const originalCommand = process.env[MUSE_COMMAND_ENV];
 const originalArgs = process.env[MUSE_ARGS_ENV];
 const originalPermission = process.env[MUSE_PERMISSION_ENV];
+
+beforeEach(() => {
+  delete process.env[MUSE_COMMAND_ENV];
+  delete process.env[MUSE_ARGS_ENV];
+  delete process.env[MUSE_PERMISSION_ENV];
+});
+
 afterEach(() => {
+  if (originalCommand === undefined) delete process.env[MUSE_COMMAND_ENV];
+  else process.env[MUSE_COMMAND_ENV] = originalCommand;
   if (originalArgs === undefined) delete process.env[MUSE_ARGS_ENV];
   else process.env[MUSE_ARGS_ENV] = originalArgs;
   if (originalPermission === undefined) delete process.env[MUSE_PERMISSION_ENV];
@@ -102,6 +117,36 @@ describe('Muse Code provider', () => {
     );
   });
 
+  it('fails closed with MUSE_PERMISSION_NOT_PREAPPROVED even when production command is in environment', () => {
+    process.env[MUSE_COMMAND_ENV] = '/home/minhquan_eth/.local/bin/muse';
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    delete process.env[MUSE_PERMISSION_ENV];
+    const provider = new MuseProvider(new Runner());
+    expect(() => provider.executePayload('/tmp/worktree', 'goal')).toThrow(
+      'MUSE_PERMISSION_NOT_PREAPPROVED',
+    );
+  });
+
+  it('default command tests use muse independently of production environment', () => {
+    delete process.env[MUSE_COMMAND_ENV];
+    expect(resolveMuseCommand()).toBe('muse');
+  });
+
+  it('supports explicit absolute command representation in dedicated test without breaking mock', () => {
+    process.env[MUSE_COMMAND_ENV] = '/custom/bin/muse';
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    expect(provider.executePayload(binding().taskWorkspace, 'test goal')).toMatchObject({
+      status: 0,
+    });
+    const launch = runner.calls.at(-1)!;
+    expect(launch.command).toBe('/custom/bin/muse');
+  });
+
   it('runs headlessly in the task workspace after one-time permission setup', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
@@ -130,3 +175,4 @@ describe('Muse Code provider', () => {
     });
   });
 });
+
