@@ -11,7 +11,12 @@ import type {
 export type TelemetrySeverity = 'info' | 'warn' | 'error';
 
 const compactText = (value: string, limit = 1_000): string =>
-  value.replace(/[\r\u0000]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
+  [...value]
+    .filter((character) => character !== '\r' && character.charCodeAt(0) !== 0)
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, limit);
 
 export const telemetryError = (error: unknown, limit = 2_000): string => {
   if (error instanceof Error) return compactText(`${error.name}:${error.message}`, limit);
