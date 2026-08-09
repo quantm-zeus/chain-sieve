@@ -1,3 +1,7 @@
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CommandResult, CommandRunner } from '../../tools/agent/lib/types.js';
 import {
@@ -17,6 +21,35 @@ const ok = (stdout = ''): CommandResult => ({
   stdout,
   stderr: '',
 });
+
+const writeTestAutonomyPolicy = (root: string) => {
+  mkdirSync(join(root, 'config'), { recursive: true });
+  writeFileSync(
+    join(root, 'config', 'autonomy-policy.json'),
+    JSON.stringify({
+      schemaVersion: '1.0.0',
+      mode: 'FULL_AUTONOMY',
+      humanReviewRequired: false,
+      humanApprovalRequired: false,
+      automatedIndependentReviewRequired: true,
+      deterministicVerificationRequired: true,
+      allowAutonomousSpecificationResolution: true,
+      allowAutonomousCiRepair: true,
+      allowAutonomousMerge: true,
+      safeDefaults: {
+        liveTradingEnabled: false,
+        externalWriteCapabilitiesEnabled: false,
+        secretMaterializationEnabled: false,
+        irreversibleMigrationsEnabled: false,
+      },
+      limits: {
+        taskCorrectionRounds: 3,
+        clusterCiCorrectionRounds: 5,
+        infrastructureRetryRounds: 3,
+      },
+    }),
+  );
+};
 
 describe('product factory convergence contract', () => {
   it('accepts a commit-bound PASS report with no gaps', () => {
@@ -178,23 +211,43 @@ describe('porcelain path parsing (Requirement F)', () => {
     expect(parsePorcelainLine('?? tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
     expect(parsePorcelainLine('A  tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
     expect(parsePorcelainLine('R  old.ts -> tools/product-factory/factory.ts')).toBe('tools/product-factory/factory.ts');
-    expect(parsePorcelainLine(' "tools/product-factory/factory.ts"')).toBe('tools/product-factory/factory.ts');
+    expect(parsePorcelainLine(' M "tools/product-factory/factory.ts"')).toBe('tools/product-factory/factory.ts');
   });
 });
 
 describe('factory bubble-up & no legacy inner recovery loop (Requirements A, C)', () => {
-  class FailingRunner implements CommandRunner {
+  class DoctorPassingFailingRunner implements CommandRunner {
     run(command: string, args: string[]): CommandResult {
-      if (command === 'git' && args[0] === 'status') return ok();
+      const key = `${command} ${args.join(' ')}`;
+      if (key === 'git branch --show-current') return ok('main\n');
+      if (key === 'git status --porcelain=v1') return ok('');
+      if (key === 'node --version') return ok('v22.23.1\n');
+      if (key === 'pnpm --version') return ok('10.13.1\n');
+      if (key === 'muse --version') return ok('muse-code beta\n');
+      if (key === 'muse --help') return ok('Muse Code help\n');
+      if (key.startsWith('gh api repos/')) return ok('true\n');
       if (command === 'git' && args[0] === 'rev-parse') return ok('deadbeef\n');
-      if (command === 'pnpm' && args.includes('autopilot:doctor')) return ok();
       if (command === 'pnpm' && args.includes('autopilot')) return { status: 1, stdout: '', stderr: 'AUTOPILOT_CORRECTION_LIMIT:T-1:3' };
       return ok();
     }
   }
 
   it('runProductFactory throws failures directly upward without catching or diagnosing internally', async () => {
-    const runner = new FailingRunner();
-    await expect(runProductFactory('/dummy', runner, { providerId: 'muse' })).rejects.toThrow('PRODUCT_FACTORY_CHECK_FAILED');
+    const root = mkdtempSync(join(tmpdir(), 'chainsieve-factory-test-'));
+    const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+    const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+    process.env.CHAINSIEVE_MUSE_ARGS_JSON = '["-y"]';
+    process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
+    try {
+      writeTestAutonomyPolicy(root);
+      const runner = new DoctorPassingFailingRunner();
+      await expect(runProductFactory(root, runner, { providerId: 'muse' })).rejects.toThrow('PRODUCT_FACTORY_CHECK_FAILED');
+    } finally {
+      if (oldEnvArgs === undefined) delete process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+      else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
+      if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+      else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

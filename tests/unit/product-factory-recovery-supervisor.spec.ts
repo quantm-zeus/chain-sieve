@@ -25,10 +25,46 @@ const ok = (stdout = ''): CommandResult => ({
   stderr: '',
 });
 
+const writeTestAutonomyPolicy = (root: string) => {
+  mkdirSync(join(root, 'config'), { recursive: true });
+  writeFileSync(
+    join(root, 'config', 'autonomy-policy.json'),
+    JSON.stringify({
+      schemaVersion: '1.0.0',
+      mode: 'FULL_AUTONOMY',
+      humanReviewRequired: false,
+      humanApprovalRequired: false,
+      automatedIndependentReviewRequired: true,
+      deterministicVerificationRequired: true,
+      allowAutonomousSpecificationResolution: true,
+      allowAutonomousCiRepair: true,
+      allowAutonomousMerge: true,
+      safeDefaults: {
+        liveTradingEnabled: false,
+        externalWriteCapabilitiesEnabled: false,
+        secretMaterializationEnabled: false,
+        irreversibleMigrationsEnabled: false,
+      },
+      limits: {
+        taskCorrectionRounds: 3,
+        clusterCiCorrectionRounds: 5,
+        infrastructureRetryRounds: 3,
+      },
+    }),
+  );
+};
+
 class RuntimeRunner implements CommandRunner {
   constructor(private readonly root: string) {}
 
   run(command: string, args: string[], _options?: CommandOptions): CommandResult {
+    const key = `${command} ${args.join(' ')}`;
+    if (key === 'git branch --show-current') return ok('main\n');
+    if (key === 'node --version') return ok('v22.23.1\n');
+    if (key === 'pnpm --version') return ok('10.13.1\n');
+    if (key === 'muse --version') return ok('muse-code beta\n');
+    if (key === 'muse --help') return ok('Muse Code help\n');
+    if (key.startsWith('gh api repos/')) return ok('true\n');
     if (command !== 'git') return ok();
     if (args[0] === 'rev-parse' && args[1] === '--git-common-dir') return ok('.git\n');
     if (args[0] === 'rev-parse' && args[1] === 'HEAD') return ok('ab68083ee116665c40e804447fa2e0cd87be1ccf\n');
@@ -192,8 +228,13 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
   it('bounces same fingerprint when max attempts are reached without invoking model (Requirement H)', async () => {
     const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-bounds-'));
     mkdirSync(join(root, '.git'), { recursive: true });
+    writeTestAutonomyPolicy(root);
     const runner = new RuntimeRunner(root);
     const fpHash = 'AUTOPILOT_CORRECTION_LIMIT:ab68083ee116665c40e804447fa2e0cd87be1ccf:1234567890abcdef';
+    const oldEnvArgs = process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+    const oldEnvPerm = process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+    process.env.CHAINSIEVE_MUSE_ARGS_JSON = '["-y"]';
+    process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = 'preapproved';
     try {
       await writeSupervisorRecoveryState(root, runner, {
         schemaVersion: '1.0.0',
@@ -209,11 +250,14 @@ describe('product factory recovery supervisor durable state & attempt bounds (Re
         },
       });
 
-      // Attempting runSupervisedProductFactory with same failing fingerprint must throw limit immediately
       await expect(
         runSupervisedProductFactory(root, runner, { providerId: 'muse' }),
       ).rejects.toThrow('PRODUCT_FACTORY_SUPERVISOR_RECOVERY_LIMIT');
     } finally {
+      if (oldEnvArgs === undefined) delete process.env.CHAINSIEVE_MUSE_ARGS_JSON;
+      else process.env.CHAINSIEVE_MUSE_ARGS_JSON = oldEnvArgs;
+      if (oldEnvPerm === undefined) delete process.env.CHAINSIEVE_MUSE_PERMISSION_MODE;
+      else process.env.CHAINSIEVE_MUSE_PERMISSION_MODE = oldEnvPerm;
       await rm(root, { recursive: true, force: true });
     }
   });
