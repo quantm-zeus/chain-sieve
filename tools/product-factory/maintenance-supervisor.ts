@@ -54,7 +54,6 @@ const MAINTENANCE_FORBIDDEN_EXACT = new Set([
   'AGENTS.md',
   'config/autonomy-policy.json',
 ]);
-
 const NON_REPAIRABLE_MARKERS = [
   'PROHIBITED_CAPABILITY',
   'SECRET_EXPOSURE',
@@ -66,8 +65,7 @@ const NON_REPAIRABLE_MARKERS = [
   'PERMISSION_DENIED',
   'PR_CLOSED',
 ] as const;
-
-const FULL_CHECKS = [
+const FULL_CHECKS: string[][] = [
   ['build'],
   ['lint'],
   ['typecheck'],
@@ -80,7 +78,7 @@ const FULL_CHECKS = [
   ['prohibited-capabilities:scan'],
   ['migration:verify'],
   ['harness:verify'],
-] as const;
+];
 
 interface PullRequestCheck {
   name?: string;
@@ -126,7 +124,11 @@ const sleep = async (milliseconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 const compact = (value: string, limit = 8_000): string =>
-  value.replace(/[\r\u0000]/g, '').trim().slice(0, limit);
+  [...value]
+    .filter((character) => character !== '\r' && character.charCodeAt(0) !== 0)
+    .join('')
+    .trim()
+    .slice(0, limit);
 
 export const normalizeMaintenanceFailure = (error: unknown): string => {
   const rendered = compact(errorCode(error));
@@ -140,7 +142,6 @@ export const normalizeMaintenanceFailure = (error: unknown): string => {
 
 export const isAutonomousMaintenanceEligible = (failure: string): boolean => {
   const upper = failure.toUpperCase();
-  if (upper.includes('MAINTENANCE_ESCALATION_UNKNOWN_FAILURE')) return true;
   return !NON_REPAIRABLE_MARKERS.some((marker) => upper.includes(marker));
 };
 
@@ -308,14 +309,14 @@ const assertMaintenanceScope = (paths: string[]): void => {
 };
 
 const runFullChecks = (runner: CommandRunner, workspace: string): void => {
-  for (const args of FULL_CHECKS) pnpm(runner, workspace, [...args]);
+  for (const args of FULL_CHECKS) pnpm(runner, workspace, args);
 };
 
 const maintenancePrompt = (failure: string, commit: string): string =>
-  `You are the trusted ChainSieve autonomous MAINTENANCE repair executor. The product factory failed at frozen main ${commit} with:\n${failure}\n\nYour job is to reproduce and repair the mechanical/control-plane/tooling cause so the factory can resume without human intervention. Inspect the repository and deterministic evidence first. You may repair non-normative implementation and maintenance surfaces only: tools/**, tests/**, apps/**, packages/**, config/** except config/autonomy-policy.json, docs/operations/**, and root package/tooling files. Never modify AGENTS.md, .github/**, .agents/**, secrets/**, docs/spec/**, docs/adr/**, tasks/**, clusters/**, artifacts/**, or immutable requirements. Never weaken a verifier, requirement, safety gate, test assertion, or capability restriction merely to make checks pass. Prefer a narrow root-cause fix. Run relevant deterministic checks, self-review the complete diff, and leave valid changes uncommitted. Do not run git commit, git push, gh, reset, clean, rebase, merge, or start product:autopilot.`;
+  `You are the trusted ChainSieve autonomous MAINTENANCE repair executor. The product factory failed at frozen main ${commit} with:\n${failure}\n\nReproduce and repair the mechanical/control-plane/tooling cause so the factory can resume without human intervention. Inspect deterministic evidence first. You may repair only non-normative maintenance surfaces: tools/**, tests/**, apps/**, packages/**, config/** except config/autonomy-policy.json, docs/operations/**, and root package/tooling files. Never modify AGENTS.md, .github/**, .agents/**, secrets/**, docs/spec/**, docs/adr/**, tasks/**, clusters/**, artifacts/**, or immutable requirements. Never weaken a verifier, requirement, safety gate, test assertion, or capability restriction merely to make checks pass. Prefer the narrowest root-cause fix. Run relevant deterministic checks, self-review the complete diff, and leave valid changes uncommitted. Do not run git commit, git push, gh, reset, clean, rebase, merge, or product:autopilot.`;
 
 const repairPrompt = (failure: string): string =>
-  `Your current autonomous maintenance patch failed deterministic verification with:\n${failure}\n\nInspect the current uncommitted diff and repair the patch itself. Preserve the original root-cause fix and all safety/authority boundaries. Do not broaden scope, weaken tests or requirements, or touch forbidden paths. Run the directly relevant checks if available. Leave the corrected changes uncommitted. Do not run git/gh/reset/clean/rebase/merge.`;
+  `The current autonomous maintenance patch failed deterministic verification with:\n${failure}\n\nRepair the patch itself while preserving the original root-cause fix and all safety/authority boundaries. Do not broaden scope, weaken tests or requirements, or touch forbidden paths. Leave changes uncommitted. Do not run git/gh/reset/clean/rebase/merge.`;
 
 const verifyAndRepairPatch = (
   runner: CommandRunner,
@@ -361,7 +362,7 @@ const runIndependentReview = async (
     executeAgent(
       provider,
       workspace,
-      `You are a fresh-context independent ChainSieve MAINTENANCE reviewer. Review frozen maintenance commit ${commit} that was created to repair this failure:\n${originalFailure}\n\nDo not modify source, tests, policy, specs, generated contracts, or git state. Do not run package commands; deterministic verification has already run outside the agent sandbox. Inspect the commit, its parent diff, authority boundaries, and whether the change actually addresses the failure without weakening safety or normative behavior. Create exactly one file ${REVIEW_FILE} containing strict JSON: {"status":"PASS|FAIL","findings":["specific finding"],"summary":"evidence-backed review summary"}. PASS only if there are no material findings.`,
+      `You are a fresh-context independent ChainSieve MAINTENANCE reviewer. Review frozen maintenance commit ${commit} created to repair:\n${originalFailure}\n\nDo not modify source, tests, policy, specs, generated contracts, or git state. Do not run package commands; deterministic verification already ran outside the agent sandbox. Inspect the commit and its parent diff, authority boundaries, and whether the change addresses the failure without weakening safety or normative behavior. Create exactly one file ${REVIEW_FILE} containing strict JSON: {"status":"PASS|FAIL","findings":["specific finding"],"summary":"evidence-backed review summary"}. PASS only with no material findings.`,
       'PRODUCT_FACTORY_MAINTENANCE_REVIEW_AGENT_FAILED',
     );
     const paths = changedPaths(runner, workspace);
@@ -404,7 +405,7 @@ const commitWithIndependentReview = async (
     executeAgent(
       provider,
       workspace,
-      `Independent maintenance review failed with findings:\n${review.findings.join('\n')}\n\nRepair every material finding in the current branch. Keep the original maintenance scope and safety boundaries. Leave changes uncommitted and do not run git/gh/reset/clean/rebase/merge.`,
+      `Independent maintenance review failed with findings:\n${review.findings.join('\n')}\n\nRepair every material finding while preserving maintenance scope and safety boundaries. Leave changes uncommitted and do not run git/gh/reset/clean/rebase/merge.`,
       'PRODUCT_FACTORY_MAINTENANCE_REVIEW_REPAIR_AGENT_FAILED',
     );
     paths = verifyAndRepairPatch(runner, provider, workspace);
@@ -478,7 +479,7 @@ const repairCi = async (
   executeAgent(
     provider,
     workspace,
-    `Autonomous maintenance PR CI failed: ${failures.join(', ')}. Inspect the current branch and repair only the mechanical CI regression. Preserve all authority boundaries and the original root-cause fix. Do not weaken tests, specs, safety gates, or policy. Leave changes uncommitted and do not run git/gh/reset/clean/rebase/merge.`,
+    `Autonomous maintenance PR CI failed: ${failures.join(', ')}. Repair only the mechanical CI regression. Preserve all authority boundaries and the original root-cause fix. Do not weaken tests, specs, safety gates, or policy. Leave changes uncommitted and do not run git/gh/reset/clean/rebase/merge.`,
     'PRODUCT_FACTORY_MAINTENANCE_CI_REPAIR_AGENT_FAILED',
   );
   await commitWithIndependentReview(
@@ -523,10 +524,7 @@ export const runAutonomousMaintenance = async (
       `PRODUCT_FACTORY_MAINTENANCE_PROVIDER_UNAVAILABLE:${provider.id}:${detection.detail}`,
     );
 
-  const suffix = createHash('sha256')
-    .update(fingerprint)
-    .digest('hex')
-    .slice(0, 10);
+  const suffix = createHash('sha256').update(fingerprint).digest('hex').slice(0, 10);
   const branch = `autonomy/maintenance-${attempt}-${suffix}-${randomUUID().slice(0, 8)}`;
   const workspace = await mkdtemp(join(tmpdir(), 'chainsieve-maintenance-action-'));
   await rm(workspace, { recursive: true, force: true });
