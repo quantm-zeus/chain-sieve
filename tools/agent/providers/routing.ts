@@ -63,13 +63,13 @@ const between = (value: string, start: string, end: string): string | undefined 
 };
 
 /**
- * Route only prompts whose role is explicitly mechanical. Task implementation,
- * specification work, convergence correction, and independent review remain on
- * Muse. Recovery diagnosis is routed from the embedded raw failure rather than
- * from generic prompt prose about PRDs/requirements.
+ * Route only product-factory recovery prompts whose role is explicitly
+ * mechanical. Task implementation, specification work, convergence correction,
+ * independent review, and cluster-CI sessions remain on Muse so existing
+ * provider-bound receipts stay truthful. Recovery diagnosis is routed from the
+ * embedded raw failure rather than generic prompt prose about PRDs/requirements.
  */
 export const shouldRouteMusePayloadToMaintenance = (payload: string): boolean => {
-  if (payload.includes('You are isolated CI repair session ')) return true;
   if (payload.startsWith('Recovery PR CI failed:')) return true;
 
   if (payload.includes('independent fresh-context recovery diagnostician')) {
@@ -98,7 +98,7 @@ export const selectMaintenanceProvider = (
   if (
     detection.available &&
     detection.mechanism === 'command' &&
-    detection.command
+    detection.command?.endsWith('agy')
   )
     return antigravity;
   return semanticProvider;
