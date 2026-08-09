@@ -66,6 +66,15 @@ export const dependencyReadyClusters = (
       clusterDependenciesComplete(inventory, cluster),
   );
 
+/**
+ * A generated cluster branch can outlive the runtime lifecycle database and its
+ * registered worktree. Treat that as bootstrap state rather than READY: the
+ * trusted initializer is responsible for recreating the cluster worktree and
+ * replaying deterministic DRAFT -> VALIDATED -> READY lifecycle transitions.
+ */
+export const clusterNeedsInitialization = (cluster: ClusterRecord): boolean =>
+  cluster.state === 'UNPREPARED' || !cluster.worktreeRegistered;
+
 const activeDecision = (
   inventory: ProjectInventory,
   task: TaskRecord,
@@ -284,7 +293,7 @@ export const decideNextAction = (
       cluster: current,
     };
   }
-  if (current.state === 'UNPREPARED') {
+  if (clusterNeedsInitialization(current)) {
     const draft = clusterTasks
       .filter((task) =>
         ['DRAFT', 'VALIDATED', 'READY'].includes(task.state.state),
@@ -292,7 +301,9 @@ export const decideNextAction = (
       .sort(taskOrder)[0];
     return {
       action: 'INITIALIZE_CLUSTER',
-      reason: 'DEPENDENCY_READY_CLUSTER_NOT_PREPARED',
+      reason: current.worktreeRegistered
+        ? 'DEPENDENCY_READY_CLUSTER_NOT_PREPARED'
+        : 'DEPENDENCY_READY_CLUSTER_WORKTREE_MISSING',
       cluster: current,
       nextCluster: current,
       ...(draft ? { task: draft, nextTask: draft } : {}),
