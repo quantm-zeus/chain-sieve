@@ -1,5 +1,7 @@
+import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { AgentError } from '../lib/errors.js';
+import { reconcileCommittedTaskCheckpoint } from '../lib/task-checkpoint.js';
 import type {
   AgentProvider,
   CommandRunner,
@@ -10,13 +12,18 @@ import {
   selectMaintenanceProvider,
   shouldRouteMusePayloadToMaintenance,
 } from './routing.js';
+import { resolveMuseSupervision } from './muse-supervision.js';
 
 export const MUSE_COMMAND_ENV = 'CHAINSIEVE_MUSE_COMMAND' as const;
 export const MUSE_ARGS_ENV = 'CHAINSIEVE_MUSE_ARGS_JSON' as const;
 export const MUSE_PERMISSION_ENV = 'CHAINSIEVE_MUSE_PERMISSION_MODE' as const;
 export const MUSE_PERMISSION_PREAPPROVED = 'preapproved' as const;
 export const MUSE_PROMPT_TOKEN = '{prompt}' as const;
-const MUSE_TIMEOUT_MS = 2 * 60 * 60_000;
+export const MUSE_SUPERVISOR_CONFIG_ENV =
+  'CHAINSIEVE_MUSE_SUPERVISOR_CONFIG' as const;
+const SUPERVISOR_EXIT_CHECKPOINT = 72;
+const SUPERVISOR_EXIT_RETRY_STORM = 75;
+const SUPERVISOR_EXIT_HARD_TIMEOUT = 76;
 
 const commandPath = (
   runner: CommandRunner,
@@ -91,8 +98,12 @@ export const buildMuseArgs = (
     arg.replace(MUSE_PROMPT_TOKEN, payload),
   );
 
+const supervisorPath = (): string =>
+  fileURLToPath(new URL('./muse-supervisor.mjs', import.meta.url));
+
 export class MuseProvider implements AgentProvider {
   readonly id = 'muse' as const;
+  private pendingTaskBinding?: TaskLaunchBinding;
 
   constructor(private readonly runner: CommandRunner) {}
 
@@ -114,6 +125,7 @@ export class MuseProvider implements AgentProvider {
   }
 
   generatePayload(binding: TaskLaunchBinding): string {
+    this.pendingTaskBinding = binding;
     const conformance = binding.conformanceManifestSha256
       ? ` Immutable conformance manifest: ${binding.conformanceManifestPath} (SHA-256 ${binding.conformanceManifestSha256}).`
       : '';
@@ -139,6 +151,16 @@ export class MuseProvider implements AgentProvider {
       }
     }
 
+    const binding =
+      this.pendingTaskBinding?.taskWorkspace === workspace
+        ? this.pendingTaskBinding
+        : undefined;
+    this.pendingTaskBinding = undefined;
+    if (binding) {
+      const reconciled = reconcileCommittedTaskCheckpoint(this.runner, binding);
+      if (reconciled) return reconciled;
+    }
+
     const command = resolveMuseCommand();
     if (!commandPath(this.runner, command))
       throw new AgentError(
@@ -151,11 +173,51 @@ export class MuseProvider implements AgentProvider {
         `Configure Muse Code permissions once, then set ${MUSE_PERMISSION_ENV}=${MUSE_PERMISSION_PREAPPROVED}.`,
       );
     const args = buildMuseArgs(wrapMusePrompt(payload));
-    return this.runner.run(command, args, {
+    const supervision = resolveMuseSupervision();
+    console.log(
+      `CHAINSIEVE_MUSE_SUPERVISED_START:${binding?.task.contract.id ?? 'semantic-session'}`,
+    );
+    const result = this.runner.run(process.execPath, [supervisorPath()], {
       cwd: workspace,
-      timeoutMilliseconds: MUSE_TIMEOUT_MS,
+      timeoutMilliseconds: supervision.hardTimeoutMilliseconds + 60_000,
       streamOutput: true,
+      environment: {
+        [MUSE_SUPERVISOR_CONFIG_ENV]: JSON.stringify({
+          command,
+          args,
+          workspace,
+          ...(binding
+            ? {
+                taskId: binding.task.contract.id,
+                baseCommit: binding.baseCommit,
+              }
+            : {}),
+          ...supervision,
+        }),
+      },
     });
+
+    if (
+      binding &&
+      (result.status === 0 || result.status === SUPERVISOR_EXIT_CHECKPOINT)
+    ) {
+      const reconciled = reconcileCommittedTaskCheckpoint(this.runner, binding);
+      if (reconciled) return reconciled;
+    }
+    if (result.status === SUPERVISOR_EXIT_CHECKPOINT)
+      return { status: 0, stdout: '', stderr: '' };
+    if (result.status === SUPERVISOR_EXIT_RETRY_STORM)
+      return {
+        ...result,
+        stderr: 'MUSE_PROVIDER_RETRY_STORM:CIRCUIT_OPEN',
+      };
+    if (result.status === SUPERVISOR_EXIT_HARD_TIMEOUT)
+      return {
+        ...result,
+        timedOut: true,
+        stderr: 'MUSE_HARD_TIMEOUT:CIRCUIT_OPEN',
+      };
+    return result;
   }
 
   copyPayload(payload: string): void {
