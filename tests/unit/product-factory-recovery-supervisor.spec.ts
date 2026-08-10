@@ -12,6 +12,7 @@ import type {
 } from '../../tools/agent/lib/types.js';
 import {
   diagnoseSupervisorRecovery,
+  extractSupervisorRecoveryDiagnosis,
   isTransientExternalBlocker,
   parseSupervisorRecoveryDiagnosis,
   readSupervisorRecoveryState,
@@ -192,6 +193,82 @@ describe('product factory recovery supervisor diagnosis', () => {
     } finally {
       await rm(root, { recursive: true, force: true });
     }
+  });
+
+  it('succeeds via stdout JSON transport when 0 git files are modified in diagnosis worktree', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'chainsieve-supervisor-stdout-test-'));
+    mkdirSync(join(root, '.git'), { recursive: true });
+    const calls = { count: 0 };
+    const providerStdout: AgentProvider = {
+      id: 'antigravity',
+      detect: () => ({ available: true, mechanism: 'command', detail: 'test' }),
+      generatePayload: () => '',
+      copyPayload: () => undefined,
+      openWorkspace: () => undefined,
+      renderOwnerInstruction: () => '',
+      executePayload: () => {
+        calls.count += 1;
+        return {
+          status: 0,
+          stdout: `Agent analysis completed.\n\`\`\`json\n${JSON.stringify({
+            action: 'REPAIR',
+            reason: 'stdout structured diagnosis',
+            evidence: ['test failure'],
+            target: 'T-G0-COL-01',
+            constraints: ['keep PRD authority'],
+            allowedLanes: ['PRODUCT_CODE', 'TEST'],
+          })}\n\`\`\`\n`,
+          stderr: '',
+        };
+      },
+    };
+    try {
+      const diagnosis = await diagnoseSupervisorRecovery(
+        root,
+        new RuntimeRunner(root),
+        providerStdout,
+        {
+          code: 'AUTOPILOT_CORRECTION_LIMIT',
+          targetId: 'commit',
+          hash: 'AUTOPILOT_CORRECTION_LIMIT:commit:stdout',
+        },
+        'deadbeef',
+        'AUTOPILOT_CORRECTION_LIMIT:T-G0-COL-01:3',
+      );
+      expect(calls.count).toBe(1);
+      expect(diagnosis.action).toBe('REPAIR');
+      expect(diagnosis.reason).toBe('stdout structured diagnosis');
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('extracts diagnosis from file content, raw stdout, markdown block, or embedded JSON substring', () => {
+    const validObj = {
+      action: 'REPAIR',
+      reason: 'test reason',
+      evidence: ['ev'],
+      target: 'T-1',
+      constraints: ['c'],
+      allowedLanes: ['PRODUCT_CODE'],
+    };
+    const jsonStr = JSON.stringify(validObj);
+
+    // 1. File content precedence
+    expect(extractSupervisorRecoveryDiagnosis('some text', jsonStr).action).toBe('REPAIR');
+
+    // 2. Pure JSON stdout
+    expect(extractSupervisorRecoveryDiagnosis(`  ${jsonStr}\n`).reason).toBe('test reason');
+
+    // 3. Markdown JSON block
+    expect(extractSupervisorRecoveryDiagnosis(`Here is response:\n\`\`\`json\n${jsonStr}\n\`\`\``).target).toBe('T-1');
+
+    // 4. Embedded JSON object
+    expect(extractSupervisorRecoveryDiagnosis(`Leading note ${jsonStr} Trailing text`).action).toBe('REPAIR');
+
+    // 5. Invalid throws
+    expect(() => extractSupervisorRecoveryDiagnosis('no json at all')).toThrow('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_INVALID');
+    expect(() => extractSupervisorRecoveryDiagnosis('{"action":"INVALID"}')).toThrow('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_INVALID');
   });
 });
 

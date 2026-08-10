@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -127,9 +128,15 @@ const executeAgent = (
   workspace: string,
   prompt: string,
   code: string,
-): void => {
+  options?: { streamOutput?: boolean },
+): CommandResult => {
   if (!provider.executePayload) throw new Error(`${code}:NO_HEADLESS_EXECUTOR`);
-  requireSuccess(provider.executePayload(workspace, prompt), code);
+  const result = provider.executePayload(workspace, prompt, options);
+  if (result.status !== 0)
+    throw new Error(
+      `${code}:${result.timedOut ? 'TIMEOUT:' : ''}${(result.stderr || result.stdout).trim()}`,
+    );
+  return result;
 };
 
 const createDetachedWorktree = async (
@@ -288,6 +295,45 @@ const recordSupervisorAttempt = async (
   return updated;
 };
 
+export const extractSupervisorRecoveryDiagnosis = (
+  stdoutText?: string,
+  fileContent?: string,
+): SupervisorRecoveryDiagnosis => {
+  if (fileContent) {
+    try {
+      return parseSupervisorRecoveryDiagnosis(JSON.parse(fileContent));
+    } catch {
+      // fallback to stdout parsing
+    }
+  }
+  if (stdoutText) {
+    try {
+      return parseSupervisorRecoveryDiagnosis(JSON.parse(stdoutText.trim()));
+    } catch {
+      // fallback
+    }
+    const codeBlockMatch = /```(?:json)?\s*([\s\S]*?)\s*```/i.exec(stdoutText);
+    if (codeBlockMatch?.[1]) {
+      try {
+        return parseSupervisorRecoveryDiagnosis(JSON.parse(codeBlockMatch[1]));
+      } catch {
+        // fallback
+      }
+    }
+    const matches = stdoutText.match(/\{[\s\S]*?\}/g);
+    if (matches) {
+      for (const match of matches) {
+        try {
+          return parseSupervisorRecoveryDiagnosis(JSON.parse(match));
+        } catch {
+          // try next candidate match
+        }
+      }
+    }
+  }
+  throw new Error('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_INVALID');
+};
+
 export const diagnoseSupervisorRecovery = async (
   root: string,
   runner: CommandRunner,
@@ -303,18 +349,24 @@ export const diagnoseSupervisorRecovery = async (
     commit,
   );
   try {
-    executeAgent(
+    const result = executeAgent(
       provider,
       workspace,
-      `You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: ${rawFailure}. Fingerprint: ${fingerprint.hash}. Frozen commit: ${commit}. Read the immutable PRD, requirements, accepted ADRs, generated task/cluster contracts, implementation, tests, and relevant evidence. Do not modify product/spec/task/control-plane files. Create exactly one file named ${DIAGNOSIS_FILE}. It must be strict JSON: {"action":"REPAIR|SPLIT_TASK|REPLAN|REGENERATE_DERIVED_TASKS|REOPEN_CORRECTION|RETRY_INFRASTRUCTURE|SAFETY_TERMINAL|EXTERNAL_BLOCKER","reason":"specific diagnosis","evidence":["concrete evidence"],"target":"task/cluster/requirement/failure target","constraints":["safety or authority constraint"],"allowedLanes":["PRODUCT_CODE|TEST|DEPENDENCY|MIGRATION|CONFIG|SPECIFICATION|GENERATED_CONTRACT"]}. Choose the narrowest safe action. Never request INFRASTRUCTURE lane from recovery. Stop after writing the JSON file.`,
+      `You are the independent fresh-context recovery diagnostician for ChainSieve. Failure: ${rawFailure}. Fingerprint: ${fingerprint.hash}. Frozen commit: ${commit}. Read the immutable PRD, requirements, accepted ADRs, generated task/cluster contracts, implementation, tests, and relevant evidence. Do not modify product/spec/task/control-plane files. Output strict JSON (either written to ${DIAGNOSIS_FILE} in your workspace or output directly as strict JSON): {"action":"REPAIR|SPLIT_TASK|REPLAN|REGENERATE_DERIVED_TASKS|REOPEN_CORRECTION|RETRY_INFRASTRUCTURE|SAFETY_TERMINAL|EXTERNAL_BLOCKER","reason":"specific diagnosis","evidence":["concrete evidence"],"target":"task/cluster/requirement/failure target","constraints":["safety or authority constraint"],"allowedLanes":["PRODUCT_CODE|TEST|DEPENDENCY|MIGRATION|CONFIG|SPECIFICATION|GENERATED_CONTRACT"]}. Choose the narrowest safe action. Never request INFRASTRUCTURE lane from recovery. Stop after providing the JSON response.`,
       'PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_AGENT_FAILED',
+      { streamOutput: false },
     );
     const paths = changedPaths(runner, workspace);
-    if (paths.length !== 1 || paths[0] !== DIAGNOSIS_FILE)
-      throw new Error(`PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_SCOPE:${paths.join(',')}`);
-    return parseSupervisorRecoveryDiagnosis(
-      JSON.parse(await readFile(join(workspace, DIAGNOSIS_FILE), 'utf8')),
-    );
+    const invalidPaths = paths.filter((p) => p !== DIAGNOSIS_FILE);
+    if (invalidPaths.length > 0)
+      throw new Error(`PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_SCOPE:${invalidPaths.join(',')}`);
+
+    let fileContent: string | undefined;
+    const diagFilePath = join(workspace, DIAGNOSIS_FILE);
+    if (existsSync(diagFilePath)) {
+      fileContent = await readFile(diagFilePath, 'utf8');
+    }
+    return extractSupervisorRecoveryDiagnosis(result.stdout, fileContent);
   } finally {
     await removeWorktree(root, runner, workspace);
   }

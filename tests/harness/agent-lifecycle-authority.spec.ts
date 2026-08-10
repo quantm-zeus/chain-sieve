@@ -302,6 +302,42 @@ describe('explicit authoritative lease lifecycle', () => {
     await expect(validateRecoveryWorkspace({ ...expected, taskWorktree: join(root, 'nested') })).rejects.toThrow('RECOVERY_WORKTREE_MISMATCH');
   });
 
+  it('validates recovery workspace when HEAD is detached but matches expected task head commit', async () => {
+    const root = await realpath(await mkdtemp(join(tmpdir(), 'chain-sieve-detached-recovery-')));
+    temporary.push(root);
+    execFileSync('git', ['init', '-b', 'task/t-g0-core'], { cwd: root });
+    execFileSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: root });
+    execFileSync('git', ['config', 'user.name', 'Lifecycle Test'], { cwd: root });
+    const contractPath = 'tasks/G0/T-G0-CORE.contract.json';
+    const contextPath = 'artifacts/context/T-G0-CORE/context-manifest.json';
+    await mkdir(join(root, 'tasks/G0'), { recursive: true });
+    await mkdir(join(root, 'artifacts/context/T-G0-CORE'), { recursive: true });
+    const contractText = '{"id":"T-G0-CORE","mode":"legacy"}\n';
+    const contextText = '{"taskId":"T-G0-CORE","mode":"legacy"}\n';
+    await writeFile(join(root, contractPath), contractText);
+    await writeFile(join(root, contextPath), contextText);
+    execFileSync('git', ['add', '.'], { cwd: root });
+    execFileSync('git', ['commit', '-m', 'detached commit'], { cwd: root });
+    const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim();
+    execFileSync('git', ['checkout', '--detach', base], { cwd: root });
+    expect(execFileSync('git', ['branch', '--show-current'], { cwd: root, encoding: 'utf8' }).trim()).toBe('');
+    const hashes = await computeWorkingCopyHashes(root);
+    const expected = {
+      taskWorktree: root,
+      expectedBranch: 'task/t-g0-core',
+      expectedTaskHeadCommit: base,
+      expectedTaskHeadTree: tree,
+      expectedTrackedWorkSha256: hashes.tracked,
+      expectedUntrackedWorkSha256: hashes.untracked,
+      contractPath,
+      expectedContractSha256: sha256(contractText),
+      contextManifestPath: contextPath,
+      expectedContextManifestSha256: sha256(contextText),
+    };
+    await expect(validateRecoveryWorkspace(expected)).resolves.toMatchObject({ contractText, contextManifestText: contextText });
+  });
+
   it('fails when task HEAD changes after recovery preflight', async () => {
     const root = await realpath(await mkdtemp(join(tmpdir(), 'chain-sieve-recovery-race-')));
     temporary.push(root);
