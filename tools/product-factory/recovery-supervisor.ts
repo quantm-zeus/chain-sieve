@@ -259,10 +259,21 @@ export const deterministicRecoveryDiagnosis = (
     target: 'generated-contracts',
     constraints: [
       'do not edit immutable PRD or ADR authority',
-      'accept a zero-diff reconciliation only after spec:verify and prd:drift-check both pass',
+      'accept a zero-diff reconciliation only after the frozen worktree and live main worktree both pass spec:verify and prd:drift-check',
     ],
     allowedLanes: ['GENERATED_CONTRACT'],
   };
+};
+
+const mainWorktreeFrom = (runner: CommandRunner, workspace: string): string => {
+  const listing = git(runner, workspace, ['worktree', 'list', '--porcelain']);
+  for (const block of listing.split(/\r?\n\r?\n/)) {
+    const lines = block.split(/\r?\n/);
+    if (!lines.includes('branch refs/heads/main')) continue;
+    const path = lines.find((line) => line.startsWith('worktree '))?.slice('worktree '.length).trim();
+    if (path) return path;
+  }
+  throw new Error('PRODUCT_FACTORY_RECOVERY_MAIN_WORKTREE_MISSING');
 };
 
 export const verifyGeneratedRecoveryNoop = (
@@ -272,8 +283,27 @@ export const verifyGeneratedRecoveryNoop = (
   paths: string[],
 ): boolean => {
   if (action !== 'REGENERATE_DERIVED_TASKS' || paths.length !== 0) return false;
+
+  // First prove the frozen commit is canonically generated. This prevents a live-root
+  // cleanup from hiding a tracked generated-contract mismatch that belongs in a PR.
   pnpm(runner, workspace, ['spec:verify']);
   pnpm(runner, workspace, ['prd:drift-check']);
+
+  // Drift can be caused by stale ignored/generated runtime files that exist only in
+  // the live main worktree and therefore are absent from a detached recovery worktree.
+  // Reconcile that worktree with the trusted deterministic compiler, then prove the
+  // compiler did not alter tracked/untracked Git-visible content and the live drift is gone.
+  const root = mainWorktreeFrom(runner, workspace);
+  const before = changedPaths(runner, root);
+  if (before.length > 0)
+    throw new Error(`PRODUCT_FACTORY_RECOVERY_ROOT_DIRTY_BEFORE_RECONCILE:${before.join(',')}`);
+  pnpm(runner, root, ['prd:compile']);
+  const after = changedPaths(runner, root);
+  if (after.length > 0)
+    throw new Error(`PRODUCT_FACTORY_RECOVERY_ROOT_DIRTY_AFTER_RECONCILE:${after.join(',')}`);
+  pnpm(runner, root, ['spec:verify']);
+  pnpm(runner, root, ['prd:drift-check']);
+
   console.log('CHAINSIEVE_RECOVERY_NOOP_VERIFIED:REGENERATE_DERIVED_TASKS');
   return true;
 };
