@@ -43,8 +43,20 @@ class Runner implements CommandRunner {
     options: CommandOptions = {},
   ): CommandResult {
     this.calls.push({ command, args, options });
-    if (command === 'pnpm')
+    if (command === 'pnpm') {
+      if (
+        args[1] === 'task:checkpoint-adopt' &&
+        this.options.expectedRef &&
+        this.options.expectedRef !== 'a'.repeat(40) &&
+        this.options.expectedRef !== 'b'.repeat(40)
+      )
+        return {
+          status: 1,
+          stdout: '',
+          stderr: `TASK_CHECKPOINT_BRANCH_DIVERGED:T-REC-01:${this.options.expectedRef}:${'b'.repeat(40)}`,
+        };
       return { status: 0, stdout: 'reviewed', stderr: '' };
+    }
     if (command !== 'git')
       return { status: 1, stdout: '', stderr: 'unexpected' };
     if (args.join(' ') === 'rev-parse --git-common-dir')
@@ -154,21 +166,14 @@ describe('committed task checkpoint reconciliation', () => {
     });
   });
 
-  it('reattaches and adopts a LEASED atomic commit through the trusted task runner before self-review', async () => {
+  it('delegates LEASED branch repair and adoption to the trusted task runner before self-review', async () => {
     const common = await stateRoot('LEASED');
     const runner = new Runner(common, { branch: '' });
 
     expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
       status: 0,
     });
-    expect(
-      runner.calls.some(
-        (call) =>
-          call.command === 'git' &&
-          call.args.join(' ') ===
-            `switch -C task/t-rec-01 ${'b'.repeat(40)}`,
-      ),
-    ).toBe(true);
+    expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
     const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
     expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
       'task:checkpoint-adopt',
@@ -185,7 +190,7 @@ describe('committed task checkpoint reconciliation', () => {
     ]);
   });
 
-  it('refuses to overwrite a divergent canonical task branch', async () => {
+  it('surfaces fail-closed divergence from the trusted checkpoint adoption command', async () => {
     const common = await stateRoot('LEASED');
     const runner = new Runner(common, {
       branch: 'sandbox-branch/t-rec-01',
@@ -196,7 +201,9 @@ describe('committed task checkpoint reconciliation', () => {
       stderr: expect.stringContaining('TASK_CHECKPOINT_BRANCH_DIVERGED'),
     });
     expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
-    expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt']);
   });
 
   it('does not pay for another provider call after a durable self-review checkpoint exists', async () => {
