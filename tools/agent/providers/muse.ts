@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { isAbsolute, join, resolve } from 'node:path';
@@ -27,7 +28,10 @@ export const MUSE_PROMPT_TOKEN = '{prompt}' as const;
 export const MUSE_SUPERVISOR_CONFIG_ENV =
   'CHAINSIEVE_MUSE_SUPERVISOR_CONFIG' as const;
 export const MUSE_TASK_CALL_LIMIT_ENV = 'CHAINSIEVE_MUSE_TASK_CALL_LIMIT' as const;
+export const MUSE_SEMANTIC_CALL_LIMIT_ENV =
+  'CHAINSIEVE_MUSE_SEMANTIC_CALL_LIMIT' as const;
 export const DEFAULT_MUSE_TASK_CALL_LIMIT = 3;
+export const DEFAULT_MUSE_SEMANTIC_CALL_LIMIT = 12;
 const SUPERVISOR_EXIT_CHECKPOINT = 72;
 const SUPERVISOR_EXIT_RETRY_STORM = 75;
 const SUPERVISOR_EXIT_HARD_TIMEOUT = 76;
@@ -47,6 +51,23 @@ const commandPath = (
 export const resolveMuseCommand = (
   environment: NodeJS.ProcessEnv = process.env,
 ): string => environment[MUSE_COMMAND_ENV]?.trim() || 'muse';
+
+const boundedCallLimit = (
+  environment: NodeJS.ProcessEnv,
+  name: string,
+  fallback: number,
+  maximum: number,
+): number => {
+  const raw = environment[name]?.trim();
+  if (!raw) return fallback;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 1 || value > maximum)
+    throw new AgentError(
+      'MUSE_CALL_LIMIT_INVALID',
+      `${name} must be an integer between 1 and ${maximum}.`,
+    );
+  return value;
+};
 
 export const parseMuseArgs = (
   environment: NodeJS.ProcessEnv = process.env,
@@ -96,17 +117,23 @@ export const musePermissionConfigured = (
 
 export const resolveMuseTaskCallLimit = (
   environment: NodeJS.ProcessEnv = process.env,
-): number => {
-  const raw = environment[MUSE_TASK_CALL_LIMIT_ENV]?.trim();
-  if (!raw) return DEFAULT_MUSE_TASK_CALL_LIMIT;
-  const value = Number(raw);
-  if (!Number.isInteger(value) || value < 1 || value > 10)
-    throw new AgentError(
-      'MUSE_TASK_CALL_LIMIT_INVALID',
-      `${MUSE_TASK_CALL_LIMIT_ENV} must be an integer between 1 and 10.`,
-    );
-  return value;
-};
+): number =>
+  boundedCallLimit(
+    environment,
+    MUSE_TASK_CALL_LIMIT_ENV,
+    DEFAULT_MUSE_TASK_CALL_LIMIT,
+    10,
+  );
+
+export const resolveMuseSemanticCallLimit = (
+  environment: NodeJS.ProcessEnv = process.env,
+): number =>
+  boundedCallLimit(
+    environment,
+    MUSE_SEMANTIC_CALL_LIMIT_ENV,
+    DEFAULT_MUSE_SEMANTIC_CALL_LIMIT,
+    50,
+  );
 
 export const wrapMusePrompt = (payload: string): string =>
   `You are running inside ChainSieve FULL_AUTONOMY mode. This session must never ask a human to approve, review, grant a tool permission, renew a lease, choose a task, rerun the orchestrator, push, or merge. Any legacy compatibility instruction in a goal or review package that says to ask the owner or to run pnpm agent again is superseded by this FULL_AUTONOMY instruction. Lifecycle state is owned exclusively by the trusted host control plane: never run task:begin, task:self-review, task:verify, agent:renew, agent:recover, merge-queue commands, or any other lifecycle mutation. For an implementation task, produce exactly one clean atomic implementation commit after task-authorized development checks, then terminate successfully; the host performs self-review and authoritative verification. Do not push, merge, rebase, reset, clean, invoke gh, or bypass ChainSieve verification and lifecycle authority.\n\n${payload}`;
@@ -176,6 +203,7 @@ const claimMuseTaskAttempt = (
     'agent',
     'provider-attempts',
     'muse',
+    'task',
     safeSegment(binding.task.contract.id),
   );
   mkdirSync(directory, { recursive: true });
@@ -200,6 +228,7 @@ const claimMuseTaskAttempt = (
     `${JSON.stringify(
       {
         schemaVersion: '1.0.0',
+        role: 'TASK',
         taskId: binding.task.contract.id,
         receiptId: binding.launchReceiptId,
         workspaceHead: head,
@@ -215,6 +244,66 @@ const claimMuseTaskAttempt = (
   );
   console.log(
     `CHAINSIEVE_MUSE_TASK_BUDGET:${binding.task.contract.id}:${used + 1}/${limit}:${binding.launchReceiptId}:${head}`,
+  );
+  return undefined;
+};
+
+const claimMuseSemanticAttempt = (
+  runner: CommandRunner,
+  workspace: string,
+  payload: string,
+): CommandResult | undefined => {
+  const common = gitCommonDirectory(runner, workspace);
+  const head = workspaceHead(runner, workspace);
+  if (!common || !head)
+    return {
+      status: 1,
+      stdout: '',
+      stderr: 'MUSE_SEMANTIC_BUDGET_EVIDENCE_UNAVAILABLE',
+    };
+  const directory = join(
+    common,
+    'ciag-runtime',
+    'agent',
+    'provider-attempts',
+    'muse',
+    'semantic',
+    safeSegment(head),
+  );
+  mkdirSync(directory, { recursive: true });
+  const payloadHash = createHash('sha256').update(payload).digest('hex');
+  const marker = join(directory, `${payloadHash}.json`);
+  if (existsSync(marker))
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `MUSE_DUPLICATE_SEMANTIC_EVIDENCE_BLOCKED:${head}:${payloadHash}`,
+    };
+  const used = readdirSync(directory).filter((name) => name.endsWith('.json')).length;
+  const limit = resolveMuseSemanticCallLimit();
+  if (used >= limit)
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `MUSE_SEMANTIC_CALL_BUDGET_EXHAUSTED:${head}:${used}/${limit}`,
+    };
+  writeFileSync(
+    marker,
+    `${JSON.stringify(
+      {
+        schemaVersion: '1.0.0',
+        role: 'SEMANTIC',
+        workspaceHead: head,
+        payloadSha256: payloadHash,
+        claimedAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    )}\n`,
+    { mode: 0o600, flag: 'wx' },
+  );
+  console.log(
+    `CHAINSIEVE_MUSE_SEMANTIC_BUDGET:${used + 1}/${limit}:${head}:${payloadHash}`,
   );
   return undefined;
 };
@@ -326,6 +415,9 @@ export class MuseProvider implements AgentProvider {
       const beginFailure = beginTaskBeforeMuse(this.runner, binding);
       if (beginFailure) return beginFailure;
       const budgetFailure = claimMuseTaskAttempt(this.runner, binding);
+      if (budgetFailure) return budgetFailure;
+    } else {
+      const budgetFailure = claimMuseSemanticAttempt(this.runner, workspace, payload);
       if (budgetFailure) return budgetFailure;
     }
 
