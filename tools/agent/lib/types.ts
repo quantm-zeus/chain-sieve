@@ -202,7 +202,11 @@ export interface AgentProvider {
   generatePayload(binding: TaskLaunchBinding): string;
   copyPayload(payload: string): void;
   openWorkspace(workspace: string): void;
-  executePayload?(workspace: string, payload: string): CommandResult;
+  executePayload?(
+    workspace: string,
+    payload: string,
+    options?: { streamOutput?: boolean },
+  ): CommandResult;
   renderOwnerInstruction(taskId: string, clusterId: string): string;
 }
 

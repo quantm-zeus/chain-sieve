@@ -380,12 +380,16 @@ export class MuseProvider implements AgentProvider {
     return `Read and obey the exact ChainSieve task skill at "${taskSkillPath}". Do not search for skills, instructions, or repositories outside "${binding.taskWorkspace}". Load the immutable task execution goal at ${binding.goalPath} (SHA-256 ${binding.goalSha256}) only as task scope and evidence; any lifecycle commands in legacy goal text are host-owned and must not be executed by this session. Work only in ${binding.taskWorkspace}. Confirm task ${binding.task.contract.id}, cluster ${binding.task.contract.cluster}, context manifest ${binding.contextManifestPath} (SHA-256 ${binding.contextManifestSha256}), and receipt-bound base commit before changing source.${conformance}${failures} Use the supplied context pack and targeted file reads; do not reread unchanged authority or scan the whole repository. Preserve valid existing work. Implement exactly this task, run focused task-authorized development checks, inspect full output only for failures, self-review the code diff conceptually, fix material issues, and create exactly one clean atomic implementation commit. Do not run any ChainSieve lifecycle command; the trusted host will adopt the checkpoint, run deterministic self-review, authoritative verification, integration, CI repair, and continuation. Never ask the human owner for review, approval, permission, task selection, lease renewal, pushing, merging, or decisions. Never push, merge, rebase, reset, clean, invoke gh, invoke the merge queue, or start another task. When the atomic commit is complete, terminate successfully.`;
   }
 
-  executePayload(workspace: string, payload: string): CommandResult {
+  executePayload(
+    workspace: string,
+    payload: string,
+    options?: { streamOutput?: boolean },
+  ): CommandResult {
     if (shouldRouteMusePayloadToMaintenance(payload)) {
       const maintenance = selectMaintenanceProvider(this.runner, this);
       if (maintenance !== this && maintenance.executePayload) {
         console.log(`CHAINSIEVE_AGENT_ROUTE:MAINTENANCE:${maintenance.id}`);
-        return maintenance.executePayload(workspace, payload);
+        return maintenance.executePayload(workspace, payload, options);
       }
     }
 
@@ -432,7 +436,7 @@ export class MuseProvider implements AgentProvider {
       {
         cwd: workspace,
         timeoutMilliseconds: supervision.hardTimeoutMilliseconds + 60_000,
-        streamOutput: true,
+        streamOutput: options?.streamOutput ?? true,
         environment: {
           [MUSE_SUPERVISOR_CONFIG_ENV]: JSON.stringify({
             command,

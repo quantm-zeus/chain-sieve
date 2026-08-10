@@ -106,7 +106,32 @@ export const validateRecoveryWorkspace = async (options: {
     throw new Error('RECOVERY_WORKTREE_NOT_CANONICAL');
   if ((await realpath(resolve(git(worktree, ['rev-parse', '--show-toplevel'])))) !== worktree)
     throw new Error('RECOVERY_WORKTREE_MISMATCH');
-  if (git(worktree, ['branch', '--show-current']) !== options.expectedBranch)
+  let currentBranch = git(worktree, ['branch', '--show-current']);
+  if (currentBranch === '' && currentBranch !== options.expectedBranch) {
+    const headCommit = git(worktree, ['rev-parse', 'HEAD']);
+    const expectedRefRes = spawnSync(
+      'git',
+      ['rev-parse', '--verify', `refs/heads/${options.expectedBranch}`],
+      { cwd: worktree, encoding: 'utf8' },
+    );
+    const expectedRefCommit =
+      expectedRefRes.status === 0 ? expectedRefRes.stdout.trim() : undefined;
+    if (
+      headCommit === options.expectedTaskHeadCommit &&
+      (!expectedRefCommit ||
+        expectedRefCommit === options.expectedTaskHeadCommit)
+    ) {
+      const switchRes = spawnSync(
+        'git',
+        ['switch', '-C', options.expectedBranch, options.expectedTaskHeadCommit],
+        { cwd: worktree, encoding: 'utf8' },
+      );
+      if (switchRes.status === 0) {
+        currentBranch = git(worktree, ['branch', '--show-current']);
+      }
+    }
+  }
+  if (currentBranch !== options.expectedBranch)
     throw new Error('RECOVERY_BRANCH_MISMATCH');
   const [taskHeadCommit, taskHeadTree] = git(worktree, ['rev-parse', 'HEAD', 'HEAD^{tree}']).split('\n');
   if (taskHeadCommit !== options.expectedTaskHeadCommit)
