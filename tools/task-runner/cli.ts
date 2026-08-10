@@ -9,6 +9,7 @@ import { correctTaskSelfReview } from './self-review-correct.js';
 import { refreshTaskSelfReview } from './self-review-refresh.js';
 import {
   acquire,
+  acquireLifecycleMutationLock,
   AGENT_LEASE_TTL_MINUTES,
   assertAgentLeaseTtlMinutes,
   assertLease,
@@ -41,6 +42,10 @@ const git = (args: string[]): string => {
   const result = spawnSync('git', args, { encoding: 'utf8' });
   if (result.status !== 0) throw new Error(`GIT_FAILED:${args.join(':')}`);
   return result.stdout.trim();
+};
+const gitOptional = (args: string[]): string | undefined => {
+  const result = spawnSync('git', args, { encoding: 'utf8' });
+  return result.status === 0 ? result.stdout.trim() : undefined;
 };
 const trustedRoot = (): string => {
   if (
@@ -124,7 +129,12 @@ const repairValidationInput = async (
 const command = process.argv[2] ?? 'list';
 const taskId = process.argv[3];
 const holder = option('--holder') ?? process.env.USER ?? 'local-agent';
+const readOnlyCommands = new Set(['list', 'ready']);
+let releaseMutationLock: (() => Promise<void>) | undefined;
 try {
+  if (!readOnlyCommands.has(command))
+    releaseMutationLock = await acquireLifecycleMutationLock();
+
   const productTasks = await loadTasks();
   const repairTasks = await loadRepairLeaseContracts();
   const tasks = [...productTasks, ...repairTasks];
@@ -293,9 +303,61 @@ try {
       });
       await writeState(state);
       console.log(JSON.stringify(target, null, 2));
+    } else if (command === 'checkpoint-adopt') {
+      const expected =
+        repairTasks.find((task) => task.id === taskId)?.approvedBranch ??
+        taskBranch(taskId);
+      if (target.branch !== expected)
+        throw new Error(`TASK_BRANCH_BINDING_MISMATCH:${target.branch ?? 'missing'}:${expected}`);
+      if (git(['status', '--porcelain']) !== '')
+        throw new Error('DIRTY_WORKTREE');
+      if (!target.baseCommit) throw new Error('TASK_BASE_COMMIT_MISSING');
+      const head = git(['rev-parse', 'HEAD']);
+      if (head === target.baseCommit) throw new Error('TASK_COMMIT_MISSING');
+      if (Number(git(['rev-list', '--count', `${target.baseCommit}..${head}`])) !== 1)
+        throw new Error('TASK_COMMIT_NOT_ATOMIC');
+      const currentBranch = git(['branch', '--show-current']);
+      if (currentBranch !== expected) {
+        const expectedRef = gitOptional([
+          'rev-parse',
+          '--verify',
+          `refs/heads/${expected}`,
+        ]);
+        if (
+          expectedRef &&
+          expectedRef !== target.baseCommit &&
+          expectedRef !== head
+        )
+          throw new Error(
+            `TASK_CHECKPOINT_BRANCH_DIVERGED:${taskId}:${expectedRef}:${head}`,
+          );
+        git(['switch', '-C', expected, head]);
+      }
+      if (target.state === 'LEASED') {
+        target.worktree = git(['rev-parse', '--show-toplevel']);
+        transition(target, ['LEASED'], 'IMPLEMENTING', {
+          command: 'task:checkpoint-adopt',
+          credential,
+          worktreeValid: true,
+        });
+        await writeState(state);
+      } else if (target.state !== 'IMPLEMENTING') {
+        throw new Error(`TASK_CHECKPOINT_ADOPT_STATE_INVALID:${target.state}`);
+      }
+      console.log(
+        JSON.stringify(
+          { status: 'TASK_CHECKPOINT_ADOPTED', taskId, head, state: target },
+          null,
+          2,
+        ),
+      );
     } else if (command === 'self-review') {
       const task = productTasks.find((item) => item.id === taskId);
       if (!task) throw new Error('PRODUCT_TASK_SELF_REVIEW_CONTRACT_REQUIRED');
+      const recoveringIncompleteReview =
+        target.state === 'SELF_REVIEWING' && !target.selfReviewEvidence;
+      if (target.state !== 'IMPLEMENTING' && !recoveringIncompleteReview)
+        throw new Error(`TASK_SELF_REVIEW_STATE_INVALID:${target.state}`);
       const commit = git(['rev-parse', 'HEAD']);
       const tree = git(['rev-parse', 'HEAD^{tree}']);
       const implementationEvidence: EvidenceReference = {
@@ -305,12 +367,6 @@ try {
         commit,
         tree,
       };
-      transition(target, ['IMPLEMENTING'], 'SELF_REVIEWING', {
-        command: 'task:self-review',
-        credential,
-        evidence: implementationEvidence,
-      });
-      await writeState(state);
       const launchReceiptId = option('--launch-receipt-id');
       const review = await performTaskSelfReview(
         task,
@@ -319,6 +375,12 @@ try {
         process.cwd(),
         { ...(launchReceiptId ? { launchReceiptId } : {}) },
       );
+      if (target.state === 'IMPLEMENTING')
+        transition(target, ['IMPLEMENTING'], 'SELF_REVIEWING', {
+          command: 'task:self-review',
+          credential,
+          evidence: implementationEvidence,
+        });
       target.selfReviewEvidence = review.evidence;
       await registerCurrentEvidence(taskId, 'SELF_REVIEW', review.evidence);
       await writeState(state);
@@ -342,4 +404,6 @@ try {
     }),
   );
   process.exitCode = 1;
+} finally {
+  await releaseMutationLock?.();
 }

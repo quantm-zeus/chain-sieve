@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { isAbsolute, join, resolve } from 'node:path';
+import { taskBranch } from './paths.js';
 import type { CommandResult, CommandRunner, TaskLaunchBinding } from './types.js';
 
 const git = (
@@ -65,56 +66,121 @@ export const cleanAtomicTaskCommit = (
   return head;
 };
 
+const ensureCanonicalTaskBranch = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+  head: string,
+): CommandResult | undefined => {
+  const expected = taskBranch(binding.task.contract.id);
+  const current = gitText(runner, binding.taskWorkspace, [
+    'branch',
+    '--show-current',
+  ]);
+  if (current === expected) return undefined;
+  const expectedRef = gitText(runner, binding.taskWorkspace, [
+    'rev-parse',
+    '--verify',
+    `refs/heads/${expected}`,
+  ]);
+  if (expectedRef && expectedRef !== binding.baseCommit && expectedRef !== head) {
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `TASK_CHECKPOINT_BRANCH_DIVERGED:${binding.task.contract.id}:${expectedRef}:${head}`,
+    };
+  }
+  const attach = git(runner, binding.taskWorkspace, [
+    'switch',
+    '-C',
+    expected,
+    head,
+  ]);
+  if (attach.status !== 0) {
+    return {
+      ...attach,
+      stderr: `TASK_CHECKPOINT_BRANCH_REATTACH_FAILED:${binding.task.contract.id}:${attach.stderr || attach.stdout}`,
+    };
+  }
+  console.log(
+    `CHAINSIEVE_TASK_BRANCH_REATTACHED:${binding.task.contract.id}:${current || 'detached'}:${expected}:${head}`,
+  );
+  return undefined;
+};
+
+const runLifecycle = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+  args: string[],
+): CommandResult =>
+  runner.run('pnpm', ['--silent', ...args], {
+    cwd: binding.taskWorkspace,
+    timeoutMilliseconds: 30 * 60_000,
+    streamOutput: true,
+  });
+
 export const reconcileCommittedTaskCheckpoint = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
   const state = readTaskLifecycleState(runner, binding);
-  if (
+  const active = state === 'LEASED' || state === 'IMPLEMENTING';
+  const durable = Boolean(
     state &&
-    ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
-      state,
-    )
-  ) {
+      ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
+        state,
+      ),
+  );
+  if (!active && !durable) return undefined;
+
+  const head = cleanAtomicTaskCommit(runner, binding);
+  if (head && durable) {
+    const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
+    if (branchFailure) return branchFailure;
+  }
+
+  if (durable) {
     console.log(
       `CHAINSIEVE_TASK_CHECKPOINT_ALREADY_DURABLE:${binding.task.contract.id}:${state}`,
     );
     return { status: 0, stdout: '', stderr: '' };
   }
-  if (state !== 'IMPLEMENTING') return undefined;
-  const head = cleanAtomicTaskCommit(runner, binding);
   if (!head || !binding.launchReceiptId) return undefined;
+
+  const adopted = runLifecycle(runner, binding, [
+    'task:checkpoint-adopt',
+    binding.task.contract.id,
+    '--holder',
+    binding.holder,
+    '--lease-version',
+    String(binding.fencingVersion),
+  ]);
+  if (adopted.status !== 0)
+    return {
+      ...adopted,
+      stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
+    };
 
   console.log(
     `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE:${binding.task.contract.id}:${head}`,
   );
-  const result = runner.run(
-    'pnpm',
-    [
-      '--silent',
-      'task:self-review',
-      binding.task.contract.id,
-      '--holder',
-      binding.holder,
-      '--lease-version',
-      String(binding.fencingVersion),
-      '--launch-receipt-id',
-      binding.launchReceiptId,
-    ],
-    {
-      cwd: binding.taskWorkspace,
-      timeoutMilliseconds: 30 * 60_000,
-      streamOutput: true,
-    },
-  );
-  if (result.status === 0) {
+  const reviewed = runLifecycle(runner, binding, [
+    'task:self-review',
+    binding.task.contract.id,
+    '--holder',
+    binding.holder,
+    '--lease-version',
+    String(binding.fencingVersion),
+    '--launch-receipt-id',
+    binding.launchReceiptId,
+  ]);
+  if (reviewed.status === 0) {
     console.log(
       `CHAINSIEVE_TASK_CHECKPOINT_RECONCILED:${binding.task.contract.id}:${head}`,
     );
-    return result;
+    return reviewed;
   }
   return {
-    ...result,
-    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${result.stderr || result.stdout}`,
+    ...reviewed,
+    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${reviewed.stderr || reviewed.stdout}`,
   };
 };

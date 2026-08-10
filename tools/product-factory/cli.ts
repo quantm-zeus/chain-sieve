@@ -3,6 +3,10 @@ import { findRepositoryRoot } from '../agent/lib/paths.js';
 import { SystemCommandRunner } from '../agent/lib/system.js';
 import type { AgentProviderId } from '../agent/lib/types.js';
 import { emitTelemetry, telemetryError } from '../observability/progress.js';
+import {
+  isAutonomousEscalationFailure,
+  runAutonomousEscalation,
+} from './autonomous-escalation.js';
 import { runBootstrapCompatibilityMigrations } from './bootstrap-migration.js';
 import {
   isAutonomousMaintenanceEligible,
@@ -29,9 +33,9 @@ const provider = (): AgentProviderId => {
   return selected;
 };
 
-const MAX_MAINTENANCE_GENERATIONS = 12;
+const MAX_MAINTENANCE_GENERATIONS = 4;
 const MAINTENANCE_GENERATION_ENV = 'CHAINSIEVE_MAINTENANCE_GENERATION';
-const CHILD_TIMEOUT_MS = 7 * 24 * 60 * 60_000;
+const CHILD_TIMEOUT_MS = 12 * 60 * 60_000;
 
 const maintenanceGeneration = (): number => {
   const raw = process.env[MAINTENANCE_GENERATION_ENV]?.trim() ?? '0';
@@ -70,11 +74,41 @@ try {
   emitTelemetry('PRODUCT_FACTORY_BOOTSTRAP_MIGRATION_COMPLETE', { root });
 
   try {
-    emitTelemetry('PRODUCT_FACTORY_SUPERVISED_RUN_START', {
-      provider: providerId,
-      maintenanceGeneration: generation,
-    });
-    const result = await runSupervisedProductFactory(root, runner, options);
+    let result: string | undefined;
+    for (;;) {
+      try {
+        emitTelemetry('PRODUCT_FACTORY_SUPERVISED_RUN_START', {
+          provider: providerId,
+          maintenanceGeneration: generation,
+        });
+        result = await runSupervisedProductFactory(root, runner, options);
+        break;
+      } catch (error) {
+        const failure = normalizeMaintenanceFailure(error);
+        if (!isAutonomousEscalationFailure(failure)) throw error;
+        emitTelemetry(
+          'PRODUCT_FACTORY_ESCALATION_START',
+          {
+            failure,
+            provider: providerId,
+            maintenanceGeneration: generation,
+          },
+          'warn',
+        );
+        const stage = await runAutonomousEscalation(root, runner, failure, {
+          ...(maxProductCorrections
+            ? { maxCorrectionRounds: Number(maxProductCorrections) }
+            : {}),
+        });
+        emitTelemetry('PRODUCT_FACTORY_ESCALATION_COMPLETE', {
+          failure,
+          stage,
+          primaryProvider: providerId,
+          fallbackProvider: 'antigravity',
+        });
+        console.log(`CHAINSIEVE_AUTONOMOUS_ESCALATION_RESUME:${stage}:${providerId}`);
+      }
+    }
     emitTelemetry('PRODUCT_FACTORY_COMPLETE', { result, provider: providerId });
     console.log(result);
   } catch (error) {
@@ -97,12 +131,16 @@ try {
       );
 
     console.error(`CHAINSIEVE_AUTO_MAINTENANCE_TRIGGER:${failure}`);
-    emitTelemetry('PRODUCT_FACTORY_MAINTENANCE_START', {
-      failure,
-      generation,
-      nextGeneration: generation + 1,
-      maxGenerations: MAX_MAINTENANCE_GENERATIONS,
-    }, 'warn');
+    emitTelemetry(
+      'PRODUCT_FACTORY_MAINTENANCE_START',
+      {
+        failure,
+        generation,
+        nextGeneration: generation + 1,
+        maxGenerations: MAX_MAINTENANCE_GENERATIONS,
+      },
+      'warn',
+    );
     const maintenanceCommit = await runAutonomousMaintenance(root, runner, failure, {
       providerId,
     });

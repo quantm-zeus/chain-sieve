@@ -7,9 +7,9 @@ export const MUSE_COMMIT_GRACE_ENV = 'CHAINSIEVE_MUSE_COMMIT_GRACE_MS' as const;
 export const MUSE_CIRCUIT_COOLDOWN_ENV = 'CHAINSIEVE_MUSE_CIRCUIT_COOLDOWN_MS' as const;
 
 export const DEFAULT_MUSE_HARD_TIMEOUT_MS = 30 * 60_000;
-export const DEFAULT_MUSE_RETRY_STORM_LIMIT = 8;
-export const DEFAULT_MUSE_RETRY_STALL_MS = 2 * 60_000;
-export const DEFAULT_MUSE_COMMIT_GRACE_MS = 8 * 60_000;
+export const DEFAULT_MUSE_RETRY_STORM_LIMIT = 4;
+export const DEFAULT_MUSE_RETRY_STALL_MS = 90_000;
+export const DEFAULT_MUSE_COMMIT_GRACE_MS = 30_000;
 export const DEFAULT_MUSE_CIRCUIT_COOLDOWN_MS = 15 * 60_000;
 
 export interface MuseSupervisionConfig {
@@ -66,7 +66,7 @@ export const resolveMuseSupervision = (
     environment,
     MUSE_COMMIT_GRACE_ENV,
     DEFAULT_MUSE_COMMIT_GRACE_MS,
-    60_000,
+    15_000,
     30 * 60_000,
   ),
   circuitCooldownMilliseconds: configuredInteger(

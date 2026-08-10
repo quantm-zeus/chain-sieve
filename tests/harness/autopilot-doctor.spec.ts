@@ -36,9 +36,11 @@ const policy = {
     irreversibleMigrationsEnabled: false,
   },
   limits: {
-    taskCorrectionRounds: 3,
-    clusterCiCorrectionRounds: 5,
-    infrastructureRetryRounds: 3,
+    taskCorrectionRounds: 2,
+    clusterCiCorrectionRounds: 3,
+    infrastructureRetryRounds: 1,
+    taskEscalationRounds: 2,
+    degradedRecoveryRounds: 2,
   },
 };
 

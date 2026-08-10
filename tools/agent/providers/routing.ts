@@ -20,6 +20,10 @@ const MAINTENANCE_FAILURE_MARKERS = [
   'EACCES',
   'EPERM',
   'WORKTREE',
+  'BRANCH_MISMATCH',
+  'DETACHED',
+  'TASK_CHECKPOINT_BRANCH_REATTACH_FAILED',
+  'TASK_CHECKPOINT_BRANCH_DIVERGED',
   'LOCKFILE',
   'MUSE_CODE_MISSING',
   'ANTIGRAVITY_HEADLESS_MISSING',
@@ -54,7 +58,11 @@ export const classifyAgentWork = (failure: string): AgentWorkRole => {
 export const isMechanicalFailure = (failure: string): boolean =>
   classifyAgentWork(failure) === 'MAINTENANCE';
 
-const between = (value: string, start: string, end: string): string | undefined => {
+const between = (
+  value: string,
+  start: string,
+  end: string,
+): string | undefined => {
   const from = value.indexOf(start);
   if (from < 0) return undefined;
   const contentStart = from + start.length;
@@ -63,14 +71,19 @@ const between = (value: string, start: string, end: string): string | undefined 
 };
 
 /**
- * Route only product-factory recovery prompts whose role is explicitly
- * mechanical. Task implementation, specification work, convergence correction,
- * independent review, and cluster-CI sessions remain on Muse so existing
- * provider-bound receipts stay truthful. Recovery diagnosis is routed from the
- * embedded raw failure rather than generic prompt prose about PRDs/requirements.
+ * Mechanical repair prompts are routed to the cheaper maintenance provider.
+ * The trusted host still enforces path scope and deterministic checks after the
+ * provider returns, so offloading these sessions does not weaken acceptance or
+ * verification gates. Semantic implementation/spec/convergence work stays Muse.
  */
 export const shouldRouteMusePayloadToMaintenance = (payload: string): boolean => {
-  if (payload.startsWith('Recovery PR CI failed:')) return true;
+  if (
+    payload.startsWith('Recovery PR CI failed:') ||
+    payload.startsWith('The product-convergence pull request failed CI checks:') ||
+    payload.includes('You are isolated CI repair session') ||
+    payload.startsWith('Autonomous maintenance PR CI failed:')
+  )
+    return true;
 
   if (payload.includes('independent fresh-context recovery diagnostician')) {
     const failure = between(payload, 'Failure: ', '. Fingerprint:');

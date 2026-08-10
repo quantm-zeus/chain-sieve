@@ -156,7 +156,11 @@ export const classifyAutonomyFailure = (code: string): AutonomyStateClassificati
     normalized.includes('AUTONOMOUS_MERGE_DISABLED') ||
     normalized.includes('PROHIBITED_CAPABILITY') ||
     normalized.includes('SECRET_EXPOSURE') ||
-    normalized.includes('SPECIFICATION_DRIFT')
+    normalized.includes('SPECIFICATION_DRIFT') ||
+    normalized.includes('MUSE_TASK_CALL_BUDGET_EXHAUSTED') ||
+    normalized.includes('MUSE_DUPLICATE_TASK_EVIDENCE_BLOCKED') ||
+    normalized.includes('MUSE_SEMANTIC_CALL_BUDGET_EXHAUSTED') ||
+    normalized.includes('MUSE_DUPLICATE_SEMANTIC_EVIDENCE_BLOCKED')
   ) {
     return 'SAFETY_TERMINAL';
   }
