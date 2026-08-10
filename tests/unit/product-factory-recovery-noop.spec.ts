@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import type {
-  CommandOptions,
   CommandResult,
   CommandRunner,
 } from '../../tools/agent/lib/types.js';
@@ -18,7 +17,7 @@ class NoopRunner implements CommandRunner {
 
   constructor(private readonly driftFailure?: string) {}
 
-  run(command: string, args: string[], _options?: CommandOptions): CommandResult {
+  run(command: string, args: string[]): CommandResult {
     const call = `${command} ${args.join(' ')}`;
     this.calls.push(call);
     if (
