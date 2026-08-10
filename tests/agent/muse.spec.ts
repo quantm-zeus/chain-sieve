@@ -42,6 +42,11 @@ class Runner implements CommandRunner {
     options: CommandOptions;
   }> = [];
   private readonly common = `/tmp/chainsieve-muse-test-${process.pid}-${Math.random().toString(16).slice(2)}`;
+  private head = 'f'.repeat(40);
+
+  setHead(head: string): void {
+    this.head = head;
+  }
 
   run(
     command: string,
@@ -56,6 +61,8 @@ class Runner implements CommandRunner {
     }
     if (command === 'git' && args.join(' ') === 'rev-parse --git-common-dir')
       return { status: 0, stdout: `${this.common}\n`, stderr: '' };
+    if (command === 'git' && args.join(' ') === 'rev-parse HEAD')
+      return { status: 0, stdout: `${this.head}\n`, stderr: '' };
     return { status: 0, stdout: '', stderr: '' };
   }
 }
@@ -253,7 +260,7 @@ describe('Muse Code provider', () => {
     expect(config.hardTimeoutMilliseconds).toBe(DEFAULT_MUSE_HARD_TIMEOUT_MS);
   });
 
-  it('blocks a duplicate task receipt before launching Muse again', () => {
+  it('blocks the same task receipt only when workspace evidence is unchanged', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
@@ -262,11 +269,23 @@ describe('Muse Code provider', () => {
     const first = binding();
     provider.executePayload(first.taskWorkspace, provider.generatePayload(first));
     const before = runner.calls.filter((call) => call.command === process.execPath).length;
-    const second = binding();
-    const result = provider.executePayload(second.taskWorkspace, provider.generatePayload(second));
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('MUSE_DUPLICATE_TASK_RECEIPT_BLOCKED');
+    const duplicate = binding();
+    const blocked = provider.executePayload(
+      duplicate.taskWorkspace,
+      provider.generatePayload(duplicate),
+    );
+    expect(blocked.status).toBe(1);
+    expect(blocked.stderr).toContain('MUSE_DUPLICATE_TASK_EVIDENCE_BLOCKED');
     expect(runner.calls.filter((call) => call.command === process.execPath)).toHaveLength(before);
+
+    runner.setHead('e'.repeat(40));
+    const changed = binding();
+    expect(
+      provider.executePayload(changed.taskWorkspace, provider.generatePayload(changed)),
+    ).toMatchObject({ status: 0 });
+    expect(runner.calls.filter((call) => call.command === process.execPath)).toHaveLength(
+      before + 1,
+    );
   });
 
   it('blocks task sessions after the configured Muse budget is exhausted', () => {
@@ -279,11 +298,16 @@ describe('Muse Code provider', () => {
     for (const receipt of ['muse-receipt-1', 'muse-receipt-2']) {
       const item = binding();
       item.launchReceiptId = receipt;
-      expect(provider.executePayload(item.taskWorkspace, provider.generatePayload(item))).toMatchObject({ status: 0 });
+      expect(
+        provider.executePayload(item.taskWorkspace, provider.generatePayload(item)),
+      ).toMatchObject({ status: 0 });
     }
     const blocked = binding();
     blocked.launchReceiptId = 'muse-receipt-3';
-    const result = provider.executePayload(blocked.taskWorkspace, provider.generatePayload(blocked));
+    const result = provider.executePayload(
+      blocked.taskWorkspace,
+      provider.generatePayload(blocked),
+    );
     expect(result.status).toBe(1);
     expect(result.stderr).toContain('MUSE_TASK_CALL_BUDGET_EXHAUSTED');
   });
@@ -372,9 +396,11 @@ describe('hybrid agent routing policy', () => {
   });
 
   it('keeps implementation and semantic review on Muse while routing mechanical CI prompts', () => {
-    expect(shouldRouteMusePayloadToMaintenance('Implement task T-1 from its immutable contract.')).toBe(
-      false,
-    );
+    expect(
+      shouldRouteMusePayloadToMaintenance(
+        'Implement task T-1 from its immutable contract.',
+      ),
+    ).toBe(false);
     expect(
       shouldRouteMusePayloadToMaintenance(
         'Independent review session 1. Review frozen product commit and return PASS or FAIL.',
