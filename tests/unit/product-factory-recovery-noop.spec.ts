@@ -15,11 +15,30 @@ const ok = (stdout = ''): CommandResult => ({ status: 0, stdout, stderr: '' });
 class NoopRunner implements CommandRunner {
   readonly calls: string[] = [];
 
-  constructor(private readonly driftFailure?: string) {}
+  constructor(
+    private readonly driftFailure?: string,
+    private readonly dirtyAfterCompile = false,
+  ) {}
+
+  private compiled = false;
 
   run(command: string, args: string[]): CommandResult {
     const call = `${command} ${args.join(' ')}`;
     this.calls.push(call);
+    if (command === 'git' && args.join(' ') === 'worktree list --porcelain') {
+      return ok(
+        ['worktree /repo', 'HEAD deadbeef', 'branch refs/heads/main', '', 'worktree /tmp/recovery-worktree', 'HEAD deadbeef', 'detached', ''].join('\n'),
+      );
+    }
+    if (command === 'git' && args.join(' ') === 'status --porcelain=v1') {
+      return this.dirtyAfterCompile && this.compiled
+        ? ok(' M tasks/G0/T-G0-COL-01.contract.json\n')
+        : ok();
+    }
+    if (command === 'pnpm' && args.join(' ') === '--silent prd:compile') {
+      this.compiled = true;
+      return ok();
+    }
     if (
       this.driftFailure &&
       command === 'pnpm' &&
@@ -53,7 +72,7 @@ describe('deterministic generated-contract recovery', () => {
     ).toBeUndefined();
   });
 
-  it('accepts zero-diff regeneration only after both deterministic guards pass', () => {
+  it('accepts zero-diff regeneration only after frozen and live-root reconciliation both verify', () => {
     const runner = new NoopRunner();
     expect(
       verifyGeneratedRecoveryNoop(
@@ -64,6 +83,12 @@ describe('deterministic generated-contract recovery', () => {
       ),
     ).toBe(true);
     expect(runner.calls).toEqual([
+      'pnpm --silent spec:verify',
+      'pnpm --silent prd:drift-check',
+      'git worktree list --porcelain',
+      'git status --porcelain=v1',
+      'pnpm --silent prd:compile',
+      'git status --porcelain=v1',
       'pnpm --silent spec:verify',
       'pnpm --silent prd:drift-check',
     ]);
@@ -89,6 +114,20 @@ describe('deterministic generated-contract recovery', () => {
         [],
       ),
     ).toThrow('PRODUCT_FACTORY_SUPERVISOR_CHECK_FAILED:prd:drift-check');
+  });
+
+  it('fails closed if live-root reconciliation creates Git-visible changes', () => {
+    const runner = new NoopRunner(undefined, true);
+    expect(() =>
+      verifyGeneratedRecoveryNoop(
+        runner,
+        '/tmp/recovery-worktree',
+        'REGENERATE_DERIVED_TASKS',
+        [],
+      ),
+    ).toThrow(
+      'PRODUCT_FACTORY_RECOVERY_ROOT_DIRTY_AFTER_RECONCILE:tasks/G0/T-G0-COL-01.contract.json',
+    );
   });
 
   it('separates mutable specification source from compiler-owned generated surfaces', () => {
