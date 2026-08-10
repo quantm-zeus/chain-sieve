@@ -308,10 +308,6 @@ export class MuseProvider implements AgentProvider {
     if (binding) {
       const reconciled = reconcileCommittedTaskCheckpoint(this.runner, binding);
       if (reconciled) return reconciled;
-      const beginFailure = beginTaskBeforeMuse(this.runner, binding);
-      if (beginFailure) return beginFailure;
-      const budgetFailure = claimMuseTaskAttempt(this.runner, binding);
-      if (budgetFailure) return budgetFailure;
     }
 
     const command = resolveMuseCommand();
@@ -325,6 +321,14 @@ export class MuseProvider implements AgentProvider {
         'MUSE_PERMISSION_NOT_PREAPPROVED',
         `Configure Muse Code permissions once, then set ${MUSE_PERMISSION_ENV}=${MUSE_PERMISSION_PREAPPROVED}.`,
       );
+
+    if (binding) {
+      const beginFailure = beginTaskBeforeMuse(this.runner, binding);
+      if (beginFailure) return beginFailure;
+      const budgetFailure = claimMuseTaskAttempt(this.runner, binding);
+      if (budgetFailure) return budgetFailure;
+    }
+
     const args = buildMuseArgs(wrapMusePrompt(payload));
     const supervision = resolveMuseSupervision();
     console.log(
