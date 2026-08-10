@@ -43,7 +43,9 @@ const maintenanceGeneration = (): number => {
 
 const isEvidenceFreeFailure = (failure: string): boolean =>
   failure.startsWith('PRODUCT_FACTORY_UNKNOWN_FAILURE:') ||
-  failure.includes('AUTOPILOT_INFRASTRUCTURE_RETRY_EXHAUSTED');
+  failure.includes('AUTOPILOT_INFRASTRUCTURE_RETRY_EXHAUSTED') ||
+  failure.includes('MUSE_TASK_CALL_BUDGET_EXHAUSTED') ||
+  failure.includes('MUSE_DUPLICATE_TASK_EVIDENCE_BLOCKED');
 
 try {
   const runner = new SystemCommandRunner();
