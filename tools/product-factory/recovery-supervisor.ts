@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { errorCode } from '../agent/lib/errors.js';
 import { agentRuntimeRoot } from '../agent/lib/runtime.js';
 import type {
   AgentProvider,
@@ -227,7 +228,7 @@ export const recoveryLanesForAction = (
     REPAIR: ['PRODUCT_CODE', 'TEST', 'DEPENDENCY', 'MIGRATION', 'CONFIG'],
     REPLAN: ['SPECIFICATION', 'GENERATED_CONTRACT'],
     SPLIT_TASK: ['SPECIFICATION', 'GENERATED_CONTRACT'],
-    REGENERATE_DERIVED_TASKS: ['SPECIFICATION', 'GENERATED_CONTRACT'],
+    REGENERATE_DERIVED_TASKS: ['GENERATED_CONTRACT'],
     REOPEN_CORRECTION: [],
     RETRY_INFRASTRUCTURE: [],
     SAFETY_TERMINAL: [],
@@ -235,7 +236,46 @@ export const recoveryLanesForAction = (
   };
   const permitted = new Set(allowedByAction[action]);
   const narrowed = requested.filter((lane) => permitted.has(lane));
+  if (action === 'REPLAN' || action === 'SPLIT_TASK') {
+    if (narrowed.includes('SPECIFICATION') && !narrowed.includes('GENERATED_CONTRACT'))
+      narrowed.push('GENERATED_CONTRACT');
+  }
   return narrowed.length > 0 ? Array.from(new Set(narrowed)) : allowedByAction[action];
+};
+
+export const deterministicRecoveryDiagnosis = (
+  rawFailure: string,
+): SupervisorRecoveryDiagnosis | undefined => {
+  if (!rawFailure.trimStart().startsWith('GENERATED_CONTRACT_DRIFT')) return undefined;
+  const evidence = rawFailure
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+  return {
+    action: 'REGENERATE_DERIVED_TASKS',
+    reason: 'deterministic generated-contract drift must be reconciled by the trusted PRD compiler before semantic recovery',
+    evidence,
+    target: 'generated-contracts',
+    constraints: [
+      'do not edit immutable PRD or ADR authority',
+      'accept a zero-diff reconciliation only after spec:verify and prd:drift-check both pass',
+    ],
+    allowedLanes: ['GENERATED_CONTRACT'],
+  };
+};
+
+export const verifyGeneratedRecoveryNoop = (
+  runner: CommandRunner,
+  workspace: string,
+  action: RecoveryAction,
+  paths: string[],
+): boolean => {
+  if (action !== 'REGENERATE_DERIVED_TASKS' || paths.length !== 0) return false;
+  pnpm(runner, workspace, ['spec:verify']);
+  pnpm(runner, workspace, ['prd:drift-check']);
+  console.log('CHAINSIEVE_RECOVERY_NOOP_VERIFIED:REGENERATE_DERIVED_TASKS');
+  return true;
 };
 
 const supervisorStatePath = (root: string, runner: CommandRunner): string =>
@@ -521,6 +561,11 @@ const publishRecoveryChanges = async (
         pnpm(runner, workspace, ['prd:compile']);
     }
     const paths = changedPaths(runner, workspace);
+    if (verifyGeneratedRecoveryNoop(runner, workspace, action, paths)) return;
+    if (paths.length === 0) {
+      console.error(`CHAINSIEVE_RECOVERY_NO_CHANGE_RETRY:${action}:${fingerprint.hash}`);
+      return;
+    }
     assertRecoveryScope(paths, lanes);
     runLaneChecks(workspace, runner, lanes);
     runFullChecks(workspace, runner);
@@ -622,7 +667,7 @@ const detailsFromFailure = (rawFailure: string): string[] => {
     ? rawFailure.split(':').slice(1).join(':')
     : rawFailure;
   return detail
-    .split(',')
+    .split(/[\n,]/)
     .map((value) => value.trim())
     .filter(Boolean)
     .slice(0, 20);
@@ -648,13 +693,13 @@ export const runSupervisedProductFactory = async (
     try {
       return await runProductFactory(root, runner, options);
     } catch (error) {
-      const rawFailure = error instanceof Error ? error.message : String(error);
+      const rawFailure = errorCode(error);
       const classification = effectiveClassification(rawFailure);
       if (classification === 'SUCCESS') throw error;
       if (classification === 'SAFETY_TERMINAL' || classification === 'AUTONOMY_GAP')
         throw error;
       const commit = git(runner, root, ['rev-parse', 'HEAD']);
-      const code = rawFailure.split(':')[0] ?? rawFailure;
+      const code = rawFailure.split(/[:\n]/)[0] ?? rawFailure;
       const fingerprint = computeFailureFingerprint(
         code,
         commit,
@@ -666,6 +711,7 @@ export const runSupervisedProductFactory = async (
         throw new Error(`PRODUCT_FACTORY_SUPERVISOR_RECOVERY_LIMIT:${fingerprint.hash}`);
 
       let diagnosis: SupervisorRecoveryDiagnosis;
+      const deterministicDiagnosis = deterministicRecoveryDiagnosis(rawFailure);
       if (classification === 'EXTERNAL_BLOCKER') {
         if (!isTransientExternalBlocker(rawFailure)) throw error;
         diagnosis = {
@@ -676,6 +722,9 @@ export const runSupervisedProductFactory = async (
           constraints: ['do not change source while external service is transiently unavailable'],
           allowedLanes: [],
         };
+      } else if (deterministicDiagnosis) {
+        diagnosis = deterministicDiagnosis;
+        console.log(`CHAINSIEVE_DETERMINISTIC_RECOVERY:${code}:${diagnosis.action}`);
       } else {
         diagnosis = await diagnoseSupervisorRecovery(
           root,
