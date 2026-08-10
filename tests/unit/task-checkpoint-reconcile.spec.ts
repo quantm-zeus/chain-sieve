@@ -138,7 +138,7 @@ const stateRoot = async (state: string): Promise<string> => {
 };
 
 describe('committed task checkpoint reconciliation', () => {
-  it('advances an IMPLEMENTING clean atomic commit through deterministic self-review', async () => {
+  it('validates an IMPLEMENTING atomic checkpoint through trusted adoption before self-review', async () => {
     const common = await stateRoot('IMPLEMENTING');
     const runner = new Runner(common);
     const task = binding();
@@ -148,7 +148,12 @@ describe('committed task checkpoint reconciliation', () => {
       status: 0,
     });
 
-    const review = runner.calls.find((call) => call.command === 'pnpm');
+    const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
+    expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
+      'task:checkpoint-adopt',
+      'task:self-review',
+    ]);
+    const review = lifecycleCalls[1];
     expect(review?.args).toEqual([
       '--silent',
       'task:self-review',
