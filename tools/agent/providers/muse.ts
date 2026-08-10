@@ -135,6 +135,19 @@ const gitCommonDirectory = (
   return resolve(workspace, isAbsolute(value) ? value : join(workspace, value));
 };
 
+const workspaceHead = (
+  runner: CommandRunner,
+  workspace: string,
+): string | undefined => {
+  const result = runner.run('git', ['rev-parse', 'HEAD'], {
+    cwd: workspace,
+    timeoutMilliseconds: 10_000,
+  });
+  return result.status === 0 && result.stdout.trim()
+    ? result.stdout.trim()
+    : undefined;
+};
+
 const claimMuseTaskAttempt = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
@@ -147,6 +160,13 @@ const claimMuseTaskAttempt = (
       stdout: '',
       stderr: `MUSE_TASK_BUDGET_RUNTIME_UNAVAILABLE:${binding.task.contract.id}`,
     };
+  const head = workspaceHead(runner, binding.taskWorkspace);
+  if (!head)
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `MUSE_TASK_BUDGET_HEAD_UNAVAILABLE:${binding.task.contract.id}`,
+    };
   const directory = join(
     common,
     'ciag-runtime',
@@ -157,12 +177,12 @@ const claimMuseTaskAttempt = (
   );
   mkdirSync(directory, { recursive: true });
   const receipt = safeSegment(binding.launchReceiptId);
-  const marker = join(directory, `${receipt}.json`);
+  const marker = join(directory, `${receipt}.${safeSegment(head)}.json`);
   if (existsSync(marker))
     return {
       status: 1,
       stdout: '',
-      stderr: `MUSE_DUPLICATE_TASK_RECEIPT_BLOCKED:${binding.task.contract.id}:${binding.launchReceiptId}`,
+      stderr: `MUSE_DUPLICATE_TASK_EVIDENCE_BLOCKED:${binding.task.contract.id}:${binding.launchReceiptId}:${head}`,
     };
   const used = readdirSync(directory).filter((name) => name.endsWith('.json')).length;
   const limit = resolveMuseTaskCallLimit();
@@ -179,6 +199,7 @@ const claimMuseTaskAttempt = (
         schemaVersion: '1.0.0',
         taskId: binding.task.contract.id,
         receiptId: binding.launchReceiptId,
+        workspaceHead: head,
         leaseId: binding.leaseId,
         fencingVersion: binding.fencingVersion,
         baseCommit: binding.baseCommit,
@@ -190,7 +211,7 @@ const claimMuseTaskAttempt = (
     { mode: 0o600, flag: 'wx' },
   );
   console.log(
-    `CHAINSIEVE_MUSE_TASK_BUDGET:${binding.task.contract.id}:${used + 1}/${limit}:${binding.launchReceiptId}`,
+    `CHAINSIEVE_MUSE_TASK_BUDGET:${binding.task.contract.id}:${used + 1}/${limit}:${binding.launchReceiptId}:${head}`,
   );
   return undefined;
 };
