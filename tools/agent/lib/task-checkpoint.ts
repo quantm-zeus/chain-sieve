@@ -123,17 +123,17 @@ export const reconcileCommittedTaskCheckpoint = (
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
   const state = readTaskLifecycleState(runner, binding);
+  const active = state === 'LEASED' || state === 'IMPLEMENTING';
   const durable = Boolean(
     state &&
       ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
         state,
       ),
   );
-  if (state !== 'LEASED' && state !== 'IMPLEMENTING' && !durable)
-    return undefined;
+  if (!active && !durable) return undefined;
 
   const head = cleanAtomicTaskCommit(runner, binding);
-  if (head && state !== 'LEASED') {
+  if (head && durable) {
     const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
     if (branchFailure) return branchFailure;
   }
@@ -146,21 +146,19 @@ export const reconcileCommittedTaskCheckpoint = (
   }
   if (!head || !binding.launchReceiptId) return undefined;
 
-  if (state === 'LEASED') {
-    const adopted = runLifecycle(runner, binding, [
-      'task:checkpoint-adopt',
-      binding.task.contract.id,
-      '--holder',
-      binding.holder,
-      '--lease-version',
-      String(binding.fencingVersion),
-    ]);
-    if (adopted.status !== 0)
-      return {
-        ...adopted,
-        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
-      };
-  }
+  const adopted = runLifecycle(runner, binding, [
+    'task:checkpoint-adopt',
+    binding.task.contract.id,
+    '--holder',
+    binding.holder,
+    '--lease-version',
+    String(binding.fencingVersion),
+  ]);
+  if (adopted.status !== 0)
+    return {
+      ...adopted,
+      stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
+    };
 
   console.log(
     `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE:${binding.task.contract.id}:${head}`,
