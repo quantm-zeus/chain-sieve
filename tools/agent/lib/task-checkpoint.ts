@@ -1,11 +1,5 @@
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  renameSync,
-  writeFileSync,
-} from 'node:fs';
-import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { isAbsolute, join, resolve } from 'node:path';
 import { taskBranch } from './paths.js';
 import type { CommandResult, CommandRunner, TaskLaunchBinding } from './types.js';
 
@@ -34,46 +28,22 @@ const gitCommonDirectory = (
   return resolve(workspace, isAbsolute(value) ? value : join(workspace, value));
 };
 
-const taskStatePath = (
-  runner: CommandRunner,
-  binding: TaskLaunchBinding,
-): string | undefined => {
-  const common = gitCommonDirectory(runner, binding.taskWorkspace);
-  return common ? join(common, 'ciag-runtime', 'task-state.json') : undefined;
-};
-
-const readLifecycleDocument = (
-  runner: CommandRunner,
-  binding: TaskLaunchBinding,
-): {
-  path: string;
-  value: {
-    schemaVersion: string;
-    tasks: Record<string, Record<string, unknown>>;
-  };
-} | undefined => {
-  const path = taskStatePath(runner, binding);
-  if (!path || !existsSync(path)) return undefined;
-  try {
-    const value = JSON.parse(readFileSync(path, 'utf8')) as {
-      schemaVersion: string;
-      tasks: Record<string, Record<string, unknown>>;
-    };
-    if (value.schemaVersion !== '2.0.0' || typeof value.tasks !== 'object')
-      return undefined;
-    return { path, value };
-  } catch {
-    return undefined;
-  }
-};
-
 export const readTaskLifecycleState = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): string | undefined => {
-  const document = readLifecycleDocument(runner, binding);
-  const state = document?.value.tasks[binding.task.contract.id]?.state;
-  return typeof state === 'string' ? state : undefined;
+  const common = gitCommonDirectory(runner, binding.taskWorkspace);
+  if (!common) return undefined;
+  const path = join(common, 'ciag-runtime', 'task-state.json');
+  if (!existsSync(path)) return undefined;
+  try {
+    const parsed = JSON.parse(readFileSync(path, 'utf8')) as {
+      tasks?: Record<string, { state?: string }>;
+    };
+    return parsed.tasks?.[binding.task.contract.id]?.state;
+  } catch {
+    return undefined;
+  }
 };
 
 export const cleanAtomicTaskCommit = (
@@ -107,7 +77,6 @@ const ensureCanonicalTaskBranch = (
     '--show-current',
   ]);
   if (current === expected) return undefined;
-
   const expectedRef = gitText(runner, binding.taskWorkspace, [
     'rev-parse',
     '--verify',
@@ -120,7 +89,6 @@ const ensureCanonicalTaskBranch = (
       stderr: `TASK_CHECKPOINT_BRANCH_DIVERGED:${binding.task.contract.id}:${expectedRef}:${head}`,
     };
   }
-
   const attach = git(runner, binding.taskWorkspace, [
     'switch',
     '-C',
@@ -139,61 +107,16 @@ const ensureCanonicalTaskBranch = (
   return undefined;
 };
 
-const adoptLeasedAtomicCommit = (
+const runLifecycle = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
-  head: string,
-): CommandResult | undefined => {
-  const document = readLifecycleDocument(runner, binding);
-  const target = document?.value.tasks[binding.task.contract.id];
-  if (!document || !target || target.state !== 'LEASED') return undefined;
-
-  const expectedBranch = taskBranch(binding.task.contract.id);
-  const tree = gitText(runner, binding.taskWorkspace, ['rev-parse', 'HEAD^{tree}']);
-  if (!tree)
-    return {
-      status: 1,
-      stdout: '',
-      stderr: `TASK_CHECKPOINT_TREE_UNAVAILABLE:${binding.task.contract.id}`,
-    };
-  if (
-    target.holder !== binding.holder ||
-    target.leaseId !== binding.leaseId ||
-    target.leaseVersion !== binding.fencingVersion ||
-    target.leaseState !== 'ACTIVE' ||
-    target.branch !== expectedBranch ||
-    typeof target.expiresAt !== 'string' ||
-    Date.parse(target.expiresAt) <= Date.now()
-  )
-    return {
-      status: 1,
-      stdout: '',
-      stderr: `TASK_CHECKPOINT_LEASE_BINDING_INVALID:${binding.task.contract.id}`,
-    };
-
-  target.state = 'IMPLEMENTING';
-  target.worktree = binding.taskWorkspace;
-  const history = Array.isArray(target.history) ? target.history : [];
-  history.push({
-    from: 'LEASED',
-    to: 'IMPLEMENTING',
-    at: new Date().toISOString(),
-    command: 'agent:adopt-committed-checkpoint',
-    leaseVersion: binding.fencingVersion,
+  args: string[],
+): CommandResult =>
+  runner.run('pnpm', ['--silent', ...args], {
+    cwd: binding.taskWorkspace,
+    timeoutMilliseconds: 30 * 60_000,
+    streamOutput: true,
   });
-  target.history = history;
-
-  mkdirSync(dirname(document.path), { recursive: true });
-  const temporary = `${document.path}.${process.pid}.checkpoint.tmp`;
-  writeFileSync(temporary, `${JSON.stringify(document.value, null, 2)}\n`, {
-    mode: 0o600,
-  });
-  renameSync(temporary, document.path);
-  console.log(
-    `CHAINSIEVE_TASK_COMMIT_ADOPTED:${binding.task.contract.id}:${head}:${tree}`,
-  );
-  return undefined;
-};
 
 export const reconcileCommittedTaskCheckpoint = (
   runner: CommandRunner,
@@ -224,40 +147,42 @@ export const reconcileCommittedTaskCheckpoint = (
   if (!head || !binding.launchReceiptId) return undefined;
 
   if (state === 'LEASED') {
-    const adoptionFailure = adoptLeasedAtomicCommit(runner, binding, head);
-    if (adoptionFailure) return adoptionFailure;
-  }
-
-  console.log(
-    `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE:${binding.task.contract.id}:${head}`,
-  );
-  const result = runner.run(
-    'pnpm',
-    [
-      '--silent',
-      'task:self-review',
+    const adopted = runLifecycle(runner, binding, [
+      'task:checkpoint-adopt',
       binding.task.contract.id,
       '--holder',
       binding.holder,
       '--lease-version',
       String(binding.fencingVersion),
-      '--launch-receipt-id',
-      binding.launchReceiptId,
-    ],
-    {
-      cwd: binding.taskWorkspace,
-      timeoutMilliseconds: 30 * 60_000,
-      streamOutput: true,
-    },
+    ]);
+    if (adopted.status !== 0)
+      return {
+        ...adopted,
+        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
+      };
+  }
+
+  console.log(
+    `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE:${binding.task.contract.id}:${head}`,
   );
-  if (result.status === 0) {
+  const reviewed = runLifecycle(runner, binding, [
+    'task:self-review',
+    binding.task.contract.id,
+    '--holder',
+    binding.holder,
+    '--lease-version',
+    String(binding.fencingVersion),
+    '--launch-receipt-id',
+    binding.launchReceiptId,
+  ]);
+  if (reviewed.status === 0) {
     console.log(
       `CHAINSIEVE_TASK_CHECKPOINT_RECONCILED:${binding.task.contract.id}:${head}`,
     );
-    return result;
+    return reviewed;
   }
   return {
-    ...result,
-    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${result.stderr || result.stdout}`,
+    ...reviewed,
+    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${reviewed.stderr || reviewed.stdout}`,
   };
 };
