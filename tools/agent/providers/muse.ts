@@ -394,7 +394,7 @@ export class MuseProvider implements AgentProvider {
         ? this.pendingTaskBinding
         : undefined;
     this.pendingTaskBinding = undefined;
-    if (binding) {
+    if (binding && binding.failures.length === 0) {
       const reconciled = reconcileCommittedTaskCheckpoint(this.runner, binding);
       if (reconciled) return reconciled;
     }
