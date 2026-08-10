@@ -133,7 +133,7 @@ export const reconcileCommittedTaskCheckpoint = (
     return undefined;
 
   const head = cleanAtomicTaskCommit(runner, binding);
-  if (head) {
+  if (head && state !== 'LEASED') {
     const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
     if (branchFailure) return branchFailure;
   }
