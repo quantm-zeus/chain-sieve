@@ -55,16 +55,9 @@ export const selectAutonomousEscalationStage = (
   hasActiveTask: boolean,
   policy: Pick<AutonomyPolicy, 'limits'>,
 ): AutonomousEscalationStage => {
-  if (
-    hasActiveTask &&
-    attempt <= policy.limits.taskEscalationRounds
-  )
-    return 'TASK_FALLBACK';
-  if (
-    attempt <=
-    policy.limits.taskEscalationRounds +
-      policy.limits.degradedRecoveryRounds
-  )
+  const taskRounds = hasActiveTask ? policy.limits.taskEscalationRounds : 0;
+  if (hasActiveTask && attempt <= taskRounds) return 'TASK_FALLBACK';
+  if (attempt <= taskRounds + policy.limits.degradedRecoveryRounds)
     return 'DEGRADED_RECOVERY';
   return 'EXHAUSTED';
 };
