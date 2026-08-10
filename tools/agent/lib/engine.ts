@@ -138,7 +138,20 @@ const activeDecision = (
   if (
     task.workspaceBranch !== expectedBranch ||
     state.branch !== expectedBranch
-  )
+  ) {
+    const recoverableAtomicCheckpoint =
+      ['LEASED', 'IMPLEMENTING'].includes(state.state) &&
+      !task.workspaceDirty &&
+      task.commitCountFromBase === 1 &&
+      state.branch === expectedBranch;
+    if (recoverableAtomicCheckpoint)
+      return {
+        action: 'RESUME_TASK',
+        reason: `TASK_CHECKPOINT_RECONCILIATION_REQUIRED:${task.workspaceBranch ?? 'detached'}:${expectedBranch}`,
+        task,
+        cluster: task.cluster,
+        taskWorkspace: workspace,
+      };
     return {
       action: 'STOP',
       reason: `TASK_BRANCH_MISMATCH:${task.workspaceBranch ?? 'detached'}:${expectedBranch}`,
@@ -146,6 +159,7 @@ const activeDecision = (
       cluster: task.cluster,
       taskWorkspace: workspace,
     };
+  }
   if (state.worktree && state.worktree !== workspace)
     return {
       action: 'STOP',
