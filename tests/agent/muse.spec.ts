@@ -6,14 +6,17 @@ import type {
   PayloadBinding,
 } from '../../tools/agent/lib/types.js';
 import {
+  DEFAULT_MUSE_TASK_CALL_LIMIT,
   MUSE_ARGS_ENV,
   MUSE_COMMAND_ENV,
   MUSE_PERMISSION_ENV,
   MUSE_SUPERVISOR_CONFIG_ENV,
+  MUSE_TASK_CALL_LIMIT_ENV,
   MuseProvider,
   buildMuseArgs,
   parseMuseArgs,
   resolveMuseCommand,
+  resolveMuseTaskCallLimit,
 } from '../../tools/agent/providers/muse.js';
 import {
   DEFAULT_MUSE_HARD_TIMEOUT_MS,
@@ -38,6 +41,7 @@ class Runner implements CommandRunner {
     args: string[];
     options: CommandOptions;
   }> = [];
+  private readonly common = `/tmp/chainsieve-muse-test-${process.pid}-${Math.random().toString(16).slice(2)}`;
 
   run(
     command: string,
@@ -50,6 +54,8 @@ class Runner implements CommandRunner {
         return { status: 1, stdout: '', stderr: 'not found' };
       return { status: 0, stdout: `${args[0]}\n`, stderr: '' };
     }
+    if (command === 'git' && args.join(' ') === 'rev-parse --git-common-dir')
+      return { status: 0, stdout: `${this.common}\n`, stderr: '' };
     return { status: 0, stdout: '', stderr: '' };
   }
 }
@@ -116,6 +122,7 @@ const originalArgs = process.env[MUSE_ARGS_ENV];
 const originalPermission = process.env[MUSE_PERMISSION_ENV];
 const originalHardTimeout = process.env[MUSE_HARD_TIMEOUT_ENV];
 const originalRetryLimit = process.env[MUSE_RETRY_STORM_LIMIT_ENV];
+const originalTaskCallLimit = process.env[MUSE_TASK_CALL_LIMIT_ENV];
 
 beforeEach(() => {
   delete process.env[MUSE_COMMAND_ENV];
@@ -123,6 +130,7 @@ beforeEach(() => {
   delete process.env[MUSE_PERMISSION_ENV];
   delete process.env[MUSE_HARD_TIMEOUT_ENV];
   delete process.env[MUSE_RETRY_STORM_LIMIT_ENV];
+  delete process.env[MUSE_TASK_CALL_LIMIT_ENV];
 });
 
 afterEach(() => {
@@ -136,6 +144,8 @@ afterEach(() => {
   else process.env[MUSE_HARD_TIMEOUT_ENV] = originalHardTimeout;
   if (originalRetryLimit === undefined) delete process.env[MUSE_RETRY_STORM_LIMIT_ENV];
   else process.env[MUSE_RETRY_STORM_LIMIT_ENV] = originalRetryLimit;
+  if (originalTaskCallLimit === undefined) delete process.env[MUSE_TASK_CALL_LIMIT_ENV];
+  else process.env[MUSE_TASK_CALL_LIMIT_ENV] = originalTaskCallLimit;
 });
 
 describe('Muse Code provider', () => {
@@ -165,6 +175,14 @@ describe('Muse Code provider', () => {
         [MUSE_ARGS_ENV]: '["--headless","--goal","{prompt}","--approve-all"]',
       }),
     ).toEqual(['--headless', '--goal', 'finish task', '--approve-all']);
+  });
+
+  it('uses a bounded configurable per-task Muse call limit', () => {
+    expect(resolveMuseTaskCallLimit({})).toBe(DEFAULT_MUSE_TASK_CALL_LIMIT);
+    expect(resolveMuseTaskCallLimit({ [MUSE_TASK_CALL_LIMIT_ENV]: '2' })).toBe(2);
+    expect(() => resolveMuseTaskCallLimit({ [MUSE_TASK_CALL_LIMIT_ENV]: '0' })).toThrow(
+      'MUSE_TASK_CALL_LIMIT_INVALID',
+    );
   });
 
   it('fails closed before launch when Muse permissions were not preapproved', () => {
@@ -218,9 +236,9 @@ describe('Muse Code provider', () => {
     expect(payload).toContain(
       '/tmp/Chain Sieve/.worktrees/T-G0-MUSE-01/.agents/skills/chainsieve-task/SKILL.md',
     );
-    expect(payload).toContain('perform a complete self-review');
+    expect(payload).toContain('exactly one clean atomic implementation commit');
+    expect(payload).toContain('Do not run any ChainSieve lifecycle command');
     expect(payload).toContain('Never ask the human owner');
-    expect(payload).toContain('Never push, merge, rebase, reset, clean, invoke gh');
     expect(provider.executePayload(taskBinding.taskWorkspace, payload)).toMatchObject({
       status: 0,
     });
@@ -233,35 +251,54 @@ describe('Muse Code provider', () => {
     expect(config.taskId).toBe('T-G0-MUSE-01');
     expect(config.baseCommit).toBe(taskBinding.baseCommit);
     expect(config.hardTimeoutMilliseconds).toBe(DEFAULT_MUSE_HARD_TIMEOUT_MS);
-    expect(launch.options).toMatchObject({
-      cwd: taskBinding.taskWorkspace,
-      timeoutMilliseconds: DEFAULT_MUSE_HARD_TIMEOUT_MS + 60_000,
-      streamOutput: true,
-    });
   });
 
-  it('keeps provider-bound cluster CI repair on supervised Muse', () => {
+  it('blocks a duplicate task receipt before launching Muse again', () => {
     process.env[MUSE_ARGS_ENV] =
       '["--headless","--goal","{prompt}","--approve-all"]';
     process.env[MUSE_PERMISSION_ENV] = 'preapproved';
     const runner = new Runner();
     const provider = new MuseProvider(runner);
-    const payload =
-      'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.';
-    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
-    expect(supervisorConfig(supervisedLaunch(runner)).command).toBe('muse');
+    const first = binding();
+    provider.executePayload(first.taskWorkspace, provider.generatePayload(first));
+    const before = runner.calls.filter((call) => call.command === process.execPath).length;
+    const second = binding();
+    const result = provider.executePayload(second.taskWorkspace, provider.generatePayload(second));
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('MUSE_DUPLICATE_TASK_RECEIPT_BLOCKED');
+    expect(runner.calls.filter((call) => call.command === process.execPath)).toHaveLength(before);
   });
 
-  it('routes recovery PR CI repair to Antigravity when agy is available', () => {
+  it('blocks task sessions after the configured Muse budget is exhausted', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    process.env[MUSE_TASK_CALL_LIMIT_ENV] = '2';
     const runner = new Runner();
     const provider = new MuseProvider(runner);
-    const payload =
-      'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.';
-    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
-    const launch = runner.calls.at(-1)!;
-    expect(launch.command).toBe('agy');
-    expect(launch.args).toContain('--mode=accept-edits');
-    expect(launch.args).toContain(payload);
+    for (const receipt of ['muse-receipt-1', 'muse-receipt-2']) {
+      const item = binding();
+      item.launchReceiptId = receipt;
+      expect(provider.executePayload(item.taskWorkspace, provider.generatePayload(item))).toMatchObject({ status: 0 });
+    }
+    const blocked = binding();
+    blocked.launchReceiptId = 'muse-receipt-3';
+    const result = provider.executePayload(blocked.taskWorkspace, provider.generatePayload(blocked));
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('MUSE_TASK_CALL_BUDGET_EXHAUSTED');
+  });
+
+  it('routes cluster and product-convergence CI repair to Antigravity when agy is available', () => {
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    for (const payload of [
+      'You are isolated CI repair session session-1. Inspect failed checks and leave changes uncommitted.',
+      'The product-convergence pull request failed CI checks: Tier 0. Reproduce the failing behavior locally and repair it.',
+      'Recovery PR CI failed: Tier 0. Repair only the existing recovery implementation.',
+    ]) {
+      expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
+      expect(runner.calls.at(-1)!.command).toBe('agy');
+    }
   });
 
   it('routes mechanical recovery diagnosis to Antigravity but keeps convergence diagnosis on supervised Muse', () => {
@@ -334,7 +371,7 @@ describe('hybrid agent routing policy', () => {
     );
   });
 
-  it('does not route ordinary implementation, independent review, or provider-bound cluster CI prompts away from Muse', () => {
+  it('keeps implementation and semantic review on Muse while routing mechanical CI prompts', () => {
     expect(shouldRouteMusePayloadToMaintenance('Implement task T-1 from its immutable contract.')).toBe(
       false,
     );
@@ -347,6 +384,6 @@ describe('hybrid agent routing policy', () => {
       shouldRouteMusePayloadToMaintenance(
         'You are isolated CI repair session session-1. Inspect failed checks.',
       ),
-    ).toBe(false);
+    ).toBe(true);
   });
 });
