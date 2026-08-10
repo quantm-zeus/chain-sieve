@@ -59,8 +59,6 @@ class Runner implements CommandRunner {
       };
     if (args.join(' ') === 'rev-parse HEAD')
       return { status: 0, stdout: `${'b'.repeat(40)}\n`, stderr: '' };
-    if (args.join(' ') === 'rev-parse HEAD^{tree}')
-      return { status: 0, stdout: `${'c'.repeat(40)}\n`, stderr: '' };
     if (args.join(' ') === 'branch --show-current')
       return { status: 0, stdout: `${this.branch}\n`, stderr: '' };
     if (
@@ -156,7 +154,7 @@ describe('committed task checkpoint reconciliation', () => {
     });
   });
 
-  it('reattaches and adopts a LEASED atomic commit produced by an isolated provider sandbox', async () => {
+  it('reattaches and adopts a LEASED atomic commit through the trusted task runner before self-review', async () => {
     const common = await stateRoot('LEASED');
     const runner = new Runner(common, { branch: '' });
 
@@ -171,16 +169,20 @@ describe('committed task checkpoint reconciliation', () => {
             `switch -C task/t-rec-01 ${'b'.repeat(40)}`,
       ),
     ).toBe(true);
-
-    const state = JSON.parse(
-      await import('node:fs/promises').then(({ readFile }) =>
-        readFile(join(common, 'ciag-runtime', 'task-state.json'), 'utf8'),
-      ),
-    ) as { tasks: Record<string, { state: string; worktree?: string }> };
-    expect(state.tasks['T-REC-01']).toMatchObject({
-      state: 'IMPLEMENTING',
-      worktree: '/tmp/task-worktree',
-    });
+    const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
+    expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
+      'task:checkpoint-adopt',
+      'task:self-review',
+    ]);
+    expect(lifecycleCalls[0]?.args).toEqual([
+      '--silent',
+      'task:checkpoint-adopt',
+      'T-REC-01',
+      '--holder',
+      'agent-orchestrator',
+      '--lease-version',
+      '3',
+    ]);
   });
 
   it('refuses to overwrite a divergent canonical task branch', async () => {
@@ -194,6 +196,7 @@ describe('committed task checkpoint reconciliation', () => {
       stderr: expect.stringContaining('TASK_CHECKPOINT_BRANCH_DIVERGED'),
     });
     expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
+    expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
   });
 
   it('does not pay for another provider call after a durable self-review checkpoint exists', async () => {
