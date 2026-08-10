@@ -17,6 +17,8 @@
   "limits": {
     "taskCorrectionRounds": 2,
     "clusterCiCorrectionRounds": 3,
-    "infrastructureRetryRounds": 1
+    "infrastructureRetryRounds": 1,
+    "taskEscalationRounds": 2,
+    "degradedRecoveryRounds": 2
   }
 }
