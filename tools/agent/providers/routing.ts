@@ -20,6 +20,8 @@ const MAINTENANCE_FAILURE_MARKERS = [
   'EACCES',
   'EPERM',
   'WORKTREE',
+  'BRANCH_MISMATCH',
+  'DETACHED',
   'LOCKFILE',
   'MUSE_CODE_MISSING',
   'ANTIGRAVITY_HEADLESS_MISSING',
@@ -54,7 +56,11 @@ export const classifyAgentWork = (failure: string): AgentWorkRole => {
 export const isMechanicalFailure = (failure: string): boolean =>
   classifyAgentWork(failure) === 'MAINTENANCE';
 
-const between = (value: string, start: string, end: string): string | undefined => {
+const between = (
+  value: string,
+  start: string,
+  end: string,
+): string | undefined => {
   const from = value.indexOf(start);
   if (from < 0) return undefined;
   const contentStart = from + start.length;
