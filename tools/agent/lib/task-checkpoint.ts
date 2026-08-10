@@ -200,24 +200,29 @@ export const reconcileCommittedTaskCheckpoint = (
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
   const state = readTaskLifecycleState(runner, binding);
-  if (
+  const durable = Boolean(
     state &&
-    ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
-      state,
-    )
-  ) {
+      ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
+        state,
+      ),
+  );
+  if (state !== 'LEASED' && state !== 'IMPLEMENTING' && !durable)
+    return undefined;
+
+  const head = cleanAtomicTaskCommit(runner, binding);
+  if (head) {
+    const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
+    if (branchFailure) return branchFailure;
+  }
+
+  if (durable) {
     console.log(
       `CHAINSIEVE_TASK_CHECKPOINT_ALREADY_DURABLE:${binding.task.contract.id}:${state}`,
     );
     return { status: 0, stdout: '', stderr: '' };
   }
-  if (state !== 'LEASED' && state !== 'IMPLEMENTING') return undefined;
-
-  const head = cleanAtomicTaskCommit(runner, binding);
   if (!head || !binding.launchReceiptId) return undefined;
 
-  const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
-  if (branchFailure) return branchFailure;
   if (state === 'LEASED') {
     const adoptionFailure = adoptLeasedAtomicCommit(runner, binding, head);
     if (adoptionFailure) return adoptionFailure;
