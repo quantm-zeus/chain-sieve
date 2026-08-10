@@ -29,9 +29,9 @@ const provider = (): AgentProviderId => {
   return selected;
 };
 
-const MAX_MAINTENANCE_GENERATIONS = 12;
+const MAX_MAINTENANCE_GENERATIONS = 4;
 const MAINTENANCE_GENERATION_ENV = 'CHAINSIEVE_MAINTENANCE_GENERATION';
-const CHILD_TIMEOUT_MS = 7 * 24 * 60 * 60_000;
+const CHILD_TIMEOUT_MS = 12 * 60 * 60_000;
 
 const maintenanceGeneration = (): number => {
   const raw = process.env[MAINTENANCE_GENERATION_ENV]?.trim() ?? '0';
