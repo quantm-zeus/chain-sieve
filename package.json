@@ -29,6 +29,7 @@
     "task:mark-ready": "tsx tools/task-runner/cli.ts mark-ready",
     "task:acquire": "tsx tools/task-runner/cli.ts acquire",
     "task:begin": "tsx tools/task-runner/cli.ts begin",
+    "task:checkpoint-adopt": "tsx tools/task-runner/cli.ts checkpoint-adopt",
     "task:self-review": "tsx tools/task-runner/cli.ts self-review",
     "task:self-review-correct": "tsx tools/task-runner/cli.ts self-review-correct",
     "task:self-review-refresh": "tsx tools/task-runner/cli.ts self-review-refresh",
