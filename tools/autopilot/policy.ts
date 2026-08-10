@@ -21,6 +21,8 @@ export interface AutonomyPolicy {
     taskCorrectionRounds: number;
     clusterCiCorrectionRounds: number;
     infrastructureRetryRounds: number;
+    taskEscalationRounds: number;
+    degradedRecoveryRounds: number;
   };
 }
 
@@ -62,7 +64,9 @@ export const loadAutonomyPolicy = async (
       safe.irreversibleMigrationsEnabled !== false ||
       !boundedInteger(limits?.taskCorrectionRounds, 1, 20) ||
       !boundedInteger(limits.clusterCiCorrectionRounds, 1, 20) ||
-      !boundedInteger(limits.infrastructureRetryRounds, 1, 10)
+      !boundedInteger(limits.infrastructureRetryRounds, 1, 10) ||
+      !boundedInteger(limits.taskEscalationRounds, 1, 10) ||
+      !boundedInteger(limits.degradedRecoveryRounds, 1, 10)
     )
       throw new Error('AUTONOMY_POLICY_INVALID');
     return parsed as AutonomyPolicy;
