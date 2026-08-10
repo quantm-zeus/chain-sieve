@@ -6,16 +6,19 @@ import type {
   PayloadBinding,
 } from '../../tools/agent/lib/types.js';
 import {
+  DEFAULT_MUSE_SEMANTIC_CALL_LIMIT,
   DEFAULT_MUSE_TASK_CALL_LIMIT,
   MUSE_ARGS_ENV,
   MUSE_COMMAND_ENV,
   MUSE_PERMISSION_ENV,
+  MUSE_SEMANTIC_CALL_LIMIT_ENV,
   MUSE_SUPERVISOR_CONFIG_ENV,
   MUSE_TASK_CALL_LIMIT_ENV,
   MuseProvider,
   buildMuseArgs,
   parseMuseArgs,
   resolveMuseCommand,
+  resolveMuseSemanticCallLimit,
   resolveMuseTaskCallLimit,
 } from '../../tools/agent/providers/muse.js';
 import {
@@ -130,6 +133,7 @@ const originalPermission = process.env[MUSE_PERMISSION_ENV];
 const originalHardTimeout = process.env[MUSE_HARD_TIMEOUT_ENV];
 const originalRetryLimit = process.env[MUSE_RETRY_STORM_LIMIT_ENV];
 const originalTaskCallLimit = process.env[MUSE_TASK_CALL_LIMIT_ENV];
+const originalSemanticCallLimit = process.env[MUSE_SEMANTIC_CALL_LIMIT_ENV];
 
 beforeEach(() => {
   delete process.env[MUSE_COMMAND_ENV];
@@ -138,6 +142,7 @@ beforeEach(() => {
   delete process.env[MUSE_HARD_TIMEOUT_ENV];
   delete process.env[MUSE_RETRY_STORM_LIMIT_ENV];
   delete process.env[MUSE_TASK_CALL_LIMIT_ENV];
+  delete process.env[MUSE_SEMANTIC_CALL_LIMIT_ENV];
 });
 
 afterEach(() => {
@@ -153,6 +158,9 @@ afterEach(() => {
   else process.env[MUSE_RETRY_STORM_LIMIT_ENV] = originalRetryLimit;
   if (originalTaskCallLimit === undefined) delete process.env[MUSE_TASK_CALL_LIMIT_ENV];
   else process.env[MUSE_TASK_CALL_LIMIT_ENV] = originalTaskCallLimit;
+  if (originalSemanticCallLimit === undefined)
+    delete process.env[MUSE_SEMANTIC_CALL_LIMIT_ENV];
+  else process.env[MUSE_SEMANTIC_CALL_LIMIT_ENV] = originalSemanticCallLimit;
 });
 
 describe('Muse Code provider', () => {
@@ -184,12 +192,19 @@ describe('Muse Code provider', () => {
     ).toEqual(['--headless', '--goal', 'finish task', '--approve-all']);
   });
 
-  it('uses a bounded configurable per-task Muse call limit', () => {
+  it('uses bounded configurable task and semantic Muse call limits', () => {
     expect(resolveMuseTaskCallLimit({})).toBe(DEFAULT_MUSE_TASK_CALL_LIMIT);
+    expect(resolveMuseSemanticCallLimit({})).toBe(DEFAULT_MUSE_SEMANTIC_CALL_LIMIT);
     expect(resolveMuseTaskCallLimit({ [MUSE_TASK_CALL_LIMIT_ENV]: '2' })).toBe(2);
+    expect(
+      resolveMuseSemanticCallLimit({ [MUSE_SEMANTIC_CALL_LIMIT_ENV]: '9' }),
+    ).toBe(9);
     expect(() => resolveMuseTaskCallLimit({ [MUSE_TASK_CALL_LIMIT_ENV]: '0' })).toThrow(
-      'MUSE_TASK_CALL_LIMIT_INVALID',
+      'MUSE_CALL_LIMIT_INVALID',
     );
+    expect(() =>
+      resolveMuseSemanticCallLimit({ [MUSE_SEMANTIC_CALL_LIMIT_ENV]: '51' }),
+    ).toThrow('MUSE_CALL_LIMIT_INVALID');
   });
 
   it('fails closed before launch when Muse permissions were not preapproved', () => {
@@ -230,6 +245,23 @@ describe('Muse Code provider', () => {
     });
     const launch = supervisedLaunch(runner);
     expect(supervisorConfig(launch).command).toBe('/custom/bin/muse');
+  });
+
+  it('dedupes semantic sessions for the same prompt and HEAD but allows new HEAD evidence', () => {
+    process.env[MUSE_ARGS_ENV] =
+      '["--headless","--goal","{prompt}","--approve-all"]';
+    process.env[MUSE_PERMISSION_ENV] = 'preapproved';
+    const runner = new Runner();
+    const provider = new MuseProvider(runner);
+    const payload = 'Review semantic convergence evidence for REQ-1.';
+    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
+    const before = runner.calls.filter((call) => call.command === process.execPath).length;
+    const duplicate = provider.executePayload('/tmp/worktree', payload);
+    expect(duplicate.status).toBe(1);
+    expect(duplicate.stderr).toContain('MUSE_DUPLICATE_SEMANTIC_EVIDENCE_BLOCKED');
+    expect(runner.calls.filter((call) => call.command === process.execPath)).toHaveLength(before);
+    runner.setHead('d'.repeat(40));
+    expect(provider.executePayload('/tmp/worktree', payload)).toMatchObject({ status: 0 });
   });
 
   it('runs semantic task payloads through bounded supervised Muse', () => {
