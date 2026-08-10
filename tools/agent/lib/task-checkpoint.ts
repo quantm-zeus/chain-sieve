@@ -1,13 +1,11 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { isAbsolute, join, resolve } from 'node:path';
 import {
-  acquireLifecycleMutationLock,
-  assertLease,
-  currentLeaseCredential,
-  readState,
-  transition,
-  writeState,
-} from '../../task-runner/state.js';
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  writeFileSync,
+} from 'node:fs';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { taskBranch } from './paths.js';
 import type { CommandResult, CommandRunner, TaskLaunchBinding } from './types.js';
 
@@ -36,22 +34,46 @@ const gitCommonDirectory = (
   return resolve(workspace, isAbsolute(value) ? value : join(workspace, value));
 };
 
-export const readTaskLifecycleState = (
+const taskStatePath = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): string | undefined => {
   const common = gitCommonDirectory(runner, binding.taskWorkspace);
-  if (!common) return undefined;
-  const path = join(common, 'ciag-runtime', 'task-state.json');
-  if (!existsSync(path)) return undefined;
+  return common ? join(common, 'ciag-runtime', 'task-state.json') : undefined;
+};
+
+const readLifecycleDocument = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+): {
+  path: string;
+  value: {
+    schemaVersion: string;
+    tasks: Record<string, Record<string, unknown>>;
+  };
+} | undefined => {
+  const path = taskStatePath(runner, binding);
+  if (!path || !existsSync(path)) return undefined;
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as {
-      tasks?: Record<string, { state?: string }>;
+    const value = JSON.parse(readFileSync(path, 'utf8')) as {
+      schemaVersion: string;
+      tasks: Record<string, Record<string, unknown>>;
     };
-    return parsed.tasks?.[binding.task.contract.id]?.state;
+    if (value.schemaVersion !== '2.0.0' || typeof value.tasks !== 'object')
+      return undefined;
+    return { path, value };
   } catch {
     return undefined;
   }
+};
+
+export const readTaskLifecycleState = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+): string | undefined => {
+  const document = readLifecycleDocument(runner, binding);
+  const state = document?.value.tasks[binding.task.contract.id]?.state;
+  return typeof state === 'string' ? state : undefined;
 };
 
 export const cleanAtomicTaskCommit = (
@@ -117,15 +139,16 @@ const ensureCanonicalTaskBranch = (
   return undefined;
 };
 
-const adoptLeasedAtomicCommit = async (
+const adoptLeasedAtomicCommit = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
   head: string,
-): Promise<CommandResult | undefined> => {
-  const state = await readState([binding.task.contract], binding.taskWorkspace);
-  const target = state.tasks[binding.task.contract.id];
-  if (!target || target.state !== 'LEASED') return undefined;
+): CommandResult | undefined => {
+  const document = readLifecycleDocument(runner, binding);
+  const target = document?.value.tasks[binding.task.contract.id];
+  if (!document || !target || target.state !== 'LEASED') return undefined;
 
+  const expectedBranch = taskBranch(binding.task.contract.id);
   const tree = gitText(runner, binding.taskWorkspace, ['rev-parse', 'HEAD^{tree}']);
   if (!tree)
     return {
@@ -133,43 +156,49 @@ const adoptLeasedAtomicCommit = async (
       stdout: '',
       stderr: `TASK_CHECKPOINT_TREE_UNAVAILABLE:${binding.task.contract.id}`,
     };
+  if (
+    target.holder !== binding.holder ||
+    target.leaseId !== binding.leaseId ||
+    target.leaseVersion !== binding.fencingVersion ||
+    target.leaseState !== 'ACTIVE' ||
+    target.branch !== expectedBranch ||
+    typeof target.expiresAt !== 'string' ||
+    Date.parse(target.expiresAt) <= Date.now()
+  )
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `TASK_CHECKPOINT_LEASE_BINDING_INVALID:${binding.task.contract.id}`,
+    };
 
-  const release = await acquireLifecycleMutationLock(binding.taskWorkspace);
-  try {
-    const refreshed = await readState(
-      [binding.task.contract],
-      binding.taskWorkspace,
-    );
-    const leased = assertLease(
-      refreshed,
-      binding.task.contract.id,
-      binding.fencingVersion,
-      binding.holder,
-      new Date(),
-      binding.leaseId,
-    );
-    if (leased.state !== 'LEASED') return undefined;
-    const credential = currentLeaseCredential(leased);
-    transition(leased, ['LEASED'], 'IMPLEMENTING', {
-      command: 'agent:adopt-committed-checkpoint',
-      credential,
-      worktreeValid: true,
-    });
-    leased.worktree = binding.taskWorkspace;
-    await writeState(refreshed, binding.taskWorkspace);
-    console.log(
-      `CHAINSIEVE_TASK_COMMIT_ADOPTED:${binding.task.contract.id}:${head}:${tree}`,
-    );
-  } finally {
-    await release();
-  }
+  target.state = 'IMPLEMENTING';
+  target.worktree = binding.taskWorkspace;
+  const history = Array.isArray(target.history) ? target.history : [];
+  history.push({
+    from: 'LEASED',
+    to: 'IMPLEMENTING',
+    at: new Date().toISOString(),
+    command: 'agent:adopt-committed-checkpoint',
+    leaseVersion: binding.fencingVersion,
+  });
+  target.history = history;
+
+  mkdirSync(dirname(document.path), { recursive: true });
+  const temporary = `${document.path}.${process.pid}.checkpoint.tmp`;
+  writeFileSync(temporary, `${JSON.stringify(document.value, null, 2)}\n`, {
+    mode: 0o600,
+  });
+  renameSync(temporary, document.path);
+  console.log(
+    `CHAINSIEVE_TASK_COMMIT_ADOPTED:${binding.task.contract.id}:${head}:${tree}`,
+  );
   return undefined;
 };
 
-export const reconcileCommittedTaskCheckpoint = async (
+export const reconcileCommittedTaskCheckpoint = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
-): Promise<CommandResult | undefined> => {
+): CommandResult | undefined => {
   const state = readTaskLifecycleState(runner, binding);
   if (
     state &&
@@ -189,9 +218,8 @@ export const reconcileCommittedTaskCheckpoint = async (
 
   const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
   if (branchFailure) return branchFailure;
-
   if (state === 'LEASED') {
-    const adoptionFailure = await adoptLeasedAtomicCommit(runner, binding, head);
+    const adoptionFailure = adoptLeasedAtomicCommit(runner, binding, head);
     if (adoptionFailure) return adoptionFailure;
   }
 
