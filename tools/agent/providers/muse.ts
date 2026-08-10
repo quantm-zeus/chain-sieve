@@ -2,7 +2,10 @@ import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { isAbsolute, join, resolve } from 'node:path';
 import { AgentError } from '../lib/errors.js';
-import { reconcileCommittedTaskCheckpoint } from '../lib/task-checkpoint.js';
+import {
+  readTaskLifecycleState,
+  reconcileCommittedTaskCheckpoint,
+} from '../lib/task-checkpoint.js';
 import type {
   AgentProvider,
   CommandResult,
@@ -216,6 +219,37 @@ const claimMuseTaskAttempt = (
   return undefined;
 };
 
+const beginTaskBeforeMuse = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+): CommandResult | undefined => {
+  if (readTaskLifecycleState(runner, binding) !== 'LEASED') return undefined;
+  const result = runner.run(
+    'pnpm',
+    [
+      '--silent',
+      'task:begin',
+      binding.task.contract.id,
+      '--holder',
+      binding.holder,
+      '--lease-version',
+      String(binding.fencingVersion),
+    ],
+    {
+      cwd: binding.taskWorkspace,
+      timeoutMilliseconds: 30 * 60_000,
+      streamOutput: true,
+    },
+  );
+  if (result.status !== 0)
+    return {
+      ...result,
+      stderr: `TASK_BEGIN_BEFORE_MUSE_FAILED:${binding.task.contract.id}:${result.stderr || result.stdout}`,
+    };
+  console.log(`CHAINSIEVE_TASK_BEGUN_BEFORE_MUSE:${binding.task.contract.id}`);
+  return undefined;
+};
+
 export class MuseProvider implements AgentProvider {
   readonly id = 'muse' as const;
   private pendingTaskBinding: TaskLaunchBinding | undefined;
@@ -274,6 +308,8 @@ export class MuseProvider implements AgentProvider {
     if (binding) {
       const reconciled = reconcileCommittedTaskCheckpoint(this.runner, binding);
       if (reconciled) return reconciled;
+      const beginFailure = beginTaskBeforeMuse(this.runner, binding);
+      if (beginFailure) return beginFailure;
       const budgetFailure = claimMuseTaskAttempt(this.runner, binding);
       if (budgetFailure) return budgetFailure;
     }
