@@ -61,14 +61,21 @@ export const CORRECTION_LANES: Record<CorrectionLaneType, CorrectionLaneDefiniti
   },
   SPECIFICATION: {
     type: 'SPECIFICATION',
-    allowedPrefixes: ['docs/spec/', 'docs/adr/', 'tasks/', 'clusters/', 'artifacts/spec/'],
+    allowedPrefixes: ['docs/spec/', 'docs/adr/'],
     forbiddenPrefixes: ['apps/', 'packages/', 'tests/', 'tools/'],
     deterministicChecks: [['prd:compile'], ['spec:verify'], ['prd:drift-check'], ['requirements:coverage']],
   },
   GENERATED_CONTRACT: {
     type: 'GENERATED_CONTRACT',
-    allowedPrefixes: ['tasks/', 'clusters/', 'artifacts/context/'],
-    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/', 'tools/'],
+    allowedPrefixes: [
+      'tasks/',
+      'clusters/',
+      'artifacts/context/',
+      'artifacts/spec/',
+      'artifacts/conformance/',
+      'docs/schemas/',
+    ],
+    forbiddenPrefixes: ['apps/', 'packages/', 'docs/spec/', 'docs/adr/', 'tools/'],
     deterministicChecks: [['spec:verify'], ['prd:drift-check']],
   },
   INFRASTRUCTURE: {
@@ -105,7 +112,15 @@ export const classifyPathLane = (path: string): CorrectionLaneType => {
   if (path.startsWith('tests/')) return 'TEST';
   if (path.startsWith('config/') || path.startsWith('docs/operations/')) return 'CONFIG';
   if (path.startsWith('docs/spec/') || path.startsWith('docs/adr/')) return 'SPECIFICATION';
-  if (path.startsWith('tasks/') || path.startsWith('clusters/')) return 'GENERATED_CONTRACT';
+  if (
+    path.startsWith('tasks/') ||
+    path.startsWith('clusters/') ||
+    path.startsWith('artifacts/context/') ||
+    path.startsWith('artifacts/spec/') ||
+    path.startsWith('artifacts/conformance/') ||
+    path.startsWith('docs/schemas/')
+  )
+    return 'GENERATED_CONTRACT';
   if (path.startsWith('.github/')) return 'INFRASTRUCTURE';
   return 'PRODUCT_CODE';
 };
