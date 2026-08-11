@@ -184,7 +184,7 @@ export const reconcileCommittedTaskCheckpoint = (
   if (!active && !durable) return undefined;
 
   const head = cleanAtomicTaskCommit(runner, binding);
-  if (head && (active || durable)) {
+  if (head && durable) {
     const branchFailure = ensureCanonicalTaskBranch(runner, binding, head);
     if (branchFailure) return branchFailure;
   }
