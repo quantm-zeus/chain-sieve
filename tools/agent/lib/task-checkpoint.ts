@@ -148,23 +148,43 @@ const currentSelfReview = (snapshot: TaskLifecycleSnapshot): boolean =>
   snapshot.selfReviewEvidence.commit === snapshot.commit &&
   snapshot.selfReviewEvidence.tree === snapshot.tree;
 
-const leaseCredentialChanged = (
+const leaseSnapshotRegression = (
+  binding: TaskLaunchBinding,
+  snapshot: TaskLifecycleSnapshot | undefined,
+): CommandResult | undefined => {
+  if (
+    !snapshot ||
+    typeof snapshot.leaseVersion !== 'number' ||
+    snapshot.leaseVersion >= binding.fencingVersion
+  )
+    return undefined;
+  console.error(
+    `CHAINSIEVE_TASK_CHECKPOINT_LEASE_REGRESSION:${binding.task.contract.id}:${binding.fencingVersion}->${snapshot.leaseVersion}`,
+  );
+  return {
+    status: 1,
+    stdout: '',
+    stderr: `TASK_CHECKPOINT_LEASE_SNAPSHOT_REGRESSION:${binding.task.contract.id}:${binding.fencingVersion}:${snapshot.leaseVersion}:${binding.leaseId}:${snapshot.leaseId ?? 'missing'}`,
+  };
+};
+
+const leaseCredentialAdvanced = (
   binding: TaskLaunchBinding,
   snapshot: TaskLifecycleSnapshot | undefined,
 ): boolean =>
   Boolean(
     snapshot &&
-      ((typeof snapshot.leaseVersion === 'number' &&
-        snapshot.leaseVersion !== binding.fencingVersion) ||
-        (snapshot.leaseId && snapshot.leaseId !== binding.leaseId) ||
-        (snapshot.holder && snapshot.holder !== binding.holder)),
+      typeof snapshot.leaseVersion === 'number' &&
+      snapshot.leaseVersion > binding.fencingVersion,
   );
 
 const leaseRebindResult = (
   binding: TaskLaunchBinding,
   snapshot: TaskLifecycleSnapshot | undefined,
 ): CommandResult | undefined => {
-  if (!leaseCredentialChanged(binding, snapshot)) return undefined;
+  const regression = leaseSnapshotRegression(binding, snapshot);
+  if (regression) return regression;
+  if (!leaseCredentialAdvanced(binding, snapshot)) return undefined;
   const version = snapshot?.leaseVersion ?? 'missing';
   const leaseId = snapshot?.leaseId ?? 'missing';
   console.log(
@@ -189,17 +209,22 @@ const rebindAfterLeaseFailure = (
     !output.includes('WRONG_LEASE_OWNER')
   )
     return undefined;
-  return leaseRebindResult(
-    binding,
-    readTaskLifecycleSnapshot(runner, binding),
-  );
+  const snapshot = readTaskLifecycleSnapshot(runner, binding);
+  const regression = leaseSnapshotRegression(binding, snapshot);
+  if (regression) return regression;
+  return leaseRebindResult(binding, snapshot);
 };
 
 export const beginTaskBeforeProvider = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
-  if (readTaskLifecycleState(runner, binding) !== 'LEASED') return undefined;
+  const snapshot = readTaskLifecycleSnapshot(runner, binding);
+  const regression = leaseSnapshotRegression(binding, snapshot);
+  if (regression) return regression;
+  if (snapshot?.state !== 'LEASED') return undefined;
+  const preflightRebind = leaseRebindResult(binding, snapshot);
+  if (preflightRebind) return preflightRebind;
   const result = runLifecycle(runner, binding, [
     'task:begin',
     binding.task.contract.id,
@@ -225,6 +250,10 @@ export const reconcileCommittedTaskCheckpoint = (
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
   const snapshot = readTaskLifecycleSnapshot(runner, binding);
+  const regression = leaseSnapshotRegression(binding, snapshot);
+  if (regression) return regression;
+  const preflightRebind = leaseRebindResult(binding, snapshot);
+  if (preflightRebind) return preflightRebind;
   const state = snapshot?.state;
   const incompleteSelfReview =
     state === 'SELF_REVIEWING' && snapshot && !currentSelfReview(snapshot);
