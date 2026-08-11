@@ -34,7 +34,7 @@ class MaintenanceLifecycleRunner implements CommandRunner {
     if (command === 'which' && args[0] === 'agy') return ok('/usr/bin/agy\n');
     if (command === 'which') return { status: 1, stdout: '', stderr: 'missing' };
 
-    if (command === 'agy') {
+    if (command === '/usr/bin/agy') {
       const promptIndex = args.indexOf('-p');
       const prompt = promptIndex >= 0 ? (args[promptIndex + 1] ?? '') : '';
       if (prompt.includes('fresh-context independent ChainSieve MAINTENANCE reviewer')) {
@@ -183,7 +183,7 @@ describe('autonomous maintenance lifecycle', () => {
       );
       expect(merged).toBe('merged-head');
       expect(runner.merged).toBe(true);
-      expect(runner.calls.some((call) => call.startsWith('agy '))).toBe(true);
+      expect(runner.calls.some((call) => call.startsWith('/usr/bin/agy '))).toBe(true);
       expect(runner.calls.some((call) => call.startsWith('muse '))).toBe(false);
       expect(runner.calls.some((call) => call.startsWith('gh pr create'))).toBe(true);
       expect(runner.calls.some((call) => call.startsWith('gh pr merge'))).toBe(true);
