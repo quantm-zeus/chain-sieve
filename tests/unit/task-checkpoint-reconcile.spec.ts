@@ -109,7 +109,7 @@ class CountingProvider implements AgentProvider {
     return { available: true, mechanism: 'command', detail: 'test provider' };
   }
 
-  generatePayload(_binding: TaskLaunchBinding): string {
+  generatePayload(): string {
     return 'test-payload';
   }
 
