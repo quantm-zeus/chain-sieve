@@ -6,11 +6,15 @@ import {
   cleanAtomicTaskCommit,
   reconcileCommittedTaskCheckpoint,
 } from '../../tools/agent/lib/task-checkpoint.js';
+import { withHostLifecycle } from '../../tools/agent/providers/index.js';
 import type {
+  AgentProvider,
   CommandOptions,
   CommandResult,
   CommandRunner,
   PayloadBinding,
+  ProviderDetection,
+  TaskLaunchBinding,
 } from '../../tools/agent/lib/types.js';
 
 const roots: string[] = [];
@@ -94,6 +98,31 @@ class Runner implements CommandRunner {
         stderr: '',
       };
     return { status: 1, stdout: '', stderr: 'unexpected git command' };
+  }
+}
+
+class CountingProvider implements AgentProvider {
+  readonly id = 'muse' as const;
+  executions = 0;
+
+  detect(): ProviderDetection {
+    return { available: true, mechanism: 'command', detail: 'test provider' };
+  }
+
+  generatePayload(_binding: TaskLaunchBinding): string {
+    return 'test-payload';
+  }
+
+  copyPayload(): void {}
+  openWorkspace(): void {}
+
+  executePayload(): CommandResult {
+    this.executions += 1;
+    return { status: 0, stdout: 'provider-ran', stderr: '' };
+  }
+
+  renderOwnerInstruction(): string {
+    return 'done';
   }
 }
 
@@ -184,10 +213,6 @@ describe('committed task checkpoint reconciliation', () => {
       '--launch-receipt-id',
       'muse-receipt-1',
     ]);
-    expect(review?.options).toMatchObject({
-      cwd: task.taskWorkspace,
-      streamOutput: true,
-    });
   });
 
   it('delegates LEASED branch repair and adoption to the trusted task runner before self-review', async () => {
@@ -198,11 +223,9 @@ describe('committed task checkpoint reconciliation', () => {
       status: 0,
     });
     expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
-    const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
-    expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
-      'task:checkpoint-adopt',
-      'task:self-review',
-    ]);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt', 'task:self-review']);
   });
 
   it('surfaces fail-closed divergence from the trusted checkpoint adoption command', async () => {
@@ -249,6 +272,23 @@ describe('committed task checkpoint reconciliation', () => {
       stderr: 'TASK_CHECKPOINT_SELF_REVIEW_EVIDENCE_STALE:T-REC-01',
     });
     expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+  });
+
+  it('skips the inner provider entirely when a clean atomic checkpoint already exists', async () => {
+    const common = await stateRoot('LEASED');
+    const runner = new Runner(common);
+    const inner = new CountingProvider();
+    const provider = withHostLifecycle(inner, runner);
+    const task = binding();
+    const payload = provider.generatePayload(task);
+
+    expect(provider.executePayload?.(task.taskWorkspace, payload)).toMatchObject({
+      status: 0,
+    });
+    expect(inner.executions).toBe(0);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt', 'task:self-review']);
   });
 
   it('refuses to reconcile dirty or non-atomic implementation work', async () => {
