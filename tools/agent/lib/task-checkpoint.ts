@@ -5,6 +5,10 @@ import type { CommandResult, CommandRunner, TaskLaunchBinding } from './types.js
 
 interface TaskLifecycleSnapshot {
   state?: string;
+  leaseVersion?: number;
+  holder?: string;
+  leaseId?: string;
+  expiresAt?: string;
   commit?: string;
   tree?: string;
   selfReviewEvidence?: {
@@ -131,8 +135,10 @@ const runLifecycle = (
   runner.run('pnpm', ['--silent', ...args], {
     cwd: binding.taskWorkspace,
     timeoutMilliseconds: 30 * 60_000,
-    streamOutput: true,
   });
+
+const lifecycleOutput = (result: CommandResult): string =>
+  (result.stderr || result.stdout).trim();
 
 const currentSelfReview = (snapshot: TaskLifecycleSnapshot): boolean =>
   snapshot.state === 'SELF_REVIEWING' &&
@@ -141,6 +147,53 @@ const currentSelfReview = (snapshot: TaskLifecycleSnapshot): boolean =>
   Boolean(snapshot.tree) &&
   snapshot.selfReviewEvidence.commit === snapshot.commit &&
   snapshot.selfReviewEvidence.tree === snapshot.tree;
+
+const leaseCredentialChanged = (
+  binding: TaskLaunchBinding,
+  snapshot: TaskLifecycleSnapshot | undefined,
+): boolean =>
+  Boolean(
+    snapshot &&
+      ((typeof snapshot.leaseVersion === 'number' &&
+        snapshot.leaseVersion !== binding.fencingVersion) ||
+        (snapshot.leaseId && snapshot.leaseId !== binding.leaseId) ||
+        (snapshot.holder && snapshot.holder !== binding.holder)),
+  );
+
+const leaseRebindResult = (
+  binding: TaskLaunchBinding,
+  snapshot: TaskLifecycleSnapshot | undefined,
+): CommandResult | undefined => {
+  if (!leaseCredentialChanged(binding, snapshot)) return undefined;
+  const version = snapshot?.leaseVersion ?? 'missing';
+  const leaseId = snapshot?.leaseId ?? 'missing';
+  console.log(
+    `CHAINSIEVE_TASK_CHECKPOINT_LEASE_REBIND:${binding.task.contract.id}:${binding.fencingVersion}->${version}`,
+  );
+  return {
+    status: 0,
+    stdout: `TASK_CHECKPOINT_REBIND_REQUIRED:${binding.task.contract.id}:${binding.fencingVersion}:${version}:${binding.leaseId}:${leaseId}`,
+    stderr: '',
+  };
+};
+
+const rebindAfterLeaseFailure = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+  result: CommandResult,
+): CommandResult | undefined => {
+  const output = lifecycleOutput(result);
+  if (
+    !output.includes('STALE_LEASE_VERSION') &&
+    !output.includes('LOST_LEASE') &&
+    !output.includes('WRONG_LEASE_OWNER')
+  )
+    return undefined;
+  return leaseRebindResult(
+    binding,
+    readTaskLifecycleSnapshot(runner, binding),
+  );
+};
 
 export const beginTaskBeforeProvider = (
   runner: CommandRunner,
@@ -155,11 +208,14 @@ export const beginTaskBeforeProvider = (
     '--lease-version',
     String(binding.fencingVersion),
   ]);
-  if (result.status !== 0)
+  if (result.status !== 0) {
+    const rebind = rebindAfterLeaseFailure(runner, binding, result);
+    if (rebind) return rebind;
     return {
       ...result,
-      stderr: `TASK_BEGIN_BEFORE_PROVIDER_FAILED:${binding.task.contract.id}:${result.stderr || result.stdout}`,
+      stderr: `TASK_BEGIN_BEFORE_PROVIDER_FAILED:${binding.task.contract.id}:${lifecycleOutput(result)}`,
     };
+  }
   console.log(`CHAINSIEVE_HOST_TASK_BEGUN:${binding.task.contract.id}`);
   return undefined;
 };
@@ -213,11 +269,19 @@ export const reconcileCommittedTaskCheckpoint = (
       '--lease-version',
       String(binding.fencingVersion),
     ]);
-    if (adopted.status !== 0)
+    if (adopted.status !== 0) {
+      const rebind = rebindAfterLeaseFailure(runner, binding, adopted);
+      if (rebind) return rebind;
       return {
         ...adopted,
-        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
+        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${lifecycleOutput(adopted)}`,
       };
+    }
+    const rebind = leaseRebindResult(
+      binding,
+      readTaskLifecycleSnapshot(runner, binding),
+    );
+    if (rebind) return rebind;
   }
 
   console.log(
@@ -239,8 +303,10 @@ export const reconcileCommittedTaskCheckpoint = (
     );
     return reviewed;
   }
+  const rebind = rebindAfterLeaseFailure(runner, binding, reviewed);
+  if (rebind) return rebind;
   return {
     ...reviewed,
-    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${reviewed.stderr || reviewed.stdout}`,
+    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${lifecycleOutput(reviewed)}`,
   };
 };
