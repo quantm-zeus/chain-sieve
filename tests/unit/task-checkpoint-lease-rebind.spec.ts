@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { reconcileCommittedTaskCheckpoint } from '../../tools/agent/lib/task-checkpoint.js';
 import type {
-  CommandOptions,
   CommandResult,
   CommandRunner,
   PayloadBinding,
@@ -21,7 +20,7 @@ class RebindRunner implements CommandRunner {
 
   constructor(private readonly common: string) {}
 
-  run(command: string, args: string[], _options: CommandOptions = {}): CommandResult {
+  run(command: string, args: string[]): CommandResult {
     this.calls.push({ command, args });
     if (command === 'pnpm') {
       if (args[1] === 'task:checkpoint-adopt')
