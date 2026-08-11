@@ -6,6 +6,7 @@ import type {
   CommandOptions,
   CommandRunner,
 } from '../../tools/agent/lib/types.js';
+import { DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL } from '../../tools/agent/providers/antigravity.js';
 import {
   assertAutopilotDoctor,
   runAutopilotDoctor,
@@ -76,7 +77,7 @@ class DoctorRunner implements CommandRunner {
     if (key === 'agy models')
       return {
         status: 0,
-        stdout: 'gemini-3.1-pro-high\ngpt-oss-120b-medium\n',
+        stdout: `gemini-3.1-pro-high\n${DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL}\n`,
         stderr: '',
       };
     if (key === 'codex exec --help')
