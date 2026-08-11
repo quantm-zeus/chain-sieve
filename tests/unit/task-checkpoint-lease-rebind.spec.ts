@@ -133,7 +133,9 @@ describe('checkpoint reconciliation lease rebinding', () => {
     await writeLifecycle(staleTask, 2, 'lease-2');
 
     const runner = new RebindRunner(authority, staleTask);
-    expect(reconcileCommittedTaskCheckpoint(runner, binding(5, 'lease-5'))).toBeUndefined();
+    const result = reconcileCommittedTaskCheckpoint(runner, binding(5, 'lease-5'));
+    expect(result?.stderr).not.toContain('TASK_CHECKPOINT_LEASE_SNAPSHOT_REGRESSION');
+    expect(result?.stderr).toContain('TASK_CHECKPOINT_ADOPT_FAILED');
     expect(
       runner.calls.some(
         (call) =>
