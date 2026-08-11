@@ -92,6 +92,11 @@ class HostLifecycleProvider implements AgentProvider {
   }
 }
 
+export const withHostLifecycle = (
+  provider: AgentProvider,
+  runner: CommandRunner,
+): AgentProvider => new HostLifecycleProvider(provider, runner);
+
 const rawProvider = (
   id: AgentProviderId,
   runner: CommandRunner,
@@ -107,7 +112,7 @@ const rawProvider = (
 export const createProvider = (
   id: AgentProviderId,
   runner: CommandRunner,
-): AgentProvider => new HostLifecycleProvider(rawProvider(id, runner), runner);
+): AgentProvider => withHostLifecycle(rawProvider(id, runner), runner);
 
 export const parseProvider = (argv: string[]): AgentProviderId => {
   const index = argv.indexOf('--provider');
