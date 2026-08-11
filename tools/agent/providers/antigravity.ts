@@ -36,9 +36,6 @@ export const resolveAntigravityPrintTimeout = (
 };
 
 const ANTIGRAVITY_TIMEOUT_MS = 90 * 60_000;
-export const ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS = 3;
-export const ANTIGRAVITY_TRANSIENT_FAILURE_WINDOW_MS = 2 * 60_000;
-const DEFAULT_TRANSIENT_RETRY_DELAY_MS = 60_000;
 
 const APPLICATIONS = [
   {
@@ -64,7 +61,6 @@ export interface AntigravityAdapterOptions {
     path: string;
     bundleIdentifier: string;
   }>;
-  transientRetryDelayMilliseconds?: number;
 }
 
 const commandPath = (
@@ -79,20 +75,10 @@ const commandPath = (
     : undefined;
 };
 
-const waitSynchronously = (milliseconds: number): void => {
-  if (milliseconds <= 0) return;
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+const streamCapturedResult = (result: CommandResult): void => {
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
 };
-
-export const antigravityFailureIsTransient = (
-  result: CommandResult,
-  elapsedMilliseconds: number,
-): boolean =>
-  result.status !== 0 &&
-  !result.timedOut &&
-  elapsedMilliseconds <= ANTIGRAVITY_TRANSIENT_FAILURE_WINDOW_MS &&
-  result.stdout.trim() === '' &&
-  result.stderr.trim() === '';
 
 export class AntigravityProvider implements AgentProvider {
   readonly id = 'antigravity' as const;
@@ -165,52 +151,27 @@ export class AntigravityProvider implements AgentProvider {
         'Install the agy CLI; agy-ide alone cannot provide a blocking headless run.',
       );
 
-    let last: CommandResult = {
-      status: 1,
-      stdout: '',
-      stderr: 'Antigravity did not execute.',
-    };
-    for (
-      let attempt = 1;
-      attempt <= ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS;
-      attempt += 1
-    ) {
-      const startedAt = Date.now();
-      last = this.runner.run(
-        'agy',
-        [
-          '--model',
-          resolveAntigravityAutopilotModel(),
-          '--mode=accept-edits',
-          '--print-timeout',
-          resolveAntigravityPrintTimeout(),
-          '-p',
-          payload,
-        ],
-        {
-          cwd: workspace,
-          timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS,
-          streamOutput: options?.streamOutput ?? true,
-        },
-      );
-      if (last.status === 0) return last;
-
-      const elapsed = Date.now() - startedAt;
-      if (
-        attempt >= ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS ||
-        !antigravityFailureIsTransient(last, elapsed)
-      )
-        return last;
-
-      console.error(
-        `CHAINSIEVE_ANTIGRAVITY_TRANSIENT_RETRY:${attempt}/${ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS}`,
-      );
-      waitSynchronously(
-        this.options.transientRetryDelayMilliseconds ??
-          DEFAULT_TRANSIENT_RETRY_DELAY_MS,
-      );
-    }
-    return last;
+    const result = this.runner.run(
+      cli,
+      [
+        '--model',
+        resolveAntigravityAutopilotModel(),
+        '--mode=accept-edits',
+        '--cwd',
+        workspace,
+        '--print-timeout',
+        resolveAntigravityPrintTimeout(),
+        '-p',
+        payload,
+      ],
+      {
+        cwd: workspace,
+        timeoutMilliseconds: ANTIGRAVITY_TIMEOUT_MS,
+        streamOutput: false,
+      },
+    );
+    if (options?.streamOutput ?? true) streamCapturedResult(result);
+    return result;
   }
 
   copyPayload(payload: string): void {
