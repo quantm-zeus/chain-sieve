@@ -23,8 +23,15 @@ class RebindRunner implements CommandRunner {
 
   run(command: string, args: string[], _options: CommandOptions = {}): CommandResult {
     this.calls.push({ command, args });
-    if (command === 'pnpm')
+    if (command === 'pnpm') {
+      if (args[1] === 'task:checkpoint-adopt')
+        return {
+          status: 1,
+          stdout: '',
+          stderr: '{"status":"FAIL","error":"STALE_LEASE_VERSION"}',
+        };
       return { status: 0, stdout: 'ok', stderr: '' };
+    }
     if (command !== 'git')
       return { status: 1, stdout: '', stderr: 'unexpected' };
     if (args.join(' ') === 'rev-parse --git-common-dir')
@@ -52,7 +59,7 @@ const binding = (): PayloadBinding =>
   }) as unknown as PayloadBinding;
 
 describe('checkpoint reconciliation lease rebinding', () => {
-  it('returns a zero-touch rebind result before running lifecycle commands when the authoritative lease rotated', async () => {
+  it('turns stale lifecycle credentials into a zero-touch rebind instead of semantic recovery', async () => {
     const common = await mkdtemp(join(tmpdir(), 'chainsieve-checkpoint-rebind-'));
     roots.push(common);
     const runtime = join(common, 'ciag-runtime');
@@ -83,6 +90,8 @@ describe('checkpoint reconciliation lease rebinding', () => {
       status: 0,
       stdout: expect.stringContaining('TASK_CHECKPOINT_REBIND_REQUIRED:T-REC-01:3:4'),
     });
-    expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt']);
   });
 });
