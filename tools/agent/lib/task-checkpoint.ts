@@ -43,11 +43,17 @@ const gitCommonDirectory = (
   return resolve(workspace, isAbsolute(value) ? value : join(workspace, value));
 };
 
+const lifecycleAuthorityWorkspace = (binding: TaskLaunchBinding): string =>
+  binding.task.cluster.branch.worktree;
+
 const readTaskLifecycleSnapshot = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): TaskLifecycleSnapshot | undefined => {
-  const common = gitCommonDirectory(runner, binding.taskWorkspace);
+  // Lifecycle state belongs to the trusted cluster/root control plane. Reading it
+  // through a stale or foreign task worktree can create a split-brain view where
+  // the launch receipt is fenced at N while that worktree observes an older N-k.
+  const common = gitCommonDirectory(runner, lifecycleAuthorityWorkspace(binding));
   if (!common) return undefined;
   const path = join(common, 'ciag-runtime', 'task-state.json');
   if (!existsSync(path)) return undefined;
