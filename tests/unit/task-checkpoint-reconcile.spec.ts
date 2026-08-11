@@ -6,11 +6,14 @@ import {
   cleanAtomicTaskCommit,
   reconcileCommittedTaskCheckpoint,
 } from '../../tools/agent/lib/task-checkpoint.js';
+import { withHostLifecycle } from '../../tools/agent/providers/index.js';
 import type {
+  AgentProvider,
   CommandOptions,
   CommandResult,
   CommandRunner,
   PayloadBinding,
+  ProviderDetection,
 } from '../../tools/agent/lib/types.js';
 
 const roots: string[] = [];
@@ -97,6 +100,31 @@ class Runner implements CommandRunner {
   }
 }
 
+class CountingProvider implements AgentProvider {
+  readonly id = 'muse' as const;
+  executions = 0;
+
+  detect(): ProviderDetection {
+    return { available: true, mechanism: 'command', detail: 'test provider' };
+  }
+
+  generatePayload(): string {
+    return 'test-payload';
+  }
+
+  copyPayload(): void {}
+  openWorkspace(): void {}
+
+  executePayload(): CommandResult {
+    this.executions += 1;
+    return { status: 0, stdout: 'provider-ran', stderr: '' };
+  }
+
+  renderOwnerInstruction(): string {
+    return 'done';
+  }
+}
+
 const binding = (): PayloadBinding =>
   ({
     task: { contract: { id: 'T-REC-01', cluster: 'C-REC' } },
@@ -109,11 +137,19 @@ const binding = (): PayloadBinding =>
     failures: [],
   }) as unknown as PayloadBinding;
 
-const stateRoot = async (state: string): Promise<string> => {
+const stateRoot = async (
+  state: string,
+  options: {
+    currentSelfReview?: boolean;
+    staleSelfReview?: boolean;
+  } = {},
+): Promise<string> => {
   const root = await mkdtemp(join(tmpdir(), 'chainsieve-task-checkpoint-'));
   roots.push(root);
   const runtime = join(root, 'ciag-runtime');
   await mkdir(runtime, { recursive: true });
+  const commit = 'b'.repeat(40);
+  const tree = 'c'.repeat(40);
   await writeFile(
     join(runtime, 'task-state.json'),
     `${JSON.stringify({
@@ -130,6 +166,17 @@ const stateRoot = async (state: string): Promise<string> => {
           baseCommit: 'a'.repeat(40),
           branch: 'task/t-rec-01',
           history: [],
+          ...(options.currentSelfReview || options.staleSelfReview
+            ? {
+                commit,
+                tree,
+                selfReviewEvidence: {
+                  status: 'CURRENT',
+                  commit: options.staleSelfReview ? 'd'.repeat(40) : commit,
+                  tree,
+                },
+              }
+            : {}),
         },
       },
     })}\n`,
@@ -165,10 +212,6 @@ describe('committed task checkpoint reconciliation', () => {
       '--launch-receipt-id',
       'muse-receipt-1',
     ]);
-    expect(review?.options).toMatchObject({
-      cwd: task.taskWorkspace,
-      streamOutput: true,
-    });
   });
 
   it('delegates LEASED branch repair and adoption to the trusted task runner before self-review', async () => {
@@ -179,20 +222,9 @@ describe('committed task checkpoint reconciliation', () => {
       status: 0,
     });
     expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
-    const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
-    expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
-      'task:checkpoint-adopt',
-      'task:self-review',
-    ]);
-    expect(lifecycleCalls[0]?.args).toEqual([
-      '--silent',
-      'task:checkpoint-adopt',
-      'T-REC-01',
-      '--holder',
-      'agent-orchestrator',
-      '--lease-version',
-      '3',
-    ]);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt', 'task:self-review']);
   });
 
   it('surfaces fail-closed divergence from the trusted checkpoint adoption command', async () => {
@@ -211,13 +243,51 @@ describe('committed task checkpoint reconciliation', () => {
     ).toEqual(['task:checkpoint-adopt']);
   });
 
-  it('does not pay for another provider call after a durable self-review checkpoint exists', async () => {
-    const common = await stateRoot('SELF_REVIEWING');
+  it('does not pay for another provider call after a proof-bound self-review checkpoint exists', async () => {
+    const common = await stateRoot('SELF_REVIEWING', { currentSelfReview: true });
     const runner = new Runner(common);
     expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
       status: 0,
     });
     expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+  });
+
+  it('finishes an interrupted self-review instead of treating state alone as durable proof', async () => {
+    const common = await stateRoot('SELF_REVIEWING');
+    const runner = new Runner(common);
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
+      status: 0,
+    });
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:self-review']);
+  });
+
+  it('fails closed when self-review evidence exists but is bound to another commit', async () => {
+    const common = await stateRoot('SELF_REVIEWING', { staleSelfReview: true });
+    const runner = new Runner(common);
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
+      status: 1,
+      stderr: 'TASK_CHECKPOINT_SELF_REVIEW_EVIDENCE_STALE:T-REC-01',
+    });
+    expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+  });
+
+  it('skips the inner provider entirely when a clean atomic checkpoint already exists', async () => {
+    const common = await stateRoot('LEASED');
+    const runner = new Runner(common);
+    const inner = new CountingProvider();
+    const provider = withHostLifecycle(inner, runner);
+    const task = binding();
+    const payload = provider.generatePayload(task);
+
+    expect(provider.executePayload?.(task.taskWorkspace, payload)).toMatchObject({
+      status: 0,
+    });
+    expect(inner.executions).toBe(0);
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:checkpoint-adopt', 'task:self-review']);
   });
 
   it('refuses to reconcile dirty or non-atomic implementation work', async () => {

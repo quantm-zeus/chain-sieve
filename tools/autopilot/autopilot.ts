@@ -4,6 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { discoverProject } from '../agent/lib/discovery.js';
 import { decideNextAction } from '../agent/lib/engine.js';
+import { errorCode } from '../agent/lib/errors.js';
 import {
   executeOrchestration,
   leaseForTask,
@@ -60,6 +61,32 @@ const CORRECTION_RECEIPT_PROVIDERS = new Set<AgentProviderId>([
   'muse',
   'zcode',
 ]);
+const NON_RETRYABLE_INFRASTRUCTURE_MARKERS = [
+  'AUTH_FAILED',
+  'AUTHENTICATION',
+  'PERMISSION_DENIED',
+  'PR_CLOSED',
+  'AUTONOMOUS_MERGE_DISABLED',
+  'PROHIBITED_CAPABILITY',
+  'SECRET_EXPOSURE',
+] as const;
+const RETRYABLE_INFRASTRUCTURE_MARKERS = [
+  'GITHUB_FAILED',
+  'GIT_FAILED',
+  'CI_TIMEOUT',
+  'FINAL_MAIN_CI_TIMEOUT',
+  'NETWORK',
+  'DNS',
+  'ORIGIN_REACHABLE',
+  'COULD NOT RESOLVE',
+  'CONNECTION RESET',
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'EAI_AGAIN',
+  'TEMPORARILY UNAVAILABLE',
+  'HIGH TRAFFIC',
+  'TRY AGAIN',
+] as const;
 
 export const correctionRoundAllowed = (completedRounds: number): boolean =>
   completedRounds + 1 <= MAX_PRODUCT_CORRECTION_ROUNDS;
@@ -80,11 +107,31 @@ export const formatPnpmCommandTag = (args: string[]): string => {
   return first ?? 'unknown';
 };
 
+export const isTransientInfrastructureFailure = (error: unknown): boolean => {
+  const normalized = errorCode(error).toUpperCase();
+  if (
+    NON_RETRYABLE_INFRASTRUCTURE_MARKERS.some((marker) =>
+      normalized.includes(marker),
+    )
+  )
+    return false;
+  return RETRYABLE_INFRASTRUCTURE_MARKERS.some((marker) =>
+    normalized.includes(marker),
+  );
+};
+
 export const infrastructureRetryKey = (
+  controlPlaneVersion: string,
   action: string,
   targetId: string,
   targetVersion: string,
-): string => `orchestration:${action}:${targetId}:${targetVersion}`;
+): string =>
+  `orchestration:v2:${controlPlaneVersion}:${action}:${targetId}:${targetVersion}`;
+
+export const infrastructureRetryStartAttempt = (
+  consumedAttempts: number,
+  persistAcrossRuns: boolean,
+): number => (persistAcrossRuns ? consumedAttempts : 0);
 
 export const assertInfrastructureRetryBudget = (
   key: string,
@@ -163,14 +210,19 @@ const withInfrastructureRetry = async <T>(
   policy: AutonomyPolicy,
   state: PersistentAutopilotState,
   key: string,
+  persistAcrossRuns: boolean,
   operation: () => Promise<T>,
 ): Promise<T> => {
-  const startAttempt = state.infrastructureFailures[key] ?? 0;
-  assertInfrastructureRetryBudget(
-    key,
-    startAttempt,
-    policy.limits.infrastructureRetryRounds,
+  const startAttempt = infrastructureRetryStartAttempt(
+    state.infrastructureFailures[key] ?? 0,
+    persistAcrossRuns,
   );
+  if (persistAcrossRuns)
+    assertInfrastructureRetryBudget(
+      key,
+      startAttempt,
+      policy.limits.infrastructureRetryRounds,
+    );
   let last: unknown;
   for (
     let attempt = startAttempt;
@@ -179,13 +231,24 @@ const withInfrastructureRetry = async <T>(
   ) {
     try {
       const value = await operation();
-      delete state.infrastructureFailures[key];
-      await writePersistentState(root, runner, state);
+      if (persistAcrossRuns && state.infrastructureFailures[key] !== undefined) {
+        delete state.infrastructureFailures[key];
+        await writePersistentState(root, runner, state);
+      }
       return value;
     } catch (error) {
+      if (!isTransientInfrastructureFailure(error)) {
+        if (persistAcrossRuns && state.infrastructureFailures[key] !== undefined) {
+          delete state.infrastructureFailures[key];
+          await writePersistentState(root, runner, state);
+        }
+        throw error;
+      }
       last = error;
-      state.infrastructureFailures[key] = attempt + 1;
-      await writePersistentState(root, runner, state);
+      if (persistAcrossRuns) {
+        state.infrastructureFailures[key] = attempt + 1;
+        await writePersistentState(root, runner, state);
+      }
       if (attempt + 1 < policy.limits.infrastructureRetryRounds)
         await sleep(Math.min(60_000, 2_000 * 2 ** attempt));
     }
@@ -751,6 +814,7 @@ export interface AutopilotOptions {
   maxCycles?: number;
   pollMilliseconds?: number;
   providerId?: AgentProviderId;
+  persistInfrastructureRetryState?: boolean;
 }
 
 export const runAutopilot = async (
@@ -769,6 +833,8 @@ export const runAutopilot = async (
   const release = await acquireAutopilotLock(root, runner);
   const persistent = await readPersistentState(root, runner);
   const pollMilliseconds = options.pollMilliseconds ?? 15_000;
+  const persistInfrastructureRetryState =
+    options.persistInfrastructureRetryState !== false;
   try {
     if (options.issueReceiptOnly) {
       const task = inventory.activeTask;
@@ -838,7 +904,13 @@ export const runAutopilot = async (
         runner,
         policy,
         persistent,
-        infrastructureRetryKey(decision.action, retryTarget, retryVersion),
+        infrastructureRetryKey(
+          inventory.rootHead,
+          decision.action,
+          retryTarget,
+          retryVersion,
+        ),
+        persistInfrastructureRetryState,
         async () => {
           await executeOrchestration(root, runner, { dryRun: false, provider });
         },

@@ -3,6 +3,17 @@ import { isAbsolute, join, resolve } from 'node:path';
 import { taskBranch } from './paths.js';
 import type { CommandResult, CommandRunner, TaskLaunchBinding } from './types.js';
 
+interface TaskLifecycleSnapshot {
+  state?: string;
+  commit?: string;
+  tree?: string;
+  selfReviewEvidence?: {
+    status?: string;
+    commit?: string;
+    tree?: string;
+  };
+}
+
 const git = (
   runner: CommandRunner,
   cwd: string,
@@ -28,23 +39,28 @@ const gitCommonDirectory = (
   return resolve(workspace, isAbsolute(value) ? value : join(workspace, value));
 };
 
-export const readTaskLifecycleState = (
+const readTaskLifecycleSnapshot = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
-): string | undefined => {
+): TaskLifecycleSnapshot | undefined => {
   const common = gitCommonDirectory(runner, binding.taskWorkspace);
   if (!common) return undefined;
   const path = join(common, 'ciag-runtime', 'task-state.json');
   if (!existsSync(path)) return undefined;
   try {
     const parsed = JSON.parse(readFileSync(path, 'utf8')) as {
-      tasks?: Record<string, { state?: string }>;
+      tasks?: Record<string, TaskLifecycleSnapshot>;
     };
-    return parsed.tasks?.[binding.task.contract.id]?.state;
+    return parsed.tasks?.[binding.task.contract.id];
   } catch {
     return undefined;
   }
 };
+
+export const readTaskLifecycleState = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+): string | undefined => readTaskLifecycleSnapshot(runner, binding)?.state;
 
 export const cleanAtomicTaskCommit = (
   runner: CommandRunner,
@@ -118,17 +134,52 @@ const runLifecycle = (
     streamOutput: true,
   });
 
+const currentSelfReview = (snapshot: TaskLifecycleSnapshot): boolean =>
+  snapshot.state === 'SELF_REVIEWING' &&
+  snapshot.selfReviewEvidence?.status === 'CURRENT' &&
+  Boolean(snapshot.commit) &&
+  Boolean(snapshot.tree) &&
+  snapshot.selfReviewEvidence.commit === snapshot.commit &&
+  snapshot.selfReviewEvidence.tree === snapshot.tree;
+
+export const beginTaskBeforeProvider = (
+  runner: CommandRunner,
+  binding: TaskLaunchBinding,
+): CommandResult | undefined => {
+  if (readTaskLifecycleState(runner, binding) !== 'LEASED') return undefined;
+  const result = runLifecycle(runner, binding, [
+    'task:begin',
+    binding.task.contract.id,
+    '--holder',
+    binding.holder,
+    '--lease-version',
+    String(binding.fencingVersion),
+  ]);
+  if (result.status !== 0)
+    return {
+      ...result,
+      stderr: `TASK_BEGIN_BEFORE_PROVIDER_FAILED:${binding.task.contract.id}:${result.stderr || result.stdout}`,
+    };
+  console.log(`CHAINSIEVE_HOST_TASK_BEGUN:${binding.task.contract.id}`);
+  return undefined;
+};
+
 export const reconcileCommittedTaskCheckpoint = (
   runner: CommandRunner,
   binding: TaskLaunchBinding,
 ): CommandResult | undefined => {
-  const state = readTaskLifecycleState(runner, binding);
-  const active = state === 'LEASED' || state === 'IMPLEMENTING';
+  const snapshot = readTaskLifecycleSnapshot(runner, binding);
+  const state = snapshot?.state;
+  const incompleteSelfReview =
+    state === 'SELF_REVIEWING' && snapshot && !currentSelfReview(snapshot);
+  const active =
+    state === 'LEASED' || state === 'IMPLEMENTING' || incompleteSelfReview;
   const durable = Boolean(
-    state &&
-      ['SELF_REVIEWING', 'VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
-        state,
-      ),
+    snapshot &&
+      (currentSelfReview(snapshot) ||
+        ['VERIFYING', 'VERIFIED', 'MERGE_QUEUED', 'MERGED'].includes(
+          state ?? '',
+        )),
   );
   if (!active && !durable) return undefined;
 
@@ -144,21 +195,30 @@ export const reconcileCommittedTaskCheckpoint = (
     );
     return { status: 0, stdout: '', stderr: '' };
   }
+  if (incompleteSelfReview && snapshot?.selfReviewEvidence) {
+    return {
+      status: 1,
+      stdout: '',
+      stderr: `TASK_CHECKPOINT_SELF_REVIEW_EVIDENCE_STALE:${binding.task.contract.id}`,
+    };
+  }
   if (!head || !binding.launchReceiptId) return undefined;
 
-  const adopted = runLifecycle(runner, binding, [
-    'task:checkpoint-adopt',
-    binding.task.contract.id,
-    '--holder',
-    binding.holder,
-    '--lease-version',
-    String(binding.fencingVersion),
-  ]);
-  if (adopted.status !== 0)
-    return {
-      ...adopted,
-      stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
-    };
+  if (state === 'LEASED' || state === 'IMPLEMENTING') {
+    const adopted = runLifecycle(runner, binding, [
+      'task:checkpoint-adopt',
+      binding.task.contract.id,
+      '--holder',
+      binding.holder,
+      '--lease-version',
+      String(binding.fencingVersion),
+    ]);
+    if (adopted.status !== 0)
+      return {
+        ...adopted,
+        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${adopted.stderr || adopted.stdout}`,
+      };
+  }
 
   console.log(
     `CHAINSIEVE_TASK_CHECKPOINT_RECONCILE:${binding.task.contract.id}:${head}`,
