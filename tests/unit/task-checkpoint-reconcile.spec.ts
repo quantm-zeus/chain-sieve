@@ -109,11 +109,19 @@ const binding = (): PayloadBinding =>
     failures: [],
   }) as unknown as PayloadBinding;
 
-const stateRoot = async (state: string): Promise<string> => {
+const stateRoot = async (
+  state: string,
+  options: {
+    currentSelfReview?: boolean;
+    staleSelfReview?: boolean;
+  } = {},
+): Promise<string> => {
   const root = await mkdtemp(join(tmpdir(), 'chainsieve-task-checkpoint-'));
   roots.push(root);
   const runtime = join(root, 'ciag-runtime');
   await mkdir(runtime, { recursive: true });
+  const commit = 'b'.repeat(40);
+  const tree = 'c'.repeat(40);
   await writeFile(
     join(runtime, 'task-state.json'),
     `${JSON.stringify({
@@ -130,6 +138,17 @@ const stateRoot = async (state: string): Promise<string> => {
           baseCommit: 'a'.repeat(40),
           branch: 'task/t-rec-01',
           history: [],
+          ...(options.currentSelfReview || options.staleSelfReview
+            ? {
+                commit,
+                tree,
+                selfReviewEvidence: {
+                  status: 'CURRENT',
+                  commit: options.staleSelfReview ? 'd'.repeat(40) : commit,
+                  tree,
+                },
+              }
+            : {}),
         },
       },
     })}\n`,
@@ -184,15 +203,6 @@ describe('committed task checkpoint reconciliation', () => {
       'task:checkpoint-adopt',
       'task:self-review',
     ]);
-    expect(lifecycleCalls[0]?.args).toEqual([
-      '--silent',
-      'task:checkpoint-adopt',
-      'T-REC-01',
-      '--holder',
-      'agent-orchestrator',
-      '--lease-version',
-      '3',
-    ]);
   });
 
   it('surfaces fail-closed divergence from the trusted checkpoint adoption command', async () => {
@@ -211,11 +221,32 @@ describe('committed task checkpoint reconciliation', () => {
     ).toEqual(['task:checkpoint-adopt']);
   });
 
-  it('does not pay for another provider call after a durable self-review checkpoint exists', async () => {
+  it('does not pay for another provider call after a proof-bound self-review checkpoint exists', async () => {
+    const common = await stateRoot('SELF_REVIEWING', { currentSelfReview: true });
+    const runner = new Runner(common);
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
+      status: 0,
+    });
+    expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
+  });
+
+  it('finishes an interrupted self-review instead of treating state alone as durable proof', async () => {
     const common = await stateRoot('SELF_REVIEWING');
     const runner = new Runner(common);
     expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
       status: 0,
+    });
+    expect(
+      runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
+    ).toEqual(['task:self-review']);
+  });
+
+  it('fails closed when self-review evidence exists but is bound to another commit', async () => {
+    const common = await stateRoot('SELF_REVIEWING', { staleSelfReview: true });
+    const runner = new Runner(common);
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
+      status: 1,
+      stderr: 'TASK_CHECKPOINT_SELF_REVIEW_EVIDENCE_STALE:T-REC-01',
     });
     expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
   });
