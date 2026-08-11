@@ -14,7 +14,6 @@ import type {
   CommandRunner,
   PayloadBinding,
   ProviderDetection,
-  TaskLaunchBinding,
 } from '../../tools/agent/lib/types.js';
 
 const roots: string[] = [];
