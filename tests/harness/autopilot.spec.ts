@@ -72,11 +72,13 @@ describe('one-command autopilot', () => {
       status: 0,
     });
     expect(runner.calls.at(-1)).toEqual({
-      command: 'agy',
+      command: '/usr/local/bin/agy',
       args: [
         '--model',
         DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
         '--mode=accept-edits',
+        '--cwd',
+        '/repo/task',
         '--print-timeout',
         DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
         '-p',
@@ -84,7 +86,7 @@ describe('one-command autopilot', () => {
       ],
       cwd: '/repo/task',
       timeoutMilliseconds: 5_400_000,
-      streamOutput: true,
+      streamOutput: false,
     });
   });
 

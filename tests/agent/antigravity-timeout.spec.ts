@@ -6,15 +6,14 @@ import type {
 } from '../../tools/agent/lib/types.js';
 import {
   ANTIGRAVITY_PRINT_TIMEOUT_ENV,
-  ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS,
   AntigravityProvider,
   DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
-  antigravityFailureIsTransient,
   resolveAntigravityPrintTimeout,
 } from '../../tools/agent/providers/antigravity.js';
 
 class Runner implements CommandRunner {
   calls: Array<{ command: string; args: string[]; options?: CommandOptions }> = [];
+  agyResult: CommandResult = { status: 0, stdout: '', stderr: '' };
 
   run(
     command: string,
@@ -25,23 +24,7 @@ class Runner implements CommandRunner {
     if (command === 'which' && args[0] === 'agy') {
       return { status: 0, stdout: '/home/test/.local/bin/agy\n', stderr: '' };
     }
-    return { status: 0, stdout: '', stderr: '' };
-  }
-}
-
-class TransientFailureRunner extends Runner {
-  private agyAttempts = 0;
-
-  override run(
-    command: string,
-    args: string[],
-    options?: CommandOptions,
-  ): CommandResult {
-    if (command !== 'agy') return super.run(command, args, options);
-    this.calls.push({ command, args, ...(options ? { options } : {}) });
-    this.agyAttempts += 1;
-    if (this.agyAttempts < ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS)
-      return { status: 1, stdout: '', stderr: '' };
+    if (command === '/home/test/.local/bin/agy') return this.agyResult;
     return { status: 0, stdout: '', stderr: '' };
   }
 }
@@ -60,55 +43,52 @@ describe('Antigravity headless print timeout', () => {
     expect(DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT).toBe('60m');
   });
 
-  it('passes an explicit print timeout to agy headless execution', () => {
+  it('uses the resolved binary and explicitly binds headless execution to the isolated workspace', () => {
     process.env[ANTIGRAVITY_PRINT_TIMEOUT_ENV] = '45m';
     const runner = new Runner();
     const provider = new AntigravityProvider(runner, { applicationCandidates: [] });
 
     provider.executePayload?.('/tmp/workspace', 'repair this failure');
 
-    const agy = runner.calls.find((call) => call.command === 'agy');
+    const agy = runner.calls.find(
+      (call) => call.command === '/home/test/.local/bin/agy',
+    );
     expect(agy?.args).toEqual([
       '--model',
       'Gemini 3.6 Flash (High)',
       '--mode=accept-edits',
+      '--cwd',
+      '/tmp/workspace',
       '--print-timeout',
       '45m',
       '-p',
       'repair this failure',
     ]);
+    expect(agy?.options?.cwd).toBe('/tmp/workspace');
     expect(agy?.options?.timeoutMilliseconds).toBe(90 * 60_000);
-    expect(agy?.options?.streamOutput).toBe(true);
+    expect(agy?.options?.streamOutput).toBe(false);
   });
 
-  it('retries bounded quick inherited-output failures such as transient service overload', () => {
-    const runner = new TransientFailureRunner();
-    const provider = new AntigravityProvider(runner, {
-      applicationCandidates: [],
-      transientRetryDelayMilliseconds: 0,
-    });
+  it('returns a captured provider failure without blind client-side retries', () => {
+    const runner = new Runner();
+    runner.agyResult = {
+      status: 1,
+      stdout: '',
+      stderr: 'Our servers are experiencing high traffic right now',
+    };
+    const provider = new AntigravityProvider(runner, { applicationCandidates: [] });
 
-    expect(provider.executePayload('/tmp/workspace', 'repair')).toMatchObject({
-      status: 0,
+    expect(
+      provider.executePayload('/tmp/workspace', 'repair', { streamOutput: false }),
+    ).toMatchObject({
+      status: 1,
+      stderr: expect.stringContaining('high traffic'),
     });
-    expect(runner.calls.filter((call) => call.command === 'agy')).toHaveLength(
-      ANTIGRAVITY_TRANSIENT_RETRY_ATTEMPTS,
-    );
-  });
-
-  it('does not retry failures with captured diagnostics or timeouts', () => {
     expect(
-      antigravityFailureIsTransient(
-        { status: 1, stdout: '', stderr: 'invalid model' },
-        100,
+      runner.calls.filter(
+        (call) => call.command === '/home/test/.local/bin/agy',
       ),
-    ).toBe(false);
-    expect(
-      antigravityFailureIsTransient(
-        { status: 1, stdout: '', stderr: '', timedOut: true },
-        100,
-      ),
-    ).toBe(false);
+    ).toHaveLength(1);
   });
 
   it('rejects malformed configured durations before launching agy', () => {
@@ -119,6 +99,10 @@ describe('Antigravity headless print timeout', () => {
     expect(() => provider.executePayload?.('/tmp/workspace', 'repair')).toThrow(
       'ANTIGRAVITY_PRINT_TIMEOUT_INVALID',
     );
-    expect(runner.calls.filter((call) => call.command === 'agy')).toHaveLength(0);
+    expect(
+      runner.calls.filter(
+        (call) => call.command === '/home/test/.local/bin/agy',
+      ),
+    ).toHaveLength(0);
   });
 });

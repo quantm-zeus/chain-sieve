@@ -127,7 +127,10 @@ class CountingProvider implements AgentProvider {
 
 const binding = (): PayloadBinding =>
   ({
-    task: { contract: { id: 'T-REC-01', cluster: 'C-REC' } },
+    task: {
+      contract: { id: 'T-REC-01', cluster: 'C-REC' },
+      cluster: { branch: { worktree: '/tmp/cluster-worktree' } },
+    },
     taskWorkspace: '/tmp/task-worktree',
     baseCommit: 'a'.repeat(40),
     leaseId: 'lease-1',
@@ -191,17 +194,14 @@ describe('committed task checkpoint reconciliation', () => {
     const task = binding();
 
     expect(cleanAtomicTaskCommit(runner, task)).toBe('b'.repeat(40));
-    expect(reconcileCommittedTaskCheckpoint(runner, task)).toMatchObject({
-      status: 0,
-    });
+    expect(reconcileCommittedTaskCheckpoint(runner, task)).toMatchObject({ status: 0 });
 
     const lifecycleCalls = runner.calls.filter((call) => call.command === 'pnpm');
     expect(lifecycleCalls.map((call) => call.args[1])).toEqual([
       'task:checkpoint-adopt',
       'task:self-review',
     ]);
-    const review = lifecycleCalls[1];
-    expect(review?.args).toEqual([
+    expect(lifecycleCalls[1]?.args).toEqual([
       '--silent',
       'task:self-review',
       'T-REC-01',
@@ -217,10 +217,7 @@ describe('committed task checkpoint reconciliation', () => {
   it('delegates LEASED branch repair and adoption to the trusted task runner before self-review', async () => {
     const common = await stateRoot('LEASED');
     const runner = new Runner(common, { branch: '' });
-
-    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
-      status: 0,
-    });
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({ status: 0 });
     expect(runner.calls.some((call) => call.args[0] === 'switch')).toBe(false);
     expect(
       runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
@@ -246,18 +243,14 @@ describe('committed task checkpoint reconciliation', () => {
   it('does not pay for another provider call after a proof-bound self-review checkpoint exists', async () => {
     const common = await stateRoot('SELF_REVIEWING', { currentSelfReview: true });
     const runner = new Runner(common);
-    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
-      status: 0,
-    });
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({ status: 0 });
     expect(runner.calls.some((call) => call.command === 'pnpm')).toBe(false);
   });
 
   it('finishes an interrupted self-review instead of treating state alone as durable proof', async () => {
     const common = await stateRoot('SELF_REVIEWING');
     const runner = new Runner(common);
-    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({
-      status: 0,
-    });
+    expect(reconcileCommittedTaskCheckpoint(runner, binding())).toMatchObject({ status: 0 });
     expect(
       runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
     ).toEqual(['task:self-review']);
@@ -281,9 +274,7 @@ describe('committed task checkpoint reconciliation', () => {
     const task = binding();
     const payload = provider.generatePayload(task);
 
-    expect(provider.executePayload?.(task.taskWorkspace, payload)).toMatchObject({
-      status: 0,
-    });
+    expect(provider.executePayload?.(task.taskWorkspace, payload)).toMatchObject({ status: 0 });
     expect(inner.executions).toBe(0);
     expect(
       runner.calls.filter((call) => call.command === 'pnpm').map((call) => call.args[1]),
@@ -293,16 +284,10 @@ describe('committed task checkpoint reconciliation', () => {
   it('refuses to reconcile dirty or non-atomic implementation work', async () => {
     const common = await stateRoot('IMPLEMENTING');
     expect(
-      reconcileCommittedTaskCheckpoint(
-        new Runner(common, { dirty: true }),
-        binding(),
-      ),
+      reconcileCommittedTaskCheckpoint(new Runner(common, { dirty: true }), binding()),
     ).toBeUndefined();
     expect(
-      reconcileCommittedTaskCheckpoint(
-        new Runner(common, { commitCount: 2 }),
-        binding(),
-      ),
+      reconcileCommittedTaskCheckpoint(new Runner(common, { commitCount: 2 }), binding()),
     ).toBeUndefined();
   });
 });

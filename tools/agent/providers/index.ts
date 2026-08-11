@@ -62,7 +62,7 @@ class HostLifecycleProvider implements AgentProvider {
       const checkpoint = reconcileCommittedTaskCheckpoint(this.runner, binding);
       if (checkpoint) {
         console.log(
-          `CHAINSIEVE_HOST_PROVIDER_SKIPPED:${binding.task.contract.id}:DURABLE_CHECKPOINT`,
+          `CHAINSIEVE_HOST_PROVIDER_SKIPPED:${binding.task.contract.id}:${checkpoint.status === 0 ? 'DURABLE_CHECKPOINT' : 'CHECKPOINT_FAILURE'}`,
         );
         return checkpoint;
       }
