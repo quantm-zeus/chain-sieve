@@ -70,7 +70,7 @@ describe('Antigravity headless print timeout', () => {
     const agy = runner.calls.find((call) => call.command === 'agy');
     expect(agy?.args).toEqual([
       '--model',
-      'gpt-oss-120b-medium',
+      'Gemini 3.6 Flash (High)',
       '--mode=accept-edits',
       '--print-timeout',
       '45m',

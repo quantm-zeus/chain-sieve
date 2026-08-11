@@ -11,7 +11,7 @@ import type {
 } from '../lib/types.js';
 
 export const DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL =
-  'gpt-oss-120b-medium' as const;
+  'Gemini 3.6 Flash (High)' as const;
 export const ANTIGRAVITY_MODEL_ENV = 'CHAINSIEVE_ANTIGRAVITY_MODEL' as const;
 export const resolveAntigravityAutopilotModel = (
   environment: NodeJS.ProcessEnv = process.env,
