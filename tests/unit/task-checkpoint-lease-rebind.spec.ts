@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -16,12 +16,15 @@ afterEach(async () => {
 });
 
 class RebindRunner implements CommandRunner {
-  calls: Array<{ command: string; args: string[] }> = [];
+  calls: Array<{ command: string; args: string[]; cwd?: string }> = [];
 
-  constructor(private readonly common: string) {}
+  constructor(
+    private readonly authorityCommon: string,
+    private readonly taskCommon = authorityCommon,
+  ) {}
 
-  run(command: string, args: string[]): CommandResult {
-    this.calls.push({ command, args });
+  run(command: string, args: string[], options?: { cwd?: string }): CommandResult {
+    this.calls.push({ command, args, ...(options?.cwd ? { cwd: options.cwd } : {}) });
     if (command === 'pnpm') {
       if (args[1] === 'task:checkpoint-adopt')
         return {
@@ -34,7 +37,11 @@ class RebindRunner implements CommandRunner {
     if (command !== 'git')
       return { status: 1, stdout: '', stderr: 'unexpected' };
     if (args.join(' ') === 'rev-parse --git-common-dir')
-      return { status: 0, stdout: `${this.common}\n`, stderr: '' };
+      return {
+        status: 0,
+        stdout: `${options?.cwd === '/tmp/cluster-worktree' ? this.authorityCommon : this.taskCommon}\n`,
+        stderr: '',
+      };
     if (args.join(' ') === 'status --porcelain=v1')
       return { status: 0, stdout: '', stderr: '' };
     if (args.join(' ') === 'rev-parse HEAD')
@@ -47,7 +54,10 @@ class RebindRunner implements CommandRunner {
 
 const binding = (fencingVersion = 3, leaseId = 'lease-3'): PayloadBinding =>
   ({
-    task: { contract: { id: 'T-REC-01', cluster: 'C-REC' } },
+    task: {
+      contract: { id: 'T-REC-01', cluster: 'C-REC' },
+      cluster: { branch: { worktree: '/tmp/cluster-worktree' } },
+    },
     taskWorkspace: '/tmp/task-worktree',
     baseCommit: 'a'.repeat(40),
     leaseId,
@@ -100,7 +110,7 @@ describe('checkpoint reconciliation lease rebinding', () => {
     expect(runner.calls.filter((call) => call.command === 'pnpm')).toEqual([]);
   });
 
-  it('fails closed when a lifecycle snapshot regresses behind the launch binding', async () => {
+  it('fails closed when the authoritative lifecycle snapshot regresses behind the launch binding', async () => {
     const common = await mkdtemp(join(tmpdir(), 'chainsieve-checkpoint-regression-'));
     roots.push(common);
     await writeLifecycle(common, 2, 'lease-2');
@@ -113,5 +123,24 @@ describe('checkpoint reconciliation lease rebinding', () => {
       ),
     });
     expect(runner.calls.filter((call) => call.command === 'pnpm')).toEqual([]);
+  });
+
+  it('ignores a stale task-worktree runtime and reads fencing from cluster authority', async () => {
+    const authority = await mkdtemp(join(tmpdir(), 'chainsieve-checkpoint-authority-'));
+    const staleTask = await mkdtemp(join(tmpdir(), 'chainsieve-checkpoint-stale-task-'));
+    roots.push(authority, staleTask);
+    await writeLifecycle(authority, 5, 'lease-5');
+    await writeLifecycle(staleTask, 2, 'lease-2');
+
+    const runner = new RebindRunner(authority, staleTask);
+    expect(reconcileCommittedTaskCheckpoint(runner, binding(5, 'lease-5'))).toBeUndefined();
+    expect(
+      runner.calls.some(
+        (call) =>
+          call.command === 'git' &&
+          call.args.join(' ') === 'rev-parse --git-common-dir' &&
+          call.cwd === '/tmp/cluster-worktree',
+      ),
+    ).toBe(true);
   });
 });
