@@ -92,10 +92,33 @@ class HostLifecycleProvider implements AgentProvider {
   }
 }
 
+const HOST_LIFECYCLE_METHODS = new Set<PropertyKey>([
+  'detect',
+  'generatePayload',
+  'copyPayload',
+  'openWorkspace',
+  'executePayload',
+  'renderOwnerInstruction',
+]);
+
 export const withHostLifecycle = (
   provider: AgentProvider,
   runner: CommandRunner,
-): AgentProvider => new HostLifecycleProvider(provider, runner);
+): AgentProvider => {
+  const lifecycle = new HostLifecycleProvider(provider, runner);
+  return new Proxy(provider, {
+    get(target, property) {
+      if (HOST_LIFECYCLE_METHODS.has(property)) {
+        const value = Reflect.get(lifecycle, property, lifecycle) as unknown;
+        return typeof value === 'function'
+          ? value.bind(lifecycle)
+          : value;
+      }
+      const value = Reflect.get(target, property, target) as unknown;
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+};
 
 const rawProvider = (
   id: AgentProviderId,
