@@ -77,8 +77,6 @@ describe('one-command autopilot', () => {
         '--model',
         DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
         '--mode=accept-edits',
-        '--cwd',
-        '/repo/task',
         '--print-timeout',
         DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
         '-p',

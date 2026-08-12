@@ -43,7 +43,7 @@ describe('Antigravity headless print timeout', () => {
     expect(DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT).toBe('60m');
   });
 
-  it('uses the resolved binary and explicitly binds headless execution to the isolated workspace', () => {
+  it('uses the resolved binary and binds headless execution with the process cwd only', () => {
     process.env[ANTIGRAVITY_PRINT_TIMEOUT_ENV] = '45m';
     const runner = new Runner();
     const provider = new AntigravityProvider(runner, { applicationCandidates: [] });
@@ -57,13 +57,12 @@ describe('Antigravity headless print timeout', () => {
       '--model',
       'Gemini 3.6 Flash (High)',
       '--mode=accept-edits',
-      '--cwd',
-      '/tmp/workspace',
       '--print-timeout',
       '45m',
       '-p',
       'repair this failure',
     ]);
+    expect(agy?.args).not.toContain('--cwd');
     expect(agy?.options?.cwd).toBe('/tmp/workspace');
     expect(agy?.options?.timeoutMilliseconds).toBe(90 * 60_000);
     expect(agy?.options?.streamOutput).toBe(false);
