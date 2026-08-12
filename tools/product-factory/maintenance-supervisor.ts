@@ -594,7 +594,6 @@ export const runAutonomousMaintenance = async (
         'merge',
         String(created.number),
         '--merge',
-        '--delete-branch',
       ]);
       break;
     }
