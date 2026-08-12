@@ -18,6 +18,7 @@ import {
   readSupervisorRecoveryState,
   recoveryLanesForAction,
   runSupervisedProductFactory,
+  verifyAndRepairRecoveryPatch,
   writeSupervisorRecoveryState,
 } from '../../tools/product-factory/recovery-supervisor.js';
 import {
@@ -269,6 +270,55 @@ describe('product factory recovery supervisor diagnosis', () => {
     // 5. Invalid throws
     expect(() => extractSupervisorRecoveryDiagnosis('no json at all')).toThrow('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_INVALID');
     expect(() => extractSupervisorRecoveryDiagnosis('{"action":"INVALID"}')).toThrow('PRODUCT_FACTORY_RECOVERY_DIAGNOSIS_INVALID');
+  });
+
+  it('repairs recovery patch when initial deterministic check fails and succeeds on repair round', () => {
+    const workspace = '/tmp/test-recovery-workspace';
+    let checkAttempts = 0;
+    let agentRepairCalls = 0;
+
+    class FailingCheckRunner implements CommandRunner {
+      run(command: string, args: string[]): CommandResult {
+        if (command === 'git' && args[0] === 'status') {
+          return ok(' M apps/collector/src/registry.ts\n');
+        }
+        if (command === 'pnpm') {
+          checkAttempts += 1;
+          if (checkAttempts === 1) {
+            return {
+              status: 1,
+              stdout: '',
+              stderr: 'apps/collector/src/registry.ts(30,18): error TS2345: Property finality is missing',
+            };
+          }
+          return ok();
+        }
+        return ok();
+      }
+    }
+
+    const provider: AgentProvider = {
+      id: 'antigravity',
+      detect: () => ({ available: true, mechanism: 'command', detail: 'test' }),
+      generatePayload: () => '',
+      copyPayload: () => undefined,
+      openWorkspace: () => undefined,
+      renderOwnerInstruction: () => '',
+      executePayload: () => {
+        agentRepairCalls += 1;
+        return ok();
+      },
+    };
+
+    const paths = verifyAndRepairRecoveryPatch(
+      new FailingCheckRunner(),
+      provider,
+      workspace,
+      ['PRODUCT_CODE'],
+    );
+
+    expect(agentRepairCalls).toBe(1);
+    expect(paths).toEqual(['apps/collector/src/registry.ts']);
   });
 });
 

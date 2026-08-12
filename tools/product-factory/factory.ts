@@ -1,6 +1,7 @@
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { errorCode } from '../agent/lib/errors.js';
 import type {
   AgentProvider,
   AgentProviderId,
@@ -359,6 +360,40 @@ const commitCorrection = (
   git(runner, workspace, ['commit', '-m', message]);
 };
 
+const MAX_CORRECTION_PATCH_REPAIR_ROUNDS = 3;
+
+const correctionRepairPrompt = (failure: string, allowedLanes: CorrectionLaneType[]): string =>
+  `The current product correction patch failed deterministic verification with:\n${failure}\n\nRepair the correction patch while preserving all completed convergence fixes and safety/authority boundaries. Allowed lanes: ${allowedLanes.join(', ')}. Do not broaden scope, weaken tests or requirements, touch secrets or forbidden paths. Leave changes uncommitted. Do not run git/gh/reset/clean/rebase/merge.`;
+
+export const verifyAndRepairCorrectionPatch = (
+  runner: CommandRunner,
+  provider: AgentProvider,
+  workspace: string,
+  allowedLanes: CorrectionLaneType[],
+): string[] => {
+  for (let round = 0; round <= MAX_CORRECTION_PATCH_REPAIR_ROUNDS; round += 1) {
+    const paths = changedPaths(runner, workspace);
+    assertProductCorrectionScope(paths, allowedLanes);
+    try {
+      if (allowedLanes.length > 0) runLaneDeterministicChecks(workspace, runner, allowedLanes);
+      runDeterministicConvergenceChecks(workspace, runner);
+      return paths;
+    } catch (error) {
+      const failure = errorCode(error);
+      if (round >= MAX_CORRECTION_PATCH_REPAIR_ROUNDS)
+        throw error;
+      console.error(`CHAINSIEVE_AUTO_CORRECTION_PATCH_REPAIR:${round + 1}:${failure}`);
+      executeAgent(
+        provider,
+        workspace,
+        correctionRepairPrompt(failure, allowedLanes),
+        'PRODUCT_FACTORY_CORRECTION_PATCH_REPAIR_AGENT_FAILED',
+      );
+    }
+  }
+  throw new Error('PRODUCT_FACTORY_CORRECTION_VERIFICATION_LIMIT');
+};
+
 const repairCorrectionCi = (
   runner: CommandRunner,
   provider: AgentProvider,
@@ -376,10 +411,7 @@ const repairCorrectionCi = (
     `The product-convergence pull request failed CI checks: ${failures.join(', ')}. Reproduce the failing behavior locally and repair it. Preserve the completed product convergence changes. You are bound to allowed correction lanes (${laneList}); modify only files permitted by those lanes. Do not modify normative PRD/spec/ADR authority, generated tasks or clusters, artifacts, tools/control-plane, or secrets unless explicitly authorized by lane. Do not weaken tests. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave the repair uncommitted and stop.`,
     'PRODUCT_FACTORY_CORRECTION_CI_AGENT_FAILED',
   );
-  const paths = changedPaths(runner, workspace);
-  assertProductCorrectionScope(paths, allowedLanes);
-  if (allowedLanes.length > 0) runLaneDeterministicChecks(workspace, runner, allowedLanes);
-  runDeterministicConvergenceChecks(workspace, runner);
+  const paths = verifyAndRepairCorrectionPatch(runner, provider, workspace, allowedLanes);
   commitCorrection(
     runner,
     workspace,
@@ -416,10 +448,7 @@ const applyProductCorrection = async (
       `You are product correction round ${round} for frozen main ${frozenMain}. The independent convergence verifier found these normative product gaps:\n${JSON.stringify(report.gaps, null, 2)}\nRepair every listed gap with the smallest coherent implementation within allowed correction lanes (${allowedLanes.join(', ')}). The immutable PRD, docs/spec, accepted ADR authority, generated tasks/clusters, workflows, tools/control-plane, and secrets are forbidden unless explicitly authorized. Do not weaken tests or requirements. Add or strengthen tests proving each corrected behavior. Run relevant tests and self-review the complete diff. Do not run git commit, git push, gh, reset, clean, rebase, or merge. Leave valid changes uncommitted and stop.`,
       'PRODUCT_FACTORY_CORRECTION_AGENT_FAILED',
     );
-    const paths = changedPaths(runner, workspace);
-    assertProductCorrectionScope(paths, allowedLanes);
-    runLaneDeterministicChecks(workspace, runner, allowedLanes);
-    runDeterministicConvergenceChecks(workspace, runner);
+    const paths = verifyAndRepairCorrectionPatch(runner, provider, workspace, allowedLanes);
     commitCorrection(
       runner,
       workspace,
