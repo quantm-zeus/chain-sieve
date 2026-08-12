@@ -18,23 +18,28 @@ export class SystemCommandRunner implements CommandRunner {
       maxBuffer: 64 * 1024 * 1024,
       timeout,
       killSignal: 'SIGTERM',
-      ...(options.streamOutput ? { stdio: 'inherit' as const } : {}),
     });
     const timedOut =
       result.error instanceof Error &&
       'code' in result.error &&
       result.error.code === 'ETIMEDOUT';
+    const stdout = typeof result.stdout === 'string' ? result.stdout : '';
+    const stderr =
+      typeof result.stderr === 'string'
+        ? result.stderr
+        : result.error
+          ? result.error.message
+          : timedOut
+            ? 'command timed out'
+            : '';
+    if (options.streamOutput) {
+      if (stdout) process.stdout.write(stdout);
+      if (stderr) process.stderr.write(stderr);
+    }
     return {
       status: result.status ?? 1,
-      stdout: typeof result.stdout === 'string' ? result.stdout : '',
-      stderr:
-        typeof result.stderr === 'string'
-          ? result.stderr
-          : result.error
-            ? result.error.message
-            : timedOut
-              ? 'command timed out'
-              : '',
+      stdout,
+      stderr,
       ...(timedOut ? { timedOut: true } : {}),
     };
   }
