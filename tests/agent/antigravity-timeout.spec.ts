@@ -43,7 +43,7 @@ describe('Antigravity headless print timeout', () => {
     expect(DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT).toBe('60m');
   });
 
-  it('uses the resolved binary and binds headless execution with the process cwd only', () => {
+  it('uses a fresh project, explicit workspace folder, process cwd, and scoped prompt', () => {
     process.env[ANTIGRAVITY_PRINT_TIMEOUT_ENV] = '45m';
     const runner = new Runner();
     const provider = new AntigravityProvider(runner, { applicationCandidates: [] });
@@ -53,16 +53,23 @@ describe('Antigravity headless print timeout', () => {
     const agy = runner.calls.find(
       (call) => call.command === '/home/test/.local/bin/agy',
     );
-    expect(agy?.args).toEqual([
+    expect(agy?.args.slice(0, 7)).toEqual([
+      '--new-project',
+      '--add-dir',
+      '/tmp/workspace',
       '--model',
       'Gemini 3.6 Flash (High)',
       '--mode=accept-edits',
       '--print-timeout',
-      '45m',
-      '-p',
-      'repair this failure',
     ]);
     expect(agy?.args).not.toContain('--cwd');
+    expect(agy?.args).toContain('45m');
+    const promptIndex = agy?.args.indexOf('-p') ?? -1;
+    expect(promptIndex).toBeGreaterThan(-1);
+    expect(agy?.args[promptIndex + 1]).toContain(
+      'The only writable workspace for this run is "/tmp/workspace"',
+    );
+    expect(agy?.args[promptIndex + 1]).toContain('repair this failure');
     expect(agy?.options?.cwd).toBe('/tmp/workspace');
     expect(agy?.options?.timeoutMilliseconds).toBe(90 * 60_000);
     expect(agy?.options?.streamOutput).toBe(false);

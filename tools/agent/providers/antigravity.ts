@@ -151,16 +151,20 @@ export class AntigravityProvider implements AgentProvider {
         'Install the agy CLI; agy-ide alone cannot provide a blocking headless run.',
       );
 
+    const scopedPayload = `The only writable workspace for this run is "${workspace}". Do not read, edit, create, or delete repository files outside that directory.\n\n${payload}`;
     const result = this.runner.run(
       cli,
       [
+        '--new-project',
+        '--add-dir',
+        workspace,
         '--model',
         resolveAntigravityAutopilotModel(),
         '--mode=accept-edits',
         '--print-timeout',
         resolveAntigravityPrintTimeout(),
         '-p',
-        payload,
+        scopedPayload,
       ],
       {
         cwd: workspace,
