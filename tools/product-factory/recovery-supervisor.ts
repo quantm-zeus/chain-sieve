@@ -533,6 +533,40 @@ const waitForPullRequest = async (
   }
 };
 
+const MAX_RECOVERY_PATCH_REPAIR_ROUNDS = 3;
+
+const recoveryRepairPrompt = (failure: string, lanes: CorrectionLaneType[]): string =>
+  `The current recovery patch failed deterministic verification with:\n${failure}\n\nRepair the recovery patch while preserving all safety/authority boundaries. Allowed lanes: ${lanes.join(', ')}. Do not broaden scope, weaken tests or requirements, touch secrets or forbidden paths. Leave changes uncommitted. Do not run git/gh/reset/clean/rebase/merge.`;
+
+export const verifyAndRepairRecoveryPatch = (
+  runner: CommandRunner,
+  provider: AgentProvider,
+  workspace: string,
+  lanes: CorrectionLaneType[],
+): string[] => {
+  for (let round = 0; round <= MAX_RECOVERY_PATCH_REPAIR_ROUNDS; round += 1) {
+    const paths = changedPaths(runner, workspace);
+    assertRecoveryScope(paths, lanes);
+    try {
+      runLaneChecks(workspace, runner, lanes);
+      runFullChecks(workspace, runner);
+      return paths;
+    } catch (error) {
+      const failure = errorCode(error);
+      if (round >= MAX_RECOVERY_PATCH_REPAIR_ROUNDS)
+        throw error;
+      console.error(`CHAINSIEVE_AUTO_RECOVERY_PATCH_REPAIR:${round + 1}:${failure}`);
+      executeAgent(
+        provider,
+        workspace,
+        recoveryRepairPrompt(failure, lanes),
+        'PRODUCT_FACTORY_RECOVERY_PATCH_REPAIR_AGENT_FAILED',
+      );
+    }
+  }
+  throw new Error('PRODUCT_FACTORY_RECOVERY_VERIFICATION_LIMIT');
+};
+
 const repairRecoveryCi = (
   runner: CommandRunner,
   provider: AgentProvider,
@@ -548,10 +582,7 @@ const repairRecoveryCi = (
     `Recovery PR CI failed: ${failures.join(', ')}. Repair only the existing recovery implementation. Allowed lanes: ${lanes.join(', ')}. Do not widen scope, weaken requirements/tests, touch secrets, or run git/gh. Leave changes uncommitted.`,
     'PRODUCT_FACTORY_RECOVERY_CI_AGENT_FAILED',
   );
-  const paths = changedPaths(runner, workspace);
-  assertRecoveryScope(paths, lanes);
-  runLaneChecks(workspace, runner, lanes);
-  runFullChecks(workspace, runner);
+  const paths = verifyAndRepairRecoveryPatch(runner, provider, workspace, lanes);
   git(runner, workspace, ['add', '--', ...paths]);
   git(runner, workspace, ['commit', '-m', `fix(autonomy): repair recovery CI round ${round}`]);
   git(runner, workspace, ['push', 'origin', `HEAD:${branch}`]);
@@ -595,10 +626,8 @@ const publishRecoveryChanges = async (
       console.error(`CHAINSIEVE_RECOVERY_NO_CHANGE_RETRY:${action}:${fingerprint.hash}`);
       return;
     }
-    assertRecoveryScope(paths, lanes);
-    runLaneChecks(workspace, runner, lanes);
-    runFullChecks(workspace, runner);
-    git(runner, workspace, ['add', '--', ...paths]);
+    const verifiedPaths = verifyAndRepairRecoveryPatch(runner, provider, workspace, lanes);
+    git(runner, workspace, ['add', '--', ...verifiedPaths]);
     git(runner, workspace, ['commit', '-m', `fix(autonomy): execute ${action.toLowerCase()} recovery`]);
     git(runner, workspace, ['push', '-u', 'origin', branch]);
     gh(runner, root, [
