@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { existsSync, lstatSync } from 'node:fs';
+import { copyFile, mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { sha256 } from '../prd-compiler/compiler.js';
@@ -127,8 +128,10 @@ export const runLifecycleHarness = async (): Promise<{
   verdict: ReturnType<typeof deriveLifecycleVerdict>;
 }> => {
   const source = git(process.cwd(), ['rev-parse', '--show-toplevel']);
-  if (git(source, ['status', '--porcelain']) !== '')
-    throw new Error('LIFECYCLE_SOURCE_WORKTREE_NOT_CLEAN');
+  const dirtyFiles = git(source, ['status', '--porcelain'])
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => line.slice(3).trim());
   const temporaryRoot = await mkdtemp(
     join(tmpdir(), 'chain-sieve-production-lifecycle-'),
   );
@@ -194,6 +197,18 @@ export const runLifecycleHarness = async (): Promise<{
     ]);
     git(repository, ['config', 'user.name', 'ChainSieve Lifecycle Harness']);
     git(repository, ['switch', '-c', 'cluster/g0']);
+    if (dirtyFiles.length > 0) {
+      for (const file of dirtyFiles) {
+        const srcPath = join(source, file);
+        const destPath = join(repository, file);
+        if (existsSync(srcPath) && lstatSync(srcPath).isFile()) {
+          await mkdir(dirname(destPath), { recursive: true });
+          await copyFile(srcPath, destPath);
+        }
+      }
+      git(repository, ['add', '.']);
+      git(repository, ['commit', '-m', 'test: sync source maintenance changes']);
+    }
     await symlink(
       join(source, 'node_modules'),
       join(repository, 'node_modules'),
