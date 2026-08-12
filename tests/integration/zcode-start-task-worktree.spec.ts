@@ -91,29 +91,26 @@ const createFixture = (): {
   git(root, ['config', 'user.email', 'zcode-test@example.com']);
   git(root, ['config', 'user.name', 'ZCode Test']);
   git(root, ['switch', '-C', 'main']);
-  git(root, [
-    'update-ref',
-    'refs/remotes/origin/main',
-    git(root, ['rev-parse', 'HEAD']),
-  ]);
-  git(root, ['tag', '-f', 'harness-v999.0.0', 'HEAD']);
-  git(root, ['update-ref', '-d', 'refs/remotes/origin/task/t-g0-disc']);
-  git(root, ['update-ref', '-d', 'refs/remotes/origin/cluster/g0']);
   cpSync(
     join(sourceRoot, 'tools', 'worktree-manager'),
     join(root, 'tools', 'worktree-manager'),
     { recursive: true },
   );
+  command(root, 'pnpm', ['install', '--frozen-lockfile']);
   if (git(root, ['status', '--porcelain']) !== '') {
     git(root, ['add', '-A']);
-    git(root, ['commit', '-q', '-m', 'fixture: current worktree manager']);
+    git(root, ['commit', '-q', '-m', 'fixture: current worktree manager and lockfile']);
   }
+  git(root, [
+    'update-ref',
+    'refs/remotes/origin/main',
+    git(root, ['rev-parse', 'HEAD']),
+  ]);
   git(root, ['branch', '-f', 'cluster/g0', 'HEAD']);
   git(root, ['branch', '-f', 'cluster/fw', 'HEAD']);
   const cluster = `${root}-worktrees/g0`;
   mkdirSync(dirname(cluster), { recursive: true });
   git(root, ['worktree', 'add', '-q', cluster, 'cluster/g0']);
-  command(root, 'pnpm', ['install', '--frozen-lockfile']);
   const runtime = join(root, '.git', 'ciag-runtime');
   mkdirSync(runtime, { recursive: true });
   writeFileSync(
