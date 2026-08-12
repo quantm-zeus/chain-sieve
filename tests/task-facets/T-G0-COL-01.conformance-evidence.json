@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "taskId": "T-G0-COL-01",
+  "mechanism": "ACTUAL_MUTATION",
+  "target": "packages/collector-core/src/index.ts",
+  "operator": "ARITHMETIC_PLUS_TO_MINUS",
+  "testPath": "tests/task-facets/T-G0-COL-01.spec.ts",
+  "expectedFailurePattern": "expected 0 to be 2",
+  "affectedExport": "executeCollectorAggregation",
+  "originalText": "value + 1"
+}
