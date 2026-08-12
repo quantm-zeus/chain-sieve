@@ -311,7 +311,7 @@ export const reconcileCommittedTaskCheckpoint = (
       if (rebind) return rebind;
       return {
         ...adopted,
-        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${lifecycleOutput(adopted)}`,
+        stderr: `TASK_CHECKPOINT_ADOPT_FAILED:${binding.task.contract.id}:${lifecycleOutput(adopted) || 'UNKNOWN_ADOPTION_FAILURE'}`,
       };
     }
     const rebind = leaseRebindResult(
@@ -344,6 +344,6 @@ export const reconcileCommittedTaskCheckpoint = (
   if (rebind) return rebind;
   return {
     ...reviewed,
-    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${lifecycleOutput(reviewed)}`,
+    stderr: `TASK_CHECKPOINT_RECONCILE_FAILED:${binding.task.contract.id}:${lifecycleOutput(reviewed) || 'UNKNOWN_RECONCILE_FAILURE'}`,
   };
 };

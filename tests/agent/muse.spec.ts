@@ -422,6 +422,9 @@ describe('hybrid agent routing policy', () => {
       'MAINTENANCE',
     );
     expect(classifyAgentWork('AUTOPILOT_CI_FAILED:Tier 0')).toBe('MAINTENANCE');
+    expect(classifyAgentWork('TASK_CHECKPOINT_ADOPT_FAILED:T-G0-COL-01:')).toBe(
+      'MAINTENANCE',
+    );
     expect(classifyAgentWork('PRODUCT_FACTORY_CONVERGENCE_LIMIT:REQ-42')).toBe(
       'SEMANTIC',
     );
