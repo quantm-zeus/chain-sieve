@@ -339,24 +339,26 @@ export const createTaskWorktree = (
     const head = git(['rev-parse', 'HEAD'], target).stdout;
     if (head !== clusterHead) {
       const commits = uniqueCommits(cwd, baseBranch, branch);
-      if (
-        commits.length === 0 ||
-        !lifecycleOwnsCommittedBranch(
-          state,
-          branch,
-          branch,
-          target,
-          clusterHead,
-          target,
-        )
-      )
-        throw new WorktreeManagerError(
-          commits.length > 0
-            ? 'UNCLAIMED_TASK_BRANCH_HAS_COMMITS'
-            : 'TASK_BRANCH_BASE_MISMATCH',
-          branch,
-          commits,
-        );
+      if (commits.length > 0) {
+        if (
+          !lifecycleOwnsCommittedBranch(
+            state,
+            branch,
+            branch,
+            target,
+            clusterHead,
+            target,
+          )
+        ) {
+          throw new WorktreeManagerError(
+            'UNCLAIMED_TASK_BRANCH_HAS_COMMITS',
+            branch,
+            commits,
+          );
+        }
+      } else if (!activeLease(state)) {
+        git(['reset', '--hard', clusterHead], target);
+      }
     }
     return { taskId: task.id, branch, baseBranch, target, reused: true };
   }
@@ -385,24 +387,28 @@ export const createTaskWorktree = (
     const head = git(['rev-parse', revision], cwd).stdout;
     const commits = uniqueCommits(cwd, baseBranch, revision);
     if (head !== clusterHead) {
-      if (
-        commits.length === 0 ||
-        !lifecycleOwnsCommittedBranch(
-          state,
-          branch,
-          revision,
-          target,
-          clusterHead,
-          cwd,
-        )
-      )
-        throw new WorktreeManagerError(
-          commits.length > 0
-            ? 'UNCLAIMED_TASK_BRANCH_HAS_COMMITS'
-            : 'TASK_BRANCH_BASE_MISMATCH',
-          branch,
-          commits,
-        );
+      if (commits.length > 0) {
+        if (
+          !lifecycleOwnsCommittedBranch(
+            state,
+            branch,
+            revision,
+            target,
+            clusterHead,
+            cwd,
+          )
+        ) {
+          throw new WorktreeManagerError(
+            'UNCLAIMED_TASK_BRANCH_HAS_COMMITS',
+            branch,
+            commits,
+          );
+        }
+      } else if (!activeLease(state)) {
+        if (localBranch) {
+          git(['branch', '-f', branch, clusterHead], cwd);
+        }
+      }
     } else if (activeLease(state)) {
       throw new WorktreeManagerError(
         'TASK_BRANCH_HAS_ACTIVE_LEASE',
@@ -415,7 +421,9 @@ export const createTaskWorktree = (
       false,
       document,
     );
-    if (!localBranch) git(['branch', branch, remoteRef], cwd);
+    if (!localBranch || (head !== clusterHead && commits.length === 0 && !activeLease(state))) {
+      git(['branch', '-f', branch, remoteBranch && head === clusterHead ? remoteRef : clusterHead], cwd);
+    }
     git(['worktree', 'add', target, branch], cwd);
     return {
       taskId: task.id,

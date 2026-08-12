@@ -108,6 +108,11 @@ const createFixture = (): {
     git(root, ['add', '-A']);
     git(root, ['commit', '-q', '-m', 'fixture: current worktree manager']);
   }
+  git(root, [
+    'update-ref',
+    'refs/remotes/origin/main',
+    git(root, ['rev-parse', 'HEAD']),
+  ]);
   git(root, ['branch', '-f', 'cluster/g0', 'HEAD']);
   git(root, ['branch', '-f', 'cluster/fw', 'HEAD']);
   const cluster = `${root}-worktrees/g0`;
