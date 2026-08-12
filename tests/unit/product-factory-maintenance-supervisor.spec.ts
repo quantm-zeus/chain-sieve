@@ -186,7 +186,16 @@ describe('autonomous maintenance lifecycle', () => {
       expect(runner.calls.some((call) => call.startsWith('/usr/bin/agy '))).toBe(true);
       expect(runner.calls.some((call) => call.startsWith('muse '))).toBe(false);
       expect(runner.calls.some((call) => call.startsWith('gh pr create'))).toBe(true);
-      expect(runner.calls.some((call) => call.startsWith('gh pr merge'))).toBe(true);
+      expect(runner.calls).toContain('gh pr merge 47 --merge');
+      expect(runner.calls.some((call) => call.includes('--delete-branch'))).toBe(false);
+      const removeWorktreeIndex = runner.calls.findIndex((call) =>
+        call.startsWith('git worktree remove --force '),
+      );
+      const deleteBranchIndex = runner.calls.findIndex((call) =>
+        call.startsWith('git branch -D autonomy/maintenance-'),
+      );
+      expect(removeWorktreeIndex).toBeGreaterThanOrEqual(0);
+      expect(deleteBranchIndex).toBeGreaterThan(removeWorktreeIndex);
       expect(
         runner.calls.filter((call) => call === 'pnpm --silent build').length,
       ).toBeGreaterThan(0);
