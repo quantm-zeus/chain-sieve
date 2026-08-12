@@ -119,7 +119,6 @@ const pnpm = (runner: CommandRunner, cwd: string, args: string[]): string =>
     runner.run('pnpm', ['--silent', ...args], {
       cwd,
       timeoutMilliseconds: AGENT_TIMEOUT_MS,
-      streamOutput: true,
     }),
     `PRODUCT_FACTORY_SUPERVISOR_CHECK_FAILED:${args[0] ?? 'unknown'}`,
   );
