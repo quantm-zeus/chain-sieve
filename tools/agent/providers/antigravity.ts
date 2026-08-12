@@ -157,8 +157,6 @@ export class AntigravityProvider implements AgentProvider {
         '--model',
         resolveAntigravityAutopilotModel(),
         '--mode=accept-edits',
-        '--cwd',
-        workspace,
         '--print-timeout',
         resolveAntigravityPrintTimeout(),
         '-p',
