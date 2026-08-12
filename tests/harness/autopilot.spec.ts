@@ -71,17 +71,25 @@ describe('one-command autopilot', () => {
     expect(provider.executePayload('/repo/task', 'bound goal')).toMatchObject({
       status: 0,
     });
-    expect(runner.calls.at(-1)).toEqual({
-      command: '/usr/local/bin/agy',
-      args: [
-        '--model',
-        DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
-        '--mode=accept-edits',
-        '--print-timeout',
-        DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT,
-        '-p',
-        'bound goal',
-      ],
+    const call = runner.calls.at(-1);
+    expect(call?.command).toBe('/usr/local/bin/agy');
+    expect(call?.args.slice(0, 7)).toEqual([
+      '--new-project',
+      '--add-dir',
+      '/repo/task',
+      '--model',
+      DEFAULT_ANTIGRAVITY_AUTOPILOT_MODEL,
+      '--mode=accept-edits',
+      '--print-timeout',
+    ]);
+    expect(call?.args).toContain(DEFAULT_ANTIGRAVITY_PRINT_TIMEOUT);
+    const promptIndex = call?.args.indexOf('-p') ?? -1;
+    expect(promptIndex).toBeGreaterThan(-1);
+    expect(call?.args[promptIndex + 1]).toContain(
+      'The only writable workspace for this run is "/repo/task"',
+    );
+    expect(call?.args[promptIndex + 1]).toContain('bound goal');
+    expect(call).toMatchObject({
       cwd: '/repo/task',
       timeoutMilliseconds: 5_400_000,
       streamOutput: false,
