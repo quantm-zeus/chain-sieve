@@ -181,6 +181,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tool-core
 
+  apps/collector: {}
+
   apps/dashboard: {}
 
   packages/agent-runtime: {}
@@ -188,6 +190,10 @@ importers:
   packages/alerts: {}
 
   packages/capability-registry: {}
+
+  packages/collector-core: {}
+
+  packages/collector-solana: {}
 
   packages/config: {}
 
@@ -204,6 +210,8 @@ importers:
   packages/observability: {}
 
   packages/persistence: {}
+
+  packages/program-decoders: {}
 
   packages/provider-contracts: {}
 

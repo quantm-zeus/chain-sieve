@@ -104,9 +104,20 @@ const createFixture = (): {
     join(root, 'tools', 'worktree-manager'),
     { recursive: true },
   );
+  cpSync(
+    join(sourceRoot, 'tools', 'agent'),
+    join(root, 'tools', 'agent'),
+    { recursive: true },
+  );
+  cpSync(
+    join(sourceRoot, 'tools', 'zcode'),
+    join(root, 'tools', 'zcode'),
+    { recursive: true },
+  );
+  command(root, 'pnpm', ['install', '--frozen-lockfile']);
   if (git(root, ['status', '--porcelain']) !== '') {
     git(root, ['add', '-A']);
-    git(root, ['commit', '-q', '-m', 'fixture: current worktree manager']);
+    git(root, ['commit', '-q', '-m', 'fixture: current tools and lockfile']);
   }
   git(root, [
     'update-ref',
@@ -118,7 +129,6 @@ const createFixture = (): {
   const cluster = `${root}-worktrees/g0`;
   mkdirSync(dirname(cluster), { recursive: true });
   git(root, ['worktree', 'add', '-q', cluster, 'cluster/g0']);
-  command(root, 'pnpm', ['install', '--frozen-lockfile']);
   const runtime = join(root, '.git', 'ciag-runtime');
   mkdirSync(runtime, { recursive: true });
   writeFileSync(
