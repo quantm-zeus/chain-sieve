@@ -11,7 +11,7 @@ from typing import Any
 from .ao import AgentOrchestrator, review_gate
 from .config import FactoryConfig
 from .github import GitHub, ci_state
-from .models import FactoryStatus, Milestone, PackageRecord, PackageStatus, PullRequest, Session, Snapshot
+from .models import FactoryStatus, Milestone, PackageRecord, PackageStatus, PullRequest, Session, Snapshot, work_key
 from .policy import protected_path_violations, review_required, reviewer_for
 from .prompts import issue_body, worker_prompt
 from .store import StateStore, utc_now
@@ -37,27 +37,30 @@ class FactoryController:
         store: StateStore,
         github: GitHub,
         ao: AgentOrchestrator,
+        reasoner: Any | None = None,
     ) -> None:
         self.root = root
         self.config = config
         self.store = store
         self.github = github
         self.ao = ao
+        self.reasoner = reasoner
 
     def sync_issues(self, milestone: Milestone) -> dict[str, Any]:
         issues = self.github.issues()
         created: list[int] = []
         for package in milestone.packages:
-            if package.id in issues:
+            key = work_key(milestone.id, package.id)
+            if key in issues:
                 continue
             issue = self.github.create_issue(
-                package.id,
-                f"[{package.id}] {package.objective[:120]}",
+                key,
+                f"[{milestone.id}/{package.id}] {package.objective[:120]}",
                 issue_body(milestone, package),
             )
-            issues[package.id] = issue
+            issues[key] = issue
             created.append(issue.number)
-            self.store.event("WORK_PACKAGE_PLANNED", milestoneId=milestone.id, workPackageId=package.id, issue=issue.number)
+            self.store.event("WORK_PACKAGE_PLANNED", milestoneId=milestone.id, workPackageId=package.id, workKey=key, issue=issue.number)
         return {"created": created, "total": len(issues)}
 
     def snapshot(self) -> Snapshot:
@@ -81,21 +84,22 @@ class FactoryController:
         previous = self.store.load()
         records: dict[str, PackageRecord] = {}
         completed: set[str] = {
-            package.id
+            work_key(milestone.id, package.id)
             for package in milestone.packages
-            if any(pr.merged_at or pr.state.upper() == "MERGED" for pr in snapshot.prs.get(package.id, []))
+            if any(pr.merged_at or pr.state.upper() == "MERGED" for pr in snapshot.prs.get(work_key(milestone.id, package.id), []))
         }
 
         for package in milestone.packages:
-            record = previous.get(package.id, PackageRecord())
-            issue = snapshot.issues.get(package.id)
+            key = work_key(milestone.id, package.id)
+            record = previous.get(key, PackageRecord())
+            issue = snapshot.issues.get(key)
             if issue:
                 record.issue_number = issue.number
 
-            prs = snapshot.prs.get(package.id, [])
+            prs = snapshot.prs.get(key, [])
             merged = [pr for pr in prs if pr.merged_at or pr.state.upper() == "MERGED"]
             open_prs = [pr for pr in prs if pr.state.upper() == "OPEN"]
-            all_sessions = snapshot.sessions.get(package.id, [])
+            all_sessions = snapshot.sessions.get(key, [])
             sessions = [item for item in all_sessions if item.status.lower() not in TERMINAL_SESSION_STATES]
             terminal = [item for item in all_sessions if item.status.lower() in TERMINAL_SESSION_STATES]
 
@@ -107,7 +111,7 @@ class FactoryController:
                 _apply_pr(record, selected)
                 record.status = PackageStatus.COMPLETED
                 record.blocked_reason = None
-                completed.add(package.id)
+                completed.add(key)
             elif open_prs:
                 selected = open_prs[0]
                 _apply_pr(record, selected)
@@ -120,7 +124,7 @@ class FactoryController:
                 record.status = PackageStatus.PR_WAITING
             elif sessions:
                 _apply_session(record, sessions[0])
-                record.branch = f"factory/{package.id}"
+                record.branch = f"factory/{key}"
                 _note_progress(record, _progress_fingerprint(sessions[0], None), sessions[0].last_activity_at)
                 record.status = _session_package_status(record, sessions[0], self.config)
             elif record.task_attempts > 0 and record.session_id and any(item.id == record.session_id for item in terminal):
@@ -133,14 +137,14 @@ class FactoryController:
             elif terminal and record.task_attempts > 0:
                 record.status = PackageStatus.BLOCKED
                 record.blocked_reason = "terminated AO sessions exist but none matches durable controller ownership; preserving work"
-            elif self.github.branch_exists(f"factory/{package.id}") or _local_worktree_has_branch(self.root, f"factory/{package.id}"):
+            elif self.github.branch_exists(f"factory/{key}") or _local_worktree_has_branch(self.root, f"factory/{key}"):
                 record.status = PackageStatus.BLOCKED
                 record.blocked_reason = "branch/worktree exists without a correlated active AO session or PR; preserving work"
             elif record.status == PackageStatus.BLOCKED:
                 # Budget/policy blockers are durable. A branch, PR, merge, or
                 # explicitly edited state file is required to change them.
                 pass
-            elif issue and all(dependency in completed for dependency in package.dependencies):
+            elif issue and all(work_key(milestone.id, dependency) in completed for dependency in package.dependencies):
                 record.status = PackageStatus.READY
                 record.blocked_reason = None
             elif issue:
@@ -149,7 +153,7 @@ class FactoryController:
             else:
                 record.status = PackageStatus.PLANNED
             record.updated_at = utc_now()
-            records[package.id] = record
+            records[key] = record
 
         metadata = self.store.metadata()
         if metadata.get("milestoneId") not in {None, milestone.id}:
@@ -174,9 +178,10 @@ class FactoryController:
         metadata = self.store.metadata()
         metadata.setdefault("milestoneStartedAt", utc_now())
         if _expired(metadata["milestoneStartedAt"], self.config.max_milestone_wall_clock_seconds):
-            for package_id, record in records.items():
+            for key, record in records.items():
                 if record.status != PackageStatus.COMPLETED:
-                    self._block(milestone.id, package_id, record, "milestone wall-clock budget exhausted")
+                    package_id = key.removeprefix(f"{milestone.id}--")
+                    self._block(milestone.id, package_id, record, "milestone wall-clock budget exhausted", key)
             metadata["milestoneTimedOut"] = True
             self.store.save(records, metadata)
             return records
@@ -189,23 +194,23 @@ class FactoryController:
         elif metadata.pop("resourceBlockedReason", None):
             self.store.event("CIRCUIT_BREAKER_CLOSED", milestoneId=milestone.id, reason="resource gates recovered")
 
-        packages = {item.id: item for item in milestone.packages}
-        for package_id, record in records.items():
-            package = packages[package_id]
-            package_sessions = snapshot.sessions.get(package_id, [])
+        packages = {work_key(milestone.id, item.id): item for item in milestone.packages}
+        for key, record in records.items():
+            package = packages[key]
+            package_sessions = snapshot.sessions.get(key, [])
             live_sessions = [item for item in package_sessions if item.status.lower() not in TERMINAL_SESSION_STATES]
             terminal_sessions = [item for item in package_sessions if item.status.lower() in TERMINAL_SESSION_STATES]
             session = _single(live_sessions) or next(
                 (item for item in terminal_sessions if item.id == record.session_id),
                 None,
             )
-            pr = _single([item for item in snapshot.prs.get(package_id, []) if item.state.upper() == "OPEN"])
+            pr = _single([item for item in snapshot.prs.get(key, []) if item.state.upper() == "OPEN"])
             if record.started_at and record.status not in {PackageStatus.COMPLETED, PackageStatus.BLOCKED} and _expired(
                 record.started_at, self.config.max_task_wall_clock_seconds
             ):
                 if session and session.status.lower() not in TERMINAL_SESSION_STATES:
                     self.ao.kill(session.id)
-                self._block(milestone.id, package_id, record, "task wall-clock budget exhausted; existing work preserved")
+                self._block(milestone.id, package.id, record, "task wall-clock budget exhausted; existing work preserved", key)
                 continue
             if record.status in {
                 PackageStatus.STARTING,
@@ -216,13 +221,13 @@ class FactoryController:
                 PackageStatus.FAILED,
             } and session:
                 if session.status.lower() in TERMINAL_SESSION_STATES:
-                    self._handle_terminated(milestone, package_id, record, session)
+                    self._handle_terminated(milestone, package, key, record, session, pr)
                 else:
-                    self._handle_activity(milestone, package_id, record, session)
+                    self._handle_activity(milestone, package, key, record, session, pr)
             elif record.status == PackageStatus.PR_WAITING and pr:
                 if session and session.status.lower() in TERMINAL_SESSION_STATES:
-                    self._handle_terminated(milestone, package_id, record, session)
-                elif any(records[dependency].status != PackageStatus.COMPLETED for dependency in package.dependencies):
+                    self._handle_terminated(milestone, package, key, record, session, pr)
+                elif any(records[work_key(milestone.id, dependency)].status != PackageStatus.COMPLETED for dependency in package.dependencies):
                     record.last_error = "dependency integration condition no longer holds"
                 else:
                     self._handle_pr(milestone, package, record, pr)
@@ -235,18 +240,19 @@ class FactoryController:
         for package in milestone.packages:
             if slots <= 0:
                 break
-            record = records[package.id]
+            key = work_key(milestone.id, package.id)
+            record = records[key]
             if record.status != PackageStatus.READY:
                 continue
             if not package.parallelizable and active > 0:
                 continue
             if record.task_attempts >= self.config.max_task_attempts:
-                self._block(milestone.id, package.id, record, "implementation attempt budget exhausted")
+                self._escalate_replan(milestone, package, key, record, "implementation attempt budget exhausted")
                 continue
             assert record.issue_number is not None
             provider = _provider_for_attempt(package.preferred_provider, record.task_attempts)
             session_id = self.ao.spawn(
-                package.id,
+                key,
                 record.issue_number,
                 provider,
                 worker_prompt(self.root, milestone, package, self.config.integration_branch),
@@ -256,7 +262,7 @@ class FactoryController:
             record.provider = provider
             record.ao_status = "spawning"
             record.ao_activity = "spawning"
-            record.branch = f"factory/{package.id}"
+            record.branch = f"factory/{key}"
             record.task_attempts += 1
             record.provider_attempts[provider] = record.provider_attempts.get(provider, 0) + 1
             record.status = PackageStatus.STARTING
@@ -266,12 +272,17 @@ class FactoryController:
             record.updated_at = utc_now()
             self.store.event(
                 "WORKER_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                provider=provider, aoSessionId=session_id, attempt=record.task_attempts,
+                workKey=key, provider=provider, aoSessionId=session_id, attempt=record.task_attempts,
             )
             slots -= 1
             active += 1
 
-        metadata.update({"milestoneId": milestone.id, "lastTickAt": utc_now(), "consecutiveTickFailures": 0})
+        metadata.update({
+            "milestoneId": milestone.id,
+            "lastTickAt": utc_now(),
+            "lastSuccessfulTickAt": utc_now(),
+            "consecutiveTickFailures": 0,
+        })
         if self.config.convergence_enabled and resources.allowed and records and all(
             record.status == PackageStatus.COMPLETED for record in records.values()
         ):
@@ -280,6 +291,8 @@ class FactoryController:
         return records
 
     def run(self, once: bool = False) -> None:
+        import threading
+
         with self.store.lock():
             self.store.event("FACTORY_STARTED")
             records = self.store.load()
@@ -287,32 +300,55 @@ class FactoryController:
             metadata["controllerStartedAt"] = utc_now()
             metadata["consecutiveTickFailures"] = 0
             self.store.save(records, metadata)
+            self.store.heartbeat(active=True)
+            heartbeat_stop = threading.Event()
+            heartbeat_thread = threading.Thread(
+                target=self._heartbeat_loop,
+                args=(heartbeat_stop,),
+                name="chainsieve-factory-heartbeat",
+                daemon=True,
+            )
+            heartbeat_thread.start()
             failures = 0
-            while True:
-                try:
-                    self.tick()
-                    failures = 0
-                except Exception as error:
-                    failures += 1
-                    delay = _retry_delay(self.config.poll_seconds, failures)
-                    metadata = self.store.metadata()
-                    metadata["consecutiveTickFailures"] = failures
-                    metadata["lastTickFailure"] = str(error)[-2000:]
-                    metadata["retryDelaySeconds"] = delay
-                    self.store.save(self.store.load(), metadata)
-                    self.store.event(
-                        "FACTORY_TICK_FAILED", reason=str(error)[-2000:],
-                        attempt=failures, retryDelaySeconds=delay,
-                    )
-                    if failures == 5:
-                        self._notify("FATAL", f"factory infrastructure failed five consecutive ticks: {str(error)[-500:]}")
+            try:
+                while True:
+                    try:
+                        self.store.heartbeat(active=True)
+                        self.tick()
+                        failures = 0
+                    except Exception as error:
+                        failures += 1
+                        delay = _retry_delay(self.config.poll_seconds, failures)
+                        metadata = self.store.metadata()
+                        metadata["consecutiveTickFailures"] = failures
+                        metadata["lastTickFailure"] = str(error)[-2000:]
+                        metadata["retryDelaySeconds"] = delay
+                        self.store.save(self.store.load(), metadata)
+                        self.store.event(
+                            "FACTORY_TICK_FAILED", reason=str(error)[-2000:],
+                            attempt=failures, retryDelaySeconds=delay,
+                        )
+                        if failures == 5:
+                            self._notify("FATAL", f"factory infrastructure failed five consecutive ticks: {str(error)[-500:]}")
+                        if once:
+                            raise
+                        time.sleep(delay)
+                        continue
                     if once:
-                        raise
-                    time.sleep(delay)
-                    continue
-                if once:
-                    return
-                time.sleep(self.config.poll_seconds)
+                        return
+                    time.sleep(self.config.poll_seconds)
+            finally:
+                heartbeat_stop.set()
+                heartbeat_thread.join(timeout=2)
+                self.store.heartbeat(active=False)
+
+    def _heartbeat_loop(self, stop: Any) -> None:
+        interval = min(30, max(1, self.config.poll_seconds))
+        while not stop.wait(interval):
+            try:
+                self.store.heartbeat(active=True)
+            except OSError:
+                pass
 
     def resource_state(self) -> ResourceState:
         disk = shutil.disk_usage(self.root)
@@ -332,16 +368,23 @@ class FactoryController:
         milestone = self.config.load_milestone()
         records = self.store.load()
         for package in milestone.packages:
-            records.setdefault(package.id, PackageRecord())
+            records.setdefault(work_key(milestone.id, package.id), PackageRecord())
         counts = {status.value: 0 for status in PackageStatus}
         for record in records.values():
             counts[record.status.value] += 1
         metadata = self.store.metadata()
         resources = self.resource_state()
         codex_usage = _codex_usage(self.config.state_dir)
-        if not metadata.get("controllerStartedAt"):
-            overall = FactoryStatus.STOPPED
-        elif counts[PackageStatus.BLOCKED.value] or counts[PackageStatus.FAILED.value] or counts[PackageStatus.STUCK.value]:
+        heartbeat = self.store.heartbeat_state()
+        heartbeat_age = _elapsed_seconds(heartbeat.get("controllerHeartbeatAt"))
+        stale_after = self.config.max_tick_duration_seconds + (2 * self.config.poll_seconds)
+        if not heartbeat or heartbeat.get("active") is not True:
+            liveness = "STOPPED_UNKNOWN"
+        elif heartbeat_age is None or heartbeat_age > stale_after:
+            liveness = "STALE"
+        else:
+            liveness = "ACTIVE"
+        if counts[PackageStatus.BLOCKED.value] or counts[PackageStatus.FAILED.value] or counts[PackageStatus.STUCK.value]:
             overall = FactoryStatus.BLOCKED
         elif (
             counts[PackageStatus.COMPLETED.value] == len(records)
@@ -349,12 +392,18 @@ class FactoryController:
             and (not self.config.convergence_enabled or metadata.get("finalAuditConverged") is True)
         ):
             overall = FactoryStatus.DONE
-        elif not resources.allowed or int(metadata.get("consecutiveTickFailures", 0)) > 0:
+        elif liveness != "ACTIVE" or not resources.allowed or int(metadata.get("consecutiveTickFailures", 0)) > 0:
             overall = FactoryStatus.DEGRADED
         else:
             overall = FactoryStatus.RUNNING
         return {
             "status": overall.value,
+            "controllerLiveness": {
+                "state": liveness,
+                "heartbeatAt": heartbeat.get("controllerHeartbeatAt"),
+                "ageSeconds": heartbeat_age,
+                "staleAfterSeconds": stale_after,
+            },
             "uptimeSeconds": _elapsed_seconds(metadata.get("controllerStartedAt")),
             "milestone": milestone.id,
             "progress": {"completed": counts[PackageStatus.COMPLETED.value], "total": len(records)},
@@ -390,7 +439,15 @@ class FactoryController:
             "recentEvents": self.store.history(10),
         }
 
-    def _handle_activity(self, milestone: Milestone, package_id: str, record: PackageRecord, session: Session) -> None:
+    def _handle_activity(
+        self,
+        milestone: Milestone,
+        package: Any,
+        key: str,
+        record: PackageRecord,
+        session: Session,
+        pr: PullRequest | None,
+    ) -> None:
         activity = session.activity.lower()
         waiting = record.status == PackageStatus.WAITING_INPUT or activity in {"waiting_input", "blocked", "needs_input"}
         stuck = record.status == PackageStatus.STUCK
@@ -404,28 +461,87 @@ class FactoryController:
             )
             record.correction_attempts += 1
             self.store.event(
-                "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package_id,
-                provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
             )
         else:
             failure = "worker remained stuck" if stuck else "worker remained waiting for input"
-            self._block(milestone.id, package_id, record, f"{failure} after bounded remediation")
+            self._retry_or_replan(milestone, package, key, record, session, pr, f"{failure} after bounded remediation")
 
-    def _handle_terminated(self, milestone: Milestone, package_id: str, record: PackageRecord, session: Session) -> None:
+    def _handle_terminated(
+        self,
+        milestone: Milestone,
+        package: Any,
+        key: str,
+        record: PackageRecord,
+        session: Session,
+        pr: PullRequest | None,
+    ) -> None:
         if record.correction_attempts < self.config.max_correction_attempts:
             self.ao.restore(session.id)
             record.correction_attempts += 1
             record.started_at = utc_now()
             self.store.event(
-                "WORKER_RESTORED", milestoneId=milestone.id, workPackageId=package_id,
-                provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                "WORKER_RESTORED", milestoneId=milestone.id, workPackageId=package.id,
+                workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
             )
             return
-        self._block(
-            milestone.id,
-            package_id,
+        self._retry_or_replan(
+            milestone,
+            package,
+            key,
             record,
-            "AO session terminated after bounded restore; workspace preserved for evidence-safe recovery",
+            session,
+            pr,
+            "AO session terminated after bounded restore",
+        )
+
+    def _retry_or_replan(
+        self,
+        milestone: Milestone,
+        package: Any,
+        key: str,
+        record: PackageRecord,
+        session: Session,
+        pr: PullRequest | None,
+        failure: str,
+    ) -> None:
+        remote_branch = self.github.branch_exists(f"factory/{key}")
+        safe, evidence = _safe_alternate_retry(
+            self.root, self.config.integration_branch, f"factory/{key}", session, pr, remote_branch
+        )
+        if safe:
+            freed = self.ao.kill(session.id)
+            if not freed and session.workspace_path and Path(session.workspace_path).exists():
+                self._escalate_replan(milestone, package, key, record, f"{failure}; AO refused to clean a supposedly clean worktree")
+                return
+            if record.task_attempts < self.config.max_task_attempts:
+                previous_provider = record.provider
+                record.status = PackageStatus.READY
+                record.session_id = None
+                record.ao_status = "terminated-clean"
+                record.ao_activity = "requeued"
+                record.started_at = None
+                record.last_progress_at = utc_now()
+                record.last_error = evidence
+                self.store.event(
+                    "ALTERNATE_PROVIDER_REQUEUED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    provider=previous_provider,
+                    attempt=record.task_attempts + 1,
+                    reason=evidence,
+                )
+                return
+            self._escalate_replan(milestone, package, key, record, f"{failure}; both implementation providers exhausted after clean failures")
+            return
+        self._escalate_replan(
+            milestone,
+            package,
+            key,
+            record,
+            f"{failure}; alternate-provider retry is unsafe; preserved work: {evidence}",
         )
 
     def _handle_pr(self, milestone: Milestone, package: Any, record: PackageRecord, pr: PullRequest) -> None:
@@ -439,7 +555,7 @@ class FactoryController:
             token = f"CI:{pr.head_sha}:{ci_reason}"
             if record.session_id and record.last_error != token:
                 if record.correction_attempts >= self.config.max_correction_attempts:
-                    self._block(milestone.id, package.id, record, f"CI correction budget exhausted: {ci_reason}")
+                    self._block(milestone.id, package.id, record, f"CI correction budget exhausted: {ci_reason}", work_key(milestone.id, package.id))
                     return
                 self.ao.send(
                     record.session_id,
@@ -449,14 +565,14 @@ class FactoryController:
                 record.last_error = token
                 self.store.event(
                     "CI_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                    provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
+                    workKey=work_key(milestone.id, package.id), provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
                     attempt=record.correction_attempts, headSha=pr.head_sha,
                 )
             return
 
         if review_required(package):
             if not record.session_id:
-                self._block(milestone.id, package.id, record, "review-required PR has no correlated AO session")
+                self._block(milestone.id, package.id, record, "review-required PR has no correlated AO session", work_key(milestone.id, package.id))
                 return
             reviews = self.ao.reviews(record.session_id or "")
             required_reviewer = reviewer_for(record.provider or package.preferred_provider)
@@ -471,7 +587,7 @@ class FactoryController:
                     record.status = PackageStatus.REVIEW
                     self.store.event(
                         "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                        provider=selected, aoSessionId=record.session_id, pr=pr.number,
+                        workKey=work_key(milestone.id, package.id), provider=selected, aoSessionId=record.session_id, pr=pr.number,
                         attempt=record.review_attempts, headSha=pr.head_sha,
                     )
                 elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
@@ -486,24 +602,30 @@ class FactoryController:
                         record.last_error = token
                         self.store.event(
                             "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                            provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
+                            workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
                             pr=pr.number, attempt=record.review_attempts, headSha=pr.head_sha,
                         )
                 elif record.review_attempts >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
-                    self._block(milestone.id, package.id, record, f"machine review budget exhausted: {review_reason}")
+                    self._block(milestone.id, package.id, record, f"machine review budget exhausted: {review_reason}", work_key(milestone.id, package.id))
                 else:
                     record.status = PackageStatus.REVIEW
                 return
 
         violations = protected_path_violations(pr.files, self.config.protected_paths, package)
         if violations:
-            self._block(milestone.id, package.id, record, f"unauthorized protected-path changes: {', '.join(violations)}")
+            self._block(milestone.id, package.id, record, f"unauthorized protected-path changes: {', '.join(violations)}", work_key(milestone.id, package.id))
             return
         if pr.merge_state.upper() in {"DIRTY", "BEHIND"}:
             token = f"MERGE:{pr.head_sha}:{pr.merge_state.upper()}"
             if record.session_id and record.last_error != token:
                 if record.correction_attempts >= self.config.max_correction_attempts:
-                    self._block(milestone.id, package.id, record, "merge-update correction budget exhausted")
+                    self._escalate_replan(
+                        milestone,
+                        package,
+                        work_key(milestone.id, package.id),
+                        record,
+                        "repeated material integration conflict exhausted merge-update correction budget",
+                    )
                     return
                 self.ao.send(
                     record.session_id,
@@ -515,7 +637,7 @@ class FactoryController:
                 record.last_error = token
                 self.store.event(
                     "MERGE_UPDATE_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                    provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
+                    workKey=work_key(milestone.id, package.id), provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
                     attempt=record.correction_attempts, headSha=pr.head_sha,
                 )
             record.status = PackageStatus.PR_WAITING
@@ -532,17 +654,49 @@ class FactoryController:
         if record.issue_number:
             self.github.close_issue(record.issue_number, f"Automatically integrated by the factory at reviewed head `{pr.head_sha}`.")
         self.store.event(
-            "PR_MERGED", milestoneId=milestone.id, workPackageId=package.id,
+            "PR_MERGED", milestoneId=milestone.id, workPackageId=package.id, workKey=work_key(milestone.id, package.id),
             provider=record.provider, aoSessionId=record.session_id, pr=pr.number, headSha=pr.head_sha,
         )
-        self.store.event("WORK_PACKAGE_COMPLETED", milestoneId=milestone.id, workPackageId=package.id)
+        self.store.event("WORK_PACKAGE_COMPLETED", milestoneId=milestone.id, workPackageId=package.id, workKey=work_key(milestone.id, package.id))
 
-    def _block(self, milestone_id: str, package_id: str, record: PackageRecord, reason: str) -> None:
+    def _block(
+        self, milestone_id: str, package_id: str, record: PackageRecord, reason: str, key: str | None = None
+    ) -> None:
         record.status = PackageStatus.BLOCKED
         record.blocked_reason = reason
         record.last_error = reason
-        self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone_id, workPackageId=package_id, reason=reason)
+        self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone_id, workPackageId=package_id, workKey=key, reason=reason)
         self._notify("FATAL", f"{package_id}: {reason}")
+
+    def _escalate_replan(
+        self, milestone: Milestone, package: Any, key: str, record: PackageRecord, reason: str
+    ) -> None:
+        if record.replan_attempted:
+            self._block(milestone.id, package.id, record, "replan already attempted; refusing escalation loop", key)
+            return
+        record.replan_attempted = True
+        from .reasoning import ReasoningRunner
+
+        reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
+        self.store.event("REPLAN_STARTED", milestoneId=milestone.id, workPackageId=package.id, workKey=key, reason=reason)
+        try:
+            result = reasoning.replan(milestone, package, reason)
+        except Exception as error:
+            self._block(milestone.id, package.id, record, f"Codex replan unavailable or budget exhausted: {error}", key)
+            return
+        if result.get("status") == "ARCHITECTURE_CONTRADICTION":
+            try:
+                result = reasoning.emergency(milestone, package, str(result.get("reason") or reason))
+            except Exception as error:
+                self._block(milestone.id, package.id, record, f"Codex emergency unavailable or budget exhausted: {error}", key)
+                return
+        if result.get("status") != "REPLANNED":
+            self._block(milestone.id, package.id, record, "Codex escalation did not produce a safe deterministic plan", key)
+            return
+        record.status = PackageStatus.BLOCKED
+        record.blocked_reason = "superseded by bounded Codex replan"
+        record.last_error = reason
+        self.store.event("REPLAN_COMPLETED", milestoneId=milestone.id, workPackageId=package.id, workKey=key)
 
     def _notify(self, severity: str, message: str) -> None:
         if not self.config.notification_command:
@@ -569,10 +723,7 @@ class FactoryController:
             return
         passes = int(metadata.get("convergencePasses", 0))
         if passes >= self.config.max_convergence_passes:
-            metadata["convergenceBlocked"] = True
-            reason = "milestone convergence pass budget exhausted"
-            self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone.id, reason=reason)
-            self._notify("FATAL", reason)
+            self._replan_convergence(milestone, metadata)
             return
         from .reasoning import ReasoningRunner, write_remediation
 
@@ -590,8 +741,37 @@ class FactoryController:
         for gap in result["gaps"]:
             self.store.event(
                 "CONVERGENCE_GAP_FOUND", milestoneId=milestone.id,
-                workPackageId=gap["id"], attempt=passes + 1,
+                workPackageId=gap["id"], workKey=work_key(milestone.id, gap["id"]), attempt=passes + 1,
             )
+
+    def _replan_convergence(self, milestone: Milestone, metadata: dict[str, Any]) -> None:
+        if metadata.get("convergenceReplanAttempted"):
+            self._block_factory(milestone.id, metadata, "convergence replan already attempted; refusing escalation loop")
+            return
+        metadata["convergenceReplanAttempted"] = True
+        from .reasoning import ReasoningRunner
+
+        reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
+        failed = milestone.packages[-1]
+        reason = "repeated convergence gaps indicate a decomposition or architecture-level mismatch"
+        self.store.event("REPLAN_STARTED", milestoneId=milestone.id, workPackageId=failed.id, workKey=work_key(milestone.id, failed.id), reason=reason)
+        try:
+            result = reasoning.replan(milestone, failed, reason)
+        except Exception as error:
+            self._block_factory(milestone.id, metadata, f"Codex convergence replan unavailable or budget exhausted: {error}")
+            return
+        if result.get("status") == "ARCHITECTURE_CONTRADICTION":
+            try:
+                result = reasoning.emergency(milestone, failed, str(result.get("reason") or reason))
+            except Exception as error:
+                self._block_factory(milestone.id, metadata, f"Codex emergency unavailable or budget exhausted: {error}")
+                return
+        if result.get("status") != "REPLANNED":
+            self._block_factory(milestone.id, metadata, "Codex convergence escalation did not produce a deterministic plan")
+            return
+        metadata["convergencePasses"] = 0
+        metadata["milestoneConverged"] = False
+        self.store.event("REPLAN_COMPLETED", milestoneId=milestone.id, reason=reason)
 
     def _advance_or_audit(
         self,
@@ -628,7 +808,13 @@ class FactoryController:
         write_remediation(self.config, milestone, [package])
         metadata["finalAuditConverged"] = False
         metadata["milestoneConverged"] = False
-        self.store.event("CONVERGENCE_GAP_FOUND", milestoneId=milestone.id, workPackageId=package["id"], reason="final audit")
+        self.store.event(
+            "CONVERGENCE_GAP_FOUND",
+            milestoneId=milestone.id,
+            workPackageId=package["id"],
+            workKey=work_key(milestone.id, package["id"]),
+            reason="final audit",
+        )
 
     def _block_factory(self, milestone_id: str, metadata: dict[str, Any], reason: str) -> None:
         metadata["convergenceBlocked"] = True
@@ -714,6 +900,66 @@ def _provider_for_attempt(preferred: str, completed_attempts: int) -> str:
     if completed_attempts == 0:
         return preferred
     return "agy" if preferred == "muse" else "muse"
+
+
+def _safe_alternate_retry(
+    root: Path,
+    integration_branch: str,
+    branch: str,
+    session: Session,
+    pr: PullRequest | None,
+    remote_branch_exists: bool,
+) -> tuple[bool, str]:
+    if pr is not None:
+        return False, "an open PR contains durable or ambiguous work"
+    if remote_branch_exists:
+        return False, "a remote implementation branch exists without a correlated PR"
+    workspace = Path(session.workspace_path) if session.workspace_path else None
+    if workspace and workspace.exists():
+        return _clean_without_commits(workspace, "HEAD", integration_branch)
+    local_branch = _git_ref_exists(root, branch)
+    if local_branch:
+        return _clean_without_commits(root, branch, integration_branch)
+    return True, "no PR, remote branch, local branch, or surviving workspace"
+
+
+def _clean_without_commits(repo: Path, head: str, integration_branch: str) -> tuple[bool, str]:
+    import subprocess
+
+    status = subprocess.run(
+        ["git", "-C", str(repo), "status", "--porcelain", "--untracked-files=all"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if status.returncode != 0:
+        return False, "workspace state cannot be inspected deterministically"
+    if status.stdout.strip():
+        return False, "workspace has uncommitted changes"
+    for base in (f"origin/{integration_branch}", integration_branch):
+        if not _git_ref_exists(repo, base):
+            continue
+        count = subprocess.run(
+            ["git", "-C", str(repo), "rev-list", "--count", f"{base}..{head}"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if count.returncode == 0:
+            if count.stdout.strip() == "0":
+                return True, f"clean workspace with no commits beyond {base}"
+            return False, f"workspace has {count.stdout.strip()} durable commit(s) beyond {base}"
+    return False, "integration base is unavailable for commit comparison"
+
+
+def _git_ref_exists(repo: Path, ref: str) -> bool:
+    import subprocess
+
+    return subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--verify", "--quiet", ref],
+        capture_output=True,
+        check=False,
+    ).returncode == 0
 
 
 def _worktree_count(root: Path) -> int:

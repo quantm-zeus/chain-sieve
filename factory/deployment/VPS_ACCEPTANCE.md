@@ -4,6 +4,12 @@ Current classification: **READY_FOR_VPS_VALIDATION**. This is not approval to me
 
 The audit ran on macOS. AO, Spec Kit, tmux, Node/pnpm, and systemd are not installed on this host, and no explicit target Ubuntu VPS SSH host was configured or reached. Consequently, every gate requiring a real AO/GitHub provider lifecycle or Linux/systemd/reboot boundary remains `NOT_RUN`; no local simulation was promoted to a live pass. The machine-readable record is `VPS_ACCEPTANCE.json`.
 
+The hardening pass adds live gates for renewable GitHub App token rotation,
+installation identity, root-checkout integrity, alternate-provider failover,
+and Codex replan escalation. Those remain `NOT_RUN` until the target host is
+exercised. Local deterministic proof is sufficient only for heartbeat liveness
+classification and milestone-qualified global work identity.
+
 ## Verified locally
 
 - Direct tag provenance: AO `v0.12.3` at `b48c98c94ca0039ad1bc42bd1b78134d3ff5773d`; Spec Kit `v0.16.2` peeled to `4871b485f97c7fa452ec58eba325d87536c55c34`.

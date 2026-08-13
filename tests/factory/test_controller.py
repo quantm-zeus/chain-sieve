@@ -12,7 +12,7 @@ from factory.controller.commands import CommandRunner
 from factory.controller.config import CodexRoute, FactoryConfig
 from factory.controller.controller import FactoryController
 from factory.controller.github import ci_gate
-from factory.controller.models import Issue, Milestone, PackageStatus, PullRequest, Session, Snapshot, WorkPackage
+from factory.controller.models import Issue, Milestone, PackageStatus, PullRequest, Session, Snapshot, WorkPackage, work_key
 from factory.controller.policy import protected_path_violations, reviewer_for
 from factory.controller.store import StateStore
 
@@ -31,6 +31,10 @@ def package(package_id: str, dependencies: list[str] | None = None) -> dict[str,
 
 def milestone(*packages: dict[str, object]) -> Milestone:
     return Milestone.from_dict({"id": "m1", "objective": "test", "workPackages": list(packages)})
+
+
+def key(package_id: str, milestone_id: str = "m1") -> str:
+    return work_key(milestone_id, package_id)
 
 
 class FakeGitHub:
@@ -73,6 +77,7 @@ def config(root: Path) -> FactoryConfig:
         max_milestone_wall_clock_seconds=600,
         max_idle_seconds=30,
         max_starting_seconds=10,
+        max_tick_duration_seconds=30,
         disk_min_free_gib=0,
         memory_min_free_mib=0,
         max_worktrees=999,
@@ -143,8 +148,9 @@ class GateTests(unittest.TestCase):
         work = WorkPackage.from_dict(package("a"))
         self.assertEqual(protected_path_violations(("factory/controller.py",), ("factory/**",), work), ("factory/controller.py",))
         allowed = package("a")
-        allowed["authorizedProtectedPaths"] = ["factory/controller.py"]
-        self.assertEqual(protected_path_violations(("factory/controller.py",), ("factory/**",), WorkPackage.from_dict(allowed)), ())
+        allowed["risk"] = "HIGH"
+        allowed["authorizedProtectedPaths"] = ["package.json"]
+        self.assertEqual(protected_path_violations(("package.json",), ("package.json",), WorkPackage.from_dict(allowed)), ())
 
     def test_cross_provider_mapping(self) -> None:
         self.assertEqual(reviewer_for("muse"), "agy")
@@ -156,14 +162,14 @@ class EnvironmentTests(unittest.TestCase):
         runner = CommandRunner(Path.cwd(), {
             "PATH": "/bin",
             "HOME": "/tmp/controller",
-            "GH_TOKEN": "integration-secret",
+            "CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH": "/integration/key.pem",
             "OPENAI_API_KEY": "codex-secret",
             "META_API_KEY": "muse-secret",
             "AO_RUN_FILE": "/run/ao.json",
         })
         ao_env = runner.env(("AO_RUN_FILE",))
         self.assertEqual(ao_env["AO_RUN_FILE"], "/run/ao.json")
-        self.assertNotIn("GH_TOKEN", ao_env)
+        self.assertNotIn("CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH", ao_env)
         self.assertNotIn("OPENAI_API_KEY", ao_env)
         self.assertNotIn("META_API_KEY", ao_env)
 
@@ -182,42 +188,42 @@ class ReconciliationTests(unittest.TestCase):
     def test_merged_dependency_makes_dependent_ready(self) -> None:
         plan = milestone(package("a"), package("b", ["a"]))
         issues = {
-            "a": Issue(1, "CLOSED", "", "url/1", "factory-bot"),
-            "b": Issue(2, "OPEN", "", "url/2", "factory-bot"),
+            key("a"): Issue(1, "CLOSED", "", "url/1", "factory-bot"),
+            key("b"): Issue(2, "OPEN", "", "url/2", "factory-bot"),
         }
         merged = PullRequest(10, "MERGED", "factory/a", "a" * 40, "pr/10", "UNKNOWN", "UNKNOWN", merged_at="now")
-        records = self.controller(Snapshot(issues=issues, prs={"a": [merged]})).reconcile(plan, Snapshot(issues=issues, prs={"a": [merged]}))
-        self.assertEqual(records["a"].status, PackageStatus.COMPLETED)
-        self.assertEqual(records["b"].status, PackageStatus.READY)
+        records = self.controller(Snapshot(issues=issues, prs={key("a"): [merged]})).reconcile(plan, Snapshot(issues=issues, prs={key("a"): [merged]}))
+        self.assertEqual(records[key("a")].status, PackageStatus.COMPLETED)
+        self.assertEqual(records[key("b")].status, PackageStatus.READY)
 
     def test_active_session_prevents_duplicate_spawn(self) -> None:
         plan = milestone(package("a"))
-        issues = {"a": Issue(1, "OPEN", "", "url/1", "factory-bot")}
-        sessions = {"a": [Session("ao-1", "factory/a", "muse", "working", "active", "1")]}
+        issues = {key("a"): Issue(1, "OPEN", "", "url/1", "factory-bot")}
+        sessions = {key("a"): [Session("ao-1", f"factory/{key('a')}", "muse", "working", "active", "1")]}
         snapshot = Snapshot(issues=issues, sessions=sessions)
-        record = self.controller(snapshot).reconcile(plan, snapshot)["a"]
+        record = self.controller(snapshot).reconcile(plan, snapshot)[key("a")]
         self.assertEqual(record.status, PackageStatus.ACTIVE)
         self.assertEqual(record.session_id, "ao-1")
 
     def test_ambiguous_duplicate_sessions_block_without_deletion(self) -> None:
         plan = milestone(package("a"))
-        issues = {"a": Issue(1, "OPEN", "", "url/1", "factory-bot")}
-        sessions = {"a": [
-            Session("ao-1", "factory/a", "muse", "working", "active", "1"),
-            Session("ao-2", "factory/a", "agy", "working", "active", "1"),
+        issues = {key("a"): Issue(1, "OPEN", "", "url/1", "factory-bot")}
+        sessions = {key("a"): [
+            Session("ao-1", f"factory/{key('a')}", "muse", "working", "active", "1"),
+            Session("ao-2", f"factory/{key('a')}", "agy", "working", "active", "1"),
         ]}
         snapshot = Snapshot(issues=issues, sessions=sessions)
-        record = self.controller(snapshot).reconcile(plan, snapshot)["a"]
+        record = self.controller(snapshot).reconcile(plan, snapshot)[key("a")]
         self.assertEqual(record.status, PackageStatus.BLOCKED)
         self.assertIn("preserving", record.blocked_reason or "")
 
     def test_stale_active_process_is_reported_stuck(self) -> None:
         plan = milestone(package("a"))
-        issues = {"a": Issue(1, "OPEN", "", "url/1", "factory-bot")}
+        issues = {key("a"): Issue(1, "OPEN", "", "url/1", "factory-bot")}
         stale = (datetime.now(UTC) - timedelta(seconds=31)).isoformat()
-        sessions = {"a": [Session("ao-1", "factory/a", "muse", "working", "active", "1", last_activity_at=stale)]}
+        sessions = {key("a"): [Session("ao-1", f"factory/{key('a')}", "muse", "working", "active", "1", last_activity_at=stale)]}
         snapshot = Snapshot(issues=issues, sessions=sessions)
-        record = self.controller(snapshot).reconcile(plan, snapshot)["a"]
+        record = self.controller(snapshot).reconcile(plan, snapshot)[key("a")]
         self.assertEqual(record.status, PackageStatus.STUCK)
         self.assertEqual(record.last_progress_at, stale)
 

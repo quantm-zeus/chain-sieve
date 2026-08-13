@@ -32,7 +32,7 @@ gh api --method PUT "repos/$repo/branches/$branch/protection" \
   "allow_force_pushes": false,
   "allow_deletions": false,
   "block_creations": false,
-  "required_conversation_resolution": true,
+  "required_conversation_resolution": false,
   "lock_branch": false,
   "allow_fork_syncing": false
 }

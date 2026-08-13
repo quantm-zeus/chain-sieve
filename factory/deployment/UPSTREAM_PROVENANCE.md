@@ -24,6 +24,10 @@ The integration is exact pinned-upstream native support, not a ChainSieve patch,
 - Agy waiting-input limitation: the exact pin has no native Agy waiting-input hook or terminal detector. ChainSieve therefore does not claim this capability; the controller's bounded meaningful-progress timeout reports `STUCK` and applies bounded remediation. This limitation requires live validation before cutover.
 - Workspace binding: AO's native `gitworktree` adapter creates one branch-bound worktree per session under its managed root; its tmux runtime starts the provider in that workspace. Agy additionally receives the exact path through `--add-dir`.
 - Reviews: both `backend/internal/adapters/reviewer/muse` and `backend/internal/adapters/reviewer/agy` are native at this commit. ChainSieve binds their machine verdict to the exact PR head SHA before merge.
+- Renewable SCM authentication: `backend/internal/adapters/scm/github/auth.go` defines `GHTokenSource`, reruns `gh auth token` after its five-minute cache expires, and exposes invalidation. `client.go` invalidates on auth-class 401/403 responses. ChainSieve supplies that supported command with the worker GitHub App helper and does not patch AO.
+- Tracker limitation: the separate GitHub issue-enrichment tracker in this pin accepts only `AO_GITHUB_TOKEN`/`GITHUB_TOKEN`. Production leaves it disabled instead of installing a static one-hour token; the controller passes the complete trusted issue-derived prompt at spawn.
+- Managed worktree root: `backend/internal/daemon/lifecycle_wiring.go` configures `filepath.Join(AO_DATA_DIR, "worktrees")`.
+- Safe teardown: `ao session kill` routes through Session Manager `Kill`, which removes a clean worktree and returns `freed=true`, but converts `ErrWorkspaceDirty` into a terminated, preserved workspace. `ao session cleanup` likewise skips dirty worktrees. ChainSieve uses these semantics only after its own no-PR/no-branch/no-durable-commit evidence gate.
 
 ## Spec Kit
 

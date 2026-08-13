@@ -53,16 +53,34 @@ getent group chainsieve-controller >/dev/null || groupadd --system chainsieve-co
 id chainsieve-worker >/dev/null 2>&1 || useradd --system --create-home --home-dir /var/lib/chainsieve-worker --gid chainsieve-worker --groups chainsieve --shell /usr/sbin/nologin chainsieve-worker
 id chainsieve-controller >/dev/null 2>&1 || useradd --system --create-home --home-dir /var/lib/chainsieve-controller --gid chainsieve-controller --groups chainsieve --shell /usr/sbin/nologin chainsieve-controller
 
-# AO needs Git's administrative directory to create isolated worktrees and
-# branch refs. Product source in the root checkout remains non-writable.
+# Root checkout source is root-owned and non-writable to workers/controllers.
+# AO receives only the .git administrative writes needed by `git worktree add`.
+chown -R root:chainsieve "$repo"
+chmod -R g+rX,o-rwx "$repo"
+find "$repo" -path "$repo/.git" -prune -o -type d -exec chmod g-w,o-w '{}' \;
+find "$repo" -path "$repo/.git" -prune -o -type f -exec chmod g-w,o-w '{}' \;
 chgrp -R chainsieve-worker "$repo/.git"
 chmod -R g+rwX "$repo/.git"
 find "$repo/.git" -type d -exec chmod g+s '{}' \;
 runuser -u chainsieve-worker -- test -w "$repo/.git"
+runuser -u chainsieve-worker -- test ! -w "$repo/factory"
+runuser -u chainsieve-worker -- test ! -w "$repo/.github/workflows"
+
+# GitHub App installation tokens authenticate HTTPS Git, not SSH. Normalize the
+# existing GitHub origin without changing its owner/repository identity.
+origin_url="$(git -C "$repo" remote get-url origin)"
+case "$origin_url" in
+  git@github.com:*) github_repo="${origin_url#git@github.com:}" ;;
+  https://github.com/*) github_repo="${origin_url#https://github.com/}" ;;
+  *) echo "origin must be a github.com SSH or HTTPS URL" >&2; exit 1 ;;
+esac
+github_repo="${github_repo%.git}"
+[[ "$github_repo" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || { echo "invalid GitHub origin repository" >&2; exit 1; }
+git -C "$repo" remote set-url origin "https://github.com/$github_repo.git"
 
 install -d -o root -g chainsieve -m 0750 /etc/chainsieve /opt/chainsieve/vendor /opt/chainsieve/factory-bin
 install -d -o root -g chainsieve -m 0755 /usr/local/lib/chainsieve/providers
-install -d -o chainsieve-worker -g chainsieve -m 0750 /var/lib/chainsieve/ao /var/lib/chainsieve/worktrees
+install -d -o chainsieve-worker -g chainsieve -m 0750 /var/lib/chainsieve/ao
 install -d -o chainsieve-controller -g chainsieve -m 0750 /var/lib/chainsieve/factory
 install -d -o root -g chainsieve -m 0755 /srv/chainsieve
 python3.12 -m venv --clear /srv/chainsieve/.venv
@@ -122,6 +140,9 @@ install -o root -g chainsieve -m 0755 "$muse_source" /usr/local/lib/chainsieve/p
 install -o root -g chainsieve -m 0755 "$agy_source" /usr/local/lib/chainsieve/providers/agy
 install -o root -g chainsieve -m 0755 "$repo/factory/deployment/bin/muse" /opt/chainsieve/factory-bin/muse
 install -o root -g chainsieve -m 0755 "$repo/factory/deployment/bin/agy" /opt/chainsieve/factory-bin/agy
+install -o root -g chainsieve -m 0755 "$repo/factory/deployment/bin/gh" /opt/chainsieve/factory-bin/gh
+install -o root -g chainsieve -m 0755 "$repo/factory/deployment/bin/github-app-askpass" /opt/chainsieve/factory-bin/github-app-askpass
+install -o root -g chainsieve -m 0755 "$repo/factory/deployment/github-app-token.py" /opt/chainsieve/factory-bin/github-app-token
 MUSE_NO_AUTO_UPDATE=1 /opt/chainsieve/factory-bin/muse --version | grep -Fx "$muse_version" >/dev/null
 /opt/chainsieve/factory-bin/agy --version | grep -Fx "$agy_version" >/dev/null
 install -o root -g root -m 0644 "$repo/factory/deployment/systemd/chainsieve-ao.service" /etc/systemd/system/chainsieve-ao.service

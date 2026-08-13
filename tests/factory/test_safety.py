@@ -9,22 +9,22 @@ from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from factory.controller.commands import CommandRunner
+from factory.controller.commands import CommandResult, CommandRunner
 from factory.controller.controller import FactoryController, _expired, _provider_for_attempt, _retry_delay
 from factory.controller.github import GitHub
 from factory.controller.models import Issue, Milestone, PackageRecord, PackageStatus, PullRequest, Session, Snapshot, WorkPackage
 from factory.controller.store import StateStore
 from factory.controller.reasoning import _write_planning_bundle
 from factory.controller.reasoning import ReasoningRunner
-from test_controller import FakeAO, FakeGitHub, config, milestone, package
+from test_controller import FakeAO, FakeGitHub, config, key, milestone, package
 
 
 class StaticRunner:
     def __init__(self, payload: object) -> None:
         self.payload = payload
 
-    def json(self, argv, **kwargs):
-        return self.payload
+    def run(self, argv, **kwargs):
+        return CommandResult(tuple(argv), json.dumps(self.payload), "", 0)
 
 
 class CapturingRunner:
@@ -51,6 +51,7 @@ class ActionAO:
     def __init__(self, reviews=None) -> None:
         self.sent: list[tuple[str, str]] = []
         self.review_payload = reviews or {"reviews": []}
+        self.killed: list[str] = []
 
     def send(self, session_id: str, message: str) -> None:
         self.sent.append((session_id, message))
@@ -60,6 +61,10 @@ class ActionAO:
 
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         pass
+
+    def kill(self, session_id: str) -> bool:
+        self.killed.append(session_id)
+        return True
 
 
 def work_to_dict(work: WorkPackage) -> dict[str, object]:
@@ -121,7 +126,7 @@ class SafetyTests(unittest.TestCase):
 
         class FlakyGitHub(FakeGitHub):
             def __init__(self):
-                super().__init__(Snapshot(issues={"a": issue}))
+                super().__init__(Snapshot(issues={key("a"): issue}))
                 self.issue_calls = 0
 
             def issues(self):
@@ -144,8 +149,8 @@ class SafetyTests(unittest.TestCase):
     def test_terminated_session_is_preserved_for_restore(self) -> None:
         plan = milestone(package("a"))
         issue = Issue(1, "OPEN", "", "url/1", "factory-bot")
-        session = Session("ao-1", "factory/a", "muse", "terminated", "terminated", "1")
-        snapshot = Snapshot(issues={"a": issue}, sessions={"a": [session]})
+        session = Session("ao-1", f"factory/{key('a')}", "muse", "terminated", "terminated", "1")
+        snapshot = Snapshot(issues={key("a"): issue}, sessions={key("a"): [session]})
         store = StateStore(self.root / "state")
         prior = PackageRecord(
             status=PackageStatus.ACTIVE,
@@ -154,9 +159,9 @@ class SafetyTests(unittest.TestCase):
             provider="muse",
             task_attempts=1,
         )
-        store.save({"a": prior})
+        store.save({key("a"): prior})
         controller = FactoryController(self.root, config(self.root), store, FakeGitHub(snapshot), FakeAO(snapshot))
-        record = controller.reconcile(plan, snapshot)["a"]
+        record = controller.reconcile(plan, snapshot)[key("a")]
         self.assertEqual(record.status, PackageStatus.FAILED)
         self.assertEqual(record.session_id, "ao-1")
 
@@ -165,7 +170,7 @@ class SafetyTests(unittest.TestCase):
         cfg = config(self.root)
         cfg.plan_path.write_text(json.dumps(plan), encoding="utf-8")
         store = StateStore(cfg.state_dir)
-        store.save({"a": PackageRecord(status=PackageStatus.READY)})
+        store.save({key("a"): PackageRecord(status=PackageStatus.READY)})
 
         class ExplodingGitHub:
             def __getattr__(self, name):
@@ -174,11 +179,11 @@ class SafetyTests(unittest.TestCase):
         controller = FactoryController(self.root, cfg, store, ExplodingGitHub(), object())
         before = store.state_path.read_bytes()
         status = controller.status()
-        self.assertEqual(status["packages"]["a"]["status"], "READY")
+        self.assertEqual(status["packages"][key("a")]["status"], "READY")
         self.assertEqual(store.state_path.read_bytes(), before)
 
     def test_untrusted_issue_and_comment_text_cannot_define_work(self) -> None:
-        marker = "<!-- chainsieve-work-package:evil -->"
+        marker = "<!-- chainsieve-work-package:m1--evil -->"
         raw = [
             {"number": 1, "state": "OPEN", "body": marker, "url": "url/1", "author": {"login": "attacker"}},
             {"number": 2, "state": "OPEN", "body": "owner issue without marker", "url": "url/2", "author": {"login": "factory-bot"}},
@@ -202,23 +207,26 @@ class SafetyTests(unittest.TestCase):
         github = GitHub(StaticRunner(raw), "owner/repo", ("factory-bot",), ("factory-bot",), "main")
         self.assertEqual(github.prs(), {})
 
-    def test_worker_subprocess_sees_worker_keys_but_not_integration_keys(self) -> None:
+    def test_provider_subprocess_never_inherits_integration_app_material(self) -> None:
         runner = CommandRunner(self.root, {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
-            "GITHUB_TOKEN": "worker",
+            "CHAINSIEVE_GITHUB_APP_ID": "integration-app",
+            "CHAINSIEVE_GITHUB_INSTALLATION_ID": "123",
+            "CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH": "/integration/key.pem",
             "META_API_KEY": "provider",
-            "GH_TOKEN": "integration",
             "OPENAI_API_KEY": "planner",
         })
         probe = (
             "import json,os; print(json.dumps({k:(k in os.environ) for k in "
-            "['GITHUB_TOKEN','META_API_KEY','GH_TOKEN','OPENAI_API_KEY']}))"
+            "['CHAINSIEVE_GITHUB_APP_ID','CHAINSIEVE_GITHUB_INSTALLATION_ID',"
+            "'CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH','META_API_KEY','OPENAI_API_KEY']}))"
         )
-        result = runner.run([sys.executable, "-c", probe], allowed_env=("GITHUB_TOKEN", "META_API_KEY"))
+        result = runner.run([sys.executable, "-c", probe], allowed_env=("META_API_KEY",))
         self.assertEqual(json.loads(result.stdout), {
-            "GITHUB_TOKEN": True,
+            "CHAINSIEVE_GITHUB_APP_ID": False,
+            "CHAINSIEVE_GITHUB_INSTALLATION_ID": False,
+            "CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH": False,
             "META_API_KEY": True,
-            "GH_TOKEN": False,
             "OPENAI_API_KEY": False,
         })
 
@@ -229,7 +237,7 @@ class SafetyTests(unittest.TestCase):
             encoding="utf-8",
         )
         store = StateStore(cfg.state_dir)
-        store.save({"a": PackageRecord(status=PackageStatus.ACTIVE, provider="agy", task_attempts=2, correction_attempts=1)})
+        store.save({key("a"): PackageRecord(status=PackageStatus.ACTIVE, provider="agy", task_attempts=2, correction_attempts=1)})
         controller = FactoryController(self.root, cfg, store, object(), object())
         usage = controller.status()["usage"]
         self.assertEqual(usage["workerStarts"], 2)
@@ -244,7 +252,7 @@ class SafetyTests(unittest.TestCase):
             "codexCallsByRole": {"planner": 1, "replan": 1, "final_audit": 1, "emergency": 1},
         }), encoding="utf-8")
         store = StateStore(cfg.state_dir)
-        store.save({"a": PackageRecord(status=PackageStatus.READY)})
+        store.save({key("a"): PackageRecord(status=PackageStatus.READY)})
         usage = FactoryController(self.root, cfg, store, object(), object()).status()["usage"]["codex"]
         self.assertEqual(usage, {
             "total": 4, "plannerCalls": 1, "replanCalls": 1, "finalAuditCalls": 1, "emergencyCalls": 1,
@@ -274,12 +282,12 @@ class SafetyTests(unittest.TestCase):
         cfg = config(self.root)
         cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("a")]}), encoding="utf-8")
         issue = Issue(1, "OPEN", "", "url/1", "factory-bot")
-        snapshot = Snapshot(issues={"a": issue})
+        snapshot = Snapshot(issues={key("a"): issue})
         ao = SpawningAO()
         repo = Path(__file__).resolve().parents[2]
         controller = FactoryController(repo, cfg, StateStore(cfg.state_dir), FakeGitHub(snapshot), ao)
         records = controller.tick()
-        self.assertEqual(records["a"].status, PackageStatus.STARTING)
+        self.assertEqual(records[key("a")].status, PackageStatus.STARTING)
         self.assertEqual(len(ao.spawns), 1)
         self.assertFalse((cfg.state_dir / "usage.json").exists())
 
@@ -330,6 +338,8 @@ class SafetyTests(unittest.TestCase):
             "ci_correction", "parallel_workers", "duplicate_prevention", "worker_credential_boundary",
             "untrusted_comment_filter", "systemd", "ssh_disconnect", "controller_crash", "vps_reboot",
             "network_retry", "resource_circuit_breaker", "codex_cost_routing", "status_observability",
+            "github_token_rotation", "github_installation_identity", "root_checkout_integrity",
+            "alternate_provider_failover", "codex_replan_escalation", "status_liveness", "global_work_identity",
         }
         self.assertEqual({item["gate"] for item in value["gates"]}, expected)
         self.assertTrue(all(item["status"] in {"PASS", "FAIL", "NOT_RUN"} for item in value["gates"]))
@@ -408,7 +418,7 @@ class SafetyTests(unittest.TestCase):
     def test_disk_pressure_opens_resource_gate_without_deleting_state(self) -> None:
         cfg = replace(config(self.root), disk_min_free_gib=10**9)
         store = StateStore(cfg.state_dir)
-        store.save({"a": PackageRecord(status=PackageStatus.ACTIVE, session_id="ao-1")})
+        store.save({key("a"): PackageRecord(status=PackageStatus.ACTIVE, session_id="ao-1")})
         controller = FactoryController(self.root, cfg, store, object(), object())
         self.assertFalse(controller.resource_state().allowed)
         self.assertTrue(store.state_path.exists())
@@ -417,24 +427,26 @@ class SafetyTests(unittest.TestCase):
         cfg = replace(config(self.root), disk_min_free_gib=10**9)
         cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("a")]}), encoding="utf-8")
         issue = Issue(1, "OPEN", "", "url/1", "factory-bot")
-        snapshot = Snapshot(issues={"a": issue})
+        snapshot = Snapshot(issues={key("a"): issue})
         ao = SpawningAO()
         repo = Path(__file__).resolve().parents[2]
         controller = FactoryController(repo, cfg, StateStore(cfg.state_dir), FakeGitHub(snapshot), ao)
         records = controller.tick()
-        self.assertEqual(records["a"].status, PackageStatus.READY)
+        self.assertEqual(records[key("a")].status, PackageStatus.READY)
         self.assertEqual(ao.spawns, [])
         self.assertTrue(any(event["type"] == "CIRCUIT_BREAKER_OPENED" for event in controller.store.history()))
 
-    def test_waiting_input_exhaustion_blocks_without_more_prompts(self) -> None:
-        cfg = config(self.root)
+    def test_waiting_input_exhaustion_requeues_clean_work_without_more_prompts(self) -> None:
+        cfg = replace(config(self.root), max_task_attempts=2)
         ao = ActionAO()
-        controller = FactoryController(self.root, cfg, StateStore(cfg.state_dir), object(), ao)
-        record = PackageRecord(status=PackageStatus.ACTIVE, correction_attempts=cfg.max_correction_attempts)
+        controller = FactoryController(self.root, cfg, StateStore(cfg.state_dir), FakeGitHub(Snapshot()), ao)
+        record = PackageRecord(status=PackageStatus.ACTIVE, task_attempts=1, correction_attempts=cfg.max_correction_attempts)
         session = Session("ao-1", "factory/a", "muse", "working", "waiting_input", "1")
-        controller._handle_activity(milestone(package("a")), "a", record, session)
-        self.assertEqual(record.status, PackageStatus.BLOCKED)
+        plan = milestone(package("a"))
+        controller._handle_activity(plan, plan.packages[0], key("a"), record, session, None)
+        self.assertEqual(record.status, PackageStatus.READY)
         self.assertEqual(ao.sent, [])
+        self.assertEqual(ao.killed, ["ao-1"])
 
 
 if __name__ == "__main__":

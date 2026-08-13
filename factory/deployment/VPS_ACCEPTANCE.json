@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-13T15:06:40Z",
+  "generatedAt": "2026-08-13T16:00:19Z",
   "classification": "READY_FOR_VPS_VALIDATION",
   "repositoryCommit": "Use the git commit containing this artifact; the final published SHA is recorded in the draft PR",
   "target": "Ubuntu VPS not configured or reached from the macOS audit host",
@@ -27,6 +27,13 @@
     {"gate": "network_retry", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Scoped deterministic GitHub outage test proves capped exponential backoff, recovery, one spawn, and zero Codex calls"]},
     {"gate": "resource_circuit_breaker", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Fault-injected disk threshold locally blocks new spawn, preserves state, emits breaker event, and leaves active-work handling enabled", "Complete repeated worker/provider/convergence failure lifecycle was not run on the target VPS"]},
     {"gate": "codex_cost_routing", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Account cache supports requested model/effort pairs", "Per-role command and budget tests pass", "Routine tick and network recovery tests record zero Codex calls"]},
-    {"gate": "status_observability", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Status distinguishes STARTING, ACTIVE, IDLE, WAITING_INPUT, CI, REVIEW, BLOCKED, FAILED, COMPLETE, and STUCK", "Stale activity deterministically becomes STUCK", "Status remains local/read-only"]}
+    {"gate": "status_observability", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Status distinguishes controller liveness from product work state", "Status remains local/read-only"]},
+    {"gate": "github_token_rotation", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Fake token A -> auth failure -> token B rotation passes without process restart", "Live expiry/rotation under both GitHub App installations requires the target VPS"]},
+    {"gate": "github_installation_identity", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Controller validates App slug through GET /app and target-repository access under the installation token; actions are verified by fetched author/review evidence", "Actual production App installations and actor names are not configured on this host"]},
+    {"gate": "root_checkout_integrity", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Systemd and installer deterministically narrow writes to .git and AO_DATA_DIR/worktrees", "Actual chainsieve-worker denial/allowance probe requires systemd/Linux"]},
+    {"gate": "alternate_provider_failover", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Controller tests exercise clean Muse -> Agy and Agy -> Muse respawn", "Live AO/provider failure requires the target VPS"]},
+    {"gate": "codex_replan_escalation", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Deterministic tests prove first failure makes no Codex call, dual failure makes one replan call, and exhausted budget blocks", "Live Terra/Sol routing is not exercised by unit tests"]},
+    {"gate": "status_liveness", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Fresh heartbeat is ACTIVE; stale heartbeat and historical start alone are not ACTIVE", "No GitHub or LLM call is used"]},
+    {"gate": "global_work_identity", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Milestone-qualified work keys bind issues, branches, AO correlation, PRs, events, and state", "Same local package ID across milestones cannot inherit a prior merge"]}
   ]
 }

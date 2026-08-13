@@ -102,6 +102,55 @@ later milestone, edit files, or include work that belongs to the autonomous fact
         _write_planning_bundle(self.config.state_dir, planned)
         return value
 
+    def replan(self, milestone: Milestone, failed: WorkPackage, evidence: str) -> dict[str, Any]:
+        prompt = f"""You are the bounded ChainSieve deadlock replanner.
+
+Milestone `{milestone.id}` has exhausted safe implementation-provider handling for work package `{failed.id}`.
+Evidence: {evidence}
+
+Return a schema-valid result. Use ARCHITECTURE_CONTRADICTION only for a genuine contradiction in authoritative product
+requirements that cannot be resolved by decomposition. Otherwise return REPLANNED with a complete deterministic plan for
+the same milestone. Do not reuse failed package ID `{failed.id}`. Do not authorize immutable control-plane paths. Do not
+modify files.
+"""
+        return self._escalation_plan("replan", milestone, failed, prompt)
+
+    def emergency(self, milestone: Milestone, failed: WorkPackage, contradiction: str) -> dict[str, Any]:
+        prompt = f"""Resolve this exceptional architecture contradiction for ChainSieve milestone `{milestone.id}`:
+{contradiction}
+
+Return REPLANNED with a complete deterministic plan for the same milestone, or ARCHITECTURE_CONTRADICTION if authoritative
+requirements remain irreconcilable. Do not reuse failed package ID `{failed.id}`. Never weaken product authority or
+authorize immutable factory/control-plane paths. Do not modify files.
+"""
+        return self._escalation_plan("emergency", milestone, failed, prompt)
+
+    def _escalation_plan(
+        self, role: str, milestone: Milestone, failed: WorkPackage, prompt: str
+    ) -> dict[str, Any]:
+        output_path = self.config.state_dir / f"{role}-plan.json"
+        schema = self.root / "factory" / "schemas" / "replan.schema.json"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        self._invoke_codex(role, milestone.id, prompt, schema, output_path)
+        value = json.loads(output_path.read_text(encoding="utf-8"))
+        if value.get("status") == "ARCHITECTURE_CONTRADICTION":
+            return value
+        if value.get("status") != "REPLANNED" or not isinstance(value.get("plan"), dict):
+            raise RuntimeError(f"Codex {role} returned no deterministic plan")
+        planned = Milestone.from_dict(value["plan"])
+        if planned.id != milestone.id:
+            raise RuntimeError(f"Codex {role} changed milestone identity")
+        if failed.id in {item.id for item in planned.packages}:
+            raise RuntimeError(f"Codex {role} reused exhausted work-package ID {failed.id!r}")
+        _validate_requirement_ids(self.root, planned)
+        active_path = self.config.state_dir / "active-milestone.json"
+        temporary = active_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(value["plan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        temporary.chmod(0o640)
+        temporary.replace(active_path)
+        _write_planning_bundle(self.config.state_dir, planned)
+        return value
+
     def _codex_budget(self, milestone_id: str, role: str) -> tuple[dict[str, Any], int]:
         usage = self._usage()
         milestone_usage = usage.setdefault("milestones", {}).setdefault(milestone_id, {})

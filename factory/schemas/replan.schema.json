@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsieve.local/schemas/replan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "reason", "plan"],
+  "properties": {
+    "status": {"type": "string", "enum": ["REPLANNED", "ARCHITECTURE_CONTRADICTION"]},
+    "reason": {"type": "string", "minLength": 1},
+    "plan": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/milestonePlan"}
+      ]
+    }
+  },
+  "$defs": {
+    "milestonePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "id", "objective", "workPackages"],
+      "properties": {
+        "schemaVersion": {"type": "integer", "const": 1},
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "objective": {"type": "string", "minLength": 1},
+        "workPackages": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"$ref": "#/$defs/workPackage"}}
+      }
+    },
+    "workPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "objective", "acceptance", "dependencies", "parallelizable", "preferredProvider", "risk", "requirementIds", "authorizedProtectedPaths"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "objective": {"type": "string", "minLength": 1},
+        "acceptance": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}},
+        "parallelizable": {"type": "boolean"},
+        "preferredProvider": {"type": "string", "enum": ["muse", "agy"]},
+        "risk": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+        "requirementIds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "authorizedProtectedPaths": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}

@@ -63,7 +63,7 @@ class WorkPackage:
         for name, items in (("dependencies", dependencies), ("requirementIds", requirement_ids), ("authorizedProtectedPaths", authorized_paths)):
             if len(items) != len(set(items)):
                 raise ValueError(f"work package {package_id} has duplicate {name}")
-        return cls(
+        package = cls(
             id=package_id,
             objective=str(value["objective"]).strip(),
             acceptance=acceptance,
@@ -74,6 +74,10 @@ class WorkPackage:
             requirement_ids=requirement_ids,
             authorized_protected_paths=authorized_paths,
         )
+        from .policy import validate_path_authority
+
+        validate_path_authority(package)
+        return package
 
 
 @dataclass(frozen=True)
@@ -84,6 +88,9 @@ class Milestone:
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "Milestone":
+        milestone_id = str(value["id"]).strip()
+        if not milestone_id or any(ch not in "abcdefghijklmnopqrstuvwxyz0123456789-" for ch in milestone_id):
+            raise ValueError(f"invalid milestone id: {milestone_id!r}")
         packages = tuple(WorkPackage.from_dict(item) for item in value.get("workPackages", []))
         ids = [item.id for item in packages]
         if len(ids) != len(set(ids)):
@@ -96,7 +103,11 @@ class Milestone:
             if package.id in package.dependencies:
                 raise ValueError(f"{package.id} depends on itself")
         _assert_acyclic(packages)
-        return cls(id=str(value["id"]), objective=str(value["objective"]), packages=packages)
+        return cls(id=milestone_id, objective=str(value["objective"]), packages=packages)
+
+
+def work_key(milestone_id: str, package_id: str) -> str:
+    return f"{milestone_id}--{package_id}"
 
 
 def _assert_acyclic(packages: tuple[WorkPackage, ...]) -> None:
@@ -139,6 +150,7 @@ class PackageRecord:
     review_attempts: int = 0
     review_sha: str | None = None
     review_verdict: str | None = None
+    replan_attempted: bool = False
     blocked_reason: str | None = None
     last_error: str | None = None
     started_at: str | None = None
@@ -174,6 +186,7 @@ class PackageRecord:
             "review_attempts": self.review_attempts,
             "review_sha": self.review_sha,
             "review_verdict": self.review_verdict,
+            "replan_attempted": self.replan_attempted,
             "blocked_reason": self.blocked_reason,
             "last_error": self.last_error,
             "started_at": self.started_at,

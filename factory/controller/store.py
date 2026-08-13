@@ -21,6 +21,7 @@ class StateStore:
         self.events_path = directory / "events.jsonl"
         self.lock_path = directory / "controller.lock"
         self.review_dir = directory / "reviews"
+        self.heartbeat_path = directory / "heartbeat.json"
 
     def prepare(self) -> None:
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o750)
@@ -80,6 +81,26 @@ class StateStore:
             return []
         lines = self.events_path.read_text(encoding="utf-8").splitlines()
         return [json.loads(line) for line in lines[-limit:] if line.strip()]
+
+    def heartbeat(self, *, active: bool) -> None:
+        self.prepare()
+        payload = {
+            "controllerHeartbeatAt": utc_now(),
+            "pid": os.getpid(),
+            "active": active,
+        }
+        temporary = self.heartbeat_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
+        os.chmod(temporary, 0o640)
+        temporary.replace(self.heartbeat_path)
+
+    def heartbeat_state(self) -> dict[str, Any]:
+        if not self.heartbeat_path.exists():
+            return {}
+        try:
+            return dict(json.loads(self.heartbeat_path.read_text(encoding="utf-8")))
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            return {}
 
     @contextmanager
     def lock(self) -> Iterator[None]:

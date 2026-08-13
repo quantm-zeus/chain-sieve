@@ -78,12 +78,13 @@ class AgentOrchestrator:
             timeout=120,
         )
 
-    def kill(self, session_id: str) -> None:
-        self.runner.run(
+    def kill(self, session_id: str) -> bool:
+        result = self.runner.run(
             ["ao", "session", "kill", session_id, "--project", self.project_id],
             allowed_env=AO_ENV,
             timeout=120,
         )
+        return "workspace preserved" not in result.stdout.lower()
 
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         self._request("PUT", f"sessions/{session_id}/reviewer", {"harness": reviewer})

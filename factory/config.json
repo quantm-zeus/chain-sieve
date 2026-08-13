@@ -17,7 +17,8 @@
     "maxTaskWallClockSeconds": 14400,
     "maxMilestoneWallClockSeconds": 259200,
     "maxIdleSeconds": 900,
-    "maxStartingSeconds": 300
+    "maxStartingSeconds": 300,
+    "maxTickDurationSeconds": 300
   },
   "resources": {
     "diskMinFreeGiB": 15,

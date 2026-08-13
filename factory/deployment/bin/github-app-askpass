@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  *Username*) printf '%s\n' 'x-access-token' ;;
+  *Password*) exec "${CHAINSIEVE_GITHUB_TOKEN_HELPER:-/opt/chainsieve/factory-bin/github-app-token}" ;;
+  *) exit 1 ;;
+esac

@@ -20,7 +20,7 @@ Environment=AO_KEEP_DAEMON=1
 Environment=AO_HOST=127.0.0.1
 RuntimeDirectory=chainsieve-ao
 RuntimeDirectoryMode=0750
-StateDirectory=chainsieve/ao chainsieve/worktrees
+StateDirectory=chainsieve/ao
 StateDirectoryMode=0750
 ExecStart=/usr/local/bin/ao daemon
 ExecStop=/usr/local/bin/ao stop
@@ -37,7 +37,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/srv/chainsieve/repo /var/lib/chainsieve /var/lib/chainsieve-worker /run/chainsieve-ao
+ReadOnlyPaths=/srv/chainsieve/repo
+ReadWritePaths=/srv/chainsieve/repo/.git /var/lib/chainsieve/ao /var/lib/chainsieve-worker /run/chainsieve-ao
 RestrictSUIDSGID=true
 LockPersonality=true
 LimitNOFILE=65536

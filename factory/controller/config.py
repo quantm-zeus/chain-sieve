@@ -33,6 +33,7 @@ class FactoryConfig:
     max_milestone_wall_clock_seconds: int
     max_idle_seconds: int
     max_starting_seconds: int
+    max_tick_duration_seconds: int
     disk_min_free_gib: float
     memory_min_free_mib: int
     max_worktrees: int
@@ -76,8 +77,8 @@ class FactoryConfig:
             required_checks=tuple(str(item) for item in integration["requiredChecks"]),
             protected_paths=tuple(str(item) for item in integration["protectedPaths"]),
             trusted_actors=tuple(str(item) for item in integration["trustedActors"]),
-            worker_actors=tuple(str(item) for item in integration.get("workerActors", integration["trustedActors"])),
-            integration_actors=tuple(str(item) for item in integration.get("integrationActors", integration["trustedActors"])),
+            worker_actors=_actors("CHAINSIEVE_WORKER_GITHUB_ACTOR", integration.get("workerActors", integration["trustedActors"])),
+            integration_actors=_actors("CHAINSIEVE_INTEGRATION_GITHUB_ACTOR", integration.get("integrationActors", integration["trustedActors"])),
             integration_branch=str(
                 os.environ.get("CHAINSIEVE_INTEGRATION_BRANCH", integration.get("targetBranch", raw.get("defaultBranch", "main")))
             ),
@@ -95,6 +96,7 @@ class FactoryConfig:
                 for role in CODEX_ROLES
             },
             agy_model=str(models["agy"]["model"]),
+            max_tick_duration_seconds=int(budgets.get("maxTickDurationSeconds", 300)),
         )
         config.validate()
         return config
@@ -122,6 +124,8 @@ class FactoryConfig:
             raise ValueError("task and milestone wall-clock budgets must be positive")
         if self.max_idle_seconds <= 0 or self.max_starting_seconds <= 0:
             raise ValueError("idle and starting thresholds must be positive")
+        if self.max_tick_duration_seconds <= 0:
+            raise ValueError("maxTickDurationSeconds must be positive")
         if self.disk_min_free_gib < 0 or self.memory_min_free_mib < 0 or self.max_worktrees < 1:
             raise ValueError("resource gates must be non-negative and maxWorktrees positive")
         if not self.integration_branch or self.integration_branch.startswith("refs/"):
@@ -149,3 +153,9 @@ class FactoryConfig:
 def _resolve(root: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else root / path
+
+
+def _actors(environment_name: str, configured: list[str]) -> tuple[str, ...]:
+    override = os.environ.get(environment_name, "")
+    values = override.split(",") if override else configured
+    return tuple(item.strip() for item in values if item.strip())

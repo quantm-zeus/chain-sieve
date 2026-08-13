@@ -13,7 +13,9 @@ from .controller.config import FactoryConfig
 from .controller.controller import FactoryController
 from .controller.doctor import checks_json, run_doctor
 from .controller.github import GitHub
+from .controller.models import work_key
 from .controller.store import StateStore
+from .controller.token_source import GitHubAppTokenSource
 
 
 def root_path() -> Path:
@@ -32,6 +34,7 @@ def build() -> tuple[FactoryController, FactoryConfig, StateStore, CommandRunner
         config.integration_actors,
         config.worker_actors,
         config.integration_branch,
+        GitHubAppTokenSource.from_environment(),
     )
     ao = AgentOrchestrator(runner, config.project_id)
     return FactoryController(root, config, store, github, ao), config, store, runner
@@ -117,7 +120,13 @@ def main(argv: list[str] | None = None) -> int:
                 write_remediation(config, milestone, [package])
                 metadata["finalAuditConverged"] = False
                 metadata["milestoneConverged"] = False
-                store.event("CONVERGENCE_GAP_FOUND", milestoneId=milestone.id, workPackageId=package["id"], reason="final audit")
+                store.event(
+                    "CONVERGENCE_GAP_FOUND",
+                    milestoneId=milestone.id,
+                    workPackageId=package["id"],
+                    workKey=work_key(milestone.id, package["id"]),
+                    reason="final audit",
+                )
             store.save(records, metadata)
         print(json.dumps(value, indent=2))
         return 0 if value.get("status") == "CONVERGED" else 3
@@ -136,6 +145,7 @@ def _human_status(value: dict[str, object]) -> str:
         "CHAINSIEVE FACTORY",
         "",
         f"STATUS      {value['status']}",
+        f"CONTROLLER  {value['controllerLiveness']['state']}",
         f"UPTIME      {_duration(value.get('uptimeSeconds'))}",
         f"MILESTONE   {value['milestone']}",
         f"PROGRESS    {progress['completed']} / {progress['total']} complete",

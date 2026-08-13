@@ -11,6 +11,8 @@ from typing import Callable
 
 from .commands import CommandRunner
 from .config import FactoryConfig
+from .github import GitHub
+from .token_source import GitHubAppTokenSource
 
 
 @dataclass(frozen=True)
@@ -84,15 +86,43 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
         "AO v0.12.3 exposes Agy active/idle/exit hooks but no native waiting-input detector; controller stuck timeout fails closed",
     )
 
-    gh_auth = runner.run(["gh", "auth", "status"], allowed_env=("GH_TOKEN", "GITHUB_TOKEN", "GH_CONFIG_DIR"), check=False)
-    add("GitHub authentication", "PASS" if gh_auth.returncode == 0 else "FAIL", "authenticated" if gh_auth.returncode == 0 else "gh is not authenticated")
-    actor_result = runner.run(["gh", "api", "user"], allowed_env=("GH_TOKEN", "GITHUB_TOKEN", "GH_CONFIG_DIR"), check=False)
+    token_source = None
     try:
-        actor = json.loads(actor_result.stdout) if actor_result.returncode == 0 else {}
-    except json.JSONDecodeError:
-        actor = {}
-    login = str(actor.get("login", ""))
-    add("trusted integration actor", "PASS" if login in config.integration_actors else "FAIL", login or "unknown")
+        token_source = GitHubAppTokenSource.from_environment()
+        github = GitHub(
+            runner,
+            config.repo,
+            config.integration_actors,
+            config.worker_actors,
+            config.integration_branch,
+            token_source,
+        )
+        credential_ok, credential_detail = github.credential_evidence()
+    except Exception as error:
+        credential_ok, credential_detail = False, str(error)
+    add("renewable GitHub App authentication", "PASS" if credential_ok else "FAIL", credential_detail)
+    static_token_present = bool(os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("AO_GITHUB_TOKEN"))
+    add(
+        "no static installation token",
+        "FAIL" if static_token_present else "PASS",
+        "remove GH_TOKEN/GITHUB_TOKEN/AO_GITHUB_TOKEN from production service environment" if static_token_present else "no static token environment variable",
+    )
+    if token_source is not None:
+        try:
+            key_mode = stat.S_IMODE(token_source.private_key_path.stat().st_mode)
+            key_ok = key_mode & 0o077 == 0
+            key_detail = f"{token_source.private_key_path} mode {key_mode:04o}"
+        except OSError as error:
+            key_ok, key_detail = False, str(error)
+        add("GitHub App private key", "PASS" if key_ok else "FAIL", key_detail)
+    actor_domains_ok = bool(config.integration_actors and config.worker_actors) and not (
+        set(config.integration_actors) & set(config.worker_actors)
+    )
+    add(
+        "GitHub actor privilege domains",
+        "PASS" if actor_domains_ok else "FAIL",
+        f"integration={','.join(config.integration_actors)} worker={','.join(config.worker_actors)}",
+    )
 
     ao_status = runner.run(["ao", "status", "--json"], allowed_env=("AO_PORT", "AO_RUN_FILE", "AO_DATA_DIR"), check=False)
     add("AO daemon", "PASS" if ao_status.returncode == 0 else "WARN", "reachable" if ao_status.returncode == 0 else "not running")
@@ -137,18 +167,36 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     free_gib = resources.free / 1024**3
     add("disk capacity", "PASS" if free_gib >= config.disk_min_free_gib else "FAIL", f"{free_gib:.1f} GiB free")
 
-    for path in (config.state_dir, config.plan_path.parent):
-        try:
-            path.mkdir(parents=True, exist_ok=True)
-            writable = os.access(path, os.W_OK)
-        except OSError:
-            writable = False
-        add(f"writable {path.name}", "PASS" if writable else "FAIL", str(path))
+    for check in filesystem_contract_checks(root, config.state_dir, config.plan_path):
+        add(check.name, check.status, check.detail)
 
     add("branch policy", "WARN", "verify required checks and protected main using deployment/factory/configure-github.sh")
     add("integration target", "PASS", config.integration_branch)
     add("notification routing", "PASS" if config.notification_command else "WARN", "configured" if config.notification_command else "no notifier configured")
     add("systemd", "PASS" if shutil.which("systemctl") else "WARN", "available" if shutil.which("systemctl") else "not available in this environment")
+    return checks
+
+
+def filesystem_contract_checks(root: Path, state_dir: Path, plan_path: Path) -> list[Check]:
+    checks: list[Check] = []
+    try:
+        state_dir.mkdir(parents=True, exist_ok=True)
+        state_writable = os.access(state_dir, os.W_OK)
+    except OSError:
+        state_writable = False
+    checks.append(Check("writable factory state", "PASS" if state_writable else "FAIL", str(state_dir)))
+    repo_readable = os.access(root, os.R_OK | os.X_OK)
+    checks.append(Check("readable committed repository", "PASS" if repo_readable else "FAIL", str(root)))
+    plan_readable = plan_path.is_file() and os.access(plan_path, os.R_OK)
+    checks.append(Check("readable committed plan", "PASS" if plan_readable else "FAIL", str(plan_path)))
+    repo_writable = os.access(root, os.W_OK)
+    checks.append(
+        Check(
+            "read-only committed repository",
+            "WARN" if repo_writable else "PASS",
+            "writable in this environment" if repo_writable else "controller identity cannot write repository root",
+        )
+    )
     return checks
 
 

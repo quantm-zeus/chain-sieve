@@ -1,6 +1,6 @@
 # ADR-FACTORY-002: OSS-backed autonomous factory control plane
 
-Status: Accepted  
+Status: Accepted
 Date: 2026-08-13
 
 ## Context
@@ -39,9 +39,30 @@ use explicit environment allowlists, so provider/Codex/notifier subprocesses nev
 Worker and integration GitHub actors must be distinct. Protected target branches require a stale-dismissed, last-push approval;
 the controller supplies that approval only after its CI, exact-head cross-review, protected-path, dependency, and mergeability gates.
 
+Both GitHub identities use independently scoped App ID, installation ID, and private-key paths. Generated installation
+tokens are never static service secrets. The controller mints/caches the integration token in memory and invalidates it on
+auth failure. AO uses its v0.12.3 `GHTokenSource` through a worker-only `gh auth token` helper, while worker HTTPS Git uses
+the same App through `GIT_ASKPASS`. Installation identity is verified through App metadata, repository access, and fetched
+post-action authors/reviews rather than `/user`. Actor logins are protected deployment configuration, not hard-coded names.
+
+Normal product models cannot authorize immutable control-plane, security, workflow, authoritative-spec, or verification
+paths. Elevated product surfaces require HIGH/CRITICAL risk and an exact deterministic authorization. Durable work identity
+is `<milestone-id>--<package-id>`, not the milestone-local package ID.
+
 Run the controller from a dedicated Python 3.12 virtual environment with a committed dependency lock. Route scarce Codex calls
 by role: Luna/medium for routine milestone planning, Terra/high for replan/final audit, and a one-call Sol/high emergency tier.
 Routine lifecycle decisions never invoke Codex. Live validation uses `factory/canary-base`, never `main`.
+
+Provider failover uses AO's native safe teardown semantics. After bounded restore, the controller respawns on the opposite
+provider only when it proves there is no PR, remote branch, dirty worktree, durable commit, or ambiguous session. AO removes
+clean worktrees and preserves dirty ones. Dual-provider exhaustion, repeated material conflicts, and exhausted convergence
+decomposition receive one Terra/high replan. Sol/high is limited to a successfully classified exceptional architecture
+contradiction and is never an availability fallback. A local heartbeat separates controller liveness from product state.
+
+The worker's systemd write boundary is the root checkout `.git` administrative directory, `$AO_DATA_DIR/worktrees`, AO
+runtime/state, and its home. Root source, workflows, authority documents, controller code, and deployment policy are
+root-owned read-only. Required GitHub conversation resolution is disabled because untrusted public threads are deliberately
+not agent inputs; exact-head CI/review/approval and protected-path gates remain authoritative.
 
 ## Consequences
 
