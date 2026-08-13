@@ -1,0 +1,10 @@
+/var/lib/chainsieve/factory/*.jsonl {
+  weekly
+  rotate 12
+  compress
+  delaycompress
+  missingok
+  notifempty
+  copytruncate
+  su chainsieve-controller chainsieve
+}

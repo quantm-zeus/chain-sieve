@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+real_binary="${CHAINSIEVE_AGY_REAL:-/usr/local/lib/chainsieve/providers/agy}"
+model="${CHAINSIEVE_AGY_MODEL:-gemini-3.6-flash-high}"
+
+if [[ ! -x "$real_binary" ]]; then
+  echo "configured Antigravity binary is not executable: $real_binary" >&2
+  exit 127
+fi
+
+for argument in "$@"; do
+  case "$argument" in
+    --model|--model=*|--help|-h|--version|-V|models|update|install|plugin|plugins|help)
+      exec "$real_binary" "$@"
+      ;;
+  esac
+done
+
+exec "$real_binary" --model "$model" "$@"

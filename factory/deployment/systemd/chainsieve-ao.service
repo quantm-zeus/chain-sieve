@@ -1,0 +1,45 @@
+[Unit]
+Description=ChainSieve Agent Orchestrator worker runtime
+Documentation=https://github.com/Untrivial-ai/agent-orchestrator/tree/v0.12.3
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=chainsieve-worker
+Group=chainsieve
+WorkingDirectory=/srv/chainsieve/repo
+EnvironmentFile=/etc/chainsieve/ao.env
+Environment=HOME=/var/lib/chainsieve-worker
+Environment=PATH=/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin
+Environment=AO_PORT=3001
+Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
+Environment=AO_DATA_DIR=/var/lib/chainsieve/ao
+Environment=AO_KEEP_DAEMON=1
+Environment=AO_HOST=127.0.0.1
+RuntimeDirectory=chainsieve-ao
+RuntimeDirectoryMode=0750
+StateDirectory=chainsieve/ao chainsieve/worktrees
+StateDirectoryMode=0750
+ExecStart=/usr/local/bin/ao daemon
+ExecStop=/usr/local/bin/ao stop
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+TimeoutStartSec=60
+TimeoutStopSec=45
+# Preserve tmux workers if only the daemon crashes. This must pass the supplied
+# Ubuntu cgroup/restart chaos test before production cutover.
+KillMode=process
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/chainsieve/repo /var/lib/chainsieve /var/lib/chainsieve-worker /run/chainsieve-ao
+RestrictSUIDSGID=true
+LockPersonality=true
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

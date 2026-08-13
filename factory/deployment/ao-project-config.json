@@ -1,0 +1,26 @@
+{
+  "defaultBranch": "main",
+  "sessionPrefix": "cs",
+  "postCreate": [
+    "corepack enable",
+    "pnpm install --frozen-lockfile"
+  ],
+  "agentRulesFile": "factory/constitution.md",
+  "worker": {
+    "agent": "muse",
+    "agentConfig": {
+      "permissions": "bypass-permissions"
+    }
+  },
+  "reviewers": [
+    { "harness": "agy" }
+  ],
+  "reactions": {
+    "ci-failed": { "auto": false, "action": "notify", "retries": 0 },
+    "changes-requested": { "auto": false, "action": "notify", "retries": 0 },
+    "merge-conflicts": { "auto": false, "action": "notify", "retries": 0 },
+    "approved-and-green": { "auto": false, "action": "notify" },
+    "agent-needs-input": { "auto": false, "action": "notify" },
+    "agent-stuck": { "auto": false, "action": "notify" }
+  }
+}

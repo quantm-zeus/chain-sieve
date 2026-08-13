@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "milestones": [
+    { "id": "g0-contract-foundation", "objective": "Canonical truth, observation boundary, Tool Core, MCP/security perimeter, and integrated evidence." },
+    { "id": "g1-deterministic-signal-execution", "objective": "Deterministic snapshots/features, pool adapters, candidate funnel, signal materialization, and evaluation baseline." },
+    { "id": "g2-durable-operations", "objective": "Durable workflow, scheduling, alerts, recovery, and administrative observability." },
+    { "id": "g3-model-assisted-research", "objective": "Bounded agent runtime, evidence planning, abstention, lineage, and research Workbench." },
+    { "id": "g4-g5-intelligence-depth", "objective": "Timing, thesis, regime, wallet, deployer, liquidity, narrative, and crowd intelligence under capability gates." },
+    { "id": "g6-distribution-readiness", "objective": "Public compatibility, claims, rights, security, and release controls." },
+    { "id": "g7-adaptive-allocation-alpha-lab", "objective": "Adaptive allocation, exploration, adversarial validation, governance, and bounded offline imports." }
+  ]
+}

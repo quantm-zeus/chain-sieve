@@ -8,6 +8,24 @@ on:
 permissions:
   contents: read
 jobs:
+  factory-control-plane:
+    name: Factory · deterministic control plane
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - name: Validate controller, plans, schemas, and deployment syntax
+        run: |
+          python -m compileall -q factory tests/factory
+          python -m unittest discover -s tests/factory -v
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in [*Path('factory').rglob('*.json'), *Path('specs').rglob('*.json')]:
+              json.loads(path.read_text())
+          PY
+          bash -n factory/deployment/*.sh factory/deployment/bin/*
   tier0:
     name: Tier 0 · static and unit
     runs-on: ubuntu-latest
@@ -100,7 +118,7 @@ jobs:
           if pnpm cluster:verify C-G0-IMPLEMENTATION; then exit 1; fi
   tier3:
     name: Tier 3 · pre-main
-    needs: [tier2, production-images]
+    needs: [factory-control-plane, tier2, production-images]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

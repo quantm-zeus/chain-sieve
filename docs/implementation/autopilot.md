@@ -1,4 +1,6 @@
-# ChainSieve autopilot
+# ChainSieve autopilot (legacy, superseded)
+
+> This describes the retired architecture retained only for migration diagnostics. Use `docs/operations/oss-factory.md` and `pnpm factory:*` for production.
 
 ChainSieve is configured for full autonomy through `config/autonomy-policy.json`. The owner does not review or approve individual implementation tasks. Machine review, deterministic verification, safe defaults and CI remain mandatory.
 

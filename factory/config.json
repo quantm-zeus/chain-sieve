@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "repository": "quantm-zeus/chain-sieve",
+  "aoProjectId": "chainsieve",
+  "defaultBranch": "main",
+  "stateDirectory": ".factory",
+  "planPath": "specs/factory/current-milestone.json",
+  "pollSeconds": 30,
+  "notificationCommand": [],
+  "budgets": {
+    "maxActiveWorkers": 3,
+    "maxTaskAttempts": 2,
+    "maxCorrectionAttempts": 2,
+    "maxReviewCycles": 2,
+    "maxConvergencePasses": 3,
+    "maxCodexCallsPerMilestone": 2,
+    "maxTaskWallClockSeconds": 14400,
+    "maxMilestoneWallClockSeconds": 259200
+  },
+  "resources": {
+    "diskMinFreeGiB": 15,
+    "memoryMinFreeMiB": 2048,
+    "maxWorktrees": 24
+  },
+  "models": {
+    "codex": {
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "high"
+    },
+    "agy": {
+      "model": "gemini-3.6-flash-high"
+    }
+  },
+  "integration": {
+    "requiredChecks": [
+      "Tier 3 · pre-main"
+    ],
+    "trustedActors": [
+      "quantm-zeus",
+      "chainsieve-factory[bot]"
+    ],
+    "protectedPaths": [
+      "docs/spec/**",
+      "artifacts/spec/**",
+      "artifacts/conformance/**",
+      "factory/**",
+      "specs/factory/**",
+      ".specify/**",
+      ".github/workflows/**",
+      "tests/harness/**",
+      "tests/spec-mutation/**",
+      "tools/task-verifier/**",
+      "tools/architecture-verifier/**",
+      "AGENTS.md",
+      "SECURITY.md",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+[Unit]
+Description=ChainSieve deterministic autonomous factory controller
+After=network-online.target chainsieve-ao.service
+Wants=network-online.target chainsieve-ao.service
+
+[Service]
+Type=simple
+User=chainsieve-controller
+Group=chainsieve
+WorkingDirectory=/srv/chainsieve/repo
+EnvironmentFile=/etc/chainsieve/factory.env
+Environment=HOME=/var/lib/chainsieve-controller
+Environment=PATH=/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/srv/chainsieve/repo
+Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
+Environment=CHAINSIEVE_FACTORY_STATE_DIR=/var/lib/chainsieve/factory
+Environment=CHAINSIEVE_FACTORY_PLAN=/srv/chainsieve/repo/specs/factory/current-milestone.json
+StateDirectory=chainsieve/factory
+StateDirectoryMode=0750
+ExecStart=/usr/bin/python3 -m factory run
+Restart=on-failure
+RestartSec=15s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+TimeoutStartSec=30
+TimeoutStopSec=30
+KillMode=mixed
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/chainsieve/factory
+ReadOnlyPaths=/srv/chainsieve/repo /run/chainsieve-ao
+RestrictSUIDSGID=true
+LockPersonality=true
+LimitNOFILE=16384
+
+[Install]
+WantedBy=multi-user.target

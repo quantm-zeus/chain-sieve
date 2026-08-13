@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-08-13",
+  "agentOrchestrator": {
+    "repository": "https://github.com/Untrivial-ai/agent-orchestrator",
+    "tag": "v0.12.3",
+    "commit": "b48c98c94ca0039ad1bc42bd1b78134d3ff5773d",
+    "ubuntuAsset": "agent-orchestrator-linux-x64.deb",
+    "ubuntuAssetSha256": "d49e4afcfef26afcba931454f48c72d4f20e8572551f61ffb14b7f983e0b3bb3",
+    "selection": "Latest stable with a two-day soak at selection time; v0.12.4 was released the same day and was intentionally not selected for unattended production."
+  },
+  "specKit": {
+    "repository": "https://github.com/github/spec-kit",
+    "tag": "v0.16.2",
+    "tagObject": "10e42d94a392c69316ecfa8e36a5c26ac17f8d1a",
+    "commit": "4871b485f97c7fa452ec58eba325d87536c55c34"
+  },
+  "localProviderBaselines": {
+    "muse": "Muse Code 0.1.0 (0.1.0-R708.1)",
+    "agy": "1.1.12",
+    "agyModel": "gemini-3.6-flash-high"
+  }
+}
