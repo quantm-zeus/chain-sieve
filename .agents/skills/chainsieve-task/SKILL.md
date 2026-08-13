@@ -1,11 +1,21 @@
 ---
 name: chainsieve-task
-description: Execute exactly one immutable ChainSieve task contract in its supplied isolated worktree.
+description: Execute one legacy generated ChainSieve product task when an immutable task execution goal has explicitly been supplied. Do not use this skill for owner-authorized factory architecture migration or control-plane replacement.
 ---
 
-# ChainSieve task execution
+# Legacy ChainSieve task execution
 
-Work only in the task worktree named in the supplied task execution goal. Never implement in the root checkout or cluster worktree.
+## Applicability
+
+This skill applies only when the current session was explicitly launched with a legacy ChainSieve immutable task execution goal for one generated product task.
+
+If the repository owner explicitly requests factory architecture migration, repository-wide factory refactoring, or replacement/removal of the legacy control plane, this skill does **not** apply. Follow the factory migration authority in the root `AGENTS.md` instead.
+
+Do not require a legacy task ID, cluster ID, lease, fencing version, task worktree, immutable task goal, context-manifest binding, conformance-manifest binding, or path lock as a prerequisite for an owner-authorized factory migration.
+
+## Legacy task execution rules
+
+When this skill does apply, work only in the task worktree named in the supplied task execution goal. Never implement the legacy product task in the root checkout or cluster worktree.
 
 Before editing:
 
