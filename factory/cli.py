@@ -26,7 +26,13 @@ def build() -> tuple[FactoryController, FactoryConfig, StateStore, CommandRunner
     config = FactoryConfig.load(root, config_path)
     store = StateStore(config.state_dir)
     runner = CommandRunner(root)
-    github = GitHub(runner, config.repo, config.trusted_actors)
+    github = GitHub(
+        runner,
+        config.repo,
+        config.integration_actors,
+        config.worker_actors,
+        config.integration_branch,
+    )
     ao = AgentOrchestrator(runner, config.project_id)
     return FactoryController(root, config, store, github, ao), config, store, runner
 
@@ -72,19 +78,23 @@ def main(argv: list[str] | None = None) -> int:
         print(checks_json(checks) if args.json else _human_doctor(checks), end="")
         return 1 if any(item.status == "FAIL" for item in checks) else 0
     if args.command == "sync-issues":
-        print(json.dumps(controller.sync_issues(config.load_milestone()), indent=2))
+        with store.lock():
+            value = controller.sync_issues(config.load_milestone())
+        print(json.dumps(value, indent=2))
         return 0
     if args.command == "reconcile":
-        records = controller.reconcile(config.load_milestone())
+        with store.lock():
+            records = controller.reconcile(config.load_milestone())
         print(json.dumps({key: value.to_dict() for key, value in records.items()}, indent=2))
         return 0
     if args.command == "converge":
         from .controller.reasoning import ReasoningRunner, write_remediation
 
-        milestone = config.load_milestone()
-        result = ReasoningRunner(root_path(), config, store, runner).converge(milestone)
-        if result["status"] == "GAPS":
-            write_remediation(config, milestone, result["gaps"])
+        with store.lock():
+            milestone = config.load_milestone()
+            result = ReasoningRunner(root_path(), config, store, runner).converge(milestone)
+            if result["status"] == "GAPS":
+                write_remediation(config, milestone, result["gaps"])
         print(json.dumps(result, indent=2))
         return 0 if result["status"] == "CONVERGED" else 3
     if args.command == "final-audit":
@@ -93,21 +103,22 @@ def main(argv: list[str] | None = None) -> int:
         output = Path(args.output)
         if not output.is_absolute():
             output = root_path() / output
-        milestone = config.load_milestone()
-        store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id)
-        value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
-        records = store.load()
-        metadata = store.metadata()
-        if value.get("status") == "CONVERGED":
-            metadata["finalAuditConverged"] = True
-            store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
-        else:
-            package = audit_remediation(milestone, value)
-            write_remediation(config, milestone, [package])
-            metadata["finalAuditConverged"] = False
-            metadata["milestoneConverged"] = False
-            store.event("CONVERGENCE_GAP_FOUND", milestoneId=milestone.id, workPackageId=package["id"], reason="final audit")
-        store.save(records, metadata)
+        with store.lock():
+            milestone = config.load_milestone()
+            store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id)
+            value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
+            records = store.load()
+            metadata = store.metadata()
+            if value.get("status") == "CONVERGED":
+                metadata["finalAuditConverged"] = True
+                store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
+            else:
+                package = audit_remediation(milestone, value)
+                write_remediation(config, milestone, [package])
+                metadata["finalAuditConverged"] = False
+                metadata["milestoneConverged"] = False
+                store.event("CONVERGENCE_GAP_FOUND", milestoneId=milestone.id, workPackageId=package["id"], reason="final audit")
+            store.save(records, metadata)
         print(json.dumps(value, indent=2))
         return 0 if value.get("status") == "CONVERGED" else 3
     if args.command in {"start", "stop", "restart"}:

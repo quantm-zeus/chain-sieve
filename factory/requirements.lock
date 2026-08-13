@@ -1,0 +1,3 @@
+# ChainSieve factory runtime lock, schema version 1.
+# There are intentionally no third-party Python runtime dependencies.
+# The controller uses only Python 3.12's standard library.

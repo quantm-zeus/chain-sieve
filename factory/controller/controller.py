@@ -111,26 +111,28 @@ class FactoryController:
             elif open_prs:
                 selected = open_prs[0]
                 _apply_pr(record, selected)
+                record.started_at = record.started_at or selected.updated_at or utc_now()
                 if sessions:
-                    record.session_id = sessions[0].id
-                    record.provider = sessions[0].harness or record.provider
-                    record.ao_status = sessions[0].status
-                    record.ao_activity = sessions[0].activity
+                    _apply_session(record, sessions[0])
+                    _note_progress(record, _progress_fingerprint(sessions[0], selected), sessions[0].last_activity_at or selected.updated_at)
+                else:
+                    _note_progress(record, _progress_fingerprint(None, selected), selected.updated_at)
                 record.status = PackageStatus.PR_WAITING
             elif sessions:
-                record.session_id = sessions[0].id
-                record.provider = sessions[0].harness or record.provider
-                record.ao_status = sessions[0].status
-                record.ao_activity = sessions[0].activity
+                _apply_session(record, sessions[0])
                 record.branch = f"factory/{package.id}"
-                record.status = PackageStatus.ACTIVE
-            elif len(terminal) == 1 and record.session_id == terminal[0].id and record.task_attempts > 0:
+                _note_progress(record, _progress_fingerprint(sessions[0], None), sessions[0].last_activity_at)
+                record.status = _session_package_status(record, sessions[0], self.config)
+            elif record.task_attempts > 0 and record.session_id and any(item.id == record.session_id for item in terminal):
                 # Preserve and recover the exact AO session. Never create a
                 # second worktree when a terminated one may contain work.
-                record.provider = terminal[0].harness or record.provider
-                record.ao_status = terminal[0].status
-                record.ao_activity = terminal[0].activity
-                record.status = PackageStatus.ACTIVE
+                selected = next(item for item in terminal if item.id == record.session_id)
+                _apply_session(record, selected)
+                _note_progress(record, _progress_fingerprint(selected, None), selected.last_activity_at)
+                record.status = PackageStatus.FAILED
+            elif terminal and record.task_attempts > 0:
+                record.status = PackageStatus.BLOCKED
+                record.blocked_reason = "terminated AO sessions exist but none matches durable controller ownership; preserving work"
             elif self.github.branch_exists(f"factory/{package.id}") or _local_worktree_has_branch(self.root, f"factory/{package.id}"):
                 record.status = PackageStatus.BLOCKED
                 record.blocked_reason = "branch/worktree exists without a correlated active AO session or PR; preserving work"
@@ -180,21 +182,41 @@ class FactoryController:
             return records
         resources = self.resource_state()
         if not resources.allowed:
-            self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone.id, reason=resources.reason)
-            self._notify("FATAL", resources.reason)
-            return records
+            if metadata.get("resourceBlockedReason") != resources.reason:
+                self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone.id, reason=resources.reason)
+                self._notify("FATAL", resources.reason)
+            metadata["resourceBlockedReason"] = resources.reason
+        elif metadata.pop("resourceBlockedReason", None):
+            self.store.event("CIRCUIT_BREAKER_CLOSED", milestoneId=milestone.id, reason="resource gates recovered")
 
         packages = {item.id: item for item in milestone.packages}
         for package_id, record in records.items():
             package = packages[package_id]
-            session = _single(snapshot.sessions.get(package_id, []))
+            package_sessions = snapshot.sessions.get(package_id, [])
+            live_sessions = [item for item in package_sessions if item.status.lower() not in TERMINAL_SESSION_STATES]
+            terminal_sessions = [item for item in package_sessions if item.status.lower() in TERMINAL_SESSION_STATES]
+            session = _single(live_sessions) or next(
+                (item for item in terminal_sessions if item.id == record.session_id),
+                None,
+            )
             pr = _single([item for item in snapshot.prs.get(package_id, []) if item.state.upper() == "OPEN"])
-            if record.status == PackageStatus.ACTIVE and session:
+            if record.started_at and record.status not in {PackageStatus.COMPLETED, PackageStatus.BLOCKED} and _expired(
+                record.started_at, self.config.max_task_wall_clock_seconds
+            ):
+                if session and session.status.lower() not in TERMINAL_SESSION_STATES:
+                    self.ao.kill(session.id)
+                self._block(milestone.id, package_id, record, "task wall-clock budget exhausted; existing work preserved")
+                continue
+            if record.status in {
+                PackageStatus.STARTING,
+                PackageStatus.ACTIVE,
+                PackageStatus.IDLE,
+                PackageStatus.WAITING_INPUT,
+                PackageStatus.STUCK,
+                PackageStatus.FAILED,
+            } and session:
                 if session.status.lower() in TERMINAL_SESSION_STATES:
                     self._handle_terminated(milestone, package_id, record, session)
-                elif record.started_at and _expired(record.started_at, self.config.max_task_wall_clock_seconds):
-                    self.ao.kill(session.id)
-                    self._block(milestone.id, package_id, record, "task wall-clock budget exhausted; AO session terminated")
                 else:
                     self._handle_activity(milestone, package_id, record, session)
             elif record.status == PackageStatus.PR_WAITING and pr:
@@ -205,8 +227,11 @@ class FactoryController:
                 else:
                     self._handle_pr(milestone, package, record, pr)
 
-        active = sum(record.status in {PackageStatus.ACTIVE, PackageStatus.PR_WAITING, PackageStatus.CI_FIX, PackageStatus.REVIEW} for record in records.values())
-        slots = max(0, self.config.max_active_workers - active)
+        active = sum(record.status in {
+            PackageStatus.STARTING, PackageStatus.ACTIVE, PackageStatus.IDLE, PackageStatus.WAITING_INPUT,
+            PackageStatus.STUCK, PackageStatus.PR_WAITING, PackageStatus.CI, PackageStatus.REVIEW,
+        } for record in records.values())
+        slots = max(0, self.config.max_active_workers - active) if resources.allowed else 0
         for package in milestone.packages:
             if slots <= 0:
                 break
@@ -224,7 +249,7 @@ class FactoryController:
                 package.id,
                 record.issue_number,
                 provider,
-                worker_prompt(self.root, milestone, package),
+                worker_prompt(self.root, milestone, package, self.config.integration_branch),
                 self.config.agy_model if provider == "agy" else None,
             )
             record.session_id = session_id
@@ -234,8 +259,10 @@ class FactoryController:
             record.branch = f"factory/{package.id}"
             record.task_attempts += 1
             record.provider_attempts[provider] = record.provider_attempts.get(provider, 0) + 1
-            record.status = PackageStatus.ACTIVE
+            record.status = PackageStatus.STARTING
             record.started_at = utc_now()
+            record.last_progress_at = record.started_at
+            record.progress_fingerprint = f"spawn:{session_id}"
             record.updated_at = utc_now()
             self.store.event(
                 "WORKER_STARTED", milestoneId=milestone.id, workPackageId=package.id,
@@ -245,7 +272,9 @@ class FactoryController:
             active += 1
 
         metadata.update({"milestoneId": milestone.id, "lastTickAt": utc_now(), "consecutiveTickFailures": 0})
-        if records and all(record.status == PackageStatus.COMPLETED for record in records.values()):
+        if self.config.convergence_enabled and resources.allowed and records and all(
+            record.status == PackageStatus.COMPLETED for record in records.values()
+        ):
             self._converge_if_needed(milestone, records, metadata)
         self.store.save(records, metadata)
         return records
@@ -265,7 +294,7 @@ class FactoryController:
                     failures = 0
                 except Exception as error:
                     failures += 1
-                    delay = min(300, self.config.poll_seconds * (2 ** min(failures - 1, 4)))
+                    delay = _retry_delay(self.config.poll_seconds, failures)
                     metadata = self.store.metadata()
                     metadata["consecutiveTickFailures"] = failures
                     metadata["lastTickFailure"] = str(error)[-2000:]
@@ -309,14 +338,15 @@ class FactoryController:
             counts[record.status.value] += 1
         metadata = self.store.metadata()
         resources = self.resource_state()
+        codex_usage = _codex_usage(self.config.state_dir)
         if not metadata.get("controllerStartedAt"):
             overall = FactoryStatus.STOPPED
-        elif counts[PackageStatus.BLOCKED.value]:
+        elif counts[PackageStatus.BLOCKED.value] or counts[PackageStatus.FAILED.value] or counts[PackageStatus.STUCK.value]:
             overall = FactoryStatus.BLOCKED
         elif (
             counts[PackageStatus.COMPLETED.value] == len(records)
             and records
-            and metadata.get("finalAuditConverged") is True
+            and (not self.config.convergence_enabled or metadata.get("finalAuditConverged") is True)
         ):
             overall = FactoryStatus.DONE
         elif not resources.allowed or int(metadata.get("consecutiveTickFailures", 0)) > 0:
@@ -333,6 +363,11 @@ class FactoryController:
                 "workerStarts": sum(record.task_attempts for record in records.values()),
                 "corrections": sum(record.correction_attempts for record in records.values()),
                 "reviews": sum(record.review_attempts for record in records.values()),
+                "codex": codex_usage,
+                "codexPlannerCalls": codex_usage["plannerCalls"],
+                "codexReplanCalls": codex_usage["replanCalls"],
+                "codexFinalAuditCalls": codex_usage["finalAuditCalls"],
+                "codexEmergencyCalls": codex_usage["emergencyCalls"],
                 "byProvider": {
                     provider: sum(
                         record.provider_attempts.get(provider, 0)
@@ -349,7 +384,7 @@ class FactoryController:
                 "passes": int(metadata.get("convergencePasses", 0)),
                 "milestoneConverged": bool(metadata.get("milestoneConverged", False)),
                 "finalAuditConverged": bool(metadata.get("finalAuditConverged", False)),
-                "codexCalls": _codex_calls(self.config.state_dir),
+                "codexCalls": codex_usage["total"],
             },
             "lastFailure": metadata.get("lastTickFailure"),
             "recentEvents": self.store.history(10),
@@ -357,12 +392,15 @@ class FactoryController:
 
     def _handle_activity(self, milestone: Milestone, package_id: str, record: PackageRecord, session: Session) -> None:
         activity = session.activity.lower()
-        if activity not in {"waiting_input", "blocked", "needs_input"}:
+        waiting = record.status == PackageStatus.WAITING_INPUT or activity in {"waiting_input", "blocked", "needs_input"}
+        stuck = record.status == PackageStatus.STUCK
+        if not waiting and not stuck:
             return
         if record.correction_attempts < self.config.max_correction_attempts:
+            reason = "stopped making meaningful progress" if stuck else "is waiting for input"
             self.ao.send(
                 session.id,
-                "You are in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
+                f"You {reason}. Continue in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
             )
             record.correction_attempts += 1
             self.store.event(
@@ -370,7 +408,8 @@ class FactoryController:
                 provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
             )
         else:
-            self._block(milestone.id, package_id, record, "worker remained waiting for input after bounded remediation")
+            failure = "worker remained stuck" if stuck else "worker remained waiting for input"
+            self._block(milestone.id, package_id, record, f"{failure} after bounded remediation")
 
     def _handle_terminated(self, milestone: Milestone, package_id: str, record: PackageRecord, session: Session) -> None:
         if record.correction_attempts < self.config.max_correction_attempts:
@@ -420,14 +459,16 @@ class FactoryController:
                 self._block(milestone.id, package.id, record, "review-required PR has no correlated AO session")
                 return
             reviews = self.ao.reviews(record.session_id or "")
-            review_ok, review_reason, reviewer, verdict = review_gate(reviews, pr.head_sha)
+            required_reviewer = reviewer_for(record.provider or package.preferred_provider)
+            review_ok, review_reason, reviewer, verdict = review_gate(reviews, pr.head_sha, required_reviewer)
             record.review_sha = pr.head_sha if reviewer else None
             record.review_verdict = verdict
             if not review_ok:
                 if reviewer is None and record.review_attempts < self.config.max_review_cycles:
-                    selected = reviewer_for(record.provider or package.preferred_provider)
+                    selected = required_reviewer
                     self.ao.trigger_review(record.session_id or "", selected)
                     record.review_attempts += 1
+                    record.status = PackageStatus.REVIEW
                     self.store.event(
                         "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                         provider=selected, aoSessionId=record.session_id, pr=pr.number,
@@ -458,11 +499,33 @@ class FactoryController:
         if violations:
             self._block(milestone.id, package.id, record, f"unauthorized protected-path changes: {', '.join(violations)}")
             return
+        if pr.merge_state.upper() in {"DIRTY", "BEHIND"}:
+            token = f"MERGE:{pr.head_sha}:{pr.merge_state.upper()}"
+            if record.session_id and record.last_error != token:
+                if record.correction_attempts >= self.config.max_correction_attempts:
+                    self._block(milestone.id, package.id, record, "merge-update correction budget exhausted")
+                    return
+                self.ao.send(
+                    record.session_id,
+                    f"PR #{pr.number} at {pr.head_sha} is {pr.merge_state.upper()} relative to "
+                    f"{self.config.integration_branch}. Rebase or merge that exact target into your branch, resolve any "
+                    "ordinary conflict from committed authority, rerun focused checks, and push the updated head. Do not invoke Codex.",
+                )
+                record.correction_attempts += 1
+                record.last_error = token
+                self.store.event(
+                    "MERGE_UPDATE_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                    provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
+                    attempt=record.correction_attempts, headSha=pr.head_sha,
+                )
+            record.status = PackageStatus.PR_WAITING
+            return
         if pr.mergeable.upper() != "MERGEABLE" or pr.merge_state.upper() in {"UNKNOWN", "DIRTY", "BLOCKED", "BEHIND"}:
             record.status = PackageStatus.PR_WAITING
             record.last_error = f"PR not mergeable: {pr.mergeable}/{pr.merge_state}"
             return
 
+        self.github.approve(pr)
         self.github.merge(pr)
         record.status = PackageStatus.COMPLETED
         record.updated_at = utc_now()
@@ -574,6 +637,62 @@ class FactoryController:
         self._notify("FATAL", reason)
 
 
+def _apply_session(record: PackageRecord, session: Session) -> None:
+    record.session_id = session.id
+    record.provider = session.harness or record.provider
+    record.ao_status = session.status
+    record.ao_activity = session.activity
+
+
+def _progress_fingerprint(session: Session | None, pr: PullRequest | None) -> str:
+    import json
+
+    return json.dumps(
+        {
+            "session": None if session is None else {
+                "id": session.id,
+                "status": session.status,
+                "activity": session.activity,
+                "lastActivityAt": session.last_activity_at,
+            },
+            "pr": None if pr is None else {
+                "number": pr.number,
+                "head": pr.head_sha,
+                "updatedAt": pr.updated_at,
+                "checks": pr.checks,
+            },
+        },
+        sort_keys=True,
+        default=str,
+    )
+
+
+def _note_progress(record: PackageRecord, fingerprint: str, observed_at: str | None = None) -> None:
+    if record.progress_fingerprint == fingerprint:
+        return
+    record.progress_fingerprint = fingerprint
+    record.last_progress_at = observed_at or utc_now()
+
+
+def _session_package_status(record: PackageRecord, session: Session, config: FactoryConfig) -> PackageStatus:
+    status = session.status.lower()
+    activity = session.activity.lower()
+    if status in TERMINAL_SESSION_STATES or activity == "exited":
+        return PackageStatus.FAILED
+    if status in {"needs_input", "waiting_input", "blocked"} or activity in {"needs_input", "waiting_input", "blocked"}:
+        return PackageStatus.WAITING_INPUT
+    progress_at = session.last_activity_at or record.last_progress_at or record.started_at
+    if status in {"starting", "spawning", "provisioning", "pending"}:
+        return PackageStatus.STUCK if progress_at and _expired(progress_at, config.max_starting_seconds) else PackageStatus.STARTING
+    if status == "no_signal":
+        return PackageStatus.STUCK
+    if progress_at and _expired(progress_at, config.max_idle_seconds):
+        return PackageStatus.STUCK
+    if status in {"idle"} or activity == "idle":
+        return PackageStatus.IDLE
+    return PackageStatus.ACTIVE
+
+
 def _apply_pr(record: PackageRecord, pr: PullRequest) -> None:
     record.pr_number = pr.number
     record.pr_url = pr.url
@@ -650,16 +769,35 @@ def _elapsed_seconds(started_at: Any) -> int | None:
     return max(0, int((datetime.now(UTC) - started).total_seconds()))
 
 
-def _codex_calls(state_dir: Path) -> int:
+def _retry_delay(poll_seconds: int, consecutive_failures: int) -> int:
+    return min(300, max(1, poll_seconds) * (2 ** min(max(0, consecutive_failures - 1), 4)))
+
+
+def _codex_usage(state_dir: Path) -> dict[str, Any]:
     import json
 
+    empty = {
+        "total": 0,
+        "plannerCalls": 0,
+        "replanCalls": 0,
+        "finalAuditCalls": 0,
+        "emergencyCalls": 0,
+    }
     path = state_dir / "usage.json"
     if not path.exists():
-        return 0
+        return empty
     try:
-        return int(json.loads(path.read_text(encoding="utf-8")).get("codexCalls", 0))
+        value = json.loads(path.read_text(encoding="utf-8"))
+        by_role = value.get("codexCallsByRole", {})
+        return {
+            "total": int(value.get("codexCalls", sum(int(item) for item in by_role.values()))),
+            "plannerCalls": int(by_role.get("planner", 0)),
+            "replanCalls": int(by_role.get("replan", 0)),
+            "finalAuditCalls": int(by_role.get("final_audit", 0)),
+            "emergencyCalls": int(by_role.get("emergency", 0)),
+        }
     except (OSError, ValueError, TypeError, json.JSONDecodeError):
-        return 0
+        return empty
 
 
 def _roadmap(root: Path) -> list[dict[str, Any]]:

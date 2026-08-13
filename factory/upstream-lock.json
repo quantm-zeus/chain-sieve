@@ -2,9 +2,12 @@
   "schemaVersion": 1,
   "verifiedAt": "2026-08-13",
   "agentOrchestrator": {
+    "requestedUpstream": "https://github.com/ComposioHQ/agent-orchestrator",
     "repository": "https://github.com/Untrivial-ai/agent-orchestrator",
+    "repositoryRelationship": "ComposioHQ URL redirects to the canonical Untrivial-ai repository; GitHub reports fork=false",
     "tag": "v0.12.3",
     "commit": "b48c98c94ca0039ad1bc42bd1b78134d3ff5773d",
+    "gitTree": "ea4d7ee451ca5a529422df66fa97a59af2c33a43",
     "ubuntuAsset": "agent-orchestrator-linux-x64.deb",
     "ubuntuAssetSha256": "d49e4afcfef26afcba931454f48c72d4f20e8572551f61ffb14b7f983e0b3bb3",
     "selection": "Latest stable with a two-day soak at selection time; v0.12.4 was released the same day and was intentionally not selected for unattended production."
@@ -13,11 +16,21 @@
     "repository": "https://github.com/github/spec-kit",
     "tag": "v0.16.2",
     "tagObject": "10e42d94a392c69316ecfa8e36a5c26ac17f8d1a",
-    "commit": "4871b485f97c7fa452ec58eba325d87536c55c34"
+    "commit": "4871b485f97c7fa452ec58eba325d87536c55c34",
+    "gitTree": "88d4f9132dbb821cb1902f59aa856f4761514889"
   },
   "localProviderBaselines": {
     "muse": "Muse Code 0.1.0 (0.1.0-R708.1)",
     "agy": "1.1.12",
     "agyModel": "gemini-3.6-flash-high"
+  },
+  "codexAccountEvidence": {
+    "cli": "codex-cli 0.147.0-alpha.6.5",
+    "accountModelCacheRefreshedAt": "2026-08-13T14:41:51.787360Z",
+    "routesVerified": [
+      "gpt-5.6-luna:medium",
+      "gpt-5.6-terra:high",
+      "gpt-5.6-sol:high"
+    ]
   }
 }

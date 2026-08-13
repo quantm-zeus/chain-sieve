@@ -62,25 +62,10 @@ an existing ID. Do not modify files.
 
     def final_audit(self, output_path: Path) -> dict[str, Any]:
         milestone = self.config.load_milestone()
-        usage, calls = self._codex_budget(milestone.id)
-        if calls >= self.config.max_codex_calls_per_milestone:
-            raise RuntimeError("Codex call budget exhausted")
-        self._record_codex_call(usage, milestone.id, calls + 1)
-        self._save_usage(usage)
         prompt = (self.root / "factory" / "prompts" / "final-audit.md").read_text(encoding="utf-8")
         schema = self.root / "factory" / "schemas" / "final-audit.schema.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        self.runner.run(
-            [
-                "codex", "--ask-for-approval", "never", "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
-                "--model", self.config.codex_model,
-                "-c", f'model_reasoning_effort="{self.config.codex_reasoning_effort}"',
-                "--output-schema", str(schema), "--output-last-message", str(output_path), "-",
-            ],
-            allowed_env=CODEX_ENV,
-            input_text=prompt,
-            timeout=self.config.max_task_wall_clock_seconds,
-        )
+        self._invoke_codex("final_audit", milestone.id, prompt, schema, output_path)
         return json.loads(output_path.read_text(encoding="utf-8"))
 
     def plan_milestone(self, current: Milestone, target: dict[str, Any]) -> dict[str, Any]:
@@ -90,11 +75,6 @@ an existing ID. Do not modify files.
             if existing.get("id") == target["id"]:
                 Milestone.from_dict(existing)
                 return existing
-        usage, calls = self._codex_budget(current.id)
-        if calls >= self.config.max_codex_calls_per_milestone:
-            raise RuntimeError("Codex call budget exhausted before next-milestone planning")
-        self._record_codex_call(usage, current.id, calls + 1)
-        self._save_usage(usage)
         prompt = (self.root / "factory" / "prompts" / "planner.md").read_text(encoding="utf-8")
         prompt += f"""
 
@@ -109,17 +89,7 @@ later milestone, edit files, or include work that belongs to the autonomous fact
         output_path = self.config.state_dir / "next-milestone.json"
         schema = self.root / "factory" / "schemas" / "milestone-plan.schema.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        self.runner.run(
-            [
-                "codex", "--ask-for-approval", "never", "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
-                "--model", self.config.codex_model,
-                "-c", f'model_reasoning_effort="{self.config.codex_reasoning_effort}"',
-                "--output-schema", str(schema), "--output-last-message", str(output_path), "-",
-            ],
-            allowed_env=CODEX_ENV,
-            input_text=prompt,
-            timeout=self.config.max_task_wall_clock_seconds,
-        )
+        self._invoke_codex("planner", current.id, prompt, schema, output_path)
         value = json.loads(output_path.read_text(encoding="utf-8"))
         planned = Milestone.from_dict(value)
         if planned.id != target["id"]:
@@ -132,15 +102,58 @@ later milestone, edit files, or include work that belongs to the autonomous fact
         _write_planning_bundle(self.config.state_dir, planned)
         return value
 
-    def _codex_budget(self, milestone_id: str) -> tuple[dict[str, Any], int]:
+    def _codex_budget(self, milestone_id: str, role: str) -> tuple[dict[str, Any], int]:
         usage = self._usage()
         milestone_usage = usage.setdefault("milestones", {}).setdefault(milestone_id, {})
-        return usage, int(milestone_usage.get("codexCalls", 0))
+        by_role = milestone_usage.setdefault("codexCallsByRole", {})
+        return usage, int(by_role.get(role, 0))
 
-    @staticmethod
-    def _record_codex_call(usage: dict[str, Any], milestone_id: str, calls: int) -> None:
-        usage.setdefault("milestones", {}).setdefault(milestone_id, {})["codexCalls"] = calls
-        usage["codexCalls"] = sum(int(value.get("codexCalls", 0)) for value in usage["milestones"].values())
+    def _record_codex_call(self, usage: dict[str, Any], milestone_id: str, role: str, calls: int) -> None:
+        milestone = usage.setdefault("milestones", {}).setdefault(milestone_id, {})
+        milestone.setdefault("codexCallsByRole", {})[role] = calls
+        totals = {
+            name: sum(
+                int(value.get("codexCallsByRole", {}).get(name, 0))
+                for value in usage["milestones"].values()
+            )
+            for name in self.config.codex_routes
+        }
+        usage["codexCallsByRole"] = totals
+        usage["codexCalls"] = sum(totals.values())
+
+    def _invoke_codex(
+        self,
+        role: str,
+        milestone_id: str,
+        prompt: str,
+        schema: Path,
+        output_path: Path,
+    ) -> None:
+        route = self.config.codex_routes[role]
+        usage, calls = self._codex_budget(milestone_id, role)
+        if calls >= route.max_calls_per_milestone:
+            raise RuntimeError(f"Codex {role} call budget exhausted")
+        self._record_codex_call(usage, milestone_id, role, calls + 1)
+        self._save_usage(usage)
+        self.store.event(
+            "CODEX_CALL_STARTED",
+            milestoneId=milestone_id,
+            role=role,
+            model=route.model,
+            reasoningEffort=route.reasoning_effort,
+            attempt=calls + 1,
+        )
+        self.runner.run(
+            [
+                "codex", "--ask-for-approval", "never", "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
+                "--model", route.model,
+                "-c", f'model_reasoning_effort="{route.reasoning_effort}"',
+                "--output-schema", str(schema), "--output-last-message", str(output_path), "-",
+            ],
+            allowed_env=CODEX_ENV,
+            input_text=prompt,
+            timeout=self.config.max_task_wall_clock_seconds,
+        )
 
     def _usage(self) -> dict[str, Any]:
         path = self.config.state_dir / "usage.json"

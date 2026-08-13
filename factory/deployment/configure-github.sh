@@ -2,20 +2,31 @@
 set -euo pipefail
 
 repo="${1:?usage: configure-github.sh OWNER/REPO}"
+branch="${2:-main}"
+[[ "$branch" == main || "$branch" == factory/canary-* ]] || { echo "refusing unsupported protected branch: $branch" >&2; exit 1; }
+check_context="Tier 3 · pre-main"
+if [[ "$branch" == factory/canary-* ]]; then
+  check_context="Factory Canary · harmless validation"
+fi
 
 # This script is intentionally explicit and idempotent. It does not use --admin
 # merge bypasses. Supply a repository-administration credential only while
 # applying policy, never to the running factory or workers.
-gh api --method PUT "repos/$repo/branches/main/protection" \
+gh api --method PUT "repos/$repo/branches/$branch/protection" \
   -H 'Accept: application/vnd.github+json' \
-  --input - <<'JSON'
+  --input - <<JSON
 {
   "required_status_checks": {
     "strict": true,
-    "contexts": ["Tier 3 · pre-main"]
+    "contexts": ["$check_context"]
   },
   "enforce_admins": true,
-  "required_pull_request_reviews": null,
+  "required_pull_request_reviews": {
+    "dismiss_stale_reviews": true,
+    "require_code_owner_reviews": false,
+    "required_approving_review_count": 1,
+    "require_last_push_approval": true
+  },
   "restrictions": null,
   "required_linear_history": false,
   "allow_force_pushes": false,
@@ -27,4 +38,4 @@ gh api --method PUT "repos/$repo/branches/main/protection" \
 }
 JSON
 
-echo "Protected main configured. Configure the worker token to write only factory/* branches and PRs; configure the integration token with narrowly scoped pull-request merge permission."
+echo "Protected $branch configured. Worker and integration GitHub App identities must be distinct; only the controller identity may approve and merge after internal gates pass."

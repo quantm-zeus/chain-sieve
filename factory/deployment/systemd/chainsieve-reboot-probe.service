@@ -1,0 +1,17 @@
+[Unit]
+Description=ChainSieve one-shot post-reboot acceptance evidence
+After=network-online.target chainsieve-ao.service chainsieve-factory.service
+Wants=network-online.target
+Requires=chainsieve-ao.service chainsieve-factory.service
+ConditionPathExists=/var/lib/chainsieve/factory/reboot-probe-armed
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/srv/chainsieve/repo
+Environment=PATH=/srv/chainsieve/.venv/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/srv/chainsieve/repo/factory/deployment/reboot-probe.sh verify
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

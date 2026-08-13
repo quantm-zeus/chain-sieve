@@ -8,6 +8,7 @@ Wants=network-online.target
 Type=simple
 User=chainsieve-worker
 Group=chainsieve
+SupplementaryGroups=chainsieve-worker
 WorkingDirectory=/srv/chainsieve/repo
 EnvironmentFile=/etc/chainsieve/ao.env
 Environment=HOME=/var/lib/chainsieve-worker
@@ -40,6 +41,7 @@ ReadWritePaths=/srv/chainsieve/repo /var/lib/chainsieve /var/lib/chainsieve-work
 RestrictSUIDSGID=true
 LockPersonality=true
 LimitNOFILE=65536
+UMask=0027
 
 [Install]
 WantedBy=multi-user.target

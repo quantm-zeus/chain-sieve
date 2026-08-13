@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "repository": "quantm-zeus/chain-sieve",
+  "aoProjectId": "chainsieve-canary",
+  "defaultBranch": "factory/canary-base",
+  "stateDirectory": "/var/lib/chainsieve/factory-canary",
+  "planPath": "factory/deployment/canary-milestone.json",
+  "pollSeconds": 20,
+  "convergenceEnabled": false,
+  "notificationCommand": [],
+  "budgets": {
+    "maxActiveWorkers": 2,
+    "maxTaskAttempts": 2,
+    "maxCorrectionAttempts": 2,
+    "maxReviewCycles": 2,
+    "maxConvergencePasses": 0,
+    "maxTaskWallClockSeconds": 3600,
+    "maxMilestoneWallClockSeconds": 14400,
+    "maxIdleSeconds": 600,
+    "maxStartingSeconds": 300
+  },
+  "resources": {
+    "diskMinFreeGiB": 15,
+    "memoryMinFreeMiB": 2048,
+    "maxWorktrees": 24
+  },
+  "models": {
+    "codex": {
+      "planner": {"model": "gpt-5.6-luna", "reasoningEffort": "medium", "maxCallsPerMilestone": 0},
+      "replan": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},
+      "final_audit": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},
+      "emergency": {"model": "gpt-5.6-sol", "reasoningEffort": "high", "maxCallsPerMilestone": 0}
+    },
+    "agy": {"model": "gemini-3.6-flash-high"}
+  },
+  "integration": {
+    "targetBranch": "factory/canary-base",
+    "requiredChecks": ["Factory Canary · harmless validation"],
+    "trustedActors": ["chainsieve-factory[bot]"],
+    "workerActors": ["chainsieve-worker[bot]"],
+    "integrationActors": ["chainsieve-factory[bot]"],
+    "protectedPaths": [
+      "docs/spec/**", "artifacts/spec/**", "artifacts/conformance/**", "factory/**", "specs/factory/**",
+      ".specify/**", ".github/workflows/**", "tests/harness/**", "tests/spec-mutation/**", "AGENTS.md",
+      "SECURITY.md", "package.json", "pnpm-lock.yaml"
+    ]
+  }
+}

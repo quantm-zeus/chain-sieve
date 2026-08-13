@@ -29,10 +29,19 @@ resource gates, reconciliation, current-head review/CI enforcement, protected pa
 
 Do not fork AO. Use its native Muse/Agy adapters. Select AO `v0.12.3` instead of same-day `v0.12.4` so production does not
 adopt an unsoaked release. Pin Spec Kit `v0.16.2`. Upgrades happen only between milestones after smoke/chaos validation.
+The historical ComposioHQ URL currently redirects to the canonical Untrivial-ai repository, which GitHub reports is not a fork.
+The exact pin has native Muse waiting-input detection but no native Agy waiting-input detector; ChainSieve therefore uses a
+bounded meaningful-progress timeout for Agy and records this as a live-acceptance requirement rather than claiming native support.
 
 Run AO and the controller as separate systemd services and Unix users/credential domains. AO receives the worker GitHub
 credential and provider credentials. The controller receives the integration GitHub credential. Controller subprocesses
 use explicit environment allowlists, so provider/Codex/notifier subprocesses never inherit the integration credential.
+Worker and integration GitHub actors must be distinct. Protected target branches require a stale-dismissed, last-push approval;
+the controller supplies that approval only after its CI, exact-head cross-review, protected-path, dependency, and mergeability gates.
+
+Run the controller from a dedicated Python 3.12 virtual environment with a committed dependency lock. Route scarce Codex calls
+by role: Luna/medium for routine milestone planning, Terra/high for replan/final audit, and a one-call Sol/high emergency tier.
+Routine lifecycle decisions never invoke Codex. Live validation uses `factory/canary-base`, never `main`.
 
 ## Consequences
 

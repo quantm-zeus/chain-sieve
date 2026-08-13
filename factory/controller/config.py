@@ -9,6 +9,16 @@ from typing import Any
 from .models import Milestone
 
 
+CODEX_ROLES = ("planner", "replan", "final_audit", "emergency")
+
+
+@dataclass(frozen=True)
+class CodexRoute:
+    model: str
+    reasoning_effort: str
+    max_calls_per_milestone: int
+
+
 @dataclass(frozen=True)
 class FactoryConfig:
     repo: str
@@ -19,21 +29,25 @@ class FactoryConfig:
     max_correction_attempts: int
     max_review_cycles: int
     max_convergence_passes: int
-    max_codex_calls_per_milestone: int
     max_task_wall_clock_seconds: int
     max_milestone_wall_clock_seconds: int
+    max_idle_seconds: int
+    max_starting_seconds: int
     disk_min_free_gib: float
     memory_min_free_mib: int
     max_worktrees: int
     required_checks: tuple[str, ...]
     protected_paths: tuple[str, ...]
     trusted_actors: tuple[str, ...]
+    worker_actors: tuple[str, ...]
+    integration_actors: tuple[str, ...]
+    integration_branch: str
     state_dir: Path
     plan_path: Path
     poll_seconds: int
+    convergence_enabled: bool
     notification_command: tuple[str, ...]
-    codex_model: str
-    codex_reasoning_effort: str
+    codex_routes: dict[str, CodexRoute]
     agy_model: str
 
     @classmethod
@@ -52,21 +66,34 @@ class FactoryConfig:
             max_correction_attempts=int(budgets["maxCorrectionAttempts"]),
             max_review_cycles=int(budgets["maxReviewCycles"]),
             max_convergence_passes=int(budgets["maxConvergencePasses"]),
-            max_codex_calls_per_milestone=int(budgets["maxCodexCallsPerMilestone"]),
             max_task_wall_clock_seconds=int(budgets["maxTaskWallClockSeconds"]),
             max_milestone_wall_clock_seconds=int(budgets["maxMilestoneWallClockSeconds"]),
+            max_idle_seconds=int(budgets["maxIdleSeconds"]),
+            max_starting_seconds=int(budgets["maxStartingSeconds"]),
             disk_min_free_gib=float(resources["diskMinFreeGiB"]),
             memory_min_free_mib=int(resources["memoryMinFreeMiB"]),
             max_worktrees=int(resources["maxWorktrees"]),
             required_checks=tuple(str(item) for item in integration["requiredChecks"]),
             protected_paths=tuple(str(item) for item in integration["protectedPaths"]),
             trusted_actors=tuple(str(item) for item in integration["trustedActors"]),
+            worker_actors=tuple(str(item) for item in integration.get("workerActors", integration["trustedActors"])),
+            integration_actors=tuple(str(item) for item in integration.get("integrationActors", integration["trustedActors"])),
+            integration_branch=str(
+                os.environ.get("CHAINSIEVE_INTEGRATION_BRANCH", integration.get("targetBranch", raw.get("defaultBranch", "main")))
+            ),
             state_dir=_resolve(root, os.environ.get("CHAINSIEVE_FACTORY_STATE_DIR", raw.get("stateDirectory", ".factory"))),
             plan_path=_resolve(root, os.environ.get("CHAINSIEVE_FACTORY_PLAN", raw.get("planPath", "specs/factory/current-milestone.json"))),
             poll_seconds=int(raw.get("pollSeconds", 30)),
+            convergence_enabled=bool(raw.get("convergenceEnabled", True)),
             notification_command=tuple(str(item) for item in raw.get("notificationCommand", [])),
-            codex_model=str(models["codex"]["model"]),
-            codex_reasoning_effort=str(models["codex"]["reasoningEffort"]),
+            codex_routes={
+                role: CodexRoute(
+                    model=str(models["codex"][role]["model"]),
+                    reasoning_effort=str(models["codex"][role]["reasoningEffort"]),
+                    max_calls_per_milestone=int(models["codex"][role]["maxCallsPerMilestone"]),
+                )
+                for role in CODEX_ROLES
+            },
             agy_model=str(models["agy"]["model"]),
         )
         config.validate()
@@ -80,7 +107,6 @@ class FactoryConfig:
             "max_correction_attempts",
             "max_review_cycles",
             "max_convergence_passes",
-            "max_codex_calls_per_milestone",
         ):
             if getattr(self, name) < 0:
                 raise ValueError(f"{name} cannot be negative")
@@ -88,10 +114,25 @@ class FactoryConfig:
             raise ValueError("at least one required CI check is required")
         if not self.trusted_actors:
             raise ValueError("trustedActors cannot be empty")
+        if not self.worker_actors or not self.integration_actors:
+            raise ValueError("workerActors and integrationActors cannot be empty")
+        if set(self.worker_actors) & set(self.integration_actors):
+            raise ValueError("workerActors and integrationActors must be disjoint privilege domains")
         if self.max_task_wall_clock_seconds <= 0 or self.max_milestone_wall_clock_seconds <= 0:
             raise ValueError("task and milestone wall-clock budgets must be positive")
+        if self.max_idle_seconds <= 0 or self.max_starting_seconds <= 0:
+            raise ValueError("idle and starting thresholds must be positive")
         if self.disk_min_free_gib < 0 or self.memory_min_free_mib < 0 or self.max_worktrees < 1:
             raise ValueError("resource gates must be non-negative and maxWorktrees positive")
+        if not self.integration_branch or self.integration_branch.startswith("refs/"):
+            raise ValueError("integration target branch must be a non-empty short branch name")
+        if set(self.codex_routes) != set(CODEX_ROLES):
+            raise ValueError(f"Codex routes must be exactly {CODEX_ROLES}")
+        for role, route in self.codex_routes.items():
+            if not route.model or route.reasoning_effort not in {"low", "medium", "high", "xhigh", "max", "ultra"}:
+                raise ValueError(f"invalid Codex route for {role}")
+            if route.max_calls_per_milestone < 0:
+                raise ValueError(f"Codex call limit for {role} cannot be negative")
 
     def load_milestone(self) -> Milestone:
         active_path = self.state_dir / "active-milestone.json"

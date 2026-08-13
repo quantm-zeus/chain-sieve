@@ -8,13 +8,33 @@ on:
 permissions:
   contents: read
 jobs:
+  factory-canary:
+    name: Factory Canary · harmless validation
+    if: github.event_name == 'pull_request' && github.base_ref == 'factory/canary-base'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Validate harmless canary payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          changed="$(git diff --name-only '${{ github.event.pull_request.base.sha }}' '${{ github.event.pull_request.head.sha }}')"
+          test -n "$changed"
+          if grep -qv '^factory-canary/' <<<"$changed"; then
+            echo "canary PR changed a path outside factory-canary/" >&2
+            exit 1
+          fi
+          if [[ -f factory-canary/ci-correction.txt ]]; then
+            test "$(tr -d '\r\n' < factory-canary/ci-correction.txt)" = PASS
+          fi
   factory-control-plane:
     name: Factory · deterministic control plane
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: '3.13' }
+        with: { python-version: '3.12' }
       - name: Validate controller, plans, schemas, and deployment syntax
         run: |
           python -m compileall -q factory tests/factory

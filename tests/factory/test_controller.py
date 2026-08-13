@@ -4,11 +4,12 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from factory.controller.ao import review_gate
 from factory.controller.commands import CommandRunner
-from factory.controller.config import FactoryConfig
+from factory.controller.config import CodexRoute, FactoryConfig
 from factory.controller.controller import FactoryController
 from factory.controller.github import ci_gate
 from factory.controller.models import Issue, Milestone, PackageStatus, PullRequest, Session, Snapshot, WorkPackage
@@ -46,6 +47,9 @@ class FakeGitHub:
     def branch_exists(self, branch: str) -> bool:
         return False
 
+    def create_issue(self, package_id: str, title: str, body: str):
+        raise AssertionError("unexpected issue creation")
+
 
 class FakeAO:
     def __init__(self, snapshot: Snapshot) -> None:
@@ -65,21 +69,28 @@ def config(root: Path) -> FactoryConfig:
         max_correction_attempts=1,
         max_review_cycles=2,
         max_convergence_passes=3,
-        max_codex_calls_per_milestone=2,
         max_task_wall_clock_seconds=60,
         max_milestone_wall_clock_seconds=600,
+        max_idle_seconds=30,
+        max_starting_seconds=10,
         disk_min_free_gib=0,
         memory_min_free_mib=0,
         max_worktrees=999,
         required_checks=("CI",),
         protected_paths=("factory/**", "docs/spec/**"),
         trusted_actors=("factory-bot",),
+        worker_actors=("worker-bot",),
+        integration_actors=("factory-bot",),
+        integration_branch="main",
         state_dir=root / "state",
         plan_path=root / "plan.json",
         poll_seconds=1,
+        convergence_enabled=True,
         notification_command=(),
-        codex_model="gpt-test",
-        codex_reasoning_effort="medium",
+        codex_routes={
+            role: CodexRoute("gpt-test", "medium", 1)
+            for role in ("planner", "replan", "final_audit", "emergency")
+        },
         agy_model="gemini-test",
     )
 
@@ -113,6 +124,15 @@ class GateTests(unittest.TestCase):
         allowed, reason, _, _ = review_gate(evidence, "b" * 40)
         self.assertFalse(allowed)
         self.assertIn("current PR head", reason)
+
+    def test_review_must_come_from_cross_provider(self) -> None:
+        head = "a" * 40
+        evidence = {"reviews": [{"latestRun": {
+            "targetSha": head, "status": "completed", "verdict": "approved", "harness": "muse",
+        }}]}
+        allowed, reason, _, _ = review_gate(evidence, head, "agy")
+        self.assertFalse(allowed)
+        self.assertIn("required agy", reason)
 
     def test_ci_requires_named_success(self) -> None:
         pr = PullRequest(1, "OPEN", "factory/a", "a" * 40, "url", "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},))
@@ -190,6 +210,16 @@ class ReconciliationTests(unittest.TestCase):
         record = self.controller(snapshot).reconcile(plan, snapshot)["a"]
         self.assertEqual(record.status, PackageStatus.BLOCKED)
         self.assertIn("preserving", record.blocked_reason or "")
+
+    def test_stale_active_process_is_reported_stuck(self) -> None:
+        plan = milestone(package("a"))
+        issues = {"a": Issue(1, "OPEN", "", "url/1", "factory-bot")}
+        stale = (datetime.now(UTC) - timedelta(seconds=31)).isoformat()
+        sessions = {"a": [Session("ao-1", "factory/a", "muse", "working", "active", "1", last_activity_at=stale)]}
+        snapshot = Snapshot(issues=issues, sessions=sessions)
+        record = self.controller(snapshot).reconcile(plan, snapshot)["a"]
+        self.assertEqual(record.status, PackageStatus.STUCK)
+        self.assertEqual(record.last_progress_at, stale)
 
 
 if __name__ == "__main__":

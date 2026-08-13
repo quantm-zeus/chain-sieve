@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import stat
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Callable
@@ -33,6 +34,30 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     dirty = runner.run(["git", "status", "--porcelain"], check=False)
     add("control-plane checkout", "PASS" if dirty.returncode == 0 and not dirty.stdout.strip() else "WARN", "clean" if not dirty.stdout.strip() else "uncommitted changes present")
 
+    expected_python = os.environ.get("CHAINSIEVE_FACTORY_EXPECTED_PYTHON")
+    actual_python = str(Path(sys.executable).resolve())
+    supported_python = sys.version_info[:2] == (3, 12)
+    exact_python = not expected_python or Path(expected_python).resolve() == Path(sys.executable).resolve()
+    if expected_python:
+        python_status = "PASS" if supported_python and exact_python else "FAIL"
+    else:
+        python_status = "PASS" if supported_python else "WARN"
+    add(
+        "Python production runtime",
+        python_status,
+        f"{actual_python} Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}; expected {expected_python or 'not asserted outside systemd'}",
+    )
+    runtime_lock = root / "factory" / "requirements.lock"
+    locked = [
+        line for line in runtime_lock.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ] if runtime_lock.exists() else ["missing"]
+    add(
+        "Python dependency lock",
+        "PASS" if not locked else "FAIL",
+        "no third-party runtime dependencies" if not locked else "lock is missing or contains unexpected entries",
+    )
+
     _binary_check(add, runner, "git", ["git", "--version"], required=True)
     _binary_check(add, runner, "gh", ["gh", "--version"], required=True)
     _binary_check(add, runner, "node", ["node", "--version"], required=True)
@@ -53,6 +78,11 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     agy_help = runner.run(["agy", "--help"], check=False)
     agy_flags = all(flag in (agy_help.stdout + agy_help.stderr) for flag in ("--dangerously-skip-permissions", "--print", "--model"))
     add("Antigravity headless permissions", "PASS" if agy_flags else "FAIL", "required non-interactive flags available" if agy_flags else "required agy flags missing")
+    add(
+        "Antigravity waiting-input telemetry",
+        "WARN",
+        "AO v0.12.3 exposes Agy active/idle/exit hooks but no native waiting-input detector; controller stuck timeout fails closed",
+    )
 
     gh_auth = runner.run(["gh", "auth", "status"], allowed_env=("GH_TOKEN", "GITHUB_TOKEN", "GH_CONFIG_DIR"), check=False)
     add("GitHub authentication", "PASS" if gh_auth.returncode == 0 else "FAIL", "authenticated" if gh_auth.returncode == 0 else "gh is not authenticated")
@@ -62,7 +92,7 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     except json.JSONDecodeError:
         actor = {}
     login = str(actor.get("login", ""))
-    add("trusted integration actor", "PASS" if login in config.trusted_actors else "FAIL", login or "unknown")
+    add("trusted integration actor", "PASS" if login in config.integration_actors else "FAIL", login or "unknown")
 
     ao_status = runner.run(["ao", "status", "--json"], allowed_env=("AO_PORT", "AO_RUN_FILE", "AO_DATA_DIR"), check=False)
     add("AO daemon", "PASS" if ao_status.returncode == 0 else "WARN", "reachable" if ao_status.returncode == 0 else "not running")
@@ -93,6 +123,12 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
         add("service secret file", "PASS" if mode & 0o077 == 0 else "FAIL", f"{service_env} mode {mode:04o}")
     else:
         add("service secret file", "WARN", f"{service_env} is not installed")
+    worker_env = Path(os.environ.get("CHAINSIEVE_AO_ENV", "/etc/chainsieve/ao.env"))
+    if worker_env.exists():
+        mode = stat.S_IMODE(worker_env.stat().st_mode)
+        add("worker secret file", "PASS" if mode & 0o077 == 0 else "FAIL", f"{worker_env} mode {mode:04o}")
+    else:
+        add("worker secret file", "WARN", f"{worker_env} is not installed")
 
     dashboard_bind = os.environ.get("AO_HOST", "127.0.0.1")
     add("dashboard bind", "PASS" if dashboard_bind in {"127.0.0.1", "localhost", "::1"} else "FAIL", dashboard_bind)
@@ -110,6 +146,7 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
         add(f"writable {path.name}", "PASS" if writable else "FAIL", str(path))
 
     add("branch policy", "WARN", "verify required checks and protected main using deployment/factory/configure-github.sh")
+    add("integration target", "PASS", config.integration_branch)
     add("notification routing", "PASS" if config.notification_command else "WARN", "configured" if config.notification_command else "no notifier configured")
     add("systemd", "PASS" if shutil.which("systemctl") else "WARN", "available" if shutil.which("systemctl") else "not available in this environment")
     return checks

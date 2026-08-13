@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-13T15:06:40Z",
+  "classification": "READY_FOR_VPS_VALIDATION",
+  "repositoryCommit": "Use the git commit containing this artifact; the final published SHA is recorded in the draft PR",
+  "target": "Ubuntu VPS not configured or reached from the macOS audit host",
+  "gates": [
+    {
+      "gate": "upstream_pin_provenance",
+      "status": "PASS",
+      "timestamp": "2026-08-13T15:06:40Z",
+      "evidence": ["Direct git ls-remote proof recorded in UPSTREAM_PROVENANCE.md", "AO v0.12.3 -> b48c98c94ca0039ad1bc42bd1b78134d3ff5773d", "Spec Kit v0.16.2 -> 4871b485f97c7fa452ec58eba325d87536c55c34"]
+    },
+    {"gate": "muse_live", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["AO is not installed on this macOS host; target Ubuntu VPS was not configured or reached"]},
+    {"gate": "agy_live", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["AO is not installed on this macOS host; target Ubuntu VPS was not configured or reached"]},
+    {"gate": "cross_provider_review", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Exact cross-provider policy is deterministic-tested; no live AO review was run"]},
+    {"gate": "exact_head_review", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Deterministic tests reject stale SHA and same-provider review evidence", "GitHub protection configuration dismisses stale approvals and requires last-push approval"]},
+    {"gate": "ci_correction", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Deterministic failure routing passes; live failing-head-to-corrected-head canary was not run"]},
+    {"gate": "parallel_workers", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Canary plan is prepared for concurrent Muse/Agy packages; no live overlap evidence exists"]},
+    {"gate": "duplicate_prevention", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Deterministic active-session and ambiguous-duplicate tests pass; controller/VPS restart scenario was not run"]},
+    {"gate": "worker_credential_boundary", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Subprocess allowlist and secret-file ownership tests pass", "Live worker push/merge-denial and process-environment probes were not run"]},
+    {"gate": "untrusted_comment_filter", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Controller never reads comments as instructions", "Deterministic tests reject external issue actors and untrusted/wrong-base PRs"]},
+    {"gate": "systemd", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Unit files and shell syntax validated on macOS; systemd is unavailable here"]},
+    {"gate": "ssh_disconnect", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Requires active target Ubuntu service and live worker"]},
+    {"gate": "controller_crash", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Crash/reconcile validation script prepared; no systemd host was exercised"]},
+    {"gate": "vps_reboot", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Enabled one-shot post-boot probe prepared; no reboot was performed"]},
+    {"gate": "network_retry", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Scoped deterministic GitHub outage test proves capped exponential backoff, recovery, one spawn, and zero Codex calls"]},
+    {"gate": "resource_circuit_breaker", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Fault-injected disk threshold locally blocks new spawn, preserves state, emits breaker event, and leaves active-work handling enabled", "Complete repeated worker/provider/convergence failure lifecycle was not run on the target VPS"]},
+    {"gate": "codex_cost_routing", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Account cache supports requested model/effort pairs", "Per-role command and budget tests pass", "Routine tick and network recovery tests record zero Codex calls"]},
+    {"gate": "status_observability", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Status distinguishes STARTING, ACTIVE, IDLE, WAITING_INPUT, CI, REVIEW, BLOCKED, FAILED, COMPLETE, and STUCK", "Stale activity deterministically becomes STUCK", "Status remains local/read-only"]}
+  ]
+}

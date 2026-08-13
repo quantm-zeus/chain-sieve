@@ -33,14 +33,20 @@ class AgentOrchestrator:
             if not issue_id:
                 continue
             activity = value.get("activity") or {}
+            status = "terminated" if value.get("isTerminated") else str(value.get("status", ""))
             session = Session(
                 id=str(value["id"]),
                 branch=str(value.get("branch", "")),
                 harness=str(value.get("harness", "")),
-                status=str(value.get("status", "")),
-                activity=str(activity.get("state") or value.get("activityState") or value.get("status", "")),
+                status=status,
+                activity=str(activity.get("state") or value.get("activityState") or status),
                 issue_id=issue_id,
                 workspace_path=value.get("workspacePath"),
+                last_activity_at=(
+                    activity.get("lastActivityAt")
+                    or value.get("lastActivityAt")
+                    or value.get("updatedAt")
+                ),
             )
             result.setdefault(issue_id, []).append(session)
         return result
@@ -103,15 +109,21 @@ class AgentOrchestrator:
             raise RuntimeError(f"AO API {method} {route} failed: {error.code}: {detail}") from error
 
 
-def review_gate(raw: dict[str, Any], head_sha: str) -> tuple[bool, str, str | None, str | None]:
+def review_gate(raw: dict[str, Any], head_sha: str, required_reviewer: str | None = None) -> tuple[bool, str, str | None, str | None]:
     reviews = raw.get("reviews") or raw.get("data") or []
     runs: list[dict[str, Any]] = []
     for review in reviews:
         latest = review.get("latestRun") if isinstance(review, dict) else None
         runs.append(latest or review)
-    current = [item for item in runs if item and item.get("targetSha") == head_sha]
+    current = [
+        item for item in runs
+        if item
+        and item.get("targetSha") == head_sha
+        and (required_reviewer is None or str(item.get("harness", "")) == required_reviewer)
+    ]
     if not current:
-        return False, "no machine review for current PR head", None, None
+        qualifier = f" by required {required_reviewer} reviewer" if required_reviewer else ""
+        return False, f"no machine review for current PR head{qualifier}", None, None
     latest = sorted(current, key=lambda item: str(item.get("createdAt", "")))[-1]
     status = str(latest.get("status", "")).lower()
     verdict = str(latest.get("verdict", "")).lower()

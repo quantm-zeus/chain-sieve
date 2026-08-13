@@ -8,12 +8,19 @@ from typing import Any
 class PackageStatus(StrEnum):
     PLANNED = "PLANNED"
     READY = "READY"
+    STARTING = "STARTING"
     ACTIVE = "ACTIVE"
+    IDLE = "IDLE"
+    WAITING_INPUT = "WAITING_INPUT"
     PR_WAITING = "PR_WAITING"
-    CI_FIX = "CI_FIX"
+    CI = "CI"
+    CI_FIX = "CI"
     REVIEW = "REVIEW"
     BLOCKED = "BLOCKED"
-    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    COMPLETE = "COMPLETE"
+    COMPLETED = "COMPLETE"
+    STUCK = "STUCK"
 
 
 class FactoryStatus(StrEnum):
@@ -135,6 +142,8 @@ class PackageRecord:
     blocked_reason: str | None = None
     last_error: str | None = None
     started_at: str | None = None
+    last_progress_at: str | None = None
+    progress_fingerprint: str | None = None
     updated_at: str | None = None
 
     @classmethod
@@ -168,6 +177,8 @@ class PackageRecord:
             "blocked_reason": self.blocked_reason,
             "last_error": self.last_error,
             "started_at": self.started_at,
+            "last_progress_at": self.last_progress_at,
+            "progress_fingerprint": self.progress_fingerprint,
             "updated_at": self.updated_at,
         }
 
@@ -193,6 +204,9 @@ class PullRequest:
     checks: tuple[dict[str, Any], ...] = ()
     files: tuple[str, ...] = ()
     merged_at: str | None = None
+    base_branch: str = ""
+    author: str = ""
+    updated_at: str | None = None
 
 
 @dataclass(frozen=True)
@@ -204,6 +218,7 @@ class Session:
     activity: str
     issue_id: str | None = None
     workspace_path: str | None = None
+    last_activity_at: str | None = None
 
 
 @dataclass

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "factory-live-canary-20260813",
+  "objective": "Prove isolated Muse and Agy AO/GitHub lifecycles without modifying production main.",
+  "workPackages": [
+    {
+      "id": "canary-muse",
+      "objective": "Create factory-canary/muse.txt containing the work-package ID and a UTC completion timestamp.",
+      "acceptance": ["Only factory-canary/muse.txt changes", "Canary CI and exact-head Agy machine review pass"],
+      "dependencies": [],
+      "parallelizable": true,
+      "preferredProvider": "muse",
+      "risk": "MEDIUM",
+      "requirementIds": []
+    },
+    {
+      "id": "canary-agy",
+      "objective": "Create factory-canary/agy.txt containing the work-package ID and a UTC completion timestamp.",
+      "acceptance": ["Only factory-canary/agy.txt changes", "Canary CI and exact-head Muse machine review pass"],
+      "dependencies": [],
+      "parallelizable": true,
+      "preferredProvider": "agy",
+      "risk": "MEDIUM",
+      "requirementIds": []
+    },
+    {
+      "id": "canary-ci-correction",
+      "objective": "Prove CI correction by first pushing factory-canary/ci-correction.txt with exactly FAIL, then changing it to exactly PASS only after the dedicated check failure is returned by the controller.",
+      "acceptance": ["First pushed head fails the harmless canary check", "Controller sends failure evidence to the owning worker without Codex", "New head contains PASS and passes CI and exact-head cross-provider review"],
+      "dependencies": ["canary-muse", "canary-agy"],
+      "parallelizable": false,
+      "preferredProvider": "muse",
+      "risk": "MEDIUM",
+      "requirementIds": []
+    }
+  ]
+}

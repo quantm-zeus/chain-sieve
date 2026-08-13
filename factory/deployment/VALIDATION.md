@@ -6,7 +6,15 @@ Required live rows: Muse autonomy; Agy autonomy; two-worker parallelism; depende
 
 Do not change a row to PASS merely because an implementation or script exists. Legacy deletion and production cutover require all applicable rows to have evidence from the pinned Ubuntu system.
 
-## 2026-08-13 migration-worktree evidence
+## 2026-08-13 pre-cutover hardening evidence
+
+- PASS — direct `git ls-remote --tags` provenance proof for AO and Spec Kit; canonical repository redirect/fork state, tag objects, commits, Git trees, install mechanisms, release digest, provider integration source, and Agy waiting-input limitation are recorded in `UPSTREAM_PROVENANCE.md`.
+- PASS — 38 deterministic Python tests after hardening pass both locally and in a Linux/amd64 Python 3.12 container with the declared Git prerequisite. They cover role-scoped Codex routing/counters/budgets and no-Codex routine/recovery cycles; meaningful-progress/stuck classification; required cross-provider exact-head reviews; untrusted/wrong-base PR filtering; process environment presence/absence; resource spawn suppression; capped GitHub backoff/recovery; deployment/canary/acceptance invariants; and the original reconciliation/security suite.
+- PASS — Python 3.12 production contract, empty dependency lock, dedicated venv path, absolute systemd interpreter, unbuffered logging, explicit working directory/PATH, service-user-readable separated environment files, and automatic post-reboot probe are implemented and syntax-checked.
+- PASS — safe canary configuration, AO project config, milestone, GitHub check, and target-branch guard are committed for `factory/canary-base`; no validation worker targets `main`.
+- NOT RUN — all live provider/AO/GitHub and Ubuntu VPS gates remain as recorded in `VPS_ACCEPTANCE.json` because this audit host is macOS and no explicit target VPS was configured or reached.
+
+## 2026-08-13 migration-worktree evidence before hardening
 
 - PASS — controller compilation, JSON plan/schema parsing, shell syntax, and whitespace checks.
 - PASS — 25 deterministic Python tests covering DAG/reconciliation, duplicate blocking, exact-head review staleness, CI wait/failure routing, review correction, provider alternation, time/resource/runaway gates, read-only status, environment separation, trusted issue filtering, rolling-plan selection/artifacts, production-entrypoint isolation, and terminated-session preservation.
