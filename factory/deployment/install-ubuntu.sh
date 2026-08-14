@@ -2,7 +2,7 @@
 set -euo pipefail
 
 usage() {
-  echo "usage: sudo $0 --user USER --repo PATH [--state PATH] [--ao-data PATH] [--venv PATH]" >&2
+  echo "usage: sudo $0 --user USER --repo PATH [--state PATH] [--ao-data PATH] [--venv PATH] [--gh-bin PATH] [--muse-bin PATH] [--agy-bin PATH] [--codex-bin PATH]" >&2
 }
 
 [[ "$(id -u)" -eq 0 ]] || { echo "run as root with sudo" >&2; exit 1; }
@@ -16,6 +16,10 @@ repo=""
 state=""
 ao_data=""
 venv=""
+gh_override=""
+muse_override=""
+agy_override=""
+codex_override=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --user) deploy_user="${2:-}"; shift 2 ;;
@@ -23,6 +27,10 @@ while [[ $# -gt 0 ]]; do
     --state) state="${2:-}"; shift 2 ;;
     --ao-data) ao_data="${2:-}"; shift 2 ;;
     --venv) venv="${2:-}"; shift 2 ;;
+    --gh-bin) gh_override="${2:-}"; shift 2 ;;
+    --muse-bin) muse_override="${2:-}"; shift 2 ;;
+    --agy-bin) agy_override="${2:-}"; shift 2 ;;
+    --codex-bin) codex_override="${2:-}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) usage; exit 2 ;;
   esac
@@ -96,37 +104,54 @@ ao_ref="b48c98c94ca0039ad1bc42bd1b78134d3ff5773d"
 ao_tree="ea4d7ee451ca5a529422df66fa97a59af2c33a43"
 ao_source="/opt/chainsieve/vendor/agent-orchestrator"
 spec_kit_ref="4871b485f97c7fa452ec58eba325d87536c55c34"
-muse_version="Muse Code 0.1.0 (0.1.0-R708.1)"
-agy_version="1.1.12"
-muse_source="${CHAINSIEVE_MUSE_SOURCE:-}"
-agy_source="${CHAINSIEVE_AGY_SOURCE:-}"
-muse_sha256="${CHAINSIEVE_MUSE_SHA256:-}"
-agy_sha256="${CHAINSIEVE_AGY_SHA256:-}"
-
-for command in git go python3.12 gh tmux uv node pnpm codex systemd-analyze runuser; do
+for command in git go python3.12 tmux uv node pnpm systemd-analyze runuser; do
   command -v "$command" >/dev/null || { echo "missing prerequisite: $command" >&2; exit 1; }
 done
 [[ "$(python3.12 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')" == 3.12 ]] || { echo "Python 3.12 is required" >&2; exit 1; }
 [[ "$(node --version)" == v22.* ]] || { echo "Node 22 is required" >&2; exit 1; }
 [[ "$(pnpm --version)" == 10.13.1 ]] || { echo "pnpm 10.13.1 is required" >&2; exit 1; }
 [[ "$(go version | awk '{print $3}')" == go1.25.7 ]] || { echo "Go 1.25.7 is required to reproduce the pinned AO build" >&2; exit 1; }
-runuser -u "$deploy_user" -- env HOME="$user_home" gh auth status >/dev/null
-github_actor="$(runuser -u "$deploy_user" -- env HOME="$user_home" gh api user --jq .login)"
+resolve_cli() {
+  local name="$1" override="$2" candidate=""
+  if [[ -n "$override" ]]; then
+    [[ "$override" == /* ]] || { echo "$name override must be absolute: $override" >&2; exit 1; }
+    candidate="$(readlink -f "$override")"
+  else
+    candidate="$(runuser -l "$deploy_user" -c "command -v -- $name" 2>/dev/null || true)"
+    [[ -n "$candidate" ]] && candidate="$(readlink -f "$candidate")"
+  fi
+  [[ "$candidate" == /* && -f "$candidate" ]] || { echo "$name is not installed in deployment user $deploy_user's login PATH" >&2; exit 1; }
+  runuser -u "$deploy_user" -- test -x "$candidate" || { echo "$name is not executable by deployment user: $candidate" >&2; exit 1; }
+  case "$candidate" in
+    "$repo/factory/deployment/bin/"*|/opt/chainsieve/factory-bin/*)
+      echo "$name resolved to a ChainSieve wrapper instead of the installed CLI: $candidate" >&2
+      exit 1
+      ;;
+  esac
+  printf '%s\n' "$candidate"
+}
+
+gh_bin="$(resolve_cli gh "$gh_override")"
+muse_bin="$(resolve_cli muse "$muse_override")"
+agy_bin="$(resolve_cli agy "$agy_override")"
+codex_bin="$(resolve_cli codex "$codex_override")"
+cli_path="$(dirname "$gh_bin"):$(dirname "$codex_bin"):$(dirname "$muse_bin"):$(dirname "$agy_bin"):/usr/local/bin:/usr/bin:/bin"
+
+runuser -u "$deploy_user" -- env HOME="$user_home" "$gh_bin" auth status >/dev/null
+github_actor="$(runuser -u "$deploy_user" -- env HOME="$user_home" "$gh_bin" api user --jq .login)"
 [[ -n "$github_actor" ]] || { echo "gh has no authenticated user for $deploy_user" >&2; exit 1; }
 origin_repo="$(git -C "$repo" remote get-url origin | sed -E 's#^git@github.com:##; s#^https://github.com/##; s#\.git$##')"
 [[ "$origin_repo" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || { echo "origin must identify one github.com repository" >&2; exit 1; }
-runuser -u "$deploy_user" -- env HOME="$user_home" gh repo view "$origin_repo" --json nameWithOwner >/dev/null
+runuser -u "$deploy_user" -- env HOME="$user_home" "$gh_bin" repo view "$origin_repo" --json nameWithOwner >/dev/null
+runuser -u "$deploy_user" -- env HOME="$user_home" MUSE_NO_AUTO_UPDATE=1 "$muse_bin" --version >/dev/null
+runuser -u "$deploy_user" -- env HOME="$user_home" "$agy_bin" --version >/dev/null
+runuser -u "$deploy_user" -- env HOME="$user_home" "$codex_bin" --version >/dev/null
+runuser -u "$deploy_user" -- env HOME="$user_home" "$codex_bin" login status >/dev/null || {
+  echo "Codex is installed but its persisted deployment-user login is unavailable (CODEX_PROVIDER_UNAVAILABLE)" >&2
+  exit 1
+}
 
-[[ -x "$muse_source" ]] || { echo "set CHAINSIEVE_MUSE_SOURCE to the executable Muse $muse_version Linux release binary" >&2; exit 1; }
-[[ -x "$agy_source" ]] || { echo "set CHAINSIEVE_AGY_SOURCE to the executable Antigravity $agy_version Linux release binary" >&2; exit 1; }
-[[ "$muse_sha256" =~ ^[0-9a-f]{64}$ ]] || { echo "set CHAINSIEVE_MUSE_SHA256 to the verified Linux binary SHA-256" >&2; exit 1; }
-[[ "$agy_sha256" =~ ^[0-9a-f]{64}$ ]] || { echo "set CHAINSIEVE_AGY_SHA256 to the verified Linux binary SHA-256" >&2; exit 1; }
-echo "$muse_sha256  $muse_source" | sha256sum --check --status
-echo "$agy_sha256  $agy_source" | sha256sum --check --status
-MUSE_NO_AUTO_UPDATE=1 "$muse_source" --version | grep -Fx "$muse_version" >/dev/null
-"$agy_source" --version | grep -Fx "$agy_version" >/dev/null
-
-install -d -o root -g root -m 0755 /etc/chainsieve /opt/chainsieve/vendor /opt/chainsieve/factory-bin /usr/local/lib/chainsieve/providers
+install -d -o root -g root -m 0755 /etc/chainsieve /opt/chainsieve/vendor /opt/chainsieve/factory-bin
 install -d -o "$deploy_user" -g "$deploy_group" -m 0750 "$state" "$ao_data" "$(dirname "$venv")"
 install -d -o "$deploy_user" -g "$deploy_group" -m 0700 "$ao_data/tmux"
 runuser -u "$deploy_user" -- python3.12 -m venv --clear "$venv"
@@ -176,19 +201,16 @@ UV_TOOL_DIR=/opt/chainsieve/uv-tools UV_TOOL_BIN_DIR=/usr/local/bin \
   uv tool install specify-cli --force --from "git+https://github.com/github/spec-kit.git@${spec_kit_ref}"
 specify --version | grep -F 0.16.2 >/dev/null
 
-install -o root -g root -m 0755 "$muse_source" /usr/local/lib/chainsieve/providers/muse
-install -o root -g root -m 0755 "$agy_source" /usr/local/lib/chainsieve/providers/agy
 install -o root -g root -m 0755 "$repo/factory/deployment/bin/muse" /opt/chainsieve/factory-bin/muse
 install -o root -g root -m 0755 "$repo/factory/deployment/bin/agy" /opt/chainsieve/factory-bin/agy
 install -o root -g root -m 0755 "$repo/factory/deployment/bin/chainsieve-review-context" /opt/chainsieve/factory-bin/chainsieve-review-context
 install -o root -g root -m 0644 "$repo/factory/deployment/reviewer-contract.md" /opt/chainsieve/factory-bin/reviewer-contract.md
-if [[ ! -e /etc/chainsieve/providers.env ]]; then
-  install -o "$deploy_user" -g "$deploy_group" -m 0600 "$repo/factory/deployment/env/providers.env.example" /etc/chainsieve/providers.env
-fi
-
 export CHAINSIEVE_RENDER_USER="$deploy_user" CHAINSIEVE_RENDER_GROUP="$deploy_group"
 export CHAINSIEVE_RENDER_HOME="$user_home" CHAINSIEVE_RENDER_REPO="$repo"
 export CHAINSIEVE_RENDER_STATE="$state" CHAINSIEVE_RENDER_AO_DATA="$ao_data" CHAINSIEVE_RENDER_VENV="$venv"
+export CHAINSIEVE_RENDER_GH_BIN="$gh_bin" CHAINSIEVE_RENDER_MUSE_BIN="$muse_bin"
+export CHAINSIEVE_RENDER_AGY_BIN="$agy_bin" CHAINSIEVE_RENDER_CODEX_BIN="$codex_bin"
+export CHAINSIEVE_RENDER_CLI_PATH="$cli_path"
 python3.12 - "$repo" <<'PY'
 import os
 import pathlib
@@ -204,6 +226,7 @@ values = {
     "@STATE@": os.environ["CHAINSIEVE_RENDER_STATE"],
     "@AO_DATA@": os.environ["CHAINSIEVE_RENDER_AO_DATA"],
     "@VENV@": os.environ["CHAINSIEVE_RENDER_VENV"],
+    "@CLI_PATH@": os.environ["CHAINSIEVE_RENDER_CLI_PATH"],
 }
 
 def render(source: pathlib.Path, target: pathlib.Path) -> None:
@@ -227,6 +250,13 @@ deployment = {
     "AO_DATA_DIR": values["@AO_DATA@"],
     "CHAINSIEVE_VENV": values["@VENV@"],
     "CHAINSIEVE_FACTORY_PYTHON": values["@VENV@"] + "/bin/python",
+    "CHAINSIEVE_GH_BIN": os.environ["CHAINSIEVE_RENDER_GH_BIN"],
+    "CHAINSIEVE_MUSE_BIN": os.environ["CHAINSIEVE_RENDER_MUSE_BIN"],
+    "CHAINSIEVE_AGY_BIN": os.environ["CHAINSIEVE_RENDER_AGY_BIN"],
+    "CHAINSIEVE_CODEX_BIN": os.environ["CHAINSIEVE_RENDER_CODEX_BIN"],
+    "CHAINSIEVE_MUSE_MODEL_MODE": "cli-default",
+    "CHAINSIEVE_AGY_MODEL_MODE": "cli-default",
+    "CHAINSIEVE_CODEX_MODEL_MODE": "cli-default",
 }
 path = pathlib.Path("/etc/chainsieve/deployment.env")
 path.write_text("\n".join(f"{key}={shlex.quote(value)}" for key, value in deployment.items()) + "\n", encoding="utf-8")
@@ -252,7 +282,9 @@ fi
 "${ao_user[@]}" /usr/local/bin/ao project set-config chainsieve-canary --config-json "$(tr -d '\n' < "$repo/factory/deployment/ao-canary-project-config.json")"
 
 runuser -u "$deploy_user" -- env \
-  HOME="$user_home" PATH="$venv/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin" \
+  HOME="$user_home" PATH="$venv/bin:/opt/chainsieve/factory-bin:$cli_path" \
+  CHAINSIEVE_GH_BIN="$gh_bin" CHAINSIEVE_MUSE_BIN="$muse_bin" \
+  CHAINSIEVE_AGY_BIN="$agy_bin" CHAINSIEVE_CODEX_BIN="$codex_bin" \
   PYTHONPATH="$repo" CHAINSIEVE_FACTORY_EXPECTED_PYTHON="$venv/bin/python" \
   CHAINSIEVE_FACTORY_STATE_DIR="$state" CHAINSIEVE_FACTORY_PLAN="$repo/specs/factory/current-milestone.json" \
   AO_RUN_FILE="$AO_RUN_FILE" AO_DATA_DIR="$ao_data" \

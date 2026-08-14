@@ -19,7 +19,18 @@ BASE_ENV_KEYS = (
     "HOME",
     "USER",
     "LOGNAME",
+    "CHAINSIEVE_GH_BIN",
+    "CHAINSIEVE_MUSE_BIN",
+    "CHAINSIEVE_AGY_BIN",
+    "CHAINSIEVE_CODEX_BIN",
+    "CHAINSIEVE_MUSE_MODEL",
+    "CHAINSIEVE_AGY_MODEL",
 )
+
+EXECUTABLE_OVERRIDES = {
+    "gh": "CHAINSIEVE_GH_BIN",
+    "codex": "CHAINSIEVE_CODEX_BIN",
+}
 
 
 @dataclass(frozen=True)
@@ -61,6 +72,10 @@ class CommandRunner:
         timeout: int = 60,
         check: bool = True,
     ) -> CommandResult:
+        argv = list(argv)
+        override = EXECUTABLE_OVERRIDES.get(argv[0]) if argv else None
+        if override and self.source_env.get(override):
+            argv[0] = self.source_env[override]
         try:
             process = subprocess.run(
                 argv,

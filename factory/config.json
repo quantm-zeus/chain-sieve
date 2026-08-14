@@ -19,7 +19,8 @@
     "maxMilestoneWallClockSeconds": 259200,
     "maxIdleSeconds": 900,
     "maxStartingSeconds": 300,
-    "maxTickDurationSeconds": 300
+    "maxTickDurationSeconds": 300,
+    "providerCooldownSeconds": 60
   },
   "resources": {
     "diskMinFreeGiB": 15,
@@ -27,6 +28,9 @@
     "maxWorktrees": 24
   },
   "models": {
+    "muse": {
+      "model": "muse-spark-1.2-contributor"
+    },
     "codex": {
       "planner": {
         "model": "gpt-5.6-luna",
@@ -50,7 +54,7 @@
       }
     },
     "agy": {
-      "model": "gemini-3.6-flash-high"
+      "model": "Gemini 3.7 Flash (High)"
     }
   },
   "integration": {

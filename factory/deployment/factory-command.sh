@@ -3,7 +3,9 @@ set -euo pipefail
 
 deployment_config="${CHAINSIEVE_DEPLOYMENT_CONFIG:-/etc/chainsieve/deployment.env}"
 if [[ -r "$deployment_config" ]]; then
+  set -a
   . "$deployment_config"
+  set +a
   export HOME="$CHAINSIEVE_USER_HOME"
   export PYTHONPATH="$CHAINSIEVE_REPO_PATH"
   export CHAINSIEVE_FACTORY_STATE_DIR

@@ -11,11 +11,11 @@ Type=simple
 User=@DEPLOY_USER@
 Group=@DEPLOY_GROUP@
 WorkingDirectory=@REPO@
-EnvironmentFile=-/etc/chainsieve/providers.env
+EnvironmentFile=/etc/chainsieve/deployment.env
 UnsetEnvironment=GH_TOKEN GITHUB_TOKEN
 Environment="HOME=@USER_HOME@"
 Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"
-Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:@CLI_PATH@"
 Environment="PYTHONPATH=@REPO@"
 Environment=PYTHONUNBUFFERED=1
 Environment="CHAINSIEVE_FACTORY_EXPECTED_PYTHON=@VENV@/bin/python"

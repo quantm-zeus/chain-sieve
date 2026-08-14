@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-real_binary="${CHAINSIEVE_AGY_REAL:-/usr/local/lib/chainsieve/providers/agy}"
-model="${CHAINSIEVE_AGY_MODEL:-gemini-3.6-flash-high}"
+real_binary="${CHAINSIEVE_AGY_BIN:-${CHAINSIEVE_AGY_REAL:-}}"
+model="${CHAINSIEVE_AGY_MODEL:-}"
 
-if [[ ! -x "$real_binary" ]]; then
+if [[ -z "$real_binary" || ! -x "$real_binary" ]]; then
   echo "configured Antigravity binary is not executable: $real_binary" >&2
   exit 127
 fi
+[[ ! "$real_binary" -ef "$0" ]] || { echo "refusing recursive Agy wrapper configuration" >&2; exit 78; }
 
 has_model=false
 is_reviewer=false
@@ -38,7 +39,7 @@ if [[ "$is_reviewer" == true ]]; then
   [[ "$injected" == true ]] || { echo "Agy reviewer invocation has no interactive prompt" >&2; exit 78; }
 fi
 
-if [[ "$has_model" == true ]]; then
+if [[ "$has_model" == true || -z "$model" ]]; then
   exec "$real_binary" "${arguments[@]}"
 fi
 exec "$real_binary" --model "$model" "${arguments[@]}"

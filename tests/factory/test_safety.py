@@ -281,10 +281,10 @@ class SafetyTests(unittest.TestCase):
 
     def test_codex_routes_use_requested_models_and_per_role_limits(self) -> None:
         cfg = config(self.root)
-        cfg.codex_routes["planner"] = replace(cfg.codex_routes["planner"], model="gpt-5.6-luna", reasoning_effort="medium")
-        cfg.codex_routes["replan"] = replace(cfg.codex_routes["replan"], model="gpt-5.6-terra", reasoning_effort="high")
-        cfg.codex_routes["final_audit"] = replace(cfg.codex_routes["final_audit"], model="gpt-5.6-terra", reasoning_effort="high")
-        cfg.codex_routes["emergency"] = replace(cfg.codex_routes["emergency"], model="gpt-5.6-sol", reasoning_effort="high")
+        cfg.codex_routes["planner"] = replace(cfg.codex_routes["planner"], model="gpt-5.6-luna", reasoning_effort="medium", explicit_model="gpt-5.6-luna")
+        cfg.codex_routes["replan"] = replace(cfg.codex_routes["replan"], model="gpt-5.6-terra", reasoning_effort="high", explicit_model="gpt-5.6-terra")
+        cfg.codex_routes["final_audit"] = replace(cfg.codex_routes["final_audit"], model="gpt-5.6-terra", reasoning_effort="high", explicit_model="gpt-5.6-terra")
+        cfg.codex_routes["emergency"] = replace(cfg.codex_routes["emergency"], model="gpt-5.6-sol", reasoning_effort="high", explicit_model="gpt-5.6-sol")
         runner = CapturingRunner()
         reasoning = ReasoningRunner(self.root, cfg, StateStore(cfg.state_dir), runner)
         for role in ("planner", "replan", "final_audit", "emergency"):
@@ -340,7 +340,7 @@ class SafetyTests(unittest.TestCase):
         self.assertNotIn("ao daemon", factory_unit)
         installer = (repo / "factory/deployment/install-ubuntu.sh").read_text()
         self.assertIn('--user USER --repo PATH', installer)
-        self.assertIn('gh auth status', installer)
+        self.assertIn('"$gh_bin" auth status', installer)
         self.assertNotIn("pip install", installer)
 
     def test_canary_assets_cannot_target_main_or_codex(self) -> None:
@@ -348,9 +348,11 @@ class SafetyTests(unittest.TestCase):
         value = json.loads((repo / "factory/deployment/canary-config.json").read_text())
         self.assertEqual(value["integration"]["targetBranch"], "factory/canary-base")
         self.assertEqual(value["defaultBranch"], "factory/canary-base")
-        self.assertTrue(all(route["maxCallsPerMilestone"] == 0 for route in value["models"]["codex"].values()))
+        self.assertEqual(value["models"]["codex"]["planner"]["maxCallsPerMilestone"], 3)
+        self.assertTrue(all(value["models"]["codex"][role]["maxCallsPerMilestone"] == 0 for role in ("replan", "final_audit", "emergency")))
         script = (repo / "factory/deployment/prepare-canary.sh").read_text()
         self.assertIn('[[ "$target_ref" != main ]]', script)
+        self.assertIn('CHAINSIEVE_CANARY_SOURCE_REF:-main', script)
 
     def test_acceptance_artifact_has_exact_required_gate_set(self) -> None:
         repo = Path(__file__).resolve().parents[2]
@@ -362,6 +364,7 @@ class SafetyTests(unittest.TestCase):
             "network_retry", "resource_circuit_breaker", "codex_cost_routing", "status_observability",
             "root_checkout_integrity", "semantic_review_effectiveness", "final_audit_remediation_cycle",
             "alternate_provider_failover", "codex_replan_escalation", "status_liveness", "global_work_identity",
+            "codex_muse_fallback",
         }
         self.assertEqual({item["gate"] for item in value["gates"]}, expected)
         self.assertTrue(all(item["status"] in {"PASS", "FAIL", "NOT_RUN"} for item in value["gates"]))

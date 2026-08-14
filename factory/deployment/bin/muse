@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-real_binary="${CHAINSIEVE_MUSE_REAL:-/usr/local/lib/chainsieve/providers/muse}"
+real_binary="${CHAINSIEVE_MUSE_BIN:-${CHAINSIEVE_MUSE_REAL:-}}"
+model="${CHAINSIEVE_MUSE_MODEL:-}"
 
-if [[ ! -x "$real_binary" ]]; then
+if [[ -z "$real_binary" || ! -x "$real_binary" ]]; then
   echo "configured Muse binary is not executable: $real_binary" >&2
   exit 127
 fi
+[[ ! "$real_binary" -ef "$0" ]] || { echo "refusing recursive Muse wrapper configuration" >&2; exit 78; }
 
 # The installed target is the exact release binary, not Muse's auto-updating
 # launcher. Retain the environment guard as defense in depth.
 export MUSE_NO_AUTO_UPDATE=1
 is_reviewer=false
+has_model=false
 for argument in "$@"; do
   [[ "$argument" == --disable-write ]] && is_reviewer=true
+  [[ "$argument" == --model || "$argument" == --model=* ]] && has_model=true
 done
 
 if [[ "$is_reviewer" == true ]]; then
@@ -28,4 +32,7 @@ if [[ "$is_reviewer" == true ]]; then
   fi
 fi
 
+if [[ -n "$model" && "$has_model" == false ]]; then
+  exec "$real_binary" --model "$model" "$@"
+fi
 exec "$real_binary" "$@"
