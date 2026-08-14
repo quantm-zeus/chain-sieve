@@ -151,6 +151,7 @@ def main(argv: list[str] | None = None) -> int:
 def _human_status(value: dict[str, object]) -> str:
     progress = value["progress"]
     packages = value["packages"]
+    reasoning = value["reasoningProviders"]
     lines = [
         "CHAINSIEVE FACTORY",
         "",
@@ -159,6 +160,10 @@ def _human_status(value: dict[str, object]) -> str:
         f"UPTIME      {_duration(value.get('uptimeSeconds'))}",
         f"MILESTONE   {value['milestone']}",
         f"PROGRESS    {progress['completed']} / {progress['total']} complete",
+        f"REASONING   preferred={reasoning['preferredProvider']} last={reasoning['actualLastProvider'] or '-'} "
+        f"museFallbacks={reasoning['museFallbackSuccesses']}",
+        f"MODELS      Muse={reasoning['muse']['modelMode']} Agy={reasoning['agy']['modelMode']} "
+        f"Codex planner={reasoning['codexRoles']['planner']['modelMode']}",
         "",
         "WORK PACKAGES",
     ]

@@ -17,6 +17,11 @@ class CodexRoute:
     model: str
     reasoning_effort: str
     max_calls_per_milestone: int
+    explicit_model: str | None = None
+
+    @property
+    def model_mode(self) -> str:
+        return "explicit" if self.explicit_model else "cli-default"
 
 
 @dataclass(frozen=True)
@@ -48,6 +53,10 @@ class FactoryConfig:
     notification_command: tuple[str, ...]
     codex_routes: dict[str, CodexRoute]
     agy_model: str
+    muse_model: str = "muse-spark-1.2-contributor"
+    muse_explicit_model: str | None = None
+    agy_explicit_model: str | None = None
+    provider_cooldown_seconds: int = 60
 
     @classmethod
     def load(cls, root: Path, path: Path) -> "FactoryConfig":
@@ -88,10 +97,15 @@ class FactoryConfig:
                     model=str(models["codex"][role]["model"]),
                     reasoning_effort=str(models["codex"][role]["reasoningEffort"]),
                     max_calls_per_milestone=int(models["codex"][role]["maxCallsPerMilestone"]),
+                    explicit_model=os.environ.get(f"CHAINSIEVE_CODEX_{role.upper()}_MODEL") or None,
                 )
                 for role in CODEX_ROLES
             },
+            muse_model=str(models["muse"]["model"]),
+            muse_explicit_model=os.environ.get("CHAINSIEVE_MUSE_MODEL") or None,
             agy_model=str(models["agy"]["model"]),
+            agy_explicit_model=os.environ.get("CHAINSIEVE_AGY_MODEL") or None,
+            provider_cooldown_seconds=int(budgets.get("providerCooldownSeconds", 60)),
             max_tick_duration_seconds=int(budgets.get("maxTickDurationSeconds", 300)),
         )
         config.validate()
@@ -117,6 +131,8 @@ class FactoryConfig:
             raise ValueError("idle and starting thresholds must be positive")
         if self.max_tick_duration_seconds <= 0:
             raise ValueError("maxTickDurationSeconds must be positive")
+        if self.provider_cooldown_seconds < 0 or self.provider_cooldown_seconds > 3600:
+            raise ValueError("providerCooldownSeconds must be between 0 and 3600")
         if self.disk_min_free_gib < 0 or self.memory_min_free_mib < 0 or self.max_worktrees < 1:
             raise ValueError("resource gates must be non-negative and maxWorktrees positive")
         if not self.integration_branch or self.integration_branch.startswith("refs/"):
@@ -126,10 +142,16 @@ class FactoryConfig:
         for role, route in self.codex_routes.items():
             if not route.model or route.reasoning_effort not in {"low", "medium", "high", "xhigh", "max", "ultra"}:
                 raise ValueError(f"invalid Codex route for {role}")
+            if route.explicit_model and route.explicit_model != route.model:
+                raise ValueError(f"verified Codex model for {role} must match its requested preference")
             if route.max_calls_per_milestone < 0:
                 raise ValueError(f"Codex call limit for {role} cannot be negative")
         if self.codex_routes["final_audit"].max_calls_per_milestone < self.max_final_audit_cycles:
             raise ValueError("final_audit Codex call limit must cover maxFinalAuditCycles")
+        if not self.muse_model or not self.agy_model:
+            raise ValueError("Muse and Agy model preferences must be non-empty")
+        if self.muse_explicit_model and self.muse_explicit_model != self.muse_model:
+            raise ValueError("verified Muse model must match its requested preference")
 
     def load_milestone(self) -> Milestone:
         active_path = self.state_dir / "active-milestone.json"

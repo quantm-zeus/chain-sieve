@@ -26,13 +26,14 @@
     "maxWorktrees": 24
   },
   "models": {
+    "muse": {"model": "muse-spark-1.2-contributor"},
     "codex": {
-      "planner": {"model": "gpt-5.6-luna", "reasoningEffort": "medium", "maxCallsPerMilestone": 0},
+      "planner": {"model": "gpt-5.6-luna", "reasoningEffort": "medium", "maxCallsPerMilestone": 3},
       "replan": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},
       "final_audit": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},
       "emergency": {"model": "gpt-5.6-sol", "reasoningEffort": "high", "maxCallsPerMilestone": 0}
     },
-    "agy": {"model": "gemini-3.6-flash-high"}
+    "agy": {"model": "Gemini 3.7 Flash (High)"}
   },
   "integration": {
     "targetBranch": "factory/canary-base",

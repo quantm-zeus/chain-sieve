@@ -23,8 +23,6 @@ class Check:
 
 def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list[Check]:
     checks: list[Check] = []
-    lock = json.loads((root / "factory" / "upstream-lock.json").read_text(encoding="utf-8"))
-    providers = lock["localProviderBaselines"]
 
     def add(name: str, status: str, detail: str) -> None:
         checks.append(Check(name, status, detail))
@@ -60,29 +58,43 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     )
 
     _binary_check(add, runner, "git", ["git", "--version"], required=True)
-    _binary_check(add, runner, "gh", ["gh", "--version"], required=True)
+    gh_bin = _configured_binary(runner, "CHAINSIEVE_GH_BIN", "gh")
+    muse_bin = _configured_binary(runner, "CHAINSIEVE_MUSE_BIN", "muse")
+    agy_bin = _configured_binary(runner, "CHAINSIEVE_AGY_BIN", "agy")
+    codex_bin = _configured_binary(runner, "CHAINSIEVE_CODEX_BIN", "codex")
+    _binary_check(add, runner, "gh", [gh_bin, "--version"], required=True, executable=gh_bin)
     _binary_check(add, runner, "node", ["node", "--version"], required=True)
     _binary_check(add, runner, "pnpm", ["pnpm", "--version"], required=True)
     _binary_check(add, runner, "tmux", ["tmux", "-V"], required=True)
     _binary_check(add, runner, "AO", ["ao", "version"], required=True, expected="0.12.3")
     _binary_check(add, runner, "Spec Kit", ["specify", "--version"], required=True, expected="0.16.2")
-    _binary_check(add, runner, "Muse", ["muse", "--version"], required=True, expected=providers["muse"])
-    _binary_check(add, runner, "Antigravity", ["agy", "--version"], required=True, expected=providers["agy"])
-    _binary_check(add, runner, "Codex", ["codex", "--version"], required=True)
+    _binary_check(add, runner, "Muse", [muse_bin, "--version"], required=True, executable=muse_bin)
+    _binary_check(add, runner, "Antigravity", [agy_bin, "--version"], required=True, executable=agy_bin)
+    _binary_check(add, runner, "Codex", [codex_bin, "--version"], required=True, executable=codex_bin)
 
-    muse_help = runner.run(["muse", "--help"], check=False)
-    muse_exec_help = runner.run(["muse", "exec", "--help"], check=False)
+    muse_help = runner.run([muse_bin, "--help"], check=False)
+    muse_exec_help = runner.run([muse_bin, "exec", "--help"], check=False)
     muse_text = muse_help.stdout + muse_help.stderr + muse_exec_help.stdout + muse_exec_help.stderr
     muse_flags = all(flag in muse_text for flag in ("--disable-approval", "--disable-write", "--disable-shell", "--user-input-auto-resolve", "--trust-workspace"))
     add("Muse headless permissions", "PASS" if muse_flags else "FAIL", "required non-interactive/reviewer flags available" if muse_flags else "required Muse flags missing")
+    add(
+        "Muse model policy", "PASS",
+        f"preferred={config.muse_model}; modelMode={'explicit' if config.muse_explicit_model else 'cli-default'}; "
+        f"effectiveModel={config.muse_explicit_model or 'CLI configured default'}",
+    )
 
-    agy_help = runner.run(["agy", "--help"], check=False)
-    agy_flags = all(flag in (agy_help.stdout + agy_help.stderr) for flag in ("--dangerously-skip-permissions", "--print", "--model"))
+    agy_help = runner.run([agy_bin, "--help"], check=False)
+    agy_flags = all(flag in (agy_help.stdout + agy_help.stderr) for flag in ("--dangerously-skip-permissions", "--print"))
     add("Antigravity headless permissions", "PASS" if agy_flags else "FAIL", "required non-interactive flags available" if agy_flags else "required agy flags missing")
     add(
         "Antigravity waiting-input telemetry",
         "WARN",
         "AO v0.12.3 exposes Agy active/idle/exit hooks but no native waiting-input detector; controller stuck timeout fails closed",
+    )
+    add(
+        "Antigravity model policy", "PASS",
+        f"preferred={config.agy_model}; modelMode={'explicit' if config.agy_explicit_model else 'cli-default'}; "
+        f"effectiveModel={config.agy_explicit_model or 'CLI configured default'}",
     )
 
     try:
@@ -92,12 +104,19 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
         credential_ok, credential_detail = False, str(error)
     add("GitHub CLI authentication", "PASS" if credential_ok else "FAIL", credential_detail)
 
-    codex_auth = runner.run(["codex", "login", "status"], check=False)
+    codex_auth = runner.run([codex_bin, "login", "status"], check=False)
     add(
         "Codex authentication",
         "PASS" if codex_auth.returncode == 0 else "FAIL",
-        (codex_auth.stdout or codex_auth.stderr).strip().splitlines()[0] if (codex_auth.stdout or codex_auth.stderr).strip() else "status unavailable",
+        ((codex_auth.stdout or codex_auth.stderr).strip().splitlines()[0]
+         if (codex_auth.stdout or codex_auth.stderr).strip() else "CODEX_PROVIDER_UNAVAILABLE"),
     )
+    for role, route in config.codex_routes.items():
+        add(
+            f"Codex {role} model policy", "PASS",
+            f"preferredModel={route.model}; modelMode={route.model_mode}; "
+            f"effectiveModel={route.explicit_model or 'CLI configured default'}; fallbackProvider=Muse",
+        )
 
     ao_status = runner.run(["ao", "status", "--json"], allowed_env=("AO_PORT", "AO_RUN_FILE", "AO_DATA_DIR"), check=False)
     add("AO daemon", "PASS" if ao_status.returncode == 0 else "WARN", "reachable" if ao_status.returncode == 0 else "not running")
@@ -193,12 +212,20 @@ def _binary_check(
     *,
     required: bool,
     expected: str | None = None,
+    executable: str | None = None,
 ) -> None:
     result = runner.run(argv, check=False)
     output = (result.stdout or result.stderr).strip().splitlines()
-    detail = output[0] if output else "not found"
+    detail = f"{executable}: {output[0] if output else 'not found'}" if executable else (output[0] if output else "not found")
     ok = result.returncode == 0 and (expected is None or expected in detail)
     add(name, "PASS" if ok else ("FAIL" if required else "WARN"), detail)
+
+
+def _configured_binary(runner: CommandRunner, variable: str, fallback: str) -> str:
+    value = runner.source_env.get(variable)
+    if value:
+        return value
+    return shutil.which(fallback, path=runner.source_env.get("PATH")) or fallback
 
 
 def checks_json(checks: list[Check]) -> str:

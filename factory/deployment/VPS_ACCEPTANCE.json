@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-14T16:26:50Z",
-  "classification": "READY_FOR_VPS_DEPLOYMENT",
+  "generatedAt": "2026-08-15T00:00:00Z",
+  "classification": "READY_FOR_VPS_INSTALL",
   "repositoryCommit": "Use the git commit containing this artifact; the published SHA remains recorded in repository and pull-request history",
   "target": "Ubuntu VPS not configured or reached from the macOS audit host",
   "gates": [
@@ -31,6 +31,7 @@
     {"gate": "root_checkout_integrity", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Rendered AO service makes the configured root checkout read-only with narrow .git and AO-data write exceptions", "Actual mount-namespace denial/allowance probe requires systemd/Linux"]},
     {"gate": "alternate_provider_failover", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Controller tests exercise clean Muse -> Agy and Agy -> Muse respawn", "Live AO/provider failure requires the target VPS"]},
     {"gate": "codex_replan_escalation", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Deterministic tests prove first failure makes no Codex call, dual failure makes one replan call, and exhausted budget blocks", "Live Terra/Sol routing is not exercised by unit tests"]},
+    {"gate": "codex_muse_fallback", "status": "NOT_RUN", "timestamp": "2026-08-15T00:00:00Z", "evidence": ["Deterministic tests cover Codex explicit-model retry, bounded provider failure classification, one-shot read-only Muse fallback, shared schema validation, unchanged logical budget, cooldown recovery, and no recursion", "Live installed-CLI proof must be run on the Ubuntu VPS without altering real Codex authentication"]},
     {"gate": "status_liveness", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Fresh heartbeat is ACTIVE; stale heartbeat and historical start alone are not ACTIVE", "No GitHub or LLM call is used"]},
     {"gate": "global_work_identity", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Milestone-qualified work keys bind issues, branches, AO correlation, PRs, events, and state", "Same local package ID across milestones cannot inherit a prior merge"]},
     {"gate": "semantic_review_effectiveness", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Controller-owned exact-head review context, standing Spawn/Notify/Restore instructions, and canonical proof digest are deterministic-tested", "Intentional CI-green acceptance violation and correction require live cross-provider VPS review"]},

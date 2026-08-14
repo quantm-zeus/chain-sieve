@@ -3,17 +3,19 @@ from __future__ import annotations
 import json
 import hashlib
 import re
+import time
 from pathlib import Path
 from typing import Any
 
-from .commands import CommandRunner
+from .commands import CommandResult, CommandRunner
 from .config import FactoryConfig
 from .models import Milestone, WorkPackage
 from .store import StateStore
 
 
-MUSE_ENV = ("META_API_KEY", "MUSE_AUTH_PATH", "XDG_CONFIG_HOME")
-CODEX_ENV = ("OPENAI_API_KEY", "CODEX_ACCESS_TOKEN", "CODEX_HOME")
+MUSE_ENV: tuple[str, ...] = ()
+CODEX_ENV: tuple[str, ...] = ()
+TRANSIENT_RETRIES = 2
 
 
 class ReasoningRunner:
@@ -184,26 +186,159 @@ authorize immutable factory/control-plane paths. Do not modify files.
         if calls >= route.max_calls_per_milestone:
             raise RuntimeError(f"Codex {role} call budget exhausted")
         self._record_codex_call(usage, milestone_id, role, calls + 1)
-        self._save_usage(usage)
+        operational = usage.setdefault("reasoningOperations", {})
+        operational["preferredProvider"] = "codex"
         self.store.event(
             "CODEX_CALL_STARTED",
             milestoneId=milestone_id,
             role=role,
-            model=route.model,
+            requestedPreference=route.model,
+            modelMode=route.model_mode,
             reasoningEffort=route.reasoning_effort,
             attempt=calls + 1,
         )
-        self.runner.run(
-            [
-                "codex", "--ask-for-approval", "never", "exec", "--ephemeral", "--ignore-user-config", "--sandbox", "read-only",
-                "--model", route.model,
-                "-c", f'model_reasoning_effort="{route.reasoning_effort}"',
-                "--output-schema", str(schema), "--output-last-message", str(output_path), "-",
-            ],
+        now = int(time.time())
+        unavailable_until = int(operational.get("codexUnavailableUntilEpoch", 0) or 0)
+        if unavailable_until > now:
+            self.store.event(
+                "CODEX_PROVIDER_UNAVAILABLE", milestoneId=milestone_id, role=role,
+                reason="provider cooldown active", retryAfterEpoch=unavailable_until,
+            )
+            self._save_usage(usage)
+            self._invoke_muse_fallback(role, milestone_id, prompt, schema, output_path, usage)
+            return
+
+        explicit_model = route.explicit_model
+        transient_attempts = 0
+        while True:
+            operational["codexAttempts"] = int(operational.get("codexAttempts", 0)) + 1
+            self._save_usage(usage)
+            result = self._run_codex_attempt(route.reasoning_effort, explicit_model, prompt, schema, output_path)
+            if result is None or result.returncode == 0:
+                operational["actualLastReasoningProvider"] = "codex"
+                operational["codexAvailable"] = True
+                operational["codexUnavailableUntilEpoch"] = 0
+                self._save_usage(usage)
+                return
+            category = _codex_failure_category(result)
+            reason = _result_detail(result)
+            if category == "model" and explicit_model:
+                operational["codexDefaultModelRetries"] = int(operational.get("codexDefaultModelRetries", 0)) + 1
+                self.store.event(
+                    "CODEX_DEFAULT_MODEL_RETRY", milestoneId=milestone_id, role=role,
+                    requestedPreference=route.model, reason=reason,
+                )
+                explicit_model = None
+                continue
+            if category == "transient" and transient_attempts < TRANSIENT_RETRIES:
+                transient_attempts += 1
+                self.store.event(
+                    "CODEX_TRANSIENT_RETRY", milestoneId=milestone_id, role=role,
+                    attempt=transient_attempts, reason=reason,
+                )
+                time.sleep(min(2 ** (transient_attempts - 1), 4))
+                continue
+            cooldown = 0 if category == "injected" else self.config.provider_cooldown_seconds
+            operational["codexAvailable"] = False
+            operational["codexUnavailableUntilEpoch"] = int(time.time()) + cooldown
+            self.store.event(
+                "CODEX_PROVIDER_UNAVAILABLE", milestoneId=milestone_id, role=role,
+                reason=reason, failureClass=category, retryAfterSeconds=cooldown,
+            )
+            self._save_usage(usage)
+            self._invoke_muse_fallback(role, milestone_id, prompt, schema, output_path, usage)
+            return
+
+    def _run_codex_attempt(
+        self,
+        reasoning_effort: str,
+        explicit_model: str | None,
+        prompt: str,
+        schema: Path,
+        output_path: Path,
+    ) -> CommandResult | None:
+        source_env = getattr(self.runner, "source_env", {})
+        injection = source_env.get("CHAINSIEVE_CANARY_CODEX_FAILURE_ONCE") == "1"
+        marker = self.config.state_dir / ".codex-canary-failure-consumed"
+        if injection and not marker.exists():
+            marker.parent.mkdir(parents=True, exist_ok=True)
+            marker.write_text("injected\n", encoding="utf-8")
+            return CommandResult(("codex", "exec"), "", "canary injected CODEX_PROVIDER_UNAVAILABLE", 77)
+        output_path.unlink(missing_ok=True)
+        argv = [
+            "codex", "--ask-for-approval", "never", "exec", "--ephemeral", "--sandbox", "read-only",
+        ]
+        if explicit_model:
+            argv.extend(("--model", explicit_model))
+        argv.extend((
+            "-c", f'model_reasoning_effort="{reasoning_effort}"',
+            "--output-schema", str(schema), "--output-last-message", str(output_path), "-",
+        ))
+        return self.runner.run(
+            argv,
             allowed_env=CODEX_ENV,
             input_text=prompt,
             timeout=self.config.max_task_wall_clock_seconds,
+            check=False,
         )
+
+    def _invoke_muse_fallback(
+        self,
+        role: str,
+        milestone_id: str,
+        prompt: str,
+        schema: Path,
+        output_path: Path,
+        usage: dict[str, Any],
+    ) -> None:
+        operational = usage.setdefault("reasoningOperations", {})
+        operational["museFallbackAttempts"] = int(operational.get("museFallbackAttempts", 0)) + 1
+        self.store.event(
+            "CODEX_FALLBACK_STARTED", milestoneId=milestone_id, role=role, provider="muse",
+            requestedPreference=self.config.muse_model,
+            modelMode="explicit" if self.config.muse_explicit_model else "cli-default",
+        )
+        schema_text = schema.read_text(encoding="utf-8")
+        fallback_prompt = (
+            f"{prompt}\n\nYou are a one-shot read-only fallback for the `{role}` logical reasoning call. "
+            "Do not modify files, run implementation work, commit, push, open a PR, or merge. "
+            "Return exactly one JSON object matching this schema:\n"
+            f"{schema_text}"
+        )
+        argv = ["muse", "exec"]
+        if self.config.muse_explicit_model:
+            argv.extend(("--model", self.config.muse_explicit_model))
+        argv.extend((
+            "--trust-workspace", "--disable-approval", "--disable-write", "--disable-shell",
+            "--user-input-auto-resolve", "--json", "--max-model-steps", "60", fallback_prompt,
+        ))
+        result = self.runner.run(
+            argv,
+            allowed_env=MUSE_ENV,
+            additions={"MUSE_NO_AUTO_UPDATE": "1"},
+            timeout=self.config.max_task_wall_clock_seconds,
+            check=False,
+        )
+        if result is not None and result.returncode == 0:
+            try:
+                value = _extract_json(_muse_final_text(result.stdout))
+                _validate_json_schema(value, json.loads(schema_text))
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                output_path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            except Exception as error:
+                result = CommandResult(result.argv, result.stdout, f"fallback schema failure: {error}", 65)
+        if result is None or result.returncode == 0:
+            operational["museFallbackSuccesses"] = int(operational.get("museFallbackSuccesses", 0)) + 1
+            operational["actualLastReasoningProvider"] = "muse"
+            self._save_usage(usage)
+            self.store.event("CODEX_FALLBACK_SUCCEEDED", milestoneId=milestone_id, role=role, provider="muse")
+            return
+        reason = _result_detail(result)
+        operational["actualLastReasoningProvider"] = "none"
+        operational["lastFallbackFailure"] = reason
+        self._save_usage(usage)
+        self.store.event("CODEX_FALLBACK_FAILED", milestoneId=milestone_id, role=role, provider="muse", reason=reason)
+        raise RuntimeError(f"Codex unavailable and one-shot Muse fallback failed: {reason}")
 
     def _usage(self) -> dict[str, Any]:
         path = self.config.state_dir / "usage.json"
@@ -213,6 +348,106 @@ authorize immutable factory/control-plane paths. Do not modify files.
         path = self.config.state_dir / "usage.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _result_detail(result: CommandResult) -> str:
+    return (result.stderr or result.stdout or f"exit {result.returncode}").strip()[-2000:]
+
+
+def _codex_failure_category(result: CommandResult) -> str:
+    detail = _result_detail(result).lower()
+    if "canary injected" in detail:
+        return "injected"
+    if any(marker in detail for marker in (
+        "model not found", "model is not available", "unsupported model", "unknown model",
+        "does not have access to model", "invalid model",
+    )):
+        return "model"
+    if any(marker in detail for marker in (
+        "authentication", "not logged in", "login required", "session expired", "unauthorized",
+        "invalid credential", "invalid token", "entitlement", "quota", "usage limit", "insufficient_quota",
+    )):
+        return "provider"
+    if any(marker in detail for marker in (
+        "temporary failure", "temporarily unavailable", "timed out", "timeout", "connection reset",
+        "connection refused", "dns", "name resolution", "rate limit", "429", "500", "502", "503", "504",
+    )):
+        return "transient"
+    return "provider"
+
+
+def _validate_json_schema(
+    value: Any, schema: dict[str, Any], path: str = "$", root_schema: dict[str, Any] | None = None
+) -> None:
+    root_schema = root_schema or schema
+    reference = schema.get("$ref")
+    if isinstance(reference, str):
+        if not reference.startswith("#/"):
+            raise RuntimeError(f"{path} uses unsupported external schema reference")
+        target: Any = root_schema
+        for token in reference[2:].split("/"):
+            target = target[token.replace("~1", "/").replace("~0", "~")]
+        _validate_json_schema(value, target, path, root_schema)
+        return
+    for keyword, minimum in (("minLength", len(value) if isinstance(value, str) else None), ("minItems", len(value) if isinstance(value, list) else None)):
+        if keyword in schema and minimum is not None and minimum < int(schema[keyword]):
+            raise RuntimeError(f"{path} violates {keyword}")
+    if isinstance(value, list) and "maxItems" in schema and len(value) > int(schema["maxItems"]):
+        raise RuntimeError(f"{path} violates maxItems")
+    if isinstance(value, list) and schema.get("uniqueItems") is True:
+        canonical = [json.dumps(item, sort_keys=True) for item in value]
+        if len(canonical) != len(set(canonical)):
+            raise RuntimeError(f"{path} contains duplicate items")
+    if isinstance(value, str) and isinstance(schema.get("pattern"), str) and not re.search(schema["pattern"], value):
+        raise RuntimeError(f"{path} does not match the required pattern")
+    for keyword in ("oneOf", "anyOf"):
+        options = schema.get(keyword)
+        if isinstance(options, list):
+            matches = 0
+            for option in options:
+                try:
+                    _validate_json_schema(value, option, path, root_schema)
+                except RuntimeError:
+                    continue
+                matches += 1
+            required = 1 if keyword == "oneOf" else 0
+            if (keyword == "oneOf" and matches != required) or (keyword == "anyOf" and matches < 1):
+                raise RuntimeError(f"{path} violates {keyword}")
+    if isinstance(schema.get("allOf"), list):
+        for option in schema["allOf"]:
+            _validate_json_schema(value, option, path, root_schema)
+    expected = schema.get("type")
+    checks = {
+        "object": lambda item: isinstance(item, dict),
+        "array": lambda item: isinstance(item, list),
+        "string": lambda item: isinstance(item, str),
+        "integer": lambda item: isinstance(item, int) and not isinstance(item, bool),
+        "number": lambda item: isinstance(item, (int, float)) and not isinstance(item, bool),
+        "boolean": lambda item: isinstance(item, bool),
+        "null": lambda item: item is None,
+    }
+    expected_types = [expected] if isinstance(expected, str) else expected if isinstance(expected, list) else []
+    if expected_types and not any(item in checks and checks[item](value) for item in expected_types):
+        raise RuntimeError(f"{path} must be one of {expected_types}")
+    if "enum" in schema and value not in schema["enum"]:
+        raise RuntimeError(f"{path} is not an allowed enum value")
+    if "const" in schema and value != schema["const"]:
+        raise RuntimeError(f"{path} does not match the required constant")
+    if isinstance(value, dict):
+        for key in schema.get("required", []):
+            if key not in value:
+                raise RuntimeError(f"{path} is missing required property {key!r}")
+        properties = schema.get("properties", {})
+        for key, item in value.items():
+            if key in properties:
+                _validate_json_schema(item, properties[key], f"{path}.{key}", root_schema)
+            elif schema.get("additionalProperties") is False:
+                raise RuntimeError(f"{path} contains unexpected property {key!r}")
+            elif isinstance(schema.get("additionalProperties"), dict):
+                _validate_json_schema(item, schema["additionalProperties"], f"{path}.{key}", root_schema)
+    if isinstance(value, list) and isinstance(schema.get("items"), dict):
+        for index, item in enumerate(value):
+            _validate_json_schema(item, schema["items"], f"{path}[{index}]", root_schema)
 
 
 def write_remediation(config: FactoryConfig, milestone: Milestone, gaps: list[dict[str, Any]]) -> None:

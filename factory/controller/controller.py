@@ -379,6 +379,7 @@ class FactoryController:
         metadata = self.store.metadata()
         resources = self.resource_state()
         codex_usage = _codex_usage(self.config.state_dir)
+        reasoning_providers = _reasoning_provider_status(self.config, self.config.state_dir)
         heartbeat = self.store.heartbeat_state()
         heartbeat_age = _elapsed_seconds(heartbeat.get("controllerHeartbeatAt"))
         stale_after = self.config.max_tick_duration_seconds + (2 * self.config.poll_seconds)
@@ -421,6 +422,7 @@ class FactoryController:
                 "codexReplanCalls": codex_usage["replanCalls"],
                 "codexFinalAuditCalls": codex_usage["finalAuditCalls"],
                 "codexEmergencyCalls": codex_usage["emergencyCalls"],
+                "museFallbackCount": reasoning_providers["museFallbackSuccesses"],
                 "byProvider": {
                     provider: sum(
                         record.provider_attempts.get(provider, 0)
@@ -432,6 +434,7 @@ class FactoryController:
                 },
             },
             "packages": {key: value.to_dict() for key, value in records.items()},
+            "reasoningProviders": reasoning_providers,
             "resources": resources.__dict__,
             "convergence": {
                 "passes": int(metadata.get("convergencePasses", 0)),
@@ -1057,8 +1060,6 @@ def _is_github_auth_blocker(error: Exception) -> bool:
 
 
 def _codex_usage(state_dir: Path) -> dict[str, Any]:
-    import json
-
     empty = {
         "total": 0,
         "plannerCalls": 0,
@@ -1083,9 +1084,50 @@ def _codex_usage(state_dir: Path) -> dict[str, Any]:
         return empty
 
 
-def _roadmap(root: Path) -> list[dict[str, Any]]:
-    import json
+def _reasoning_provider_status(config: FactoryConfig, state_dir: Path) -> dict[str, Any]:
+    operations: dict[str, Any] = {}
+    path = state_dir / "usage.json"
+    if path.exists():
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(raw.get("reasoningOperations"), dict):
+                operations = raw["reasoningOperations"]
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            pass
+    unavailable_until = int(operations.get("codexUnavailableUntilEpoch", 0) or 0)
+    now = int(datetime.now(UTC).timestamp())
+    return {
+        "preferredProvider": "codex",
+        "actualLastProvider": operations.get("actualLastReasoningProvider"),
+        "codexAvailable": unavailable_until <= now if unavailable_until else bool(operations.get("codexAvailable", True)),
+        "codexCooldownUntilEpoch": unavailable_until or None,
+        "codexAttempts": int(operations.get("codexAttempts", 0)),
+        "codexDefaultModelRetries": int(operations.get("codexDefaultModelRetries", 0)),
+        "museFallbackAttempts": int(operations.get("museFallbackAttempts", 0)),
+        "museFallbackSuccesses": int(operations.get("museFallbackSuccesses", 0)),
+        "muse": {
+            "modelMode": "explicit" if config.muse_explicit_model else "cli-default",
+            "requestedPreference": config.muse_model,
+            "effectiveModel": config.muse_explicit_model or "CLI configured default",
+        },
+        "agy": {
+            "modelMode": "explicit" if config.agy_explicit_model else "cli-default",
+            "requestedPreference": config.agy_model,
+            "effectiveModel": config.agy_explicit_model or "CLI configured default",
+        },
+        "codexRoles": {
+            role: {
+                "modelMode": route.model_mode,
+                "preferredModel": route.model,
+                "effectiveModel": route.explicit_model or "CLI configured default",
+                "reasoningEffort": route.reasoning_effort,
+            }
+            for role, route in config.codex_routes.items()
+        },
+    }
 
+
+def _roadmap(root: Path) -> list[dict[str, Any]]:
     value = json.loads((root / "specs" / "factory" / "roadmap.json").read_text(encoding="utf-8"))
     milestones = value.get("milestones", [])
     ids = [str(item.get("id", "")) for item in milestones]

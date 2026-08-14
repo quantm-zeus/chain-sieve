@@ -11,11 +11,11 @@ Type=simple
 User=@DEPLOY_USER@
 Group=@DEPLOY_GROUP@
 WorkingDirectory=@REPO@
-EnvironmentFile=-/etc/chainsieve/providers.env
+EnvironmentFile=/etc/chainsieve/deployment.env
 UnsetEnvironment=GH_TOKEN GITHUB_TOKEN
 Environment="HOME=@USER_HOME@"
 Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"
-Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:@CLI_PATH@"
 Environment=AO_PORT=3001
 Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
 Environment="AO_DATA_DIR=@AO_DATA@"

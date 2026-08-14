@@ -5,7 +5,7 @@ deployment_config="${CHAINSIEVE_DEPLOYMENT_CONFIG:-/etc/chainsieve/deployment.en
 [[ -r "$deployment_config" ]] || { echo "deployment configuration not found: $deployment_config" >&2; exit 1; }
 . "$deployment_config"
 repo="$CHAINSIEVE_REPO_PATH"
-source_ref="${CHAINSIEVE_CANARY_SOURCE_REF:-factory/oss-migration}"
+source_ref="${CHAINSIEVE_CANARY_SOURCE_REF:-main}"
 target_ref="${CHAINSIEVE_CANARY_TARGET_REF:-factory/canary-base}"
 
 [[ "$target_ref" == factory/canary-* ]] || { echo "refusing unsafe canary target: $target_ref" >&2; exit 1; }

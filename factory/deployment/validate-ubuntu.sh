@@ -3,7 +3,9 @@ set -euo pipefail
 
 deployment_config="${CHAINSIEVE_DEPLOYMENT_CONFIG:-/etc/chainsieve/deployment.env}"
 [[ -r "$deployment_config" ]] || { echo "deployment configuration not found: $deployment_config" >&2; exit 1; }
+set -a
 . "$deployment_config"
+set +a
 repo="$CHAINSIEVE_REPO_PATH"
 state_dir="$CHAINSIEVE_FACTORY_STATE_DIR"
 factory_python="$CHAINSIEVE_FACTORY_PYTHON"
@@ -18,13 +20,15 @@ report="${CHAINSIEVE_VALIDATION_REPORT:-$state_dir/ubuntu-validation.json}"
 [[ "$($factory_python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')" == 3.12 ]]
 
 factory_user=(runuser -u "$deploy_user" -- env \
-  HOME="$user_home" PATH="$(dirname "$factory_python"):/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin" \
+  HOME="$user_home" PATH="$(dirname "$factory_python"):/opt/chainsieve/factory-bin:$(dirname "$CHAINSIEVE_GH_BIN"):$(dirname "$CHAINSIEVE_CODEX_BIN"):$(dirname "$CHAINSIEVE_MUSE_BIN"):$(dirname "$CHAINSIEVE_AGY_BIN"):/usr/local/bin:/usr/bin:/bin" \
+  CHAINSIEVE_GH_BIN="$CHAINSIEVE_GH_BIN" CHAINSIEVE_MUSE_BIN="$CHAINSIEVE_MUSE_BIN" \
+  CHAINSIEVE_AGY_BIN="$CHAINSIEVE_AGY_BIN" CHAINSIEVE_CODEX_BIN="$CHAINSIEVE_CODEX_BIN" \
   PYTHONPATH="$repo" CHAINSIEVE_FACTORY_EXPECTED_PYTHON="$factory_python" \
   CHAINSIEVE_FACTORY_STATE_DIR="$state_dir" CHAINSIEVE_FACTORY_PLAN="$repo/specs/factory/current-milestone.json" \
   AO_RUN_FILE=/run/chainsieve-ao/running.json AO_DATA_DIR="$AO_DATA_DIR")
 
-"${factory_user[@]}" gh auth status >/dev/null
-github_actor="$("${factory_user[@]}" gh api user --jq .login)"
+"${factory_user[@]}" "$CHAINSIEVE_GH_BIN" auth status >/dev/null
+github_actor="$("${factory_user[@]}" "$CHAINSIEVE_GH_BIN" api user --jq .login)"
 [[ -n "$github_actor" ]]
 "${factory_user[@]}" "$factory_python" -m factory doctor --json >/tmp/chainsieve-doctor.json
 
@@ -127,6 +131,7 @@ Path(report).write_text(json.dumps({
         "AO daemon crash with active tmux workers",
         "network outage",
         "live Muse/Agy semantic PR-to-merge paths",
+        "Codex-to-Muse fallback canary (run run-codex-fallback-canary.py separately)",
         "final audit remediation with live Codex",
     ],
 }, indent=2) + "\n", encoding="utf-8")
