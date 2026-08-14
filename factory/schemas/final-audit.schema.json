@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsieve.local/schemas/final-audit.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "blocking_gaps", "requirements_missing", "architecture_conflicts", "test_gaps", "runtime_failures", "security_gaps", "operational_gaps"],
+  "properties": {
+    "status": { "type": "string", "enum": ["CONVERGED", "NOT_CONVERGED"] },
+    "blocking_gaps": { "$ref": "#/$defs/strings" },
+    "requirements_missing": { "$ref": "#/$defs/strings" },
+    "architecture_conflicts": { "$ref": "#/$defs/strings" },
+    "test_gaps": { "$ref": "#/$defs/strings" },
+    "runtime_failures": { "$ref": "#/$defs/strings" },
+    "security_gaps": { "$ref": "#/$defs/strings" },
+    "operational_gaps": { "$ref": "#/$defs/strings" }
+  },
+  "$defs": { "strings": { "type": "array", "items": { "type": "string" } } }
+}

@@ -1,4 +1,6 @@
-# Claude Code with DeepSeek
+# Claude Code with DeepSeek (legacy, superseded)
+
+> This provider path is not part of the production OSS factory. Use `docs/operations/oss-factory.md` for the current Muse/Antigravity architecture.
 
 ChainSieve supports Claude Code CLI as the explicit `claude-deepseek` agent provider. Antigravity remains the default provider.
 

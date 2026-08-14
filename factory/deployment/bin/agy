@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+real_binary="${CHAINSIEVE_AGY_REAL:-/usr/local/lib/chainsieve/providers/agy}"
+model="${CHAINSIEVE_AGY_MODEL:-gemini-3.6-flash-high}"
+
+if [[ ! -x "$real_binary" ]]; then
+  echo "configured Antigravity binary is not executable: $real_binary" >&2
+  exit 127
+fi
+
+has_model=false
+is_reviewer=false
+for argument in "$@"; do
+  case "$argument" in
+    --model|--model=*) has_model=true ;;
+    --sandbox) is_reviewer=true ;;
+    --help|-h|--version|-V|models|update|install|plugin|plugins|help)
+      exec "$real_binary" "$@"
+      ;;
+  esac
+done
+
+arguments=("$@")
+if [[ "$is_reviewer" == true ]]; then
+  contract_file="${CHAINSIEVE_REVIEWER_CONTRACT_FILE:-/opt/chainsieve/factory-bin/reviewer-contract.md}"
+  [[ -r "$contract_file" ]] || { echo "ChainSieve standing reviewer contract is unavailable: $contract_file" >&2; exit 78; }
+  contract="$(<"$contract_file")"
+  injected=false
+  for ((index = 0; index < ${#arguments[@]}; index++)); do
+    if [[ "${arguments[$index]}" == --prompt-interactive && $((index + 1)) -lt ${#arguments[@]} ]]; then
+      arguments[$((index + 1))]+=$'\n\n'
+      arguments[$((index + 1))]+="$contract"
+      injected=true
+      break
+    fi
+  done
+  [[ "$injected" == true ]] || { echo "Agy reviewer invocation has no interactive prompt" >&2; exit 78; }
+fi
+
+if [[ "$has_model" == true ]]; then
+  exec "$real_binary" "${arguments[@]}"
+fi
+exec "$real_binary" --model "$model" "${arguments[@]}"

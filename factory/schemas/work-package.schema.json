@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsieve.local/schemas/work-package.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "objective", "acceptance", "dependencies", "parallelizable", "preferredProvider", "risk"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "objective": { "type": "string", "minLength": 1 },
+    "acceptance": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } },
+    "parallelizable": { "type": "boolean" },
+    "preferredProvider": { "type": "string", "enum": ["muse", "agy"] },
+    "risk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "requirementIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "authorizedProtectedPaths": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+  }
+}

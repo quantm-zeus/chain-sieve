@@ -1,0 +1,10 @@
+"@STATE@/*.jsonl" {
+  weekly
+  rotate 12
+  compress
+  delaycompress
+  missingok
+  notifempty
+  copytruncate
+  su @DEPLOY_USER@ @DEPLOY_GROUP@
+}

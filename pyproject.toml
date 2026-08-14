@@ -1,0 +1,10 @@
+[project]
+name = "chainsieve-factory"
+version = "0.1.0"
+description = "Deterministic ChainSieve autonomous factory controller"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[tool.chainsieve-runtime]
+python = "3.12"
+dependency-lock = "factory/requirements.lock"

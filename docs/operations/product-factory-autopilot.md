@@ -1,4 +1,6 @@
-# Muse-driven product factory autopilot
+# Muse-driven product factory autopilot (legacy, superseded)
+
+> This describes the retired architecture retained only for migration diagnostics. Use `docs/operations/oss-factory.md` and `pnpm factory:*` for production.
 
 ChainSieve remains the deterministic root control plane. Muse Code CLI is the primary implementation, review, convergence, and correction agent, but it never receives authority to push, merge, rewrite normative requirements, or change control-plane policy.
 

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+real_binary="${CHAINSIEVE_MUSE_REAL:-/usr/local/lib/chainsieve/providers/muse}"
+
+if [[ ! -x "$real_binary" ]]; then
+  echo "configured Muse binary is not executable: $real_binary" >&2
+  exit 127
+fi
+
+# The installed target is the exact release binary, not Muse's auto-updating
+# launcher. Retain the environment guard as defense in depth.
+export MUSE_NO_AUTO_UPDATE=1
+is_reviewer=false
+for argument in "$@"; do
+  [[ "$argument" == --disable-write ]] && is_reviewer=true
+done
+
+if [[ "$is_reviewer" == true ]]; then
+  contract_file="${CHAINSIEVE_REVIEWER_CONTRACT_FILE:-/opt/chainsieve/factory-bin/reviewer-contract.md}"
+  [[ -r "$contract_file" ]] || { echo "ChainSieve standing reviewer contract is unavailable: $contract_file" >&2; exit 78; }
+  contract="$(<"$contract_file")"
+  existing="${TBH_EVAL_APPEND_DEVELOPER_PROMPT:-}"
+  if [[ -n "$existing" ]]; then
+    export TBH_EVAL_APPEND_DEVELOPER_PROMPT="$existing"$'\n\n'"$contract"
+  else
+    export TBH_EVAL_APPEND_DEVELOPER_PROMPT="$contract"
+  fi
+fi
+
+exec "$real_binary" "$@"

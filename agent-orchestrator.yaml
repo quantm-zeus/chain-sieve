@@ -1,0 +1,37 @@
+defaultBranch: main
+runtime: tmux
+workspace: worktree
+worker:
+  agent: muse
+  agentConfig:
+    permissions: bypass-permissions
+reviewers:
+  - harness: agy
+agentRulesFile: factory/constitution.md
+postCreate:
+  - corepack enable
+  - pnpm install --frozen-lockfile
+reactions:
+  ci-failed:
+    auto: false
+    action: notify
+    retries: 0
+  changes-requested:
+    auto: false
+    action: notify
+    retries: 0
+  bugbot-comments:
+    auto: false
+  merge-conflicts:
+    auto: false
+    action: notify
+    retries: 0
+  approved-and-green:
+    auto: false
+    action: notify
+  agent-needs-input:
+    auto: false
+    action: notify
+  agent-stuck:
+    auto: false
+    action: notify

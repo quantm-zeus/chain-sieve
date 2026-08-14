@@ -1,0 +1,43 @@
+[Unit]
+Description=ChainSieve deterministic autonomous factory controller
+After=network-online.target chainsieve-ao.service
+Wants=network-online.target
+Requires=chainsieve-ao.service
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=@DEPLOY_USER@
+Group=@DEPLOY_GROUP@
+WorkingDirectory=@REPO@
+EnvironmentFile=-/etc/chainsieve/providers.env
+UnsetEnvironment=GH_TOKEN GITHUB_TOKEN
+Environment="HOME=@USER_HOME@"
+Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"
+Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=@REPO@"
+Environment=PYTHONUNBUFFERED=1
+Environment="CHAINSIEVE_FACTORY_EXPECTED_PYTHON=@VENV@/bin/python"
+Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
+Environment="CHAINSIEVE_FACTORY_STATE_DIR=@STATE@"
+Environment="CHAINSIEVE_FACTORY_PLAN=@REPO@/specs/factory/current-milestone.json"
+ExecStart="@VENV@/bin/python" -m factory run
+Restart=on-failure
+RestartSec=15s
+TimeoutStartSec=30
+TimeoutStopSec=30
+KillMode=mixed
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
+ReadWritePaths=@STATE@
+ReadOnlyPaths=@REPO@ /run/chainsieve-ao
+RestrictSUIDSGID=true
+LockPersonality=true
+LimitNOFILE=16384
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

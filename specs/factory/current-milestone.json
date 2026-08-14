@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "g0-contract-foundation",
+  "objective": "Converge the G0 contract foundation, first-party observation boundary, and security perimeter against the authoritative v6.0 PRD.",
+  "workPackages": [
+    {
+      "id": "g0-domain-contracts",
+      "objective": "Complete canonical identity, state-machine, timestamp, and shared schema contracts required by G0.",
+      "acceptance": [
+        "G0 identity and independent state-machine requirements are represented without collapsing distinct states",
+        "public schemas preserve point-in-time and no-backdating semantics",
+        "focused domain and schema tests pass"
+      ],
+      "dependencies": [],
+      "parallelizable": true,
+      "preferredProvider": "muse",
+      "risk": "HIGH",
+      "requirementIds": ["FR-DATA-001", "FR-DATA-003", "FR-SIG-005"]
+    },
+    {
+      "id": "g0-security-perimeter",
+      "objective": "Complete the permanent read-only, MCP fail-closed, prompt-injection, and provider negative-capability security perimeter for G0.",
+      "acceptance": [
+        "transaction construction and submission capabilities remain structurally prohibited",
+        "MCP origin, authentication, session scope, and tool allowlists fail closed",
+        "adversarial security and negative-capability tests pass"
+      ],
+      "dependencies": ["g0-domain-contracts"],
+      "parallelizable": true,
+      "preferredProvider": "agy",
+      "risk": "CRITICAL",
+      "requirementIds": ["FR-MCP-001", "FR-SEC-001"]
+    },
+    {
+      "id": "g0-collector-boundary",
+      "objective": "Complete the bounded first-party Solana observation contracts, checkpoints, gaps, reorg handling, and decoder registry boundary required by G0.",
+      "acceptance": [
+        "collector ingestion is idempotent and checkpointed",
+        "gap and reorg behavior follows point-in-time product semantics",
+        "unknown or unsupported programs fail closed through the registry",
+        "focused collector tests pass"
+      ],
+      "dependencies": ["g0-domain-contracts"],
+      "parallelizable": true,
+      "preferredProvider": "muse",
+      "risk": "HIGH",
+      "requirementIds": ["FR-COL-001"]
+    },
+    {
+      "id": "g0-tool-core",
+      "objective": "Complete the shared Tool Core execution envelope, exact cache, single-flight, quota, freshness, and provider schema-drift behavior required by G0.",
+      "acceptance": [
+        "tool authorization precedes provider execution",
+        "cache hits consume zero provider quota and preserve freshness metadata",
+        "provider schema drift fails explicitly rather than fabricating partial truth",
+        "focused Tool Core tests pass"
+      ],
+      "dependencies": ["g0-domain-contracts", "g0-security-perimeter"],
+      "parallelizable": true,
+      "preferredProvider": "muse",
+      "risk": "HIGH",
+      "requirementIds": ["FR-CORE-001", "FR-CORE-002", "FR-CORE-006", "FR-CORE-007"]
+    },
+    {
+      "id": "g0-integration-evidence",
+      "objective": "Integrate G0 persistence, API/MCP delivery, conformance evidence, and walking-skeleton verification without weakening authority.",
+      "acceptance": [
+        "authoritative migrations and typed persistence mirrors agree",
+        "G0 API and MCP contracts exercise domain behavior only through approved boundaries",
+        "walking-skeleton and conformance suites prove the integrated G0 outcome",
+        "PRD drift and architecture verification pass"
+      ],
+      "dependencies": ["g0-security-perimeter", "g0-collector-boundary", "g0-tool-core"],
+      "parallelizable": false,
+      "preferredProvider": "agy",
+      "risk": "CRITICAL",
+      "requirementIds": ["AC-001", "AC-002", "AC-003", "AC-004"]
+    }
+  ]
+}

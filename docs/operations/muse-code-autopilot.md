@@ -1,4 +1,6 @@
-# Muse Code full-autonomy setup
+# Muse Code full-autonomy setup (legacy, superseded)
+
+> This describes the retired architecture retained only for migration diagnostics. Use `docs/operations/oss-factory.md` and `pnpm factory:*` for production.
 
 ChainSieve can run Muse Code as a headless autonomous implementation provider while keeping lifecycle authority, verification, GitHub push/PR operations, CI repair, and merge in the trusted root control plane.
 

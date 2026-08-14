@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "repository": "quantm-zeus/chain-sieve",
+  "aoProjectId": "chainsieve",
+  "defaultBranch": "main",
+  "stateDirectory": ".factory",
+  "planPath": "specs/factory/current-milestone.json",
+  "pollSeconds": 30,
+  "convergenceEnabled": true,
+  "notificationCommand": [],
+  "budgets": {
+    "maxActiveWorkers": 3,
+    "maxTaskAttempts": 2,
+    "maxCorrectionAttempts": 2,
+    "maxReviewCycles": 2,
+    "maxFinalAuditCycles": 3,
+    "maxConvergencePasses": 3,
+    "maxTaskWallClockSeconds": 14400,
+    "maxMilestoneWallClockSeconds": 259200,
+    "maxIdleSeconds": 900,
+    "maxStartingSeconds": 300,
+    "maxTickDurationSeconds": 300
+  },
+  "resources": {
+    "diskMinFreeGiB": 15,
+    "memoryMinFreeMiB": 2048,
+    "maxWorktrees": 24
+  },
+  "models": {
+    "codex": {
+      "planner": {
+        "model": "gpt-5.6-luna",
+        "reasoningEffort": "medium",
+        "maxCallsPerMilestone": 1
+      },
+      "replan": {
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "maxCallsPerMilestone": 1
+      },
+      "final_audit": {
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "maxCallsPerMilestone": 3
+      },
+      "emergency": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "high",
+        "maxCallsPerMilestone": 1
+      }
+    },
+    "agy": {
+      "model": "gemini-3.6-flash-high"
+    }
+  },
+  "integration": {
+    "targetBranch": "main",
+    "requiredChecks": [
+      "Tier 3 · pre-main"
+    ],
+    "protectedPaths": [
+      "docs/spec/**",
+      "artifacts/spec/**",
+      "artifacts/conformance/**",
+      "factory/**",
+      "specs/factory/**",
+      ".specify/**",
+      ".github/workflows/**",
+      "tests/harness/**",
+      "tests/spec-mutation/**",
+      "tools/task-verifier/**",
+      "tools/architecture-verifier/**",
+      "AGENTS.md",
+      "SECURITY.md",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+[Unit]
+Description=ChainSieve Agent Orchestrator worker runtime
+Documentation=https://github.com/Untrivial-ai/agent-orchestrator/tree/v0.12.3
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=@DEPLOY_USER@
+Group=@DEPLOY_GROUP@
+WorkingDirectory=@REPO@
+EnvironmentFile=-/etc/chainsieve/providers.env
+UnsetEnvironment=GH_TOKEN GITHUB_TOKEN
+Environment="HOME=@USER_HOME@"
+Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"
+Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin"
+Environment=AO_PORT=3001
+Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
+Environment="AO_DATA_DIR=@AO_DATA@"
+Environment="TMUX_TMPDIR=@AO_DATA@/tmux"
+Environment="CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR=@STATE@/reviews"
+Environment="CHAINSIEVE_FACTORY_PYTHON=@VENV@/bin/python"
+Environment="CHAINSIEVE_REVIEWER_CONTRACT_FILE=/opt/chainsieve/factory-bin/reviewer-contract.md"
+Environment="PYTHONPATH=@REPO@"
+Environment=AO_KEEP_DAEMON=1
+Environment=AO_HOST=127.0.0.1
+RuntimeDirectory=chainsieve-ao
+RuntimeDirectoryMode=0750
+ExecStart=/usr/local/bin/ao daemon
+ExecStop=/usr/local/bin/ao stop
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=60
+TimeoutStopSec=45
+# Preserve tmux workers if only the daemon crashes. This must pass the supplied
+# Ubuntu cgroup/restart chaos test before production cutover.
+KillMode=process
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
+ReadOnlyPaths=@REPO@ @STATE@
+ReadWritePaths=@REPO@/.git @AO_DATA@ /run/chainsieve-ao
+RestrictSUIDSGID=true
+LockPersonality=true
+LimitNOFILE=65536
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

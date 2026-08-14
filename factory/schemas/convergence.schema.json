@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsieve.local/schemas/convergence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "gaps"],
+  "properties": {
+    "status": { "enum": ["CONVERGED", "GAPS"] },
+    "gaps": {
+      "type": "array",
+      "maxItems": 8,
+      "items": { "$ref": "work-package.schema.json" }
+    }
+  }
+}
