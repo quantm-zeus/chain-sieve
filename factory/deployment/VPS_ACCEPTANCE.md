@@ -1,29 +1,19 @@
 # Ubuntu VPS acceptance
 
-Current classification: **READY_FOR_VPS_VALIDATION**. This is not approval to merge the migration branch into `main`, remove the legacy factory, or cut over production.
+Current classification: **READY_FOR_VPS_VALIDATION**. This is not approval to merge PR #73, remove the legacy factory, target `main`, or cut over production.
 
-The audit ran on macOS. AO, Spec Kit, tmux, Node/pnpm, and systemd are not installed on this host, and no explicit target Ubuntu VPS SSH host was configured or reached. Consequently, every gate requiring a real AO/GitHub provider lifecycle or Linux/systemd/reboot boundary remains `NOT_RUN`; no local simulation was promoted to a live pass. The machine-readable record is `VPS_ACCEPTANCE.json`.
+The deployment topology is one normal non-root user running AO, the Factory Controller, Muse, Agy, Codex CLI, and GitHub CLI. The user authenticates once with `gh auth login`; services read the normal persistent login through the real `HOME`. Resolved repo/state/AO/venv paths are generated at install time.
 
-The hardening pass adds live gates for renewable GitHub App token rotation,
-installation identity, root-checkout integrity, alternate-provider failover,
-and Codex replan escalation. Those remain `NOT_RUN` until the target host is
-exercised. Local deterministic proof is sufficient only for heartbeat liveness
-classification and milestone-qualified global work identity.
+Local deterministic validation covers exact-head CI/review/merge logic, policy `BLOCKED` versus real conflict, no GitHub approval call, same-account operation, protected paths, heartbeat concurrency/liveness, audit-remediation re-audit and circuit breaking, exact normative IDs, controller-owned semantic context, bounded event history, failover, duplicate prevention, and canary guards. It does not prove live VPS behavior.
 
-## Verified locally
+Required live order:
 
-- Direct tag provenance: AO `v0.12.3` at `b48c98c94ca0039ad1bc42bd1b78134d3ff5773d`; Spec Kit `v0.16.2` peeled to `4871b485f97c7fa452ec58eba325d87536c55c34`.
-- Exact-head review rejection, required cross-provider identity, untrusted issue/PR filtering, CI failure routing, duplicate detection, bounded GitHub retry/recovery, resource breaker behavior, role-based Codex routing, no-Codex routine cycles, explicit status states, and stuck detection.
-- Python production contract: Python 3.12 only, no third-party runtime dependencies, dedicated `/srv/chainsieve/.venv`, absolute systemd `ExecStart`, unbuffered logging, fixed working directory/PATH, and interpreter/lock checks in doctor.
-- Process/credential design: one AO daemon service, one controller service with a nonblocking file lock, distinct Unix users and secret files, distinct GitHub App actors, stale-dismissed required GitHub approval, and controller approval only after internal gates.
-- Safe canary assets target `factory/canary-base`; production `main` is not a canary target.
+1. On the target user, run `gh auth login`, `gh auth status`, and supported Muse/Agy/Codex authentication.
+2. Install with `sudo ./factory/deployment/install-ubuntu.sh --user "$(id -un)" --repo "$(pwd)"` plus verified provider binary variables.
+3. Prepare and protect `factory/canary-base`, activate canary mode, then enable/start the two services.
+4. Run `validate-ubuntu.sh`, provider/parallel/CI/failover canaries, and the semantic review canary.
+5. Exercise SSH disconnect, controlled controller/AO crashes, scoped network/auth blocking, resource breaker, and one explicitly authorized reboot probe.
+6. Exercise a live `NOT_CONVERGED -> remediation -> CONVERGED` final-audit cycle.
+7. Update `VPS_ACCEPTANCE.json` only from durable live evidence.
 
-## Required live run order
-
-1. Deploy the published migration commit on the target Ubuntu VPS with separate worker/integration GitHub App credentials and verified provider binaries.
-2. Run doctor, prepare/protect `factory/canary-base`, activate the guarded canary override, and start the actual `chainsieve-factory.service`; the installer already registers `chainsieve-canary`.
-3. Capture the two provider lifecycles, overlap timestamps, cross-reviews, exact-head staleness, controlled CI correction, canary merges, controller restart reconciliation, and process credential-presence probes.
-4. Exercise scoped GitHub failure, simulated disk threshold, worker privilege denial, SSH disconnect, unexpected controller kill, and the single armed reboot probe.
-5. Replace each `NOT_RUN` only with durable IDs/logs/SHAs from that run. Any failure remains `FAIL`; do not retry the destructive reboot more than once per validation run.
-
-Live acceptance must record work-package ID, AO session, worktree, branch, commit, PR, CI run, machine review target SHA, integration approval, and resulting canary merge for each provider. Production `main` remains untouched throughout.
+All live-only gates—including `github_cli_auth`, provider execution, semantic review effectiveness, systemd, SSH disconnect, crash/reboot, failover, and final-audit remediation—remain `NOT_RUN` until that evidence exists.

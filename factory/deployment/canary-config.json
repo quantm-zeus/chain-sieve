@@ -3,7 +3,7 @@
   "repository": "quantm-zeus/chain-sieve",
   "aoProjectId": "chainsieve-canary",
   "defaultBranch": "factory/canary-base",
-  "stateDirectory": "/var/lib/chainsieve/factory-canary",
+  "stateDirectory": ".factory-canary",
   "planPath": "factory/deployment/canary-milestone.json",
   "pollSeconds": 20,
   "convergenceEnabled": false,
@@ -13,6 +13,7 @@
     "maxTaskAttempts": 2,
     "maxCorrectionAttempts": 2,
     "maxReviewCycles": 2,
+    "maxFinalAuditCycles": 0,
     "maxConvergencePasses": 0,
     "maxTaskWallClockSeconds": 3600,
     "maxMilestoneWallClockSeconds": 14400,
@@ -36,9 +37,6 @@
   "integration": {
     "targetBranch": "factory/canary-base",
     "requiredChecks": ["Factory Canary · harmless validation"],
-    "trustedActors": ["chainsieve-factory[bot]"],
-    "workerActors": ["chainsieve-worker[bot]"],
-    "integrationActors": ["chainsieve-factory[bot]"],
     "protectedPaths": [
       "docs/spec/**", "artifacts/spec/**", "artifacts/conformance/**", "factory/**", "specs/factory/**",
       ".specify/**", ".github/workflows/**", "tests/harness/**", "tests/spec-mutation/**", "AGENTS.md",

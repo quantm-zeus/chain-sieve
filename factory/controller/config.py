@@ -28,6 +28,7 @@ class FactoryConfig:
     max_task_attempts: int
     max_correction_attempts: int
     max_review_cycles: int
+    max_final_audit_cycles: int
     max_convergence_passes: int
     max_task_wall_clock_seconds: int
     max_milestone_wall_clock_seconds: int
@@ -39,9 +40,6 @@ class FactoryConfig:
     max_worktrees: int
     required_checks: tuple[str, ...]
     protected_paths: tuple[str, ...]
-    trusted_actors: tuple[str, ...]
-    worker_actors: tuple[str, ...]
-    integration_actors: tuple[str, ...]
     integration_branch: str
     state_dir: Path
     plan_path: Path
@@ -66,6 +64,7 @@ class FactoryConfig:
             max_task_attempts=int(budgets["maxTaskAttempts"]),
             max_correction_attempts=int(budgets["maxCorrectionAttempts"]),
             max_review_cycles=int(budgets["maxReviewCycles"]),
+            max_final_audit_cycles=int(budgets.get("maxFinalAuditCycles", 3)),
             max_convergence_passes=int(budgets["maxConvergencePasses"]),
             max_task_wall_clock_seconds=int(budgets["maxTaskWallClockSeconds"]),
             max_milestone_wall_clock_seconds=int(budgets["maxMilestoneWallClockSeconds"]),
@@ -76,9 +75,6 @@ class FactoryConfig:
             max_worktrees=int(resources["maxWorktrees"]),
             required_checks=tuple(str(item) for item in integration["requiredChecks"]),
             protected_paths=tuple(str(item) for item in integration["protectedPaths"]),
-            trusted_actors=tuple(str(item) for item in integration["trustedActors"]),
-            worker_actors=_actors("CHAINSIEVE_WORKER_GITHUB_ACTOR", integration.get("workerActors", integration["trustedActors"])),
-            integration_actors=_actors("CHAINSIEVE_INTEGRATION_GITHUB_ACTOR", integration.get("integrationActors", integration["trustedActors"])),
             integration_branch=str(
                 os.environ.get("CHAINSIEVE_INTEGRATION_BRANCH", integration.get("targetBranch", raw.get("defaultBranch", "main")))
             ),
@@ -108,18 +104,13 @@ class FactoryConfig:
             "max_task_attempts",
             "max_correction_attempts",
             "max_review_cycles",
+            "max_final_audit_cycles",
             "max_convergence_passes",
         ):
             if getattr(self, name) < 0:
                 raise ValueError(f"{name} cannot be negative")
         if not self.required_checks:
             raise ValueError("at least one required CI check is required")
-        if not self.trusted_actors:
-            raise ValueError("trustedActors cannot be empty")
-        if not self.worker_actors or not self.integration_actors:
-            raise ValueError("workerActors and integrationActors cannot be empty")
-        if set(self.worker_actors) & set(self.integration_actors):
-            raise ValueError("workerActors and integrationActors must be disjoint privilege domains")
         if self.max_task_wall_clock_seconds <= 0 or self.max_milestone_wall_clock_seconds <= 0:
             raise ValueError("task and milestone wall-clock budgets must be positive")
         if self.max_idle_seconds <= 0 or self.max_starting_seconds <= 0:
@@ -137,6 +128,8 @@ class FactoryConfig:
                 raise ValueError(f"invalid Codex route for {role}")
             if route.max_calls_per_milestone < 0:
                 raise ValueError(f"Codex call limit for {role} cannot be negative")
+        if self.codex_routes["final_audit"].max_calls_per_milestone < self.max_final_audit_cycles:
+            raise ValueError("final_audit Codex call limit must cover maxFinalAuditCycles")
 
     def load_milestone(self) -> Milestone:
         active_path = self.state_dir / "active-milestone.json"
@@ -153,9 +146,3 @@ class FactoryConfig:
 def _resolve(root: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else root / path
-
-
-def _actors(environment_name: str, configured: list[str]) -> tuple[str, ...]:
-    override = os.environ.get(environment_name, "")
-    values = override.split(",") if override else configured
-    return tuple(item.strip() for item in values if item.strip())

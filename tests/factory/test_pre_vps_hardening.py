@@ -1,74 +1,44 @@
 from __future__ import annotations
 
 import json
-import os
 import tempfile
 import unittest
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch
 
-from factory.controller.commands import CommandError, CommandResult
+from factory.controller.commands import CommandResult
 from factory.controller.config import FactoryConfig
 from factory.controller.controller import FactoryController
 from factory.controller.doctor import filesystem_contract_checks
 from factory.controller.github import GitHub
 from factory.controller.models import Issue, PackageRecord, PackageStatus, Session, Snapshot, WorkPackage, work_key
 from factory.controller.store import StateStore
-from factory.controller.token_source import GitHubAppTokenSource, InstallationToken
 from test_controller import config, key, milestone, package
 
 
-class TokenRunner:
-    def __init__(self) -> None:
-        self.tokens: list[str] = []
-
-    def run(self, argv, **kwargs):
-        token = kwargs.get("additions", {}).get("GH_TOKEN", "")
-        self.tokens.append(token)
-        if token == "token-A":
-            result = CommandResult(tuple(argv), "", "HTTP 401: Bad credentials", 1)
-            raise CommandError(result)
-        return CommandResult(tuple(argv), "[]", "", 0)
-
-
-class NonCheckingTokenRunner:
-    def __init__(self) -> None:
-        self.tokens: list[str] = []
-
-    def run(self, argv, **kwargs):
-        token = kwargs.get("additions", {}).get("GH_TOKEN", "")
-        self.tokens.append(token)
-        if token == "token-A":
-            return CommandResult(tuple(argv), "", "HTTP 401: Bad credentials", 1)
-        return CommandResult(tuple(argv), "{}", "", 0)
-
-
 class ActorRunner:
-    def __init__(self, issue_actor: str = "factory-bot", review_actor: str = "factory-bot") -> None:
+    def __init__(self, issue_actor: str = "factory-bot") -> None:
         self.issue_actor = issue_actor
-        self.review_actor = review_actor
         self.calls: list[list[str]] = []
-        self.review_submitted = False
+        self.kwargs: list[dict[str, object]] = []
         self.issue_body = ""
 
     def run(self, argv, **kwargs):
         self.calls.append(argv)
+        self.kwargs.append(kwargs)
+        if argv[:3] == ["gh", "api", "user"]:
+            return CommandResult(tuple(argv), json.dumps({"login": "factory-bot"}), "", 0)
+        if argv[:3] == ["gh", "issue", "list"]:
+            return CommandResult(tuple(argv), "[]", "", 0)
         if argv[:3] == ["gh", "issue", "create"]:
             self.issue_body = kwargs.get("input_text", "")
             return CommandResult(tuple(argv), "https://github.test/issues/9\n", "", 0)
         if argv[:3] == ["gh", "issue", "view"]:
             payload = {"number": 9, "state": "OPEN", "body": self.issue_body, "url": "https://github.test/issues/9", "author": {"login": self.issue_actor}}
             return CommandResult(tuple(argv), json.dumps(payload), "", 0)
-        if argv[:3] == ["gh", "pr", "review"]:
-            self.review_submitted = True
+        if argv[:3] == ["gh", "pr", "merge"]:
             return CommandResult(tuple(argv), "", "", 0)
-        if argv[:2] == ["gh", "api"] and argv[-1].endswith("/reviews"):
-            reviews = []
-            if self.review_submitted:
-                reviews = [{"user": {"login": self.review_actor}, "state": "APPROVED", "commit_id": "a" * 40}]
-            return CommandResult(tuple(argv), json.dumps(reviews), "", 0)
         raise AssertionError(argv)
 
 
@@ -133,53 +103,36 @@ class PreVPSHardeningTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def test_installation_token_rotates_after_auth_failure_without_restart(self) -> None:
-        minted = iter((InstallationToken("token-A", 10_000), InstallationToken("token-B", 10_000)))
-        source = GitHubAppTokenSource("1", "2", Path("key.pem"), mint=lambda: next(minted), clock=lambda: 1)
-        runner = TokenRunner()
-        github = GitHub(runner, "owner/repo", ("factory-bot",), ("worker-bot",), "main", source)
-        self.assertEqual(github.issues(), {})
-        self.assertEqual(runner.tokens, ["token-A", "token-B"])
-        self.assertEqual(source.token(), "token-B")
-
-    def test_installation_token_refreshes_after_expiration_without_restart(self) -> None:
-        now = [1.0]
-        minted = iter((InstallationToken("token-A", 10), InstallationToken("token-B", 20)))
-        source = GitHubAppTokenSource(
-            "1", "2", Path("key.pem"), mint=lambda: next(minted), clock=lambda: now[0], refresh_skew_seconds=0
-        )
-        self.assertEqual(source.token(), "token-A")
-        now[0] = 11
-        self.assertEqual(source.token(), "token-B")
-
-    def test_nonchecking_branch_probe_rotates_token_and_fails_closed(self) -> None:
-        minted = iter((InstallationToken("token-A", 10_000), InstallationToken("token-B", 10_000)))
-        source = GitHubAppTokenSource("1", "2", Path("key.pem"), mint=lambda: next(minted), clock=lambda: 1)
-        runner = NonCheckingTokenRunner()
-        github = GitHub(runner, "owner/repo", ("factory-bot",), ("worker-bot",), "main", source)
-        self.assertTrue(github.branch_exists("factory/m1--a"))
-        self.assertEqual(runner.tokens, ["token-A", "token-B"])
-
-    def test_issue_and_approval_verify_actual_action_actor_without_user_endpoint(self) -> None:
+    def test_normal_gh_auth_uses_home_state_without_token_environment(self) -> None:
         runner = ActorRunner()
-        github = GitHub(runner, "owner/repo", ("factory-bot",), ("worker-bot",), "main")
+        github = GitHub(runner, "owner/repo", "main")
+        self.assertEqual(github.issues(), {})
+        self.assertTrue(all("additions" not in kwargs for kwargs in runner.kwargs))
+        self.assertTrue(all("GH_TOKEN" not in kwargs.get("allowed_env", ()) for kwargs in runner.kwargs))
+        self.assertTrue(all("GITHUB_TOKEN" not in kwargs.get("allowed_env", ()) for kwargs in runner.kwargs))
+
+    def test_issue_and_merge_use_same_authenticated_account(self) -> None:
+        runner = ActorRunner()
+        github = GitHub(runner, "owner/repo", "main")
         issue = github.create_issue("m1--a", "title", "body")
         self.assertEqual(issue.author, "factory-bot")
         from factory.controller.models import PullRequest
 
-        github.approve(PullRequest(3, "OPEN", "factory/m1--a", "a" * 40, "url", "MERGEABLE", "CLEAN", author="worker-bot"))
+        github.merge(PullRequest(3, "OPEN", "factory/m1--a", "a" * 40, "url", "MERGEABLE", "BLOCKED", base_branch="main", author="factory-bot"))
         flattened = [part for argv in runner.calls for part in argv]
-        self.assertNotIn("user", flattened)
+        self.assertIn("--match-head-commit", flattened)
+        self.assertNotIn("--approve", flattened)
 
     def test_unexpected_action_actor_fails_closed_despite_marker_prose(self) -> None:
-        github = GitHub(ActorRunner(issue_actor="attacker"), "owner/repo", ("factory-bot",), ("worker-bot",), "main")
+        github = GitHub(ActorRunner(issue_actor="attacker"), "owner/repo", "main")
         with self.assertRaisesRegex(RuntimeError, "unexpected author"):
             github.create_issue("m1--a", "title", "claims factory-bot authored this")
-        from factory.controller.models import PullRequest
 
-        github = GitHub(ActorRunner(review_actor="attacker"), "owner/repo", ("factory-bot",), ("worker-bot",), "main")
-        with self.assertRaisesRegex(RuntimeError, "not authored"):
-            github.approve(PullRequest(3, "OPEN", "factory/m1--a", "a" * 40, "url", "MERGEABLE", "CLEAN", author="worker-bot"))
+    def test_controller_has_no_github_approval_path(self) -> None:
+        github_source = (Path(__file__).resolve().parents[2] / "factory/controller/github.py").read_text(encoding="utf-8")
+        controller_source = (Path(__file__).resolve().parents[2] / "factory/controller/controller.py").read_text(encoding="utf-8")
+        self.assertNotIn("gh\", \"pr\", \"review", github_source)
+        self.assertNotIn(".approve(", controller_source)
 
     def test_immutable_control_plane_cannot_be_model_authorized(self) -> None:
         value = package("a")
@@ -330,15 +283,14 @@ class PreVPSHardeningTests(unittest.TestCase):
         self.assertEqual(checks["readable committed plan"], "PASS")
         self.assertEqual(checks["read-only committed repository"], "PASS")
 
-    def test_actor_names_override_committed_defaults(self) -> None:
+    def test_config_has_no_second_github_actor_requirement(self) -> None:
         repo = Path(__file__).resolve().parents[2]
-        with patch.dict(os.environ, {
-            "CHAINSIEVE_WORKER_GITHUB_ACTOR": "worker-custom[bot]",
-            "CHAINSIEVE_INTEGRATION_GITHUB_ACTOR": "integration-custom[bot]",
-        }, clear=False):
-            loaded = FactoryConfig.load(repo, repo / "factory/config.json")
-        self.assertEqual(loaded.worker_actors, ("worker-custom[bot]",))
-        self.assertEqual(loaded.integration_actors, ("integration-custom[bot]",))
+        loaded = FactoryConfig.load(repo, repo / "factory/config.json")
+        self.assertFalse(hasattr(loaded, "worker_actors"))
+        self.assertFalse(hasattr(loaded, "integration_actors"))
+        raw = (repo / "factory/config.json").read_text(encoding="utf-8")
+        self.assertNotIn("workerActors", raw)
+        self.assertNotIn("integrationActors", raw)
 
     def test_untrusted_conversations_are_not_a_merge_dependency(self) -> None:
         repo = Path(__file__).resolve().parents[2]
@@ -348,9 +300,9 @@ class PreVPSHardeningTests(unittest.TestCase):
     def test_root_checkout_systemd_boundary_is_narrow(self) -> None:
         repo = Path(__file__).resolve().parents[2]
         unit = (repo / "factory/deployment/systemd/chainsieve-ao.service").read_text(encoding="utf-8")
-        self.assertIn("ReadOnlyPaths=/srv/chainsieve/repo", unit)
-        self.assertIn("ReadWritePaths=/srv/chainsieve/repo/.git /var/lib/chainsieve/ao", unit)
-        self.assertNotIn("ReadWritePaths=/srv/chainsieve/repo ", unit)
+        self.assertIn("ReadOnlyPaths=@REPO@ @STATE@", unit)
+        self.assertIn("ReadWritePaths=@REPO@/.git @AO_DATA@", unit)
+        self.assertIn("ProtectHome=false", unit)
 
 
 if __name__ == "__main__":

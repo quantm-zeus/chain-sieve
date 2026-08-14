@@ -12,7 +12,6 @@ from typing import Callable
 from .commands import CommandRunner
 from .config import FactoryConfig
 from .github import GitHub
-from .token_source import GitHubAppTokenSource
 
 
 @dataclass(frozen=True)
@@ -86,42 +85,18 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
         "AO v0.12.3 exposes Agy active/idle/exit hooks but no native waiting-input detector; controller stuck timeout fails closed",
     )
 
-    token_source = None
     try:
-        token_source = GitHubAppTokenSource.from_environment()
-        github = GitHub(
-            runner,
-            config.repo,
-            config.integration_actors,
-            config.worker_actors,
-            config.integration_branch,
-            token_source,
-        )
+        github = GitHub(runner, config.repo, config.integration_branch)
         credential_ok, credential_detail = github.credential_evidence()
     except Exception as error:
         credential_ok, credential_detail = False, str(error)
-    add("renewable GitHub App authentication", "PASS" if credential_ok else "FAIL", credential_detail)
-    static_token_present = bool(os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("AO_GITHUB_TOKEN"))
+    add("GitHub CLI authentication", "PASS" if credential_ok else "FAIL", credential_detail)
+
+    codex_auth = runner.run(["codex", "login", "status"], check=False)
     add(
-        "no static installation token",
-        "FAIL" if static_token_present else "PASS",
-        "remove GH_TOKEN/GITHUB_TOKEN/AO_GITHUB_TOKEN from production service environment" if static_token_present else "no static token environment variable",
-    )
-    if token_source is not None:
-        try:
-            key_mode = stat.S_IMODE(token_source.private_key_path.stat().st_mode)
-            key_ok = key_mode & 0o077 == 0
-            key_detail = f"{token_source.private_key_path} mode {key_mode:04o}"
-        except OSError as error:
-            key_ok, key_detail = False, str(error)
-        add("GitHub App private key", "PASS" if key_ok else "FAIL", key_detail)
-    actor_domains_ok = bool(config.integration_actors and config.worker_actors) and not (
-        set(config.integration_actors) & set(config.worker_actors)
-    )
-    add(
-        "GitHub actor privilege domains",
-        "PASS" if actor_domains_ok else "FAIL",
-        f"integration={','.join(config.integration_actors)} worker={','.join(config.worker_actors)}",
+        "Codex authentication",
+        "PASS" if codex_auth.returncode == 0 else "FAIL",
+        (codex_auth.stdout or codex_auth.stderr).strip().splitlines()[0] if (codex_auth.stdout or codex_auth.stderr).strip() else "status unavailable",
     )
 
     ao_status = runner.run(["ao", "status", "--json"], allowed_env=("AO_PORT", "AO_RUN_FILE", "AO_DATA_DIR"), check=False)
@@ -147,18 +122,12 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
     else:
         add("AO provider authorization", "WARN", "not checked while daemon is unavailable")
 
-    service_env = Path(os.environ.get("CHAINSIEVE_FACTORY_ENV", "/etc/chainsieve/factory.env"))
-    if service_env.exists():
-        mode = stat.S_IMODE(service_env.stat().st_mode)
-        add("service secret file", "PASS" if mode & 0o077 == 0 else "FAIL", f"{service_env} mode {mode:04o}")
-    else:
-        add("service secret file", "WARN", f"{service_env} is not installed")
-    worker_env = Path(os.environ.get("CHAINSIEVE_AO_ENV", "/etc/chainsieve/ao.env"))
-    if worker_env.exists():
-        mode = stat.S_IMODE(worker_env.stat().st_mode)
-        add("worker secret file", "PASS" if mode & 0o077 == 0 else "FAIL", f"{worker_env} mode {mode:04o}")
-    else:
-        add("worker secret file", "WARN", f"{worker_env} is not installed")
+    deployment_env = Path(os.environ.get("CHAINSIEVE_DEPLOYMENT_CONFIG", "/etc/chainsieve/deployment.env"))
+    add(
+        "deployment path configuration",
+        "PASS" if deployment_env.is_file() else "WARN",
+        str(deployment_env) if deployment_env.is_file() else f"{deployment_env} is not installed",
+    )
 
     dashboard_bind = os.environ.get("AO_HOST", "127.0.0.1")
     add("dashboard bind", "PASS" if dashboard_bind in {"127.0.0.1", "localhost", "::1"} else "FAIL", dashboard_bind)
@@ -169,11 +138,27 @@ def run_doctor(root: Path, config: FactoryConfig, runner: CommandRunner) -> list
 
     for check in filesystem_contract_checks(root, config.state_dir, config.plan_path):
         add(check.name, check.status, check.detail)
+    ao_data = os.environ.get("AO_DATA_DIR")
+    if ao_data:
+        ao_path = Path(ao_data)
+        add(
+            "writable AO data",
+            "PASS" if ao_path.is_dir() and os.access(ao_path, os.W_OK | os.X_OK) else "FAIL",
+            str(ao_path),
+        )
+    else:
+        add("writable AO data", "WARN", "AO_DATA_DIR is not asserted outside the installed service")
 
     add("branch policy", "WARN", "verify required checks and protected main using deployment/factory/configure-github.sh")
     add("integration target", "PASS", config.integration_branch)
     add("notification routing", "PASS" if config.notification_command else "WARN", "configured" if config.notification_command else "no notifier configured")
-    add("systemd", "PASS" if shutil.which("systemctl") else "WARN", "available" if shutil.which("systemctl") else "not available in this environment")
+    analyze = shutil.which("systemd-analyze")
+    installed_units = [Path("/etc/systemd/system/chainsieve-ao.service"), Path("/etc/systemd/system/chainsieve-factory.service")]
+    if analyze and all(path.is_file() for path in installed_units):
+        verified = runner.run([analyze, "verify", *(str(path) for path in installed_units)], check=False)
+        add("systemd unit validity", "PASS" if verified.returncode == 0 else "FAIL", (verified.stderr or "verified").strip())
+    else:
+        add("systemd unit validity", "WARN", "systemd-analyze or rendered units unavailable in this environment")
     return checks
 
 
@@ -189,7 +174,7 @@ def filesystem_contract_checks(root: Path, state_dir: Path, plan_path: Path) -> 
     checks.append(Check("readable committed repository", "PASS" if repo_readable else "FAIL", str(root)))
     plan_readable = plan_path.is_file() and os.access(plan_path, os.R_OK)
     checks.append(Check("readable committed plan", "PASS" if plan_readable else "FAIL", str(plan_path)))
-    repo_writable = os.access(root, os.W_OK)
+    repo_writable = bool(stat.S_IMODE(root.stat().st_mode) & 0o222) and os.access(root, os.W_OK)
     checks.append(
         Check(
             "read-only committed repository",

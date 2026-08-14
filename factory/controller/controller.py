@@ -283,6 +283,7 @@ class FactoryController:
             "lastSuccessfulTickAt": utc_now(),
             "consecutiveTickFailures": 0,
         })
+        metadata.pop("externalBlocker", None)
         if self.config.convergence_enabled and resources.allowed and records and all(
             record.status == PackageStatus.COMPLETED for record in records.values()
         ):
@@ -300,7 +301,6 @@ class FactoryController:
             metadata["controllerStartedAt"] = utc_now()
             metadata["consecutiveTickFailures"] = 0
             self.store.save(records, metadata)
-            self.store.heartbeat(active=True)
             heartbeat_stop = threading.Event()
             heartbeat_thread = threading.Thread(
                 target=self._heartbeat_loop,
@@ -313,7 +313,6 @@ class FactoryController:
             try:
                 while True:
                     try:
-                        self.store.heartbeat(active=True)
                         self.tick()
                         failures = 0
                     except Exception as error:
@@ -323,6 +322,8 @@ class FactoryController:
                         metadata["consecutiveTickFailures"] = failures
                         metadata["lastTickFailure"] = str(error)[-2000:]
                         metadata["retryDelaySeconds"] = delay
+                        if _is_github_auth_blocker(error):
+                            metadata["externalBlocker"] = "GITHUB_AUTH"
                         self.store.save(self.store.load(), metadata)
                         self.store.event(
                             "FACTORY_TICK_FAILED", reason=str(error)[-2000:],
@@ -344,11 +345,13 @@ class FactoryController:
 
     def _heartbeat_loop(self, stop: Any) -> None:
         interval = min(30, max(1, self.config.poll_seconds))
-        while not stop.wait(interval):
+        while not stop.is_set():
             try:
                 self.store.heartbeat(active=True)
             except OSError:
                 pass
+            if stop.wait(interval):
+                return
 
     def resource_state(self) -> ResourceState:
         disk = shutil.disk_usage(self.root)
@@ -436,6 +439,7 @@ class FactoryController:
                 "codexCalls": codex_usage["total"],
             },
             "lastFailure": metadata.get("lastTickFailure"),
+            "externalBlocker": metadata.get("externalBlocker"),
             "recentEvents": self.store.history(10),
         }
 
@@ -582,13 +586,14 @@ class FactoryController:
             if not review_ok:
                 if reviewer is None and record.review_attempts < self.config.max_review_cycles:
                     selected = required_reviewer
+                    context_path = self.store.write_review_context(milestone.id, package, pr.head_sha)
                     self.ao.trigger_review(record.session_id or "", selected)
                     record.review_attempts += 1
                     record.status = PackageStatus.REVIEW
                     self.store.event(
                         "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                         workKey=work_key(milestone.id, package.id), provider=selected, aoSessionId=record.session_id, pr=pr.number,
-                        attempt=record.review_attempts, headSha=pr.head_sha,
+                        attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
                     )
                 elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
                     record.status = PackageStatus.REVIEW
@@ -615,8 +620,9 @@ class FactoryController:
         if violations:
             self._block(milestone.id, package.id, record, f"unauthorized protected-path changes: {', '.join(violations)}", work_key(milestone.id, package.id))
             return
-        if pr.merge_state.upper() in {"DIRTY", "BEHIND"}:
-            token = f"MERGE:{pr.head_sha}:{pr.merge_state.upper()}"
+        if pr.mergeable.upper() == "CONFLICTING" or pr.merge_state.upper() in {"DIRTY", "BEHIND"}:
+            integration_state = "CONFLICTING" if pr.mergeable.upper() == "CONFLICTING" else pr.merge_state.upper()
+            token = f"MERGE:{pr.head_sha}:{integration_state}"
             if record.session_id and record.last_error != token:
                 if record.correction_attempts >= self.config.max_correction_attempts:
                     self._escalate_replan(
@@ -629,7 +635,7 @@ class FactoryController:
                     return
                 self.ao.send(
                     record.session_id,
-                    f"PR #{pr.number} at {pr.head_sha} is {pr.merge_state.upper()} relative to "
+                    f"PR #{pr.number} at {pr.head_sha} is {integration_state} relative to "
                     f"{self.config.integration_branch}. Rebase or merge that exact target into your branch, resolve any "
                     "ordinary conflict from committed authority, rerun focused checks, and push the updated head. Do not invoke Codex.",
                 )
@@ -642,12 +648,11 @@ class FactoryController:
                 )
             record.status = PackageStatus.PR_WAITING
             return
-        if pr.mergeable.upper() != "MERGEABLE" or pr.merge_state.upper() in {"UNKNOWN", "DIRTY", "BLOCKED", "BEHIND"}:
+        if not pr.head_sha or pr.mergeable.upper() != "MERGEABLE" or pr.merge_state.upper() in {"UNKNOWN", "DIRTY", "BEHIND"}:
             record.status = PackageStatus.PR_WAITING
             record.last_error = f"PR not mergeable: {pr.mergeable}/{pr.merge_state}"
             return
 
-        self.github.approve(pr)
         self.github.merge(pr)
         record.status = PackageStatus.COMPLETED
         record.updated_at = utc_now()
@@ -787,7 +792,7 @@ class FactoryController:
         index = ids.index(milestone.id)
         from .reasoning import ReasoningRunner, audit_remediation, write_remediation
 
-        reasoning = ReasoningRunner(self.root, self.config, self.store, self.github.runner)
+        reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
         if index + 1 < len(roadmap):
             target = roadmap[index + 1]
             self.store.archive(milestone.id, records, metadata)
@@ -797,8 +802,18 @@ class FactoryController:
             return
 
         output = self.config.state_dir / "final-audit.json"
-        self.store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id)
+        cycles = int(metadata.get("finalAuditCycles", 0))
+        if cycles >= self.config.max_final_audit_cycles:
+            self._block_factory(
+                milestone.id,
+                metadata,
+                f"final audit cycle budget exhausted after {cycles} NOT_CONVERGED result(s)",
+            )
+            return
+        cycle = cycles + 1
+        self.store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id, cycle=cycle)
         value = reasoning.final_audit(output)
+        metadata["finalAuditCycles"] = cycle
         if value.get("status") == "CONVERGED":
             metadata["finalAuditConverged"] = True
             self.store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
@@ -814,6 +829,7 @@ class FactoryController:
             workPackageId=package["id"],
             workKey=work_key(milestone.id, package["id"]),
             reason="final audit",
+            cycle=cycle,
         )
 
     def _block_factory(self, milestone_id: str, metadata: dict[str, Any], reason: str) -> None:
@@ -1017,6 +1033,13 @@ def _elapsed_seconds(started_at: Any) -> int | None:
 
 def _retry_delay(poll_seconds: int, consecutive_failures: int) -> int:
     return min(300, max(1, poll_seconds) * (2 ** min(max(0, consecutive_failures - 1), 4)))
+
+
+def _is_github_auth_blocker(error: Exception) -> bool:
+    detail = str(error).lower()
+    return any(marker in detail for marker in (
+        "bad credentials", "http 401", "status 401", "requires authentication", "gh auth login",
+    ))
 
 
 def _codex_usage(state_dir: Path) -> dict[str, Any]:

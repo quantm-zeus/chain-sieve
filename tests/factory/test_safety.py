@@ -24,6 +24,8 @@ class StaticRunner:
         self.payload = payload
 
     def run(self, argv, **kwargs):
+        if argv[:3] == ["gh", "api", "user"]:
+            return CommandResult(tuple(argv), json.dumps({"login": "factory-bot"}), "", 0)
         return CommandResult(tuple(argv), json.dumps(self.payload), "", 0)
 
 
@@ -188,7 +190,7 @@ class SafetyTests(unittest.TestCase):
             {"number": 1, "state": "OPEN", "body": marker, "url": "url/1", "author": {"login": "attacker"}},
             {"number": 2, "state": "OPEN", "body": "owner issue without marker", "url": "url/2", "author": {"login": "factory-bot"}},
         ]
-        github = GitHub(StaticRunner(raw), "owner/repo", ("factory-bot",), ("worker-bot",), "main")
+        github = GitHub(StaticRunner(raw), "owner/repo", "main")
         self.assertEqual(github.issues(), {})
 
     def test_untrusted_or_wrong_base_pull_requests_are_not_routed(self) -> None:
@@ -204,28 +206,25 @@ class SafetyTests(unittest.TestCase):
                 "mergeable": "MERGEABLE", "mergeStateStatus": "CLEAN", "files": [],
             },
         ]
-        github = GitHub(StaticRunner(raw), "owner/repo", ("factory-bot",), ("factory-bot",), "main")
+        github = GitHub(StaticRunner(raw), "owner/repo", "main")
         self.assertEqual(github.prs(), {})
 
-    def test_provider_subprocess_never_inherits_integration_app_material(self) -> None:
+    def test_subprocesses_do_not_require_token_environment(self) -> None:
         runner = CommandRunner(self.root, {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
-            "CHAINSIEVE_GITHUB_APP_ID": "integration-app",
-            "CHAINSIEVE_GITHUB_INSTALLATION_ID": "123",
-            "CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH": "/integration/key.pem",
+            "GH_TOKEN": "not-used",
+            "GITHUB_TOKEN": "not-used",
             "META_API_KEY": "provider",
             "OPENAI_API_KEY": "planner",
         })
         probe = (
             "import json,os; print(json.dumps({k:(k in os.environ) for k in "
-            "['CHAINSIEVE_GITHUB_APP_ID','CHAINSIEVE_GITHUB_INSTALLATION_ID',"
-            "'CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH','META_API_KEY','OPENAI_API_KEY']}))"
+            "['GH_TOKEN','GITHUB_TOKEN','META_API_KEY','OPENAI_API_KEY']}))"
         )
         result = runner.run([sys.executable, "-c", probe], allowed_env=("META_API_KEY",))
         self.assertEqual(json.loads(result.stdout), {
-            "CHAINSIEVE_GITHUB_APP_ID": False,
-            "CHAINSIEVE_GITHUB_INSTALLATION_ID": False,
-            "CHAINSIEVE_GITHUB_PRIVATE_KEY_PATH": False,
+            "GH_TOKEN": False,
+            "GITHUB_TOKEN": False,
             "META_API_KEY": True,
             "OPENAI_API_KEY": False,
         })
@@ -295,9 +294,9 @@ class SafetyTests(unittest.TestCase):
         repo = Path(__file__).resolve().parents[2]
         scripts = json.loads((repo / "package.json").read_text(encoding="utf-8"))["scripts"]
         for name in ("autopilot", "product:autopilot", "factory:run", "factory:start", "factory:status"):
-            self.assertIn("python3 -m factory", scripts[name])
+            self.assertIn("factory/deployment/factory-command.sh", scripts[name])
         service = (repo / "factory/deployment/systemd/chainsieve-factory.service").read_text(encoding="utf-8")
-        self.assertIn("/srv/chainsieve/.venv/bin/python -m factory run", service)
+        self.assertIn('ExecStart="@VENV@/bin/python" -m factory run', service)
         production_text = "\n".join(
             path.read_text(encoding="utf-8")
             for path in (repo / "factory").rglob("*.py")
@@ -310,7 +309,7 @@ class SafetyTests(unittest.TestCase):
         repo = Path(__file__).resolve().parents[2]
         factory_unit = (repo / "factory/deployment/systemd/chainsieve-factory.service").read_text()
         ao_unit = (repo / "factory/deployment/systemd/chainsieve-ao.service").read_text()
-        self.assertIn("ExecStart=/srv/chainsieve/.venv/bin/python -m factory run", factory_unit)
+        self.assertIn('ExecStart="@VENV@/bin/python" -m factory run', factory_unit)
         self.assertIn("Environment=PYTHONUNBUFFERED=1", factory_unit)
         self.assertIn("Requires=chainsieve-ao.service", factory_unit)
         self.assertEqual(factory_unit.count("ExecStart="), 1)
@@ -318,7 +317,8 @@ class SafetyTests(unittest.TestCase):
         self.assertIn("ExecStart=/usr/local/bin/ao daemon", ao_unit)
         self.assertNotIn("ao daemon", factory_unit)
         installer = (repo / "factory/deployment/install-ubuntu.sh").read_text()
-        self.assertLess(installer.index('repo="${CHAINSIEVE_REPO_PATH'), installer.index('test -d "$repo/.git"'))
+        self.assertIn('--user USER --repo PATH', installer)
+        self.assertIn('gh auth status', installer)
         self.assertNotIn("pip install", installer)
 
     def test_canary_assets_cannot_target_main_or_codex(self) -> None:
@@ -335,10 +335,10 @@ class SafetyTests(unittest.TestCase):
         value = json.loads((repo / "factory/deployment/VPS_ACCEPTANCE.json").read_text())
         expected = {
             "upstream_pin_provenance", "muse_live", "agy_live", "cross_provider_review", "exact_head_review",
-            "ci_correction", "parallel_workers", "duplicate_prevention", "worker_credential_boundary",
+            "ci_correction", "parallel_workers", "duplicate_prevention", "github_cli_auth",
             "untrusted_comment_filter", "systemd", "ssh_disconnect", "controller_crash", "vps_reboot",
             "network_retry", "resource_circuit_breaker", "codex_cost_routing", "status_observability",
-            "github_token_rotation", "github_installation_identity", "root_checkout_integrity",
+            "root_checkout_integrity", "semantic_review_effectiveness", "final_audit_remediation_cycle",
             "alternate_provider_failover", "codex_replan_escalation", "status_liveness", "global_work_identity",
         }
         self.assertEqual({item["gate"] for item in value["gates"]}, expected)

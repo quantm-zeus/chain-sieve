@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import re
 from pathlib import Path
 from typing import Any
 
@@ -290,15 +291,31 @@ def _package_dict(package: WorkPackage) -> dict[str, Any]:
 
 
 def _validate_requirement_ids(root: Path, milestone: Milestone) -> None:
-    authority_paths = [root / "docs" / "spec", root / "artifacts" / "spec"]
-    corpus_parts: list[str] = []
-    for directory in authority_paths:
-        if directory.exists():
-            corpus_parts.extend(path.read_text(encoding="utf-8", errors="ignore") for path in directory.rglob("*") if path.is_file())
-    corpus = "\n".join(corpus_parts)
-    unknown = sorted({rid for package in milestone.packages for rid in package.requirement_ids if rid not in corpus})
+    authoritative = authoritative_requirement_ids(root)
+    unknown = sorted({rid for package in milestone.packages for rid in package.requirement_ids if rid not in authoritative})
     if unknown:
         raise RuntimeError(f"planner returned unknown normative requirement IDs: {unknown}")
+
+
+NORMATIVE_ID = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$")
+
+
+def authoritative_requirement_ids(root: Path) -> frozenset[str]:
+    identifiers: set[str] = set()
+    manifests = list(sorted((root / "docs" / "spec").glob("*.requirements.json")))
+    artifact_directory = root / "artifacts" / "spec"
+    if artifact_directory.exists():
+        manifests.extend(sorted(artifact_directory.glob("*.requirements.json")))
+    for path in manifests:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        for family in ("requirements", "acceptanceCriteria", "invariants", "adrs"):
+            for item in value.get(family, []):
+                identifier = item.get("id") if isinstance(item, dict) else None
+                if isinstance(identifier, str) and NORMATIVE_ID.fullmatch(identifier):
+                    identifiers.add(identifier)
+    if not identifiers:
+        raise RuntimeError("authoritative requirement manifests contain no normative IDs")
+    return frozenset(identifiers)
 
 
 def _write_planning_bundle(state_dir: Path, milestone: Milestone) -> None:

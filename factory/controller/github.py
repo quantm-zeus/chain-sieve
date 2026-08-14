@@ -5,13 +5,12 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .commands import CommandError, CommandResult, CommandRunner
+from .commands import CommandError, CommandRunner
 from .models import Issue, PullRequest
-from .token_source import GitHubAppTokenSource
 
 
 WORK_PACKAGE_MARKER = re.compile(r"<!-- chainsieve-work-package:([a-z0-9-]+--[a-z0-9-]+) -->")
-GH_ENV = ("GH_TOKEN", "GITHUB_TOKEN", "GH_HOST", "GH_CONFIG_DIR")
+GH_ENV = ("GH_HOST", "GH_CONFIG_DIR")
 
 
 class GitHub:
@@ -19,41 +18,14 @@ class GitHub:
         self,
         runner: CommandRunner,
         repo: str,
-        integration_actors: tuple[str, ...],
-        worker_actors: tuple[str, ...],
         integration_branch: str,
-        token_source: GitHubAppTokenSource | None = None,
     ) -> None:
         self.runner = runner
         self.repo = repo
-        self.integration_actors = set(integration_actors)
-        self.worker_actors = set(worker_actors)
         self.integration_branch = integration_branch
-        self.token_source = token_source
 
     def _run(self, argv: list[str], **kwargs: Any):
-        if self.token_source is None:
-            return self.runner.run(argv, allowed_env=GH_ENV, **kwargs)
-        for attempt in range(2):
-            try:
-                result = self.runner.run(
-                    argv,
-                    allowed_env=("GH_HOST", "GH_CONFIG_DIR"),
-                    additions={"GH_TOKEN": self.token_source.token()},
-                    **kwargs,
-                )
-            except CommandError as error:
-                if attempt or not _auth_failure(error):
-                    raise
-                self.token_source.invalidate()
-                continue
-            if result.returncode != 0 and _auth_result(result):
-                if attempt:
-                    return result
-                self.token_source.invalidate()
-                continue
-            return result
-        raise AssertionError("unreachable")
+        return self.runner.run(argv, allowed_env=GH_ENV, **kwargs)
 
     def _json(self, argv: list[str], **kwargs: Any) -> Any:
         result = self._run(argv, **kwargs)
@@ -62,7 +34,15 @@ class GitHub:
         except json.JSONDecodeError as error:
             raise RuntimeError(f"command returned invalid JSON: {' '.join(argv[:3])}") from error
 
+    def current_actor(self) -> str:
+        value = self._json(["gh", "api", "user"])
+        actor = str(value.get("login", "")).strip()
+        if not actor:
+            raise RuntimeError("authenticated GitHub user has no login")
+        return actor
+
     def issues(self) -> dict[str, Issue]:
+        expected_actor = self.current_actor()
         raw = self._json(
             [
                 "gh", "issue", "list", "--repo", self.repo, "--state", "all", "--limit", "500",
@@ -74,7 +54,7 @@ class GitHub:
             body = value.get("body") or ""
             author = (value.get("author") or {}).get("login", "")
             marker = WORK_PACKAGE_MARKER.search(body)
-            if not marker or author not in self.integration_actors:
+            if not marker or author != expected_actor:
                 continue
             package_id = marker.group(1)
             issue = Issue(int(value["number"]), str(value["state"]), body, str(value["url"]), author)
@@ -85,7 +65,6 @@ class GitHub:
         return result
 
     def create_issue(self, package_id: str, title: str, body: str) -> Issue:
-        self._assert_integration_identity()
         payload = f"<!-- chainsieve-work-package:{package_id} -->\n\n{body.rstrip()}\n"
         url = self._run(
             ["gh", "issue", "create", "--repo", self.repo, "--title", title, "--body-file", "-"],
@@ -96,7 +75,7 @@ class GitHub:
             ["gh", "issue", "view", str(number), "--repo", self.repo, "--json", "number,state,body,url,author"]
         )
         actor = str((value.get("author") or {}).get("login", ""))
-        if actor not in self.integration_actors:
+        if actor != self.current_actor():
             raise RuntimeError(f"created issue #{number} has unexpected author {actor!r}")
         marker = WORK_PACKAGE_MARKER.search(str(value.get("body") or ""))
         if marker is None or marker.group(1) != package_id:
@@ -109,6 +88,7 @@ class GitHub:
         )
 
     def prs(self) -> dict[str, list[PullRequest]]:
+        expected_actor = self.current_actor()
         raw = self._json(
             [
                 "gh", "pr", "list", "--repo", self.repo, "--state", "all", "--limit", "500",
@@ -121,7 +101,7 @@ class GitHub:
             if not branch.startswith("factory/"):
                 continue
             author = str((value.get("author") or {}).get("login", ""))
-            if author not in self.worker_actors:
+            if author != expected_actor:
                 continue
             if str(value.get("baseRefName", "")) != self.integration_branch:
                 continue
@@ -158,13 +138,12 @@ class GitHub:
         raise CommandError(result)
 
     def merge(self, pr: PullRequest) -> None:
-        self._assert_integration_identity()
         if pr.base_branch != self.integration_branch:
             raise RuntimeError(
                 f"refusing to merge PR #{pr.number}: base {pr.base_branch!r} is not configured target {self.integration_branch!r}"
             )
-        if pr.author not in self.worker_actors:
-            raise RuntimeError(f"refusing to merge PR #{pr.number}: author {pr.author!r} is not a configured worker")
+        if pr.author != self.current_actor():
+            raise RuntimeError(f"refusing to merge PR #{pr.number}: author {pr.author!r} is not the authenticated factory user")
         self._run(
             [
                 "gh", "pr", "merge", str(pr.number), "--repo", self.repo, "--squash",
@@ -173,36 +152,6 @@ class GitHub:
             timeout=180,
         )
 
-    def approve(self, pr: PullRequest) -> None:
-        self._assert_integration_identity()
-        if pr.author in self.integration_actors:
-            raise RuntimeError("integration actor must not be the PR author")
-        reviews = self._json(
-            ["gh", "api", f"repos/{self.repo}/pulls/{pr.number}/reviews"],
-        )
-        if any(
-            str((review.get("user") or {}).get("login", "")) in self.integration_actors
-            and str(review.get("state", "")).upper() == "APPROVED"
-            and str(review.get("commit_id", "")) == pr.head_sha
-            for review in reviews
-        ):
-            return
-        self._run(
-            [
-                "gh", "pr", "review", str(pr.number), "--repo", self.repo, "--approve",
-                "--body", f"Factory gates passed for exact head {pr.head_sha}.",
-            ],
-            timeout=120,
-        )
-        reviews = self._json(["gh", "api", f"repos/{self.repo}/pulls/{pr.number}/reviews"])
-        if not any(
-            str((review.get("user") or {}).get("login", "")) in self.integration_actors
-            and str(review.get("state", "")).upper() == "APPROVED"
-            and str(review.get("commit_id", "")) == pr.head_sha
-            for review in reviews
-        ):
-            raise RuntimeError(f"approval for PR #{pr.number} was not authored by the configured integration actor at exact head")
-
     def auth_scopes(self) -> tuple[str, ...]:
         result = self._run(["gh", "auth", "status"], check=False)
         text = result.stdout + result.stderr
@@ -210,33 +159,14 @@ class GitHub:
         return tuple(item.strip() for item in match.group(1).split(",")) if match else ()
 
     def credential_evidence(self) -> tuple[bool, str]:
-        if self.token_source is None:
-            return False, "renewable GitHub App token source is not configured"
+        auth = self._run(["gh", "auth", "status"], check=False)
+        if auth.returncode != 0:
+            return False, "gh auth status failed for the deployment user"
         repository = self._json(["gh", "api", f"repos/{self.repo}"])
         if str(repository.get("full_name", "")).lower() != self.repo.lower():
-            return False, f"installation cannot access {self.repo}"
-        actor = self.token_source.app_actor()
-        if actor not in self.integration_actors:
-            return False, f"GitHub App actor {actor!r} is not configured as an integration actor"
-        return True, f"installation repository access and app actor {actor} verified"
-
-    def _assert_integration_identity(self) -> None:
-        if self.token_source is None:
-            return
-        actor = self.token_source.app_actor()
-        if actor not in self.integration_actors:
-            raise RuntimeError(f"configured GitHub App actor {actor!r} is not an integration actor")
-
-
-def _auth_failure(error: CommandError) -> bool:
-    return _auth_result(error.result)
-
-
-def _auth_result(result: CommandResult) -> bool:
-    text = f"{result.stdout}\n{result.stderr}".lower()
-    return any(value in text for value in (
-        "bad credentials", "http 401", "status 401", "http 403", "status 403", "requires authentication"
-    ))
+            return False, f"authenticated user cannot access {self.repo}"
+        actor = self.current_actor()
+        return True, f"gh CLI user {actor} can access {self.repo}"
 
 
 def ci_gate(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[bool, str]:

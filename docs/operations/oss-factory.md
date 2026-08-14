@@ -2,89 +2,96 @@
 
 ## Architecture and authority
 
-ChainSieve's production factory is a thin integration layer. Committed product documentation defines what must be built; Spec Kit structures the milestone specification, plan, tasks, and convergence review; Agent Orchestrator (AO) owns sessions, tmux workers, worktrees, provider adapters, reviews, and local runtime persistence; GitHub owns issues, PRs, CI, branches, and integrated history. The Python Factory Controller makes only deterministic lifecycle, budget, security, review, and merge decisions.
+Authoritative product documentation defines the outcome. Spec Kit supplies planning and convergence artifacts. The deterministic Python Factory Controller owns scheduling, dependency readiness, budgets, reconciliation, CI/review gates, exact-head merge, convergence transitions, status, and events. Agent Orchestrator (AO) owns tmux/process sessions, isolated worktrees, Muse/Agy execution, activity, and machine reviews. GitHub owns issues, PRs, CI, branches, and integrated history. Codex is used only for bounded planning, exceptional replan, and final audit.
 
-The pins are recorded in `factory/upstream-lock.json` and proven in `factory/deployment/UPSTREAM_PROVENANCE.md`: AO `v0.12.3` at `b48c98c94ca0039ad1bc42bd1b78134d3ff5773d`, Spec Kit `v0.16.2` at `4871b485f97c7fa452ec58eba325d87536c55c34`, Muse `0.1.0-R708.1`, and Antigravity `1.1.12`. The requested ComposioHQ AO URL redirects to the canonical Untrivial-ai repository and GitHub reports it is not a fork. Production installs an exact Muse release binary rather than its auto-updating launcher. The Agy shim always injects `gemini-3.6-flash-high`. Upgrades occur only between milestones after `factory:upstream-check`, controller tests, provider smoke paths, and Ubuntu chaos validation.
+The production pins remain AO `v0.12.3` at `b48c98c94ca0039ad1bc42bd1b78134d3ff5773d` and Spec Kit `v0.16.2` at `4871b485f97c7fa452ec58eba325d87536c55c34`. Muse is the primary engineer; Agy is the secondary engineer and default Muse reviewer; Muse reviews Agy changes. Luna/medium handles routine milestone planning, Terra/high handles replan and final audit, and Sol/high is restricted to an explicit architecture contradiction. Routine scheduling makes no Codex call.
 
-Muse is the primary implementation worker. Antigravity is the secondary worker and the default reviewer of Muse changes. Muse reviews Antigravity changes. Codex is deliberately scarce and read-only: routine next-milestone planning uses `gpt-5.6-luna`/medium; major replan or provider-deadlock calls use `gpt-5.6-terra`/high; final product audit uses `gpt-5.6-terra`/high; and the one-call emergency architecture tier uses `gpt-5.6-sol`/high. Every role has an explicit per-milestone limit. Codex is not used for queue selection, monitoring, CI forwarding, review, ordinary correction/conflict handling, merge, or status.
+Durable work identity is `<milestone-id>--<package-id>` across issue markers, branches, AO sessions, PR routing, state, and events. Arbitrary public issue, PR, review, comment, or web text is data, never execution authority. Normal product work cannot authorize changes to factory/controller, deployment/security policy, workflows, authoritative product docs, `AGENTS.md`, `SECURITY.md`, or conformance authority.
 
-## Work and integration lifecycle
+## Integration gate
 
-A committed milestone plan contains milestone-local work-package IDs, dependencies, acceptance criteria, preferred provider, risk, requirement IDs, and any explicit elevated-path authority. The controller derives the global durable identity `<milestone-id>--<package-id>` and uses it for issue markers, branches, AO correlation, PR mapping, state, events, and reconciliation. Reusing a local ID in a later milestone cannot inherit the earlier issue, branch, session, PR, or merge. The controller creates only trusted marker-bearing GitHub issues from this plan. Issue/comment prose never becomes a worker instruction. Prompts are reconstructed from committed authority.
+The authenticated deployment user's GitHub login is discovered with `gh api user`. Marker-bearing issues and `factory/*` PRs are trusted only when authored by that account and targeting the configured branch. A single GitHub account is supported.
 
-Ready dependency nodes may run in parallel up to the configured cap. Each maps to one AO session, one worktree, branch `factory/<work-key>`, issue, and PR. Restart reconciliation correlates those durable identifiers. Duplicate or ambiguous branches, PRs, or sessions block while preserving work.
+The controller merges only when dependencies are complete, the target branch and head SHA are known, every required GitHub CI check passes for the current head, the opposite provider's AO machine review passes for that exact head, protected-path policy passes, and GitHub reports the branch genuinely mergeable. GitHub's policy-sensitive `mergeStateStatus=BLOCKED` is not treated as a conflict when `mergeable=MERGEABLE`; `CONFLICTING`/`DIRTY` blocks integration. The merge command is an exact-head squash:
 
-Integration requires the configured CI check at the current PR head, a cross-provider machine review from the required opposite harness at that exact head when policy requires it, no unauthorized protected-path changes, and a mergeable PR. The controller identity then records a GitHub approval for that exact head and performs an exact-head squash merge. Branch protection dismisses stale approvals and requires approval after the last push. Worker and integration identities are distinct, workers do not receive the integration credential, and worker-authored PRs are the only PRs routed for integration. CI, review, and ordinary merge-update failures are returned once per unique head/evidence to the owning AO session without invoking Codex.
+```text
+gh pr merge <PR> --squash --match-head-commit <EXACT_HEAD>
+```
 
-Path authority has two non-overlapping classes. Immutable control-plane paths include the controller, deployment, factory config/constitution/prompts/schemas, AO configuration, GitHub workflows, root agent/security policy, authoritative specs/conformance, and security/architecture verifiers. Normal planning, convergence, Muse, Agy, and routine Codex planning can never authorize these; even `authorizedProtectedPaths=["factory/**"]` is rejected before execution. Elevated product/repository paths include dependency manifests/locks, migrations, and selected generated surfaces. Those require HIGH/CRITICAL risk and an exact deterministic authorization. Neither implementation workers nor reviewers may weaken requirements, verification, or security to obtain a pass.
+The controller never submits GitHub APPROVE reviews. GitHub CI is executable verification, AO exact-head cross-provider review is semantic review, and the Factory Controller is deterministic integration authority. Target-branch protection requires strict status checks, disables force pushes/deletion, and does not require approving reviews, last-push approval, or conversation resolution.
 
-## Budgets and failure behavior
+Before triggering AO review, the controller writes a mode `0440` JSON artifact at `<factory-state>/reviews/<workKey>/<headSha>.json` containing the workKey, milestone, objective, acceptance criteria, normative requirement IDs, authoritative source paths, and target SHA. The installed Muse/Agy wrappers read that artifact from the read-only mount and embed its contents in AO's upstream review prompt without changing AO core. The AO service mounts factory state read-only, so a worker worktree cannot rewrite its review criteria. Any new commit selects a different context path and invalidates old CI/review evidence.
 
-Configuration in `factory/config.json` bounds active workers, primary/alternate task attempts, corrections, review cycles, convergence passes, Codex calls, task time, milestone time, worktrees, memory, and disk. A terminated session first receives bounded AO restore/correction. After that, alternate-provider respawn is permitted only when there is no PR, remote branch, uncommitted change, commit beyond the integration base, or ambiguous workspace/session. The controller then uses AO's supported `session kill`: AO deletes only a clean workspace and preserves a dirty one. The same logical work key is requeued and the opposite provider is spawned. Durable or uncertain work is preserved and routed to replan, never deleted.
+## Budgets, convergence, and observability
 
-AO `v0.12.3` does not directly switch a Muse worktree/session to Agy. ChainSieve therefore implements only the proven clean-respawn case. A second provider failure, repeated material integration conflict, or exhausted convergence decomposition invokes one schema-constrained Terra/high replan. Sol/high is invoked at most once only when Terra successfully reports an exceptional authoritative architecture contradiction; network/auth/unavailability never falls through to Sol. Exhausted/unavailable Codex budget blocks the affected milestone without looping.
+Provider failover remains bounded and evidence-preserving: bounded restore/correction, then the opposite provider only for clean and unambiguous work. Dirty, partial, durable, or ambiguous work is preserved and escalated. Resource, task, correction, review, wall-clock, worktree, and model-call budgets are deterministic circuit breakers.
 
-Low resources open a circuit breaker and prevent new work while existing work continues to be monitored/preserved. Task/milestone timeouts and exhausted correction/review budgets block the affected package. AO activity and PR/CI changes update a durable meaningful-progress timestamp; an unchanged live process eventually becomes `STUCK` rather than remaining `ACTIVE`. AO v0.12.3 natively detects Muse input waits but lacks an Agy waiting-input detector, so Agy relies on the bounded stuck timeout and must prove this path live. Notifications are optional and informational; no notification response is needed for normal progress.
+Final audit permits at most three cycles. A normal `AUDIT -> REMEDIATION -> AUDIT` flow is valid; remediation must complete and converge before the next audit. Identical findings map to one deterministic remediation ID. Three non-converged audits block further Codex calls. Product status cannot become `DONE` without a successful final audit.
 
-After every milestone merge set, Muse performs a read-only docs/spec/plan/tasks convergence pass. Gaps become deterministic idempotent remediation packages. When a milestone converges, the bounded Codex planner decomposes exactly the next committed roadmap objective into two to eight packages; the controller validates the DAG and requirement IDs, writes the runtime active plan plus Spec Kit-style `spec.md`, `plan.md`, and `tasks.md`, archives the prior state, and continues. After the last roadmap milestone, the controller automatically runs the schema-constrained read-only Codex audit; a non-converged audit becomes remediation work.
+Requirement IDs are loaded as exact tokens from committed normative requirement manifests (`requirements`, acceptance criteria, invariants, and ADR families). Prefix, suffix, whitespace, malformed, and unknown variants are rejected.
 
-## Commands and observability
+`factory:status` is local and read-only. Controller liveness (`ACTIVE`, `STALE`, `STOPPED_UNKNOWN`) remains separate from product status (`RUNNING`, `DEGRADED`, `BLOCKED`, `DONE`). A dedicated heartbeat thread writes unique temporary files under a local lock and atomically replaces `heartbeat.json`; shutdown writes inactive state after the thread stops. `factory:history` reverse-reads bounded blocks from append-only JSONL, skips a malformed crash-truncated line, and does not load months of history to return the last 50 events.
 
-Use the package scripts:
+Useful commands:
 
 ```text
 pnpm factory:doctor
-pnpm factory:start
-pnpm factory:stop
-pnpm factory:restart
 pnpm factory:status
 pnpm factory:history
-pnpm factory:sync
-pnpm factory:converge
-pnpm factory:final-audit
-pnpm factory:upstream-check
+systemctl status chainsieve-factory chainsieve-ao
+journalctl -u chainsieve-factory -f
+ao status
+ao open <session>
 ```
 
-`factory:status` reads local state without calling or mutating GitHub/AO. A heartbeat thread atomically updates `heartbeat.json` even during a long tick. Status reports controller liveness as `ACTIVE`, `STALE`, or `STOPPED_UNKNOWN` separately from product state `RUNNING`, `BLOCKED`, `DEGRADED`, or `DONE`; a historical start timestamp alone is never active. It also distinguishes package states `STARTING`, `ACTIVE`, `IDLE`, `WAITING_INPUT`, `CI`, `REVIEW`, `BLOCKED`, `FAILED`, `COMPLETE`, and `STUCK`, and shows retries, resource gates, and separate Codex role counters. `factory:history` reads the append-only JSONL event stream. AO exposes session detail and its dashboard only on loopback; use an SSH tunnel. Journald is the service-liveness log, AO/tmux is the worker log, GitHub Actions is CI truth, and `.factory/events.jsonl` (or `/var/lib/chainsieve/factory/events.jsonl`) is concise factory history. Logrotate bounds local history growth.
+AO's dashboard binds only to loopback; use an SSH tunnel.
 
-## Ubuntu installation and privilege boundaries
+## Ubuntu installation
 
-The target is Ubuntu x86-64 with Git, Python 3.12, GitHub CLI, tmux, uv, Node 22/pnpm 10.13.1, and exactly Go 1.25.7. The installer creates `/srv/chainsieve/.venv`; the controller has no third-party Python dependencies, and `factory/requirements.lock` records that empty lock. Supply separately obtained, verified Linux provider binaries:
+Production uses one configurable normal non-root deployment user for AO, the controller, Muse, Agy, Codex CLI, and GitHub CLI. Authentication stays in that user's real home. The services use `ProtectHome=false` so normal CLI authentication remains readable, while retaining `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=full`, explicit root-checkout mounts, and the loopback AO bind.
+
+Log in as that user and authenticate once:
 
 ```bash
-sudo CHAINSIEVE_REPO_PATH=/srv/chainsieve/repo \
-  CHAINSIEVE_MUSE_SOURCE=/secure/staging/muse-bin-0.1.0-R708.1 \
+gh auth login
+gh auth status
+# Authenticate Muse, Agy, and Codex through their normal supported flows.
+```
+
+Supply verified pinned provider binaries, then install:
+
+```bash
+sudo CHAINSIEVE_MUSE_SOURCE=/secure/staging/muse-bin-0.1.0-R708.1 \
   CHAINSIEVE_MUSE_SHA256=<verified-linux-sha256> \
   CHAINSIEVE_AGY_SOURCE=/secure/staging/agy-1.1.12 \
   CHAINSIEVE_AGY_SHA256=<verified-linux-sha256> \
-  factory/deployment/install-ubuntu.sh
+  ./factory/deployment/install-ubuntu.sh \
+    --user "$(id -un)" \
+    --repo "$(pwd)"
+
+sudo systemctl enable --now chainsieve-ao chainsieve-factory
 ```
 
-The installer builds and tests AO from its pinned commit, installs pinned Spec Kit, immutable provider targets and credential helpers, creates separate `chainsieve-worker` and `chainsieve-controller` users/groups, builds the dedicated venv, and registers systemd services. Configure each service with its own GitHub App ID, installation ID, and private-key path; never put a generated installation token in an EnvironmentFile. `/etc/chainsieve/ao.env` holds only the worker App material and provider credentials. `/etc/chainsieve/factory.env` holds only the integration App material, configurable worker/integration actor names, Codex credential, and the Muse credential used for read-only convergence. Key and environment files must be owner-only and unreadable by the other service user.
+The installer validates Ubuntu x86-64, the non-root user, Python 3.12, Node 22, pnpm 10.13.1, Go 1.25.7, normal `gh` authentication/repository access, pinned provider binaries, AO and Spec Kit pins, rendered units, and doctor. Defaults derive from the deployment home:
 
-Install the two downloaded App keys separately, then set the matching paths in the environment files:
+- factory state: `$HOME/.local/state/chainsieve-factory`
+- AO data/worktrees: `$HOME/.local/state/agent-orchestrator`
+- venv: `$HOME/.local/share/chainsieve-factory/venv`
 
-```bash
-sudo install -o chainsieve-worker -g root -m 0400 worker-app.pem /etc/chainsieve/worker-app.pem
-sudo install -o chainsieve-controller -g root -m 0400 integration-app.pem /etc/chainsieve/integration-app.pem
-```
+Override them with `--state`, `--ao-data`, and `--venv`. For unambiguous systemd rendering, configured deployment paths must not contain whitespace, backslashes, quotes, or percent characters. Non-secret resolved paths are recorded in `/etc/chainsieve/deployment.env`; scripts source that file. `/etc/chainsieve/providers.env` contains only optional provider locations/model settings. GitHub/provider/Codex authentication is not copied or extracted.
 
-The controller mints installation tokens in memory, refreshes before expiry, invalidates on an auth-class failure, and retries once. AO v0.12.3's native `GHTokenSource` reruns `gh auth token` every five minutes and invalidates its cache after a GitHub 401/403; the installed `gh` wrapper backs that command with the worker App token helper. The installer normalizes the existing GitHub origin to the same repository over HTTPS, and the helper supplies worker Git through `GIT_ASKPASS`. AO's optional issue-enrichment tracker accepts only a static environment token in this pin and is intentionally left disabled; the controller already supplies the complete authoritative prompt. No token value is placed in arguments, logs, events, or prompts. Deployment-configurable `CHAINSIEVE_WORKER_GITHUB_ACTOR` and `CHAINSIEVE_INTEGRATION_GITHUB_ACTOR` replace assumptions about literal bot names and must remain disjoint.
+Both services run as the selected user with its real `HOME`. AO sees the configured root checkout read-only, with write exceptions only for `.git`, AO data/worktrees, and runtime state. The controller sees the root checkout read-only and factory state writable. This is a trusted-agent workflow boundary, not hostile multi-tenant isolation.
 
-Identity is not inferred with `GET /user`, which is invalid for installation authentication. Doctor verifies `GET /app` app-slug identity using the App JWT plus installation repository access. Issue creation is accepted only after refetching the issue and checking its actual author. Approval is accepted only after refetching reviews and finding a configured integration actor on the exact PR head SHA. Prose cannot impersonate either actor. Branch protection deliberately sets `required_conversation_resolution=false`: untrusted public review threads are neither sent to agents nor allowed to create a mandatory human dependency; exact-head CI, machine review, protected-path, integration approval, and mergeability remain mandatory.
+`factory:doctor` checks the repo, configured runtime and paths, pins, provider binaries/headless support, Codex login status where available, `gh auth status`, current GitHub login/repository access, AO reachability/provider authorization, state/plan access, disk, loopback dashboard, and rendered systemd validity. Missing/revoked `gh` auth is an external credential blocker: state is preserved and bounded runtime retry/backoff prevents duplicate work or model storms. The daemon never runs `gh auth login`.
 
-The installer runs AO's production-relevant Go packages rather than `go test ./...`: in v0.12.3 the unrelated fake-agent lifecycle test launches `sh -lc`, which resets its injected shim PATH on Debian/Ubuntu and fails to create its hook log. The actual session-manager suite passes once the declared tmux dependency is installed. Treat this exclusion as an upstream pin note, not evidence that live AO behavior passed.
+## Canary, validation, backup, and recovery
 
-`chainsieve-ao.service` and `chainsieve-factory.service` start at boot and do not depend on an SSH shell. AO binds to `127.0.0.1`. The root checkout is root-owned and read-only to both service identities. AO can write only the root `.git` administrative directory required by `git worktree add`, `$AO_DATA_DIR` (whose exact managed worktree root is `$AO_DATA_DIR/worktrees`), its runtime directory, and its own home. It cannot replace root `factory/**`, `.github/**`, authoritative docs, controller source, or deployment policy. Product worktrees remain writable. Before starting the controller, run `factory:doctor`; it requires writable factory state but only readable committed repo/plan/factory source, verifies renewable installation identity, refreshes AO's agent catalog, and fails unless Muse and Agy are authorized under the worker identity. Provision any Agy local profile under that identity through the supported login flow. `KillMode=process` remains conditional on the pinned AO Ubuntu child-survival tests before production cutover.
+All pre-cutover live work targets only `factory/canary-base`. `prepare-canary.sh` rejects `main`; `configure-github.sh OWNER/REPO factory/canary-base` installs autonomous branch protection; and `activate-canary.sh activate` pins the actual controller service to the canary config, plan, target, and derived canary state directory while giving AO read-only access to that canary's controller-owned review context.
 
-Validate on the actual host with `factory/deployment/validate-ubuntu.sh`. The safe live plan in `factory/deployment/canary-milestone.json` targets only `factory/canary-base`; prepare the branch with `prepare-canary.sh`, protect it with `configure-github.sh OWNER/REPO factory/canary-base`, and run `activate-canary.sh activate` while the controller is stopped. This uses the actual `chainsieve-factory.service` executable/topology with a systemd override that pins only the plan/config/target to canary. Never use `main` for validation. Use `reboot-probe.sh arm` once during a disposable active validation package; the enabled one-shot service records the post-boot result automatically. Also exercise SSH disconnect, AO daemon crash, worker crash, scoped GitHub outage, disk threshold injection, credential probes, worker privilege denial, Muse and Agy PR-to-merge, parallel workers, cross-review correction, review staleness, and convergence. Record evidence in `VPS_ACCEPTANCE.json`; code presence is not validation.
+Run `factory/deployment/validate-ubuntu.sh` only on the prepared Ubuntu host. It verifies the rendered service user/HOME/path model, `gh` auth, systemd units, AO mount namespace, writable worktrees, controller crash recovery, and local reconciliation. `reboot-probe.sh arm` is only for an explicitly authorized validation reboot. Record live evidence in `VPS_ACCEPTANCE.json`; mocks never make a live row pass. The semantic-review canary must first reject CI-green code that violates an acceptance criterion, then pass only after the exact head is fixed.
 
-## Backup and recovery
+`backup.sh <destination>` reads deployment paths and archives allowlisted AO metadata, factory state/events/review context, rendered units, non-secret deployment metadata, and factory pin/config files. It does not archive the user's home, `gh` authentication, provider/Codex credentials, reviewer profiles, caches, or worktrees.
 
-Run `factory/deployment/backup.sh <destination>` from a protected backup job. It archives AO metadata/config, controller planning/events/state, and non-secret service definitions. It excludes `/etc/chainsieve/*.env`, provider credentials, package caches, and worktrees. Retain encrypted archives off-host under the normal operational policy.
+Services continue after SSH exits. On recovery, restore compatible local metadata when available, start AO, and run `pnpm factory:reconcile`. GitHub issues, branches, PRs, and merges remain durable truth; ambiguous work blocks rather than being deleted or duplicated.
 
-After loss of local AO state, restore a compatible backup if available, start AO, then run `factory:reconcile`. Without a backup, GitHub issues, branches, PRs, merges, and the committed milestone remain authoritative. Re-register the AO project; the controller will complete merged work, recognize PRs/branches, and block ambiguous branch-only state rather than duplicating it.
-
-## Migration status and legacy isolation
-
-Normal production package entrypoints now target `python3 -m factory`; explicit `legacy:*` diagnostics and some old lifecycle/test scripts remain available during migration. They must not be installed as services or invoked by normal factory operation. The old code and tests are intentionally retained until all required live Muse/Agy, GitHub, parallelism, review, SSH, crash, reboot, and outage scenarios pass on Ubuntu. Deletion before that evidence would violate the migration safety gate.
+The legacy factory remains installed until every required live Ubuntu/VPS gate passes and cutover is separately authorized.

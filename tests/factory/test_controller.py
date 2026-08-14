@@ -72,6 +72,7 @@ def config(root: Path) -> FactoryConfig:
         max_task_attempts=1,
         max_correction_attempts=1,
         max_review_cycles=2,
+        max_final_audit_cycles=3,
         max_convergence_passes=3,
         max_task_wall_clock_seconds=60,
         max_milestone_wall_clock_seconds=600,
@@ -83,9 +84,6 @@ def config(root: Path) -> FactoryConfig:
         max_worktrees=999,
         required_checks=("CI",),
         protected_paths=("factory/**", "docs/spec/**"),
-        trusted_actors=("factory-bot",),
-        worker_actors=("worker-bot",),
-        integration_actors=("factory-bot",),
         integration_branch="main",
         state_dir=root / "state",
         plan_path=root / "plan.json",
@@ -93,7 +91,7 @@ def config(root: Path) -> FactoryConfig:
         convergence_enabled=True,
         notification_command=(),
         codex_routes={
-            role: CodexRoute("gpt-test", "medium", 1)
+            role: CodexRoute("gpt-test", "medium", 3 if role == "final_audit" else 1)
             for role in ("planner", "replan", "final_audit", "emergency")
         },
         agy_model="gemini-test",

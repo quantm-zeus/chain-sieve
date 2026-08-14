@@ -15,7 +15,6 @@ from .controller.doctor import checks_json, run_doctor
 from .controller.github import GitHub
 from .controller.models import work_key
 from .controller.store import StateStore
-from .controller.token_source import GitHubAppTokenSource
 
 
 def root_path() -> Path:
@@ -28,14 +27,7 @@ def build() -> tuple[FactoryController, FactoryConfig, StateStore, CommandRunner
     config = FactoryConfig.load(root, config_path)
     store = StateStore(config.state_dir)
     runner = CommandRunner(root)
-    github = GitHub(
-        runner,
-        config.repo,
-        config.integration_actors,
-        config.worker_actors,
-        config.integration_branch,
-        GitHubAppTokenSource.from_environment(),
-    )
+    github = GitHub(runner, config.repo, config.integration_branch)
     ao = AgentOrchestrator(runner, config.project_id)
     return FactoryController(root, config, store, github, ao), config, store, runner
 
@@ -108,10 +100,28 @@ def main(argv: list[str] | None = None) -> int:
             output = root_path() / output
         with store.lock():
             milestone = config.load_milestone()
-            store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id)
-            value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
-            records = store.load()
             metadata = store.metadata()
+            records = store.load()
+            expected = {work_key(milestone.id, package.id) for package in milestone.packages}
+            if metadata.get("milestoneConverged") is not True or any(
+                records.get(key) is None or records[key].status.value != "COMPLETE" for key in expected
+            ):
+                print(json.dumps({
+                    "status": "BLOCKED",
+                    "reason": "final audit requires every current/remediation package complete and milestone convergence",
+                }, indent=2))
+                return 4
+            cycles = int(metadata.get("finalAuditCycles", 0))
+            if cycles >= config.max_final_audit_cycles:
+                metadata["convergenceBlocked"] = True
+                metadata["lastTickFailure"] = f"final audit cycle budget exhausted after {cycles} calls"
+                store.save(store.load(), metadata)
+                print(json.dumps({"status": "BLOCKED", "reason": metadata["lastTickFailure"]}, indent=2))
+                return 4
+            cycle = cycles + 1
+            store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id, cycle=cycle)
+            value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
+            metadata["finalAuditCycles"] = cycle
             if value.get("status") == "CONVERGED":
                 metadata["finalAuditConverged"] = True
                 store.event("FACTORY_CONVERGED", milestoneId=milestone.id)

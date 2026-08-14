@@ -33,17 +33,15 @@ The historical ComposioHQ URL currently redirects to the canonical Untrivial-ai 
 The exact pin has native Muse waiting-input detection but no native Agy waiting-input detector; ChainSieve therefore uses a
 bounded meaningful-progress timeout for Agy and records this as a live-acceptance requirement rather than claiming native support.
 
-Run AO and the controller as separate systemd services and Unix users/credential domains. AO receives the worker GitHub
-credential and provider credentials. The controller receives the integration GitHub credential. Controller subprocesses
-use explicit environment allowlists, so provider/Codex/notifier subprocesses never inherit the integration credential.
-Worker and integration GitHub actors must be distinct. Protected target branches require a stale-dismissed, last-push approval;
-the controller supplies that approval only after its CI, exact-head cross-review, protected-path, dependency, and mergeability gates.
+Run AO and the controller as separate systemd services under one configurable normal non-root deployment user. Muse, Agy,
+Codex CLI, and GitHub CLI use that user's normal supported authentication in its real home. GitHub authentication is a single
+interactive `gh auth login`; the daemons neither extract tokens nor implement token refresh, App credentials, askpass brokers,
+or a second actor. The authenticated login returned by `gh api user` is the trusted author for factory issues and PRs.
 
-Both GitHub identities use independently scoped App ID, installation ID, and private-key paths. Generated installation
-tokens are never static service secrets. The controller mints/caches the integration token in memory and invalidates it on
-auth failure. AO uses its v0.12.3 `GHTokenSource` through a worker-only `gh auth token` helper, while worker HTTPS Git uses
-the same App through `GIT_ASKPASS`. Installation identity is verified through App metadata, repository access, and fetched
-post-action authors/reviews rather than `/user`. Actor logins are protected deployment configuration, not hard-coded names.
+Protected target branches require strict status checks, disable force push/deletion, and require neither GitHub approval nor
+conversation resolution. The controller never calls GitHub APPROVE. It merges only after dependencies, exact-head CI,
+opposite-provider AO exact-head review, protected paths, target branch, known head, and actual mergeability pass. GitHub
+`mergeStateStatus=BLOCKED` is policy data, not a conflict when the explicit mergeability result is `MERGEABLE`.
 
 Normal product models cannot authorize immutable control-plane, security, workflow, authoritative-spec, or verification
 paths. Elevated product surfaces require HIGH/CRITICAL risk and an exact deterministic authorization. Durable work identity
@@ -59,10 +57,21 @@ clean worktrees and preserves dirty ones. Dual-provider exhaustion, repeated mat
 decomposition receive one Terra/high replan. Sol/high is limited to a successfully classified exceptional architecture
 contradiction and is never an availability fallback. A local heartbeat separates controller liveness from product state.
 
-The worker's systemd write boundary is the root checkout `.git` administrative directory, `$AO_DATA_DIR/worktrees`, AO
-runtime/state, and its home. Root source, workflows, authority documents, controller code, and deployment policy are
-root-owned read-only. Required GitHub conversation resolution is disabled because untrusted public threads are deliberately
-not agent inputs; exact-head CI/review/approval and protected-path gates remain authoritative.
+AO v0.12.3 reviewer configuration selects a harness but does not accept dynamic per-work-package criteria. Without forking
+AO, the controller therefore writes an immutable exact-head review-context artifact outside worker worktrees. Thin Muse/Agy
+binary wrappers read it from the read-only mount and embed its contents in AO's native review invocation. It contains the workKey, milestone, objective, acceptance,
+normative IDs, authority paths, and target SHA; the AO service can read but not write the factory-state mount.
+
+Final audit is bounded to three cycles so one non-converged audit can create remediation and a later audit can establish
+convergence. Identical findings use a deterministic remediation ID; exhaustion blocks further Codex calls. Normative IDs
+are exact tokens parsed from committed manifests. Heartbeats use locked unique atomic replacements, and JSONL history uses a
+bounded reverse reader.
+
+The AO systemd write boundary is the root checkout `.git` administrative directory, `$AO_DATA_DIR/worktrees`, and AO
+runtime/state. The configured root source and controller-owned review state are read-only in AO's mount namespace. The
+controller's explicit runtime write path is its configured state, while `ProtectHome=false` intentionally leaves the trusted
+deployment user's home available because normal CLI authentication lives there; other compatible hardening remains enabled. This is workflow
+containment for trusted coding agents, not a hostile-agent or multi-tenant security boundary.
 
 ## Consequences
 

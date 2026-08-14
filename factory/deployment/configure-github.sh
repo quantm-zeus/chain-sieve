@@ -21,12 +21,7 @@ gh api --method PUT "repos/$repo/branches/$branch/protection" \
     "contexts": ["$check_context"]
   },
   "enforce_admins": true,
-  "required_pull_request_reviews": {
-    "dismiss_stale_reviews": true,
-    "require_code_owner_reviews": false,
-    "required_approving_review_count": 1,
-    "require_last_push_approval": true
-  },
+  "required_pull_request_reviews": null,
   "restrictions": null,
   "required_linear_history": false,
   "allow_force_pushes": false,
@@ -38,4 +33,4 @@ gh api --method PUT "repos/$repo/branches/$branch/protection" \
 }
 JSON
 
-echo "Protected $branch configured. Worker and integration GitHub App identities must be distinct; only the controller identity may approve and merge after internal gates pass."
+echo "Protected $branch configured. GitHub CI is executable verification; AO exact-head review is semantic authority; the controller merges only after its deterministic gates pass."

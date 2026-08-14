@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo="${CHAINSIEVE_REPO_PATH:-/srv/chainsieve/repo}"
+deployment_config="${CHAINSIEVE_DEPLOYMENT_CONFIG:-/etc/chainsieve/deployment.env}"
+[[ -r "$deployment_config" ]] || { echo "deployment configuration not found: $deployment_config" >&2; exit 1; }
+. "$deployment_config"
+repo="$CHAINSIEVE_REPO_PATH"
 source_ref="${CHAINSIEVE_CANARY_SOURCE_REF:-factory/oss-migration}"
 target_ref="${CHAINSIEVE_CANARY_TARGET_REF:-factory/canary-base}"
 

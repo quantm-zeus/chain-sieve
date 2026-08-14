@@ -32,6 +32,16 @@
       "preferredProvider": "muse",
       "risk": "MEDIUM",
       "requirementIds": []
+    },
+    {
+      "id": "semantic-review-effectiveness",
+      "objective": "First push factory-canary/semantic-review.txt containing exactly TECHNICALLY_VALID so the harmless path-only CI passes, and do not correct it until the exact-head cross-provider reviewer requests changes. After that machine verdict is returned, change it to exactly SEMANTICALLY_CORRECT and push a new head.",
+      "acceptance": ["The final factory-canary/semantic-review.txt content is exactly SEMANTICALLY_CORRECT", "The first CI-green head receives an AO changes_requested verdict for violating the explicit content criterion", "Controller refuses the first head, then merges only the corrected head after new CI and exact-head cross-provider review"],
+      "dependencies": ["canary-ci-correction"],
+      "parallelizable": false,
+      "preferredProvider": "muse",
+      "risk": "MEDIUM",
+      "requirementIds": []
     }
   ]
 }

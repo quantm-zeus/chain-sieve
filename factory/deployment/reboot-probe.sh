@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo="${CHAINSIEVE_REPO_PATH:-/srv/chainsieve/repo}"
-factory_python="${CHAINSIEVE_FACTORY_PYTHON:-/srv/chainsieve/.venv/bin/python}"
-state_dir="${CHAINSIEVE_FACTORY_STATE_DIR:-/var/lib/chainsieve/factory}"
+deployment_config="${CHAINSIEVE_DEPLOYMENT_CONFIG:-/etc/chainsieve/deployment.env}"
+[[ -r "$deployment_config" ]] || { echo "deployment configuration not found: $deployment_config" >&2; exit 1; }
+. "$deployment_config"
+repo="$CHAINSIEVE_REPO_PATH"
+factory_python="$CHAINSIEVE_FACTORY_PYTHON"
+state_dir="$CHAINSIEVE_FACTORY_STATE_DIR"
+export CHAINSIEVE_FACTORY_STATE_DIR
+export CHAINSIEVE_FACTORY_PLAN="$repo/specs/factory/current-milestone.json"
+export PYTHONPATH="$repo"
+export HOME="$CHAINSIEVE_USER_HOME"
 cd "$repo"
 
 case "${1:-}" in
   arm)
     if [[ "$(id -u)" -ne 0 ]]; then echo "run as root" >&2; exit 1; fi
-    install -d -o chainsieve-controller -g chainsieve -m 0750 "$state_dir"
+    systemctl enable chainsieve-reboot-probe.service
+    install -d -o "$CHAINSIEVE_DEPLOYMENT_USER" -g "$CHAINSIEVE_DEPLOYMENT_GROUP" -m 0750 "$state_dir"
     systemctl show chainsieve-ao.service chainsieve-factory.service \
       -p ActiveState -p SubState -p MainPID -p NRestarts \
       >"$state_dir/pre-reboot-services.txt"
@@ -27,7 +35,7 @@ Path(sys.argv[1]).write_text(json.dumps({
     "pid": os.getpid(),
 }, indent=2) + "\n", encoding="utf-8")
 PY
-    chown chainsieve-controller:chainsieve "$state_dir"/pre-reboot-* "$state_dir/reboot-probe-armed"
+    chown "$CHAINSIEVE_DEPLOYMENT_USER:$CHAINSIEVE_DEPLOYMENT_GROUP" "$state_dir"/pre-reboot-* "$state_dir/reboot-probe-armed"
     chmod 0640 "$state_dir"/pre-reboot-* "$state_dir/reboot-probe-armed"
     echo "probe armed; the enabled one-shot unit will capture evidence automatically after the single authorized reboot"
     ;;
@@ -107,7 +115,7 @@ result = {
 if duplicates or artifact_mismatches or not fresh_reconcile:
     raise SystemExit("post-reboot reconciliation evidence failed")
 PY
-    chown chainsieve-controller:chainsieve "$state_dir"/post-reboot-*
+    chown "$CHAINSIEVE_DEPLOYMENT_USER:$CHAINSIEVE_DEPLOYMENT_GROUP" "$state_dir"/post-reboot-*
     chmod 0640 "$state_dir"/post-reboot-*
     rm "$state_dir/reboot-probe-armed"
     echo "post-reboot evidence captured automatically; no duplicate blocker was observed"

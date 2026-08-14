@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
+import threading
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -22,6 +24,7 @@ class StateStore:
         self.lock_path = directory / "controller.lock"
         self.review_dir = directory / "reviews"
         self.heartbeat_path = directory / "heartbeat.json"
+        self._heartbeat_lock = threading.Lock()
 
     def prepare(self) -> None:
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o750)
@@ -77,22 +80,95 @@ class StateStore:
         return path
 
     def history(self, limit: int = 50) -> list[dict[str, Any]]:
-        if not self.events_path.exists():
+        if limit <= 0 or not self.events_path.exists():
             return []
-        lines = self.events_path.read_text(encoding="utf-8").splitlines()
-        return [json.loads(line) for line in lines[-limit:] if line.strip()]
+        events: list[dict[str, Any]] = []
+        with self.events_path.open("rb") as stream:
+            stream.seek(0, os.SEEK_END)
+            position = stream.tell()
+            suffix = b""
+            while position > 0 and len(events) < limit:
+                size = min(8192, position)
+                position -= size
+                stream.seek(position)
+                parts = (stream.read(size) + suffix).split(b"\n")
+                suffix = parts[0]
+                for raw in reversed(parts[1:]):
+                    if not raw.strip():
+                        continue
+                    try:
+                        value = json.loads(raw.decode("utf-8"))
+                    except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
+                        continue
+                    if isinstance(value, dict):
+                        events.append(value)
+                        if len(events) == limit:
+                            break
+            if position == 0 and len(events) < limit and suffix.strip():
+                try:
+                    value = json.loads(suffix.decode("utf-8"))
+                except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
+                    pass
+                else:
+                    if isinstance(value, dict):
+                        events.append(value)
+        events.reverse()
+        return events
 
     def heartbeat(self, *, active: bool) -> None:
-        self.prepare()
+        with self._heartbeat_lock:
+            self.prepare()
+            payload = {
+                "controllerHeartbeatAt": utc_now(),
+                "pid": os.getpid(),
+                "active": active,
+            }
+            descriptor, name = tempfile.mkstemp(prefix=".heartbeat.", dir=self.directory)
+            temporary = Path(name)
+            try:
+                with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+                    stream.write(json.dumps(payload, sort_keys=True) + "\n")
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                os.chmod(temporary, 0o640)
+                os.replace(temporary, self.heartbeat_path)
+            finally:
+                temporary.unlink(missing_ok=True)
+
+    def write_review_context(self, milestone_id: str, package: Any, head_sha: str) -> Path:
+        if not head_sha or any(character not in "0123456789abcdefABCDEF" for character in head_sha):
+            raise ValueError("review context requires a hexadecimal PR head SHA")
+        key = f"{milestone_id}--{package.id}"
+        directory = self.review_dir / key
+        directory.mkdir(parents=True, exist_ok=True, mode=0o750)
+        path = directory / f"{head_sha}.json"
         payload = {
-            "controllerHeartbeatAt": utc_now(),
-            "pid": os.getpid(),
-            "active": active,
+            "schemaVersion": 1,
+            "workKey": key,
+            "milestoneId": milestone_id,
+            "workPackageId": package.id,
+            "objective": package.objective,
+            "acceptance": list(package.acceptance),
+            "requirementIds": list(package.requirement_ids),
+            "authoritativeSources": [
+                "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+                "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json",
+                "specs/factory/current-milestone.json",
+            ],
+            "targetSha": head_sha,
         }
-        temporary = self.heartbeat_path.with_suffix(".json.tmp")
-        temporary.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
-        os.chmod(temporary, 0o640)
-        temporary.replace(self.heartbeat_path)
+        descriptor, name = tempfile.mkstemp(prefix=".review-context.", dir=directory)
+        temporary = Path(name)
+        try:
+            with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+                stream.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.chmod(temporary, 0o440)
+            os.replace(temporary, path)
+        finally:
+            temporary.unlink(missing_ok=True)
+        return path
 
     def heartbeat_state(self) -> dict[str, Any]:
         if not self.heartbeat_path.exists():
