@@ -137,6 +137,13 @@ class GateTests(unittest.TestCase):
         self.assertFalse(allowed)
         self.assertIn("required agy", reason)
 
+    def test_review_accepts_exact_pinned_ao_complete_status(self) -> None:
+        head = "c" * 40
+        evidence = {"reviews": [{"latestRun": {
+            "targetSha": head, "status": "complete", "verdict": "approved", "harness": "agy",
+        }}]}
+        self.assertTrue(review_gate(evidence, head, "agy")[0])
+
     def test_ci_requires_named_success(self) -> None:
         pr = PullRequest(1, "OPEN", "factory/a", "a" * 40, "url", "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},))
         self.assertTrue(ci_gate(pr, ("CI",))[0])

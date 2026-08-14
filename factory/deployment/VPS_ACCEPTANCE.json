@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-14T14:57:40Z",
-  "classification": "READY_FOR_VPS_VALIDATION",
-  "repositoryCommit": "Use the git commit containing this artifact; the final published SHA is recorded in the draft PR",
+  "generatedAt": "2026-08-14T16:26:50Z",
+  "classification": "READY_FOR_VPS_DEPLOYMENT",
+  "repositoryCommit": "Use the git commit containing this artifact; the published SHA remains recorded in repository and pull-request history",
   "target": "Ubuntu VPS not configured or reached from the macOS audit host",
   "gates": [
     {
@@ -14,12 +14,12 @@
     {"gate": "muse_live", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["AO is not installed on this macOS host; target Ubuntu VPS was not configured or reached"]},
     {"gate": "agy_live", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["AO is not installed on this macOS host; target Ubuntu VPS was not configured or reached"]},
     {"gate": "cross_provider_review", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Exact cross-provider policy is deterministic-tested; no live AO review was run"]},
-    {"gate": "exact_head_review", "status": "PASS", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Deterministic tests reject stale SHA and same-provider review evidence", "AO machine verdict and CI evidence are both bound to the current PR head"]},
+    {"gate": "exact_head_review", "status": "PASS", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Deterministic tests reject stale SHA, stale or missing controller-context digest, wrong work package, and same-provider review evidence", "Spawn, Notify reuse, and Restore retain a standing reviewer contract; AO machine verdict, canonical context digest, and CI evidence are bound to the current PR head"]},
     {"gate": "ci_correction", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Deterministic failure routing passes; live failing-head-to-corrected-head canary was not run"]},
     {"gate": "parallel_workers", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Canary plan is prepared for concurrent Muse/Agy packages; no live overlap evidence exists"]},
     {"gate": "duplicate_prevention", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Deterministic active-session and ambiguous-duplicate tests pass; controller/VPS restart scenario was not run"]},
     {"gate": "untrusted_comment_filter", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Controller never reads comments as instructions", "Deterministic tests reject external issue actors and untrusted/wrong-base PRs"]},
-    {"gate": "systemd", "status": "NOT_RUN", "timestamp": "2026-08-14T14:57:40Z", "evidence": ["Rendered units pass systemd-analyze verify without diagnostics in an amd64 Debian Linux container", "Actual service startup, cgroup/mount behavior, and Ubuntu host recovery remain untested"]},
+    {"gate": "systemd", "status": "NOT_RUN", "timestamp": "2026-08-14T14:57:40Z", "evidence": ["Rendered units pass systemd-analyze verify without diagnostics in an Ubuntu 24.04 amd64 container", "Actual service startup, cgroup/mount behavior, and Ubuntu host recovery remain untested"]},
     {"gate": "ssh_disconnect", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Requires active target Ubuntu service and live worker"]},
     {"gate": "controller_crash", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Crash/reconcile validation script prepared; no systemd host was exercised"]},
     {"gate": "vps_reboot", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Enabled one-shot post-boot probe prepared; no reboot was performed"]},
@@ -27,13 +27,13 @@
     {"gate": "resource_circuit_breaker", "status": "NOT_RUN", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Fault-injected disk threshold locally blocks new spawn, preserves state, emits breaker event, and leaves active-work handling enabled", "Complete repeated worker/provider/convergence failure lifecycle was not run on the target VPS"]},
     {"gate": "codex_cost_routing", "status": "PASS", "timestamp": "2026-08-13T15:06:40Z", "evidence": ["Account cache supports requested model/effort pairs", "Per-role command and budget tests pass", "Routine tick and network recovery tests record zero Codex calls"]},
     {"gate": "status_observability", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Status distinguishes controller liveness from product work state", "Status remains local/read-only"]},
-    {"gate": "github_cli_auth", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Controller and doctor use the deployment user's persistent gh CLI login without token extraction", "Deployment-user repository read/write, worker PR creation, and controller merge require the target VPS canary"]},
+    {"gate": "github_cli_auth", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Controller and doctor use the deployment user's persistent gh CLI login without token extraction; systemd pins the standard config directory and removes GH_TOKEN/GITHUB_TOKEN overrides", "Deployment-user repository read/write, worker PR creation, and controller merge require the target VPS canary"]},
     {"gate": "root_checkout_integrity", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Rendered AO service makes the configured root checkout read-only with narrow .git and AO-data write exceptions", "Actual mount-namespace denial/allowance probe requires systemd/Linux"]},
     {"gate": "alternate_provider_failover", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Controller tests exercise clean Muse -> Agy and Agy -> Muse respawn", "Live AO/provider failure requires the target VPS"]},
     {"gate": "codex_replan_escalation", "status": "NOT_RUN", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Deterministic tests prove first failure makes no Codex call, dual failure makes one replan call, and exhausted budget blocks", "Live Terra/Sol routing is not exercised by unit tests"]},
     {"gate": "status_liveness", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Fresh heartbeat is ACTIVE; stale heartbeat and historical start alone are not ACTIVE", "No GitHub or LLM call is used"]},
     {"gate": "global_work_identity", "status": "PASS", "timestamp": "2026-08-13T16:00:19Z", "evidence": ["Milestone-qualified work keys bind issues, branches, AO correlation, PRs, events, and state", "Same local package ID across milestones cannot inherit a prior merge"]},
-    {"gate": "semantic_review_effectiveness", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Controller-owned exact-head review context and wrapper injection are deterministic-tested", "Intentional CI-green acceptance violation and correction require live cross-provider VPS review"]},
+    {"gate": "semantic_review_effectiveness", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Controller-owned exact-head review context, standing Spawn/Notify/Restore instructions, and canonical proof digest are deterministic-tested", "Intentional CI-green acceptance violation and correction require live cross-provider VPS review"]},
     {"gate": "final_audit_remediation_cycle", "status": "NOT_RUN", "timestamp": "2026-08-14T00:00:00Z", "evidence": ["Deterministic tests prove NOT_CONVERGED -> remediation -> CONVERGED and the three-cycle breaker", "Live Codex audit/remediation execution requires the target VPS canary"]}
   ]
 }

@@ -14,6 +14,7 @@ from unittest.mock import patch
 from factory.controller.controller import FactoryController
 from factory.controller.models import Issue, PackageRecord, PackageStatus, PullRequest, Snapshot, WorkPackage
 from factory.controller.reasoning import _validate_requirement_ids
+from factory.controller.review_context import PROOF_PREFIX, build_review_context, resolve_task_context
 from factory.controller.store import StateStore
 from test_controller import config, key, milestone, package
 
@@ -47,9 +48,10 @@ class SnapshotGitHub(MergeGitHub):
 
 
 class ReviewAO:
-    def __init__(self, head: str, verdict: str = "approved") -> None:
+    def __init__(self, head: str, verdict: str = "approved", digest: str | None = None) -> None:
         self.head = head
         self.verdict = verdict
+        self.digest = digest if digest is not None else review_digest(head)
         self.sent: list[str] = []
         self.triggered: list[tuple[str, str]] = []
 
@@ -58,9 +60,10 @@ class ReviewAO:
             return {"reviews": []}
         return {"reviews": [{"latestRun": {
             "targetSha": self.head,
-            "status": "completed",
+            "status": "complete",
             "verdict": self.verdict,
             "harness": "agy",
+            "body": f"semantic review\n\n{PROOF_PREFIX}{self.digest}",
             "createdAt": "2026-01-01T00:00:00Z",
         }}]}
 
@@ -99,6 +102,21 @@ def audit(status: str, finding: str = "") -> dict[str, object]:
     }
 
 
+def review_digest(head: str, value: dict[str, object] | None = None, milestone_id: str = "m1") -> str:
+    work = WorkPackage.from_dict(value or package("a"))
+    context = build_review_context(
+        milestone_id,
+        work,
+        head,
+        (
+            "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
+            "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json",
+            "specs/factory/current-milestone.json",
+        ),
+    )
+    return str(context["contextDigest"])
+
+
 class FinalVPSHardeningTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
@@ -123,6 +141,22 @@ class FinalVPSHardeningTests(unittest.TestCase):
         controller._handle_pr(milestone(package("a")), work, record, pr)
         self.assertEqual(github.merged, [pr])
         self.assertEqual(record.status, PackageStatus.COMPLETE)
+
+    def test_approved_review_without_exact_digest_blocks_deterministically(self) -> None:
+        head = "e" * 40
+        cfg = config(self.root)
+        github = MergeGitHub()
+        ao = ReviewAO(head, digest="f" * 64)
+        controller = FactoryController(self.root, cfg, StateStore(cfg.state_dir), github, ao)
+        record = PackageRecord(session_id="ao-1", provider="muse", review_attempts=1)
+        pr = PullRequest(
+            71, "OPEN", "factory/m1--a", head, "url/71", "MERGEABLE", "CLEAN",
+            checks=({"name": "CI", "conclusion": "SUCCESS"},), base_branch="main", author="factory-bot",
+        )
+        controller._handle_pr(milestone(package("a")), WorkPackage.from_dict(package("a")), record, pr)
+        self.assertEqual(github.merged, [])
+        self.assertEqual(record.status, PackageStatus.BLOCKED)
+        self.assertIn("semantic authority proof", record.blocked_reason or "")
 
     def test_revoked_github_login_is_reported_as_external_blocker(self) -> None:
         cfg = config(self.root)
@@ -210,16 +244,16 @@ class FinalVPSHardeningTests(unittest.TestCase):
         self.assertEqual(context["objective"], value["objective"])
         self.assertEqual(context["acceptance"], value["acceptance"])
         self.assertEqual(context["requirementIds"], value["requirementIds"])
+        self.assertEqual(context["contextDigest"], review_digest(head, value))
         self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o440)
         self.assertEqual(ao.triggered, [("ao-1", "agy")])
         unit = (Path(__file__).resolve().parents[2] / "factory/deployment/systemd/chainsieve-ao.service").read_text()
         self.assertIn("ReadOnlyPaths=@REPO@ @STATE@", unit)
-        for wrapper in ("agy", "muse"):
-            source = (Path(__file__).resolve().parents[2] / "factory/deployment/bin" / wrapper).read_text()
-            self.assertIn('context_payload="$(<"$context_file")"', source)
-            self.assertIn('arguments[', source)
+        contract = (Path(__file__).resolve().parents[2] / "factory/deployment/reviewer-contract.md").read_text()
+        self.assertIn("every later AO task", contract)
+        self.assertIn(PROOF_PREFIX, contract)
 
-    def test_review_wrappers_embed_controller_context_in_reviewer_prompt(self) -> None:
+    def test_review_wrappers_establish_standing_contract_on_spawn_and_restore(self) -> None:
         workspace = self.root / "workspace"
         workspace.mkdir()
         subprocess.run(["git", "init", "-q", "-b", "factory/m1--a"], cwd=workspace, check=True)
@@ -231,16 +265,13 @@ class FinalVPSHardeningTests(unittest.TestCase):
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True,
         ).stdout.strip()
-        context_root = self.root / "reviews"
-        context_dir = context_root / "m1--a"
-        context_dir.mkdir(parents=True)
-        authority = '{"workKey":"m1--a","objective":"semantic authority"}'
-        (context_dir / f"{head}.json").write_text(authority, encoding="utf-8")
+        repo = Path(__file__).resolve().parents[2]
+        contract = repo / "factory/deployment/reviewer-contract.md"
         capture = self.root / "capture"
-        capture.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\n', encoding="utf-8")
+        capture.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\nprintf "DEVELOPER=%s\\n" "${TBH_EVAL_APPEND_DEVELOPER_PROMPT:-}"\n', encoding="utf-8")
         capture.chmod(0o755)
-        deployment = Path(__file__).resolve().parents[2] / "factory/deployment/bin"
-        common = {**os.environ, "CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR": str(context_root)}
+        deployment = repo / "factory/deployment/bin"
+        common = {**os.environ, "CHAINSIEVE_REVIEWER_CONTRACT_FILE": str(contract)}
         invocations = (
             ("agy", "CHAINSIEVE_AGY_REAL", ["--sandbox", "--prompt-interactive", "review this head"]),
             ("muse", "CHAINSIEVE_MUSE_REAL", ["--disable-write", "review this head"]),
@@ -250,22 +281,152 @@ class FinalVPSHardeningTests(unittest.TestCase):
                 [str(deployment / wrapper), *arguments], cwd=workspace,
                 env={**common, variable: str(capture)}, check=True, text=True, capture_output=True,
             )
-            self.assertIn("controller-owned ChainSieve review authority", result.stdout)
-            self.assertIn(authority, result.stdout)
-        restored = subprocess.run(
-            [str(deployment / "muse"), "--disable-write", "resume", "muse-native-1"], cwd=workspace,
-            env={**common, "CHAINSIEVE_MUSE_REAL": str(capture)}, check=True, text=True, capture_output=True,
+            self.assertIn("standing reviewer contract", result.stdout)
+            self.assertIn("chainsieve-review-context", result.stdout)
+        restores = (
+            ("muse", "CHAINSIEVE_MUSE_REAL", ["--disable-write", "resume", "muse-native-1"]),
+            ("agy", "CHAINSIEVE_AGY_REAL", ["--sandbox", "--prompt-interactive", "idle restored reviewer"]),
         )
-        self.assertNotIn("controller-owned ChainSieve review authority", restored.stdout)
-        self.assertTrue(restored.stdout.endswith("resume\nmuse-native-1\n"))
-        (context_dir / f"{head}.json").unlink()
-        for wrapper, variable, arguments in invocations:
-            rejected = subprocess.run(
+        for wrapper, variable, arguments in restores:
+            restored = subprocess.run(
                 [str(deployment / wrapper), *arguments], cwd=workspace,
-                env={**common, variable: str(capture)}, check=False, text=True, capture_output=True,
+                env={**common, variable: str(capture)}, check=True, text=True, capture_output=True,
             )
-            self.assertEqual(rejected.returncode, 78)
-            self.assertIn("controller review context is unavailable", rejected.stderr)
+            self.assertIn("standing reviewer contract", restored.stdout)
+
+        ordinary = (
+            ("muse", "CHAINSIEVE_MUSE_REAL", ["--yolo", "implement ordinary work"]),
+            ("agy", "CHAINSIEVE_AGY_REAL", ["--dangerously-skip-permissions", "--prompt-interactive", "implement ordinary work"]),
+        )
+        for wrapper, variable, arguments in ordinary:
+            result = subprocess.run(
+                [str(deployment / wrapper), *arguments], cwd=workspace,
+                env={**common, variable: str(capture)}, check=True, text=True, capture_output=True,
+            )
+            self.assertNotIn("standing reviewer contract", result.stdout)
+
+    def test_notify_reuse_resolves_new_head_context_and_rejects_stale_proof(self) -> None:
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        subprocess.run(["git", "init", "-q", "-b", "factory/m1--a"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.name", "test"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=workspace, check=True)
+        store = StateStore(self.root / "state")
+        work = WorkPackage.from_dict(package("a"))
+        ao_data = self.root / "ao"
+        task_dir = ao_data / "prompts" / "worker" / "reviewer" / "requests" / "batch" / "run"
+        task_dir.mkdir(parents=True)
+
+        def commit_and_resolve(content: str) -> dict[str, object]:
+            (workspace / "file").write_text(content, encoding="utf-8")
+            subprocess.run(["git", "add", "file"], cwd=workspace, check=True)
+            subprocess.run(["git", "commit", "-q", "-m", content], cwd=workspace, check=True)
+            head_value = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True,
+            ).stdout.strip()
+            store.write_review_context("m1", work, head_value)
+            task = task_dir / "task.md"
+            task.write_text(
+                f"Review task queue:\n* 1. https://example/pr (head commit {head_value}, run run-1)\n",
+                encoding="utf-8",
+            )
+            with patch.dict(os.environ, {
+                "AO_DATA_DIR": str(ao_data),
+                "CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR": str(store.review_dir),
+            }, clear=False):
+                return resolve_task_context(task, cwd=workspace)
+
+        authority_a = commit_and_resolve("head-a")
+        authority_b = commit_and_resolve("head-b")
+        self.assertNotEqual(authority_a["contextDigest"], authority_b["contextDigest"])
+        head_b = str(authority_b["authority"]["targetSha"])
+        approved_b = {"reviews": [{"latestRun": {
+            "targetSha": head_b, "status": "completed", "verdict": "approved", "harness": "agy",
+            "body": str(authority_b["proofMarker"]),
+        }}]}
+        from factory.controller.ao import review_gate
+        self.assertTrue(review_gate(approved_b, head_b, "agy", str(authority_b["contextDigest"]))[0])
+        self.assertFalse(review_gate(approved_b, head_b, "agy", str(authority_a["contextDigest"]))[0])
+        wrong_work_key_digest = review_digest(head_b, package("b"))
+        self.assertFalse(review_gate(approved_b, head_b, "agy", wrong_work_key_digest)[0])
+        missing_proof = {"reviews": [{"latestRun": {
+            "targetSha": head_b, "status": "delivered", "verdict": "approved", "harness": "agy", "body": "ready",
+        }}]}
+        self.assertFalse(review_gate(missing_proof, head_b, "agy", str(authority_b["contextDigest"]))[0])
+
+    def test_changes_requested_head_a_then_same_session_review_head_b_passes_only_with_digest_b(self) -> None:
+        head_a = "a" * 40
+        head_b = "b" * 40
+
+        class ReusedReviewerAO:
+            def __init__(self) -> None:
+                self.payload: dict[str, object] = {"reviews": [{"latestRun": {
+                    "targetSha": head_a, "status": "delivered", "verdict": "changes_requested",
+                    "harness": "agy", "body": "acceptance is not met",
+                }}]}
+                self.sent: list[tuple[str, str]] = []
+                self.triggered: list[tuple[str, str]] = []
+
+            def reviews(self, session_id: str):
+                return self.payload
+
+            def send(self, session_id: str, message: str) -> None:
+                self.sent.append((session_id, message))
+
+            def trigger_review(self, session_id: str, reviewer: str) -> None:
+                self.triggered.append((session_id, reviewer))
+
+        cfg = config(self.root)
+        store = StateStore(cfg.state_dir)
+        github = MergeGitHub()
+        ao = ReusedReviewerAO()
+        controller = FactoryController(self.root, cfg, store, github, ao)
+        work = WorkPackage.from_dict(package("a"))
+        record = PackageRecord(session_id="ao-reused-pane", provider="muse", review_attempts=1)
+
+        def pr(head: str) -> PullRequest:
+            return PullRequest(
+                81, "OPEN", "factory/m1--a", head, "url/81", "MERGEABLE", "CLEAN",
+                checks=({"name": "CI", "conclusion": "SUCCESS"},), base_branch="main", author="factory-bot",
+            )
+
+        controller._handle_pr(milestone(package("a")), work, record, pr(head_a))
+        self.assertEqual(len(ao.sent), 1)
+        self.assertEqual(github.merged, [])
+
+        ao.payload = {"reviews": []}
+        controller._handle_pr(milestone(package("a")), work, record, pr(head_b))
+        self.assertEqual(ao.triggered, [("ao-reused-pane", "agy")])
+        context_b = json.loads((store.review_dir / "m1--a" / f"{head_b}.json").read_text())
+
+        ao.payload = {"reviews": [{"latestRun": {
+            "targetSha": head_b, "status": "delivered", "verdict": "approved", "harness": "agy",
+            "body": f"ready\n\n{PROOF_PREFIX}{context_b['contextDigest']}",
+        }}]}
+        controller._handle_pr(milestone(package("a")), work, record, pr(head_b))
+        self.assertEqual(github.merged, [pr(head_b)])
+
+    def test_actual_review_without_context_root_fails_closed_while_idle_restore_can_launch(self) -> None:
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        subprocess.run(["git", "init", "-q", "-b", "factory/m1--a"], cwd=workspace, check=True)
+        (workspace / "file").write_text("content", encoding="utf-8")
+        subprocess.run(["git", "add", "file"], cwd=workspace, check=True)
+        subprocess.run(["git", "-c", "user.name=test", "-c", "user.email=test@example.invalid", "commit", "-q", "-m", "test"], cwd=workspace, check=True)
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True).stdout.strip()
+        ao_data = self.root / "ao"
+        task = ao_data / "prompts" / "worker" / "reviewer" / "requests" / "batch" / "run" / "task.md"
+        task.parent.mkdir(parents=True)
+        task.write_text(f"* 1. https://example/pr (head commit {head}, run run-1)\n", encoding="utf-8")
+        deployment = Path(__file__).resolve().parents[2] / "factory/deployment"
+        resolver_env = {key: value for key, value in os.environ.items() if key != "CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR"}
+        result = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env={**resolver_env, "AO_DATA_DIR": str(ao_data), "PYTHONPATH": str(Path(__file__).resolve().parents[2])},
+            check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(result.returncode, 78)
+        self.assertIn("review-context root is unavailable", result.stderr)
 
     def test_concurrent_heartbeat_writes_are_atomic_and_valid(self) -> None:
         store = StateStore(self.root / "state")
@@ -371,9 +532,20 @@ class FinalVPSHardeningTests(unittest.TestCase):
         self.assertIn("User=@DEPLOY_USER@", factory_unit)
         self.assertIn("ProtectHome=false", ao_unit)
         self.assertIn("ProtectHome=false", factory_unit)
+        self.assertIn('Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"', ao_unit)
+        self.assertIn("UnsetEnvironment=GH_TOKEN GITHUB_TOKEN", ao_unit)
+        self.assertIn("UnsetEnvironment=GH_TOKEN GITHUB_TOKEN", factory_unit)
+        self.assertIn('Environment="TMUX_TMPDIR=@AO_DATA@/tmux"', ao_unit)
+        self.assertIn('Environment="CHAINSIEVE_REVIEWER_CONTRACT_FILE=/opt/chainsieve/factory-bin/reviewer-contract.md"', ao_unit)
         installer = (deployment / "install-ubuntu.sh").read_text()
         self.assertIn('--user USER --repo PATH', installer)
         self.assertIn('state="$(readlink -m "${state:-$user_home/', installer)
+        self.assertIn('install -d -o "$deploy_user" -g "$deploy_group" -m 0700 "$ao_data/tmux"', installer)
+        self.assertIn('refusing broad runtime or environment path', installer)
+        self.assertIn('runtime and environment paths cannot contain one another', installer)
+        self.assertIn("ao_tree=\"ea4d7ee451ca5a529422df66fa97a59af2c33a43\"", installer)
+        self.assertIn('refusing to compile local modifications', installer)
+        self.assertIn('ls-files --others --ignored --exclude-standard', installer)
         canary = (deployment / "activate-canary.sh").read_text()
         self.assertIn("chainsieve-ao.service.d", canary)
         self.assertIn('"ReadOnlyPaths=$canary_state_unit"', canary)

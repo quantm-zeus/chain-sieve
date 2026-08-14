@@ -193,6 +193,28 @@ class SafetyTests(unittest.TestCase):
         github = GitHub(StaticRunner(raw), "owner/repo", "main")
         self.assertEqual(github.issues(), {})
 
+    def test_duplicate_trusted_package_issues_fail_closed(self) -> None:
+        marker = "<!-- chainsieve-work-package:m1--a -->"
+        raw = [
+            {"number": number, "state": "OPEN", "body": marker, "url": f"url/{number}", "author": {"login": "factory-bot"}}
+            for number in (1, 2)
+        ]
+        with self.assertRaisesRegex(RuntimeError, "duplicate trusted issues"):
+            GitHub(StaticRunner(raw), "owner/repo", "main").issues()
+
+    def test_duplicate_trusted_package_prs_fail_closed(self) -> None:
+        plan = milestone(package("a"))
+        issue = Issue(1, "OPEN", "", "issue/1", "factory-bot")
+        prs = [
+            PullRequest(number, "OPEN", f"factory/{key('a')}", f"{number}" * 40, f"pr/{number}", "MERGEABLE", "CLEAN")
+            for number in (1, 2)
+        ]
+        snapshot = Snapshot(issues={key("a"): issue}, prs={key("a"): prs})
+        controller = FactoryController(self.root, config(self.root), StateStore(self.root / "state"), FakeGitHub(snapshot), FakeAO(snapshot))
+        record = controller.reconcile(plan, snapshot)[key("a")]
+        self.assertEqual(record.status, PackageStatus.BLOCKED)
+        self.assertIn("ambiguous duplicate PR", record.blocked_reason or "")
+
     def test_untrusted_or_wrong_base_pull_requests_are_not_routed(self) -> None:
         raw = [
             {

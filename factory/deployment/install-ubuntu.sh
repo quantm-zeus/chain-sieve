@@ -59,13 +59,41 @@ for value in "$state" "$ao_data" "$venv"; do
   case "$value/" in
     "$repo/"*) echo "runtime and environment paths must be outside the read-only repository: $value" >&2; exit 1 ;;
   esac
+  case "$repo/" in
+    "$value/"*) echo "runtime and environment paths cannot contain the repository checkout: $value" >&2; exit 1 ;;
+  esac
 done
-[[ "$state" != "$ao_data" ]] || { echo "factory state and AO data must use distinct directories" >&2; exit 1; }
+for value in "$state" "$ao_data" "$venv"; do
+  case "$value" in
+    /|/home|/var|/usr|/opt|/etc|"$user_home")
+      echo "refusing broad runtime or environment path: $value" >&2
+      exit 1
+      ;;
+  esac
+done
+runtime_paths=("$state" "$ao_data" "$venv")
+for ((left = 0; left < ${#runtime_paths[@]}; left++)); do
+  for ((right = left + 1; right < ${#runtime_paths[@]}; right++)); do
+    left_path="${runtime_paths[$left]}"
+    right_path="${runtime_paths[$right]}"
+    if [[ "$left_path" == "$right_path" ]]; then
+      echo "factory state, AO data, and venv must use distinct directories: $left_path" >&2
+      exit 1
+    fi
+    case "$left_path/" in
+      "$right_path/"*) echo "runtime and environment paths cannot contain one another: $right_path -> $left_path" >&2; exit 1 ;;
+    esac
+    case "$right_path/" in
+      "$left_path/"*) echo "runtime and environment paths cannot contain one another: $left_path -> $right_path" >&2; exit 1 ;;
+    esac
+  done
+done
 for service in chainsieve-ao.service chainsieve-factory.service; do
   systemctl is-active --quiet "$service" && { echo "stop $service before reinstalling" >&2; exit 1; }
 done
 
 ao_ref="b48c98c94ca0039ad1bc42bd1b78134d3ff5773d"
+ao_tree="ea4d7ee451ca5a529422df66fa97a59af2c33a43"
 ao_source="/opt/chainsieve/vendor/agent-orchestrator"
 spec_kit_ref="4871b485f97c7fa452ec58eba325d87536c55c34"
 muse_version="Muse Code 0.1.0 (0.1.0-R708.1)"
@@ -100,6 +128,7 @@ MUSE_NO_AUTO_UPDATE=1 "$muse_source" --version | grep -Fx "$muse_version" >/dev/
 
 install -d -o root -g root -m 0755 /etc/chainsieve /opt/chainsieve/vendor /opt/chainsieve/factory-bin /usr/local/lib/chainsieve/providers
 install -d -o "$deploy_user" -g "$deploy_group" -m 0750 "$state" "$ao_data" "$(dirname "$venv")"
+install -d -o "$deploy_user" -g "$deploy_group" -m 0700 "$ao_data/tmux"
 runuser -u "$deploy_user" -- python3.12 -m venv --clear "$venv"
 runuser -u "$deploy_user" -- "$venv/bin/python" - "$repo" <<'PY'
 import pathlib
@@ -120,6 +149,15 @@ fi
 git -C "$ao_source" fetch --tags origin
 git -C "$ao_source" checkout --detach "$ao_ref"
 [[ "$(git -C "$ao_source" rev-parse HEAD)" == "$ao_ref" ]]
+[[ "$(git -C "$ao_source" rev-parse 'HEAD^{tree}')" == "$ao_tree" ]] || {
+  echo "pinned AO source tree does not match the lock" >&2; exit 1;
+}
+[[ -z "$(git -C "$ao_source" status --porcelain --untracked-files=all)" ]] || {
+  echo "pinned AO source checkout is dirty; refusing to compile local modifications" >&2; exit 1;
+}
+[[ -z "$(git -C "$ao_source" ls-files --others --ignored --exclude-standard)" ]] || {
+  echo "pinned AO source checkout contains ignored local files; refusing an ambiguous build" >&2; exit 1;
+}
 (
   cd "$ao_source/backend"
   go test \
@@ -142,6 +180,8 @@ install -o root -g root -m 0755 "$muse_source" /usr/local/lib/chainsieve/provide
 install -o root -g root -m 0755 "$agy_source" /usr/local/lib/chainsieve/providers/agy
 install -o root -g root -m 0755 "$repo/factory/deployment/bin/muse" /opt/chainsieve/factory-bin/muse
 install -o root -g root -m 0755 "$repo/factory/deployment/bin/agy" /opt/chainsieve/factory-bin/agy
+install -o root -g root -m 0755 "$repo/factory/deployment/bin/chainsieve-review-context" /opt/chainsieve/factory-bin/chainsieve-review-context
+install -o root -g root -m 0644 "$repo/factory/deployment/reviewer-contract.md" /opt/chainsieve/factory-bin/reviewer-contract.md
 if [[ ! -e /etc/chainsieve/providers.env ]]; then
   install -o "$deploy_user" -g "$deploy_group" -m 0600 "$repo/factory/deployment/env/providers.env.example" /etc/chainsieve/providers.env
 fi

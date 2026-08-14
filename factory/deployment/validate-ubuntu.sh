@@ -37,6 +37,9 @@ systemctl is-active --quiet chainsieve-ao.service chainsieve-factory.service
 [[ "$(systemctl show chainsieve-ao.service -p ProtectHome --value)" == no ]]
 [[ "$(systemctl show chainsieve-factory.service -p ProtectHome --value)" == no ]]
 systemctl show chainsieve-factory.service -p ExecStart --value | grep -F "$factory_python -m factory run" >/dev/null
+systemctl show chainsieve-ao.service -p Environment --value | grep -F "GH_CONFIG_DIR=$user_home/.config/gh" >/dev/null
+systemctl show chainsieve-ao.service -p Environment --value | grep -F "TMUX_TMPDIR=$AO_DATA_DIR/tmux" >/dev/null
+[[ -d "$AO_DATA_DIR/tmux" && -w "$AO_DATA_DIR/tmux" ]]
 systemd-analyze verify \
   /etc/systemd/system/chainsieve-ao.service \
   /etc/systemd/system/chainsieve-factory.service \

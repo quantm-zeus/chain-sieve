@@ -12,12 +12,18 @@ User=@DEPLOY_USER@
 Group=@DEPLOY_GROUP@
 WorkingDirectory=@REPO@
 EnvironmentFile=-/etc/chainsieve/providers.env
+UnsetEnvironment=GH_TOKEN GITHUB_TOKEN
 Environment="HOME=@USER_HOME@"
+Environment="GH_CONFIG_DIR=@USER_HOME@/.config/gh"
 Environment="PATH=@VENV@/bin:/opt/chainsieve/factory-bin:/usr/local/bin:/usr/bin:/bin"
 Environment=AO_PORT=3001
 Environment=AO_RUN_FILE=/run/chainsieve-ao/running.json
 Environment="AO_DATA_DIR=@AO_DATA@"
+Environment="TMUX_TMPDIR=@AO_DATA@/tmux"
 Environment="CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR=@STATE@/reviews"
+Environment="CHAINSIEVE_FACTORY_PYTHON=@VENV@/bin/python"
+Environment="CHAINSIEVE_REVIEWER_CONTRACT_FILE=/opt/chainsieve/factory-bin/reviewer-contract.md"
+Environment="PYTHONPATH=@REPO@"
 Environment=AO_KEEP_DAEMON=1
 Environment=AO_HOST=127.0.0.1
 RuntimeDirectory=chainsieve-ao

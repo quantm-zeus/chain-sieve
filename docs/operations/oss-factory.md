@@ -20,7 +20,9 @@ gh pr merge <PR> --squash --match-head-commit <EXACT_HEAD>
 
 The controller never submits GitHub APPROVE reviews. GitHub CI is executable verification, AO exact-head cross-provider review is semantic review, and the Factory Controller is deterministic integration authority. Target-branch protection requires strict status checks, disables force pushes/deletion, and does not require approving reviews, last-push approval, or conversation resolution.
 
-Before triggering AO review, the controller writes a mode `0440` JSON artifact at `<factory-state>/reviews/<workKey>/<headSha>.json` containing the workKey, milestone, objective, acceptance criteria, normative requirement IDs, authoritative source paths, and target SHA. The installed Muse/Agy wrappers read that artifact from the read-only mount and embed its contents in AO's upstream review prompt without changing AO core. The AO service mounts factory state read-only, so a worker worktree cannot rewrite its review criteria. Any new commit selects a different context path and invalidates old CI/review evidence.
+Before triggering AO review, the controller writes a mode `0440` JSON artifact at `<factory-state>/reviews/<workKey>/<headSha>.json` containing the work key, milestone, work package, objective, acceptance criteria, normative requirement IDs, authoritative source paths, target SHA, and a canonical SHA-256 digest. Root-owned Muse/Agy wrapper policy establishes a standing reviewer contract on Spawn and Restore. On every actual pass—including AO Notify reuse—the reviewer resolves the exact immutable AO task file through `chainsieve-review-context`, which binds its target SHA and current factory branch to the controller artifact. The AO service mounts factory state read-only, so a worker worktree cannot rewrite its review criteria. The AO result must contain exactly one `CHAINSIEVE_REVIEW_CONTEXT_SHA256:<digest>` marker matching the current work package/head/provider gate; a new commit selects a different context and invalidates old evidence.
+
+The gate accepts pinned AO's exact terminal review-run states: `complete` for a submitted result and `delivered` after change-request delivery. An approved run need not transition to `delivered`.
 
 ## Budgets, convergence, and observability
 
@@ -48,7 +50,7 @@ AO's dashboard binds only to loopback; use an SSH tunnel.
 
 ## Ubuntu installation
 
-Production uses one configurable normal non-root deployment user for AO, the controller, Muse, Agy, Codex CLI, and GitHub CLI. Authentication stays in that user's real home. The services use `ProtectHome=false` so normal CLI authentication remains readable, while retaining `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=full`, explicit root-checkout mounts, and the loopback AO bind.
+Production uses one configurable normal non-root deployment user for AO, the controller, Muse, Agy, Codex CLI, and GitHub CLI. Authentication stays in that user's real home. Both services pin the standard `GH_CONFIG_DIR` to that user's normal `.config/gh` and explicitly unset `GH_TOKEN`/`GITHUB_TOKEN`; this preserves the one persistent `gh auth login` when AO's host-trusted Agy reviewer gives the provider an AO-owned `HOME`, without copying a token or adding an auth wrapper. The services use `ProtectHome=false` so normal CLI authentication remains readable, while retaining `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=full`, explicit root-checkout mounts, and the loopback AO bind. AO pins `TMUX_TMPDIR` below its durable data directory so preserved worker/reviewer panes remain addressable after a daemon-only restart despite `PrivateTmp`.
 
 Log in as that user and authenticate once:
 
@@ -72,7 +74,7 @@ sudo CHAINSIEVE_MUSE_SOURCE=/secure/staging/muse-bin-0.1.0-R708.1 \
 sudo systemctl enable --now chainsieve-ao chainsieve-factory
 ```
 
-The installer validates Ubuntu x86-64, the non-root user, Python 3.12, Node 22, pnpm 10.13.1, Go 1.25.7, normal `gh` authentication/repository access, pinned provider binaries, AO and Spec Kit pins, rendered units, and doctor. Defaults derive from the deployment home:
+The installer validates Ubuntu x86-64, the non-root user, Python 3.12, Node 22, pnpm 10.13.1, Go 1.25.7, normal `gh` authentication/repository access, pinned provider binaries, AO and Spec Kit pins, rendered units, and doctor. It rejects broad/overlapping runtime paths and any tracked, untracked, or ignored drift in the pinned AO source checkout before compiling the exact locked git tree. Defaults derive from the deployment home:
 
 - factory state: `$HOME/.local/state/chainsieve-factory`
 - AO data/worktrees: `$HOME/.local/state/agent-orchestrator`

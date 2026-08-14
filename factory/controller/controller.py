@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import time
@@ -578,15 +579,19 @@ class FactoryController:
             if not record.session_id:
                 self._block(milestone.id, package.id, record, "review-required PR has no correlated AO session", work_key(milestone.id, package.id))
                 return
+            context_path = self.store.write_review_context(milestone.id, package, pr.head_sha)
+            context = json.loads(context_path.read_text(encoding="utf-8"))
+            expected_context_digest = str(context["contextDigest"])
             reviews = self.ao.reviews(record.session_id or "")
             required_reviewer = reviewer_for(record.provider or package.preferred_provider)
-            review_ok, review_reason, reviewer, verdict = review_gate(reviews, pr.head_sha, required_reviewer)
+            review_ok, review_reason, reviewer, verdict = review_gate(
+                reviews, pr.head_sha, required_reviewer, expected_context_digest,
+            )
             record.review_sha = pr.head_sha if reviewer else None
             record.review_verdict = verdict
             if not review_ok:
                 if reviewer is None and record.review_attempts < self.config.max_review_cycles:
                     selected = required_reviewer
-                    context_path = self.store.write_review_context(milestone.id, package, pr.head_sha)
                     self.ao.trigger_review(record.session_id or "", selected)
                     record.review_attempts += 1
                     record.status = PackageStatus.REVIEW
@@ -594,6 +599,15 @@ class FactoryController:
                         "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                         workKey=work_key(milestone.id, package.id), provider=selected, aoSessionId=record.session_id, pr=pr.number,
                         attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                        contextDigest=expected_context_digest,
+                    )
+                elif reviewer is not None and verdict in {"approved", "pass"}:
+                    self._block(
+                        milestone.id,
+                        package.id,
+                        record,
+                        f"approved machine review failed semantic authority proof: {review_reason}",
+                        work_key(milestone.id, package.id),
                     )
                 elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
                     record.status = PackageStatus.REVIEW

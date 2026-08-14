@@ -9,6 +9,7 @@ from typing import Any
 
 from .commands import CommandRunner
 from .models import Session
+from .review_context import proof_markers
 
 
 AO_ENV = ("AO_PORT", "AO_RUN_FILE", "AO_DATA_DIR", "AO_REQUEST_TIMEOUT", "AO_SHUTDOWN_TIMEOUT")
@@ -110,7 +111,12 @@ class AgentOrchestrator:
             raise RuntimeError(f"AO API {method} {route} failed: {error.code}: {detail}") from error
 
 
-def review_gate(raw: dict[str, Any], head_sha: str, required_reviewer: str | None = None) -> tuple[bool, str, str | None, str | None]:
+def review_gate(
+    raw: dict[str, Any],
+    head_sha: str,
+    required_reviewer: str | None = None,
+    expected_context_digest: str | None = None,
+) -> tuple[bool, str, str | None, str | None]:
     reviews = raw.get("reviews") or raw.get("data") or []
     runs: list[dict[str, Any]] = []
     for review in reviews:
@@ -129,8 +135,18 @@ def review_gate(raw: dict[str, Any], head_sha: str, required_reviewer: str | Non
     status = str(latest.get("status", "")).lower()
     verdict = str(latest.get("verdict", "")).lower()
     reviewer = str(latest.get("harness", "")) or None
-    if status not in {"completed", "delivered"}:
+    # Pinned AO v0.12.3 serializes ReviewRunComplete as "complete" and
+    # ReviewRunDelivered as "delivered". Retain "completed" for compatible
+    # external/future evidence, but never require delivery: approved reviews
+    # ordinarily remain complete because only change requests are auto-injected.
+    if status not in {"complete", "completed", "delivered"}:
         return False, f"machine review is {status or 'pending'}", reviewer, verdict or None
     if verdict not in {"approved", "pass"}:
         return False, f"machine review verdict is {verdict or 'missing'}", reviewer, verdict or None
+    if expected_context_digest is not None:
+        markers = proof_markers(str(latest.get("body", "")))
+        if len(markers) != 1:
+            return False, "machine review is missing one exact semantic context digest", reviewer, verdict
+        if markers[0] != expected_context_digest:
+            return False, "machine review semantic context digest is stale or belongs to another work package", reviewer, verdict
     return True, "machine review passes current head", reviewer, verdict

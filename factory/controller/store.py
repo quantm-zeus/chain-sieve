@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from .models import PackageRecord
+from .review_context import build_review_context
 
 
 def utc_now() -> str:
@@ -136,27 +137,23 @@ class StateStore:
                 temporary.unlink(missing_ok=True)
 
     def write_review_context(self, milestone_id: str, package: Any, head_sha: str) -> Path:
-        if not head_sha or any(character not in "0123456789abcdefABCDEF" for character in head_sha):
-            raise ValueError("review context requires a hexadecimal PR head SHA")
+        if len(head_sha) != 40 or any(character not in "0123456789abcdefABCDEF" for character in head_sha):
+            raise ValueError("review context requires a 40-character hexadecimal PR head SHA")
+        head_sha = head_sha.lower()
         key = f"{milestone_id}--{package.id}"
         directory = self.review_dir / key
         directory.mkdir(parents=True, exist_ok=True, mode=0o750)
         path = directory / f"{head_sha}.json"
-        payload = {
-            "schemaVersion": 1,
-            "workKey": key,
-            "milestoneId": milestone_id,
-            "workPackageId": package.id,
-            "objective": package.objective,
-            "acceptance": list(package.acceptance),
-            "requirementIds": list(package.requirement_ids),
-            "authoritativeSources": [
+        payload = build_review_context(
+            milestone_id,
+            package,
+            head_sha,
+            (
                 "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md",
                 "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json",
                 "specs/factory/current-milestone.json",
-            ],
-            "targetSha": head_sha,
-        }
+            ),
+        )
         descriptor, name = tempfile.mkstemp(prefix=".review-context.", dir=directory)
         temporary = Path(name)
         try:
