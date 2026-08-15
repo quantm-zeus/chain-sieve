@@ -44,10 +44,24 @@ export const sanitizeUntrustedContent = (
 ): string => {
   if (typeof input !== 'string') return '';
 
-  let sanitized = input;
-
-  // 1. Remove zero-width characters and invisible control code points
-  sanitized = sanitized.replace(/[\u200B-\u200D\uFEFF\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+  let sanitized = Array.from(input)
+    .filter((char) => {
+      const code = char.codePointAt(0);
+      if (code === undefined) return false;
+      if (code >= 0x200b && code <= 0x200d) return false;
+      if (code === 0xfeff) return false;
+      if (
+        (code >= 0x00 && code <= 0x08) ||
+        code === 0x0b ||
+        code === 0x0c ||
+        (code >= 0x0e && code <= 0x1f) ||
+        code === 0x7f
+      ) {
+        return false;
+      }
+      return true;
+    })
+    .join('');
 
   // 2. Strip Unicode bidirectional override characters that can obfuscate attacks
   sanitized = sanitized.replace(/[\u202A-\u202E\u2066-\u2069]/g, '');
