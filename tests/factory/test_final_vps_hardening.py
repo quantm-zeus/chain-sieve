@@ -419,7 +419,7 @@ class FinalVPSHardeningTests(unittest.TestCase):
         task.parent.mkdir(parents=True)
         task.write_text(f"* 1. https://example/pr (head commit {head}, run run-1)\n", encoding="utf-8")
         deployment = Path(__file__).resolve().parents[2] / "factory/deployment"
-        resolver_env = {key: value for key, value in os.environ.items() if key != "CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR"}
+        resolver_env = {key: value for key, value in os.environ.items() if key not in {"CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR", "CHAINSIEVE_FACTORY_STATE_DIR"}}
         result = subprocess.run(
             [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
             env={**resolver_env, "AO_DATA_DIR": str(ao_data), "PYTHONPATH": str(Path(__file__).resolve().parents[2])},
@@ -427,6 +427,84 @@ class FinalVPSHardeningTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 78)
         self.assertIn("review-context root is unavailable", result.stderr)
+
+    def test_reviewer_launch_environment_normalizes_home_under_ao_isolation(self) -> None:
+        fake_user_home = self.root / "fake_user_home"
+        fake_user_home.mkdir()
+        (fake_user_home / ".gemini").mkdir()
+        (fake_user_home / ".gemini" / "settings.json").write_text("{}", encoding="utf-8")
+
+        isolated_runtime = self.root / "reviewer-runtime" / "review-session-1" / "config"
+        isolated_runtime.mkdir(parents=True)
+
+        capture = self.root / "capture-env"
+        capture.write_text(
+            '#!/bin/sh\n'
+            'printf "HOME=%s\\n" "${HOME:-}"\n'
+            'printf "XDG_CONFIG_HOME=%s\\n" "${XDG_CONFIG_HOME:-}"\n'
+            'printf "ARGS=%s\\n" "$*"\n',
+            encoding="utf-8",
+        )
+        capture.chmod(0o755)
+
+        repo = Path(__file__).resolve().parents[2]
+        deployment = repo / "factory/deployment/bin"
+        contract = repo / "factory/deployment/reviewer-contract.md"
+
+        env = {
+            **os.environ,
+            "CHAINSIEVE_USER_HOME": str(fake_user_home),
+            "HOME": str(isolated_runtime),
+            "XDG_CONFIG_HOME": str(isolated_runtime),
+            "CHAINSIEVE_AGY_REAL": str(capture),
+            "CHAINSIEVE_MUSE_REAL": str(capture),
+            "CHAINSIEVE_REVIEWER_CONTRACT_FILE": str(contract),
+        }
+
+        # Test Agy reviewer
+        res_agy = subprocess.run(
+            [str(deployment / "agy"), "--sandbox", "--prompt-interactive", "review prompt"],
+            env=env, check=True, text=True, capture_output=True,
+        )
+        self.assertIn(f"HOME={fake_user_home}", res_agy.stdout)
+        self.assertIn("XDG_CONFIG_HOME=\n", res_agy.stdout)
+
+    def test_review_context_fallback_to_state_dir_when_review_context_dir_mismatched(self) -> None:
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        subprocess.run(["git", "init", "-q", "-b", "factory/m1--a"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.name", "test"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=workspace, check=True)
+        (workspace / "file").write_text("content\n", encoding="utf-8")
+        subprocess.run(["git", "add", "file"], cwd=workspace, check=True)
+        subprocess.run(["git", "commit", "-q", "-m", "test"], cwd=workspace, check=True)
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True).stdout.strip()
+
+        store = StateStore(self.root / "actual_state")
+        work = WorkPackage.from_dict(package("a"))
+        store.write_review_context("m1", work, head)
+
+        ao_data = self.root / "ao"
+        task = ao_data / "prompts" / "worker" / "reviewer" / "requests" / "batch" / "run" / "task.md"
+        task.parent.mkdir(parents=True)
+        task.write_text(f"* 1. https://example/pr (head commit {head}, run run-1)\n", encoding="utf-8")
+
+        deployment = Path(__file__).resolve().parents[2] / "factory/deployment"
+        mismatched_env = {
+            **os.environ,
+            "AO_DATA_DIR": str(ao_data),
+            "CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR": str(self.root / "non_existent_canary_state" / "reviews"),
+            "CHAINSIEVE_FACTORY_STATE_DIR": str(self.root / "actual_state"),
+            "PYTHONPATH": str(Path(__file__).resolve().parents[2]),
+        }
+        result = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env=mismatched_env, check=True, text=True, capture_output=True,
+        )
+        parsed = json.loads(result.stdout)
+        self.assertEqual(parsed["authority"]["targetSha"], head)
+        self.assertEqual(parsed["authority"]["workKey"], "m1--a")
+        self.assertIn(PROOF_PREFIX, parsed["proofMarker"])
 
     def test_concurrent_heartbeat_writes_are_atomic_and_valid(self) -> None:
         store = StateStore(self.root / "state")
