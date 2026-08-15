@@ -205,6 +205,95 @@ class InstalledCliPolicyTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, installer)
 
+    def test_agy_reviewer_mode_applies_dangerously_skip_permissions_and_strips_sandbox(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        capture = self.root / "capture-agy"
+        capture.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\n', encoding="utf-8")
+        capture.chmod(0o755)
+        contract = repo / "factory" / "deployment" / "reviewer-contract.md"
+        wrapper = repo / "factory" / "deployment" / "bin" / "agy"
+        env = {
+            **os.environ,
+            "CHAINSIEVE_AGY_REAL": str(capture),
+            "CHAINSIEVE_REVIEWER_CONTRACT_FILE": str(contract),
+        }
+        # Reviewer mode (has --sandbox)
+        result = subprocess.run(
+            [str(wrapper), "--sandbox", "--add-dir", "/tmp/ws", "--prompt-interactive", "review this"],
+            env=env, check=True, text=True, capture_output=True,
+        )
+        lines = result.stdout.splitlines()
+        self.assertIn("--dangerously-skip-permissions", lines)
+        self.assertNotIn("--sandbox", lines)
+        self.assertIn("--add-dir", lines)
+        self.assertIn("--prompt-interactive", lines)
+        # Verify contract is injected into prompt-interactive
+        self.assertIn("ChainSieve semantic review authority", result.stdout)
+
+    def test_agy_worker_mode_does_not_apply_skip_permissions(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        capture = self.root / "capture-agy-worker"
+        capture.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\n', encoding="utf-8")
+        capture.chmod(0o755)
+        wrapper = repo / "factory" / "deployment" / "bin" / "agy"
+        env = {
+            **os.environ,
+            "CHAINSIEVE_AGY_REAL": str(capture),
+        }
+        # Normal worker mode (no --sandbox)
+        result = subprocess.run(
+            [str(wrapper), "--add-dir", "/tmp/ws", "--prompt", "worker task"],
+            env=env, check=True, text=True, capture_output=True,
+        )
+        lines = result.stdout.splitlines()
+        self.assertNotIn("--dangerously-skip-permissions", lines)
+        self.assertNotIn("--sandbox", lines)
+        self.assertIn("--add-dir", lines)
+
+    def test_muse_reviewer_mode_disables_broken_sandbox_and_retains_disable_write(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        capture = self.root / "capture-muse"
+        capture.write_text('#!/bin/sh\nprintf "ENV_DEV_PROMPT=%s\\n" "$TBH_EVAL_APPEND_DEVELOPER_PROMPT"\nprintf "%s\\n" "$@"\n', encoding="utf-8")
+        capture.chmod(0o755)
+        contract = repo / "factory" / "deployment" / "reviewer-contract.md"
+        wrapper = repo / "factory" / "deployment" / "bin" / "muse"
+        env = {
+            **os.environ,
+            "CHAINSIEVE_MUSE_REAL": str(capture),
+            "CHAINSIEVE_REVIEWER_CONTRACT_FILE": str(contract),
+        }
+        # Reviewer mode (has --disable-write)
+        result = subprocess.run(
+            [str(wrapper), "--trust-workspace", "--approval-mode", "never", "--disable-write", "review task"],
+            env=env, check=True, text=True, capture_output=True,
+        )
+        lines = result.stdout.splitlines()
+        self.assertIn("--disable-sandbox", lines)
+        self.assertIn("--disable-write", lines)
+        self.assertIn("--approval-mode", lines)
+        self.assertIn("never", lines)
+        self.assertIn("--trust-workspace", lines)
+        self.assertTrue(any("ChainSieve semantic review authority" in line for line in lines))
+
+    def test_muse_worker_mode_does_not_disable_sandbox(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        capture = self.root / "capture-muse-worker"
+        capture.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\n', encoding="utf-8")
+        capture.chmod(0o755)
+        wrapper = repo / "factory" / "deployment" / "bin" / "muse"
+        env = {
+            **os.environ,
+            "CHAINSIEVE_MUSE_REAL": str(capture),
+        }
+        # Normal worker mode (no --disable-write)
+        result = subprocess.run(
+            [str(wrapper), "--trust-workspace", "--approval-mode", "never", "worker task"],
+            env=env, check=True, text=True, capture_output=True,
+        )
+        lines = result.stdout.splitlines()
+        self.assertNotIn("--disable-sandbox", lines)
+        self.assertNotIn("--disable-write", lines)
+
 
 if __name__ == "__main__":
     unittest.main()

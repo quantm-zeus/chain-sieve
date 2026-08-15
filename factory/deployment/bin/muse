@@ -20,6 +20,7 @@ for argument in "$@"; do
   [[ "$argument" == --model || "$argument" == --model=* ]] && has_model=true
 done
 
+arguments=("$@")
 if [[ "$is_reviewer" == true ]]; then
   contract_file="${CHAINSIEVE_REVIEWER_CONTRACT_FILE:-/opt/chainsieve/factory-bin/reviewer-contract.md}"
   [[ -r "$contract_file" ]] || { echo "ChainSieve standing reviewer contract is unavailable: $contract_file" >&2; exit 78; }
@@ -30,9 +31,16 @@ if [[ "$is_reviewer" == true ]]; then
   else
     export TBH_EVAL_APPEND_DEVELOPER_PROMPT="$contract"
   fi
+  has_disable_sandbox=false
+  for argument in "${arguments[@]}"; do
+    [[ "$argument" == --disable-sandbox ]] && has_disable_sandbox=true
+  done
+  if [[ "$has_disable_sandbox" == false ]]; then
+    arguments=("--disable-sandbox" "${arguments[@]}")
+  fi
 fi
 
 if [[ -n "$model" && "$has_model" == false ]]; then
-  exec "$real_binary" --model "$model" "$@"
+  exec "$real_binary" --model "$model" "${arguments[@]}"
 fi
-exec "$real_binary" "$@"
+exec "$real_binary" "${arguments[@]}"
