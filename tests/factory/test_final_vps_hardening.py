@@ -506,6 +506,80 @@ class FinalVPSHardeningTests(unittest.TestCase):
         self.assertEqual(parsed["authority"]["workKey"], "m1--a")
         self.assertIn(PROOF_PREFIX, parsed["proofMarker"])
 
+    def test_review_context_fail_closed_on_mismatches_and_stale_digests(self) -> None:
+        workspace = self.root / "workspace-failclosed"
+        workspace.mkdir()
+        subprocess.run(["git", "init", "-q", "-b", "factory/m1--a"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.name", "test"], cwd=workspace, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=workspace, check=True)
+        (workspace / "file").write_text("initial\n", encoding="utf-8")
+        subprocess.run(["git", "add", "file"], cwd=workspace, check=True)
+        subprocess.run(["git", "commit", "-q", "-m", "initial"], cwd=workspace, check=True)
+        head1 = subprocess.run(["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True).stdout.strip()
+
+        # Create second commit (new head)
+        (workspace / "file").write_text("updated\n", encoding="utf-8")
+        subprocess.run(["git", "add", "file"], cwd=workspace, check=True)
+        subprocess.run(["git", "commit", "-q", "-m", "update"], cwd=workspace, check=True)
+        head2 = subprocess.run(["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True, capture_output=True).stdout.strip()
+
+        store = StateStore(self.root / "state-failclosed")
+        work = WorkPackage.from_dict(package("a"))
+        # Write review context for head1 only
+        store.write_review_context("m1", work, head1)
+
+        ao_data = self.root / "ao-failclosed"
+        task = ao_data / "prompts" / "worker" / "reviewer" / "requests" / "batch" / "run" / "task.md"
+        task.parent.mkdir(parents=True)
+        # Task points to head1, but workspace is at head2
+        task.write_text(f"* 1. https://example/pr (head commit {head1}, run run-1)\n", encoding="utf-8")
+
+        deployment = Path(__file__).resolve().parents[2] / "factory/deployment"
+        env = {
+            **os.environ,
+            "AO_DATA_DIR": str(ao_data),
+            "CHAINSIEVE_FACTORY_STATE_DIR": str(self.root / "state-failclosed"),
+            "PYTHONPATH": str(Path(__file__).resolve().parents[2]),
+        }
+        # 1. Wrong workspace head -> must fail closed with exit 78
+        res_wrong_head = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env=env, check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(res_wrong_head.returncode, 78)
+        self.assertIn("workspace head does not match", res_wrong_head.stderr)
+
+        # 2. Task points to head2, but context was only generated for head1 -> missing context for head2 -> fail closed with exit 78
+        task.write_text(f"* 1. https://example/pr (head commit {head2}, run run-2)\n", encoding="utf-8")
+        res_missing_context = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env=env, check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(res_missing_context.returncode, 78)
+        self.assertIn("review context artifact is unavailable", res_missing_context.stderr)
+
+        # 3. Now write review context for head2 -> must succeed
+        store.write_review_context("m1", work, head2)
+        res_valid = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env=env, check=True, text=True, capture_output=True,
+        )
+        parsed = json.loads(res_valid.stdout)
+        self.assertEqual(parsed["authority"]["targetSha"], head2)
+
+        # 4. Context with corrupted digest -> must fail closed
+        context_path = self.root / "state-failclosed" / "reviews" / "m1--a" / f"{head2}.json"
+        raw = json.loads(context_path.read_text(encoding="utf-8"))
+        raw["contextDigest"] = "0" * 64
+        context_path.chmod(0o644)
+        context_path.write_text(json.dumps(raw), encoding="utf-8")
+        res_corrupt_digest = subprocess.run(
+            [str(deployment / "bin/chainsieve-review-context"), str(task)], cwd=workspace,
+            env=env, check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(res_corrupt_digest.returncode, 78)
+        self.assertIn("digest is invalid", res_corrupt_digest.stderr)
+
     def test_concurrent_heartbeat_writes_are_atomic_and_valid(self) -> None:
         store = StateStore(self.root / "state")
         with ThreadPoolExecutor(max_workers=16) as executor:
