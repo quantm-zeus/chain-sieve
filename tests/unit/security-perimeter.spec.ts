@@ -357,7 +357,12 @@ describe('G0 Security Perimeter', () => {
         }),
       ).toThrow('CSRF_TOKEN_INVALID');
 
-      const { csrfToken: _c, expectedCsrfToken: _e, ...withoutCsrf } = base;
+      const withoutCsrf = {
+        actionType: base.actionType,
+        reason: base.reason,
+        idempotencyKey: base.idempotencyKey,
+        authFactors: base.authFactors,
+      };
       expect(() =>
         validateHighImpactAction(withoutCsrf),
       ).toThrow('CSRF_TOKEN_REQUIRED');
