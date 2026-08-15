@@ -3,9 +3,5 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts",
-  "dependencies": {
-    "@ciag/provider-contracts": "workspace:*",
-    "@ciag/security": "workspace:*"
-  }
+  "exports": "./src/index.ts"
 }

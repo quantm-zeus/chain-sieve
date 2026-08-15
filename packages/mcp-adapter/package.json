@@ -3,9 +3,5 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts",
-  "dependencies": {
-    "@ciag/security": "workspace:*",
-    "@ciag/tool-core": "workspace:*"
-  }
+  "exports": "./src/index.ts"
 }
