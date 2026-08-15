@@ -43,10 +43,12 @@ case "${1:-}" in
       "Environment=\"CHAINSIEVE_FACTORY_PLAN=$repo_unit/factory/deployment/canary-milestone.json\"" \
       "Environment=\"CHAINSIEVE_FACTORY_STATE_DIR=$canary_state_unit\"" \
       'Environment="CHAINSIEVE_INTEGRATION_BRANCH=factory/canary-base"' \
+      "ReadWritePaths=$canary_state_unit" \
       >"$factory_temporary"
     printf '%s\n' \
       '[Service]' \
       "Environment=\"CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR=$canary_state_unit/reviews\"" \
+      "Environment=\"CHAINSIEVE_FACTORY_STATE_DIR=$canary_state_unit\"" \
       "ReadOnlyPaths=$canary_state_unit" \
       >"$ao_temporary"
     chmod 0644 "$factory_temporary" "$ao_temporary"

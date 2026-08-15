@@ -114,9 +114,23 @@ def resolve_task_context(task_file: Path, *, cwd: Path | None = None) -> dict[st
 
     context_root_value = os.environ.get("CHAINSIEVE_FACTORY_REVIEW_CONTEXT_DIR", "").strip()
     if not context_root_value:
-        raise ValueError("controller review-context root is unavailable")
-    context_root = Path(context_root_value).resolve(strict=True)
-    context_path = (context_root / work_key / f"{target_sha}.json").resolve(strict=True)
+        state_dir_value = os.environ.get("CHAINSIEVE_FACTORY_STATE_DIR", "").strip()
+        if state_dir_value:
+            context_root_value = str(Path(state_dir_value) / "reviews")
+        else:
+            raise ValueError("controller review-context root is unavailable")
+
+    context_root = Path(context_root_value).resolve()
+    if not context_root.is_dir():
+        state_dir_value = os.environ.get("CHAINSIEVE_FACTORY_STATE_DIR", "").strip()
+        if state_dir_value and (Path(state_dir_value) / "reviews").is_dir():
+            context_root = (Path(state_dir_value) / "reviews").resolve()
+        else:
+            raise ValueError(f"controller review-context root is unavailable: {context_root}")
+
+    context_path = (context_root / work_key / f"{target_sha}.json").resolve()
+    if not context_path.is_file():
+        raise ValueError(f"review context artifact is unavailable: {context_path}")
     if not context_path.is_relative_to(context_root):
         raise ValueError("resolved review context escaped the controller context root")
     value = validate_review_context(

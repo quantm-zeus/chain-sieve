@@ -4,6 +4,12 @@ set -euo pipefail
 real_binary="${CHAINSIEVE_AGY_BIN:-${CHAINSIEVE_AGY_REAL:-}}"
 model="${CHAINSIEVE_AGY_MODEL:-}"
 
+user_home="${CHAINSIEVE_USER_HOME:-${HOME:-}}"
+if [[ -n "$user_home" ]]; then
+  export HOME="$user_home"
+  unset XDG_CONFIG_HOME
+fi
+
 if [[ -z "$real_binary" || ! -x "$real_binary" ]]; then
   echo "configured Antigravity binary is not executable: $real_binary" >&2
   exit 127
