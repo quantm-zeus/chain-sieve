@@ -2,7 +2,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    pool: 'vmThreads',
     include: ['tests/**/*.spec.ts'],
     exclude: ['tests/e2e/**', 'tests/service/**'],
     testTimeout: 60_000,
