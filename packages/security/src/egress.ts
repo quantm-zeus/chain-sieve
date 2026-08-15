@@ -64,47 +64,60 @@ export const isPrivateOrBlockedAddress = (hostOrIp: string): boolean => {
     }
   }
 
-  const ipType = isIP(cleanHost);
+  // Check dotted quad notation (including octal/hex/decimal representations)
+  if (cleanHost.includes('.')) {
+    const rawParts = cleanHost.split('.');
+    if (rawParts.length === 4 && rawParts.every((p) => /^(?:0x[0-9a-f]+|0[0-7]+|\d+)$/i.test(p))) {
+      const resolved = rawParts.map((part) => {
+        if (/^0x/i.test(part)) {
+          return parseInt(part, 16);
+        }
+        if (part.length > 1 && part.startsWith('0')) {
+          if (!/^[0-7]+$/.test(part)) {
+            return NaN; // Block invalid octal e.g. 08, 09 fail-closed
+          }
+          return parseInt(part, 8);
+        }
+        return Number(part);
+      });
 
-  if (ipType === 4) {
-    const parts = cleanHost.split('.').map((part) => {
-      // Octal notation check (e.g. 0177)
-      if (part.length > 1 && part.startsWith('0')) {
-        return parseInt(part, 8);
+      if (resolved.some((p) => Number.isNaN(p) || p < 0 || p > 255)) {
+        return true; // Fail closed on malformed/out-of-range IP parts
       }
-      return Number(part);
-    });
 
-    if (parts.length !== 4 || parts.some((p) => Number.isNaN(p) || p < 0 || p > 255)) {
+      const [b0, b1] = resolved;
+
+      // Loopback: 127.0.0.0/8, 0.0.0.0/8
+      if (b0 === 127 || b0 === 0) return true;
+
+      // RFC 1918 Private: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+      if (b0 === 10) return true;
+      if (b0 === 172 && b1 !== undefined && b1 >= 16 && b1 <= 31) return true;
+      if (b0 === 192 && b1 === 168) return true;
+
+      // Link-local / Cloud metadata: 169.254.0.0/16 (e.g., AWS/GCP/Azure 169.254.169.254)
+      if (b0 === 169 && b1 === 254) return true;
+
+      // Carrier-grade NAT: 100.64.0.0/10 (e.g., 100.64.0.0 to 100.127.255.255, Alibaba metadata 100.100.100.200)
+      if (b0 === 100 && b1 !== undefined && b1 >= 64 && b1 <= 127) return true;
+
+      // Documentation / Benchmark: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24, 198.18.0.0/15
+      if (b0 === 192 && b1 === 0) return true;
+      if (b0 === 198 && (b1 === 51 || (b1 !== undefined && b1 >= 18 && b1 <= 19))) return true;
+      if (b0 === 203 && b1 === 0) return true;
+
+      // Broadcast: 255.255.255.255
+      if (b0 === 255) return true;
+
+      return false;
+    }
+    // Fail closed on invalid octal or IP quad notation (e.g., 010.08.0.1)
+    if (rawParts.length === 4 && rawParts.every((p) => /^[0-9a-fx]+$/i.test(p))) {
       return true;
     }
-
-    const [b0, b1] = parts;
-
-    // Loopback: 127.0.0.0/8, 0.0.0.0/8
-    if (b0 === 127 || b0 === 0) return true;
-
-    // RFC 1918 Private: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-    if (b0 === 10) return true;
-    if (b0 === 172 && b1 !== undefined && b1 >= 16 && b1 <= 31) return true;
-    if (b0 === 192 && b1 === 168) return true;
-
-    // Link-local / Cloud metadata: 169.254.0.0/16 (e.g., AWS/GCP/Azure 169.254.169.254)
-    if (b0 === 169 && b1 === 254) return true;
-
-    // Carrier-grade NAT: 100.64.0.0/10 (e.g., 100.64.0.0 to 100.127.255.255, Alibaba metadata 100.100.100.200)
-    if (b0 === 100 && b1 !== undefined && b1 >= 64 && b1 <= 127) return true;
-
-    // Documentation / Benchmark: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24, 198.18.0.0/15
-    if (b0 === 192 && b1 === 0) return true;
-    if (b0 === 198 && (b1 === 51 || (b1 !== undefined && b1 >= 18 && b1 <= 19))) return true;
-    if (b0 === 203 && b1 === 0) return true;
-
-    // Broadcast: 255.255.255.255
-    if (b0 === 255) return true;
-
-    return false;
   }
+
+  const ipType = isIP(cleanHost);
 
   if (ipType === 6) {
     const full = cleanHost.toLowerCase();
@@ -174,3 +187,17 @@ export const validateEgressUrl = (
 
   return parsed;
 };
+
+/**
+ * Safe outbound fetch wrapper enforcing SSRF and egress controls (FR-SEC-004).
+ */
+export const secureFetch = async (
+  input: string | URL,
+  init?: RequestInit,
+  allowedHosts?: readonly string[],
+): Promise<Response> => {
+  const urlStr = typeof input === 'string' ? input : input.toString();
+  validateEgressUrl(urlStr, allowedHosts);
+  return fetch(urlStr, init);
+};
+

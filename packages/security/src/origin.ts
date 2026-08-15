@@ -51,6 +51,19 @@ export const normalizeOrigin = (origin: string): string => {
   }
 };
 
+export const validateAllowedOriginsConfig = (allowedOrigins: readonly string[]): string[] => {
+  if (!Array.isArray(allowedOrigins)) {
+    throw new Error('MCP_ORIGIN_CONFIG_INVALID');
+  }
+  return allowedOrigins.map((allowed) => {
+    try {
+      return normalizeOrigin(allowed);
+    } catch {
+      throw new Error(`MCP_ORIGIN_CONFIG_INVALID: ${allowed}`);
+    }
+  });
+};
+
 export const validateOrigin = (origin: string | undefined, allowedOrigins: readonly string[]): void => {
   if (origin === undefined || origin === null || origin.trim() === '') {
     throw new Error('MCP_ORIGIN_REQUIRED');
@@ -63,13 +76,7 @@ export const validateOrigin = (origin: string | undefined, allowedOrigins: reado
     throw new Error('MCP_ORIGIN_FORBIDDEN');
   }
 
-  const normalizedAllowed = allowedOrigins.map((allowed) => {
-    try {
-      return normalizeOrigin(allowed);
-    } catch {
-      throw new Error('MCP_ORIGIN_MALFORMED');
-    }
-  });
+  const normalizedAllowed = validateAllowedOriginsConfig(allowedOrigins);
 
   if (!normalizedAllowed.includes(normalizedOrigin)) {
     throw new Error('MCP_ORIGIN_FORBIDDEN');

@@ -17,7 +17,9 @@ import {
   assertPromptIntegrity,
   isPrivateOrBlockedAddress,
   validateEgressUrl,
+  secureFetch,
   validateHighImpactAction,
+  validateAllowedOriginsConfig,
 } from '@ciag/security';
 
 describe('G0 Security Perimeter', () => {
@@ -54,7 +56,14 @@ describe('G0 Security Perimeter', () => {
       expect(() => validateOrigin('https://attacker.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
       expect(() => validateOrigin('https://app.chainsieve.io.attacker.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
       expect(() => validateOrigin('http://app.chainsieve.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
-      expect(() => validateOrigin('https://app.chainsieve.io', ['null'])).toThrow('MCP_ORIGIN_MALFORMED');
+      expect(() => validateOrigin('https://app.chainsieve.io', ['null'])).toThrow('MCP_ORIGIN_CONFIG_INVALID');
+
+      expect(validateAllowedOriginsConfig(allowed)).toEqual([
+        'https://app.chainsieve.io',
+        'https://agent.internal:8443',
+        'https://[::1]:8443',
+      ]);
+      expect(() => validateAllowedOriginsConfig(['javascript:void(0)'])).toThrow('MCP_ORIGIN_CONFIG_INVALID');
     });
   });
 
@@ -256,6 +265,9 @@ describe('G0 Security Perimeter', () => {
       expect(isPrivateOrBlockedAddress('fe80::1')).toBe(true);
       expect(isPrivateOrBlockedAddress('2130706433')).toBe(true); // 127.0.0.1 decimal
       expect(isPrivateOrBlockedAddress('0x7f000001')).toBe(true); // 127.0.0.1 hex
+      expect(isPrivateOrBlockedAddress('0177.0.0.1')).toBe(true); // 127.0.0.1 octal
+      expect(isPrivateOrBlockedAddress('010.08.0.1')).toBe(true); // Invalid octal digit 8 fails closed
+      expect(isPrivateOrBlockedAddress('08.0.0.1')).toBe(true); // Invalid octal digit 8 fails closed
 
       expect(isPrivateOrBlockedAddress('8.8.8.8')).toBe(false);
       expect(isPrivateOrBlockedAddress('api.mainnet-beta.solana.com')).toBe(false);
@@ -265,6 +277,8 @@ describe('G0 Security Perimeter', () => {
       expect(validateEgressUrl('https://api.mainnet-beta.solana.com').hostname).toBe('api.mainnet-beta.solana.com');
       expect(() => validateEgressUrl('http://169.254.169.254/latest/meta-data/')).toThrow('SSRF_EGRESS_BLOCKED');
       expect(() => validateEgressUrl('http://127.0.0.1:8080/admin')).toThrow('SSRF_EGRESS_BLOCKED');
+      expect(() => validateEgressUrl('http://0177.0.0.1/admin')).toThrow('SSRF_EGRESS_BLOCKED');
+      expect(() => validateEgressUrl('http://010.08.0.1/admin')).toThrow('EGRESS_URL_MALFORMED');
       expect(() => validateEgressUrl('ftp://example.com/file')).toThrow('EGRESS_PROTOCOL_FORBIDDEN');
       expect(() => validateEgressUrl('https://user:pass@api.solana.com')).toThrow('EGRESS_CREDENTIALS_FORBIDDEN');
 
@@ -371,11 +385,28 @@ describe('G0 Security Perimeter', () => {
         validateHighImpactAction({
           ...base,
           authFactors: {
+            phishingResistant: true,
+            stepUpVerified: true,
+            method: 'HARDWARE_KEY',
+          },
+        }),
+      ).toThrow('STEP_UP_TIMESTAMP_REQUIRED');
+
+      expect(() =>
+        validateHighImpactAction({
+          ...base,
+          authFactors: {
             ...base.authFactors,
             verifiedAt: new Date(Date.now() - 600_000).toISOString(), // 10 minutes ago (> 300s)
           },
         }),
       ).toThrow('STEP_UP_EXPIRED');
+    });
+
+    it('secureFetch validates outbound URLs before requesting', async () => {
+      await expect(secureFetch('http://169.254.169.254/latest/meta-data/')).rejects.toThrow('SSRF_EGRESS_BLOCKED');
+      await expect(secureFetch('http://127.0.0.1:8080/metrics')).rejects.toThrow('SSRF_EGRESS_BLOCKED');
+      await expect(secureFetch('https://evil.com', undefined, ['api.solana.com'])).rejects.toThrow('EGRESS_HOST_FORBIDDEN');
     });
   });
 });

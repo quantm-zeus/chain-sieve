@@ -28,6 +28,13 @@ export const createMcpServer = (adapter: McpAdapter = bootstrapMcpAdapter(), tes
 };
 
 export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
+  // Validate allowedOrigins configuration at deploy/startup time
+  if (Array.isArray(input.allowedOrigins)) {
+    for (const allowed of input.allowedOrigins) {
+      validateOrigin(allowed, [allowed]);
+    }
+  }
+
   const app = new OpenAPIHono<ApiEnv>();
   const logger = input.logger ?? new JsonLogger();
   const now = input.now ?? (() => new Date().toISOString());

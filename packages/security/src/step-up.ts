@@ -66,8 +66,11 @@ export const validateHighImpactAction = (
     throw new Error('STEP_UP_AUTHENTICATION_REQUIRED');
   }
 
-  // 4. Freshness Validation (reject stale or future assertions)
-  const verifiedAtStr = input.authFactors.verifiedAt ?? input.timestamp ?? new Date().toISOString();
+  // 4. Freshness Validation (reject stale, future, or missing assertions per FR-SEC-001)
+  const verifiedAtStr = input.authFactors.verifiedAt ?? input.timestamp;
+  if (!verifiedAtStr || typeof verifiedAtStr !== 'string' || verifiedAtStr.trim() === '') {
+    throw new Error('STEP_UP_TIMESTAMP_REQUIRED');
+  }
   const verifiedAtMs = Date.parse(verifiedAtStr);
   if (Number.isNaN(verifiedAtMs)) {
     throw new Error('STEP_UP_TIMESTAMP_INVALID');
