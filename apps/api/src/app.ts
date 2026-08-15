@@ -51,7 +51,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   app.onError((error, context) => {
     const correlationId = context.get('correlationId');
     logger.log('error', 'http_error', { correlationId, error: error.message });
-    const originError = error.message === 'MCP_ORIGIN_FORBIDDEN' || error.message === 'MCP_ORIGIN_REQUIRED';
+    const originError = error.message === 'MCP_ORIGIN_FORBIDDEN' || error.message === 'MCP_ORIGIN_REQUIRED' || error.message === 'MCP_ORIGIN_MALFORMED';
     const code = originError ? 'ORIGIN_FORBIDDEN' : 'INTERNAL_ERROR';
     return context.json(ErrorSchema.parse({ error: { code, message: code === 'INTERNAL_ERROR' ? 'Internal server error' : 'Origin is not allowed', correlationId } }), originError ? 403 : 500);
   });

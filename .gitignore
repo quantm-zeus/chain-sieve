@@ -18,3 +18,4 @@ artifacts/test-output/
 .factory/
 __pycache__/
 *.py[cod]
+.tmp/
