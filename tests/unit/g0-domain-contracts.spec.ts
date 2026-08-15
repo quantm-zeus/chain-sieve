@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createAssetRepresentation, normalizeAddress, createPoolIdentity, createAssetGroup } from '../../packages/domain/src/identity.js';
 import { assertNoBackdating, isAvailableAtPointInTime, filterByAvailableAt, createBackfillRecord } from '../../packages/domain/src/temporal.js';
-import { isCandidateLifecycle, isCandidateRiskState, canTransitionLifecycle, canTransitionRisk, assertLifecycleAndRiskIndependent, validateLifecycleTransition } from '../../packages/domain/src/state-machines.js';
+import { isCandidateLifecycle, isCandidateRiskState, canTransitionLifecycle, assertLifecycleAndRiskIndependent, validateLifecycleTransition } from '../../packages/domain/src/state-machines.js';
 import { ObservationEnvelopeSchema } from '../../packages/shared-schemas/src/data.js';
 import { CandidateLifecycleSchema, CandidateRiskStateSchema, CandidateLifecycleTransitionSchema } from '../../packages/shared-schemas/src/sig.js';
 import { RequiredTimestampsSchema } from '../../packages/shared-schemas/src/temporal.js';
