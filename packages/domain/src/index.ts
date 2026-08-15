@@ -42,8 +42,21 @@ export interface DegradedResult<T> {
   reason?: string;
 }
 
-export const assertNoBackdating = (eventTime: string, availableAt: string): void => {
-  if (Date.parse(availableAt) < Date.parse(eventTime)) {
-    throw new Error('AVAILABLE_AT_BACKDATED');
-  }
-};
+export * from './identity.js';
+export * from './state-machines.js';
+export {
+  type AvailabilityProvenance,
+  type RequiredTimestamps,
+  type ChainCoordinates,
+  type BackfillRecord,
+  type DataQualityCode,
+  type LearnedArtifactAvailability,
+  assertNoBackdating,
+  assertAvailableAtMonotonic,
+  isAvailableAtPointInTime,
+  filterByAvailableAt,
+  resolveLatestRevision,
+  createBackfillRecord,
+  deriveAvailableAt,
+  isArtifactAvailableAt,
+} from './temporal.js';

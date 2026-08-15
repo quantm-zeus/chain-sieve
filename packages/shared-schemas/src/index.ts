@@ -375,6 +375,10 @@ export const LifecycleManifestSchema = z.object({
   generatedAt: z.string().datetime(),
 });
 
+export * from './temporal.js';
+export * from './data.js';
+export * from './sig.js';
+
 export const ContractSchemas = {
   'task-contract': TaskContractSchema,
   'task-result': TaskResultSchema,
