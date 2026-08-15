@@ -40,7 +40,7 @@ const INJECTION_PATTERNS: readonly { pattern: RegExp; name: string; weight: numb
 
 export const sanitizeUntrustedContent = (
   input: string,
-  options?: { maxLength?: number; stripDelimiters?: boolean },
+  options?: { maxLength?: number | undefined; stripDelimiters?: boolean | undefined },
 ): string => {
   if (typeof input !== 'string') return '';
 
@@ -113,10 +113,11 @@ export const detectPromptInjection = (input: string): PromptInjectionScanResult 
 export const wrapUntrustedContent = (
   content: string,
   source: string,
-  options?: { maxLength?: number; sanitize?: boolean },
+  options?: { maxLength?: number | undefined; sanitize?: boolean | undefined },
 ): UntrustedContentEnvelope => {
+  const sanitizeOptions = options?.maxLength !== undefined ? { maxLength: options.maxLength } : undefined;
   const safeContent = options?.sanitize !== false
-    ? sanitizeUntrustedContent(content, { maxLength: options?.maxLength })
+    ? sanitizeUntrustedContent(content, sanitizeOptions)
     : content;
 
   const sha256 = createHash('sha256').update(content, 'utf8').digest('hex');
