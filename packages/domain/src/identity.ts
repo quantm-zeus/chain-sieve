@@ -96,7 +96,6 @@ export interface AssetGroup {
 
 export const createAssetGroup = (input: { assetId: string; representations: AssetRepresentation[]; equivalenceProof?: string | null }): AssetGroup => {
   if (input.representations.length === 0) throw new Error('ASSET_GROUP_EMPTY');
-  const distinctChains = new Set(input.representations.map((r) => r.chainId));
   const verified = input.representations.length > 1 ? Boolean(input.equivalenceProof) : true;
   if (input.representations.length > 1 && !verified) throw new Error('EQUIVALENCE_UNVERIFIED');
   return {
