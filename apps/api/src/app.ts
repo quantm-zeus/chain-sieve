@@ -7,7 +7,7 @@ import { HealthSchema, ReadinessSchema } from '@ciag/shared-schemas';
 import { McpAdapter } from '@ciag/mcp-adapter';
 import { ExactMemoryCache } from '@ciag/runtime-cache';
 import { ToolCore } from '@ciag/tool-core';
-import { validateOrigin } from '@ciag/security';
+import { sanitizeUntrustedContent, validateBearerAuth, validateMcpContentType, validateMcpProtocol, validateOrigin } from '@ciag/security';
 import { JsonLogger } from '@ciag/observability';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
@@ -68,15 +68,31 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   app.post('/mcp', async (context) => {
     validateOrigin(context.req.header('origin'), input.allowedOrigins);
     if (input.mcpTestMode === true && context.req.header('x-mcp-test-internal-error') === '1') throw new Error('MCP_TEST_INTERNAL_ERROR');
-    if (input.mcpAuthToken) { const expected = Buffer.from(`Bearer ${input.mcpAuthToken}`); const supplied = Buffer.from(context.req.header('authorization') ?? ''); if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) return context.json({ error: { code: 'UNAUTHORIZED', message: 'Valid bearer authentication is required', correlationId: context.get('correlationId') } }, 401); }
-    if (!context.req.header('content-type')?.toLowerCase().startsWith('application/json')) return context.json({ error: { code: 'UNSUPPORTED_MEDIA_TYPE', message: 'application/json required', correlationId: context.get('correlationId') } }, 415);
+    if (input.mcpAuthToken) {
+      try {
+        validateBearerAuth(context.req.header('authorization'), input.mcpAuthToken);
+      } catch {
+        return context.json({ error: { code: 'UNAUTHORIZED', message: 'Valid bearer authentication is required', correlationId: context.get('correlationId') } }, 401);
+      }
+    }
+    try {
+      validateMcpContentType(context.req.header('content-type'));
+    } catch {
+      return context.json({ error: { code: 'UNSUPPORTED_MEDIA_TYPE', message: 'application/json required', correlationId: context.get('correlationId') } }, 415);
+    }
     const declaredLength = Number(context.req.header('content-length') ?? '0');
     if (Number.isFinite(declaredLength) && declaredLength > mcpMaxBodyBytes) return context.json({ error: { code: 'PAYLOAD_TOO_LARGE', message: 'MCP request exceeds configured limit', correlationId: context.get('correlationId') } }, 413);
     const bodySize = (await context.req.raw.clone().arrayBuffer()).byteLength;
     if (bodySize > mcpMaxBodyBytes) return context.json({ error: { code: 'PAYLOAD_TOO_LARGE', message: 'MCP request exceeds configured limit', correlationId: context.get('correlationId') } }, 413);
     const protocol = context.req.header('mcp-protocol-version');
-    if (protocol !== undefined && protocol !== '2025-11-25') return context.json({ error: { code: 'UNSUPPORTED_PROTOCOL_VERSION', message: 'Supported MCP protocol: 2025-11-25', correlationId: context.get('correlationId') } }, 400);
-    const clientId = context.req.header('x-mcp-client-id') ?? context.req.header('x-forwarded-for') ?? 'anonymous'; if (clientId.length > 128) return context.json({ error: { code: 'INVALID_CLIENT_ID', message: 'MCP client identifier is invalid', correlationId: context.get('correlationId') } }, 400);
+    try {
+      validateMcpProtocol(protocol, ['2025-11-25'], { allowMissing: true });
+    } catch {
+      return context.json({ error: { code: 'UNSUPPORTED_PROTOCOL_VERSION', message: 'Supported MCP protocol: 2025-11-25', correlationId: context.get('correlationId') } }, 400);
+    }
+    const rawClientId = context.req.header('x-mcp-client-id') ?? context.req.header('x-forwarded-for') ?? 'anonymous';
+    if (rawClientId.length > 128) return context.json({ error: { code: 'INVALID_CLIENT_ID', message: 'MCP client identifier is invalid', correlationId: context.get('correlationId') } }, 400);
+    const clientId = sanitizeUntrustedContent(rawClientId, { maxLength: 128 });
     const current = nowMs(); if (rateWindows.size >= mcpMaxTrackedClients) for (const [key, value] of rateWindows) if (current - value.startedAt >= 60_000) rateWindows.delete(key); const previous = rateWindows.get(clientId); if (!previous && rateWindows.size >= mcpMaxTrackedClients) return context.json({ error: { code: 'MCP_LIMIT_EXCEEDED', message: 'MCP request limit exceeded', correlationId: context.get('correlationId') } }, 429); const window = !previous || current - previous.startedAt >= 60_000 ? { startedAt: current, count: 0 } : previous; window.count += 1; rateWindows.set(clientId, window);
     if (window.count > mcpRatePerMinute || activeMcpRequests >= mcpMaxConcurrent) return context.json({ error: { code: 'MCP_LIMIT_EXCEEDED', message: 'MCP request limit exceeded', correlationId: context.get('correlationId') } }, 429);
     const transportOptions = { enableJsonResponse: true, allowedOrigins: input.allowedOrigins, enableDnsRebindingProtection: true };

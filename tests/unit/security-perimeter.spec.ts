@@ -27,6 +27,8 @@ describe('G0 Security Perimeter', () => {
       expect(normalizeOrigin('http://example.com:80')).toBe('http://example.com');
       expect(normalizeOrigin('HTTPS://EXAMPLE.COM')).toBe('https://example.com');
       expect(normalizeOrigin('https://example.com:8443')).toBe('https://example.com:8443');
+      expect(normalizeOrigin('https://[::1]:8443')).toBe('https://[::1]:8443');
+      expect(normalizeOrigin('http://[::1]:80')).toBe('http://[::1]');
     });
 
     it('rejects invalid, malformed, or prohibited origins', () => {
@@ -40,24 +42,27 @@ describe('G0 Security Perimeter', () => {
     });
 
     it('validates origins against exact allowlists and fails closed', () => {
-      const allowed = ['https://app.chainsieve.io', 'https://agent.internal:8443'];
+      const allowed = ['https://app.chainsieve.io', 'https://agent.internal:8443', 'https://[::1]:8443'];
 
       expect(() => validateOrigin('https://app.chainsieve.io', allowed)).not.toThrow();
       expect(() => validateOrigin('https://app.chainsieve.io:443', allowed)).not.toThrow();
       expect(() => validateOrigin('HTTPS://APP.CHAINSIEVE.IO', allowed)).not.toThrow();
+      expect(() => validateOrigin('https://[::1]:8443', allowed)).not.toThrow();
 
       expect(() => validateOrigin(undefined, allowed)).toThrow('MCP_ORIGIN_REQUIRED');
       expect(() => validateOrigin('', allowed)).toThrow('MCP_ORIGIN_REQUIRED');
       expect(() => validateOrigin('https://attacker.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
       expect(() => validateOrigin('https://app.chainsieve.io.attacker.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
       expect(() => validateOrigin('http://app.chainsieve.io', allowed)).toThrow('MCP_ORIGIN_FORBIDDEN');
+      expect(() => validateOrigin('https://app.chainsieve.io', ['null'])).toThrow('MCP_ORIGIN_MALFORMED');
     });
   });
 
   describe('MCP fail-closed controls', () => {
     it('enforces supported MCP protocol versions', () => {
       expect(() => validateMcpProtocol('2025-11-25')).not.toThrow();
-      expect(() => validateMcpProtocol(undefined)).not.toThrow();
+      expect(() => validateMcpProtocol(undefined, undefined, { allowMissing: true })).not.toThrow();
+      expect(() => validateMcpProtocol(undefined)).toThrow('UNSUPPORTED_PROTOCOL_VERSION');
       expect(() => validateMcpProtocol('2024-01-01')).toThrow('UNSUPPORTED_PROTOCOL_VERSION');
       expect(() => validateMcpProtocol('v1.0')).toThrow('UNSUPPORTED_PROTOCOL_VERSION');
     });
@@ -71,9 +76,10 @@ describe('G0 Security Perimeter', () => {
       expect(() => validateMcpContentType(undefined)).toThrow('UNSUPPORTED_MEDIA_TYPE');
     });
 
-    it('enforces timing-safe bearer authentication', () => {
+    it('enforces timing-safe bearer authentication and fails closed on unconfigured tokens', () => {
       expect(() => validateBearerAuth('Bearer secret-token-123', 'secret-token-123')).not.toThrow();
-      expect(() => validateBearerAuth(undefined, undefined)).not.toThrow();
+      expect(() => validateBearerAuth(undefined, undefined)).toThrow('UNAUTHORIZED');
+      expect(() => validateBearerAuth('Bearer token', undefined)).toThrow('UNAUTHORIZED');
       expect(() => validateBearerAuth(undefined, 'secret-token-123')).toThrow('UNAUTHORIZED');
       expect(() => validateBearerAuth('Bearer wrong-token', 'secret-token-123')).toThrow('UNAUTHORIZED');
       expect(() => validateBearerAuth('Basic dXNlcjpwYXNz', 'secret-token-123')).toThrow('UNAUTHORIZED');
@@ -278,6 +284,7 @@ describe('G0 Security Perimeter', () => {
           phishingResistant: true,
           stepUpVerified: true,
           method: 'FIDO2_WEBAUTHN',
+          verifiedAt: new Date().toISOString(),
         },
         csrfToken: 'token-abc',
         expectedCsrfToken: 'token-abc',
@@ -300,11 +307,13 @@ describe('G0 Security Perimeter', () => {
             stepUpVerified: true,
             method: 'TOTP',
           },
+          csrfToken: 'token-abc',
+          expectedCsrfToken: 'token-abc',
         }),
       ).toThrow('STEP_UP_PHISHING_RESISTANCE_REQUIRED');
     });
 
-    it('rejects unverified step-up, missing reason, missing idempotency, or invalid CSRF', () => {
+    it('rejects unverified step-up, missing reason, missing idempotency, expired assertion, or missing/invalid CSRF', () => {
       const base = {
         actionType: 'PURGE_CACHE',
         reason: 'Clearing stale observations after upstream fix',
@@ -313,7 +322,10 @@ describe('G0 Security Perimeter', () => {
           phishingResistant: true,
           stepUpVerified: true,
           method: 'HARDWARE_KEY',
+          verifiedAt: new Date().toISOString(),
         },
+        csrfToken: 'good-token',
+        expectedCsrfToken: 'good-token',
       };
 
       expect(() =>
@@ -344,6 +356,21 @@ describe('G0 Security Perimeter', () => {
           expectedCsrfToken: 'good-token',
         }),
       ).toThrow('CSRF_TOKEN_INVALID');
+
+      const { csrfToken: _c, expectedCsrfToken: _e, ...withoutCsrf } = base;
+      expect(() =>
+        validateHighImpactAction(withoutCsrf),
+      ).toThrow('CSRF_TOKEN_REQUIRED');
+
+      expect(() =>
+        validateHighImpactAction({
+          ...base,
+          authFactors: {
+            ...base.authFactors,
+            verifiedAt: new Date(Date.now() - 600_000).toISOString(), // 10 minutes ago (> 300s)
+          },
+        }),
+      ).toThrow('STEP_UP_EXPIRED');
     });
   });
 });

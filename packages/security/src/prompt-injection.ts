@@ -120,7 +120,7 @@ export const wrapUntrustedContent = (
     ? sanitizeUntrustedContent(content, sanitizeOptions)
     : content;
 
-  const sha256 = createHash('sha256').update(content, 'utf8').digest('hex');
+  const sha256 = createHash('sha256').update(safeContent, 'utf8').digest('hex');
 
   return {
     type: 'UNTRUSTED_CONTENT',

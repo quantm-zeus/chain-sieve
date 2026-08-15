@@ -1,4 +1,4 @@
-import { timingSafeEqual } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { requireReadOnlyCapability } from './negative-capability.js';
 
 export interface McpSessionScope {
@@ -15,8 +15,15 @@ export const SUPPORTED_MCP_PROTOCOLS = Object.freeze(['2025-11-25']);
 export const validateMcpProtocol = (
   protocolVersion: string | undefined,
   supportedVersions: readonly string[] = SUPPORTED_MCP_PROTOCOLS,
+  options?: { allowMissing?: boolean | undefined },
 ): void => {
-  if (protocolVersion !== undefined && !supportedVersions.includes(protocolVersion)) {
+  if (protocolVersion === undefined) {
+    if (options?.allowMissing === true) {
+      return;
+    }
+    throw new Error('UNSUPPORTED_PROTOCOL_VERSION');
+  }
+  if (!supportedVersions.includes(protocolVersion)) {
     throw new Error('UNSUPPORTED_PROTOCOL_VERSION');
   }
 };
@@ -35,16 +42,18 @@ export const validateBearerAuth = (
   authHeader: string | undefined,
   expectedToken: string | undefined,
 ): void => {
-  if (!expectedToken) return;
-
-  if (!authHeader) {
+  if (!expectedToken || typeof expectedToken !== 'string' || expectedToken.trim() === '') {
     throw new Error('UNAUTHORIZED');
   }
 
-  const expected = Buffer.from(`Bearer ${expectedToken}`);
-  const supplied = Buffer.from(authHeader);
+  if (!authHeader || typeof authHeader !== 'string') {
+    throw new Error('UNAUTHORIZED');
+  }
 
-  if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) {
+  const expectedHash = createHash('sha256').update(`Bearer ${expectedToken}`).digest();
+  const suppliedHash = createHash('sha256').update(authHeader).digest();
+
+  if (!timingSafeEqual(expectedHash, suppliedHash)) {
     throw new Error('UNAUTHORIZED');
   }
 };

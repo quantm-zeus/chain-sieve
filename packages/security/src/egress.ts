@@ -17,7 +17,21 @@ const BLOCKED_HOSTNAMES = new Set([
 export const isPrivateOrBlockedAddress = (hostOrIp: string): boolean => {
   if (!hostOrIp || typeof hostOrIp !== 'string') return true;
 
-  const normalized = hostOrIp.trim().toLowerCase();
+  let normalized = hostOrIp.trim().toLowerCase();
+
+  // Decode percent-encoded hosts (e.g., %31%32%37.0.0.1)
+  try {
+    if (normalized.includes('%')) {
+      normalized = decodeURIComponent(normalized).toLowerCase();
+    }
+  } catch {
+    return true; // Malformed percent-encoding is blocked
+  }
+
+  // Strip trailing dot (DNS root domain notation e.g., localhost.)
+  if (normalized.endsWith('.')) {
+    normalized = normalized.slice(0, -1);
+  }
 
   // Strip brackets from IPv6 literal
   const cleanHost = normalized.startsWith('[') && normalized.endsWith(']')

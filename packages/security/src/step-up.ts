@@ -1,4 +1,4 @@
-import { randomUUID, timingSafeEqual } from 'node:crypto';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 
 /**
  * FR-SEC-001 High-impact action security validation.
@@ -23,6 +23,7 @@ export interface HighImpactActionInput {
   expectedCsrfToken?: string;
   actorId?: string;
   timestamp?: string;
+  maxAgeSeconds?: number;
 }
 
 export interface HighImpactActionResult {
@@ -65,20 +66,31 @@ export const validateHighImpactAction = (
     throw new Error('STEP_UP_AUTHENTICATION_REQUIRED');
   }
 
-  // 4. CSRF Protection
-  if (input.expectedCsrfToken !== undefined || input.csrfToken !== undefined) {
-    if (!input.csrfToken || !input.expectedCsrfToken) {
-      throw new Error('CSRF_TOKEN_INVALID');
-    }
-    const suppliedBuf = Buffer.from(input.csrfToken);
-    const expectedBuf = Buffer.from(input.expectedCsrfToken);
-    if (suppliedBuf.length !== expectedBuf.length || !timingSafeEqual(suppliedBuf, expectedBuf)) {
-      throw new Error('CSRF_TOKEN_INVALID');
-    }
+  // 4. Freshness Validation (reject stale or future assertions)
+  const verifiedAtStr = input.authFactors.verifiedAt ?? input.timestamp ?? new Date().toISOString();
+  const verifiedAtMs = Date.parse(verifiedAtStr);
+  if (Number.isNaN(verifiedAtMs)) {
+    throw new Error('STEP_UP_TIMESTAMP_INVALID');
+  }
+  const maxAgeMs = (input.maxAgeSeconds ?? 300) * 1000;
+  const now = Date.now();
+  if (verifiedAtMs > now + 60_000 || now - verifiedAtMs > maxAgeMs) {
+    throw new Error('STEP_UP_EXPIRED');
+  }
+
+  // 5. CSRF Protection (Mandatory for high-impact actions)
+  if (!input.csrfToken || !input.expectedCsrfToken) {
+    throw new Error('CSRF_TOKEN_REQUIRED');
+  }
+
+  const suppliedHash = createHash('sha256').update(input.csrfToken).digest();
+  const expectedHash = createHash('sha256').update(input.expectedCsrfToken).digest();
+  if (!timingSafeEqual(suppliedHash, expectedHash)) {
+    throw new Error('CSRF_TOKEN_INVALID');
   }
 
   const auditId = randomUUID();
-  const verifiedAt = input.authFactors.verifiedAt ?? new Date().toISOString();
+  const verifiedAt = verifiedAtStr;
 
   return {
     authorized: true,

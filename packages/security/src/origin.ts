@@ -25,19 +25,24 @@ export const normalizeOrigin = (origin: string): string => {
     }
 
     const host = url.hostname.toLowerCase();
-    if (!host || host.includes(' ') || host.includes(':')) {
-      // IPv6 hosts are enclosed in brackets in standard URLs
-      if (host.includes(':') && !trimmed.includes('[')) {
-        throw new Error('MCP_ORIGIN_MALFORMED');
-      }
+    if (!host || host.includes(' ')) {
+      throw new Error('MCP_ORIGIN_MALFORMED');
     }
+
+    if (host.includes(':') && !trimmed.includes('[')) {
+      throw new Error('MCP_ORIGIN_MALFORMED');
+    }
+
+    const formattedHost = host.includes(':')
+      ? `[${host.replace(/^\[|\]$/g, '')}]`
+      : host;
 
     let port = url.port;
     if ((protocol === 'http:' && port === '80') || (protocol === 'https:' && port === '443')) {
       port = '';
     }
 
-    return `${protocol}//${host}${port ? `:${port}` : ''}`;
+    return `${protocol}//${formattedHost}${port ? `:${port}` : ''}`;
   } catch (error) {
     if (error instanceof Error && error.message === 'MCP_ORIGIN_MALFORMED') {
       throw error;
@@ -62,7 +67,7 @@ export const validateOrigin = (origin: string | undefined, allowedOrigins: reado
     try {
       return normalizeOrigin(allowed);
     } catch {
-      return allowed.toLowerCase().trim();
+      throw new Error('MCP_ORIGIN_MALFORMED');
     }
   });
 

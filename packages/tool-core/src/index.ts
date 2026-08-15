@@ -1,10 +1,12 @@
 import type { CostPolicyAdapter } from '@ciag/provider-contracts';
 import type { RuntimeCacheAdapter } from '@ciag/provider-contracts';
+import { requireReadOnlyCapability } from '@ciag/security';
 
 export class ToolCore {
   constructor(private readonly cache: RuntimeCacheAdapter, private readonly costPolicy: CostPolicyAdapter) {}
   systemReadiness(): { capabilityMode: 'SYNTHETIC_SHADOW'; productCapabilitiesActive: false } { return { capabilityMode: 'SYNTHETIC_SHADOW', productCapabilitiesActive: false }; }
   async execute<T>(input: { key: string; operation: string; costClass: 'FREE' | 'METERED' | 'UNKNOWN'; expiresAt: string }, load: () => Promise<T>): Promise<{ value: T; cached: boolean }> {
+    requireReadOnlyCapability(input.operation);
     const cached = await this.cache.get<T>(input.key);
     if (cached !== undefined) {
       const authorization = await this.costPolicy.authorize({ operation: input.operation, costClass: input.costClass, cacheHit: true });

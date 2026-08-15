@@ -4,8 +4,8 @@ import { basename, extname, join, relative } from 'node:path';
 const architectureRoots = ['apps', 'packages'];
 const executableRoots = ['apps', 'packages', 'tools', 'tests', 'infra', '.github'];
 const executableExtensions = new Set(['.ts', '.js', '.mjs', '.cjs', '.svelte', '.sql', '.yml', '.yaml']);
-const walk = async (root: string): Promise<string[]> => { const result: string[] = []; for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory()) result.push(...await walk(path)); else if (['.ts', '.svelte'].includes(extname(path))) result.push(path); } return result; };
 const ignoredDirectories = new Set(['node_modules', '.svelte-kit', 'build', 'dist', 'coverage', 'test-results', 'playwright-report']);
+const walk = async (root: string): Promise<string[]> => { const result: string[] = []; for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory() && !ignoredDirectories.has(entry.name)) result.push(...await walk(path)); else if (['.ts', '.svelte'].includes(extname(path))) result.push(path); } return result; };
 const walkExecutable = async (root: string): Promise<string[]> => { const result: string[] = []; for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) { const path = join(root, entry.name); if (entry.isDirectory() && !ignoredDirectories.has(entry.name)) result.push(...await walkExecutable(path)); else if (!entry.isDirectory() && (executableExtensions.has(extname(path)) || basename(path).startsWith('Dockerfile'))) result.push(path); } return result; };
 const sourceFiles = async (cwd: string): Promise<string[]> => (await Promise.all(architectureRoots.map((root) => walk(join(cwd, root))))).flat();
 const executableFiles = async (cwd: string): Promise<string[]> => (await Promise.all(executableRoots.map((root) => walkExecutable(join(cwd, root))))).flat();
@@ -18,7 +18,18 @@ export const verifyArchitecture = async (cwd = process.cwd()): Promise<{ files: 
     const path = relative(cwd, file); const text = await readFile(file, 'utf8'); violations.push(...architectureViolations(path, text));
     const owner = /^(?:apps|packages)\/[^/]+/.exec(path)?.[0]; if (owner) { const edges = packageEdges.get(owner) ?? new Set<string>(); for (const dependency of imports(text)) { const match = /^@ciag\/([^/]+)/.exec(dependency); if (match?.[1]) edges.add(`packages/${match[1]}`); } packageEdges.set(owner, edges); }
   }
-  const visit = (node: string, path: string[]): void => { if (path.includes(node)) { violations.push(`package-cycle:${[...path.slice(path.indexOf(node)), node].join('>')}`); return; } for (const dependency of packageEdges.get(node) ?? []) if (packageEdges.has(dependency)) visit(dependency, [...path, node]); };
+  const visited = new Set<string>();
+  const visit = (node: string, path: string[]): void => {
+    if (path.includes(node)) {
+      violations.push(`package-cycle:${[...path.slice(path.indexOf(node)), node].join('>')}`);
+      return;
+    }
+    if (visited.has(node)) return;
+    for (const dependency of packageEdges.get(node) ?? []) {
+      if (packageEdges.has(dependency)) visit(dependency, [...path, node]);
+    }
+    visited.add(node);
+  };
   for (const node of packageEdges.keys()) visit(node, []);
   if (violations.length > 0) throw new Error(`ARCHITECTURE_VIOLATIONS\n${[...new Set(violations)].join('\n')}`); return { files: files.length, rules: 11 };
 };
