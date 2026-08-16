@@ -558,20 +558,6 @@ describe('pool-adapter deterministic normalization', () => {
   it('economic trade normalization fails explicit typed not silent partial', () => {
     expect(() => normalizeEconomicTrades([])).toThrow(TradeNormalizationError);
     expect(() => normalizeEconomicTrades([])).toThrow(/TRADE_EMPTY/);
-    const malformed = [
-      {
-        txHash: 'tx1',
-        hopIndex: 0,
-        programId: 'raydium',
-        fromMint: 'MintA',
-        toMint: 'MintB',
-        fromAmountRaw: 'not-a-number',
-        toAmountRaw: '900',
-        actor: 'walletA',
-        isAggregatorHop: false,
-      } as unknown as typeof malformed extends Array<infer T> ? T : never,
-    ];
-    // Actually use hops with bad amount
     const badHop: Parameters<typeof normalizeEconomicTrades>[0][number] = {
       txHash: 'tx1',
       hopIndex: 0,

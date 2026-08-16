@@ -3,7 +3,6 @@ import type {
   AdapterResult,
   CanonicalPoolSnapshot,
   CurveType,
-  PoolAdapter,
   PoolAdapterInput,
 } from './types.js';
 import { PoolAdapterError } from './types.js';
