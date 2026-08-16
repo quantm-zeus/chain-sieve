@@ -369,7 +369,18 @@ export const materializeSignal = (input: MaterializeSignalInput): SignalRecord =
     // Collect from features' lineage.inputHashes where available
     const hashes = new Set<string>();
     for (const f of featureSet.features) {
-      for (const h of f.lineage.inputHashes) hashes.add(h);
+      const lineage = (f as unknown as { lineage?: unknown }).lineage as
+        | { inputHashes?: unknown }
+        | undefined;
+      if (lineage === null || typeof lineage !== 'object')
+        throw new SignalMaterializationError('SIGNAL_MALFORMED', 'FEATURE_LINEAGE_MALFORMED');
+      if (!Array.isArray(lineage.inputHashes))
+        throw new SignalMaterializationError('SIGNAL_MALFORMED', 'FEATURE_LINEAGE_HASHES_MALFORMED');
+      for (const h of lineage.inputHashes as unknown[]) {
+        if (typeof h !== 'string' || !SHA256_RE.test(h))
+          throw new SignalMaterializationError('SIGNAL_MALFORMED', 'FEATURE_LINEAGE_HASH_MALFORMED');
+        hashes.add(h);
+      }
     }
     evidenceHashes = [...hashes].sort();
   }
@@ -438,12 +449,8 @@ export const materializeSignal = (input: MaterializeSignalInput): SignalRecord =
     asOf: candidate.asOf,
     materializedAt: resolvedMaterializedAt,
     canonicalInputs: {
-      snapshotId,
       snapshotHash: snapshotHash ?? featureSet.snapshotHash,
       featureSetHash: computedFeatureSetHash,
-      observationIds,
-      evidenceHashes,
-      collectedAt,
       featureVersions,
       adapterPoolId: adapterEvidence.poolId,
       adapterVersion: adapterEvidence.adapterVersion,
@@ -606,6 +613,15 @@ export const materializeSignals = (
 
   const signals: SignalRecord[] = [];
   for (const candidate of candidates) {
+    if (candidate === null || typeof candidate !== 'object')
+      throw new SignalMaterializationError('SIGNAL_MALFORMED', 'CANDIDATE_NOT_OBJECT');
+    const c = candidate as unknown as Record<string, unknown>;
+    if (typeof c.assetId !== 'string' || c.assetId.length === 0)
+      throw new SignalMaterializationError('SIGNAL_MALFORMED', 'CANDIDATE_ASSET_ID_MALFORMED');
+    if (typeof c.eligible !== 'boolean')
+      throw new SignalMaterializationError('SIGNAL_MALFORMED', 'CANDIDATE_ELIGIBLE_MALFORMED');
+    if (!Array.isArray(c.componentValues))
+      throw new SignalMaterializationError('SIGNAL_MALFORMED', 'CANDIDATE_COMPONENT_VALUES_MALFORMED');
     if (candidate.eligible !== true) continue; // ineligible cannot materialize; skip (fail-closed for ineligible)
     const featureSet = fsMap.get(candidate.assetId);
     if (!featureSet) throw new SignalMaterializationError('SIGNAL_INCOMPLETE', `FEATURE_SET_MISSING_FOR:${candidate.assetId}`);
