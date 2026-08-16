@@ -9,7 +9,7 @@
 
 import { createHash } from 'node:crypto';
 import type { MarketSnapshot } from './snapshot.js';
-import { validateSnapshot, SnapshotValidationError } from './snapshot.js';
+import { validateSnapshot, SnapshotValidationError, canonicalSnapshotBytes } from './snapshot.js';
 
 // ---------------------------------------------------------------------------
 // Feature Registry
@@ -92,7 +92,7 @@ export const FEATURE_REGISTRY: readonly FeatureDefinition[] = [
     unit: 'nats',
     minimumObservations: 5,
     minimumDenominator: 5,
-    minimumAbsoluteActivity: 100,
+    minimumAbsoluteActivity: 10,
     stabilityTransform: 'identity',
     outlierWinsorizeP: null,
     shrinkagePrior: 0.5,
@@ -608,10 +608,8 @@ export const computeFeatureSet = (
     features.push(ent);
   }
 
-  // Snapshot hash for lineage
-  const snapshotHash = createHash('sha256')
-    .update(JSON.stringify(canonicalize(now)))
-    .digest('hex');
+  // Snapshot hash for lineage - byte-stable via canonical snapshot serialization (pools sorted, keys sorted)
+  const snapshotHash = canonicalSnapshotBytes(now).sha256;
 
   // Sort features deterministically before returning
   features.sort((a, b) => a.featureId.localeCompare(b.featureId));
