@@ -36,7 +36,11 @@ if [[ "$is_reviewer" == true ]]; then
     [[ "$argument" == --disable-sandbox ]] && has_disable_sandbox=true
   done
   if [[ "$has_disable_sandbox" == false ]]; then
-    arguments=("--disable-sandbox" "${arguments[@]}")
+    if [[ ${#arguments[@]} -gt 0 && "${arguments[0]}" != -* ]]; then
+      arguments=("${arguments[0]}" "--disable-sandbox" "${arguments[@]:1}")
+    else
+      arguments=("--disable-sandbox" "${arguments[@]}")
+    fi
   fi
 fi
 
