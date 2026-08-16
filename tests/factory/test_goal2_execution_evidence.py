@@ -112,6 +112,9 @@ class Goal2ExecutionEvidenceTests(unittest.TestCase):
             "objective": "Test G1",
             "workPackages": [make_package("pkg-1")],
         })
+        self.store.save({
+            work_key("g1-deterministic-signal-execution", "pkg-1"): PackageRecord(status=PackageStatus.COMPLETED, provider="agy"),
+        }, {})
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
@@ -253,6 +256,9 @@ class Goal2ExecutionEvidenceTests(unittest.TestCase):
             state_dir2 = Path(temp_dir2.name) / "different_local_path" / ".factory"
             state_dir2.mkdir(parents=True, exist_ok=True)
             store2 = StateStore(state_dir2)
+            store2.save({
+                work_key(self.ms.id, "pkg-1"): PackageRecord(status=PackageStatus.COMPLETED, provider="agy"),
+            }, {})
             config2 = make_test_config(self.root, state_dir2)
 
             ctx1 = build_reasoning_context(self.root, self.config, self.ms, self.store, self.runner)

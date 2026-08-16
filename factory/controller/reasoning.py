@@ -306,9 +306,21 @@ def build_reasoning_context(
     package_plan = [_package_dict(pkg) for pkg in milestone.packages]
     dependency_dag = {pkg.id: list(pkg.dependencies) for pkg in milestone.packages}
 
+    requires_evidence = is_product_roadmap_milestone(root, milestone.id) and role in {"convergence", "final_audit"}
+
     try:
         all_records = store.load()
-    except Exception:
+    except Exception as error:
+        if requires_evidence:
+            reason = f"unable to load durable execution state: {error}"
+            store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                role=role,
+                reason=reason,
+                failureClass="EXECUTION_EVIDENCE_UNAVAILABLE",
+            )
+            raise ReasoningContextUnavailableError(reason)
         all_records = {}
 
     execution_evidence: list[dict[str, Any]] = []
@@ -316,7 +328,22 @@ def build_reasoning_context(
 
     for pkg in milestone.packages:
         key = work_key(milestone.id, pkg.id)
-        rec = all_records.get(key, PackageRecord())
+        if key not in all_records:
+            if requires_evidence:
+                reason = f"missing durable package execution record for work key {key!r} (package {pkg.id!r})"
+                store.event(
+                    "REASONING_CONTEXT_UNAVAILABLE",
+                    milestoneId=milestone.id,
+                    role=role,
+                    reason=reason,
+                    failureClass="EXECUTION_EVIDENCE_UNAVAILABLE",
+                    workKey=key,
+                    packageId=pkg.id,
+                )
+                raise ReasoningContextUnavailableError(reason)
+            rec = PackageRecord()
+        else:
+            rec = all_records[key]
 
         review_context_digest = None
         if rec.head_sha:

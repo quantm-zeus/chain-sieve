@@ -102,6 +102,7 @@ class FinalReasoningClosureTests(unittest.TestCase):
             json.dumps({"id": "g1-deterministic-signal-execution", "objective": "Converge G1", "workPackages": [self.pkg1]}),
             encoding="utf-8",
         )
+        self.store.save({work_key("g1-deterministic-signal-execution", self.pkg1["id"]): PackageRecord(status=PackageStatus.COMPLETED, provider="agy")}, {})
 
         self.valid_head = "1" * 40
 
