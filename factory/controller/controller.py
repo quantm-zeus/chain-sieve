@@ -588,9 +588,15 @@ class FactoryController:
         )
         if safe:
             freed = self.ao.kill(session.id)
+            if hasattr(self.ao, "cleanup"):
+                try:
+                    self.ao.cleanup()
+                except Exception:
+                    pass
             if not freed and session.workspace_path and Path(session.workspace_path).exists():
                 self._escalate_replan(milestone, package, key, record, f"{failure}; AO refused to clean a supposedly clean worktree")
                 return
+
             if record.task_attempts < self.config.max_task_attempts:
                 previous_provider = record.provider
                 record.status = PackageStatus.READY

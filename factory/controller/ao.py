@@ -87,6 +87,15 @@ class AgentOrchestrator:
         )
         return "workspace preserved" not in result.stdout.lower()
 
+    def cleanup(self) -> None:
+        self.runner.run(
+            ["ao", "session", "cleanup", "--project", self.project_id, "-y"],
+            allowed_env=AO_ENV,
+            timeout=120,
+            check=False,
+        )
+
+
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         self._request("PUT", f"sessions/{session_id}/reviewer", {"harness": reviewer})
         try:
