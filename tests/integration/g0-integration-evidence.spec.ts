@@ -19,8 +19,19 @@ import {
 import { ToolCore } from '@ciag/tool-core';
 import type { CostPolicyAdapter } from '@ciag/provider-contracts';
 import { ExactMemoryCache } from '@ciag/runtime-cache';
-import { applyBootstrapMigration } from '@ciag/persistence';
-import * as persistenceSchema from '../../packages/persistence/src/schema.js';
+import {
+  applyBootstrapMigration,
+  schemaMigrations,
+  specificationMetadata,
+  harnessState,
+  taskState,
+  clusterState,
+  syntheticObservations,
+  artifactMetadata,
+  outbox,
+  evaluationRecords,
+  auditRecords,
+} from '@ciag/persistence';
 import {
   FakeNotificationTransport,
   FakeProviderNetwork,
@@ -31,8 +42,8 @@ import { FakeObjectStore } from '@ciag/object-store';
 import { InMemoryTracer } from '@ciag/observability';
 import { runWalkingSkeleton, replayStagesAsOf } from '@ciag/workflow-runtime';
 import { createApp, createMcpServer } from '../../apps/api/src/app.js';
-import { McpAdapter } from '../../packages/mcp-adapter/src/index.js';
-import { decode, hasDecoder, supportedDecoderIds } from '../../packages/program-decoders/src/index.js';
+import { McpAdapter } from '@ciag/mcp-adapter';
+import { decode, hasDecoder, supportedDecoderIds } from '@ciag/program-decoders';
 import { loadAndValidateSpecification } from '../../tools/prd-compiler/compiler.js';
 
 describe('G0 integration and conformance evidence (AC-001..AC-004)', () => {
@@ -545,7 +556,20 @@ describe('G0 integration and conformance evidence (AC-001..AC-004)', () => {
         .map((match) => match[1])
         .sort();
 
-      const drizzleTables = Object.values(persistenceSchema)
+      const drizzleTableObjects = [
+        schemaMigrations,
+        specificationMetadata,
+        harnessState,
+        taskState,
+        clusterState,
+        syntheticObservations,
+        artifactMetadata,
+        outbox,
+        evaluationRecords,
+        auditRecords,
+      ];
+
+      const drizzleTables = drizzleTableObjects
         .map((table) => getTableName(table))
         .sort();
 
@@ -570,7 +594,7 @@ describe('G0 integration and conformance evidence (AC-001..AC-004)', () => {
       }
 
       // Column and structure agreement across Drizzle schema and SQL
-      for (const table of Object.values(persistenceSchema)) {
+      for (const table of drizzleTableObjects) {
         const tableName = getTableName(table);
         const tableBlockMatch = migrationSql.match(
           new RegExp(`CREATE TABLE IF NOT EXISTS\\s+${tableName}\\s*\\(([^;]+)\\);`, 's'),
