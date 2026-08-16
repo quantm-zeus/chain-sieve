@@ -567,15 +567,34 @@ export const canonicalFeatureSetBytes = (featureSet: FeatureSet): CanonicalFeatu
   return { canonicalJson: json, sha256, bytes: bytes.byteLength };
 };
 
+const mapSnapshotError = (e: unknown): never => {
+  if (e instanceof SnapshotValidationError) {
+    if (e.code === 'SNAPSHOT_MALFORMED') throw new FeatureValidationError('FEATURE_MALFORMED', e.message);
+    if (e.code === 'SNAPSHOT_INCOMPLETE') throw new FeatureValidationError('FEATURE_INCOMPLETE', e.message);
+    throw new FeatureValidationError('FEATURE_INCONSISTENT', e.message);
+  }
+  throw e as Error;
+};
+
 export const computeFeatureSet = (
   history: readonly MarketSnapshot[],
   now: MarketSnapshot,
   tradeBucketsForEntropy: number[] | null = null,
   calculatedAt: string = new Date().toISOString(),
 ): FeatureSet => {
-  validateSnapshot(now);
+  try {
+    validateSnapshot(now);
+  } catch (e) {
+    mapSnapshotError(e);
+  }
   if (history.length > 0) {
-    for (const h of history) validateSnapshot(h);
+    for (const h of history) {
+      try {
+        validateSnapshot(h);
+      } catch (e) {
+        mapSnapshotError(e);
+      }
+    }
   }
 
   const vol = computeVolumeAcceleration(history, now, FEATURE_REGISTRY[0]!, calculatedAt);

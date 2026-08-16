@@ -92,7 +92,7 @@ const ISO_DATETIME_RE =
 
 const DECIMAL_RE = /^\d+(\.\d+)?$/;
 const SHA256_RE = /^[a-f0-9]{64}$/;
-const POOL_ID_RE = /^[^:]+:[^:]+:[^:]+$/;
+const POOL_ID_RE = /^.+:[^:]+:[^:]+$/;
 
 const isValidIso = (v: string): boolean =>
   ISO_DATETIME_RE.test(v) && !Number.isNaN(Date.parse(v));
