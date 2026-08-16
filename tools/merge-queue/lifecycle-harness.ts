@@ -207,7 +207,10 @@ export const runLifecycleHarness = async (): Promise<{
         }
       }
       git(repository, ['add', '.']);
-      git(repository, ['commit', '-m', 'test: sync source maintenance changes']);
+      const staged = git(repository, ['diff', '--cached', '--name-only']);
+      if (staged.length > 0) {
+        git(repository, ['commit', '-m', 'test: sync source maintenance changes']);
+      }
     }
     await symlink(
       join(source, 'node_modules'),

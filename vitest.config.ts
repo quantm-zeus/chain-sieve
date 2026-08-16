@@ -26,6 +26,7 @@ export default defineConfig({
       '@ciag/test-fixtures': resolve(__dirname, 'packages/test-fixtures/src/index.ts'),
       '@ciag/tool-core': resolve(__dirname, 'packages/tool-core/src/index.ts'),
       '@ciag/workflow-runtime': resolve(__dirname, 'packages/workflow-runtime/src/index.ts'),
+      '@ciag/signal-intelligence': resolve(__dirname, 'packages/signal-intelligence/src/index.ts'),
     },
   },
   test: {
