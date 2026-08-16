@@ -4,7 +4,7 @@ import {
   DEFAULT_FUNNEL_PROFILE,
   FunnelValidationError,
 } from '@ciag/signal-intelligence';
-import type { FunnelInput, FunnelProfile } from '@ciag/signal-intelligence';
+import type { FunnelInput, FunnelProfile, FunnelAdapterEvidence } from '@ciag/signal-intelligence';
 import type { FeatureSet } from '@ciag/signal-intelligence';
 
 const iso = '2026-03-01T00:00:00.000Z';
@@ -17,7 +17,7 @@ const makeFeature = (overrides: Partial<FeatureSet['features'][number]> & { feat
   windowStart: null,
   windowEnd: iso,
   value: overrides.value ?? 1.0,
-  quality: (overrides.quality as string) ?? 'VALID',
+  quality: overrides.quality ?? 'VALID',
   denominator: 1000,
   sampleSize: 5,
   cohortLevel: 'exact',
@@ -52,7 +52,7 @@ const adapterUnavailable = {
   verified: false,
 };
 
-const inputFor = (assetId: string, scoreValue: number, adapter = adapterAvailable): FunnelInput => {
+const inputFor = (assetId: string, scoreValue: number, adapter: FunnelAdapterEvidence | null = adapterAvailable): FunnelInput => {
   const fs = makeFeatureSet(assetId, [
     makeFeature({ featureId: 'volume_acceleration', value: scoreValue, entityId: assetId }),
     makeFeature({ featureId: 'liquidity_growth', value: scoreValue, entityId: assetId }),
