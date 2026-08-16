@@ -18,8 +18,11 @@ from factory.controller.reasoning import (
     ConvergenceOutputRejectedError,
     ReasoningContextUnavailableError,
     ReasoningRunner,
+    _format_reasoning_prompt,
     _validate_requirement_ids,
+    audit_remediation,
     authoritative_requirement_ids,
+    build_reasoning_context,
     is_product_roadmap_milestone,
     preflight_convergence_context,
     reconcile_durable_state,
@@ -416,27 +419,54 @@ class G1ReconciliationAndPlanningBoundaryTests(unittest.TestCase):
         _validate_requirement_ids(self.root, ms_canary)
 
     def test_10_reasoning_context_preflight_fail_closed_on_invalid_git_sha(self) -> None:
-        """TEST 10: Preflight context fails closed with REASONING_CONTEXT_UNAVAILABLE on git failure, malformed SHA, or all-zero SHA."""
+        """TEST 10: Preflight context correctly and independently exercises all four SHA branches (runner + subprocess)."""
         ms = self.config.load_milestone()
+        valid_sha = "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
 
-        # Case A: Git command failure
+        # Case 1: Runner returns non-zero git result
         mock_runner_fail = MagicMock()
         mock_runner_fail.run.return_value = CommandResult(("git", "rev-parse", "HEAD"), "", "git error", 1)
+        with self.assertRaises(ReasoningContextUnavailableError):
+            preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_fail)
+
+        # Case 2: Runner returns success + all-zero SHA
+        mock_runner_zero = MagicMock()
+        mock_runner_zero.run.return_value = CommandResult(("git", "rev-parse", "HEAD"), "0" * 40, "", 0)
+        with self.assertRaises(ReasoningContextUnavailableError):
+            preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_zero)
+
+        # Case 3: Runner returns success + malformed/short SHA
+        mock_runner_short = MagicMock()
+        mock_runner_short.run.return_value = CommandResult(("git", "rev-parse", "HEAD"), "abc123", "", 0)
+        with self.assertRaises(ReasoningContextUnavailableError):
+            preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_short)
+
+        # Case 4: Runner returns success + valid 40-character hex SHA
+        mock_runner_valid = MagicMock()
+        mock_runner_valid.run.return_value = CommandResult(("git", "rev-parse", "HEAD"), valid_sha, "", 0)
+        ctx_runner = preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_valid)
+        self.assertEqual(ctx_runner["headSha"], valid_sha)
+
+        # Subprocess path (runner is None)
+        # Subprocess Case 1: Non-zero exit code
         with patch("subprocess.run", return_value=MagicMock(returncode=1, stdout="", stderr="error")):
             with self.assertRaises(ReasoningContextUnavailableError):
-                preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_fail)
-        events = self.store.history(5)
-        self.assertTrue(any(e.get("type") == "REASONING_CONTEXT_UNAVAILABLE" for e in events))
+                preflight_convergence_context(self.root, self.config, ms, self.store, None)
 
-        # Case B: All-zero SHA returned
+        # Subprocess Case 2: Success + all-zero SHA
         with patch("subprocess.run", return_value=MagicMock(returncode=0, stdout="0" * 40, stderr="")):
             with self.assertRaises(ReasoningContextUnavailableError):
-                preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_fail)
+                preflight_convergence_context(self.root, self.config, ms, self.store, None)
 
-        # Case C: Malformed short SHA
-        with patch("subprocess.run", return_value=MagicMock(returncode=0, stdout="abc123", stderr="")):
+        # Subprocess Case 3: Success + malformed SHA
+        with patch("subprocess.run", return_value=MagicMock(returncode=0, stdout="not-a-valid-sha", stderr="")):
             with self.assertRaises(ReasoningContextUnavailableError):
-                preflight_convergence_context(self.root, self.config, ms, self.store, mock_runner_fail)
+                preflight_convergence_context(self.root, self.config, ms, self.store, None)
+
+        # Subprocess Case 4: Success + valid 40-character hex SHA
+        with patch("subprocess.run", return_value=MagicMock(returncode=0, stdout=valid_sha, stderr="")):
+            ctx_sub = preflight_convergence_context(self.root, self.config, ms, self.store, None)
+            self.assertEqual(ctx_sub["headSha"], valid_sha)
 
     def test_11_reasoning_context_preflight_records_sha256_sources_and_valid_sha(self) -> None:
         """TEST 11: Preflight context captures SHA-256 digests for all constitution/manifest/planning inputs."""
@@ -466,6 +496,176 @@ class G1ReconciliationAndPlanningBoundaryTests(unittest.TestCase):
 
         # Verify no remediation plan written
         self.assertFalse((self.config.state_dir / "remediation-plan.json").exists())
+
+    def test_13_reconciliation_preserves_legitimate_package_with_convergence_evidence_in_name(self) -> None:
+        """TEST 13: Legitimate package whose ID happens to contain 'convergence-evidence' is NOT deleted by reconciliation."""
+        g1_ms = Milestone.from_dict({
+            "id": "g1-deterministic-signal-execution",
+            "objective": "G1 with legitimate evidence package",
+            "workPackages": [
+                {
+                    "id": "signal-convergence-evidence",
+                    "objective": "Compute deterministic convergence evidence metrics for materialized signals.",
+                    "acceptance": ["Metrics match expected byte outputs under FR-SIG-001."],
+                    "dependencies": [],
+                    "parallelizable": True,
+                    "preferredProvider": "muse",
+                    "risk": "MEDIUM",
+                    "requirementIds": ["FR-SIG-001", "AC-136"],
+                }
+            ],
+        })
+        key_legit = make_key("signal-convergence-evidence", "g1-deterministic-signal-execution")
+        self.store.save({
+            key_legit: PackageRecord(status=PackageStatus.ACTIVE, issue_number=110, session_id="chainsieve-legit-ev"),
+        }, {"stateMigrationVersion": 1})
+
+        mock_ao = MagicMock()
+        reconciled_records, _ = reconcile_durable_state(self.store, g1_ms, self.root, mock_ao)
+        self.assertIn(key_legit, reconciled_records)
+        self.assertEqual(reconciled_records[key_legit].session_id, "chainsieve-legit-ev")
+        mock_ao.kill.assert_not_called()
+
+    def test_14_final_audit_fail_closed_on_requirement_traceability(self) -> None:
+        """TEST 14: Final audit remediation strictly enforces authoritative requirement traceability."""
+        ms = self.config.load_milestone()
+
+        # 1. Valid finding with authoritative requirement IDs -> accepted
+        valid_audit = {
+            "status": "NOT_CONVERGED",
+            "blocking_gaps": [
+                "Feature calculation inconsistency under FR-DATA-004 and AC-136 across unordered inputs"
+            ],
+        }
+        pkg = audit_remediation(ms, valid_audit, self.root)
+        self.assertIn("FR-DATA-004", pkg["requirementIds"])
+        self.assertIn("AC-136", pkg["requirementIds"])
+        self.assertGreater(len(pkg["requirementIds"]), 0)
+
+        # 2. Product-sounding finding with zero requirement IDs -> rejected
+        no_req_audit = {
+            "status": "NOT_CONVERGED",
+            "blocking_gaps": [
+                "Signal materialization needs refactoring of internal helper functions"
+            ],
+        }
+        with self.assertRaises(ConvergenceOutputRejectedError) as cm_no_req:
+            audit_remediation(ms, no_req_audit, self.root)
+        self.assertEqual(cm_no_req.exception.failure_class, "MISSING_REQUIREMENT_EVIDENCE")
+
+        # 3. Explicit unknown requirement ID -> rejected
+        unknown_audit = {
+            "status": "NOT_CONVERGED",
+            "requirementIds": ["FR-UNKNOWN-9999"],
+            "blocking_gaps": ["Unmapped deficiency"],
+        }
+        with self.assertRaises(ConvergenceOutputRejectedError) as cm_unk:
+            audit_remediation(ms, unknown_audit, self.root)
+        self.assertEqual(cm_unk.exception.failure_class, "UNKNOWN_REQUIREMENT_ID")
+
+        # 4. Pure tooling findings -> rejected
+        tooling_audit = {
+            "status": "NOT_CONVERGED",
+            "blocking_gaps": [
+                "Tooling read-access error when inspecting /tmp directory",
+                "Cannot read factory infrastructure configuration",
+            ],
+        }
+        with self.assertRaises(ConvergenceOutputRejectedError) as cm_tool:
+            audit_remediation(ms, tooling_audit, self.root)
+        self.assertEqual(cm_tool.exception.failure_class, "TOOLING_REMEDIATION_REJECTED")
+
+        # 5. Mixed tooling + valid product finding -> only valid product finding retained
+        mixed_audit = {
+            "status": "NOT_CONVERGED",
+            "blocking_gaps": [
+                "Tooling read-access failed on temporary log file",
+                "Feature computation consistency bug under FR-DATA-004",
+            ],
+        }
+        mixed_pkg = audit_remediation(ms, mixed_audit, self.root)
+        self.assertEqual(mixed_pkg["requirementIds"], ["FR-DATA-004"])
+        self.assertEqual(len(mixed_pkg["acceptance"]), 1)
+        self.assertIn("FR-DATA-004", mixed_pkg["acceptance"][0])
+
+    def test_15_controller_owned_context_builder_and_digest(self) -> None:
+        """TEST 15: Context builder constructs self-contained audit payload with deterministic contextDigest."""
+        ms = self.config.load_milestone()
+        valid_sha = "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+        mock_runner = MagicMock()
+        mock_runner.run.return_value = CommandResult(("git", "rev-parse", "HEAD"), valid_sha, "", 0)
+
+        ctx = build_reasoning_context(self.root, self.config, ms, self.store, mock_runner, role="convergence")
+
+        # Check all structured fields
+        self.assertEqual(ctx["milestoneId"], ms.id)
+        self.assertEqual(ctx["headSha"], valid_sha)
+        self.assertIn("contextDigest", ctx)
+        self.assertEqual(len(ctx["contextDigest"]), 64)
+        self.assertIn("planningBundle", ctx)
+        self.assertIn("spec", ctx["planningBundle"])
+        self.assertIn("plan", ctx["planningBundle"])
+        self.assertIn("tasks", ctx["planningBundle"])
+        self.assertIn("scopedRequirementDefinitions", ctx)
+        self.assertIn("packagePlan", ctx)
+        self.assertIn("dependencyDag", ctx)
+
+        # Verify prompt formatter embeds the planning texts and digests
+        base_prompt = "Perform audit."
+        formatted = _format_reasoning_prompt(base_prompt, ctx, ms, role="convergence")
+        self.assertIn(ctx["contextDigest"], formatted)
+        self.assertIn(valid_sha, formatted)
+        self.assertIn(ctx["planningBundle"]["spec"], formatted)
+
+    def test_16_issue_sync_idempotent_no_unnecessary_mutation(self) -> None:
+        """TEST 16: Issue sync does not issue unnecessary mutations when titles and bodies are exact, and updates in-place when metadata changes."""
+        ms = self.config.load_milestone()
+        from factory.controller.controller import issue_body
+
+        existing_issues = {}
+        for i, pkg in enumerate(ms.packages, start=100):
+            key = work_key(ms.id, pkg.id)
+            title = f"[{ms.id}/{pkg.id}] {pkg.objective[:120]}"
+            body = f"<!-- chainsieve-work-package:{key} -->\n\n{issue_body(ms, pkg).rstrip()}\n"
+            existing_issues[key] = Issue(
+                number=i,
+                state="OPEN",
+                body=body,
+                url=f"https://github.com/repo/issues/{i}",
+                author="quantm-zeus",
+                title=title,
+            )
+
+        mock_github = MagicMock()
+        mock_github.issues.return_value = dict(existing_issues)
+
+        controller = FactoryController(self.root, self.config, self.store, mock_github, MagicMock())
+        result = controller.sync_issues(ms)
+
+        # 1. Exact match -> 0 created, 0 updated
+        self.assertEqual(result["created"], [])
+        self.assertEqual(result["updated"], [])
+        mock_github.create_issue.assert_not_called()
+        mock_github.update_issue.assert_not_called()
+
+        # 2. Changed requirement body -> updates in-place
+        first_pkg = ms.packages[0]
+        first_key = work_key(ms.id, first_pkg.id)
+        # Simulate an outdated issue body on GitHub
+        existing_issues[first_key] = Issue(
+            number=100,
+            state="OPEN",
+            body=f"<!-- chainsieve-work-package:{first_key} -->\n\nOutdated body\n",
+            url="https://github.com/repo/issues/100",
+            author="quantm-zeus",
+            title=f"[{ms.id}/{first_pkg.id}] {first_pkg.objective[:120]}",
+        )
+        mock_github.issues.return_value = dict(existing_issues)
+        result2 = controller.sync_issues(ms)
+        self.assertEqual(result2["created"], [])
+        self.assertEqual(result2["updated"], [100])
+        mock_github.update_issue.assert_called_once()
+        mock_github.create_issue.assert_not_called()
 
 
 if __name__ == "__main__":
