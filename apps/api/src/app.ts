@@ -125,7 +125,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     if (rawClientId.length > 128) return context.json({ error: { code: 'INVALID_CLIENT_ID', message: 'MCP client identifier is invalid', correlationId: context.get('correlationId') } }, 400);
 
     const sessionId = context.req.header('x-mcp-session-id');
-    if (sessionId) {
+    if (sessionId !== undefined) {
       const expiresAt = context.req.header('x-mcp-session-expires');
       try {
         validateMcpSessionScope({
