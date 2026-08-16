@@ -89,7 +89,14 @@ class AgentOrchestrator:
 
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         self._request("PUT", f"sessions/{session_id}/reviewer", {"harness": reviewer})
-        self.runner.run(["ao", "review", "trigger", session_id], allowed_env=AO_ENV, timeout=120)
+        try:
+            self.runner.run(["ao", "review", "trigger", session_id], allowed_env=AO_ENV, timeout=120)
+        except Exception as error:
+            if "terminated" in str(error).lower():
+                self.restore(session_id)
+                self.runner.run(["ao", "review", "trigger", session_id], allowed_env=AO_ENV, timeout=120)
+            else:
+                raise
 
     def reviews(self, session_id: str) -> dict[str, Any]:
         return self.runner.json(["ao", "review", "ls", session_id, "--json"], allowed_env=AO_ENV)

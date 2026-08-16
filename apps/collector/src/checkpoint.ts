@@ -96,3 +96,42 @@ export const createRevision = (originalSignature: string, type: Revision['type']
   compensatingEvent: compensating,
   createdAt: new Date().toISOString(),
 });
+
+export type IngestResult =
+  | { kind: 'accepted'; envelope: CollectorEnvelope }
+  | { kind: 'duplicate'; canonicalKey: string };
+
+const canonicalKey = (e: CollectorEnvelope): string =>
+  `${e.signature}:${e.slot}:${e.instructionIndex}:${e.logIndex ?? 'null'}:${e.blockHash}`;
+
+export class IngestionStore {
+  private seen = new Set<string>();
+  private envelopes: CollectorEnvelope[] = [];
+  private checkpoint: PartitionCheckpoint | null = null;
+
+  constructor(private readonly partition: string) {}
+
+  ingest(envelope: CollectorEnvelope): IngestResult {
+    const key = canonicalKey(envelope);
+    if (this.seen.has(key)) return { kind: 'duplicate', canonicalKey: key };
+    this.seen.add(key);
+    this.envelopes.push(envelope);
+    return { kind: 'accepted', envelope };
+  }
+
+  getCheckpoint(): PartitionCheckpoint | null { return this.checkpoint; }
+
+  commitCheckpoint(next: PartitionCheckpoint): { ok: true } | { ok: false; reason: string } {
+    if (!isMonotonic(this.checkpoint, next)) return { ok: false, reason: 'NON_MONOTONIC_CHECKPOINT' };
+    this.checkpoint = next;
+    return { ok: true };
+  }
+
+  detectGapFor(observedSlot: number, observedSequence: number, now?: string): ReturnType<typeof detectGap> {
+    if (!this.checkpoint) return null;
+    return detectGap(this.checkpoint, observedSlot, observedSequence, now);
+  }
+
+  count(): number { return this.envelopes.length; }
+  all(): readonly CollectorEnvelope[] { return this.envelopes; }
+}

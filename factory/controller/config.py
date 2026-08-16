@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -57,6 +57,7 @@ class FactoryConfig:
     muse_explicit_model: str | None = None
     agy_explicit_model: str | None = None
     provider_cooldown_seconds: int = 60
+    implementation_weights: dict[str, int] = field(default_factory=lambda: {"agy": 2, "muse": 1})
 
     @classmethod
     def load(cls, root: Path, path: Path) -> "FactoryConfig":
@@ -65,6 +66,11 @@ class FactoryConfig:
         resources = raw["resources"]
         integration = raw["integration"]
         models = raw["models"]
+        raw_weights = budgets.get("implementationWeights")
+        if raw_weights is None:
+            weights = {"agy": 2, "muse": 1}
+        else:
+            weights = {str(k).lower(): int(v) for k, v in raw_weights.items()}
         config = cls(
             repo=str(raw["repository"]),
             project_id=str(raw.get("aoProjectId", "chainsieve")),
@@ -107,6 +113,7 @@ class FactoryConfig:
             agy_explicit_model=os.environ.get("CHAINSIEVE_AGY_MODEL") or None,
             provider_cooldown_seconds=int(budgets.get("providerCooldownSeconds", 60)),
             max_tick_duration_seconds=int(budgets.get("maxTickDurationSeconds", 300)),
+            implementation_weights=weights,
         )
         config.validate()
         return config
@@ -152,6 +159,11 @@ class FactoryConfig:
             raise ValueError("Muse and Agy model preferences must be non-empty")
         if self.muse_explicit_model and self.muse_explicit_model != self.muse_model:
             raise ValueError("verified Muse model must match its requested preference")
+        if set(self.implementation_weights) != {"agy", "muse"}:
+            raise ValueError("implementationWeights must configure exactly agy and muse")
+        for provider, weight in self.implementation_weights.items():
+            if weight <= 0:
+                raise ValueError(f"implementation weight for {provider} must be positive")
 
     def load_milestone(self) -> Milestone:
         active_path = self.state_dir / "active-milestone.json"
