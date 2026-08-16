@@ -81,6 +81,9 @@ class FactoryController:
         return Snapshot(issues=issues, prs=prs, sessions=sessions)
 
     def reconcile(self, milestone: Milestone, snapshot: Snapshot | None = None) -> dict[str, PackageRecord]:
+        from .reasoning import reconcile_durable_state
+
+        reconcile_durable_state(self.store, self.config.plan_path, self.root, self.ao)
         snapshot = snapshot or self.snapshot()
         previous = self.store.load()
         records: dict[str, PackageRecord] = {}
@@ -836,10 +839,36 @@ class FactoryController:
         if passes >= self.config.max_convergence_passes:
             self._replan_convergence(milestone, metadata)
             return
-        from .reasoning import ReasoningRunner, write_remediation
+        from .reasoning import (
+            ConvergenceOutputRejectedError,
+            ReasoningContextUnavailableError,
+            ReasoningRunner,
+            write_remediation,
+        )
 
         self.store.event("CONVERGENCE_STARTED", milestoneId=milestone.id, attempt=passes + 1)
-        result = ReasoningRunner(self.root, self.config, self.store, self.github.runner).converge(milestone)
+        reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
+        try:
+            result = reasoning.converge(milestone)
+        except ConvergenceOutputRejectedError as error:
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                attempt=passes + 1,
+                reason=str(error),
+                failureClass=error.failure_class,
+                workPackageId=error.gap_id,
+            )
+            raise RuntimeError(f"Convergence output rejected: {error}")
+        except ReasoningContextUnavailableError as error:
+            self.store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                attempt=passes + 1,
+                reason=str(error),
+            )
+            raise RuntimeError(f"Convergence context unavailable: {error}")
+
         metadata["convergencePasses"] = passes + 1
         if result["status"] == "CONVERGED":
             metadata["milestoneConverged"] = True
@@ -896,7 +925,13 @@ class FactoryController:
             self._block_factory(milestone.id, metadata, "active milestone is absent from committed roadmap")
             return
         index = ids.index(milestone.id)
-        from .reasoning import ReasoningRunner, audit_remediation, write_remediation
+        from .reasoning import (
+            ConvergenceOutputRejectedError,
+            ReasoningContextUnavailableError,
+            ReasoningRunner,
+            audit_remediation,
+            write_remediation,
+        )
 
         reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
         if index + 1 < len(roadmap):
@@ -918,25 +953,43 @@ class FactoryController:
             return
         cycle = cycles + 1
         self.store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id, cycle=cycle)
-        value = reasoning.final_audit(output)
-        metadata["finalAuditCycles"] = cycle
-        if value.get("status") == "CONVERGED":
-            metadata["finalAuditConverged"] = True
-            self.store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
-            self._notify("INFO", "ChainSieve final product audit converged")
-            return
-        package = audit_remediation(milestone, value)
-        write_remediation(self.config, milestone, [package])
-        metadata["finalAuditConverged"] = False
-        metadata["milestoneConverged"] = False
-        self.store.event(
-            "CONVERGENCE_GAP_FOUND",
-            milestoneId=milestone.id,
-            workPackageId=package["id"],
-            workKey=work_key(milestone.id, package["id"]),
-            reason="final audit",
-            cycle=cycle,
-        )
+        try:
+            value = reasoning.final_audit(output)
+            metadata["finalAuditCycles"] = cycle
+            if value.get("status") == "CONVERGED":
+                metadata["finalAuditConverged"] = True
+                self.store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
+                self._notify("INFO", "ChainSieve final product audit converged")
+                return
+            package = audit_remediation(milestone, value, self.root)
+            write_remediation(self.config, milestone, [package])
+            metadata["finalAuditConverged"] = False
+            metadata["milestoneConverged"] = False
+            self.store.event(
+                "CONVERGENCE_GAP_FOUND",
+                milestoneId=milestone.id,
+                workPackageId=package["id"],
+                workKey=work_key(milestone.id, package["id"]),
+                reason="final audit",
+                cycle=cycle,
+            )
+        except ConvergenceOutputRejectedError as error:
+            self.store.event(
+                "FINAL_AUDIT_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                cycle=cycle,
+                reason=str(error),
+                failureClass=error.failure_class,
+            )
+            raise RuntimeError(f"Final audit output rejected: {error}")
+        except ReasoningContextUnavailableError as error:
+            self.store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                cycle=cycle,
+                reason=str(error),
+            )
+            raise RuntimeError(f"Final audit context unavailable: {error}")
 
     def _block_factory(self, milestone_id: str, metadata: dict[str, Any], reason: str) -> None:
         metadata["convergenceBlocked"] = True
