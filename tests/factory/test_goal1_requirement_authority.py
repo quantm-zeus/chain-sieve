@@ -236,6 +236,14 @@ class Goal1RequirementAuthorityTests(unittest.TestCase):
         events = self.store.history(10)
         dup_events = [e for e in events if e.get("type") == "REASONING_CONTEXT_UNAVAILABLE" and e.get("failureClass") == "DUPLICATE_REQUIREMENT_ID"]
         self.assertEqual(len(dup_events), 1)
+        self.assertEqual(dup_events[0].get("requirementId"), "FR-DATA-001")
+        self.assertFalse((self.config.state_dir / "remediation-plan.json").exists())
+        self.assertEqual(len(self.store.load()), 0)
+
+    def test_r7b_intra_package_duplicate(self) -> None:
+        """R7b: Intra-package duplicate requirement IDs fail closed at model ingestion with ValueError."""
+        with self.assertRaises(ValueError):
+            WorkPackage.from_dict(make_package("pkg-1", ["FR-DATA-001", "FR-DATA-001"]))
 
 
 if __name__ == "__main__":
