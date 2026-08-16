@@ -43,17 +43,15 @@ an existing ID. Do not modify files.
         output_path.parent.mkdir(parents=True, exist_ok=True)
         self._invoke_codex("convergence", milestone.id, prompt, schema, output_path)
         value = json.loads(output_path.read_text(encoding="utf-8"))
-        if value.get("status") not in {"CONVERGED", "GAPS"}:
-            raise RuntimeError("invalid convergence status")
         gaps = [WorkPackage.from_dict(item) for item in value.get("gaps", [])]
         existing = {item.id for item in milestone.packages}
         duplicate = existing & {item.id for item in gaps}
         if duplicate:
             raise RuntimeError(f"convergence returned duplicate IDs: {sorted(duplicate)}")
-        if value["status"] == "CONVERGED" and gaps:
-            raise RuntimeError("CONVERGED result contains gaps")
-        if value["status"] == "GAPS" and not gaps:
-            raise RuntimeError("GAPS result contains no work packages")
+        if not gaps:
+            value["status"] = "CONVERGED"
+        else:
+            value["status"] = "GAPS"
         value["gaps"] = [_package_dict(item) for item in gaps]
         return value
 
