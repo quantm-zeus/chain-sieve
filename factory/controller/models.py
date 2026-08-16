@@ -156,6 +156,7 @@ class PackageRecord:
     started_at: str | None = None
     last_progress_at: str | None = None
     progress_fingerprint: str | None = None
+    provider_selection: dict[str, Any] | None = None
     updated_at: str | None = None
 
     @classmethod
@@ -192,6 +193,7 @@ class PackageRecord:
             "started_at": self.started_at,
             "last_progress_at": self.last_progress_at,
             "progress_fingerprint": self.progress_fingerprint,
+            "provider_selection": self.provider_selection,
             "updated_at": self.updated_at,
         }
 

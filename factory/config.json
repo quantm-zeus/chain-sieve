@@ -20,7 +20,11 @@
     "maxIdleSeconds": 900,
     "maxStartingSeconds": 300,
     "maxTickDurationSeconds": 300,
-    "providerCooldownSeconds": 60
+    "providerCooldownSeconds": 60,
+    "implementationWeights": {
+      "agy": 2,
+      "muse": 1
+    }
   },
   "resources": {
     "diskMinFreeGiB": 15,

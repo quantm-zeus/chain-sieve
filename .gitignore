@@ -16,5 +16,6 @@ artifacts/merge-queue/
 artifacts/test-output/
 *.log
 .factory/
+.factory-canary/
 __pycache__/
 *.py[cod]
