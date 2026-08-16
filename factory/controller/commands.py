@@ -30,6 +30,8 @@ BASE_ENV_KEYS = (
 EXECUTABLE_OVERRIDES = {
     "gh": "CHAINSIEVE_GH_BIN",
     "codex": "CHAINSIEVE_CODEX_BIN",
+    "muse": "CHAINSIEVE_MUSE_BIN",
+    "agy": "CHAINSIEVE_AGY_BIN",
 }
 
 

@@ -55,6 +55,27 @@ class StateStore:
         os.chmod(temporary, 0o640)
         temporary.replace(self.state_path)
 
+    def set_reasoning_operation(
+        self,
+        *,
+        role: str | None,
+        provider: str | None = None,
+        milestone_id: str | None = None,
+        started_at: str | None = None,
+    ) -> None:
+        records = self.load()
+        metadata = self.metadata()
+        if role is None:
+            metadata.pop("reasoningOperation", None)
+        else:
+            metadata["reasoningOperation"] = {
+                "role": role,
+                "provider": provider,
+                "milestoneId": milestone_id,
+                "startedAt": started_at or utc_now(),
+            }
+        self.save(records, metadata)
+
     def event(self, event_type: str, **fields: Any) -> None:
         self.prepare()
         payload = {"timestamp": utc_now(), "type": event_type}

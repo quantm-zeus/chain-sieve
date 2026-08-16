@@ -18,7 +18,8 @@
     "maxTaskWallClockSeconds": 3600,
     "maxMilestoneWallClockSeconds": 14400,
     "maxIdleSeconds": 600,
-    "maxStartingSeconds": 300
+    "maxStartingSeconds": 300,
+    "reasoningTimeoutSeconds": 300
   },
   "resources": {
     "diskMinFreeGiB": 15,
@@ -28,6 +29,7 @@
   "models": {
     "muse": {"model": "muse-spark-1.2-contributor"},
     "codex": {
+      "convergence": {"model": "gpt-5.6-luna", "reasoningEffort": "medium", "maxCallsPerMilestone": 0},
       "planner": {"model": "gpt-5.6-luna", "reasoningEffort": "medium", "maxCallsPerMilestone": 3},
       "replan": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},
       "final_audit": {"model": "gpt-5.6-terra", "reasoningEffort": "high", "maxCallsPerMilestone": 0},

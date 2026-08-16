@@ -3,11 +3,40 @@
   "$id": "https://chainsieve.local/schemas/review.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["verdict", "severity", "headSha", "findings"],
+  "required": ["verdict", "headSha"],
   "properties": {
-    "verdict": { "type": "string", "enum": ["PASS", "FINDINGS"] },
+    "verdict": { "type": "string", "enum": ["PASS", "FINDINGS", "approved", "changes_requested"] },
     "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
     "headSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "reviewScope": { "type": "string", "enum": ["FULL", "DELTA"] },
+    "blockingFindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "issue", "severity"],
+        "properties": {
+          "file": { "type": "string" },
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "requirementId": { "type": "string" },
+          "rule": { "type": "string" }
+        }
+      }
+    },
+    "nonBlockingSuggestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "suggestion"],
+        "properties": {
+          "file": { "type": "string" },
+          "suggestion": { "type": "string" },
+          "category": { "type": "string" }
+        }
+      }
+    },
     "findings": {
       "type": "array",
       "items": {
@@ -17,7 +46,9 @@
         "properties": {
           "file": { "type": "string" },
           "issue": { "type": "string" },
-          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "requirementId": { "type": "string" },
+          "rule": { "type": "string" }
         }
       }
     }

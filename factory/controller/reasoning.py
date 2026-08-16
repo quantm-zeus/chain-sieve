@@ -26,6 +26,7 @@ class ReasoningRunner:
         self.runner = runner
 
     def converge(self, milestone: Milestone) -> dict[str, Any]:
+        output_path = self.config.state_dir / "convergence-result.json"
         prompt = (self.root / "factory" / "prompts" / "convergence.md").read_text(encoding="utf-8")
         prompt += f"""
 
@@ -38,17 +39,10 @@ Return one JSON object only with `status` equal to `CONVERGED` or `GAPS`, and `g
 work-package objects matching factory/schemas/work-package.schema.json. Every gap ID must be deterministic and not reuse
 an existing ID. Do not modify files.
 """
-        result = self.runner.run(
-            [
-                "muse", "exec", "--trust-workspace", "--disable-approval", "--disable-write", "--disable-shell",
-                "--user-input-auto-resolve", "--json", "--max-model-steps", "60", prompt,
-            ],
-            allowed_env=MUSE_ENV,
-            additions={"MUSE_NO_AUTO_UPDATE": "1"},
-            timeout=self.config.max_task_wall_clock_seconds,
-        )
-        text = _muse_final_text(result.stdout)
-        value = _extract_json(text)
+        schema = self.root / "factory" / "schemas" / "convergence.schema.json"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        self._invoke_codex("convergence", milestone.id, prompt, schema, output_path)
+        value = json.loads(output_path.read_text(encoding="utf-8"))
         if value.get("status") not in {"CONVERGED", "GAPS"}:
             raise RuntimeError("invalid convergence status")
         gaps = [WorkPackage.from_dict(item) for item in value.get("gaps", [])]
@@ -181,6 +175,20 @@ authorize immutable factory/control-plane paths. Do not modify files.
         schema: Path,
         output_path: Path,
     ) -> None:
+        self.store.set_reasoning_operation(role=role, provider="codex", milestone_id=milestone_id)
+        try:
+            self._do_invoke_codex(role, milestone_id, prompt, schema, output_path)
+        finally:
+            self.store.set_reasoning_operation(role=None)
+
+    def _do_invoke_codex(
+        self,
+        role: str,
+        milestone_id: str,
+        prompt: str,
+        schema: Path,
+        output_path: Path,
+    ) -> None:
         route = self.config.codex_routes[role]
         usage, calls = self._codex_budget(milestone_id, role)
         if calls >= route.max_calls_per_milestone:
@@ -278,11 +286,26 @@ authorize immutable factory/control-plane paths. Do not modify files.
             argv,
             allowed_env=CODEX_ENV,
             input_text=prompt,
-            timeout=self.config.max_task_wall_clock_seconds,
+            timeout=self.config.reasoning_timeout_seconds,
             check=False,
         )
 
     def _invoke_muse_fallback(
+        self,
+        role: str,
+        milestone_id: str,
+        prompt: str,
+        schema: Path,
+        output_path: Path,
+        usage: dict[str, Any],
+    ) -> None:
+        self.store.set_reasoning_operation(role=role, provider="muse", milestone_id=milestone_id)
+        try:
+            self._do_invoke_muse_fallback(role, milestone_id, prompt, schema, output_path, usage)
+        finally:
+            self.store.set_reasoning_operation(role=None)
+
+    def _do_invoke_muse_fallback(
         self,
         role: str,
         milestone_id: str,
@@ -310,13 +333,13 @@ authorize immutable factory/control-plane paths. Do not modify files.
             argv.extend(("--model", self.config.muse_explicit_model))
         argv.extend((
             "--trust-workspace", "--disable-approval", "--disable-write", "--disable-shell",
-            "--user-input-auto-resolve", "--json", "--max-model-steps", "60", fallback_prompt,
+            "--user-input-auto-resolve", "--json", "--max-model-steps", "10", fallback_prompt,
         ))
         result = self.runner.run(
             argv,
             allowed_env=MUSE_ENV,
             additions={"MUSE_NO_AUTO_UPDATE": "1"},
-            timeout=self.config.max_task_wall_clock_seconds,
+            timeout=self.config.reasoning_timeout_seconds,
             check=False,
         )
         if result is not None and result.returncode == 0:
