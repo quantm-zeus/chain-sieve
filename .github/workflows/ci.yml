@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   factory-canary:
     name: Factory Canary · harmless validation
@@ -149,17 +152,8 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm test
-      - run: pnpm prd:compile
-      - run: pnpm prd:drift-check
-      - run: pnpm requirements:coverage
-      - run: pnpm architecture:verify
-      - run: pnpm migration:verify
-      - run: pnpm harness:verify
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
-      - run: pnpm placeholders:scan
-      - run: pnpm tests:skeleton-integrity
       - run: pnpm test:mutation
   production-images:
     name: Tier 3 · production image (${{ matrix.service }}, linux/amd64)

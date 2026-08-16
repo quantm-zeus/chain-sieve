@@ -91,8 +91,8 @@ def config(root: Path) -> FactoryConfig:
         convergence_enabled=True,
         notification_command=(),
         codex_routes={
-            role: CodexRoute("gpt-test", "medium", 3 if role == "final_audit" else 1)
-            for role in ("planner", "replan", "final_audit", "emergency")
+            role: CodexRoute("gpt-test", "medium", 3 if role in {"final_audit", "convergence"} else 1)
+            for role in ("planner", "replan", "final_audit", "emergency", "convergence")
         },
         agy_model="gemini-test",
     )

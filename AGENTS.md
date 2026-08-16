@@ -72,3 +72,36 @@ The legacy `.agents/skills/chainsieve-task` workflow applies **only** when the c
 When that condition is true, continue to honor the task's supplied worktree, scope, bindings, allowed/forbidden paths, locks, verification requirements, and lifecycle ownership rules.
 
 When the owner explicitly requests factory architecture migration, repository-wide factory refactoring, or replacement/removal of the legacy control plane, the legacy task workflow does not apply. Follow the factory migration authority in this file instead.
+
+## Product-worker commit-history contract (No Amend / Force-Push)
+
+Normal autonomous product workers MUST NOT use `git commit --amend`, `git rebase`, `git push --force`, `git push --force-with-lease`, or equivalent history rewriting under any circumstances. This applies especially after a pull request exists.
+
+Normal correction behavior must strictly be:
+1. edit affected code/tests;
+2. perform focused local verification;
+3. create a NEW additive commit;
+4. execute a normal `git push`.
+
+The deterministic merge queue may squash history later during integration. If the target integration branch moves and a branch update is genuinely required, merge the target branch into the product branch and normal push; do not rebase or force-push. Under no circumstances may a product worker rebase or force-push while semantic review is active.
+
+## Test economy and verification policy
+
+Product workers must maintain rigorous verification without wasteful synthetic duplication:
+
+1. **New behavior or bug fix**: Add the smallest regression test that directly proves the changed behavior.
+2. **Security/control-plane invariants**: Dedicated regression tests are strictly required.
+3. **Pure refactors with sufficient coverage**: Do not add redundant tests merely to increase test count.
+4. **Existing coverage reuse**: If an existing test already directly proves acceptance, reuse it rather than creating synthetic duplicates.
+5. **Focused tests**: Prefer one focused test covering the invariant over multiple repetitive tests.
+6. **No synthetic suites for optional suggestions**: Do not invent large synthetic integration suites merely because a reviewer suggested optional additional evidence.
+7. **Preserve authoritative tests**: Do not weaken or delete existing authoritative tests solely to reduce CI duration.
+
+## Local verification economy
+
+Local worker verification must be focused and economical:
+- Before pushing, run only the smallest useful affected checks. Do not routinely run the entire repository CI locally.
+- Avoid repeatedly running broad suites (`pnpm test`, `pnpm test:integration`, `harness:lifecycle`, full typecheck) after every minor edit unless required by the changed behavior.
+- If a local test runner hangs: inspect once, retry at most once with a materially justified invocation change. If it hangs again and CI is available, stop burning worker time locally, commit the focused change, and let exact-head CI provide authoritative verification.
+- Do not perform repeated retries of local test runner hangs. Do not update Vite, Vitest, pnpm, lockfiles, or unrelated dependencies merely to resolve local test runner hangs unless reproduced in CI and explicitly part of the work package.
+

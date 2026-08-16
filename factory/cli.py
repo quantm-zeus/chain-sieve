@@ -164,9 +164,11 @@ def _human_status(value: dict[str, object]) -> str:
         f"museFallbacks={reasoning['museFallbackSuccesses']}",
         f"MODELS      Muse={reasoning['muse']['modelMode']} Agy={reasoning['agy']['modelMode']} "
         f"Codex planner={reasoning['codexRoles']['planner']['modelMode']}",
-        "",
-        "WORK PACKAGES",
     ]
+    active_op = value.get("reasoningOperation")
+    if active_op and isinstance(active_op, dict):
+        lines.append(f"ACTIVE OP   role={active_op.get('role')} provider={active_op.get('provider')} age={_duration(active_op.get('ageSeconds'))}")
+    lines.extend(["", "WORK PACKAGES"])
     for package_id, record in packages.items():
         suffix = f" PR #{record['pr_number']}" if record.get("pr_number") else ""
         provider = record.get("provider") or "-"

@@ -109,16 +109,21 @@ class FactoryController:
                 record.blocked_reason = "ambiguous duplicate PR/session state; preserving existing work"
             elif merged:
                 selected = sorted(merged, key=lambda item: item.number)[-1]
-                _apply_pr(record, selected)
+                _apply_pr(record, selected, self.root)
                 record.status = PackageStatus.COMPLETED
                 record.blocked_reason = None
                 record.ao_status = "merged"
                 record.ao_activity = "merged"
                 record.last_error = None
                 completed.add(key)
+                for s in sessions:
+                    try:
+                        self.ao.kill(s.id)
+                    except Exception:
+                        pass
             elif open_prs:
                 selected = open_prs[0]
-                _apply_pr(record, selected)
+                _apply_pr(record, selected, self.root)
                 record.started_at = record.started_at or selected.updated_at or utc_now()
                 if sessions:
                     _apply_session(record, sessions[0])
@@ -419,6 +424,18 @@ class FactoryController:
             overall = FactoryStatus.DEGRADED
         else:
             overall = FactoryStatus.RUNNING
+        active_op = metadata.get("reasoningOperation")
+        if active_op and isinstance(active_op, dict) and active_op.get("startedAt"):
+            op_started = active_op.get("startedAt")
+            reasoning_operation = {
+                "role": active_op.get("role"),
+                "provider": active_op.get("provider"),
+                "milestoneId": active_op.get("milestoneId"),
+                "startedAt": op_started,
+                "ageSeconds": _elapsed_seconds(op_started),
+            }
+        else:
+            reasoning_operation = None
         return {
             "status": overall.value,
             "controllerLiveness": {
@@ -431,6 +448,7 @@ class FactoryController:
             "milestone": milestone.id,
             "progress": {"completed": counts[PackageStatus.COMPLETED.value], "total": len(records)},
             "counts": counts,
+            "reasoningOperation": reasoning_operation,
             "usage": {
                 "workerStarts": sum(record.task_attempts for record in records.values()),
                 "corrections": sum(record.correction_attempts for record in records.values()),
@@ -474,6 +492,8 @@ class FactoryController:
         session: Session,
         pr: PullRequest | None,
     ) -> None:
+        if record.status in {PackageStatus.REVIEW, PackageStatus.COMPLETED}:
+            return
         activity = session.activity.lower()
         waiting = record.status == PackageStatus.WAITING_INPUT or activity in {"waiting_input", "blocked", "needs_input"}
         stuck = record.status == PackageStatus.STUCK
@@ -608,6 +628,8 @@ class FactoryController:
         )
 
     def _handle_pr(self, milestone: Milestone, package: Any, record: PackageRecord, pr: PullRequest) -> None:
+        if record.status == PackageStatus.BLOCKED:
+            return
         ci_status, ci_reason = ci_state(pr, self.config.required_checks)
         record.ci_status = ci_status
         if ci_status != "PASS":
@@ -622,7 +644,7 @@ class FactoryController:
                     return
                 self.ao.send(
                     record.session_id,
-                    f"Required CI is not green for PR #{pr.number} at {pr.head_sha}: {ci_reason}. Inspect the check logs, implement the smallest authoritative fix, verify it, and push a new commit without asking for input.",
+                    f"Required CI is not green for PR #{pr.number} at {pr.head_sha}: {ci_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
                 )
                 record.correction_attempts += 1
                 record.last_error = token
@@ -676,7 +698,7 @@ class FactoryController:
                     if record.last_error != token:
                         self.ao.send(
                             record.session_id or "",
-                            f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Read the machine-review evidence, fix every actionable finding, verify, and push a new commit.",
+                            f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
                         )
                         record.last_error = token
                         record.last_progress_at = utc_now()
@@ -711,8 +733,8 @@ class FactoryController:
                 self.ao.send(
                     record.session_id,
                     f"PR #{pr.number} at {pr.head_sha} is {integration_state} relative to "
-                    f"{self.config.integration_branch}. Rebase or merge that exact target into your branch, resolve any "
-                    "ordinary conflict from committed authority, rerun focused checks, and push the updated head. Do not invoke Codex.",
+                    f"{self.config.integration_branch}. Merge that exact target into your branch, resolve any "
+                    "ordinary conflict from committed authority, rerun focused checks, and normal push. Do not amend, rebase, or force-push.",
                 )
                 record.correction_attempts += 1
                 record.last_error = token
@@ -731,8 +753,15 @@ class FactoryController:
 
         self.github.merge(pr)
         record.status = PackageStatus.COMPLETED
+        record.ao_status = "merged"
+        record.ao_activity = "merged"
         record.updated_at = utc_now()
         record.last_progress_at = utc_now()
+        if record.session_id:
+            try:
+                self.ao.kill(record.session_id)
+            except Exception:
+                pass
         if record.issue_number:
             self.github.close_issue(record.issue_number, f"Automatically integrated by the factory at reviewed head `{pr.head_sha}`.")
         self.store.event(
@@ -985,12 +1014,35 @@ def _session_package_status(record: PackageRecord, session: Session, config: Fac
     return PackageStatus.ACTIVE
 
 
-def _apply_pr(record: PackageRecord, pr: PullRequest) -> None:
+def _is_descendant(repo: Path | None, base_sha: str | None, head_sha: str | None) -> bool:
+    if not repo or not base_sha or not head_sha or base_sha == head_sha:
+        return True
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["git", "-C", str(repo), "merge-base", "--is-ancestor", base_sha, head_sha],
+            capture_output=True,
+            check=False,
+        )
+        return result.returncode == 0
+    except Exception:
+        return True
+
+
+def _apply_pr(record: PackageRecord, pr: PullRequest, root: Path | None = None) -> None:
     record.pr_number = pr.number
     record.pr_url = pr.url
     record.pr_state = pr.state
     record.branch = pr.branch
-    if record.head_sha != pr.head_sha:
+    if record.head_sha and pr.head_sha and record.head_sha != pr.head_sha:
+        if root and not _is_descendant(root, record.head_sha, pr.head_sha):
+            record.status = PackageStatus.BLOCKED
+            record.blocked_reason = (
+                f"non-fast-forward PR head history rewrite detected ({record.head_sha[:8]} -> {pr.head_sha[:8]}); "
+                "preserving work"
+            )
+            record.last_error = record.blocked_reason
+            return
         record.review_sha = None
         record.review_verdict = None
         record.last_error = None

@@ -9,7 +9,7 @@ from typing import Any
 from .models import Milestone
 
 
-CODEX_ROLES = ("planner", "replan", "final_audit", "emergency")
+CODEX_ROLES = ("planner", "replan", "final_audit", "emergency", "convergence")
 
 
 @dataclass(frozen=True)
@@ -53,6 +53,7 @@ class FactoryConfig:
     notification_command: tuple[str, ...]
     codex_routes: dict[str, CodexRoute]
     agy_model: str
+    reasoning_timeout_seconds: int = 300
     muse_model: str = "muse-spark-1.2-contributor"
     muse_explicit_model: str | None = None
     agy_explicit_model: str | None = None
@@ -113,6 +114,7 @@ class FactoryConfig:
             agy_explicit_model=os.environ.get("CHAINSIEVE_AGY_MODEL") or None,
             provider_cooldown_seconds=int(budgets.get("providerCooldownSeconds", 60)),
             max_tick_duration_seconds=int(budgets.get("maxTickDurationSeconds", 300)),
+            reasoning_timeout_seconds=int(budgets.get("reasoningTimeoutSeconds", budgets.get("maxTickDurationSeconds", 300))),
             implementation_weights=weights,
         )
         config.validate()
@@ -138,6 +140,8 @@ class FactoryConfig:
             raise ValueError("idle and starting thresholds must be positive")
         if self.max_tick_duration_seconds <= 0:
             raise ValueError("maxTickDurationSeconds must be positive")
+        if self.reasoning_timeout_seconds <= 0:
+            raise ValueError("reasoningTimeoutSeconds must be positive")
         if self.provider_cooldown_seconds < 0 or self.provider_cooldown_seconds > 3600:
             raise ValueError("providerCooldownSeconds must be between 0 and 3600")
         if self.disk_min_free_gib < 0 or self.memory_min_free_mib < 0 or self.max_worktrees < 1:
@@ -155,6 +159,8 @@ class FactoryConfig:
                 raise ValueError(f"Codex call limit for {role} cannot be negative")
         if self.codex_routes["final_audit"].max_calls_per_milestone < self.max_final_audit_cycles:
             raise ValueError("final_audit Codex call limit must cover maxFinalAuditCycles")
+        if self.max_convergence_passes > 0 and self.codex_routes["convergence"].max_calls_per_milestone < self.max_convergence_passes:
+            raise ValueError("convergence Codex call limit must cover maxConvergencePasses")
         if not self.muse_model or not self.agy_model:
             raise ValueError("Muse and Agy model preferences must be non-empty")
         if self.muse_explicit_model and self.muse_explicit_model != self.muse_model:
