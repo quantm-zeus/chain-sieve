@@ -50,19 +50,26 @@ class FactoryController:
     def sync_issues(self, milestone: Milestone) -> dict[str, Any]:
         issues = self.github.issues()
         created: list[int] = []
+        updated: list[int] = []
         for package in milestone.packages:
             key = work_key(milestone.id, package.id)
+            expected_title = f"[{milestone.id}/{package.id}] {package.objective[:120]}"
+            expected_body = f"<!-- chainsieve-work-package:{key} -->\n\n{issue_body(milestone, package).rstrip()}\n"
             if key in issues:
+                existing = issues[key]
+                if existing.body.strip() != expected_body.strip() and hasattr(self.github, "update_issue"):
+                    self.github.update_issue(existing.number, expected_title, expected_body)
+                    updated.append(existing.number)
                 continue
             issue = self.github.create_issue(
                 key,
-                f"[{milestone.id}/{package.id}] {package.objective[:120]}",
+                expected_title,
                 issue_body(milestone, package),
             )
             issues[key] = issue
             created.append(issue.number)
             self.store.event("WORK_PACKAGE_PLANNED", milestoneId=milestone.id, workPackageId=package.id, workKey=key, issue=issue.number)
-        return {"created": created, "total": len(issues)}
+        return {"created": created, "updated": updated, "total": len(issues)}
 
     def snapshot(self) -> Snapshot:
         issues = self.github.issues()
@@ -83,7 +90,7 @@ class FactoryController:
     def reconcile(self, milestone: Milestone, snapshot: Snapshot | None = None) -> dict[str, PackageRecord]:
         from .reasoning import reconcile_durable_state
 
-        reconcile_durable_state(self.store, self.config.plan_path, self.root, self.ao)
+        reconcile_durable_state(self.store, milestone, self.root, self.ao)
         snapshot = snapshot or self.snapshot()
         previous = self.store.load()
         records: dict[str, PackageRecord] = {}
