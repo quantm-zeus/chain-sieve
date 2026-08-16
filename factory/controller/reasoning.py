@@ -93,6 +93,7 @@ def build_reasoning_context(
         raise ReasoningContextUnavailableError(reason)
     try:
         constitution_bytes = constitution.read_bytes()
+        constitution_text = constitution_bytes.decode("utf-8")
         sources_manifest["factory/constitution.md"] = hashlib.sha256(constitution_bytes).hexdigest()
     except Exception as error:
         reason = f"unable to read constitution: {error}"
@@ -209,6 +210,7 @@ def build_reasoning_context(
         "milestoneObjective": milestone.objective,
         "headSha": head_sha,
         "role": role,
+        "constitution": constitution_text,
         "scopedRequirementIds": milestone_reqs,
         "authoritativeRequirementCount": len(authoritative_ids),
         "scopedRequirementDefinitions": scoped_defs,
@@ -225,6 +227,7 @@ def build_reasoning_context(
     context_snapshot["contextDigest"] = context_digest
 
     return context_snapshot
+
 
 
 def preflight_convergence_context(
@@ -368,6 +371,7 @@ def _format_reasoning_prompt(base_prompt: str, ctx: dict[str, Any], milestone: M
     spec_md = planning.get("spec", "")
     plan_md = planning.get("plan", "")
     tasks_md = planning.get("tasks", "")
+    constitution_text = ctx.get("constitution", "")
 
     if role == "convergence":
         instructions = f"""Determine if the product implementation in the repository satisfies all authoritative requirements and acceptance criteria for milestone `{milestone.id}`.
@@ -377,9 +381,9 @@ def _format_reasoning_prompt(base_prompt: str, ctx: dict[str, Any], milestone: M
 - CRITICAL HARD INVARIANT: Do NOT report tooling, sandbox, environment, file-access, or audit-infrastructure tasks as product gaps. Infrastructure failures are handled by the factory control plane and must never become product work."""
     else:
         instructions = f"""Determine if the product implementation in the repository satisfies all authoritative requirements and acceptance criteria for milestone `{milestone.id}`.
-- If all requirements and acceptance criteria are satisfied, return `status: "CONVERGED"`.
-- If genuine missing PRODUCT functionality or tests remain, return `status: "NOT_CONVERGED"` with validated product findings.
-- Every finding MUST reference valid requirement IDs from authoritative specs.
+- If all requirements and acceptance criteria are satisfied, return `status: "CONVERGED"` with `findings: []`.
+- If genuine missing PRODUCT functionality or tests remain, return `status: "NOT_CONVERGED"` with structured `findings`.
+- Every finding MUST reference at least one valid requirement ID from the scoped definitions below.
 - CRITICAL HARD INVARIANT: Do NOT report tooling, sandbox, environment, file-access, or audit-infrastructure tasks as product gaps. Infrastructure failures are handled by the factory control plane and must never become product work."""
 
     return f"""{base_prompt}
@@ -390,6 +394,11 @@ Milestone Objective: {milestone.objective}
 Integration HEAD Git Commit: `{ctx.get('headSha')}`
 Audit Context Digest: `{ctx.get('contextDigest')}`
 Scoped Requirement IDs: {scoped_reqs_str}
+
+### Factory Constitution:
+```markdown
+{constitution_text}
+```
 
 ### Authoritative Normative Requirements Scoped for Milestone:
 {req_defs_str}
@@ -425,9 +434,30 @@ class ReasoningRunner:
         self.store = store
         self.runner = runner
 
+    def _get_head_sha(self) -> str | None:
+        try:
+            if self.runner is not None:
+                res = self.runner.run(["git", "rev-parse", "HEAD"], check=False)
+                if res.returncode == 0:
+                    candidate = (res.stdout or "").strip()
+                    if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                        return candidate.lower()
+            else:
+                import subprocess
+                res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=self.root, capture_output=True, text=True, check=False)
+                if res.returncode == 0:
+                    candidate = (res.stdout or "").strip()
+                    if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                        return candidate.lower()
+        except Exception:
+            pass
+        return None
+
     def converge(self, milestone: Milestone) -> dict[str, Any]:
         output_path = self.config.state_dir / "convergence-result.json"
         ctx = build_reasoning_context(self.root, self.config, milestone, self.store, self.runner, role="convergence")
+        expected_head = ctx["headSha"]
+        expected_digest = ctx["contextDigest"]
 
         base_prompt = (self.root / "factory" / "prompts" / "convergence.md").read_text(encoding="utf-8")
         prompt = _format_reasoning_prompt(base_prompt, ctx, milestone, role="convergence")
@@ -437,21 +467,95 @@ class ReasoningRunner:
         self.store.event(
             "CONVERGENCE_STARTED",
             milestoneId=milestone.id,
-            headSha=ctx["headSha"],
-            contextDigest=ctx["contextDigest"],
+            headSha=expected_head,
+            contextDigest=expected_digest,
         )
         self._invoke_codex("convergence", milestone.id, prompt, schema, output_path)
+
+        current_head = self._get_head_sha()
+        if current_head != expected_head:
+            reason = f"integration HEAD advanced during convergence from {expected_head} to {current_head}"
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="STALE_INTEGRATION_HEAD",
+                reason=reason,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(reason, failure_class="STALE_INTEGRATION_HEAD")
+
+        fresh_ctx = build_reasoning_context(self.root, self.config, milestone, self.store, self.runner, role="convergence")
+        if fresh_ctx["contextDigest"] != expected_digest:
+            reason = f"normative context changed during convergence: expected {expected_digest}, now {fresh_ctx['contextDigest']}"
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="STALE_CONTEXT_DIGEST",
+                reason=reason,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(reason, failure_class="STALE_CONTEXT_DIGEST")
+
         value = json.loads(output_path.read_text(encoding="utf-8"))
-        value["contextDigest"] = ctx["contextDigest"]
-        value["headSha"] = ctx["headSha"]
+        try:
+            _validate_json_schema(value, json.loads(schema.read_text(encoding="utf-8")))
+        except Exception as error:
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="SCHEMA_VALIDATION_FAILED",
+                reason=f"convergence output violates schema: {error}",
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(f"convergence output violates schema: {error}", failure_class="SCHEMA_VALIDATION_FAILED")
+
+        value["contextDigest"] = expected_digest
+        value["headSha"] = expected_head
         raw_gaps = value.get("gaps", [])
-        if not raw_gaps:
+        if value.get("status") == "CONVERGED":
+            if raw_gaps:
+                self.store.event(
+                    "CONVERGENCE_OUTPUT_REJECTED",
+                    milestoneId=milestone.id,
+                    failureClass="INCONSISTENT_OUTPUT",
+                    reason="CONVERGED status cannot contain gaps",
+                    headSha=expected_head,
+                    contextDigest=expected_digest,
+                )
+                raise ConvergenceOutputRejectedError("CONVERGED status cannot contain gaps", failure_class="INCONSISTENT_OUTPUT")
             value["status"] = "CONVERGED"
             value["gaps"] = []
             output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
             return value
 
-        validated = validate_product_gaps(self.root, milestone, raw_gaps)
+        if not raw_gaps:
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="EMPTY_FINDINGS",
+                reason="GAPS status requires non-empty gaps",
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError("GAPS status requires non-empty gaps", failure_class="EMPTY_FINDINGS")
+
+        try:
+            validated = validate_product_gaps(self.root, milestone, raw_gaps)
+        except ConvergenceOutputRejectedError as error:
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass=error.failure_class,
+                reason=str(error),
+                workPackageId=error.gap_id,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise
+
         value["status"] = "GAPS"
         value["gaps"] = [_package_dict(item) for item in validated]
         output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -460,6 +564,8 @@ class ReasoningRunner:
     def final_audit(self, output_path: Path) -> dict[str, Any]:
         milestone = self.config.load_milestone()
         ctx = build_reasoning_context(self.root, self.config, milestone, self.store, self.runner, role="final_audit")
+        expected_head = ctx["headSha"]
+        expected_digest = ctx["contextDigest"]
 
         base_prompt = (self.root / "factory" / "prompts" / "final-audit.md").read_text(encoding="utf-8")
         prompt = _format_reasoning_prompt(base_prompt, ctx, milestone, role="final_audit")
@@ -469,15 +575,69 @@ class ReasoningRunner:
         self.store.event(
             "FINAL_AUDIT_STARTED",
             milestoneId=milestone.id,
-            headSha=ctx["headSha"],
-            contextDigest=ctx["contextDigest"],
+            headSha=expected_head,
+            contextDigest=expected_digest,
         )
         self._invoke_codex("final_audit", milestone.id, prompt, schema, output_path)
+
+        current_head = self._get_head_sha()
+        if current_head != expected_head:
+            reason = f"integration HEAD advanced during final audit from {expected_head} to {current_head}"
+            self.store.event(
+                "FINAL_AUDIT_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="STALE_INTEGRATION_HEAD",
+                reason=reason,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(reason, failure_class="STALE_INTEGRATION_HEAD")
+
+        fresh_ctx = build_reasoning_context(self.root, self.config, milestone, self.store, self.runner, role="final_audit")
+        if fresh_ctx["contextDigest"] != expected_digest:
+            reason = f"normative context changed during final audit: expected {expected_digest}, now {fresh_ctx['contextDigest']}"
+            self.store.event(
+                "FINAL_AUDIT_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="STALE_CONTEXT_DIGEST",
+                reason=reason,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(reason, failure_class="STALE_CONTEXT_DIGEST")
+
         value = json.loads(output_path.read_text(encoding="utf-8"))
-        value["contextDigest"] = ctx["contextDigest"]
-        value["headSha"] = ctx["headSha"]
+        try:
+            _validate_json_schema(value, json.loads(schema.read_text(encoding="utf-8")))
+        except Exception as error:
+            self.store.event(
+                "FINAL_AUDIT_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="SCHEMA_VALIDATION_FAILED",
+                reason=f"final audit output violates schema: {error}",
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(f"final audit output violates schema: {error}", failure_class="SCHEMA_VALIDATION_FAILED")
+
+        try:
+            audit_remediation(milestone, value, self.root)
+        except ConvergenceOutputRejectedError as error:
+            self.store.event(
+                "FINAL_AUDIT_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass=error.failure_class,
+                reason=str(error),
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise
+
+        value["contextDigest"] = expected_digest
+        value["headSha"] = expected_head
         output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
         return value
+
 
     def plan_milestone(self, current: Milestone, target: dict[str, Any]) -> dict[str, Any]:
         active_path = self.config.state_dir / "active-milestone.json"
@@ -913,32 +1073,57 @@ def audit_remediation(milestone: Milestone, audit: dict[str, Any], root: Path | 
             failure_class="MISSING_REQUIREMENT_EVIDENCE",
         )
 
-    categories = (
-        "blocking_gaps", "requirements_missing", "architecture_conflicts", "test_gaps",
-        "runtime_failures", "security_gaps", "operational_gaps",
-    )
-    findings = [f"{category}: {item}" for category in categories for item in audit.get(category, [])]
-    if not findings:
-        raise ConvergenceOutputRejectedError("NOT_CONVERGED final audit contains no remediation findings", failure_class="EMPTY_FINDINGS")
-
-    pure_tooling_count = 0
-    for finding in findings:
-        for pattern in FORBIDDEN_OBJECTIVE_PATTERNS:
-            if pattern.search(finding):
-                pure_tooling_count += 1
-                break
-
-    if pure_tooling_count == len(findings):
+    if not isinstance(audit, dict):
         raise ConvergenceOutputRejectedError(
-            "final audit findings are pure tooling/read-access failures rather than product deficiencies",
-            failure_class="TOOLING_REMEDIATION_REJECTED",
+            "final audit output must be a JSON object",
+            failure_class="MALFORMED_OUTPUT",
         )
 
-    product_findings = [f for f in findings if not any(p.search(f) for p in FORBIDDEN_OBJECTIVE_PATTERNS)]
-    if not product_findings:
+    status = audit.get("status")
+    if status not in {"CONVERGED", "NOT_CONVERGED"}:
         raise ConvergenceOutputRejectedError(
-            "no valid product findings remain after filtering tooling findings",
-            failure_class="TOOLING_REMEDIATION_REJECTED",
+            f"invalid final audit status {status!r}; expected CONVERGED or NOT_CONVERGED",
+            failure_class="MALFORMED_OUTPUT",
+        )
+
+    raw_findings = audit.get("findings")
+    if raw_findings is None:
+        categories = (
+            "blocking_gaps", "requirements_missing", "architecture_conflicts", "test_gaps",
+            "runtime_failures", "security_gaps", "operational_gaps",
+        )
+        legacy_findings = []
+        for cat in categories:
+            for item in audit.get(cat, []):
+                extracted = re.findall(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}", str(item))
+                reqs = list(audit.get("requirementIds", [])) + extracted
+                legacy_findings.append({
+                    "category": "PRODUCT_GAP",
+                    "summary": str(item),
+                    "requirementIds": reqs,
+                    "evidence": str(item),
+                })
+        raw_findings = legacy_findings
+
+
+    if not isinstance(raw_findings, list):
+        raise ConvergenceOutputRejectedError(
+            "final audit findings must be a list",
+            failure_class="MALFORMED_OUTPUT",
+        )
+
+    if status == "CONVERGED":
+        if raw_findings:
+            raise ConvergenceOutputRejectedError(
+                "CONVERGED final audit output cannot contain findings",
+                failure_class="INCONSISTENT_OUTPUT",
+            )
+        return {"status": "CONVERGED", "findings": []}
+
+    if not raw_findings:
+        raise ConvergenceOutputRejectedError(
+            "NOT_CONVERGED final audit contains no remediation findings",
+            failure_class="EMPTY_FINDINGS",
         )
 
     try:
@@ -951,46 +1136,113 @@ def audit_remediation(milestone: Milestone, audit: dict[str, Any], root: Path | 
             )
         authoritative_ids = frozenset()
 
-    explicit_reqs = audit.get("requirementIds", [])
-    if not isinstance(explicit_reqs, list):
-        raise ConvergenceOutputRejectedError(
-            "final audit requirementIds must be a list",
-            failure_class="MALFORMED_OUTPUT",
-        )
-    unknown_explicit = [rid for rid in explicit_reqs if rid not in authoritative_ids]
-    if unknown_explicit:
-        raise ConvergenceOutputRejectedError(
-            f"final audit contains unknown requirement IDs: {unknown_explicit}",
-            failure_class="UNKNOWN_REQUIREMENT_ID",
+    is_product = is_product_roadmap_milestone(root, milestone.id)
+    tooling_count = 0
+    validated_product_findings: list[dict[str, Any]] = []
+
+    for finding in raw_findings:
+        if not isinstance(finding, dict):
+            raise ConvergenceOutputRejectedError(
+                "each finding must be a dictionary",
+                failure_class="MALFORMED_OUTPUT",
+            )
+        cat = str(finding.get("category", "PRODUCT_GAP"))
+        summary = str(finding.get("summary", "")).strip()
+        evidence = str(finding.get("evidence", "")).strip()
+        if not summary:
+            raise ConvergenceOutputRejectedError(
+                "finding summary cannot be empty",
+                failure_class="EMPTY_OBJECTIVE",
+            )
+
+        is_tooling = cat == "TOOLING_GAP" or any(
+            pattern.search(summary) or pattern.search(evidence) or pattern.search(cat)
+            for pattern in FORBIDDEN_OBJECTIVE_PATTERNS
         )
 
-    all_extracted = [
-        token for text in product_findings
-        for token in re.findall(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}", text)
-        if token in authoritative_ids
-    ]
-    all_extracted.extend([rid for rid in explicit_reqs if rid in authoritative_ids])
-    valid_extracted = sorted(set(all_extracted))
+        if is_tooling:
+            tooling_count += 1
+            continue
 
-    if not valid_extracted and is_product_roadmap_milestone(root, milestone.id):
+        req_ids = finding.get("requirementIds", [])
+        if not isinstance(req_ids, list):
+            raise ConvergenceOutputRejectedError(
+                f"finding {summary!r} requirementIds must be a list",
+                failure_class="MALFORMED_OUTPUT",
+            )
+
+        if is_product:
+            if not req_ids:
+                raise ConvergenceOutputRejectedError(
+                    f"product finding {summary!r} has empty requirementIds",
+                    failure_class="MISSING_REQUIREMENT_EVIDENCE",
+                )
+            for rid in req_ids:
+                if not isinstance(rid, str) or not NORMATIVE_ID.fullmatch(rid):
+                    raise ConvergenceOutputRejectedError(
+                        f"finding {summary!r} contains malformed requirement ID: {rid!r}",
+                        failure_class="MALFORMED_OUTPUT",
+                    )
+                if rid not in authoritative_ids:
+                    raise ConvergenceOutputRejectedError(
+                        f"finding {summary!r} contains unknown requirement ID: {rid!r}",
+                        failure_class="UNKNOWN_REQUIREMENT_ID",
+                    )
+        else:
+            for rid in req_ids:
+                if not isinstance(rid, str) or not NORMATIVE_ID.fullmatch(rid):
+                    raise ConvergenceOutputRejectedError(
+                        f"finding {summary!r} contains malformed requirement ID: {rid!r}",
+                        failure_class="MALFORMED_OUTPUT",
+                    )
+
+        validated_product_findings.append({
+            "category": cat,
+            "summary": summary,
+            "evidence": evidence,
+            "requirementIds": sorted(set(req_ids)),
+        })
+
+    if tooling_count > 0 and not validated_product_findings:
+        raise ConvergenceOutputRejectedError(
+            "final audit findings are pure tooling/read-access failures rather than product deficiencies",
+            failure_class="TOOLING_REMEDIATION_REJECTED",
+        )
+
+    if not validated_product_findings:
+        raise ConvergenceOutputRejectedError(
+            "no valid product findings remain in NOT_CONVERGED audit",
+            failure_class="EMPTY_FINDINGS",
+        )
+
+    all_valid_ids = sorted({rid for f in validated_product_findings for rid in f["requirementIds"]})
+    if is_product and not all_valid_ids:
         raise ConvergenceOutputRejectedError(
             f"final audit findings contain zero validated authoritative requirement IDs for milestone {milestone.id}",
             failure_class="MISSING_REQUIREMENT_EVIDENCE",
         )
 
-    digest = hashlib.sha256(json.dumps(audit, sort_keys=True).encode()).hexdigest()[:10]
+    acceptance_criteria = [
+        f"{f['category']}: {f['summary']}" + (f" (Evidence: {f['evidence']})" if f["evidence"] and f["evidence"] != f["summary"] else "")
+        for f in validated_product_findings
+    ]
+
+    canonical_audit = json.dumps(audit, sort_keys=True)
+    digest = hashlib.sha256(canonical_audit.encode("utf-8")).hexdigest()[:10]
+
     package_dict: dict[str, Any] = {
         "id": f"final-audit-remediation-{digest}",
         "objective": "Resolve blocking product gaps from the independent final audit.",
-        "acceptance": product_findings,
+        "acceptance": acceptance_criteria,
         "dependencies": [item.id for item in milestone.packages],
         "parallelizable": False,
         "preferredProvider": "muse",
         "risk": "CRITICAL",
-        "requirementIds": valid_extracted,
+        "requirementIds": all_valid_ids,
         "authorizedProtectedPaths": [],
     }
     return package_dict
+
 
 
 def reconcile_durable_state(
