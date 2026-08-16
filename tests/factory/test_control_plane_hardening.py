@@ -242,6 +242,8 @@ class HardeningTests(unittest.TestCase):
 
         # Mock codex exec output
         def fake_run(argv, **kwargs):
+            if "git" in argv and "rev-parse" in argv:
+                return CommandResult(tuple(argv), "a" * 40, "", 0)
             timeout = kwargs.get("timeout")
             self.assertEqual(timeout, self.config.reasoning_timeout_seconds)
             self.assertEqual(timeout, 300)

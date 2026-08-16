@@ -82,6 +82,13 @@ class GitHub:
             raise RuntimeError(f"created issue #{number} does not retain exact work marker {package_id!r}")
         return Issue(number, str(value["state"]), str(value.get("body") or ""), str(value["url"]), actor)
 
+    def update_issue(self, number: int, title: str, body: str) -> None:
+        payload = body.rstrip() + "\n"
+        self._run(
+            ["gh", "issue", "edit", str(number), "--repo", self.repo, "--title", title, "--body-file", "-"],
+            input_text=payload,
+        )
+
     def close_issue(self, number: int, reason: str) -> None:
         self._run(
             ["gh", "issue", "close", str(number), "--repo", self.repo, "--comment", reason],

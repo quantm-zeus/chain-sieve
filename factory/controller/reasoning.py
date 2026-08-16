@@ -63,9 +63,17 @@ def preflight_convergence_context(
     store: StateStore,
     runner: CommandRunner | None = None,
 ) -> dict[str, Any]:
+    sources_manifest: dict[str, str] = {}
+
     constitution = root / "factory" / "constitution.md"
     if not constitution.exists() or not constitution.is_file():
         reason = f"constitution missing or unreadable at {constitution}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+    try:
+        sources_manifest["factory/constitution.md"] = hashlib.sha256(constitution.read_bytes()).hexdigest()
+    except Exception as error:
+        reason = f"unable to read constitution: {error}"
         store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
         raise ReasoningContextUnavailableError(reason)
 
@@ -74,6 +82,24 @@ def preflight_convergence_context(
         reason = f"authoritative requirement manifests missing or unreadable in {spec_dir}"
         store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
         raise ReasoningContextUnavailableError(reason)
+
+    for req_file in sorted(spec_dir.glob("*.requirements.json")):
+        try:
+            rel = str(req_file.relative_to(root))
+            sources_manifest[rel] = hashlib.sha256(req_file.read_bytes()).hexdigest()
+        except Exception as error:
+            reason = f"unable to read requirement manifest {req_file}: {error}"
+            store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+            raise ReasoningContextUnavailableError(reason)
+
+    prd_doc = root / "docs" / "spec" / "crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md"
+    if prd_doc.exists():
+        try:
+            sources_manifest["docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.md"] = hashlib.sha256(prd_doc.read_bytes()).hexdigest()
+        except Exception as error:
+            reason = f"unable to read PRD document {prd_doc}: {error}"
+            store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+            raise ReasoningContextUnavailableError(reason)
 
     try:
         authoritative_ids = authoritative_requirement_ids(root)
@@ -97,15 +123,36 @@ def preflight_convergence_context(
             reason = f"planning bundle artifact missing or unreadable: {bundle_file}"
             store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
             raise ReasoningContextUnavailableError(reason)
+        try:
+            rel_bundle = str(bundle_file.relative_to(config.state_dir))
+            sources_manifest[f".factory/{rel_bundle}"] = hashlib.sha256(bundle_file.read_bytes()).hexdigest()
+        except Exception as error:
+            reason = f"unable to read planning bundle {bundle_file}: {error}"
+            store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+            raise ReasoningContextUnavailableError(reason)
 
-    head_sha = "0" * 40
+    head_sha: str | None = None
     try:
-        import subprocess
-        res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False)
-        if res.returncode == 0 and len(res.stdout.strip()) >= 40:
-            head_sha = res.stdout.strip()
+        if runner is not None:
+            res = runner.run(["git", "rev-parse", "HEAD"], check=False)
+            if res.returncode == 0:
+                candidate = (res.stdout or "").strip()
+                if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                    head_sha = candidate.lower()
+        else:
+            import subprocess
+            res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False)
+            if res.returncode == 0:
+                candidate = (res.stdout or "").strip()
+                if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                    head_sha = candidate.lower()
     except Exception:
         pass
+
+    if not head_sha:
+        reason = "unable to resolve valid git HEAD commit SHA"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
 
     milestone_reqs = sorted({rid for pkg in milestone.packages for rid in pkg.requirement_ids if rid in authoritative_ids})
 
@@ -116,6 +163,7 @@ def preflight_convergence_context(
         "scopedRequirementIds": milestone_reqs,
         "authoritativeRequirementCount": len(authoritative_ids),
         "planningDirectory": str(planning_dir),
+        "sources": sources_manifest,
     }
 
 
@@ -282,7 +330,38 @@ Determine if the product implementation in the repository satisfies all authorit
 
     def final_audit(self, output_path: Path) -> dict[str, Any]:
         milestone = self.config.load_milestone()
-        prompt = (self.root / "factory" / "prompts" / "final-audit.md").read_text(encoding="utf-8")
+        manifest = preflight_convergence_context(self.root, self.config, milestone, self.store, self.runner)
+
+        base_prompt = (self.root / "factory" / "prompts" / "final-audit.md").read_text(encoding="utf-8")
+        completed_summary = "\n".join(
+            f"- `{pkg.id}`: {pkg.objective} (Requirement IDs: {', '.join(pkg.requirement_ids) or 'none'})"
+            for pkg in milestone.packages
+        )
+        scoped_reqs_str = ", ".join(manifest["scopedRequirementIds"]) or "none"
+
+        prompt = f"""{base_prompt}
+
+### Deterministic Audit Context Manifest:
+Milestone ID: `{milestone.id}`
+Milestone Objective: {milestone.objective}
+Current Main Git Commit: `{manifest['headSha']}`
+Authoritative Spec Scoped Requirement IDs: {scoped_reqs_str}
+
+Completed Work Packages in Milestone:
+{completed_summary}
+
+Spec Kit Planning Artifacts:
+- `{manifest['planningDirectory']}/spec.md`
+- `{manifest['planningDirectory']}/plan.md`
+- `{manifest['planningDirectory']}/tasks.md`
+
+### Instructions:
+Determine if the product implementation in the repository satisfies all authoritative requirements and acceptance criteria for milestone `{milestone.id}`.
+- If all requirements and acceptance criteria are satisfied, return `status: "CONVERGED"`.
+- If genuine missing PRODUCT functionality or tests remain, return `status: "NOT_CONVERGED"` with validated product findings.
+- Every finding MUST reference valid requirement IDs from authoritative specs.
+- CRITICAL HARD INVARIANT: Do NOT report tooling, sandbox, environment, file-access, or audit-infrastructure tasks as product gaps. Infrastructure failures are handled by the factory control plane and must never become product work.
+"""
         schema = self.root / "factory" / "schemas" / "final-audit.schema.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         self._invoke_codex("final_audit", milestone.id, prompt, schema, output_path)
@@ -773,7 +852,7 @@ def audit_remediation(milestone: Milestone, audit: dict[str, Any], root: Path | 
 
 def reconcile_durable_state(
     store: StateStore,
-    plan_path: Path,
+    milestone_or_plan: Milestone | Path,
     root: Path,
     ao: Any = None,
 ) -> tuple[dict[str, PackageRecord], dict[str, Any]]:
@@ -781,35 +860,44 @@ def reconcile_durable_state(
     metadata = store.metadata()
     cleaned = False
 
-    base_plan_keys: set[str] = set()
-    try:
-        base_raw = json.loads(plan_path.read_text(encoding="utf-8"))
-        mid = base_raw.get("id", "")
-        base_plan_keys = {work_key(mid, p.get("id", "")) for p in base_raw.get("workPackages", [])}
-    except Exception:
-        pass
+    if isinstance(milestone_or_plan, Milestone):
+        active_milestone = milestone_or_plan
+    elif isinstance(milestone_or_plan, Path):
+        active_path = store.directory / "active-milestone.json"
+        source = active_path if active_path.exists() else milestone_or_plan
+        try:
+            active_milestone = Milestone.from_dict(json.loads(source.read_text(encoding="utf-8")))
+        except Exception:
+            active_milestone = Milestone.from_dict(json.loads(milestone_or_plan.read_text(encoding="utf-8")))
+    else:
+        raise TypeError(f"expected Milestone or Path, got {type(milestone_or_plan)}")
 
+    active_keys: set[str] = {work_key(active_milestone.id, p.id) for p in active_milestone.packages}
+
+    purged_remediation_keys: set[str] = set()
     rem_keys: set[str] = set()
     remediation_path = store.directory / "remediation-plan.json"
     if remediation_path.exists():
         try:
             raw = json.loads(remediation_path.read_text(encoding="utf-8"))
-            pkgs = raw.get("workPackages", [])
-            valid_pkgs = []
-            for p in pkgs:
-                if "convergence-evidence" in p.get("id", ""):
-                    continue
-                if any(pat.search(p.get("objective", "")) for pat in FORBIDDEN_OBJECTIVE_PATTERNS):
-                    continue
-                valid_pkgs.append(p)
-                rem_keys.add(work_key(raw.get("milestoneId", ""), p.get("id", "")))
-            if len(valid_pkgs) != len(pkgs):
-                cleaned = True
-                if not valid_pkgs:
-                    remediation_path.unlink(missing_ok=True)
-                else:
-                    raw["workPackages"] = valid_pkgs
-                    remediation_path.write_text(json.dumps(raw, indent=2) + "\n", encoding="utf-8")
+            if raw.get("milestoneId") == active_milestone.id:
+                pkgs = raw.get("workPackages", [])
+                valid_pkgs = []
+                for p in pkgs:
+                    pid = p.get("id", "")
+                    pkey = work_key(raw.get("milestoneId", ""), pid)
+                    if "convergence-evidence" in pid or any(pat.search(p.get("objective", "")) for pat in FORBIDDEN_OBJECTIVE_PATTERNS):
+                        purged_remediation_keys.add(pkey)
+                        continue
+                    valid_pkgs.append(p)
+                    rem_keys.add(pkey)
+                if len(valid_pkgs) != len(pkgs):
+                    cleaned = True
+                    if not valid_pkgs:
+                        remediation_path.unlink(missing_ok=True)
+                    else:
+                        raw["workPackages"] = valid_pkgs
+                        remediation_path.write_text(json.dumps(raw, indent=2) + "\n", encoding="utf-8")
         except Exception:
             pass
 
@@ -825,15 +913,26 @@ def reconcile_durable_state(
             pass
 
     synthetic_keys: list[str] = []
-    for key, record in list(records.items()):
-        is_synthetic = False
-        if "convergence-evidence" in key or (record.issue_number == 98):
-            is_synthetic = True
-        elif base_plan_keys and key not in base_plan_keys and key not in rem_keys:
-            if record.status != PackageStatus.COMPLETE:
-                is_synthetic = True
 
-        if is_synthetic:
+    # One-time migration for historical incidents (Issue #98 synthetic remediation cleanup)
+    migration_version = int(metadata.get("stateMigrationVersion", 0))
+    if migration_version < 1:
+        for key, record in list(records.items()):
+            if record.issue_number == 98 or "convergence-evidence" in key:
+                synthetic_keys.append(key)
+                if record.session_id and ao:
+                    try:
+                        ao.kill(record.session_id)
+                    except Exception:
+                        pass
+                records.pop(key, None)
+                cleaned = True
+        metadata["stateMigrationVersion"] = 1
+        cleaned = True
+
+    # Generic durable reconciliation: remove ONLY deterministically proven invalid synthetic remediation state
+    for key, record in list(records.items()):
+        if key in purged_remediation_keys or (key.endswith("--convergence-evidence") and key not in active_keys):
             synthetic_keys.append(key)
             if record.session_id and ao:
                 try:
@@ -847,9 +946,7 @@ def reconcile_durable_state(
         metadata["convergencePasses"] = 0
         metadata["milestoneConverged"] = False
         metadata["consecutiveTickFailures"] = 0
-        last_failure = metadata.get("lastTickFailure")
-        if last_failure and any(token in str(last_failure) for token in ("convergence-evidence", "BRANCH_CHECKED_OUT_ELSEWHERE", "chainsieve-8", "chainsieve-7")):
-            metadata["lastTickFailure"] = None
+        metadata["lastTickFailure"] = None
         store.save(records, metadata)
         store.event("STATE_RECONCILED", syntheticRemoved=synthetic_keys)
 
@@ -892,14 +989,37 @@ def _package_dict(package: WorkPackage) -> dict[str, Any]:
     }
 
 
+NORMATIVE_ID = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$")
+
+
+def is_product_roadmap_milestone(root: Path, milestone_id: str) -> bool:
+    if milestone_id.startswith("factory-") or "canary" in milestone_id.lower() or milestone_id.startswith("test-") or milestone_id == "m1":
+        return False
+    roadmap_path = root / "specs" / "factory" / "roadmap.json"
+    if roadmap_path.exists():
+        try:
+            raw = json.loads(roadmap_path.read_text(encoding="utf-8"))
+            roadmap_ids = {item.get("id") for item in raw.get("milestones", []) if item.get("id")}
+            if milestone_id in roadmap_ids:
+                return True
+        except Exception:
+            pass
+    return bool(re.match(r"^g[0-9]+(-[a-z0-9]+)*$", milestone_id))
+
+
 def _validate_requirement_ids(root: Path, milestone: Milestone) -> None:
     authoritative = authoritative_requirement_ids(root)
-    unknown = sorted({rid for package in milestone.packages for rid in package.requirement_ids if rid not in authoritative})
-    if unknown:
-        raise RuntimeError(f"planner returned unknown normative requirement IDs: {unknown}")
-
-
-NORMATIVE_ID = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$")
+    is_product = is_product_roadmap_milestone(root, milestone.id)
+    for package in milestone.packages:
+        if is_product and not package.requirement_ids:
+            raise RuntimeError(
+                f"product roadmap package {package.id!r} in milestone {milestone.id!r} must specify non-empty normative requirement IDs"
+            )
+        if len(package.requirement_ids) != len(set(package.requirement_ids)):
+            raise RuntimeError(f"work package {package.id!r} contains duplicate requirement IDs: {package.requirement_ids}")
+        for rid in package.requirement_ids:
+            if not isinstance(rid, str) or not NORMATIVE_ID.fullmatch(rid) or rid not in authoritative:
+                raise RuntimeError(f"work package {package.id!r} contains unknown normative requirement ID: {rid!r}")
 
 
 def authoritative_requirement_ids(root: Path) -> frozenset[str]:
