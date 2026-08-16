@@ -19,3 +19,4 @@ artifacts/test-output/
 .factory-canary/
 __pycache__/
 *.py[cod]
+.tmp/
