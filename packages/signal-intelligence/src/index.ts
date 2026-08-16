@@ -7,6 +7,7 @@
 
 export * from './snapshot.js';
 export * from './features.js';
+export * from './funnel.js';
 
 // Re-export registry utilities for external consumption
 export { FEATURE_REGISTRY, getFeatureDefinition } from './features.js';
