@@ -57,7 +57,7 @@ export const concentratedLiquidityAdapter: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `${input.dex}:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     snapshot.concentrated = {
       currentTick: raw.currentTick,

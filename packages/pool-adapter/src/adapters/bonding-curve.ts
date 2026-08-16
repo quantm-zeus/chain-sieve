@@ -60,7 +60,7 @@ export const bondingCurveAdapter: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `${input.dex}:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     snapshot.bondingCurve = {
       virtualBaseReserves: raw.virtualBaseReserves,

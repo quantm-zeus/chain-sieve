@@ -122,7 +122,7 @@ export const makeBaseSnapshot = (input: {
 };
 
 export const hashRaw = (raw: unknown): string =>
-  createHash('sha256').update(JSON.stringify(raw)).digest('hex').slice(0, 64);
+  createHash('sha256').update(JSON.stringify(canonicalize(raw))).digest('hex').slice(0, 64);
 
 // Common adapter guard: ensures chainId/dex/program consistency
 export const assertAdapterInput = (input: PoolAdapterInput, expected: {

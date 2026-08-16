@@ -59,7 +59,7 @@ export const jupiterRouteObserver: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `jupiter:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     // Store route steps in provenance / snapshot as incomplete tradability note
     snapshot.stateCompleteness = 'COMPLETE';

@@ -60,7 +60,7 @@ export const discreteBinAdapter: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `${input.dex}:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     snapshot.bins = {
       activeBinId: raw.activeBinId,

@@ -50,7 +50,7 @@ export const stableSwapAdapter: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `${input.dex}:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     snapshot.stable = { ampFactor: raw.ampFactor };
     snapshot.stateCompleteness = 'COMPLETE';

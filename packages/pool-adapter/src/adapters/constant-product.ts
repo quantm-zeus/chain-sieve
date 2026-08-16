@@ -50,7 +50,7 @@ export const constantProductAdapter: PoolAdapter = {
       updatedAt: raw.updatedAt,
       provenanceSource: `${input.dex}:${input.programVersion}`,
       rawHash: hashRaw(raw),
-      normalizedAt: new Date().toISOString(),
+      normalizedAt: raw.updatedAt,
     });
     snapshot.liquidityUsd = null;
     return toAdapterResult(snapshot);
