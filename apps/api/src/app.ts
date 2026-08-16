@@ -8,7 +8,6 @@ import { McpAdapter } from '@ciag/mcp-adapter';
 import { ExactMemoryCache } from '@ciag/runtime-cache';
 import { ToolCore } from '@ciag/tool-core';
 import {
-  sanitizeUntrustedContent,
   validateAllowedOriginsConfig,
   validateBearerAuth,
   validateMcpContentType,
@@ -104,8 +103,19 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     }
     const rawClientId = context.req.header('x-mcp-client-id') ?? context.req.header('x-forwarded-for') ?? 'anonymous';
     if (rawClientId.length > 128) return context.json({ error: { code: 'INVALID_CLIENT_ID', message: 'MCP client identifier is invalid', correlationId: context.get('correlationId') } }, 400);
-    const clientId = sanitizeUntrustedContent(rawClientId, { maxLength: 128 });
-    const current = nowMs(); if (rateWindows.size >= mcpMaxTrackedClients) for (const [key, value] of rateWindows) if (current - value.startedAt >= 60_000) rateWindows.delete(key); const previous = rateWindows.get(clientId); if (!previous && rateWindows.size >= mcpMaxTrackedClients) return context.json({ error: { code: 'MCP_LIMIT_EXCEEDED', message: 'MCP request limit exceeded', correlationId: context.get('correlationId') } }, 429); const window = !previous || current - previous.startedAt >= 60_000 ? { startedAt: current, count: 0 } : previous; window.count += 1; rateWindows.set(clientId, window);
+    const current = nowMs();
+    if (rateWindows.size >= mcpMaxTrackedClients) {
+      for (const [key, value] of rateWindows) {
+        if (current - value.startedAt >= 60_000) rateWindows.delete(key);
+      }
+    }
+    const previous = rateWindows.get(rawClientId);
+    if (!previous && rateWindows.size >= mcpMaxTrackedClients) {
+      return context.json({ error: { code: 'MCP_LIMIT_EXCEEDED', message: 'MCP request limit exceeded', correlationId: context.get('correlationId') } }, 429);
+    }
+    const window = !previous || current - previous.startedAt >= 60_000 ? { startedAt: current, count: 0 } : previous;
+    window.count += 1;
+    rateWindows.set(rawClientId, window);
     if (window.count > mcpRatePerMinute || activeMcpRequests >= mcpMaxConcurrent) return context.json({ error: { code: 'MCP_LIMIT_EXCEEDED', message: 'MCP request limit exceeded', correlationId: context.get('correlationId') } }, 429);
     const transportOptions = { enableJsonResponse: true, allowedOrigins: input.allowedOrigins, enableDnsRebindingProtection: true };
     Object.assign(transportOptions, { sessionIdGenerator: undefined });

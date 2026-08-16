@@ -159,10 +159,21 @@ export const isPrivateOrBlockedAddress = (hostOrIp: string): boolean => {
       return true;
     }
 
-    // IPv4-mapped IPv6: ::ffff:127.0.0.1, ::ffff:10.0.0.1, etc.
-    const ipv4MappedMatch = full.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+    // IPv4-mapped IPv6: ::ffff:127.0.0.1, ::ffff:0x7f.0.0.1, ::ffff:0177.0.0.1, ::ffff:7f00:1, 0:0:0:0:0:ffff:127.0.0.1, etc.
+    const ipv4MappedMatch = full.match(/^(?:(?:::|0+:0+:0+:0+:0+:)ffff:)(.+)$/i);
     if (ipv4MappedMatch?.[1]) {
-      return isPrivateOrBlockedAddress(ipv4MappedMatch[1]);
+      const rest = ipv4MappedMatch[1];
+      const hexWordsMatch = rest.match(/^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i);
+      if (hexWordsMatch?.[1] && hexWordsMatch?.[2]) {
+        const h1 = parseInt(hexWordsMatch[1], 16);
+        const h2 = parseInt(hexWordsMatch[2], 16);
+        const b0 = (h1 >> 8) & 255;
+        const b1 = h1 & 255;
+        const b2 = (h2 >> 8) & 255;
+        const b3 = h2 & 255;
+        return isPrivateOrBlockedAddress(`${b0}.${b1}.${b2}.${b3}`);
+      }
+      return isPrivateOrBlockedAddress(rest);
     }
 
     if (ipType === 6) return false;

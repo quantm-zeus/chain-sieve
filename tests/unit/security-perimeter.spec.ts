@@ -272,6 +272,12 @@ describe('G0 Security Perimeter', () => {
       expect(isPrivateOrBlockedAddress('::1')).toBe(true);
       expect(isPrivateOrBlockedAddress('::ffff:127.0.0.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('::ffff:169.254.169.254')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:0x7f.0.0.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:0177.0.0.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:2130706433')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:0x7f.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('0:0:0:0:0:ffff:127.0.0.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('0000:0000:0000:0000:0000:ffff:0x7f.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('fc00::1')).toBe(true);
       expect(isPrivateOrBlockedAddress('fe80::1')).toBe(true);
       expect(isPrivateOrBlockedAddress('fe80::1%lo0')).toBe(true);
