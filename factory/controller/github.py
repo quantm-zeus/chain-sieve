@@ -46,7 +46,7 @@ class GitHub:
         raw = self._json(
             [
                 "gh", "issue", "list", "--repo", self.repo, "--state", "all", "--limit", "500",
-                "--json", "number,state,body,url,author",
+                "--json", "number,state,title,body,url,author",
             ],
         )
         result: dict[str, Issue] = {}
@@ -57,7 +57,14 @@ class GitHub:
             if not marker or author != expected_actor:
                 continue
             package_id = marker.group(1)
-            issue = Issue(int(value["number"]), str(value["state"]), body, str(value["url"]), author)
+            issue = Issue(
+                int(value["number"]),
+                str(value["state"]),
+                body,
+                str(value["url"]),
+                author,
+                title=str(value.get("title") or ""),
+            )
             previous = result.get(package_id)
             if previous and previous.number != issue.number:
                 raise RuntimeError(f"duplicate trusted issues for work package {package_id}")
@@ -72,7 +79,7 @@ class GitHub:
         ).stdout.strip()
         number = int(url.rstrip("/").rsplit("/", 1)[1])
         value = self._json(
-            ["gh", "issue", "view", str(number), "--repo", self.repo, "--json", "number,state,body,url,author"]
+            ["gh", "issue", "view", str(number), "--repo", self.repo, "--json", "number,state,title,body,url,author"]
         )
         actor = str((value.get("author") or {}).get("login", ""))
         if actor != self.current_actor():
@@ -80,7 +87,14 @@ class GitHub:
         marker = WORK_PACKAGE_MARKER.search(str(value.get("body") or ""))
         if marker is None or marker.group(1) != package_id:
             raise RuntimeError(f"created issue #{number} does not retain exact work marker {package_id!r}")
-        return Issue(number, str(value["state"]), str(value.get("body") or ""), str(value["url"]), actor)
+        return Issue(
+            number,
+            str(value["state"]),
+            str(value.get("body") or ""),
+            str(value["url"]),
+            actor,
+            title=str(value.get("title") or ""),
+        )
 
     def update_issue(self, number: int, title: str, body: str) -> None:
         payload = body.rstrip() + "\n"

@@ -205,6 +205,7 @@ class Issue:
     body: str
     url: str
     author: str
+    title: str = ""
 
 
 @dataclass(frozen=True)

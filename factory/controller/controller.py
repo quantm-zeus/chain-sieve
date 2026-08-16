@@ -57,7 +57,9 @@ class FactoryController:
             expected_body = f"<!-- chainsieve-work-package:{key} -->\n\n{issue_body(milestone, package).rstrip()}\n"
             if key in issues:
                 existing = issues[key]
-                if existing.body.strip() != expected_body.strip() and hasattr(self.github, "update_issue"):
+                body_changed = existing.body.strip() != expected_body.strip()
+                title_changed = bool(existing.title and existing.title.strip() != expected_title.strip())
+                if (body_changed or title_changed) and hasattr(self.github, "update_issue"):
                     self.github.update_issue(existing.number, expected_title, expected_body)
                     updated.append(existing.number)
                 continue
