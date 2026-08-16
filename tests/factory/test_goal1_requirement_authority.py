@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 from factory.controller.commands import CommandResult
 from factory.controller.config import FactoryConfig
-from factory.controller.models import Milestone, PackageStatus, WorkPackage
+from factory.controller.models import Milestone, PackageRecord, PackageStatus, WorkPackage, work_key
 from factory.controller.reasoning import (
     ReasoningContextUnavailableError,
     authoritative_requirement_definitions,
@@ -114,6 +114,11 @@ class Goal1RequirementAuthorityTests(unittest.TestCase):
             "objective": "Test G1",
             "workPackages": [pkg1, pkg2],
         })
+
+        self.store.save({
+            work_key(ms.id, "pkg-1"): PackageRecord(status=PackageStatus.COMPLETED, provider="agy"),
+            work_key(ms.id, "pkg-2"): PackageRecord(status=PackageStatus.COMPLETED, provider="agy"),
+        }, {})
 
         ctx = build_reasoning_context(self.root, self.config, ms, self.store, self.runner)
         raw_ids = [rid for p in ms.packages for rid in p.requirement_ids]

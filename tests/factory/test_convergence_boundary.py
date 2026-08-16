@@ -72,6 +72,7 @@ class ConvergenceBoundaryTests(unittest.TestCase):
             json.dumps({"id": "g0-contract-foundation", "objective": "Converge G0", "workPackages": [self.pkg1]}),
             encoding="utf-8",
         )
+        self.store.save({work_key("g0-contract-foundation", self.pkg1["id"]): PackageRecord(status=PackageStatus.COMPLETED, provider="agy")}, {})
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()

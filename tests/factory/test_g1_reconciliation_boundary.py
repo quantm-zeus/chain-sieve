@@ -120,6 +120,11 @@ class G1ReconciliationAndPlanningBoundaryTests(unittest.TestCase):
             json.dumps(self.g1_milestone_dict, indent=2),
             encoding="utf-8",
         )
+        self.store.save({
+            make_key("deterministic-snapshots-features", "g1-deterministic-signal-execution"): PackageRecord(
+                status=PackageStatus.COMPLETED, provider="muse"
+            )
+        }, {})
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
