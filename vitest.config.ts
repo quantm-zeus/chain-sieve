@@ -27,6 +27,7 @@ export default defineConfig({
       '@ciag/tool-core': resolve(__dirname, 'packages/tool-core/src/index.ts'),
       '@ciag/workflow-runtime': resolve(__dirname, 'packages/workflow-runtime/src/index.ts'),
       '@ciag/signal-intelligence': resolve(__dirname, 'packages/signal-intelligence/src/index.ts'),
+      '@ciag/pool-adapter': resolve(__dirname, 'packages/pool-adapter/src/index.ts'),
     },
   },
   test: {
