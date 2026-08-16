@@ -83,17 +83,32 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({key: value.to_dict() for key, value in records.items()}, indent=2))
         return 0
     if args.command == "converge":
-        from .controller.reasoning import ReasoningRunner, write_remediation
+        from .controller.reasoning import (
+            ConvergenceOutputRejectedError,
+            ReasoningContextUnavailableError,
+            ReasoningRunner,
+            write_remediation,
+        )
 
         with store.lock():
             milestone = config.load_milestone()
-            result = ReasoningRunner(root_path(), config, store, runner).converge(milestone)
-            if result["status"] == "GAPS":
-                write_remediation(config, milestone, result["gaps"])
+            try:
+                result = ReasoningRunner(root_path(), config, store, runner).converge(milestone)
+                if result["status"] == "GAPS":
+                    write_remediation(config, milestone, result["gaps"])
+            except (ConvergenceOutputRejectedError, ReasoningContextUnavailableError) as error:
+                print(json.dumps({"status": "REJECTED", "reason": str(error)}, indent=2))
+                return 4
         print(json.dumps(result, indent=2))
         return 0 if result["status"] == "CONVERGED" else 3
     if args.command == "final-audit":
-        from .controller.reasoning import ReasoningRunner, audit_remediation, write_remediation
+        from .controller.reasoning import (
+            ConvergenceOutputRejectedError,
+            ReasoningContextUnavailableError,
+            ReasoningRunner,
+            audit_remediation,
+            write_remediation,
+        )
 
         output = Path(args.output)
         if not output.is_absolute():
@@ -120,23 +135,27 @@ def main(argv: list[str] | None = None) -> int:
                 return 4
             cycle = cycles + 1
             store.event("FINAL_AUDIT_STARTED", milestoneId=milestone.id, cycle=cycle)
-            value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
-            metadata["finalAuditCycles"] = cycle
-            if value.get("status") == "CONVERGED":
-                metadata["finalAuditConverged"] = True
-                store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
-            else:
-                package = audit_remediation(milestone, value)
-                write_remediation(config, milestone, [package])
-                metadata["finalAuditConverged"] = False
-                metadata["milestoneConverged"] = False
-                store.event(
-                    "CONVERGENCE_GAP_FOUND",
-                    milestoneId=milestone.id,
-                    workPackageId=package["id"],
-                    workKey=work_key(milestone.id, package["id"]),
-                    reason="final audit",
-                )
+            try:
+                value = ReasoningRunner(root_path(), config, store, runner).final_audit(output)
+                metadata["finalAuditCycles"] = cycle
+                if value.get("status") == "CONVERGED":
+                    metadata["finalAuditConverged"] = True
+                    store.event("FACTORY_CONVERGED", milestoneId=milestone.id)
+                else:
+                    package = audit_remediation(milestone, value, root_path())
+                    write_remediation(config, milestone, [package])
+                    metadata["finalAuditConverged"] = False
+                    metadata["milestoneConverged"] = False
+                    store.event(
+                        "CONVERGENCE_GAP_FOUND",
+                        milestoneId=milestone.id,
+                        workPackageId=package["id"],
+                        workKey=work_key(milestone.id, package["id"]),
+                        reason="final audit",
+                    )
+            except (ConvergenceOutputRejectedError, ReasoningContextUnavailableError) as error:
+                print(json.dumps({"status": "REJECTED", "reason": str(error)}, indent=2))
+                return 4
             store.save(records, metadata)
         print(json.dumps(value, indent=2))
         return 0 if value.get("status") == "CONVERGED" else 3

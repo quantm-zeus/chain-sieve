@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import os
 import re
 import time
 from pathlib import Path
@@ -9,13 +10,218 @@ from typing import Any
 
 from .commands import CommandResult, CommandRunner
 from .config import FactoryConfig
-from .models import Milestone, WorkPackage
+from .models import Milestone, PackageRecord, PackageStatus, WorkPackage, work_key
 from .store import StateStore
 
 
 MUSE_ENV: tuple[str, ...] = ()
 CODEX_ENV: tuple[str, ...] = ()
 TRANSIENT_RETRIES = 2
+
+FORBIDDEN_OBJECTIVE_PATTERNS = (
+    re.compile(r"\bread[- ]access\b", re.IGNORECASE),
+    re.compile(r"\brestore\b.*\baccess\b", re.IGNORECASE),
+    re.compile(r"\b(?:cannot|unable to|failed to)\s+(?:read|access|find)\b", re.IGNORECASE),
+    re.compile(r"\baudit\b.*\b(?:sources?|constitution|infrastructure|artifacts?|files?)\b", re.IGNORECASE),
+    re.compile(r"\bperform\b.*\b(?:convergence\s+audit|audit)\b", re.IGNORECASE),
+    re.compile(r"\baudit\s+the\s+audit\b", re.IGNORECASE),
+    re.compile(r"\bfactory\b.*\b(?:infrastructure|migration|repair|control|controller)\b", re.IGNORECASE),
+    re.compile(r"\bcontrol[- ]plane\b", re.IGNORECASE),
+    re.compile(r"\bsandbox\b", re.IGNORECASE),
+    re.compile(r"\breasoning\b.*\b(?:model|plumbing|wrapper|schema|transport)\b", re.IGNORECASE),
+    re.compile(r"\breasoner\b", re.IGNORECASE),
+    re.compile(r"\bprovider\b.*\b(?:auth|credential|login|token|access)\b", re.IGNORECASE),
+    re.compile(r"\bremediation\s+package\b", re.IGNORECASE),
+    re.compile(r"\bduplicate\b.*\b(?:package|id)\b", re.IGNORECASE),
+    re.compile(r"\btooling\b.*\b(?:failure|error|access|read)\b", re.IGNORECASE),
+    re.compile(r"\b(?:runtime\s+planning|planning\s+directory)\b", re.IGNORECASE),
+)
+
+
+class ReasoningInfrastructureError(RuntimeError):
+    """Base exception for reasoning/control-plane infrastructure problems."""
+    pass
+
+
+class ReasoningContextUnavailableError(ReasoningInfrastructureError):
+    """Raised when a required convergence/reasoning context source cannot be read."""
+    pass
+
+
+class ConvergenceOutputRejectedError(RuntimeError):
+    """Raised when convergence output fails deterministic PRODUCT_GAP acceptance validation."""
+    def __init__(self, message: str, failure_class: str = "INVALID_PRODUCT_GAP", gap_id: str | None = None) -> None:
+        super().__init__(message)
+        self.failure_class = failure_class
+        self.gap_id = gap_id
+
+
+def preflight_convergence_context(
+    root: Path,
+    config: FactoryConfig,
+    milestone: Milestone,
+    store: StateStore,
+    runner: CommandRunner | None = None,
+) -> dict[str, Any]:
+    constitution = root / "factory" / "constitution.md"
+    if not constitution.exists() or not constitution.is_file():
+        reason = f"constitution missing or unreadable at {constitution}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    spec_dir = root / "docs" / "spec"
+    if not spec_dir.exists() or not list(spec_dir.glob("*.requirements.json")):
+        reason = f"authoritative requirement manifests missing or unreadable in {spec_dir}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    try:
+        authoritative_ids = authoritative_requirement_ids(root)
+    except Exception as error:
+        reason = f"unable to load authoritative requirement IDs: {error}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    # Ensure rolling Spec Kit planning bundle is present on disk
+    try:
+        _write_planning_bundle(config.state_dir, milestone)
+    except Exception as error:
+        reason = f"unable to write planning bundle to state dir: {error}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    planning_dir = config.state_dir / "planning" / milestone.id
+    for name in ("spec.md", "plan.md", "tasks.md"):
+        bundle_file = planning_dir / name
+        if not bundle_file.exists() or not os.access(bundle_file, os.R_OK):
+            reason = f"planning bundle artifact missing or unreadable: {bundle_file}"
+            store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, reason=reason)
+            raise ReasoningContextUnavailableError(reason)
+
+    head_sha = "0" * 40
+    try:
+        import subprocess
+        res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False)
+        if res.returncode == 0 and len(res.stdout.strip()) >= 40:
+            head_sha = res.stdout.strip()
+    except Exception:
+        pass
+
+    milestone_reqs = sorted({rid for pkg in milestone.packages for rid in pkg.requirement_ids if rid in authoritative_ids})
+
+    return {
+        "milestoneId": milestone.id,
+        "milestoneObjective": milestone.objective,
+        "headSha": head_sha,
+        "scopedRequirementIds": milestone_reqs,
+        "authoritativeRequirementCount": len(authoritative_ids),
+        "planningDirectory": str(planning_dir),
+    }
+
+
+def validate_product_gaps(
+    root: Path,
+    milestone: Milestone,
+    gaps: list[dict[str, Any]],
+    completed_package_ids: set[str] | None = None,
+) -> list[WorkPackage]:
+    completed_ids = set(completed_package_ids or {pkg.id for pkg in milestone.packages})
+    authoritative_ids = authoritative_requirement_ids(root)
+    validated_packages: list[WorkPackage] = []
+    seen_gap_ids: set[str] = set()
+
+    for raw in gaps:
+        gap_id = raw.get("id")
+        if not gap_id or not isinstance(gap_id, str):
+            raise ConvergenceOutputRejectedError("gap missing required string 'id'", failure_class="MALFORMED_OUTPUT")
+        if not re.match(r"^[a-z0-9]+(?:-[a-z0-9]+)*$", gap_id):
+            raise ConvergenceOutputRejectedError(
+                f"gap id {gap_id!r} is not a valid kebab-case identifier", failure_class="INVALID_ID_FORMAT", gap_id=gap_id
+            )
+        if gap_id in seen_gap_ids:
+            raise ConvergenceOutputRejectedError(
+                f"duplicate gap ID {gap_id!r} in convergence output", failure_class="DUPLICATE_GAP_ID", gap_id=gap_id
+            )
+        seen_gap_ids.add(gap_id)
+        if gap_id in completed_ids:
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} duplicates already completed package", failure_class="DUPLICATE_COMPLETED_OUTCOME", gap_id=gap_id
+            )
+
+        classification = raw.get("classification", "PRODUCT_GAP")
+        if classification != "PRODUCT_GAP":
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} has invalid classification {classification!r}; only PRODUCT_GAP is accepted",
+                failure_class="INVALID_CLASSIFICATION",
+                gap_id=gap_id,
+            )
+
+        objective = str(raw.get("objective", "")).strip()
+        if not objective:
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} has empty objective", failure_class="EMPTY_OBJECTIVE", gap_id=gap_id
+            )
+
+        acceptance = raw.get("acceptance", [])
+        if not isinstance(acceptance, list) or not acceptance:
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} has empty or non-list acceptance criteria", failure_class="EMPTY_ACCEPTANCE", gap_id=gap_id
+            )
+
+        all_text = [objective, *[str(c) for c in acceptance]]
+        for pattern in FORBIDDEN_OBJECTIVE_PATTERNS:
+            for text in all_text:
+                if pattern.search(text):
+                    raise ConvergenceOutputRejectedError(
+                        f"gap {gap_id!r} contains forbidden tooling/infrastructure pattern {pattern.pattern!r} in: {text!r}",
+                        failure_class="TOOLING_REMEDIATION_REJECTED",
+                        gap_id=gap_id,
+                    )
+
+        req_ids = raw.get("requirementIds", [])
+        if not isinstance(req_ids, list):
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} requirementIds must be a list", failure_class="MALFORMED_OUTPUT", gap_id=gap_id
+            )
+
+        if not req_ids:
+            extracted = [
+                token for text in all_text
+                for token in re.findall(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}", text)
+                if token in authoritative_ids
+            ]
+            if not extracted:
+                raise ConvergenceOutputRejectedError(
+                    f"gap {gap_id!r} has empty requirementIds and no validated authoritative invariant in objective/acceptance",
+                    failure_class="MISSING_REQUIREMENT_EVIDENCE",
+                    gap_id=gap_id,
+                )
+            raw["requirementIds"] = sorted(set(extracted))
+        else:
+            unknown = [rid for rid in req_ids if rid not in authoritative_ids]
+            if unknown:
+                raise ConvergenceOutputRejectedError(
+                    f"gap {gap_id!r} contains unknown requirement IDs: {unknown}",
+                    failure_class="UNKNOWN_REQUIREMENT_ID",
+                    gap_id=gap_id,
+                )
+
+        protected = raw.get("authorizedProtectedPaths", [])
+        if not isinstance(protected, list):
+            raise ConvergenceOutputRejectedError(
+                f"gap {gap_id!r} authorizedProtectedPaths must be a list", failure_class="MALFORMED_OUTPUT", gap_id=gap_id
+            )
+        for path_str in protected:
+            if any(path_str.startswith(cp) for cp in ("factory/", ".agents/", ".github/", "tools/", "specs/factory/")):
+                raise ConvergenceOutputRejectedError(
+                    f"gap {gap_id!r} authorizes forbidden control-plane path: {path_str!r}",
+                    failure_class="CONTROL_PLANE_PATH_REJECTED",
+                    gap_id=gap_id,
+                )
+
+        validated_packages.append(WorkPackage.from_dict(raw))
+
+    return validated_packages
 
 
 class ReasoningRunner:
@@ -27,32 +233,51 @@ class ReasoningRunner:
 
     def converge(self, milestone: Milestone) -> dict[str, Any]:
         output_path = self.config.state_dir / "convergence-result.json"
-        prompt = (self.root / "factory" / "prompts" / "convergence.md").read_text(encoding="utf-8")
-        prompt += f"""
+        manifest = preflight_convergence_context(self.root, self.config, milestone, self.store, self.runner)
 
-Current milestone: {milestone.id}
-Committed Spec Kit artifacts: {self.root / 'specs'}
-Runtime rolling Spec Kit artifacts: {self.config.state_dir / 'planning' / milestone.id}
-Current work-package plan: {self.config.state_dir / 'active-milestone.json'} (when present), otherwise {self.config.plan_path}
+        base_prompt = (self.root / "factory" / "prompts" / "convergence.md").read_text(encoding="utf-8")
+        completed_summary = "\n".join(
+            f"- `{pkg.id}`: {pkg.objective} (Requirement IDs: {', '.join(pkg.requirement_ids) or 'none'})"
+            for pkg in milestone.packages
+        )
+        scoped_reqs_str = ", ".join(manifest["scopedRequirementIds"]) or "none"
 
-Return one JSON object only with `status` equal to `CONVERGED` or `GAPS`, and `gaps` containing zero to eight complete
-work-package objects matching factory/schemas/work-package.schema.json. Every gap ID must be deterministic and not reuse
-an existing ID. Do not modify files.
+        prompt = f"""{base_prompt}
+
+### Deterministic Audit Context Manifest:
+Milestone ID: `{milestone.id}`
+Milestone Objective: {milestone.objective}
+Current Main Git Commit: `{manifest['headSha']}`
+Authoritative Spec Scoped Requirement IDs: {scoped_reqs_str}
+
+Completed Work Packages in Milestone:
+{completed_summary}
+
+Spec Kit Planning Artifacts:
+- `{manifest['planningDirectory']}/spec.md`
+- `{manifest['planningDirectory']}/plan.md`
+- `{manifest['planningDirectory']}/tasks.md`
+
+### Instructions:
+Determine if the product implementation in the repository satisfies all authoritative requirements and acceptance criteria for milestone `{milestone.id}`.
+- If all requirements and acceptance criteria are satisfied, return `status: "CONVERGED"` with `gaps: []`.
+- If genuine missing PRODUCT functionality or tests remain, return `status: "GAPS"` with validated work-package objects.
+- Every gap MUST specify at least one valid requirement ID from authoritative specs.
+- CRITICAL HARD INVARIANT: Do NOT report tooling, sandbox, environment, file-access, or audit-infrastructure tasks as product gaps. Infrastructure failures are handled by the factory control plane and must never become product work.
 """
         schema = self.root / "factory" / "schemas" / "convergence.schema.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         self._invoke_codex("convergence", milestone.id, prompt, schema, output_path)
         value = json.loads(output_path.read_text(encoding="utf-8"))
-        gaps = [WorkPackage.from_dict(item) for item in value.get("gaps", [])]
-        existing = {item.id for item in milestone.packages}
-        duplicate = existing & {item.id for item in gaps}
-        if duplicate:
-            raise RuntimeError(f"convergence returned duplicate IDs: {sorted(duplicate)}")
-        if not gaps:
+        raw_gaps = value.get("gaps", [])
+        if not raw_gaps:
             value["status"] = "CONVERGED"
-        else:
-            value["status"] = "GAPS"
-        value["gaps"] = [_package_dict(item) for item in gaps]
+            value["gaps"] = []
+            return value
+
+        validated = validate_product_gaps(self.root, milestone, raw_gaps)
+        value["status"] = "GAPS"
+        value["gaps"] = [_package_dict(item) for item in validated]
         return value
 
     def final_audit(self, output_path: Path) -> dict[str, Any]:
@@ -472,6 +697,8 @@ def _validate_json_schema(
 
 
 def write_remediation(config: FactoryConfig, milestone: Milestone, gaps: list[dict[str, Any]]) -> None:
+    if not gaps:
+        return
     path = config.state_dir / "remediation-plan.json"
     existing: list[dict[str, Any]] = []
     if path.exists():
@@ -488,19 +715,40 @@ def write_remediation(config: FactoryConfig, milestone: Milestone, gaps: list[di
     )
 
 
-def audit_remediation(milestone: Milestone, audit: dict[str, Any]) -> dict[str, Any]:
+def audit_remediation(milestone: Milestone, audit: dict[str, Any], root: Path | None = None) -> dict[str, Any]:
     categories = (
         "blocking_gaps", "requirements_missing", "architecture_conflicts", "test_gaps",
         "runtime_failures", "security_gaps", "operational_gaps",
     )
     findings = [f"{category}: {item}" for category in categories for item in audit.get(category, [])]
     if not findings:
-        raise RuntimeError("NOT_CONVERGED final audit contains no remediation findings")
+        raise ConvergenceOutputRejectedError("NOT_CONVERGED final audit contains no remediation findings", failure_class="EMPTY_FINDINGS")
+
+    pure_tooling_count = 0
+    for finding in findings:
+        for pattern in FORBIDDEN_OBJECTIVE_PATTERNS:
+            if pattern.search(finding):
+                pure_tooling_count += 1
+                break
+
+    if pure_tooling_count == len(findings):
+        raise ConvergenceOutputRejectedError(
+            "final audit findings are pure tooling/read-access failures rather than product deficiencies",
+            failure_class="TOOLING_REMEDIATION_REJECTED",
+        )
+
+    product_findings = [f for f in findings if not any(p.search(f) for p in FORBIDDEN_OBJECTIVE_PATTERNS)]
+    if not product_findings:
+        raise ConvergenceOutputRejectedError(
+            "no valid product findings remain after filtering tooling findings",
+            failure_class="TOOLING_REMEDIATION_REJECTED",
+        )
+
     digest = hashlib.sha256(json.dumps(audit, sort_keys=True).encode()).hexdigest()[:10]
-    return {
+    package_dict: dict[str, Any] = {
         "id": f"final-audit-remediation-{digest}",
-        "objective": "Resolve every blocking gap from the independent final docs-to-product audit.",
-        "acceptance": findings,
+        "objective": "Resolve blocking product gaps from the independent final audit.",
+        "acceptance": product_findings,
         "dependencies": [item.id for item in milestone.packages],
         "parallelizable": False,
         "preferredProvider": "muse",
@@ -508,6 +756,104 @@ def audit_remediation(milestone: Milestone, audit: dict[str, Any]) -> dict[str, 
         "requirementIds": [],
         "authorizedProtectedPaths": [],
     }
+    if root is not None:
+        try:
+            authoritative_ids = authoritative_requirement_ids(root)
+            extracted = [
+                token for text in product_findings
+                for token in re.findall(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}", text)
+                if token in authoritative_ids
+            ]
+            if extracted:
+                package_dict["requirementIds"] = sorted(set(extracted))
+        except Exception:
+            pass
+    return package_dict
+
+
+def reconcile_durable_state(
+    store: StateStore,
+    plan_path: Path,
+    root: Path,
+    ao: Any = None,
+) -> tuple[dict[str, PackageRecord], dict[str, Any]]:
+    records = store.load()
+    metadata = store.metadata()
+    cleaned = False
+
+    base_plan_keys: set[str] = set()
+    try:
+        base_raw = json.loads(plan_path.read_text(encoding="utf-8"))
+        mid = base_raw.get("id", "")
+        base_plan_keys = {work_key(mid, p.get("id", "")) for p in base_raw.get("workPackages", [])}
+    except Exception:
+        pass
+
+    rem_keys: set[str] = set()
+    remediation_path = store.directory / "remediation-plan.json"
+    if remediation_path.exists():
+        try:
+            raw = json.loads(remediation_path.read_text(encoding="utf-8"))
+            pkgs = raw.get("workPackages", [])
+            valid_pkgs = []
+            for p in pkgs:
+                if "convergence-evidence" in p.get("id", ""):
+                    continue
+                if any(pat.search(p.get("objective", "")) for pat in FORBIDDEN_OBJECTIVE_PATTERNS):
+                    continue
+                valid_pkgs.append(p)
+                rem_keys.add(work_key(raw.get("milestoneId", ""), p.get("id", "")))
+            if len(valid_pkgs) != len(pkgs):
+                cleaned = True
+                if not valid_pkgs:
+                    remediation_path.unlink(missing_ok=True)
+                else:
+                    raw["workPackages"] = valid_pkgs
+                    remediation_path.write_text(json.dumps(raw, indent=2) + "\n", encoding="utf-8")
+        except Exception:
+            pass
+
+    conv_result_path = store.directory / "convergence-result.json"
+    if conv_result_path.exists():
+        try:
+            craw = json.loads(conv_result_path.read_text(encoding="utf-8"))
+            gaps = craw.get("gaps", [])
+            if any("convergence-evidence" in g.get("id", "") or any(pat.search(g.get("objective", "")) for pat in FORBIDDEN_OBJECTIVE_PATTERNS) for g in gaps):
+                conv_result_path.unlink(missing_ok=True)
+                cleaned = True
+        except Exception:
+            pass
+
+    synthetic_keys: list[str] = []
+    for key, record in list(records.items()):
+        is_synthetic = False
+        if "convergence-evidence" in key or (record.issue_number == 98):
+            is_synthetic = True
+        elif base_plan_keys and key not in base_plan_keys and key not in rem_keys:
+            if record.status != PackageStatus.COMPLETE:
+                is_synthetic = True
+
+        if is_synthetic:
+            synthetic_keys.append(key)
+            if record.session_id and ao:
+                try:
+                    ao.kill(record.session_id)
+                except Exception:
+                    pass
+            records.pop(key, None)
+            cleaned = True
+
+    if cleaned:
+        metadata["convergencePasses"] = 0
+        metadata["milestoneConverged"] = False
+        metadata["consecutiveTickFailures"] = 0
+        last_failure = metadata.get("lastTickFailure")
+        if last_failure and any(token in str(last_failure) for token in ("convergence-evidence", "BRANCH_CHECKED_OUT_ELSEWHERE", "chainsieve-8", "chainsieve-7")):
+            metadata["lastTickFailure"] = None
+        store.save(records, metadata)
+        store.event("STATE_RECONCILED", syntheticRemoved=synthetic_keys)
+
+    return records, metadata
 
 
 def _muse_final_text(output: str) -> str:

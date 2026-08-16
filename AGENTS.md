@@ -105,3 +105,25 @@ Local worker verification must be focused and economical:
 - If a local test runner hangs: inspect once, retry at most once with a materially justified invocation change. If it hangs again and CI is available, stop burning worker time locally, commit the focused change, and let exact-head CI provide authoritative verification.
 - Do not perform repeated retries of local test runner hangs. Do not update Vite, Vitest, pnpm, lockfiles, or unrelated dependencies merely to resolve local test runner hangs unless reproduced in CI and explicitly part of the work package.
 
+## Owner-authorized maintenance and direct-main prohibition
+
+Owner-authorized factory maintenance does NOT mean direct `main` writes.
+
+All repository source changes, including urgent control-plane repairs, require:
+1. dedicated maintenance branch;
+2. focused local verification;
+3. additive commit(s);
+4. normal push;
+5. pull request;
+6. exact-head full CI PASS;
+7. authorized merge;
+8. deployment of merged commit.
+
+Under no circumstances may any repository source change be committed or pushed directly to `main`.
+
+Allowed direct host operations are strictly limited to runtime operational actions on the host, such as:
+- `systemctl stop/start/restart/status`;
+- diagnostics and log inspection;
+- deploying already-merged and validated code;
+- cleaning up runtime worker processes/worktrees through supported daemon commands.
+
