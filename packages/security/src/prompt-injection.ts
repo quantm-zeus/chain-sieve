@@ -113,9 +113,12 @@ export const detectPromptInjection = (input: string): PromptInjectionScanResult 
 export const wrapUntrustedContent = (
   content: string,
   source: string,
-  options?: { maxLength?: number | undefined; sanitize?: boolean | undefined },
+  options?: { maxLength?: number | undefined; sanitize?: boolean | undefined; stripDelimiters?: boolean | undefined },
 ): UntrustedContentEnvelope => {
-  const sanitizeOptions = options?.maxLength !== undefined ? { maxLength: options.maxLength } : undefined;
+  const sanitizeOptions = {
+    ...(options?.maxLength !== undefined ? { maxLength: options.maxLength } : {}),
+    ...(options?.stripDelimiters !== undefined ? { stripDelimiters: options.stripDelimiters } : {}),
+  };
   const safeContent = options?.sanitize !== false
     ? sanitizeUntrustedContent(content, sanitizeOptions)
     : content;

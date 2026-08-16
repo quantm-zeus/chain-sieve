@@ -135,6 +135,14 @@ describe('G0 Security Perimeter', () => {
         'seedPhrase',
         'seed_phrase',
         'mnemonic',
+        'sign',
+        'signed',
+        'signing',
+        'signData',
+        'signAndSendTransaction',
+        'signCustom',
+        'signtransaction',
+        'sign_payload',
         'signTransaction',
         'signPayload',
         'signMessage',
@@ -154,7 +162,7 @@ describe('G0 Security Perimeter', () => {
         expect(() => requireReadOnlyCapability(cap)).toThrow('PROHIBITED_CAPABILITY');
       }
 
-      const allowed = ['analyze_asset', 'system_readiness', 'get_historical_observations', 'evaluate_candidate'];
+      const allowed = ['analyze_asset', 'system_readiness', 'get_historical_observations', 'evaluate_candidate', 'signature', 'signal', 'significant'];
       for (const cap of allowed) {
         expect(() => requireReadOnlyCapability(cap)).not.toThrow();
       }
@@ -237,6 +245,9 @@ describe('G0 Security Perimeter', () => {
       expect(envelope.sanitized).toBe(true);
       expect(envelope.safeContent).toContain('&lt;system&gt;');
       expect(envelope.sha256).toMatch(/^[a-f0-9]{64}$/);
+
+      const unstripped = wrapUntrustedContent(raw, 'solana-metadata-api', { stripDelimiters: false });
+      expect(unstripped.safeContent).toContain('<system>');
     });
 
     it('asserts prompt integrity against high-confidence injections', () => {
@@ -263,6 +274,13 @@ describe('G0 Security Perimeter', () => {
       expect(isPrivateOrBlockedAddress('::ffff:169.254.169.254')).toBe(true);
       expect(isPrivateOrBlockedAddress('fc00::1')).toBe(true);
       expect(isPrivateOrBlockedAddress('fe80::1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('fe80::1%lo0')).toBe(true);
+      expect(isPrivateOrBlockedAddress('[fe80::1%lo0]')).toBe(true);
+      expect(isPrivateOrBlockedAddress('127.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('0x7f.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('10.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('192.168.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('169.254.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('2130706433')).toBe(true); // 127.0.0.1 decimal
       expect(isPrivateOrBlockedAddress('0x7f000001')).toBe(true); // 127.0.0.1 hex
       expect(isPrivateOrBlockedAddress('0177.0.0.1')).toBe(true); // 127.0.0.1 octal
@@ -391,6 +409,20 @@ describe('G0 Security Perimeter', () => {
           },
         }),
       ).toThrow('STEP_UP_TIMESTAMP_REQUIRED');
+
+      expect(() =>
+        validateHighImpactAction({
+          ...base,
+          maxAgeSeconds: 0,
+        }),
+      ).toThrow('STEP_UP_MAX_AGE_INVALID');
+
+      expect(() =>
+        validateHighImpactAction({
+          ...base,
+          maxAgeSeconds: -5,
+        }),
+      ).toThrow('STEP_UP_MAX_AGE_INVALID');
 
       expect(() =>
         validateHighImpactAction({

@@ -75,6 +75,9 @@ export const validateHighImpactAction = (
   if (Number.isNaN(verifiedAtMs)) {
     throw new Error('STEP_UP_TIMESTAMP_INVALID');
   }
+  if (input.maxAgeSeconds !== undefined && input.maxAgeSeconds <= 0) {
+    throw new Error('STEP_UP_MAX_AGE_INVALID');
+  }
   const maxAgeMs = (input.maxAgeSeconds ?? 300) * 1000;
   const now = Date.now();
   if (verifiedAtMs > now + 60_000 || now - verifiedAtMs > maxAgeMs) {

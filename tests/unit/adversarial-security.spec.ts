@@ -194,6 +194,12 @@ describe('Adversarial Security Suite for G0', () => {
   describe('Structural negative capability and financial write prohibition', () => {
     it('denies transaction building, signing, and submission attempts across all parameter shapes', () => {
       const maliciousPayloads = [
+        { operation: 'sign', params: { data: '0xabc' } },
+        { operation: 'signData', params: { payload: '0x123' } },
+        { operation: 'signAndSendTransaction', params: { rawTx: '0x123' } },
+        { operation: 'sign_order', params: { orderId: 'ord-1' } },
+        { operation: 'SIGN_PAYLOAD', params: { data: 'test' } },
+        { operation: 'signtransaction', params: { tx: '0x' } },
         { operation: 'signTransaction', params: { rawTx: '0x123' } },
         { operation: 'executeSwap', params: { route: 'jupiter' } },
         { operation: 'approveToken', params: { spender: '0x456' } },

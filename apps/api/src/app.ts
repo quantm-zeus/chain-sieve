@@ -7,7 +7,14 @@ import { HealthSchema, ReadinessSchema } from '@ciag/shared-schemas';
 import { McpAdapter } from '@ciag/mcp-adapter';
 import { ExactMemoryCache } from '@ciag/runtime-cache';
 import { ToolCore } from '@ciag/tool-core';
-import { sanitizeUntrustedContent, validateBearerAuth, validateMcpContentType, validateMcpProtocol, validateOrigin } from '@ciag/security';
+import {
+  sanitizeUntrustedContent,
+  validateAllowedOriginsConfig,
+  validateBearerAuth,
+  validateMcpContentType,
+  validateMcpProtocol,
+  validateOrigin,
+} from '@ciag/security';
 import { JsonLogger } from '@ciag/observability';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
@@ -30,9 +37,7 @@ export const createMcpServer = (adapter: McpAdapter = bootstrapMcpAdapter(), tes
 export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   // Validate allowedOrigins configuration at deploy/startup time
   if (Array.isArray(input.allowedOrigins)) {
-    for (const allowed of input.allowedOrigins) {
-      validateOrigin(allowed, [allowed]);
-    }
+    validateAllowedOriginsConfig(input.allowedOrigins);
   }
 
   const app = new OpenAPIHono<ApiEnv>();
