@@ -238,5 +238,84 @@ describe('Adversarial Security Suite for G0', () => {
       expect(violations).toHaveLength(1);
       expect(violations[0]).toContain('signPayload');
     });
+
+    it('asserts negative capability on ToolCore.execute hot path including nested parameters', async () => {
+      const { ToolCore } = await import('@ciag/tool-core');
+      const { ExactMemoryCache } = await import('@ciag/runtime-cache');
+
+      const toolCore = new ToolCore(
+        new ExactMemoryCache(),
+        { authorize: async () => ({ status: 'AVAILABLE', capabilityMode: 'SYNTHETIC_SHADOW', value: { quotaCharged: 0 } }) },
+      );
+
+      // Clean execution works
+      await expect(
+        toolCore.execute(
+          { key: 'cache-1', operation: 'system_readiness', costClass: 'FREE', expiresAt: new Date(Date.now() + 10_000).toISOString() },
+          async () => ({ ready: true }),
+        ),
+      ).resolves.toEqual({ value: { ready: true }, cached: false });
+
+      // Prohibited operation rejected on hot path
+      await expect(
+        toolCore.execute(
+          { key: 'cache-2', operation: 'createSwap', costClass: 'FREE', expiresAt: new Date(Date.now() + 10_000).toISOString() },
+          async () => ({ ready: true }),
+        ),
+      ).rejects.toThrow('PROHIBITED_CAPABILITY');
+
+      // Prohibited nested parameter rejected on hot path
+      await expect(
+        toolCore.execute(
+          {
+            key: 'cache-3',
+            operation: 'system_readiness',
+            costClass: 'FREE',
+            expiresAt: new Date(Date.now() + 10_000).toISOString(),
+            parameters: { nested: { action: 'signTransaction' } },
+          },
+          async () => ({ ready: true }),
+        ),
+      ).rejects.toThrow('PROHIBITED_CAPABILITY');
+    });
+  });
+
+  describe('Adversarial session scoping and tool allowlists on transport', () => {
+    it('enforces session scope allowlist and expiration on transport', async () => {
+      // Session with expired timestamp
+      const expiredRes = await app.request('/mcp', {
+        method: 'POST',
+        headers: {
+          origin: 'https://app.chainsieve.io',
+          authorization: 'Bearer valid-secret-token',
+          'content-type': 'application/json',
+          'mcp-protocol-version': '2025-11-25',
+          'x-mcp-client-id': 'client-1',
+          'x-mcp-session-id': 'sess-1',
+          'x-mcp-session-expires': new Date(Date.now() - 10_000).toISOString(),
+        },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+      });
+      expect(expiredRes.status).toBe(401);
+      const expiredData = await expiredRes.json();
+      expect(expiredData.error.code).toBe('SESSION_EXPIRED');
+
+      // Session with empty/whitespace session ID
+      const invalidRes = await app.request('/mcp', {
+        method: 'POST',
+        headers: {
+          origin: 'https://app.chainsieve.io',
+          authorization: 'Bearer valid-secret-token',
+          'content-type': 'application/json',
+          'mcp-protocol-version': '2025-11-25',
+          'x-mcp-client-id': 'client-1',
+          'x-mcp-session-id': '   ',
+        },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+      });
+      expect(invalidRes.status).toBe(400);
+      const invalidData = await invalidRes.json();
+      expect(invalidData.error.code).toBe('INVALID_SESSION');
+    });
   });
 });

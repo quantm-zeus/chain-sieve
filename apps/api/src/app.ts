@@ -12,12 +12,14 @@ import {
   validateBearerAuth,
   validateMcpContentType,
   validateMcpProtocol,
+  validateMcpSessionScope,
   validateOrigin,
+  validateToolAllowlist,
 } from '@ciag/security';
 import { JsonLogger } from '@ciag/observability';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
-export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void }
+export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void }
 type ApiEnv = { Variables: { correlationId: string } };
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
@@ -26,10 +28,28 @@ const readinessRoute = createRoute({ method: 'get', path: '/api/v1/readiness', r
 
 const bootstrapMcpAdapter = (): McpAdapter => new McpAdapter(new ToolCore(new ExactMemoryCache(), { authorize: async () => ({ status: 'AVAILABLE', capabilityMode: 'SYNTHETIC_SHADOW', value: { quotaCharged: 0 } }) }));
 const waitForAbortableDelay = (milliseconds: number, signal: AbortSignal): Promise<void> => new Promise((resolve, reject) => { if (signal.aborted) { reject(new Error('MCP_OPERATION_ABORTED')); return; } const timer = setTimeout(resolve, milliseconds); signal.addEventListener('abort', () => { clearTimeout(timer); reject(new Error('MCP_OPERATION_ABORTED')); }, { once: true }); });
-export const createMcpServer = (adapter: McpAdapter = bootstrapMcpAdapter(), test?: { enabled: boolean; slowToolDelayMs: number; onSideEffect?: () => void }): McpServer => {
+export const createMcpServer = (
+  adapter: McpAdapter = bootstrapMcpAdapter(),
+  test?: { enabled: boolean; slowToolDelayMs: number; onSideEffect?: () => void },
+  allowedTools: readonly string[] = ['system_readiness'],
+): McpServer => {
   const server = new McpServer({ name: 'crypto-intelligence-agent-gateway', version: '0.1.0' });
-  server.registerTool('system_readiness', { description: adapter.listTools()[0]?.description ?? 'Synthetic readiness only.', inputSchema: {} }, async () => ({ content: [{ type: 'text', text: JSON.stringify(adapter.systemReadiness()) }] }));
-  if (test?.enabled) server.registerTool('__test_slow', { description: 'Controllably slow synthetic tool for timeout regression only.', inputSchema: {} }, async (_input, extra) => { await waitForAbortableDelay(test.slowToolDelayMs, extra.signal); if (extra.signal.aborted) throw new Error('MCP_OPERATION_ABORTED'); test.onSideEffect?.(); return { content: [{ type: 'text', text: 'completed' }] }; });
+  const effectiveAllowlist = test?.enabled ? [...allowedTools, '__test_slow'] : allowedTools;
+  validateToolAllowlist('system_readiness', effectiveAllowlist);
+
+  server.registerTool('system_readiness', { description: adapter.listTools()[0]?.description ?? 'Synthetic readiness only.', inputSchema: {} }, async () => {
+    validateToolAllowlist('system_readiness', effectiveAllowlist);
+    return { content: [{ type: 'text', text: JSON.stringify(adapter.systemReadiness()) }] };
+  });
+  if (test?.enabled) {
+    server.registerTool('__test_slow', { description: 'Controllably slow synthetic tool for timeout regression only.', inputSchema: {} }, async (_input, extra) => {
+      validateToolAllowlist('__test_slow', effectiveAllowlist);
+      await waitForAbortableDelay(test.slowToolDelayMs, extra.signal);
+      if (extra.signal.aborted) throw new Error('MCP_OPERATION_ABORTED');
+      test.onSideEffect?.();
+      return { content: [{ type: 'text', text: 'completed' }] };
+    });
+  }
   return server;
 };
 
@@ -97,12 +117,35 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     if (bodySize > mcpMaxBodyBytes) return context.json({ error: { code: 'PAYLOAD_TOO_LARGE', message: 'MCP request exceeds configured limit', correlationId: context.get('correlationId') } }, 413);
     const protocol = context.req.header('mcp-protocol-version');
     try {
-      validateMcpProtocol(protocol, ['2025-11-25'], { allowMissing: true });
+      validateMcpProtocol(protocol, ['2025-11-25'], { allowMissing: input.mcpTestMode === true });
     } catch {
       return context.json({ error: { code: 'UNSUPPORTED_PROTOCOL_VERSION', message: 'Supported MCP protocol: 2025-11-25', correlationId: context.get('correlationId') } }, 400);
     }
     const rawClientId = context.req.header('x-mcp-client-id') ?? context.req.header('x-forwarded-for') ?? 'anonymous';
     if (rawClientId.length > 128) return context.json({ error: { code: 'INVALID_CLIENT_ID', message: 'MCP client identifier is invalid', correlationId: context.get('correlationId') } }, 400);
+
+    const sessionId = context.req.header('x-mcp-session-id');
+    if (sessionId) {
+      const expiresAt = context.req.header('x-mcp-session-expires');
+      try {
+        validateMcpSessionScope({
+          sessionId,
+          clientId: rawClientId,
+          expiresAt: expiresAt ?? undefined,
+          allowedTools: input.allowedTools ?? ['system_readiness'],
+        }, 'system_readiness');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'INVALID_SESSION';
+        if (message === 'SESSION_EXPIRED') {
+          return context.json({ error: { code: 'SESSION_EXPIRED', message: 'MCP session has expired', correlationId: context.get('correlationId') } }, 401);
+        }
+        if (message === 'INVALID_CLIENT_ID' || message === 'INVALID_SESSION_ID') {
+          return context.json({ error: { code: 'INVALID_SESSION', message: 'Invalid session credentials', correlationId: context.get('correlationId') } }, 400);
+        }
+        return context.json({ error: { code: 'TOOL_ACCESS_FORBIDDEN', message: 'Tool access is forbidden by session scope', correlationId: context.get('correlationId') } }, 403);
+      }
+    }
+
     const current = nowMs();
     if (rateWindows.size >= mcpMaxTrackedClients) {
       for (const [key, value] of rateWindows) {
@@ -120,7 +163,11 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     const transportOptions = { enableJsonResponse: true, allowedOrigins: input.allowedOrigins, enableDnsRebindingProtection: true };
     Object.assign(transportOptions, { sessionIdGenerator: undefined });
     const transport = new WebStandardStreamableHTTPServerTransport(transportOptions);
-    const server = createMcpServer(undefined, { enabled: input.mcpTestMode === true, slowToolDelayMs: input.mcpTestSlowToolDelayMs ?? 100, ...(input.onMcpTestSideEffect ? { onSideEffect: input.onMcpTestSideEffect } : {}) });
+    const server = createMcpServer(
+      undefined,
+      { enabled: input.mcpTestMode === true, slowToolDelayMs: input.mcpTestSlowToolDelayMs ?? 100, ...(input.onMcpTestSideEffect ? { onSideEffect: input.onMcpTestSideEffect } : {}) },
+      input.allowedTools,
+    );
     activeMcpRequests += 1;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     const abortController = new AbortController();

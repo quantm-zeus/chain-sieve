@@ -19,10 +19,17 @@ export const isPrivateOrBlockedAddress = (hostOrIp: string): boolean => {
 
   let normalized = hostOrIp.trim().toLowerCase();
 
-  // Decode percent-encoded hosts (e.g., %31%32%37.0.0.1)
+  // Decode percent-encoded hosts recursively (e.g., %31%32%37.0.0.1 or %2531%2532%2537.0.0.1)
   try {
-    if (normalized.includes('%')) {
+    let prev = '';
+    let iterations = 0;
+    while (normalized.includes('%') && normalized !== prev && iterations < 5) {
+      prev = normalized;
       normalized = decodeURIComponent(normalized).toLowerCase();
+      iterations++;
+    }
+    if (normalized.includes('%')) {
+      return true; // Fail closed on unresolved/nested percent encoding
     }
   } catch {
     return true; // Malformed percent-encoding is blocked

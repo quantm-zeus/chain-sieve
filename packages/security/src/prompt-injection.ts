@@ -66,14 +66,13 @@ export const sanitizeUntrustedContent = (
   // 2. Strip Unicode bidirectional override characters that can obfuscate attacks
   sanitized = sanitized.replace(/[\u202A-\u202E\u2066-\u2069]/g, '');
 
-  // 3. Neutralize known system / role delimiter tokens if requested or by default
+  // 3. Neutralize known system / role / admin / override / instruction delimiter tokens if requested or by default
   if (options?.stripDelimiters !== false) {
     sanitized = sanitized
-      .replace(/<(\/?)system>/gi, '&lt;$1system&gt;')
-      .replace(/<(\/?)system_instruction>/gi, '&lt;$1system_instruction&gt;')
-      .replace(/\[(\/?)(INST|SYS|SYSTEM|ASSISTANT)\]/gi, '\\[$1$2\\]')
-      .replace(/<!--\s*system/gi, '&lt;!-- system')
-      .replace(/```system/gi, '``` untrusted-system');
+      .replace(/<(\/?)(system|system_instruction|override|admin|instruction)>/gi, '&lt;$1$2&gt;')
+      .replace(/\[(\/?)(INST|SYS|SYSTEM|ASSISTANT|ADMIN|OVERRIDE)\]/gi, '\\[$1$2\\]')
+      .replace(/<!--\s*(system|override|admin|instruction)/gi, '&lt;!-- $1')
+      .replace(/```\s*(system|instruction|admin|override)/gi, '``` untrusted-$1');
   }
 
   // 4. Bound length

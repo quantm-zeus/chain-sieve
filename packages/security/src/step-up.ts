@@ -58,7 +58,8 @@ export const validateHighImpactAction = (
     throw new Error('STEP_UP_AUTHENTICATION_REQUIRED');
   }
 
-  if (input.authFactors.method === 'TOTP' || !input.authFactors.phishingResistant) {
+  const methodUpper = String(input.authFactors.method ?? '').toUpperCase().trim();
+  if (methodUpper === 'TOTP' || methodUpper === 'SMS' || methodUpper === 'PASSWORD' || !input.authFactors.phishingResistant) {
     throw new Error('STEP_UP_PHISHING_RESISTANCE_REQUIRED');
   }
 

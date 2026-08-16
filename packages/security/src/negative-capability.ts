@@ -34,8 +34,20 @@ export const PROHIBITED_ENV_PATTERNS: readonly RegExp[] = Object.freeze([
   /(?:^|_)EXECUTION_KEY(?:$|_)/i,
 ]);
 
-export const requireReadOnlyCapability = (capability: string): void => {
-  if (typeof capability !== 'string') return;
+export const requireReadOnlyCapability = (capability: unknown): void => {
+  if (typeof capability !== 'string' || capability.trim() === '') {
+    if (capability === null || capability === undefined) {
+      throw new Error('PROHIBITED_CAPABILITY:CAPABILITY_REQUIRED');
+    }
+    if (typeof capability === 'object' || typeof capability === 'function') {
+      const violations = scanObjectForProhibitedCapabilities(capability);
+      if (violations.length > 0) {
+        throw new Error(`PROHIBITED_CAPABILITY:${violations.join(',')}`);
+      }
+      return;
+    }
+    throw new Error('PROHIBITED_CAPABILITY:INVALID_TYPE');
+  }
   for (const pattern of PROHIBITED_PATTERNS) {
     if (pattern.test(capability)) {
       throw new Error('PROHIBITED_CAPABILITY');
