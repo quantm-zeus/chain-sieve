@@ -220,6 +220,23 @@ class Goal1RequirementAuthorityTests(unittest.TestCase):
         # Verify no active records mutated
         self.assertEqual(len(self.store.load()), 0)
 
+    def test_r7_duplicate_requirement_ids_fail_closed(self) -> None:
+        """R7: Duplicate requirement IDs across packages fail closed with DUPLICATE_REQUIREMENT_ID."""
+        pkg1 = make_package("pkg-1", ["FR-DATA-001"])
+        pkg2 = make_package("pkg-2", ["FR-DATA-001"])
+        ms = Milestone.from_dict({
+            "id": "g1-deterministic-signal-execution",
+            "objective": "Test G1",
+            "workPackages": [pkg1, pkg2],
+        })
+
+        with self.assertRaises(ReasoningContextUnavailableError):
+            build_reasoning_context(self.root, self.config, ms, self.store, self.runner)
+
+        events = self.store.history(10)
+        dup_events = [e for e in events if e.get("type") == "REASONING_CONTEXT_UNAVAILABLE" and e.get("failureClass") == "DUPLICATE_REQUIREMENT_ID"]
+        self.assertEqual(len(dup_events), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

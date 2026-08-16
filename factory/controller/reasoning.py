@@ -265,9 +265,31 @@ def build_reasoning_context(
                 )
                 raise ReasoningContextUnavailableError(reason)
 
-        milestone_reqs = sorted(set(raw_package_reqs))
+        if len(raw_package_reqs) != len(set(raw_package_reqs)):
+            seen = set()
+            duplicates = []
+            for rid in raw_package_reqs:
+                if rid in seen and rid not in duplicates:
+                    duplicates.append(rid)
+                seen.add(rid)
+            reason = f"active milestone {milestone.id} contains duplicate requirement IDs in packages: {duplicates}"
+            store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                role=role,
+                reason=reason,
+                failureClass="DUPLICATE_REQUIREMENT_ID",
+                requirementId=duplicates[0] if duplicates else "",
+            )
+            raise ReasoningContextUnavailableError(reason)
+
+        milestone_reqs = sorted(raw_package_reqs)
         scoped_defs = [authoritative_defs[rid] for rid in milestone_reqs]
-        if set(raw_package_reqs) != set(milestone_reqs) or set(milestone_reqs) != {d.get("id") for d in scoped_defs}:
+        if (
+            set(raw_package_reqs) != set(milestone_reqs)
+            or set(milestone_reqs) != {d.get("id") for d in scoped_defs}
+            or len(milestone_reqs) != len(scoped_defs)
+        ):
             reason = f"active milestone {milestone.id} requirement ID set mismatch: raw={set(raw_package_reqs)} scoped={set(milestone_reqs)} defs={{d.get('id') for d in scoped_defs}}"
             store.event(
                 "REASONING_CONTEXT_UNAVAILABLE",
