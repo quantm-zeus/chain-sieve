@@ -230,7 +230,7 @@ const validateFeatureSetForMaterialization = (featureSet: FeatureSet, candidate:
 const validateCandidateForMaterialization = (candidate: FunnelCandidate): void => {
   if (candidate === null || typeof candidate !== 'object')
     throw new SignalMaterializationError('SIGNAL_MALFORMED', 'CANDIDATE_NOT_OBJECT');
-  const c = candidate as Record<string, unknown>;
+  const c = candidate as unknown as Record<string, unknown>;
   for (const key of ['assetId', 'chainId', 'asOf', 'eligible', 'score', 'rank', 'rejectionReasons', 'componentValues', 'featureSetHash', 'adapterEvidence'] as const) {
     if (!(key in c)) throw new SignalMaterializationError('SIGNAL_INCOMPLETE', `CANDIDATE_MISSING_${key}`);
   }
@@ -287,7 +287,7 @@ const validateCandidateForMaterialization = (candidate: FunnelCandidate): void =
 const validateProfile = (profile: FunnelProfile): void => {
   if (profile === null || typeof profile !== 'object')
     throw new SignalMaterializationError('SIGNAL_MALFORMED', 'PROFILE_NOT_OBJECT');
-  const p = profile as Record<string, unknown>;
+  const p = profile as unknown as Record<string, unknown>;
   if (typeof p.version !== 'string' || (p.version as string).length === 0)
     throw new SignalMaterializationError('SIGNAL_MALFORMED', 'PROFILE_VERSION_MALFORMED');
   if (!Array.isArray(p.requiredFeatureIds) || (p.requiredFeatureIds as unknown[]).length === 0)
