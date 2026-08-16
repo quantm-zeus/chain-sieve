@@ -378,6 +378,282 @@ class WallClockAndRecoveryTests(unittest.TestCase):
         self.assertEqual(records[a_key].status, PackageStatus.BLOCKED)
         self.assertIn("milestone stagnant", records[a_key].blocked_reason or "")
 
+    def test_regression_1_no_signal_with_durable_work(self) -> None:
+        """
+        TEST 1 — no_signal with durable work
+        Given: AO session reports no_signal, workspace/branch contains durable work
+        Then: work is preserved, package does not immediately escalate to Codex replan, same package is restored/recoverable
+        """
+        import subprocess
+        from dataclasses import replace
+
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+
+        ws_dir = self.temp_root / "ws_int"
+        ws_dir.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "init", str(ws_dir)], check=True, capture_output=True)
+        (ws_dir / "untracked.ts").write_text("// durable work", encoding="utf-8")
+
+        session = Session("chainsieve-6", f"factory/{int_key}", "agy", "no_signal", "no_signal", "89", workspace_path=str(ws_dir))
+        prior_record = PackageRecord(
+            status=PackageStatus.ACTIVE,
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=1,
+            correction_attempts=2,
+        )
+        self.store.save({int_key: prior_record})
+
+        cfg = replace(self.cfg, max_task_attempts=2, max_correction_attempts=2)
+        ao = MockAO(sessions_by_issue={"89": [session]})
+        github = MockGitHub(issues_dict={int_key: issue})
+        controller = FactoryController(self.repo_root, cfg, self.store, github, ao)
+
+        cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("int")]}), encoding="utf-8")
+        records = controller.tick()
+
+        self.assertIn("chainsieve-6", ao.killed)
+        self.assertIn("chainsieve-6", ao.restored)
+        record = records[int_key]
+        self.assertEqual(record.task_attempts, 2)
+        self.assertEqual(record.correction_attempts, 0)
+        self.assertNotEqual(record.status, PackageStatus.BLOCKED)
+
+    def test_regression_2_no_signal_with_clean_workspace(self) -> None:
+        """
+        TEST 2 — no_signal with clean workspace
+        Given: child is genuinely dead/stale, no durable implementation exists
+        Then: safe same-package retry occurs, Issue remains #89-equivalent, no duplicate PR/worktree ownership
+        """
+        from dataclasses import replace
+
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+
+        session = Session("chainsieve-6", f"factory/{int_key}", "agy", "no_signal", "no_signal", "89")
+        prior_record = PackageRecord(
+            status=PackageStatus.ACTIVE,
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=1,
+            correction_attempts=2,
+        )
+        self.store.save({int_key: prior_record})
+
+        cfg = replace(self.cfg, max_task_attempts=2, max_correction_attempts=2)
+        ao = MockAO(sessions_by_issue={"89": [session]})
+        github = MockGitHub(issues_dict={int_key: issue})
+        controller = FactoryController(self.repo_root, cfg, self.store, github, ao)
+
+        cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("int")]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[int_key]
+        self.assertIn("chainsieve-6", ao.killed)
+        self.assertIn(record.status, {PackageStatus.READY, PackageStatus.STARTING})
+        self.assertEqual(len(ao.spawns), 1)
+        self.assertEqual(record.issue_number, 89)
+
+    def test_regression_3_existing_pr(self) -> None:
+        """
+        TEST 3 — existing PR
+        Given: child unavailable, open PR exists
+        Then: controller continues from PR/CI/review state without restarting implementation
+        """
+        from dataclasses import replace
+
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+        head = "a" * 40
+
+        dead_session = Session("chainsieve-6", f"factory/{int_key}", "agy", "no_signal", "no_signal", "89")
+        pr = PullRequest(95, "OPEN", f"factory/{int_key}", head, "url/95", "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},))
+
+        prior_record = PackageRecord(
+            status=PackageStatus.ACTIVE,
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=1,
+            correction_attempts=2,
+            pr_number=95,
+            head_sha=head,
+        )
+        self.store.save({int_key: prior_record})
+
+        cfg = replace(self.cfg, max_task_attempts=2, max_correction_attempts=2)
+        ao = MockAO(sessions_by_issue={"89": [dead_session]})
+        github = MockGitHub(issues_dict={int_key: issue}, prs_dict={int_key: [pr]})
+        controller = FactoryController(self.repo_root, cfg, self.store, github, ao)
+
+        cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("int")]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[int_key]
+        self.assertIn(record.status, {PackageStatus.PR_WAITING, PackageStatus.REVIEW})
+        self.assertEqual(record.pr_number, 95)
+        self.assertEqual(ao.spawns, [])
+
+    def test_regression_4_codex_replan_budget_exhausted_unblocks_on_runtime_recovery(self) -> None:
+        """
+        TEST 4 — Codex replan budget exhausted
+        Given: replan call was unavailable/exhausted, but underlying failure is a recoverable runtime failure
+        Then: package does NOT become permanently deadlocked; reconciles back to recoverable state
+        """
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+
+        session = Session("chainsieve-6", f"factory/{int_key}", "agy", "working", "working", "89")
+        prior_record = PackageRecord(
+            status=PackageStatus.BLOCKED,
+            blocked_reason="Codex replan unavailable or budget exhausted: Codex replan call budget exhausted",
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=1,
+            replan_attempted=True,
+        )
+        self.store.save({int_key: prior_record})
+
+        ao = MockAO(sessions_by_issue={"89": [session]})
+        github = MockGitHub(issues_dict={int_key: issue})
+        controller = FactoryController(self.repo_root, self.cfg, self.store, github, ao)
+
+        snapshot = Snapshot(issues={int_key: issue}, sessions={int_key: [session]})
+        records = controller.reconcile(plan, snapshot)
+
+        record = records[int_key]
+        self.assertIsNone(record.blocked_reason)
+        self.assertFalse(record.replan_attempted)
+        self.assertEqual(record.status, PackageStatus.ACTIVE)
+
+    def test_regression_5_genuine_repeated_failure_uses_bounded_replan(self) -> None:
+        """
+        TEST 5 — genuine repeated implementation/decomposition failure
+        Given: task attempts exhausted (>= maxTaskAttempts) on persistent failures
+        Then: bounded Codex replan is invoked
+        """
+        from dataclasses import replace
+
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+
+        class MockReasoner:
+            def __init__(self):
+                self.replan_called = False
+
+            def replan(self, milestone, pkg, evidence):
+                self.replan_called = True
+                return {"status": "REPLANNED", "plan": {"id": "m1", "objective": "test", "workPackages": [{"id": "int-reboot", "objective": "reboot", "acceptance": ["pass"], "dependencies": [], "preferredProvider": "muse"}]}}
+
+        session = Session("chainsieve-6", f"factory/{int_key}", "agy", "no_signal", "no_signal", "89")
+        prior_record = PackageRecord(
+            status=PackageStatus.ACTIVE,
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=2,
+            correction_attempts=2,
+        )
+        self.store.save({int_key: prior_record})
+
+        cfg = replace(self.cfg, max_task_attempts=2, max_correction_attempts=2)
+        ao = MockAO(sessions_by_issue={"89": [session]})
+        github = MockGitHub(issues_dict={int_key: issue})
+        reasoner = MockReasoner()
+        controller = FactoryController(self.repo_root, cfg, self.store, github, ao, reasoner=reasoner)
+
+        cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("int")]}), encoding="utf-8")
+        records = controller.tick()
+
+        self.assertTrue(reasoner.replan_called)
+
+    def test_regression_6_no_infinite_retry(self) -> None:
+        """
+        TEST 6 — no infinite retry
+        Given: repeated failure after replan already attempted
+        Then: failure remains bounded and blocked without infinite loops
+        """
+        from dataclasses import replace
+
+        plan = milestone(package("int"))
+        int_key = key("int")
+        issue = Issue(89, "OPEN", "", "url/89", "factory-bot")
+
+        session = Session("chainsieve-6", f"factory/{int_key}", "agy", "no_signal", "no_signal", "89")
+        prior_record = PackageRecord(
+            status=PackageStatus.ACTIVE,
+            issue_number=89,
+            session_id="chainsieve-6",
+            provider="agy",
+            task_attempts=2,
+            correction_attempts=2,
+            replan_attempted=True,
+        )
+        self.store.save({int_key: prior_record})
+
+        cfg = replace(self.cfg, max_task_attempts=2, max_correction_attempts=2)
+        ao = MockAO(sessions_by_issue={"89": [session]})
+        github = MockGitHub(issues_dict={int_key: issue})
+        controller = FactoryController(self.repo_root, cfg, self.store, github, ao)
+
+        cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [package("int")]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[int_key]
+        self.assertEqual(record.status, PackageStatus.BLOCKED)
+        self.assertIn("refusing escalation loop", record.blocked_reason or "")
+
+    def test_regression_7_exact_head_review_gates_unchanged(self) -> None:
+        """
+        TEST 7 — exact-head/review gates unchanged
+        Given: review with mismatched context digest or wrong reviewer
+        Then: review gate fails closed
+        """
+        head = "b" * 40
+        valid_digest = self._context_digest("m1", package("int"), head)
+        wrong_digest = "f" * 64
+
+        # Case A: Wrong digest
+        evidence_wrong_digest = {
+            "reviews": [{
+                "latestRun": {
+                    "targetSha": head,
+                    "status": "complete",
+                    "verdict": "approved",
+                    "harness": "muse",
+                    "body": f"Review passed.\n\n{PROOF_PREFIX}{wrong_digest}",
+                }
+            }]
+        }
+        ok, reason, _, _ = review_gate(evidence_wrong_digest, head, "muse", valid_digest)
+        self.assertFalse(ok)
+        self.assertIn("stale or belongs to another work package", reason)
+
+        # Case B: Self-review (agy reviewed agy implementation)
+        evidence_self_review = {
+            "reviews": [{
+                "latestRun": {
+                    "targetSha": head,
+                    "status": "complete",
+                    "verdict": "approved",
+                    "harness": "agy",
+                    "body": f"Review passed.\n\n{PROOF_PREFIX}{valid_digest}",
+                }
+            }]
+        }
+        ok, reason, _, _ = review_gate(evidence_self_review, head, "muse", valid_digest)
+        self.assertFalse(ok)
+        self.assertIn("required muse", reason)
+
     def _context_digest(self, milestone_id: str, pkg_dict: dict, head: str) -> str:
         work = WorkPackage.from_dict(pkg_dict)
         context = build_review_context(
