@@ -10,7 +10,7 @@ import {
   canonicalSnapshotBytes,
   canonicalFeatureSetBytes,
 } from '@ciag/signal-intelligence';
-import type { FeatureSet, MarketSnapshot } from '@ciag/signal-intelligence';
+import type { FeatureSet, MarketSnapshot, FunnelCandidate, FunnelInput } from '@ciag/signal-intelligence';
 
 const iso2 = '2026-03-01T02:00:00.000Z';
 
@@ -191,17 +191,12 @@ describe('signal materialization', () => {
       featureSet: badFS,
       adapterEvidence: null,
     };
-    const badFunnel = runFunnel([badInput as unknown as import('@ciag/signal-intelligence').FunnelInput], DEFAULT_FUNNEL_PROFILE);
+    const badFunnel = runFunnel([badInput as unknown as FunnelInput], DEFAULT_FUNNEL_PROFILE);
     expect(badFunnel.candidates[0]!.eligible).toBe(false);
     expect(() => materializeSignal({ candidate: badFunnel.candidates[0]!, featureSet: badFS, snapshot, funnelProfile: DEFAULT_FUNNEL_PROFILE })).toThrow(SignalMaterializationError);
     expect(() => materializeSignal({ candidate: badFunnel.candidates[0]!, featureSet: badFS, snapshot, funnelProfile: DEFAULT_FUNNEL_PROFILE })).toThrow(expect.objectContaining({ code: 'SIGNAL_INCOMPLETE' }));
 
-    // Incomplete: missing required feature quality not VALID
-    const lowQualityFS: FeatureSet = {
-      ...featureSet,
-      features: featureSet.features.map((f) => (f.featureId === 'volume_acceleration' ? { ...f, quality: 'LOW_SAMPLE' as const, value: 1 } : f)),
-    };
-    // Need to recompute candidate with low quality to avoid hash mismatch, so test via malformed lineage instead
+    // Test malformed lineage when no snapshot
     // Test malformed lineage when no snapshot
     const malformedFS = {
       ...featureSet,
@@ -235,13 +230,13 @@ describe('signal materialization', () => {
 
   it('materializeSignals validates each candidate and throws typed error not TypeError', () => {
     const { featureSet, snapshot } = buildEligible();
-    const funnelOutWithNull = { candidates: [null as unknown as import('@ciag/signal-intelligence').FunnelCandidate], funnelVersion: '1.0.0', profileVersion: '1.0.0' };
-    expect(() => materializeSignals(funnelOutWithNull as unknown as { candidates: import('@ciag/signal-intelligence').FunnelCandidate[] }, { [now.assetId]: featureSet }, { [now.assetId]: snapshot }, DEFAULT_FUNNEL_PROFILE)).toThrow(SignalMaterializationError);
+    const funnelOutWithNull = { candidates: [null as unknown as FunnelCandidate], funnelVersion: '1.0.0', profileVersion: '1.0.0' };
+    expect(() => materializeSignals(funnelOutWithNull as unknown as { candidates: FunnelCandidate[] }, { [now.assetId]: featureSet }, { [now.assetId]: snapshot }, DEFAULT_FUNNEL_PROFILE)).toThrow(SignalMaterializationError);
     const funnelOutMissingComponent = {
-      candidates: [{ assetId: now.assetId, eligible: true, componentValues: null as unknown as [], chainId: now.chainId, asOf: iso2, score: 1, rank: 1, rejectionReasons: [], featureSetHash: 'b'.repeat(64), adapterEvidence: { poolId: 'x', adapterVersion: '1.0.0', available: true, verified: true } } as unknown as import('@ciag/signal-intelligence').FunnelCandidate],
+      candidates: [{ assetId: now.assetId, eligible: true, componentValues: null as unknown as [], chainId: now.chainId, asOf: iso2, score: 1, rank: 1, rejectionReasons: [], featureSetHash: 'b'.repeat(64), adapterEvidence: { poolId: 'x', adapterVersion: '1.0.0', available: true, verified: true } } as unknown as FunnelCandidate],
       funnelVersion: '1.0.0',
     };
-    expect(() => materializeSignals(funnelOutMissingComponent as unknown as { candidates: import('@ciag/signal-intelligence').FunnelCandidate[] }, { [now.assetId]: featureSet }, { [now.assetId]: snapshot }, DEFAULT_FUNNEL_PROFILE)).toThrow(SignalMaterializationError);
+    expect(() => materializeSignals(funnelOutMissingComponent as unknown as { candidates: FunnelCandidate[] }, { [now.assetId]: featureSet }, { [now.assetId]: snapshot }, DEFAULT_FUNNEL_PROFILE)).toThrow(SignalMaterializationError);
   });
 
   it('batch ordering deterministic and InMemorySignalStore idempotent', () => {
