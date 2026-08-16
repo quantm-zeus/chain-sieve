@@ -72,11 +72,11 @@ export const validateMcpSessionScope = (
   session: McpSessionScope,
   requestedTool: string,
 ): void => {
-  if (!session.sessionId || typeof session.sessionId !== 'string') {
+  if (!session.sessionId || typeof session.sessionId !== 'string' || session.sessionId.trim() === '') {
     throw new Error('INVALID_SESSION_ID');
   }
 
-  if (!session.clientId || typeof session.clientId !== 'string' || session.clientId.length > 128) {
+  if (!session.clientId || typeof session.clientId !== 'string' || session.clientId.trim() === '' || session.clientId.length > 128) {
     throw new Error('INVALID_CLIENT_ID');
   }
 

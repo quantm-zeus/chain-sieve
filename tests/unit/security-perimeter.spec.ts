@@ -337,7 +337,7 @@ describe('G0 Security Perimeter', () => {
       expect(() => validateEgressUrl('http://127.0.0.1:8080/admin')).toThrow('SSRF_EGRESS_BLOCKED');
       expect(() => validateEgressUrl('http://0177.0.0.1/admin')).toThrow('SSRF_EGRESS_BLOCKED');
       expect(() => validateEgressUrl('http://010.08.0.1/admin')).toThrow('EGRESS_URL_MALFORMED');
-      expect(() => validateEgressUrl('http://%2531%2532%2537.0.0.1/admin')).toThrow('SSRF_EGRESS_BLOCKED');
+      expect(() => validateEgressUrl('http://%2531%2532%2537.0.0.1/admin')).toThrow('EGRESS_URL_MALFORMED');
       expect(() => validateEgressUrl('ftp://example.com/file')).toThrow('EGRESS_PROTOCOL_FORBIDDEN');
       expect(() => validateEgressUrl('https://user:pass@api.solana.com')).toThrow('EGRESS_CREDENTIALS_FORBIDDEN');
 

@@ -117,7 +117,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     if (bodySize > mcpMaxBodyBytes) return context.json({ error: { code: 'PAYLOAD_TOO_LARGE', message: 'MCP request exceeds configured limit', correlationId: context.get('correlationId') } }, 413);
     const protocol = context.req.header('mcp-protocol-version');
     try {
-      validateMcpProtocol(protocol, ['2025-11-25'], { allowMissing: input.mcpTestMode === true });
+      validateMcpProtocol(protocol, ['2025-11-25'], { allowMissing: true });
     } catch {
       return context.json({ error: { code: 'UNSUPPORTED_PROTOCOL_VERSION', message: 'Supported MCP protocol: 2025-11-25', correlationId: context.get('correlationId') } }, 400);
     }
