@@ -10,16 +10,16 @@ import { TradeNormalizationError } from './types.js';
 export const normalizeEconomicTrades = (
   rawHops: RawSwapHop[],
 ): EconomicTrade[] => {
-  if (!Array.isArray(rawHops)) throw new TradeNormalizationError('TRADE_MALFORMED', 'HOPS_NOT_ARRAY');
-  if (rawHops.length === 0) throw new TradeNormalizationError('TRADE_EMPTY', 'NO_HOPS');
+  if (!Array.isArray(rawHops)) throw new TradeNormalizationError('TRADE_MALFORMED', 'TRADE_MALFORMED: HOPS_NOT_ARRAY');
+  if (rawHops.length === 0) throw new TradeNormalizationError('TRADE_EMPTY', 'TRADE_EMPTY: NO_HOPS');
 
   // Validate each hop
   for (const hop of rawHops) {
     if (!hop.txHash || !hop.fromMint || !hop.toMint || !hop.fromAmountRaw || !hop.toAmountRaw || !hop.actor) {
-      throw new TradeNormalizationError('TRADE_MALFORMED', 'HOP_MISSING_FIELD');
+      throw new TradeNormalizationError('TRADE_MALFORMED', 'TRADE_MALFORMED: HOP_MISSING_FIELD');
     }
     if (!/^\d+$/.test(hop.fromAmountRaw) || !/^\d+$/.test(hop.toAmountRaw)) {
-      throw new TradeNormalizationError('TRADE_MALFORMED', 'AMOUNT_MALFORMED');
+      throw new TradeNormalizationError('TRADE_MALFORMED', 'TRADE_MALFORMED: AMOUNT_MALFORMED');
     }
   }
 
@@ -45,7 +45,7 @@ export const normalizeEconomicTrades = (
         // Allow aggregator hop discontinuity only if legs are flagged correctly
         // Otherwise treat as inconsistent route
         if (!legs[i]!.isAggregatorHop && !legs[i + 1]!.isAggregatorHop) {
-          throw new TradeNormalizationError('TRADE_INCONSISTENT_ROUTE', `ROUTE_DISCONTINUITY:${legs[i]!.toMint}->${legs[i + 1]!.fromMint}`);
+          throw new TradeNormalizationError('TRADE_INCONSISTENT_ROUTE', `TRADE_INCONSISTENT_ROUTE: ROUTE_DISCONTINUITY:${legs[i]!.toMint}->${legs[i + 1]!.fromMint}`);
         }
       }
     }
