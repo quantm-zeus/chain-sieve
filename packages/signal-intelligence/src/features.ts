@@ -267,7 +267,7 @@ const validateHistory = (snapshots: readonly MarketSnapshot[], feature: FeatureD
 export const computeVolumeAcceleration = (
   history: readonly MarketSnapshot[],
   now: MarketSnapshot,
-  definition: FeatureDefinition = FEATURE_REGISTRY[0],
+  definition: FeatureDefinition = FEATURE_REGISTRY[0]!,
   calculatedAt: string = new Date().toISOString(),
 ): FeatureValue => {
   validateHistory([...history, now].sort((a, b) => Date.parse(a.asOf) - Date.parse(b.asOf)), definition);
@@ -309,7 +309,7 @@ export const computeVolumeAcceleration = (
 export const computeLiquidityGrowth = (
   history: readonly MarketSnapshot[],
   now: MarketSnapshot,
-  definition: FeatureDefinition = FEATURE_REGISTRY[1],
+  definition: FeatureDefinition = FEATURE_REGISTRY[1]!,
   calculatedAt: string = new Date().toISOString(),
 ): FeatureValue => {
   validateHistory([...history, now].sort((a, b) => Date.parse(a.asOf) - Date.parse(b.asOf)), definition);
@@ -344,7 +344,7 @@ export const computeTradeEntropy = (
   tradeBuckets: number[], // deterministic bucket counts, e.g. [10, 5, 0, 2]
   asOf: string,
   entityId: string,
-  definition: FeatureDefinition = FEATURE_REGISTRY[2],
+  definition: FeatureDefinition = FEATURE_REGISTRY[2]!,
   calculatedAt: string = new Date().toISOString(),
   lineageIds: string[] = [],
   lineageHashes: string[] = [],
@@ -392,7 +392,7 @@ export const computeTradeEntropy = (
 export const computeLiquidityDrawdown = (
   history: readonly MarketSnapshot[],
   now: MarketSnapshot,
-  definition: FeatureDefinition = FEATURE_REGISTRY[3],
+  definition: FeatureDefinition = FEATURE_REGISTRY[3]!,
   calculatedAt: string = new Date().toISOString(),
 ): FeatureValue => {
   validateHistory([...history, now].sort((a, b) => Date.parse(a.asOf) - Date.parse(b.asOf)), definition);
@@ -441,7 +441,7 @@ const boundedFeature = (
 ): FeatureValue => {
   const cohort = computeCohortLevel(sampleSize, definition.minimumObservations, definition.cohortFallback);
   // Window: from earliest in history to now.asOf
-  const windowStart = sortedHistory.length > 0 ? sortedHistory[0].asOf : null;
+  const windowStart = sortedHistory.length > 0 ? sortedHistory[0]!.asOf : null;
   return {
     featureId: definition.featureId,
     version: definition.version,
@@ -578,14 +578,14 @@ export const computeFeatureSet = (
     for (const h of history) validateSnapshot(h);
   }
 
-  const vol = computeVolumeAcceleration(history, now, FEATURE_REGISTRY[0], calculatedAt);
-  const liq = computeLiquidityGrowth(history, now, FEATURE_REGISTRY[1], calculatedAt);
-  const dd = computeLiquidityDrawdown(history, now, FEATURE_REGISTRY[3], calculatedAt);
+  const vol = computeVolumeAcceleration(history, now, FEATURE_REGISTRY[0]!, calculatedAt);
+  const liq = computeLiquidityGrowth(history, now, FEATURE_REGISTRY[1]!, calculatedAt);
+  const dd = computeLiquidityDrawdown(history, now, FEATURE_REGISTRY[3]!, calculatedAt);
 
   const features: FeatureValue[] = [vol, liq, dd];
 
   if (tradeBucketsForEntropy !== null) {
-    const ent = computeTradeEntropy(tradeBucketsForEntropy, now.asOf, now.assetId, FEATURE_REGISTRY[2], calculatedAt, [now.snapshotId], [hashSnapshotId(now.snapshotId)]);
+    const ent = computeTradeEntropy(tradeBucketsForEntropy, now.asOf, now.assetId, FEATURE_REGISTRY[2]!, calculatedAt, [now.snapshotId], [hashSnapshotId(now.snapshotId)]);
     features.push(ent);
   }
 

@@ -168,7 +168,7 @@ describe('deterministic-snapshots-features', () => {
   it('feature computation rejects inconsistent snapshot deterministically', () => {
     const inconsistent = makeSnapshot();
     // Pool updated after asOf -> inconsistent
-    inconsistent.pools[0].updatedAt = '2026-04-01T00:00:00.000Z';
+    inconsistent.pools[0]!.updatedAt = '2026-04-01T00:00:00.000Z';
     expect(() => validateSnapshot(inconsistent)).toThrow(SnapshotValidationError);
     try {
       validateSnapshot(inconsistent);
@@ -178,7 +178,7 @@ describe('deterministic-snapshots-features', () => {
 
     // Duplicate poolIds
     const dup = makeSnapshot();
-    dup.pools = [dup.pools[0], { ...dup.pools[0] }];
+    dup.pools = [dup.pools[0]!, { ...dup.pools[0]! }];
     expect(() => validateSnapshot(dup)).toThrow(SnapshotValidationError);
 
     // History with duplicate asOf
