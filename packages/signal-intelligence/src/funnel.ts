@@ -14,7 +14,6 @@
 
 import { createHash } from 'node:crypto';
 import type { FeatureSet, FeatureValue } from './features.js';
-import { FeatureValidationError } from './features.js';
 
 // ---------------------------------------------------------------------------
 // Errors
