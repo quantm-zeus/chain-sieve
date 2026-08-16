@@ -150,9 +150,20 @@ describe('G0 Security Perimeter', () => {
         'submitTransaction',
         'broadcastRawTransaction',
         'sendTransaction',
+        'swap',
+        'createSwap',
         'executeSwap',
-        'approveToken',
+        'swapExactIn',
+        'createOrder',
+        'cancelOrder',
         'placeOrder',
+        'limitOrder',
+        'marketOrder',
+        'approve',
+        'approveToken',
+        'tokenApproval',
+        'setApprovalForAll',
+        'increaseAllowance',
         'walletCustody',
         'bridgeAssets',
         'stakeTokens',
@@ -276,6 +287,9 @@ describe('G0 Security Perimeter', () => {
       expect(isPrivateOrBlockedAddress('::ffff:0177.0.0.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('::ffff:2130706433')).toBe(true);
       expect(isPrivateOrBlockedAddress('::ffff:0x7f.1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:7f00:0001')).toBe(true);
+      expect(isPrivateOrBlockedAddress('::ffff:7f00:1')).toBe(true);
+      expect(isPrivateOrBlockedAddress('0:0:0:0:0:ffff:7f00:1')).toBe(true);
       expect(isPrivateOrBlockedAddress('0:0:0:0:0:ffff:127.0.0.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('0000:0000:0000:0000:0000:ffff:0x7f.1')).toBe(true);
       expect(isPrivateOrBlockedAddress('fc00::1')).toBe(true);
@@ -294,6 +308,8 @@ describe('G0 Security Perimeter', () => {
       expect(isPrivateOrBlockedAddress('08.0.0.1')).toBe(true); // Invalid octal digit 8 fails closed
 
       expect(isPrivateOrBlockedAddress('8.8.8.8')).toBe(false);
+      expect(isPrivateOrBlockedAddress('::ffff:8.8.8.8')).toBe(false);
+      expect(isPrivateOrBlockedAddress('::ffff:0808:0808')).toBe(false);
       expect(isPrivateOrBlockedAddress('api.mainnet-beta.solana.com')).toBe(false);
     });
 
