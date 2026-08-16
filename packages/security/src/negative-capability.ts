@@ -8,7 +8,7 @@ export const PROHIBITED_PATTERNS: readonly RegExp[] = Object.freeze([
   /\bprivate[_-]?key\b/i,
   /\bseed[_-]?phrase\b/i,
   /\bmnemonic\b/i,
-  /\bsign(?:ed)?(?:Transaction|Payload|Message|Order)\b/i,
+  /\b(?:sign|signed|signing)(?:Transaction|Payload|Message|Order|Data|AndSend(?:Transaction)?)?\b/i,
   /\b(?:send|submit|broadcast)(?:Raw)?(?:Transaction|SignedPayload)\b/i,
   /\bexecuteSwap\b/i,
   /\bapproveToken\b/i,
