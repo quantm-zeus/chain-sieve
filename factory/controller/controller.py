@@ -294,7 +294,12 @@ class FactoryController:
             )
             record.session_id = session_id
             record.provider = provider
-            record.provider_selection = {"provider": provider, "reason": selection_reason}
+            record.initial_provider = record.initial_provider or provider
+            record.provider_selection = {
+                "provider": provider,
+                "reason": selection_reason,
+                "initialProvider": record.initial_provider,
+            }
             record.ao_status = "spawning"
             record.ao_activity = "spawning"
             record.branch = f"factory/{key}"

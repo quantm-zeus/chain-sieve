@@ -97,7 +97,7 @@ class ProviderBalancingTests(unittest.TestCase):
         agy_count = history.count("agy")
         muse_count = history.count("muse")
         self.assertEqual((agy_count, muse_count), (4, 2))
-        self.assertEqual(history, ["muse", "agy", "agy", "muse", "agy", "agy"])
+        self.assertEqual(history, ["agy", "muse", "agy", "agy", "muse", "agy"])
 
     def test_4_no_billing_token_api_required(self) -> None:
         """

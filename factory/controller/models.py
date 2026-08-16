@@ -136,6 +136,7 @@ class PackageRecord:
     issue_number: int | None = None
     session_id: str | None = None
     provider: str | None = None
+    initial_provider: str | None = None
     ao_status: str | None = None
     ao_activity: str | None = None
     branch: str | None = None
@@ -173,6 +174,7 @@ class PackageRecord:
             "issue_number": self.issue_number,
             "session_id": self.session_id,
             "provider": self.provider,
+            "initial_provider": self.initial_provider,
             "ao_status": self.ao_status,
             "ao_activity": self.ao_activity,
             "branch": self.branch,

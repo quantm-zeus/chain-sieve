@@ -125,6 +125,34 @@ def review_required(package: WorkPackage) -> bool:
     return package.risk in {"MEDIUM", "HIGH", "CRITICAL"}
 
 
+def classify_work_package(package: WorkPackage) -> str:
+    """
+    Deterministically classify work package into:
+    - AUXILIARY: test-only, fixtures, mocks, harnesses, schema conformance, CI, migrations, docs
+    - HIGH_SEMANTIC_COMPLEXITY: security perimeter, concurrency, subtle state machine, financial/consensus correctness
+    - STANDARD: normal product implementation
+    """
+    obj_and_id = f"{package.id} {package.objective}".lower()
+    aux_markers = (
+        "test-only", "fixture", "mock", "harness", "schema-conformance", "schema conformance",
+        "conformance test", "ci workflow", "ci pipeline", "mechanical migration", "migration",
+        "documentation", "docs", "baseline metrics", "auxiliary",
+    )
+    if any(marker in obj_and_id for marker in aux_markers) and package.risk in {"LOW", "MEDIUM"}:
+        return "AUXILIARY"
+
+    if package.risk in {"CRITICAL", "HIGH"} and (
+        any(rid.startswith(("FR-SEC", "FR-MCP", "FR-CONC", "FR-CONS")) for rid in package.requirement_ids)
+        or any(marker in obj_and_id for marker in ("security", "sandbox", "concurrency", "consensus", "state machine", "reentrancy"))
+    ):
+        return "HIGH_SEMANTIC_COMPLEXITY"
+
+    if package.risk == "CRITICAL":
+        return "HIGH_SEMANTIC_COMPLEXITY"
+
+    return "STANDARD"
+
+
 def select_implementation_provider(
     package: WorkPackage,
     record: PackageRecord,
@@ -137,9 +165,8 @@ def select_implementation_provider(
     1. mandatory normative/provider capability constraint, if any
     2. durable existing work ownership (preserve provider for existing branch/session/record/PR)
     3. provider availability/cooldown
-    4. task risk/capability compatibility
-    5. deterministic configured weighting
-    6. preferredProvider as tie-break/preference
+    4. work category specialization (AUXILIARY -> Agy-first, HIGH_SEMANTIC_COMPLEXITY -> Muse when justified)
+    5. deterministic configured weighting for fresh STANDARD work (AGY-FIRST / MUSE-SCARCE 2:1)
     """
     available = set(available_providers) if available_providers is not None else {"agy", "muse"}
 
@@ -157,26 +184,56 @@ def select_implementation_provider(
             if alt in available:
                 return alt, "provider-cooldown-fallback"
 
-    # Priority 5: Deterministic configured weighting for fresh eligible work
-    weights = getattr(config, "implementation_weights", None) or {"agy": 2, "muse": 1}
-    counts: dict[str, int] = {"agy": 0, "muse": 0}
-    for r in records.values():
-        if r.provider in counts:
-            counts[r.provider] += 1
-
+    # Priority 3: Provider availability
     candidates = [p for p in ("agy", "muse") if p in available]
     if not candidates:
         return package.preferred_provider, "default-fallback"
     if len(candidates) == 1:
         return candidates[0], "single-available-provider"
 
-    score_agy = counts["agy"] / max(1, weights.get("agy", 2))
-    score_muse = counts["muse"] / max(1, weights.get("muse", 1))
+    # Priority 4: Category specialization
+    category = classify_work_package(package)
+    if category == "AUXILIARY":
+        if "agy" in available:
+            return "agy", "auxiliary-agy-preference"
+        if "muse" in available:
+            return "muse", "provider-cooldown-fallback"
+
+    if category == "HIGH_SEMANTIC_COMPLEXITY":
+        if "muse" in available and (package.risk == "CRITICAL" or package.preferred_provider == "muse"):
+            return "muse", "high-semantic-complexity"
+        if "agy" in available:
+            return "agy", "high-semantic-complexity-fallback"
+
+    # Priority 5: Deterministic configured weighting for fresh STANDARD work (Agy-first 2:1)
+    weights = getattr(config, "implementation_weights", None) or {"agy": 2, "muse": 1}
+    fresh_counts: dict[str, int] = {"agy": 0, "muse": 0}
+    for r in records.values():
+        init_p = getattr(r, "initial_provider", None)
+        if not init_p and r.provider_selection:
+            init_p = r.provider_selection.get("initialProvider") or (
+                r.provider_selection.get("provider")
+                if r.provider_selection.get("reason") in {"weighted-balance", "auxiliary-agy-preference", "high-semantic-complexity"}
+                else None
+            )
+        if not init_p and r.provider and r.task_attempts <= 1 and not r.replan_attempted:
+            init_p = r.provider
+        if init_p in fresh_counts:
+            fresh_counts[init_p] += 1
+
+    w_agy = max(1, weights.get("agy", 2))
+    w_muse = max(1, weights.get("muse", 1))
+    score_agy = fresh_counts["agy"] / w_agy
+    score_muse = fresh_counts["muse"] / w_muse
 
     if score_agy < score_muse and "agy" in available:
         return "agy", "weighted-balance"
     elif score_muse < score_agy and "muse" in available:
         return "muse", "weighted-balance"
     else:
-        pref = package.preferred_provider if package.preferred_provider in candidates else candidates[0]
-        return pref, "weighted-balance"
+        # On tie/equal score: AGY-FIRST
+        if "agy" in available:
+            return "agy", "weighted-balance"
+        elif "muse" in available:
+            return "muse", "weighted-balance"
+        return package.preferred_provider, "default-fallback"
