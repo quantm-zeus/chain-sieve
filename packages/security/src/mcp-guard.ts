@@ -4,10 +4,10 @@ import { requireReadOnlyCapability } from './negative-capability.js';
 export interface McpSessionScope {
   sessionId: string;
   clientId: string;
-  allowedTools?: readonly string[];
-  expiresAt?: string;
-  roles?: readonly string[];
-  metadata?: Record<string, unknown>;
+  allowedTools?: readonly string[] | undefined;
+  expiresAt?: string | undefined;
+  roles?: readonly string[] | undefined;
+  metadata?: Record<string, unknown> | undefined;
 }
 
 export const SUPPORTED_MCP_PROTOCOLS = Object.freeze(['2025-11-25']);

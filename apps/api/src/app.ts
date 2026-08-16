@@ -131,7 +131,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
         validateMcpSessionScope({
           sessionId,
           clientId: rawClientId,
-          expiresAt: expiresAt ?? undefined,
+          ...(expiresAt !== undefined ? { expiresAt } : {}),
           allowedTools: input.allowedTools ?? ['system_readiness'],
         }, 'system_readiness');
       } catch (err: unknown) {
