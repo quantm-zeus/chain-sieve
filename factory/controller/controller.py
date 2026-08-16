@@ -112,6 +112,9 @@ class FactoryController:
                 _apply_pr(record, selected)
                 record.status = PackageStatus.COMPLETED
                 record.blocked_reason = None
+                record.ao_status = "merged"
+                record.ao_activity = "merged"
+                record.last_error = None
                 completed.add(key)
             elif open_prs:
                 selected = open_prs[0]
@@ -124,7 +127,7 @@ class FactoryController:
                 else:
                     _note_progress(record, _progress_fingerprint(None, selected, record), selected.updated_at)
                 record.status = PackageStatus.PR_WAITING
-                if record.blocked_reason and ("wall-clock" in record.blocked_reason.lower() or "budget exhausted" in record.blocked_reason.lower()):
+                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "budget exhausted", "replan", "stagnant")):
                     record.blocked_reason = None
                     record.replan_attempted = False
                     if record.review_verdict not in {"approved", "pass"}:
@@ -134,7 +137,7 @@ class FactoryController:
                 record.branch = f"factory/{key}"
                 _note_progress(record, _progress_fingerprint(sessions[0], None, record), sessions[0].last_activity_at)
                 record.status = _session_package_status(record, sessions[0], self.config)
-                if record.blocked_reason and ("wall-clock" in record.blocked_reason.lower() or "budget exhausted" in record.blocked_reason.lower()):
+                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "budget exhausted", "replan", "stagnant")):
                     record.blocked_reason = None
                     record.replan_attempted = False
             elif record.task_attempts > 0 and record.session_id and any(item.id == record.session_id for item in terminal):
@@ -144,7 +147,7 @@ class FactoryController:
                 _apply_session(record, selected)
                 _note_progress(record, _progress_fingerprint(selected, None, record), selected.last_activity_at)
                 record.status = PackageStatus.FAILED
-                if record.blocked_reason and ("wall-clock" in record.blocked_reason.lower() or "budget exhausted" in record.blocked_reason.lower()):
+                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "budget exhausted", "replan", "stagnant")):
                     record.blocked_reason = None
                     record.replan_attempted = False
             elif terminal and record.task_attempts > 0:
@@ -560,6 +563,7 @@ class FactoryController:
                 previous_provider = record.provider
                 record.status = PackageStatus.READY
                 record.session_id = None
+                record.correction_attempts = 0
                 record.ao_status = "terminated-clean"
                 record.ao_activity = "requeued"
                 record.started_at = None
@@ -577,12 +581,30 @@ class FactoryController:
                 return
             self._escalate_replan(milestone, package, key, record, f"{failure}; both implementation providers exhausted after clean failures")
             return
+        if record.task_attempts < self.config.max_task_attempts:
+            self.ao.kill(session.id)
+            self.ao.restore(session.id)
+            record.task_attempts += 1
+            record.correction_attempts = 0
+            record.started_at = utc_now()
+            record.last_progress_at = utc_now()
+            record.last_error = evidence
+            self.store.event(
+                "WORKER_RESTORED",
+                milestoneId=milestone.id,
+                workPackageId=package.id,
+                workKey=key,
+                provider=record.provider,
+                aoSessionId=session.id,
+                attempt=record.task_attempts,
+            )
+            return
         self._escalate_replan(
             milestone,
             package,
             key,
             record,
-            f"{failure}; alternate-provider retry is unsafe; preserved work: {evidence}",
+            f"{failure}; task attempts exhausted; preserved work: {evidence}",
         )
 
     def _handle_pr(self, milestone: Milestone, package: Any, record: PackageRecord, pr: PullRequest) -> None:
