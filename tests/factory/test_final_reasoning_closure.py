@@ -173,8 +173,15 @@ class FinalReasoningClosureTests(unittest.TestCase):
         (self.root / "docs" / "spec" / "product.requirements.json").write_text(
             json.dumps({
                 "requirements": [
-                    {"id": "FR-DATA-001", "title": "Mutated Pipeline", "description": "Altered description"},
-                ]
+                    {"id": "FR-DATA-001", "title": "Mutated Pipeline", "description": "Altered description", "acceptanceCriteria": ["AC-101"]},
+                    {"id": "FR-SIG-001", "title": "Signal Engine", "description": "Signal generation", "acceptanceCriteria": ["AC-102"]},
+                    {"id": "FR-SEC-001", "title": "Security Sandbox", "description": "Isolated execution", "acceptanceCriteria": ["AC-103"]},
+                ],
+                "acceptanceCriteria": [
+                    {"id": "AC-101", "description": "All events ingested in timestamp order"},
+                    {"id": "AC-102", "description": "Signals emitted deterministically"},
+                    {"id": "AC-103", "description": "No filesystem breakout"},
+                ],
             }),
             encoding="utf-8",
         )
@@ -183,7 +190,18 @@ class FinalReasoningClosureTests(unittest.TestCase):
 
         # Reset requirement definition
         (self.root / "docs" / "spec" / "product.requirements.json").write_text(
-            json.dumps({"requirements": [{"id": "FR-DATA-001", "description": "Original"}]}),
+            json.dumps({
+                "requirements": [
+                    {"id": "FR-DATA-001", "title": "Data Pipeline", "description": "Deterministic ingestion", "acceptanceCriteria": ["AC-101"]},
+                    {"id": "FR-SIG-001", "title": "Signal Engine", "description": "Signal generation", "acceptanceCriteria": ["AC-102"]},
+                    {"id": "FR-SEC-001", "title": "Security Sandbox", "description": "Isolated execution", "acceptanceCriteria": ["AC-103"]},
+                ],
+                "acceptanceCriteria": [
+                    {"id": "AC-101", "description": "All events ingested in timestamp order"},
+                    {"id": "AC-102", "description": "Signals emitted deterministically"},
+                    {"id": "AC-103", "description": "No filesystem breakout"},
+                ],
+            }),
             encoding="utf-8",
         )
 

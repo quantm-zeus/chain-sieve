@@ -18,6 +18,8 @@ MUSE_ENV: tuple[str, ...] = ()
 CODEX_ENV: tuple[str, ...] = ()
 TRANSIENT_RETRIES = 2
 
+NORMATIVE_ID = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$")
+
 FORBIDDEN_OBJECTIVE_PATTERNS = (
     re.compile(r"\bread[- ]access\b", re.IGNORECASE),
     re.compile(r"\brestore\b.*\baccess\b", re.IGNORECASE),
@@ -58,22 +60,67 @@ class ConvergenceOutputRejectedError(RuntimeError):
 
 def authoritative_requirement_definitions(root: Path) -> dict[str, dict[str, Any]]:
     definitions: dict[str, dict[str, Any]] = {}
-    manifests = list(sorted((root / "docs" / "spec").glob("*.requirements.json")))
+    spec_dir = root / "docs" / "spec"
+    if not spec_dir.exists():
+        raise ReasoningContextUnavailableError(f"spec directory missing at {spec_dir}")
+    manifests = list(sorted(spec_dir.glob("*.requirements.json")))
+    if not manifests:
+        raise ReasoningContextUnavailableError(f"no requirement manifests found in {spec_dir}")
     artifact_directory = root / "artifacts" / "spec"
     if artifact_directory.exists():
         manifests.extend(sorted(artifact_directory.glob("*.requirements.json")))
     for path in manifests:
         try:
-            value = json.loads(path.read_text(encoding="utf-8"))
-            for family in ("requirements", "acceptanceCriteria", "invariants", "adrs"):
-                for item in value.get(family, []):
-                    if isinstance(item, dict) and item.get("id"):
-                        identifier = item["id"]
-                        if isinstance(identifier, str) and NORMATIVE_ID.fullmatch(identifier):
-                            definitions[identifier] = item
-        except Exception:
-            pass
+            content = path.read_text(encoding="utf-8")
+        except Exception as error:
+            raise ReasoningContextUnavailableError(f"unable to read requirement manifest {path}: {error}")
+        try:
+            value = json.loads(content)
+        except Exception as error:
+            raise ReasoningContextUnavailableError(f"unable to parse requirement manifest {path} as JSON: {error}")
+        if not isinstance(value, dict):
+            raise ReasoningContextUnavailableError(f"requirement manifest {path} is not a JSON object")
+        for family in ("requirements", "acceptanceCriteria", "invariants", "adrs"):
+            for item in value.get(family, []):
+                if isinstance(item, dict) and item.get("id"):
+                    identifier = item["id"]
+                    if isinstance(identifier, str) and NORMATIVE_ID.fullmatch(identifier):
+                        definitions[identifier] = item
+    if not definitions:
+        raise ReasoningContextUnavailableError("authoritative requirement manifests contain no normative definitions")
     return definitions
+
+
+def authoritative_requirement_ids(root: Path) -> frozenset[str]:
+    identifiers: set[str] = set()
+    spec_dir = root / "docs" / "spec"
+    if not spec_dir.exists():
+        raise ReasoningContextUnavailableError(f"spec directory missing at {spec_dir}")
+    manifests = list(sorted(spec_dir.glob("*.requirements.json")))
+    if not manifests:
+        raise ReasoningContextUnavailableError(f"no requirement manifests found in {spec_dir}")
+    artifact_directory = root / "artifacts" / "spec"
+    if artifact_directory.exists():
+        manifests.extend(sorted(artifact_directory.glob("*.requirements.json")))
+    for path in manifests:
+        try:
+            content = path.read_text(encoding="utf-8")
+        except Exception as error:
+            raise ReasoningContextUnavailableError(f"unable to read requirement manifest {path}: {error}")
+        try:
+            value = json.loads(content)
+        except Exception as error:
+            raise ReasoningContextUnavailableError(f"unable to parse requirement manifest {path} as JSON: {error}")
+        if not isinstance(value, dict):
+            raise ReasoningContextUnavailableError(f"requirement manifest {path} is not a JSON object")
+        for family in ("requirements", "acceptanceCriteria", "invariants", "adrs"):
+            for item in value.get(family, []):
+                identifier = item.get("id") if isinstance(item, dict) else None
+                if isinstance(identifier, str) and NORMATIVE_ID.fullmatch(identifier):
+                    identifiers.add(identifier)
+    if not identifiers:
+        raise ReasoningContextUnavailableError("authoritative requirement manifests contain no normative IDs")
+    return frozenset(identifiers)
 
 
 def build_reasoning_context(
@@ -181,29 +228,137 @@ def build_reasoning_context(
         store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=milestone.id, role=role, reason=reason)
         raise ReasoningContextUnavailableError(reason)
 
-    milestone_reqs = sorted({rid for pkg in milestone.packages for rid in pkg.requirement_ids if rid in authoritative_ids})
-    scoped_defs = [authoritative_defs[rid] for rid in milestone_reqs if rid in authoritative_defs]
+    raw_package_reqs: list[str] = [rid for pkg in milestone.packages for rid in pkg.requirement_ids]
+    if milestone.packages:
+        for rid in raw_package_reqs:
+            if not isinstance(rid, str) or not NORMATIVE_ID.fullmatch(rid):
+                reason = f"active milestone {milestone.id} contains malformed requirement ID: {rid!r}"
+                store.event(
+                    "REASONING_CONTEXT_UNAVAILABLE",
+                    milestoneId=milestone.id,
+                    role=role,
+                    reason=reason,
+                    failureClass="MALFORMED_REQUIREMENT_ID",
+                    requirementId=str(rid),
+                )
+                raise ReasoningContextUnavailableError(reason)
+            if rid not in authoritative_ids:
+                reason = f"active milestone {milestone.id} contains unknown requirement ID not in committed authority: {rid}"
+                store.event(
+                    "REASONING_CONTEXT_UNAVAILABLE",
+                    milestoneId=milestone.id,
+                    role=role,
+                    reason=reason,
+                    failureClass="UNKNOWN_REQUIREMENT_ID",
+                    requirementId=rid,
+                )
+                raise ReasoningContextUnavailableError(reason)
+            if rid not in authoritative_defs:
+                reason = f"active milestone {milestone.id} requirement ID {rid} has no semantic definition in manifests"
+                store.event(
+                    "REASONING_CONTEXT_UNAVAILABLE",
+                    milestoneId=milestone.id,
+                    role=role,
+                    reason=reason,
+                    failureClass="MISSING_REQUIREMENT_DEFINITION",
+                    requirementId=rid,
+                )
+                raise ReasoningContextUnavailableError(reason)
+
+        if len(raw_package_reqs) != len(set(raw_package_reqs)):
+            seen = set()
+            duplicates = []
+            for rid in raw_package_reqs:
+                if rid in seen and rid not in duplicates:
+                    duplicates.append(rid)
+                seen.add(rid)
+            reason = f"active milestone {milestone.id} contains duplicate requirement IDs in packages: {duplicates}"
+            store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                role=role,
+                reason=reason,
+                failureClass="DUPLICATE_REQUIREMENT_ID",
+                requirementId=duplicates[0] if duplicates else "",
+            )
+            raise ReasoningContextUnavailableError(reason)
+
+        milestone_reqs = sorted(raw_package_reqs)
+        scoped_defs = [authoritative_defs[rid] for rid in milestone_reqs]
+        if (
+            set(raw_package_reqs) != set(milestone_reqs)
+            or set(milestone_reqs) != {d.get("id") for d in scoped_defs}
+            or len(milestone_reqs) != len(scoped_defs)
+        ):
+            reason = f"active milestone {milestone.id} requirement ID set mismatch: raw={set(raw_package_reqs)} scoped={set(milestone_reqs)} defs={{d.get('id') for d in scoped_defs}}"
+            store.event(
+                "REASONING_CONTEXT_UNAVAILABLE",
+                milestoneId=milestone.id,
+                role=role,
+                reason=reason,
+                failureClass="REQUIREMENT_SET_MISMATCH",
+            )
+            raise ReasoningContextUnavailableError(reason)
+    else:
+        milestone_reqs = []
+        scoped_defs = []
 
     package_plan = [_package_dict(pkg) for pkg in milestone.packages]
     dependency_dag = {pkg.id: list(pkg.dependencies) for pkg in milestone.packages}
 
     try:
         all_records = store.load()
-        completed_records = {
-            k: {
-                "status": r.status.value,
-                "issue_number": r.issue_number,
-                "head_sha": r.head_sha,
-                "ci_status": r.ci_status,
-                "pr_number": r.pr_number,
-                "pr_state": r.pr_state,
-                "review_verdict": r.review_verdict,
-            }
-            for k, r in all_records.items()
-            if k.startswith(f"{milestone.id}--")
-        }
     except Exception:
-        completed_records = {}
+        all_records = {}
+
+    execution_evidence: list[dict[str, Any]] = []
+    completed_records: dict[str, Any] = {}
+
+    for pkg in milestone.packages:
+        key = work_key(milestone.id, pkg.id)
+        rec = all_records.get(key, PackageRecord())
+
+        review_context_digest = None
+        if rec.head_sha:
+            review_file = config.state_dir / "reviews" / key / f"{rec.head_sha}.json"
+            if review_file.exists():
+                try:
+                    rdata = json.loads(review_file.read_text(encoding="utf-8"))
+                    review_context_digest = rdata.get("contextDigest")
+                except Exception:
+                    pass
+
+        reviewer_provider = None
+        if rec.provider in {"agy", "muse"}:
+            reviewer_provider = "muse" if rec.provider == "agy" else "agy"
+
+        pkg_ev = {
+            "workKey": key,
+            "packageId": pkg.id,
+            "status": rec.status.value,
+            "provider": rec.provider,
+            "issueNumber": rec.issue_number,
+            "prNumber": rec.pr_number,
+            "prState": rec.pr_state,
+            "headSha": rec.head_sha,
+            "ciStatus": rec.ci_status,
+            "reviewVerdict": rec.review_verdict,
+            "reviewSha": rec.review_sha,
+            "reviewerProvider": reviewer_provider,
+            "reviewContextDigest": review_context_digest,
+            "lastError": rec.last_error,
+        }
+        execution_evidence.append(pkg_ev)
+
+        completed_records[key] = {
+            "status": rec.status.value,
+            "issue_number": rec.issue_number,
+            "head_sha": rec.head_sha,
+            "ci_status": rec.ci_status,
+            "pr_number": rec.pr_number,
+            "pr_state": rec.pr_state,
+            "review_verdict": rec.review_verdict,
+        }
 
     context_snapshot: dict[str, Any] = {
         "milestoneId": milestone.id,
@@ -216,8 +371,8 @@ def build_reasoning_context(
         "scopedRequirementDefinitions": scoped_defs,
         "packagePlan": package_plan,
         "dependencyDag": dependency_dag,
+        "executionEvidence": execution_evidence,
         "completedPackageRecords": completed_records,
-        "planningDirectory": str(planning_dir),
         "planningBundle": planning_bundle_texts,
         "sources": sources_manifest,
     }
@@ -367,6 +522,38 @@ def _format_reasoning_prompt(base_prompt: str, ctx: dict[str, Any], milestone: M
     else:
         req_defs_str = "None defined in manifests."
 
+    ev_list = ctx.get("executionEvidence", [])
+    if ev_list:
+        ev_blocks = []
+        for item in ev_list:
+            issue_str = f"#{item['issueNumber']}" if item.get("issueNumber") else "none"
+            pr_str = (
+                f"#{item['prNumber']} (State: {item.get('prState') or 'none'}, Head SHA: {item.get('headSha') or 'none'})"
+                if item.get("prNumber")
+                else "none"
+            )
+            rev_str = (
+                f"Verdict: {item.get('reviewVerdict') or 'none'}, "
+                f"Reviewed Head SHA: {item.get('reviewSha') or 'none'}, "
+                f"Reviewer Provider: {item.get('reviewerProvider') or 'none'}, "
+                f"Context Digest: {item.get('reviewContextDigest') or 'none'}"
+            )
+            block = (
+                f"- Package: `{item.get('packageId')}` (`{item.get('workKey')}`)\n"
+                f"  - Status: `{item.get('status')}`\n"
+                f"  - Implementation Provider: `{item.get('provider') or 'none'}`\n"
+                f"  - Issue: {issue_str}\n"
+                f"  - PR: {pr_str}\n"
+                f"  - CI Status: `{item.get('ciStatus') or 'none'}`\n"
+                f"  - Semantic Review: {rev_str}"
+            )
+            if item.get("lastError"):
+                block += f"\n  - Last Error / Note: {item.get('lastError')}"
+            ev_blocks.append(block)
+        execution_evidence_str = "\n".join(ev_blocks)
+    else:
+        execution_evidence_str = "No execution records available."
+
     planning = ctx.get("planningBundle", {})
     spec_md = planning.get("spec", "")
     plan_md = planning.get("plan", "")
@@ -405,6 +592,9 @@ Scoped Requirement IDs: {scoped_reqs_str}
 
 ### Work Package Plan & Dependencies:
 {completed_summary}
+
+### Verified Execution Evidence:
+{execution_evidence_str}
 
 ### Spec Kit Planning Artifacts:
 #### spec.md
@@ -1384,9 +1574,6 @@ def _package_dict(package: WorkPackage) -> dict[str, Any]:
     }
 
 
-NORMATIVE_ID = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$")
-
-
 def is_product_roadmap_milestone(root: Path, milestone_id: str) -> bool:
     if milestone_id.startswith("factory-") or "canary" in milestone_id.lower() or milestone_id.startswith("test-") or milestone_id == "m1":
         return False
@@ -1415,24 +1602,6 @@ def _validate_requirement_ids(root: Path, milestone: Milestone) -> None:
         for rid in package.requirement_ids:
             if not isinstance(rid, str) or not NORMATIVE_ID.fullmatch(rid) or rid not in authoritative:
                 raise RuntimeError(f"work package {package.id!r} contains unknown normative requirement ID: {rid!r}")
-
-
-def authoritative_requirement_ids(root: Path) -> frozenset[str]:
-    identifiers: set[str] = set()
-    manifests = list(sorted((root / "docs" / "spec").glob("*.requirements.json")))
-    artifact_directory = root / "artifacts" / "spec"
-    if artifact_directory.exists():
-        manifests.extend(sorted(artifact_directory.glob("*.requirements.json")))
-    for path in manifests:
-        value = json.loads(path.read_text(encoding="utf-8"))
-        for family in ("requirements", "acceptanceCriteria", "invariants", "adrs"):
-            for item in value.get(family, []):
-                identifier = item.get("id") if isinstance(item, dict) else None
-                if isinstance(identifier, str) and NORMATIVE_ID.fullmatch(identifier):
-                    identifiers.add(identifier)
-    if not identifiers:
-        raise RuntimeError("authoritative requirement manifests contain no normative IDs")
-    return frozenset(identifiers)
 
 
 def _write_planning_bundle(state_dir: Path, milestone: Milestone) -> None:

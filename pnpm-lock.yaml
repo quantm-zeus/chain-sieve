@@ -211,6 +211,8 @@ importers:
 
   packages/persistence: {}
 
+  packages/pool-adapter: {}
+
   packages/program-decoders: {}
 
   packages/provider-contracts: {}
@@ -222,6 +224,8 @@ importers:
   packages/security: {}
 
   packages/shared-schemas: {}
+
+  packages/signal-intelligence: {}
 
   packages/test-fixtures: {}
 
