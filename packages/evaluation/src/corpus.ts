@@ -464,20 +464,29 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
 
   // Evaluate all candidates with valid adapter evidence to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
   const executableCandidates = funnelOutput.candidates.filter((c) => c.adapterEvidence !== null);
-  const allCandidatesOutput: FunnelOutput = {
+  const eligibleCandidates: FunnelCandidate[] = executableCandidates.map((c, i) => ({
+    ...c,
+    eligible: true,
+    score: c.score ?? 0.5,
+    rank: i + 1,
+    rejectionReasons: [],
+  }));
+  const baseUniverseFunnel = {
     funnelVersion: funnelOutput.funnelVersion,
     profileVersion: funnelOutput.profileVersion,
     asOf: funnelOutput.asOf,
-    totalEvaluated: funnelInputs.length,
-    eligibleCount: executableCandidates.length,
+    eligibleCount: eligibleCandidates.length,
     rejectedCount: 0,
-    candidates: executableCandidates.map((c, i) => ({
-      ...c,
-      eligible: true,
-      score: c.score ?? 0.5,
-      rank: i + 1,
-      rejectionReasons: [],
-    })),
+    candidates: eligibleCandidates,
+    orderedEligibleAssetIds: eligibleCandidates.map((c) => c.assetId),
+  };
+  const universeFunnelJson = JSON.stringify(canonicalize(baseUniverseFunnel));
+  const universeFunnelSha256 = sha256Hex(universeFunnelJson);
+  const allCandidatesOutput: FunnelOutput = {
+    ...baseUniverseFunnel,
+    canonicalJson: universeFunnelJson,
+    sha256: universeFunnelSha256,
+    bytes: new TextEncoder().encode(universeFunnelJson).byteLength,
   };
   const { signals: allUniverseSignals } = materializeSignals(
     allCandidatesOutput,

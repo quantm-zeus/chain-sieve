@@ -35,6 +35,7 @@ import {
 import type {
   EvaluationArtifactClass,
   ForwardObservation,
+  FrozenCandidateUniverse,
   OutcomeProfile,
   OutcomeRecord,
 } from '@ciag/evaluation';
