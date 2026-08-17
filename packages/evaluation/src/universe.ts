@@ -33,7 +33,7 @@ export interface CreateUniverseInput {
   universeId: string;
   dataCutoff: string;
   candidateAssetIds: string[];
-  corpusVersion?: string;
+  corpusVersion?: string | undefined;
 }
 
 /**

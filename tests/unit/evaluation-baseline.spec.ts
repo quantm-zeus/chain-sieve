@@ -248,6 +248,7 @@ describe('evaluation-baseline', () => {
         candidate: funnelOut.candidates[0]!,
         featureSet: fs,
         snapshot: asset.currentSnapshot,
+        funnelProfile: DEFAULT_FUNNEL_PROFILE,
       });
 
       // Signal delivered at T0 (2026-03-01T02:00:00Z) with actionDelayMs = 60_000 (1 minute)
@@ -296,6 +297,7 @@ describe('evaluation-baseline', () => {
         candidate: funnelOut.candidates[0]!,
         featureSet: fs,
         snapshot: asset.currentSnapshot,
+        funnelProfile: DEFAULT_FUNNEL_PROFILE,
       });
 
       const highFeeProfile: OutcomeProfile = {
@@ -355,6 +357,7 @@ describe('evaluation-baseline', () => {
         candidate: funnelOut.candidates[0]!,
         featureSet: fs,
         snapshot: asset.currentSnapshot,
+        funnelProfile: DEFAULT_FUNNEL_PROFILE,
       });
 
       const outcome = evaluateOutcome({

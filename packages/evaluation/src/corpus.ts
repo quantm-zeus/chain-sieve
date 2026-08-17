@@ -375,11 +375,11 @@ export const createDefaultEvaluationCorpus = (): EvaluationFixtureCorpus => {
 
 export interface ExecutePipelineInput {
   corpus: EvaluationFixtureCorpus;
-  funnelProfile?: FunnelProfile;
-  outcomeProfile?: OutcomeProfile;
-  policyMetadata?: PolicyMetadata;
-  artifactClass?: EvaluationArtifactClass;
-  evaluationTime?: string;
+  funnelProfile?: FunnelProfile | undefined;
+  outcomeProfile?: OutcomeProfile | undefined;
+  policyMetadata?: PolicyMetadata | undefined;
+  artifactClass?: EvaluationArtifactClass | undefined;
+  evaluationTime?: string | undefined;
 }
 
 export interface PipelineExecutionResult {

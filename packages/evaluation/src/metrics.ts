@@ -9,11 +9,11 @@
 import type { EvaluationMetrics, OutcomeRecord } from './types.js';
 
 export interface ComputeMetricsOptions {
-  totalCandidates?: number;
-  eligibleCandidates?: number;
-  rejectedCandidates?: number;
-  universeSignalWinnersCount?: number;
-  universeTradableWinnersCount?: number;
+  totalCandidates?: number | undefined;
+  eligibleCandidates?: number | undefined;
+  rejectedCandidates?: number | undefined;
+  universeSignalWinnersCount?: number | undefined;
+  universeTradableWinnersCount?: number | undefined;
 }
 
 const round6 = (num: number): number => {

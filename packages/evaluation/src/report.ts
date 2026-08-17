@@ -46,8 +46,8 @@ export interface GenerateReportInput {
   profile: OutcomeProfile;
   policy: PolicyMetadata;
   outcomes: OutcomeRecord[];
-  metricsOptions?: ComputeMetricsOptions;
-  generatedAt?: string;
+  metricsOptions?: ComputeMetricsOptions | undefined;
+  generatedAt?: string | undefined;
 }
 
 /**
@@ -174,7 +174,7 @@ export const assertNoArtifactClassBlending = (reports: EvaluationReport[]): void
 export interface ComparePoliciesInput {
   baselineReport: EvaluationReport;
   championReport: EvaluationReport;
-  frozenUniverse?: FrozenCandidateUniverse;
+  frozenUniverse?: FrozenCandidateUniverse | undefined;
 }
 
 /**

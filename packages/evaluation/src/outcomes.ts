@@ -95,7 +95,7 @@ export interface EvaluateOutcomeInput {
   signal: SignalRecord;
   profile: OutcomeProfile;
   observations: ForwardObservation[];
-  evaluationTime?: string; // current simulated time; defaults to latest observation timestamp
+  evaluationTime?: string | undefined; // current simulated time; defaults to latest observation timestamp
 }
 
 /**
@@ -556,7 +556,7 @@ export const evaluateOutcomes = (
   signals: SignalRecord[],
   profile: OutcomeProfile,
   observationsByAssetId: Map<string, ForwardObservation[]> | Record<string, ForwardObservation[]>,
-  evaluationTime?: string,
+  evaluationTime?: string | undefined,
 ): OutcomeRecord[] => {
   if (!Array.isArray(signals)) {
     throw new EvaluationError('EVAL_MALFORMED', 'SIGNALS_NOT_ARRAY');
