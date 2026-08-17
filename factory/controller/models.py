@@ -130,6 +130,25 @@ def _assert_acyclic(packages: tuple[WorkPackage, ...]) -> None:
         visit(node)
 
 
+class ReviewDispatchState(StrEnum):
+    CLAIMED = "CLAIMED"
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    STALE = "STALE"
+    FAILED = "FAILED"
+    UNKNOWN = "UNKNOWN"
+
+
+def review_dispatch_key(
+    work_key_str: str,
+    pr_number: int,
+    head_sha: str,
+    reviewer: str,
+    context_digest: str,
+) -> str:
+    return f"{work_key_str}:{pr_number}:{head_sha.lower()}:{reviewer.lower()}:{context_digest.lower()}"
+
+
 @dataclass
 class PackageRecord:
     status: PackageStatus = PackageStatus.PLANNED
@@ -151,6 +170,15 @@ class PackageRecord:
     review_attempts: int = 0
     review_sha: str | None = None
     review_verdict: str | None = None
+    review_dispatch_key: str | None = None
+    review_dispatch_state: str | None = None
+    review_dispatch_pr: int | None = None
+    review_dispatch_sha: str | None = None
+    review_dispatch_reviewer: str | None = None
+    review_dispatch_context_digest: str | None = None
+    review_dispatch_attempt: int = 0
+    review_dispatch_run_id: str | None = None
+    review_dispatch_requested_at: str | None = None
     replan_attempted: bool = False
     blocked_reason: str | None = None
     last_error: str | None = None
@@ -189,6 +217,15 @@ class PackageRecord:
             "review_attempts": self.review_attempts,
             "review_sha": self.review_sha,
             "review_verdict": self.review_verdict,
+            "review_dispatch_key": self.review_dispatch_key,
+            "review_dispatch_state": self.review_dispatch_state,
+            "review_dispatch_pr": self.review_dispatch_pr,
+            "review_dispatch_sha": self.review_dispatch_sha,
+            "review_dispatch_reviewer": self.review_dispatch_reviewer,
+            "review_dispatch_context_digest": self.review_dispatch_context_digest,
+            "review_dispatch_attempt": self.review_dispatch_attempt,
+            "review_dispatch_run_id": self.review_dispatch_run_id,
+            "review_dispatch_requested_at": self.review_dispatch_requested_at,
             "replan_attempted": self.replan_attempted,
             "blocked_reason": self.blocked_reason,
             "last_error": self.last_error,

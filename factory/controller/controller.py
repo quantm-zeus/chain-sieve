@@ -12,7 +12,18 @@ from typing import Any
 from .ao import AgentOrchestrator, review_gate
 from .config import FactoryConfig
 from .github import GitHub, ci_state
-from .models import FactoryStatus, Milestone, PackageRecord, PackageStatus, PullRequest, Session, Snapshot, work_key
+from .models import (
+    FactoryStatus,
+    Milestone,
+    PackageRecord,
+    PackageStatus,
+    PullRequest,
+    ReviewDispatchState,
+    Session,
+    Snapshot,
+    review_dispatch_key,
+    work_key,
+)
 from .policy import protected_path_violations, review_required, reviewer_for, select_implementation_provider
 from .prompts import issue_body, worker_prompt
 from .store import StateStore, utc_now
@@ -143,7 +154,18 @@ class FactoryController:
                     _note_progress(record, _progress_fingerprint(sessions[0], selected, record), observed_at)
                 else:
                     _note_progress(record, _progress_fingerprint(None, selected, record), selected.updated_at)
-                record.status = PackageStatus.PR_WAITING
+                if record.review_dispatch_sha and record.review_dispatch_sha != selected.head_sha:
+                    record.review_dispatch_state = ReviewDispatchState.STALE.value
+                    record.review_verdict = None
+                    record.review_sha = None
+                    record.review_attempts = 0
+                if (
+                    record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
+                    and record.review_dispatch_sha == selected.head_sha
+                ):
+                    record.status = PackageStatus.REVIEW
+                else:
+                    record.status = PackageStatus.PR_WAITING
                 if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "budget exhausted", "replan", "stagnant")):
                     record.blocked_reason = None
                     record.replan_attempted = False
@@ -774,55 +796,152 @@ class FactoryController:
             context_path = self.store.write_review_context(milestone.id, package, pr.head_sha)
             context = json.loads(context_path.read_text(encoding="utf-8"))
             expected_context_digest = str(context["contextDigest"])
-            reviews = self.ao.reviews(record.session_id or "")
             required_reviewer = reviewer_for(record.provider or package.preferred_provider)
+            target_dispatch_key = review_dispatch_key(
+                work_key(milestone.id, package.id),
+                pr.number,
+                pr.head_sha,
+                required_reviewer,
+                expected_context_digest,
+            )
+
+            if record.review_dispatch_key and record.review_dispatch_key != target_dispatch_key:
+                record.review_dispatch_state = ReviewDispatchState.STALE.value
+                record.review_verdict = None
+                record.review_sha = None
+                if record.review_dispatch_sha != pr.head_sha:
+                    record.review_attempts = 0
+
+            reviews = self.ao.reviews(record.session_id or "")
             review_ok, review_reason, reviewer, verdict = review_gate(
                 reviews, pr.head_sha, required_reviewer, expected_context_digest,
             )
-            record.review_sha = pr.head_sha if reviewer else None
-            record.review_verdict = verdict
-            if not review_ok:
-                if reviewer is None and record.review_attempts < self.config.max_review_cycles:
-                    selected = required_reviewer
-                    self.ao.trigger_review(record.session_id or "", selected)
-                    record.review_attempts += 1
+
+            raw_runs = reviews.get("reviews") or reviews.get("data") or []
+            runs = [r.get("latestRun") if isinstance(r, dict) and r.get("latestRun") else r for r in raw_runs if isinstance(r, dict)]
+            matching_runs = [
+                item for item in runs
+                if isinstance(item, dict)
+                and item.get("targetSha") == pr.head_sha
+                and (required_reviewer is None or str(item.get("harness", "")) == required_reviewer)
+            ]
+            matching_run = sorted(matching_runs, key=lambda item: str(item.get("createdAt", "")))[-1] if matching_runs else None
+
+            if matching_run is not None:
+                run_status = str(matching_run.get("status", "")).lower()
+                run_id = matching_run.get("id") or matching_run.get("reviewId")
+                record.review_dispatch_key = target_dispatch_key
+                record.review_dispatch_pr = pr.number
+                record.review_dispatch_sha = pr.head_sha
+                record.review_dispatch_reviewer = required_reviewer
+                record.review_dispatch_context_digest = expected_context_digest
+                record.review_dispatch_run_id = str(run_id) if run_id else None
+
+                if run_status not in {"complete", "completed", "delivered"}:
+                    record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
                     record.status = PackageStatus.REVIEW
                     record.last_progress_at = utc_now()
-                    self.store.event(
-                        "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                        workKey=work_key(milestone.id, package.id), provider=selected, aoSessionId=record.session_id, pr=pr.number,
-                        attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
-                        contextDigest=expected_context_digest,
-                    )
-                elif reviewer is not None and verdict in {"approved", "pass"}:
-                    self._block(
-                        milestone.id,
-                        package.id,
-                        record,
-                        f"approved machine review failed semantic authority proof: {review_reason}",
-                        work_key(milestone.id, package.id),
-                    )
-                elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
-                    record.status = PackageStatus.REVIEW
-                elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_attempts < self.config.max_review_cycles:
-                    token = f"REVIEW:{pr.head_sha}:{verdict}:{review_reason}"
-                    if record.last_error != token:
-                        self.ao.send(
-                            record.session_id or "",
-                            f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
+                    return
+
+                record.review_sha = pr.head_sha
+                record.review_verdict = verdict
+                record.review_dispatch_state = ReviewDispatchState.COMPLETED.value
+
+                if not review_ok:
+                    if reviewer is not None and verdict in {"approved", "pass"}:
+                        self._block(
+                            milestone.id,
+                            package.id,
+                            record,
+                            f"approved machine review failed semantic authority proof: {review_reason}",
+                            work_key(milestone.id, package.id),
                         )
-                        record.last_error = token
+                    elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
+                        record.status = PackageStatus.REVIEW
+                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_attempts < self.config.max_review_cycles:
+                        token = f"REVIEW:{pr.head_sha}:{verdict}:{review_reason}"
+                        if record.last_error != token:
+                            self.ao.send(
+                                record.session_id or "",
+                                f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
+                            )
+                            record.last_error = token
+                            record.last_progress_at = utc_now()
+                            self.store.event(
+                                "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
+                                pr=pr.number, attempt=record.review_attempts, headSha=pr.head_sha,
+                            )
+                    elif record.review_attempts >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
+                        self._block(milestone.id, package.id, record, f"machine review budget exhausted: {review_reason}", work_key(milestone.id, package.id))
+                    else:
+                        record.status = PackageStatus.REVIEW
+                    return
+            else:
+                if (
+                    record.review_dispatch_key == target_dispatch_key
+                    and record.review_dispatch_state == ReviewDispatchState.CLAIMED.value
+                ):
+                    try:
+                        self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+                        record.status = PackageStatus.REVIEW
                         record.last_progress_at = utc_now()
                         self.store.event(
-                            "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                            workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
-                            pr=pr.number, attempt=record.review_attempts, headSha=pr.head_sha,
+                            "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                            contextDigest=expected_context_digest,
                         )
-                elif record.review_attempts >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
-                    self._block(milestone.id, package.id, record, f"machine review budget exhausted: {review_reason}", work_key(milestone.id, package.id))
-                else:
+                    except Exception as error:
+                        record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                        record.last_error = f"AO review trigger failed: {error}"
+                    return
+                elif (
+                    record.review_dispatch_key == target_dispatch_key
+                    and record.review_dispatch_state in {ReviewDispatchState.ACTIVE.value, ReviewDispatchState.UNKNOWN.value}
+                ):
                     record.status = PackageStatus.REVIEW
-                return
+                    return
+                else:
+                    if record.review_attempts >= self.config.max_review_cycles:
+                        self._block(milestone.id, package.id, record, "machine review budget exhausted", work_key(milestone.id, package.id))
+                        return
+
+                    record.review_dispatch_key = target_dispatch_key
+                    record.review_dispatch_state = ReviewDispatchState.CLAIMED.value
+                    record.review_dispatch_pr = pr.number
+                    record.review_dispatch_sha = pr.head_sha
+                    record.review_dispatch_reviewer = required_reviewer
+                    record.review_dispatch_context_digest = expected_context_digest
+                    record.review_dispatch_requested_at = utc_now()
+                    record.review_attempts += 1
+                    record.review_dispatch_attempt = record.review_attempts
+                    record.status = PackageStatus.REVIEW
+                    record.last_progress_at = utc_now()
+
+                    current_records = self.store.load()
+                    current_records[work_key(milestone.id, package.id)] = record
+                    self.store.save(current_records, self.store.metadata())
+
+                    try:
+                        self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+                        self.store.event(
+                            "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                            contextDigest=expected_context_digest,
+                        )
+                    except Exception as error:
+                        record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                        record.last_error = f"AO review trigger failed: {error}"
+                        self.store.event(
+                            "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
+                        )
+                    return
 
         violations = protected_path_violations(pr.files, self.config.protected_paths, package)
         if violations:
