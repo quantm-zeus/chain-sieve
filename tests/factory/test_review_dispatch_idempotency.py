@@ -68,6 +68,7 @@ class MockAO:
         self.triggered_reviews: list[tuple[str, str]] = []
         self.spawns: list[tuple] = []
         self.trigger_hook = None
+        self.trigger_exception: Exception | None = None
 
     def sessions(self):
         return dict(self.sessions_by_issue)
@@ -89,6 +90,8 @@ class MockAO:
 
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         self.triggered_reviews.append((session_id, reviewer))
+        if self.trigger_exception:
+            raise self.trigger_exception
         if self.trigger_hook:
             self.trigger_hook(session_id, reviewer)
 
@@ -671,6 +674,385 @@ class ReviewDispatchIdempotencyTests(unittest.TestCase):
         ok_wrong_reviewer, reason_rev, _, _ = review_gate(matching_review, self.head_sha, "agy", digest)
         self.assertFalse(ok_wrong_reviewer)
         self.assertIn("required agy", reason_rev)
+
+    def test_u1_trigger_review_raises_bounded_retry(self) -> None:
+        """U1 — trigger_review raises -> UNKNOWN. No retry on immediate tick. After grace period exactly one retry occurs."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        ao = MockAO(sessions)
+        ao.trigger_exception = RuntimeError("Connection timeout to AO daemon")
+        github = MockGitHub(issues, prs)
+        controller = self._create_controller(store, github, ao)
+
+        # First tick: trigger fails with exception -> UNKNOWN
+        controller.tick()
+        self.assertEqual(len(ao.triggered_reviews), 1)
+        record = store.load()[self.wkey]
+        self.assertEqual(record.review_dispatch_state, ReviewDispatchState.UNKNOWN.value)
+        self.assertEqual(record.review_dispatch_trigger_attempts, 1)
+        self.assertEqual(record.review_attempts, 1)
+
+        # Second tick immediately: grace period has not elapsed -> no retry
+        controller.tick()
+        self.assertEqual(len(ao.triggered_reviews), 1)
+
+        # Simulate elapsed time beyond grace period (40 seconds ago)
+        older_time = "2026-08-17T16:00:00+00:00"
+        record.review_dispatch_last_attempt_at = older_time
+        store.save({self.wkey: record})
+
+        # Clear exception so retry succeeds
+        ao.trigger_exception = None
+        controller.tick()
+        self.assertEqual(len(ao.triggered_reviews), 2)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+        self.assertEqual(saved.review_dispatch_trigger_attempts, 2)
+        # Semantic review cycle count MUST NOT increase on transport retry
+        self.assertEqual(saved.review_attempts, 1)
+
+    def test_u2_trigger_fails_but_ao_run_exists_adopts(self) -> None:
+        """U2 — trigger call appears to fail/timeout but matching AO run exists; controller adopts without extra trigger."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+        dkey = review_dispatch_key(self.wkey, 115, self.head_sha, "muse", digest)
+
+        record = PackageRecord(
+            status=PackageStatus.REVIEW,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_sha,
+            review_attempts=1,
+            review_dispatch_key=dkey,
+            review_dispatch_state=ReviewDispatchState.UNKNOWN.value,
+            review_dispatch_pr=115,
+            review_dispatch_sha=self.head_sha,
+            review_dispatch_reviewer="muse",
+            review_dispatch_context_digest=digest,
+            review_dispatch_trigger_attempts=1,
+            review_dispatch_last_attempt_at="2026-08-17T16:00:00+00:00",
+        )
+        store.save({self.wkey: record})
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+        reviews = {"chainsieve-88": {"reviews": [{
+            "latestRun": {
+                "id": "run-u2",
+                "targetSha": self.head_sha,
+                "harness": "muse",
+                "status": "running",
+                "createdAt": "2026-08-17T16:01:00Z",
+            }
+        }]}}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        controller.tick()
+
+        # MUST NOT call trigger_review again
+        self.assertEqual(len(ao.triggered_reviews), 0)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+        self.assertEqual(saved.review_dispatch_run_id, "run-u2")
+
+    def test_u3_restart_while_unknown_survives(self) -> None:
+        """U3 — Restart while in UNKNOWN state recovers and allows bounded retry after grace period."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+        dkey = review_dispatch_key(self.wkey, 115, self.head_sha, "muse", digest)
+
+        # Saved state in UNKNOWN with older attempt timestamp
+        record = PackageRecord(
+            status=PackageStatus.REVIEW,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_sha,
+            review_attempts=1,
+            review_dispatch_key=dkey,
+            review_dispatch_state=ReviewDispatchState.UNKNOWN.value,
+            review_dispatch_pr=115,
+            review_dispatch_sha=self.head_sha,
+            review_dispatch_reviewer="muse",
+            review_dispatch_context_digest=digest,
+            review_dispatch_trigger_attempts=1,
+            review_dispatch_last_attempt_at="2026-08-17T16:00:00+00:00",
+            last_error="AO review trigger failed: connection reset",
+        )
+        store.save({self.wkey: record})
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+
+        # Fresh controller instance post-restart
+        fresh_controller = self._create_controller(store, github, ao)
+        fresh_controller.tick()
+
+        # Executes exactly one retry
+        self.assertEqual(len(ao.triggered_reviews), 1)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+        self.assertEqual(saved.review_dispatch_trigger_attempts, 2)
+        self.assertEqual(saved.review_attempts, 1)
+
+    def test_u4_unknown_recovery_exhausted_blocks(self) -> None:
+        """U4 — When UNKNOWN recovery trigger attempts are exhausted, package transitions to BLOCKED with diagnostic."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+        dkey = review_dispatch_key(self.wkey, 115, self.head_sha, "muse", digest)
+
+        # Seed record with trigger attempts exhausted (attempts=2)
+        record = PackageRecord(
+            status=PackageStatus.REVIEW,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_sha,
+            review_attempts=1,
+            review_dispatch_key=dkey,
+            review_dispatch_state=ReviewDispatchState.UNKNOWN.value,
+            review_dispatch_pr=115,
+            review_dispatch_sha=self.head_sha,
+            review_dispatch_reviewer="muse",
+            review_dispatch_context_digest=digest,
+            review_dispatch_trigger_attempts=2,
+            review_dispatch_last_attempt_at="2026-08-17T16:00:00+00:00",
+            last_error="AO review trigger retry failed: fatal socket error",
+        )
+        store.save({self.wkey: record})
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+        controller = self._create_controller(store, github, ao)
+
+        controller.tick()
+
+        # No new trigger attempted
+        self.assertEqual(len(ao.triggered_reviews), 0)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.status, PackageStatus.BLOCKED)
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.FAILED.value)
+        self.assertIn("review dispatch trigger recovery exhausted", saved.blocked_reason or "")
+
+    def test_b1_head_change_preserves_review_attempts_budget(self) -> None:
+        """B1 — Review changes_requested -> additive new head. Old dispatch STALE. review_attempts DOES NOT reset."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_old = self._setup_review_context(store, self.head_sha_alt)
+        _, digest_new = self._setup_review_context(store, self.head_sha)
+
+        dkey_old = review_dispatch_key(self.wkey, 115, self.head_sha_alt, "muse", digest_old)
+
+        # Seed with completed review on old head (review_attempts=1)
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_sha_alt,
+            review_attempts=1,
+            review_sha=self.head_sha_alt,
+            review_verdict="changes_requested",
+            review_dispatch_key=dkey_old,
+            review_dispatch_state=ReviewDispatchState.COMPLETED.value,
+            review_dispatch_pr=115,
+            review_dispatch_sha=self.head_sha_alt,
+            review_dispatch_reviewer="muse",
+            review_dispatch_context_digest=digest_old,
+        )
+        store.save({self.wkey: record})
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+        controller = self._create_controller(store, github, ao)
+
+        # Reconcile snapshot -> review_attempts must remain 1
+        snapshot = Snapshot(issues=issues, prs=prs, sessions=sessions)
+        records = controller.reconcile(self.plan, snapshot)
+        self.assertEqual(records[self.wkey].review_attempts, 1)
+        self.assertEqual(records[self.wkey].review_dispatch_state, ReviewDispatchState.STALE.value)
+
+        # Tick claims next review for new head -> review_attempts increments to 2
+        controller.tick()
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_attempts, 2)
+        dkey_new = review_dispatch_key(self.wkey, 115, self.head_sha, "muse", digest_new)
+        self.assertEqual(saved.review_dispatch_key, dkey_new)
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+
+    def test_b2_max_review_cycles_exhausted_across_corrected_heads_blocks(self) -> None:
+        """B2 — After max_review_cycles across multiple corrected heads, next review cycle is refused / package blocks."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_old = self._setup_review_context(store, self.head_sha_alt)
+        _, digest_new = self._setup_review_context(store, self.head_sha)
+
+        cfg_limited = dataclasses.replace(self.cfg, max_review_cycles=2)
+
+        # Seed with review_attempts=2 (budget exhausted for max_review_cycles=2)
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_sha_alt,
+            review_attempts=2,
+            review_sha=self.head_sha_alt,
+            review_verdict="changes_requested",
+            review_dispatch_key="old-key",
+            review_dispatch_state=ReviewDispatchState.COMPLETED.value,
+        )
+        store.save({self.wkey: record})
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+        controller = FactoryController(self.repo_root, cfg_limited, store, github, ao)
+
+        controller.tick()
+
+        # Trigger is refused, package is blocked
+        self.assertEqual(len(ao.triggered_reviews), 0)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.status, PackageStatus.BLOCKED)
+        self.assertIn("machine review budget exhausted", saved.blocked_reason or "")
+
+    def test_b3_transport_retries_do_not_increment_semantic_review_cycles(self) -> None:
+        """B3 — Transport retries for same dispatch do not increment semantic review-cycle count."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        ao = MockAO(sessions)
+        ao.trigger_exception = RuntimeError("Temporary network glitch")
+        github = MockGitHub(issues, prs)
+        controller = self._create_controller(store, github, ao)
+
+        # Initial trigger fails -> UNKNOWN, review_attempts=1
+        controller.tick()
+        record = store.load()[self.wkey]
+        self.assertEqual(record.review_attempts, 1)
+        self.assertEqual(record.review_dispatch_trigger_attempts, 1)
+
+        # Simulate retry after grace period
+        record.review_dispatch_last_attempt_at = "2026-08-17T16:00:00+00:00"
+        store.save({self.wkey: record})
+        ao.trigger_exception = None
+
+        controller.tick()
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+        self.assertEqual(saved.review_dispatch_trigger_attempts, 2)
+        # Semantic review cycle count MUST remain 1
+        self.assertEqual(saved.review_attempts, 1)
+
+    def test_p1_publication_layer_duplicate_evidence_handled_safely(self) -> None:
+        """P1 — Duplicate publication evidence in AO/GitHub is adopted deterministically without second dispatch."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest = self._setup_review_context(store, self.head_sha)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}
+
+        # AO contains both the duplicate review runs / submissions
+        reviews = {"chainsieve-88": {"reviews": [
+            {
+                "latestRun": {
+                    "id": "run-pub-1",
+                    "targetSha": self.head_sha,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "approved",
+                    "body": f"Review body 1\n\n{PROOF_PREFIX}{digest}",
+                    "githubReviewId": "4952583774",
+                    "createdAt": "2026-08-17T16:17:52Z",
+                }
+            },
+            {
+                "latestRun": {
+                    "id": "run-pub-2",
+                    "targetSha": self.head_sha,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "approved",
+                    "body": f"Review body 2 with comments\n\n{PROOF_PREFIX}{digest}",
+                    "githubReviewId": "4952584255",
+                    "createdAt": "2026-08-17T16:17:59Z",
+                }
+            }
+        ]}}
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        controller.tick()
+
+        # No new review triggered; PR merged safely
+        self.assertEqual(len(ao.triggered_reviews), 0)
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.COMPLETED.value)
+        self.assertEqual(saved.review_dispatch_run_id, "run-pub-2")
+        self.assertEqual(len(github.merged), 1)
 
 
 if __name__ == "__main__":
