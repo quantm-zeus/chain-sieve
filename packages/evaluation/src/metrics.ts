@@ -66,33 +66,35 @@ export const computeEvaluationMetrics = (
         break;
     }
 
-    if (outcome.signalSuccess) {
-      signalSuccessCount++;
-    }
-    if (outcome.signalOutcome === 'SIGNAL_LOSS') {
-      signalFailureCount++;
-    }
+    if (outcome.state === 'FULLY_MATURED') {
+      if (outcome.signalSuccess) {
+        signalSuccessCount++;
+      }
+      if (outcome.signalOutcome === 'SIGNAL_LOSS') {
+        signalFailureCount++;
+      }
 
-    switch (outcome.tradableOutcome) {
-      case 'TRADABLE_SUCCESS':
-        tradableSuccessCount++;
-        break;
-      case 'TRADABLE_FAILURE':
-        tradableFailureCount++;
-        break;
-      case 'TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY':
-        securityOrLiquidityFailureCount++;
-        break;
-      case 'TRADABLE_NEUTRAL':
-        tradableNeutralCount++;
-        break;
-      case 'UNTRADABLE_SIGNAL_WIN':
-        untradableSignalWinCount++;
-        break;
-    }
+      switch (outcome.tradableOutcome) {
+        case 'TRADABLE_SUCCESS':
+          tradableSuccessCount++;
+          break;
+        case 'TRADABLE_FAILURE':
+          tradableFailureCount++;
+          break;
+        case 'TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY':
+          securityOrLiquidityFailureCount++;
+          break;
+        case 'TRADABLE_NEUTRAL':
+          tradableNeutralCount++;
+          break;
+        case 'UNTRADABLE_SIGNAL_WIN':
+          untradableSignalWinCount++;
+          break;
+      }
 
-    if (outcome.state === 'FULLY_MATURED' && outcome.netReturn !== null) {
-      matureReturns.push(outcome.netReturn);
+      if (outcome.netReturn !== null) {
+        matureReturns.push(outcome.netReturn);
+      }
     }
   }
 
@@ -110,10 +112,14 @@ export const computeEvaluationMetrics = (
   const missedGemsCount = Math.max(0, univTradableWins - tradableSuccessCount);
   const falseDiscoveryRate = matureEvaluated > 0 ? round6(1 - tradablePrecision) : 0;
 
-  // Ranking diagnostics: Precision@1, @3, @5
-  const p1Slice = outcomes.slice(0, 1);
-  const p3Slice = outcomes.slice(0, 3);
-  const p5Slice = outcomes.slice(0, 5);
+  // Ranking diagnostics: sort copy by descending signal score (with outcomeId tie-breaker for deterministic stability) per PRD 7.5
+  const rankedOutcomes = [...outcomes].sort(
+    (a, b) => (b.signal.score - a.signal.score) || a.outcomeId.localeCompare(b.outcomeId),
+  );
+
+  const p1Slice = rankedOutcomes.slice(0, 1);
+  const p3Slice = rankedOutcomes.slice(0, 3);
+  const p5Slice = rankedOutcomes.slice(0, 5);
 
   const precisionAt1 = p1Slice.length > 0 ? round6(p1Slice.filter((o) => o.tradableSuccess).length / p1Slice.length) : 0;
   const precisionAt3 = p3Slice.length > 0 ? round6(p3Slice.filter((o) => o.tradableSuccess).length / p3Slice.length) : 0;
@@ -121,8 +127,8 @@ export const computeEvaluationMetrics = (
 
   // Mean Reciprocal Rank (MRR)
   let firstWinRank = 0;
-  for (let i = 0; i < outcomes.length; i++) {
-    if (outcomes[i]!.tradableSuccess) {
+  for (let i = 0; i < rankedOutcomes.length; i++) {
+    if (rankedOutcomes[i]!.tradableSuccess) {
       firstWinRank = i + 1;
       break;
     }
@@ -131,7 +137,7 @@ export const computeEvaluationMetrics = (
 
   // NDCG@5 and NDCG@10
   const computeNdcg = (k: number): number => {
-    const slice = outcomes.slice(0, k);
+    const slice = rankedOutcomes.slice(0, k);
     if (slice.length === 0) return 0;
 
     let dcg = 0;

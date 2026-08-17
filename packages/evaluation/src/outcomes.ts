@@ -6,7 +6,6 @@
  * and separate signal vs tradable outcome resolution.
  */
 
-import { createHash } from 'node:crypto';
 import type { SignalRecord } from '@ciag/signal-intelligence';
 import { EvaluationError } from './errors.js';
 import type {
@@ -18,36 +17,7 @@ import type {
   TradableOutcomeLabel,
   UniversalTiming,
 } from './types.js';
-
-// ---------------------------------------------------------------------------
-// Helpers & Canonicalization
-// ---------------------------------------------------------------------------
-
-const ISO_DATETIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
-
-const isValidIso = (s: string): boolean => {
-  if (!ISO_DATETIME_RE.test(s)) return false;
-  const ms = Date.parse(s);
-  return !Number.isNaN(ms);
-};
-
-const sha256Hex = (data: string): string =>
-  createHash('sha256').update(data, 'utf8').digest('hex');
-
-const canonicalize = (value: unknown): unknown => {
-  if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(canonicalize);
-  const obj = value as Record<string, unknown>;
-  const sortedKeys = Object.keys(obj).sort();
-  const result: Record<string, unknown> = {};
-  for (const k of sortedKeys) {
-    const val = obj[k];
-    if (val !== undefined) {
-      result[k] = canonicalize(val);
-    }
-  }
-  return result;
-};
+import { canonicalize, isValidIso, sha256Hex } from './canonical.js';
 
 /**
  * Validate input profile and observations for outcome evaluation.
@@ -66,23 +36,44 @@ const validateProfile = (profile: OutcomeProfile): void => {
   if (!s || typeof s !== 'object') {
     throw new EvaluationError('EVAL_INCOMPLETE', 'EXECUTION_SCENARIO_MISSING');
   }
-  if (typeof s.notionalUsd !== 'number' || s.notionalUsd <= 0) {
+  if (typeof s.notionalUsd !== 'number' || !Number.isFinite(s.notionalUsd) || s.notionalUsd <= 0) {
     throw new EvaluationError('EVAL_MALFORMED', 'NOTIONAL_USD_INVALID');
   }
-  if (typeof s.actionDelayMs !== 'number' || s.actionDelayMs < 0) {
+  if (typeof s.actionDelayMs !== 'number' || !Number.isFinite(s.actionDelayMs) || s.actionDelayMs < 0) {
     throw new EvaluationError('EVAL_MALFORMED', 'ACTION_DELAY_MS_INVALID');
+  }
+  if (typeof s.minLiquidityUsd !== 'number' || !Number.isFinite(s.minLiquidityUsd) || s.minLiquidityUsd < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'MIN_LIQUIDITY_USD_INVALID');
+  }
+  if (typeof s.maxImpactBps !== 'number' || !Number.isFinite(s.maxImpactBps) || s.maxImpactBps < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'MAX_IMPACT_BPS_INVALID');
+  }
+  if (typeof s.slippageBps !== 'number' || !Number.isFinite(s.slippageBps) || s.slippageBps < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'SLIPPAGE_BPS_INVALID');
+  }
+  if (typeof s.networkFeeUsd !== 'number' || !Number.isFinite(s.networkFeeUsd) || s.networkFeeUsd < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'NETWORK_FEE_USD_INVALID');
+  }
+  if (typeof s.priorityFeeUsd !== 'number' || !Number.isFinite(s.priorityFeeUsd) || s.priorityFeeUsd < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'PRIORITY_FEE_USD_INVALID');
+  }
+  if (typeof s.poolFeeBps !== 'number' || !Number.isFinite(s.poolFeeBps) || s.poolFeeBps < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'POOL_FEE_BPS_INVALID');
+  }
+  if (typeof s.tokenTransferFeeBps !== 'number' || !Number.isFinite(s.tokenTransferFeeBps) || s.tokenTransferFeeBps < 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'TOKEN_TRANSFER_FEE_BPS_INVALID');
   }
   const p = profile.exitPolicy;
   if (!p || typeof p !== 'object') {
     throw new EvaluationError('EVAL_INCOMPLETE', 'EXIT_POLICY_MISSING');
   }
-  if (typeof p.targetMultiplier !== 'number' || p.targetMultiplier <= 1.0) {
+  if (typeof p.targetMultiplier !== 'number' || !Number.isFinite(p.targetMultiplier) || p.targetMultiplier <= 1.0) {
     throw new EvaluationError('EVAL_MALFORMED', 'TARGET_MULTIPLIER_INVALID');
   }
-  if (typeof p.stopLossMultiplier !== 'number' || p.stopLossMultiplier <= 0 || p.stopLossMultiplier >= 1.0) {
+  if (typeof p.stopLossMultiplier !== 'number' || !Number.isFinite(p.stopLossMultiplier) || p.stopLossMultiplier <= 0 || p.stopLossMultiplier >= 1.0) {
     throw new EvaluationError('EVAL_MALFORMED', 'STOP_LOSS_MULTIPLIER_INVALID');
   }
-  if (typeof p.maxHorizonMs !== 'number' || p.maxHorizonMs <= 0) {
+  if (typeof p.maxHorizonMs !== 'number' || !Number.isFinite(p.maxHorizonMs) || p.maxHorizonMs <= 0) {
     throw new EvaluationError('EVAL_MALFORMED', 'MAX_HORIZON_MS_INVALID');
   }
 };
@@ -508,11 +499,14 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   }
 
   // Check for UNTRADABLE_SIGNAL_WIN (AC-040 & PRD Section 8.2)
-  // When signal reached target (signalSuccess = true), but tradable execution failed or was untradable
+  // When signal reached target (signalSuccess = true), but tradable execution failed or was untradable.
+  // Preserve terminal security/liquidity outcome when securitySurvives == false or liquiditySurvives == false per AC-040 8.2.
   if (signalSuccess && !tradableSuccess) {
-    tradableOutcome = 'UNTRADABLE_SIGNAL_WIN';
-    if (!failureReason) {
-      failureReason = 'SIGNAL_WIN_UNTRADABLE_DUE_TO_EXECUTION_FRICTION';
+    if (securitySurvives && liquiditySurvives) {
+      tradableOutcome = 'UNTRADABLE_SIGNAL_WIN';
+      if (!failureReason) {
+        failureReason = 'SIGNAL_WIN_UNTRADABLE_DUE_TO_EXECUTION_FRICTION';
+      }
     }
   }
 

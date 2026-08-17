@@ -8,6 +8,7 @@
 
 export * from './types.js';
 export * from './errors.js';
+export * from './canonical.js';
 export * from './universe.js';
 export * from './outcomes.js';
 export * from './metrics.js';

@@ -373,6 +373,8 @@ export const createDefaultEvaluationCorpus = (): EvaluationFixtureCorpus => {
 // Pipeline Runner
 // ---------------------------------------------------------------------------
 
+export const DEFAULT_FEATURE_WINDOWS: readonly number[] = Object.freeze([10, 5, 2, 1]);
+
 export interface ExecutePipelineInput {
   corpus: EvaluationFixtureCorpus;
   funnelProfile?: FunnelProfile | undefined;
@@ -380,6 +382,7 @@ export interface ExecutePipelineInput {
   policyMetadata?: PolicyMetadata | undefined;
   artifactClass?: EvaluationArtifactClass | undefined;
   evaluationTime?: string | undefined;
+  featureWindows?: number[] | undefined;
 }
 
 export interface PipelineExecutionResult {
@@ -402,6 +405,7 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
     policyMetadata = DEFAULT_POLICY_METADATA,
     artifactClass = 'BACKTEST',
     evaluationTime,
+    featureWindows = DEFAULT_FEATURE_WINDOWS,
   } = input;
 
   // 1. Create Frozen Candidate Universe (AC-042)
@@ -423,7 +427,7 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
     const fs = computeFeatureSet(
       asset.historySnapshots,
       asset.currentSnapshot,
-      [10, 5, 2, 1],
+      featureWindows as number[],
       corpus.dataCutoff,
     );
     featureSets.set(asset.assetId, fs);

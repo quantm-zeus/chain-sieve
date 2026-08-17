@@ -69,9 +69,10 @@ describe('evaluation-baseline', () => {
       expect(result1.funnelOutput.rejectedCount).toBe(1);
       expect(result1.funnelOutput.sha256).toBe(result2.funnelOutput.sha256);
 
-      // 3. Materialized signals: exactly 7 signals for the 7 eligible candidates
+      // 3. Materialized signals: exactly 7 signals for the 7 eligible candidates (missing adapter asset excluded)
       expect(result1.signals.length).toBe(7);
       expect(result1.signals.map((s) => s.signalId)).toEqual(result2.signals.map((s) => s.signalId));
+      expect(result1.signals.find((s) => s.assetId === 'solana:asset-8-missing-adapter')).toBeUndefined();
 
       // 4. Outcomes
       expect(result1.outcomes.length).toBe(7);
@@ -180,7 +181,7 @@ describe('evaluation-baseline', () => {
   // 3. AC-040: Separate Signal vs Tradable Labels & Universal Timing
   // -------------------------------------------------------------------------
   describe('AC-040: separate signal and tradable labels', () => {
-    it('differentiates UNTRADABLE_SIGNAL_WIN from TRADABLE_SUCCESS', () => {
+    it('differentiates UNTRADABLE_SIGNAL_WIN from TRADABLE_SUCCESS and preserves TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY', () => {
       const corpus = createDefaultEvaluationCorpus();
       const { outcomes } = executeEvaluationPipeline({ corpus });
 
@@ -195,15 +196,62 @@ describe('evaluation-baseline', () => {
       expect(gem1.securitySurvives).toBe(true);
       expect(gem1.netReturn).toBeGreaterThan(0.5);
 
-      // Asset 2: Untradable Gem -> SIGNAL_WIN & UNTRADABLE_SIGNAL_WIN
+      // Asset 2: Untradable Gem (Liquidity collapsed) -> SIGNAL_WIN & TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY
       const gem2 = outcomes.find((o) => o.assetId === 'solana:asset-2-gem-untradable')!;
       expect(gem2).toBeDefined();
       expect(gem2.signalSuccess).toBe(true); // Signal target hit
       expect(gem2.tradableSuccess).toBe(false); // Liquidity collapsed
       expect(gem2.signalOutcome).toBe('SIGNAL_WIN');
-      expect(gem2.tradableOutcome).toBe('UNTRADABLE_SIGNAL_WIN');
+      expect(gem2.tradableOutcome).toBe('TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY');
       expect(gem2.liquiditySurvives).toBe(false);
       expect(gem2.failureReason).toBe('LIQUIDITY_DROPPED_BELOW_MINIMUM');
+    });
+
+    it('resolves UNTRADABLE_SIGNAL_WIN when signal target is hit but tradable execution fails with surviving liquidity/security', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const asset = corpus.assets[0]!;
+      const fs = computeFeatureSet(asset.historySnapshots, asset.currentSnapshot, [10, 5, 2, 1], corpus.dataCutoff);
+      const funnelOut = runFunnel([{
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        asOf: corpus.dataCutoff,
+        featureSet: fs,
+        adapterEvidence: asset.adapterEvidence,
+      }], DEFAULT_FUNNEL_PROFILE);
+      const signal = materializeSignal({
+        candidate: funnelOut.candidates[0]!,
+        featureSet: fs,
+        snapshot: asset.currentSnapshot,
+        funnelProfile: DEFAULT_FUNNEL_PROFILE,
+      });
+
+      // Pure signal target reaches 2.0x raw price, but huge fee wipes out tradable execution so netReturn < 0
+      const frictionProfile: OutcomeProfile = {
+        ...DEFAULT_OUTCOME_PROFILE,
+        executionScenario: {
+          ...DEFAULT_OUTCOME_PROFILE.executionScenario,
+          notionalUsd: 100,
+          networkFeeUsd: 150, // $150 fee on $100 notional
+        },
+      };
+
+      const obs: ForwardObservation[] = [
+        { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: 1.0, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
+        { timestamp: '2026-03-01T04:00:00.000Z', priceUsd: 2.5, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
+      ];
+
+      const outcome = evaluateOutcome({
+        signal,
+        profile: frictionProfile,
+        observations: obs,
+      });
+
+      expect(outcome.signalSuccess).toBe(true);
+      expect(outcome.tradableSuccess).toBe(false);
+      expect(outcome.signalOutcome).toBe('SIGNAL_WIN');
+      expect(outcome.tradableOutcome).toBe('UNTRADABLE_SIGNAL_WIN');
+      expect(outcome.securitySurvives).toBe(true);
+      expect(outcome.liquiditySurvives).toBe(true);
     });
 
     it('enforces terminal security failures: TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY', () => {
@@ -480,8 +528,7 @@ describe('evaluation-baseline', () => {
       // Signal vs Tradable counts
       expect(m.signalSuccessCount).toBeGreaterThan(0);
       expect(m.tradableSuccessCount).toBeGreaterThan(0);
-      expect(m.untradableSignalWinCount).toBe(1); // Asset 2 was untradable signal win
-      expect(m.securityOrLiquidityFailureCount).toBeGreaterThan(0); // Asset 2 & 3
+      expect(m.securityOrLiquidityFailureCount).toBeGreaterThanOrEqual(2); // Asset 2 & 3
 
       // Precision & Recall
       expect(m.signalPrecision).toBeGreaterThanOrEqual(0);
@@ -500,6 +547,96 @@ describe('evaluation-baseline', () => {
       expect(typeof m.cvar95).toBe('number');
       expect(typeof m.netShadowPortfolioUtility).toBe('number');
       expect(typeof m.lcb95Utility).toBe('number');
+    });
+
+    it('computes ranking diagnostics (Precision@K, NDCG@K, MRR) ordered by descending signal score per PRD 7.5', () => {
+      const outcomes = [
+        {
+          outcomeId: 'out_c_lowest_score',
+          state: 'FULLY_MATURED' as const,
+          signal: { score: 0.1 } as any,
+          tradableSuccess: false,
+          signalSuccess: false,
+          signalOutcome: 'SIGNAL_LOSS' as const,
+          tradableOutcome: 'TRADABLE_FAILURE' as const,
+          netReturn: -0.5,
+        },
+        {
+          outcomeId: 'out_a_highest_score',
+          state: 'FULLY_MATURED' as const,
+          signal: { score: 0.9 } as any,
+          tradableSuccess: true,
+          signalSuccess: true,
+          signalOutcome: 'SIGNAL_WIN' as const,
+          tradableOutcome: 'TRADABLE_SUCCESS' as const,
+          netReturn: 0.5,
+        },
+        {
+          outcomeId: 'out_b_mid_score',
+          state: 'FULLY_MATURED' as const,
+          signal: { score: 0.5 } as any,
+          tradableSuccess: false,
+          signalSuccess: false,
+          signalOutcome: 'SIGNAL_LOSS' as const,
+          tradableOutcome: 'TRADABLE_FAILURE' as const,
+          netReturn: -0.2,
+        },
+      ];
+
+      const metrics = computeEvaluationMetrics(outcomes as any);
+      // Top 1 by score is Signal A (score 0.9, tradableSuccess = true) -> Precision@1 should be 1.0
+      expect(metrics.precisionAt1).toBe(1.0);
+      // Top 3 has 1 win out of 3 -> Precision@3 = 1/3 = 0.333333
+      expect(metrics.precisionAt3).toBe(0.333333);
+      // MRR: First win is at rank 1 -> MRR = 1.0
+      expect(metrics.meanReciprocalRank).toBe(1.0);
+      expect(metrics.ndcgAt5).toBeGreaterThan(0);
+    });
+
+    it('validateProfile rejects negative or non-finite scenario and policy parameters', () => {
+      const baseProfile = DEFAULT_OUTCOME_PROFILE;
+
+      expect(() =>
+        evaluateOutcome({
+          signal: {} as any,
+          profile: {
+            ...baseProfile,
+            executionScenario: {
+              ...baseProfile.executionScenario,
+              minLiquidityUsd: -100,
+            },
+          },
+          observations: [],
+        }),
+      ).toThrowError(/MIN_LIQUIDITY_USD_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: {} as any,
+          profile: {
+            ...baseProfile,
+            executionScenario: {
+              ...baseProfile.executionScenario,
+              maxImpactBps: NaN,
+            },
+          },
+          observations: [],
+        }),
+      ).toThrowError(/MAX_IMPACT_BPS_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: {} as any,
+          profile: {
+            ...baseProfile,
+            executionScenario: {
+              ...baseProfile.executionScenario,
+              poolFeeBps: -10,
+            },
+          },
+          observations: [],
+        }),
+      ).toThrowError(/POOL_FEE_BPS_INVALID/);
     });
 
     it('computeEvaluationMetrics handles empty or custom outcome arrays deterministically', () => {

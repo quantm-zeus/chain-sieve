@@ -4,30 +4,12 @@
  * Implements immutable frozen candidate universes and validation logic to prevent evaluation bias.
  */
 
-import { createHash } from 'node:crypto';
 import { EvaluationError } from './errors.js';
 import type { FrozenCandidateUniverse } from './types.js';
+import { canonicalize, ISO_DATETIME_RE, sha256Hex } from './canonical.js';
 
-const ISO_DATETIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 const SHA256_RE = /^[a-f0-9]{64}$/;
 
-const sha256Hex = (data: string): string =>
-  createHash('sha256').update(data, 'utf8').digest('hex');
-
-const canonicalize = (value: unknown): unknown => {
-  if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(canonicalize);
-  const obj = value as Record<string, unknown>;
-  const sortedKeys = Object.keys(obj).sort();
-  const result: Record<string, unknown> = {};
-  for (const k of sortedKeys) {
-    const val = obj[k];
-    if (val !== undefined) {
-      result[k] = canonicalize(val);
-    }
-  }
-  return result;
-};
 
 export interface CreateUniverseInput {
   universeId: string;

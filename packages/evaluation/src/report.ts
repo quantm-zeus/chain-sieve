@@ -6,7 +6,6 @@
  * Deterministic report generation, artifact class separation enforcement, and policy comparison.
  */
 
-import { createHash } from 'node:crypto';
 import { EvaluationError } from './errors.js';
 import { computeEvaluationMetrics } from './metrics.js';
 import type { ComputeMetricsOptions } from './metrics.js';
@@ -21,24 +20,8 @@ import type {
   PolicyMetadata,
 } from './types.js';
 import { EVALUATION_ARTIFACT_CLASSES } from './types.js';
+import { canonicalize, sha256Hex } from './canonical.js';
 
-const sha256Hex = (data: string): string =>
-  createHash('sha256').update(data, 'utf8').digest('hex');
-
-const canonicalize = (value: unknown): unknown => {
-  if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(canonicalize);
-  const obj = value as Record<string, unknown>;
-  const sortedKeys = Object.keys(obj).sort();
-  const result: Record<string, unknown> = {};
-  for (const k of sortedKeys) {
-    const val = obj[k];
-    if (val !== undefined) {
-      result[k] = canonicalize(val);
-    }
-  }
-  return result;
-};
 
 export interface GenerateReportInput {
   artifactClass: EvaluationArtifactClass;
