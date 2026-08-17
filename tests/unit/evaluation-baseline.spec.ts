@@ -1,0 +1,594 @@
+/**
+ * @requirement FR-EVAL-019 - Backtest, cross-fit, forward shadow, live shadow, and active-production results are separate artifact classes; UI and exports cannot blend them into one performance curve.
+ * @requirement AC-040 - Outcome profiles compute separate signal and tradable labels from actionable delivery time, canonical pool, configured notional/delay, modeled impact, all required fees, fill/liquidity constraints, exit policy and maturity state.
+ * @requirement AC-042 - Baseline and champion use the same frozen candidate universe and data cutoff.
+ *
+ * Unit and regression tests for evaluation baseline, metrics, artifact class separation, and deterministic reports.
+ */
+
+import { describe, it, expect } from 'vitest';
+import {
+  // Types & Constants
+  EVALUATION_ARTIFACT_CLASSES,
+  DEFAULT_OUTCOME_PROFILE,
+  DEFAULT_POLICY_METADATA,
+  // Universe (AC-042)
+  createFrozenCandidateUniverse,
+  validateFrozenUniverse,
+  assertIdenticalUniverses,
+  // Outcomes (AC-040)
+  evaluateOutcome,
+  evaluateOutcomes,
+  // Metrics & Reports (FR-EVAL-019)
+  computeEvaluationMetrics,
+  generateEvaluationReport,
+  assertNoArtifactClassBlending,
+  comparePolicies,
+  // Corpus & Pipeline
+  createDefaultEvaluationCorpus,
+  executeEvaluationPipeline,
+  // Errors & Compatibility
+  EvaluationError,
+  matureSyntheticOutcome,
+  assertOutcomeLabelsDistinct,
+} from '@ciag/evaluation';
+import type {
+  EvaluationArtifactClass,
+  ForwardObservation,
+  OutcomeProfile,
+} from '@ciag/evaluation';
+import {
+  computeFeatureSet,
+  runFunnel,
+  materializeSignal,
+  DEFAULT_FUNNEL_PROFILE,
+} from '@ciag/signal-intelligence';
+
+describe('evaluation-baseline', () => {
+  // -------------------------------------------------------------------------
+  // 1. Versioned Fixture Corpus & Full Snapshot-to-Signal-to-Outcome Pipeline
+  // -------------------------------------------------------------------------
+  describe('versioned fixture corpus and pipeline execution', () => {
+    it('executes full snapshot-to-signal-to-outcome pipeline reproducibly', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      expect(corpus.corpusVersion).toBe('1.0.0');
+      expect(corpus.assets.length).toBe(8);
+
+      const result1 = executeEvaluationPipeline({ corpus, artifactClass: 'BACKTEST' });
+      const result2 = executeEvaluationPipeline({ corpus, artifactClass: 'BACKTEST' });
+
+      // 1. Universe
+      expect(result1.candidateUniverse.totalAssets).toBe(8);
+      expect(result1.candidateUniverse.sha256).toBe(result2.candidateUniverse.sha256);
+      expect(result1.candidateUniverse.candidateAssetIds).toEqual(
+        [...corpus.assets.map((a) => a.assetId)].sort(),
+      );
+
+      // 2. Funnel candidates: 6 eligible, 2 rejected (ineligible score + missing adapter)
+      expect(result1.funnelOutput.eligibleCount).toBe(6);
+      expect(result1.funnelOutput.rejectedCount).toBe(2);
+      expect(result1.funnelOutput.sha256).toBe(result2.funnelOutput.sha256);
+
+      // 3. Materialized signals: exactly 6 signals for the 6 eligible candidates
+      expect(result1.signals.length).toBe(6);
+      expect(result1.signals.map((s) => s.signalId)).toEqual(result2.signals.map((s) => s.signalId));
+
+      // 4. Outcomes
+      expect(result1.outcomes.length).toBe(6);
+      expect(result1.outcomes.map((o) => o.outcomeId)).toEqual(result2.outcomes.map((o) => o.outcomeId));
+
+      // 5. Deterministic report
+      expect(result1.report.reportId).toBe(result2.report.reportId);
+      expect(result1.report.sha256).toBe(result2.report.sha256);
+      expect(result1.report.canonicalJson).toBe(result2.report.canonicalJson);
+      expect(result1.report.bytes).toBe(result2.report.bytes);
+      expect(result1.report.artifactClass).toBe('BACKTEST');
+
+      // 6. Metrics stability
+      expect(result1.report.metrics).toEqual(result2.report.metrics);
+      expect(result1.report.metrics.totalCandidates).toBe(8);
+      expect(result1.report.metrics.eligibleCandidates).toBe(6);
+      expect(result1.report.metrics.rejectedCandidates).toBe(2);
+      expect(result1.report.metrics.materializedSignals).toBe(6);
+      expect(result1.report.metrics.evaluatedOutcomes).toBe(6);
+    });
+
+    it('produces frozen immutable structures across all evaluation stages', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const result = executeEvaluationPipeline({ corpus });
+
+      expect(Object.isFrozen(result.candidateUniverse)).toBe(true);
+      expect(Object.isFrozen(result.report)).toBe(true);
+      for (const outcome of result.outcomes) {
+        expect(Object.isFrozen(outcome)).toBe(true);
+      }
+      for (const signal of result.signals) {
+        expect(Object.isFrozen(signal)).toBe(true);
+      }
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 2. FR-EVAL-019: Strict Artifact Class Separation
+  // -------------------------------------------------------------------------
+  describe('FR-EVAL-019: artifact class separation', () => {
+    it('supports all normative artifact classes', () => {
+      expect(EVALUATION_ARTIFACT_CLASSES).toEqual([
+        'BACKTEST',
+        'CROSS_FIT',
+        'FORWARD_SHADOW',
+        'LIVE_SHADOW',
+        'ACTIVE_PRODUCTION',
+      ]);
+    });
+
+    it('assertNoArtifactClassBlending passes for homogenous reports', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const r1 = executeEvaluationPipeline({ corpus, artifactClass: 'FORWARD_SHADOW' }).report;
+      const r2 = executeEvaluationPipeline({ corpus, artifactClass: 'FORWARD_SHADOW' }).report;
+
+      expect(() => assertNoArtifactClassBlending([r1, r2])).not.toThrow();
+    });
+
+    it('assertNoArtifactClassBlending fails closed when blending distinct classes', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const rBacktest = executeEvaluationPipeline({ corpus, artifactClass: 'BACKTEST' }).report;
+      const rLive = executeEvaluationPipeline({ corpus, artifactClass: 'LIVE_SHADOW' }).report;
+
+      expect(() => assertNoArtifactClassBlending([rBacktest, rLive])).toThrowError(
+        /FR-EVAL-019 violation: Attempted to blend distinct artifact classes/,
+      );
+
+      try {
+        assertNoArtifactClassBlending([rBacktest, rLive]);
+      } catch (err) {
+        expect(err).toBeInstanceOf(EvaluationError);
+        expect((err as EvaluationError).code).toBe('EVAL_CLASS_BLENDED');
+      }
+    });
+
+    it('generateEvaluationReport rejects invalid or missing artifactClass', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { candidateUniverse, outcomes } = executeEvaluationPipeline({ corpus });
+
+      expect(() =>
+        generateEvaluationReport({
+          artifactClass: 'INVALID_CLASS' as EvaluationArtifactClass,
+          candidateUniverse,
+          profile: DEFAULT_OUTCOME_PROFILE,
+          policy: DEFAULT_POLICY_METADATA,
+          outcomes,
+        }),
+      ).toThrowError(/Invalid artifactClass/);
+    });
+
+    it('comparePolicies rejects comparing baseline and champion across different artifact classes', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const rBacktest = executeEvaluationPipeline({ corpus, artifactClass: 'BACKTEST' }).report;
+      const rForward = executeEvaluationPipeline({ corpus, artifactClass: 'FORWARD_SHADOW' }).report;
+
+      expect(() =>
+        comparePolicies({
+          baselineReport: rBacktest,
+          championReport: rForward,
+        }),
+      ).toThrowError(/FR-EVAL-019 violation/);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 3. AC-040: Separate Signal vs Tradable Labels & Universal Timing
+  // -------------------------------------------------------------------------
+  describe('AC-040: separate signal and tradable labels', () => {
+    it('differentiates UNTRADABLE_SIGNAL_WIN from TRADABLE_SUCCESS', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { outcomes } = executeEvaluationPipeline({ corpus });
+
+      // Asset 1: Tradable Gem -> SIGNAL_WIN & TRADABLE_SUCCESS
+      const gem1 = outcomes.find((o) => o.assetId === 'solana:asset-1-gem-tradable')!;
+      expect(gem1).toBeDefined();
+      expect(gem1.signalSuccess).toBe(true);
+      expect(gem1.tradableSuccess).toBe(true);
+      expect(gem1.signalOutcome).toBe('SIGNAL_WIN');
+      expect(gem1.tradableOutcome).toBe('TRADABLE_SUCCESS');
+      expect(gem1.liquiditySurvives).toBe(true);
+      expect(gem1.securitySurvives).toBe(true);
+      expect(gem1.netReturn).toBeGreaterThan(0.5);
+
+      // Asset 2: Untradable Gem -> SIGNAL_WIN & UNTRADABLE_SIGNAL_WIN
+      const gem2 = outcomes.find((o) => o.assetId === 'solana:asset-2-gem-untradable')!;
+      expect(gem2).toBeDefined();
+      expect(gem2.signalSuccess).toBe(true); // Signal target hit
+      expect(gem2.tradableSuccess).toBe(false); // Liquidity collapsed
+      expect(gem2.signalOutcome).toBe('SIGNAL_WIN');
+      expect(gem2.tradableOutcome).toBe('UNTRADABLE_SIGNAL_WIN');
+      expect(gem2.liquiditySurvives).toBe(false);
+      expect(gem2.failureReason).toBe('LIQUIDITY_DROPPED_BELOW_MINIMUM');
+    });
+
+    it('enforces terminal security failures: TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { outcomes } = executeEvaluationPipeline({ corpus });
+
+      const rug = outcomes.find((o) => o.assetId === 'solana:asset-3-rugpull')!;
+      expect(rug).toBeDefined();
+      expect(rug.signalSuccess).toBe(false);
+      expect(rug.tradableSuccess).toBe(false);
+      expect(rug.signalOutcome).toBe('SIGNAL_LOSS');
+      expect(rug.tradableOutcome).toBe('TRADABLE_FAILURE_SECURITY_OR_LIQUIDITY');
+      expect(rug.securitySurvives).toBe(false);
+      expect(rug.failureReason).toContain('SECURITY_TERMINAL_EVENT');
+    });
+
+    it('enforces stop loss triggers: TRADABLE_FAILURE', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { outcomes } = executeEvaluationPipeline({ corpus });
+
+      const stop = outcomes.find((o) => o.assetId === 'solana:asset-4-stoploss')!;
+      expect(stop).toBeDefined();
+      expect(stop.signalSuccess).toBe(false);
+      expect(stop.tradableSuccess).toBe(false);
+      expect(stop.signalOutcome).toBe('SIGNAL_LOSS');
+      expect(stop.tradableOutcome).toBe('TRADABLE_FAILURE');
+      expect(stop.failureReason).toBe('STOP_LOSS_TRIGGERED');
+    });
+
+    it('enforces universal action delay: observations before T_action_reference are ignored for entry', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const asset = corpus.assets[0]!;
+      const fs = computeFeatureSet(asset.historySnapshots, asset.currentSnapshot, [10, 5, 2, 1], corpus.dataCutoff);
+      const funnelOut = runFunnel([{
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        asOf: corpus.dataCutoff,
+        featureSet: fs,
+        adapterEvidence: asset.adapterEvidence,
+      }], DEFAULT_FUNNEL_PROFILE);
+      const signal = materializeSignal({
+        candidate: funnelOut.candidates[0]!,
+        featureSet: fs,
+        snapshot: asset.currentSnapshot,
+      });
+
+      // Signal delivered at T0 (2026-03-01T02:00:00Z) with actionDelayMs = 60_000 (1 minute)
+      // T_action_reference = 2026-03-01T02:01:00Z
+      const customProfile: OutcomeProfile = {
+        ...DEFAULT_OUTCOME_PROFILE,
+        executionScenario: {
+          ...DEFAULT_OUTCOME_PROFILE.executionScenario,
+          actionDelayMs: 60_000, // 60s
+        },
+      };
+
+      const obs: ForwardObservation[] = [
+        // Before action reference (should not be entry)
+        { timestamp: '2026-03-01T02:00:30.000Z', priceUsd: 1.25, poolLiquidityUsd: 100000, securityStatus: 'SAFE' },
+        // At action reference (should be entry)
+        { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: 1.50, poolLiquidityUsd: 100000, securityStatus: 'SAFE' },
+        // Target reached
+        { timestamp: '2026-03-01T04:00:00.000Z', priceUsd: 3.50, poolLiquidityUsd: 100000, securityStatus: 'SAFE' },
+      ];
+
+      const outcome = evaluateOutcome({
+        signal,
+        profile: customProfile,
+        observations: obs,
+      });
+
+      expect(outcome.timing.tActionReference).toBe('2026-03-01T02:01:00.000Z');
+      expect(outcome.timing.actionablePriceTime).toBe('2026-03-01T02:01:00.000Z');
+      // Entry price should be derived from 1.50 (at action reference), NOT 1.25 (before action reference)
+      expect(outcome.entryPrice).toBeGreaterThanOrEqual(1.50);
+    });
+
+    it('deducts network, priority, pool, and token transfer fees from net return', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const asset = corpus.assets[0]!;
+      const fs = computeFeatureSet(asset.historySnapshots, asset.currentSnapshot, [10, 5, 2, 1], corpus.dataCutoff);
+      const funnelOut = runFunnel([{
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        asOf: corpus.dataCutoff,
+        featureSet: fs,
+        adapterEvidence: asset.adapterEvidence,
+      }], DEFAULT_FUNNEL_PROFILE);
+      const signal = materializeSignal({
+        candidate: funnelOut.candidates[0]!,
+        featureSet: fs,
+        snapshot: asset.currentSnapshot,
+      });
+
+      const highFeeProfile: OutcomeProfile = {
+        ...DEFAULT_OUTCOME_PROFILE,
+        executionScenario: {
+          ...DEFAULT_OUTCOME_PROFILE.executionScenario,
+          notionalUsd: 100,
+          networkFeeUsd: 5.0, // $5 network fee
+          priorityFeeUsd: 5.0, // $5 priority fee
+          poolFeeBps: 100, // 1%
+          tokenTransferFeeBps: 200, // 2%
+        },
+      };
+
+      const obs: ForwardObservation[] = [
+        { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: 1.0, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
+        { timestamp: '2026-03-01T04:00:00.000Z', priceUsd: 2.2, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
+      ];
+
+      const outcome = evaluateOutcome({
+        signal,
+        profile: highFeeProfile,
+        observations: obs,
+      });
+
+      // Total fees: (5 + 5 + 100 * 3%) * 2 = (10 + 3) * 2 = 26 USD on 100 USD notional = 26% fee drag
+      expect(outcome.totalFeesUsd).toBeGreaterThanOrEqual(20);
+      expect(outcome.netReturn).toBeLessThan(outcome.rawReturn!);
+    });
+
+    it('correctly reports PENDING when observations have not matured', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { outcomes } = executeEvaluationPipeline({
+        corpus,
+        evaluationTime: '2026-03-01T02:15:00.000Z',
+      });
+
+      const pending = outcomes.find((o) => o.assetId === 'solana:asset-6-pending')!;
+      expect(pending).toBeDefined();
+      expect(pending.state).toBe('PARTIALLY_MATURED');
+      expect(pending.tradableOutcome).toBe('PENDING');
+      expect(pending.signalOutcome).toBe('SIGNAL_NEUTRAL');
+    });
+
+    it('correctly reports CENSORED when data cutoff passes horizon with no actionable observations', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const asset = corpus.assets[0]!;
+      const fs = computeFeatureSet(asset.historySnapshots, asset.currentSnapshot, [10, 5, 2, 1], corpus.dataCutoff);
+      const funnelOut = runFunnel([{
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        asOf: corpus.dataCutoff,
+        featureSet: fs,
+        adapterEvidence: asset.adapterEvidence,
+      }], DEFAULT_FUNNEL_PROFILE);
+      const signal = materializeSignal({
+        candidate: funnelOut.candidates[0]!,
+        featureSet: fs,
+        snapshot: asset.currentSnapshot,
+      });
+
+      const outcome = evaluateOutcome({
+        signal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [], // No forward observations
+        evaluationTime: '2026-03-05T00:00:00.000Z', // Far after horizon
+      });
+
+      expect(outcome.state).toBe('CENSORED');
+      expect(outcome.tradableOutcome).toBe('CENSORED');
+      expect(outcome.signalOutcome).toBe('SIGNAL_CENSORED');
+      expect(outcome.failureReason).toBe('NO_ACTIONABLE_OBSERVATIONS_FOUND');
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 4. AC-042: Candidate Universe Consistency & Policy Comparison
+  // -------------------------------------------------------------------------
+  describe('AC-042: frozen candidate universe & policy comparison', () => {
+    it('creates deterministic, deduplicated, lexicographically sorted universe', () => {
+      const u1 = createFrozenCandidateUniverse({
+        universeId: 'univ-test-1',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-z', 'solana:token-a', 'solana:token-m', 'solana:token-a'],
+      });
+
+      expect(u1.candidateAssetIds).toEqual(['solana:token-a', 'solana:token-m', 'solana:token-z']);
+      expect(u1.totalAssets).toBe(3);
+      expect(u1.sha256).toMatch(/^[a-f0-9]{64}$/);
+
+      const u2 = createFrozenCandidateUniverse({
+        universeId: 'univ-test-1',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-m', 'solana:token-z', 'solana:token-a'],
+      });
+
+      expect(u1.sha256).toBe(u2.sha256);
+      expect(() => validateFrozenUniverse(u1)).not.toThrow();
+    });
+
+    it('assertIdenticalUniverses fails closed on universe hash or cutoff mismatch', () => {
+      const u1 = createFrozenCandidateUniverse({
+        universeId: 'univ-1',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-a', 'solana:token-b'],
+      });
+
+      const uDiffCutoff = createFrozenCandidateUniverse({
+        universeId: 'univ-1',
+        dataCutoff: '2026-03-02T00:00:00.000Z', // Different cutoff
+        candidateAssetIds: ['solana:token-a', 'solana:token-b'],
+      });
+
+      const uDiffAssets = createFrozenCandidateUniverse({
+        universeId: 'univ-1',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-a', 'solana:token-c'], // Different assets
+      });
+
+      expect(() => assertIdenticalUniverses(u1, uDiffCutoff)).toThrowError(
+        /Data cutoff mismatch between policies/,
+      );
+
+      expect(() => assertIdenticalUniverses(u1, uDiffAssets)).toThrowError(
+        /Candidate universe hash mismatch between policies/,
+      );
+    });
+
+    it('comparePolicies evaluates baseline vs champion over identical universe', () => {
+      const corpus = createDefaultEvaluationCorpus();
+
+      // Baseline policy: minScore = 0.0 (selects all eligible)
+      const baselineReport = executeEvaluationPipeline({
+        corpus,
+        policyMetadata: { policyId: 'policy-baseline', policyVersion: '1.0.0' },
+      }).report;
+
+      // Champion policy: higher threshold, improved filtering
+      const championReport = executeEvaluationPipeline({
+        corpus,
+        funnelProfile: {
+          ...DEFAULT_FUNNEL_PROFILE,
+          minScore: 0.5, // Filter out weak candidates
+        },
+        policyMetadata: { policyId: 'policy-champion', policyVersion: '2.0.0' },
+      }).report;
+
+      const comparison = comparePolicies({
+        baselineReport,
+        championReport,
+      });
+
+      expect(comparison.baselineReportId).toBe(baselineReport.reportId);
+      expect(comparison.championReportId).toBe(championReport.reportId);
+      expect(comparison.universeHash).toBe(baselineReport.candidateUniverse.sha256);
+      expect(comparison.dataCutoff).toBe(baselineReport.candidateUniverse.dataCutoff);
+      expect(typeof comparison.precisionLift).toBe('number');
+      expect(typeof comparison.utilityLift).toBe('number');
+      expect(typeof comparison.lcb95Lift).toBe('number');
+      expect(comparison.sha256).toMatch(/^[a-f0-9]{64}$/);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 5. Metrics & Opportunity Diagnostics (PRD Section 7 & 38.42)
+  // -------------------------------------------------------------------------
+  describe('comprehensive metrics computation', () => {
+    it('computes financial, ranking, and utility metrics correctly', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { report } = executeEvaluationPipeline({ corpus });
+      const m = report.metrics;
+
+      // Counts
+      expect(m.totalCandidates).toBe(8);
+      expect(m.eligibleCandidates).toBe(6);
+      expect(m.materializedSignals).toBe(6);
+      expect(m.evaluatedOutcomes).toBe(6);
+
+      // Signal vs Tradable counts
+      expect(m.signalSuccessCount).toBeGreaterThan(0);
+      expect(m.tradableSuccessCount).toBeGreaterThan(0);
+      expect(m.untradableSignalWinCount).toBe(1); // Asset 2 was untradable signal win
+      expect(m.securityOrLiquidityFailureCount).toBeGreaterThan(0); // Asset 2 & 3
+
+      // Precision & Recall
+      expect(m.signalPrecision).toBeGreaterThanOrEqual(0);
+      expect(m.tradablePrecision).toBeGreaterThanOrEqual(0);
+      expect(m.falseDiscoveryRate).toBeGreaterThanOrEqual(0);
+
+      // Ranking diagnostics
+      expect(m.precisionAt1).toBeGreaterThanOrEqual(0);
+      expect(m.ndcgAt5).toBeGreaterThanOrEqual(0);
+      expect(m.meanReciprocalRank).toBeGreaterThanOrEqual(0);
+
+      // Financial & Net Portfolio Utility
+      expect(typeof m.averageNetReturn).toBe('number');
+      expect(typeof m.profitFactor).toBe('number');
+      expect(typeof m.maxDrawdown).toBe('number');
+      expect(typeof m.cvar95).toBe('number');
+      expect(typeof m.netShadowPortfolioUtility).toBe('number');
+      expect(typeof m.lcb95Utility).toBe('number');
+    });
+
+    it('computeEvaluationMetrics handles empty or custom outcome arrays deterministically', () => {
+      const emptyMetrics = computeEvaluationMetrics([]);
+      expect(emptyMetrics.evaluatedOutcomes).toBe(0);
+      expect(emptyMetrics.signalPrecision).toBe(0);
+      expect(emptyMetrics.tradablePrecision).toBe(0);
+      expect(emptyMetrics.profitFactor).toBe(0);
+      expect(emptyMetrics.netShadowPortfolioUtility).toBe(0);
+    });
+
+    it('evaluateOutcomes evaluates batch of signals with deterministic sorting by outcomeId', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { signals } = executeEvaluationPipeline({ corpus });
+      const obsMap: Record<string, ForwardObservation[]> = {};
+      for (const a of corpus.assets) {
+        obsMap[a.assetId] = a.forwardObservations;
+      }
+
+      const batchOutcomes = evaluateOutcomes(signals, DEFAULT_OUTCOME_PROFILE, obsMap);
+      expect(batchOutcomes.length).toBe(signals.length);
+      for (let i = 0; i < batchOutcomes.length - 1; i++) {
+        expect(batchOutcomes[i]!.outcomeId.localeCompare(batchOutcomes[i + 1]!.outcomeId)).toBeLessThan(0);
+      }
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 6. Regression Detection for Candidate Selection, Materialization, Outcomes
+  // -------------------------------------------------------------------------
+  describe('regression detection', () => {
+    it('detects changes in candidate selection criteria', () => {
+      const corpus = createDefaultEvaluationCorpus();
+
+      const baseResult = executeEvaluationPipeline({ corpus });
+
+      // Change funnel required features
+      const changedFunnelResult = executeEvaluationPipeline({
+        corpus,
+        funnelProfile: {
+          ...DEFAULT_FUNNEL_PROFILE,
+          minScore: 10.0, // High threshold rejecting all
+        },
+      });
+
+      expect(changedFunnelResult.funnelOutput.eligibleCount).not.toBe(baseResult.funnelOutput.eligibleCount);
+      expect(changedFunnelResult.report.sha256).not.toBe(baseResult.report.sha256);
+    });
+
+    it('detects changes in outcome profile parameters', () => {
+      const corpus = createDefaultEvaluationCorpus();
+
+      const baseResult = executeEvaluationPipeline({ corpus });
+
+      // Change target multiplier from 2.0x to 5.0x
+      const changedOutcomeResult = executeEvaluationPipeline({
+        corpus,
+        outcomeProfile: {
+          ...DEFAULT_OUTCOME_PROFILE,
+          signalTargetMultiplier: 5.0,
+          exitPolicy: {
+            ...DEFAULT_OUTCOME_PROFILE.exitPolicy,
+            targetMultiplier: 5.0,
+          },
+        },
+      });
+
+      expect(changedOutcomeResult.report.metrics.tradableSuccessCount).not.toBe(
+        baseResult.report.metrics.tradableSuccessCount,
+      );
+      expect(changedOutcomeResult.report.sha256).not.toBe(baseResult.report.sha256);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 7. Backward Compatibility & Error Handling
+  // -------------------------------------------------------------------------
+  describe('backward compatibility and typed errors', () => {
+    it('maintains matureSyntheticOutcome behavior', () => {
+      const pending = matureSyntheticOutcome('2026-01-01T00:00:00.000Z', '2026-01-01T00:00:01.000Z', 5000);
+      expect(pending.state).toBe('PENDING');
+
+      const mature = matureSyntheticOutcome('2026-01-01T00:00:00.000Z', '2026-01-01T00:00:10.000Z', 5000);
+      expect(mature.state).toBe('MATURE');
+      expect(mature.signalSuccess).toBe(true);
+      expect(mature.tradableSuccess).toBe(false);
+    });
+
+    it('maintains assertOutcomeLabelsDistinct validation', () => {
+      expect(() => assertOutcomeLabelsDistinct(true, false)).not.toThrow();
+      expect(() => assertOutcomeLabelsDistinct(undefined, true)).toThrowError(/OUTCOME_LABEL_REQUIRED/);
+      expect(() => assertOutcomeLabelsDistinct(false, undefined)).toThrowError(/OUTCOME_LABEL_REQUIRED/);
+    });
+  });
+});
