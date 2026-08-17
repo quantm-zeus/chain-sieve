@@ -124,13 +124,21 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   if (!signal.signalId || !signal.assetId || !signal.asOf || !isValidIso(signal.asOf)) {
     throw new EvaluationError('EVAL_MALFORMED', 'SIGNAL_RECORD_MALFORMED');
   }
+  if (signal.materializedAt !== undefined && signal.materializedAt !== null && !isValidIso(signal.materializedAt)) {
+    throw new EvaluationError('EVAL_MALFORMED', 'SIGNAL_MATERIALIZED_AT_INVALID');
+  }
+  if (evaluationTime !== undefined && evaluationTime !== null && !isValidIso(evaluationTime)) {
+    throw new EvaluationError('EVAL_MALFORMED', 'EVALUATION_TIME_INVALID');
+  }
 
   validateProfile(profile);
 
   const scenario = profile.executionScenario;
   const exitPolicy = profile.exitPolicy;
 
-  // Universal Timing calculation (PRD Section 8.1)
+  // Universal Timing calculation (PRD Section 8.1):
+  // T_action_reference = max(T_delivery, T_delivery_eligible) + D_action
+  // Execution state and security availability are evaluated at entry and along forward observations downstream.
   const tDecisionReady = signal.asOf;
   const tPolicyDecided = signal.materializedAt ?? signal.asOf;
   const tDecisionReadyMs = Date.parse(tDecisionReady);

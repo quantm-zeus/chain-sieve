@@ -465,11 +465,12 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
   );
 
   // Evaluate all candidates with valid adapter evidence to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
+  // Real candidate score is preserved (defaulting to 0 when rejected prior to scoring) without synthetic promotion
   const executableCandidates = funnelOutput.candidates.filter((c) => c.adapterEvidence !== null);
   const eligibleCandidates: FunnelCandidate[] = executableCandidates.map((c, i) => ({
     ...c,
     eligible: true,
-    score: c.score ?? 0.5,
+    score: c.score ?? 0,
     rank: i + 1,
     rejectionReasons: [],
   }));

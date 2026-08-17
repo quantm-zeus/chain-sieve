@@ -12,6 +12,7 @@ import {
   EVALUATION_ARTIFACT_CLASSES,
   DEFAULT_OUTCOME_PROFILE,
   DEFAULT_POLICY_METADATA,
+  isValidIso,
   // Universe (AC-042)
   createFrozenCandidateUniverse,
   validateFrozenUniverse,
@@ -518,6 +519,32 @@ describe('evaluation-baseline', () => {
       );
     });
 
+    it('validateFrozenUniverse rejects unsorted or duplicate candidateAssetIds', () => {
+      const unsortedUniverse = {
+        universeId: 'univ-unsorted',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-z', 'solana:token-a'],
+        totalAssets: 2,
+        corpusVersion: '1.0.0',
+        sha256: 'a'.repeat(64),
+      };
+      expect(() => validateFrozenUniverse(unsortedUniverse as unknown as FrozenCandidateUniverse)).toThrowError(
+        /CANDIDATE_ASSET_IDS_NOT_SORTED/,
+      );
+
+      const duplicatedUniverse = {
+        universeId: 'univ-duplicated',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-a', 'solana:token-a'],
+        totalAssets: 2,
+        corpusVersion: '1.0.0',
+        sha256: 'a'.repeat(64),
+      };
+      expect(() => validateFrozenUniverse(duplicatedUniverse as unknown as FrozenCandidateUniverse)).toThrowError(
+        /CANDIDATE_ASSET_IDS_DUPLICATED/,
+      );
+    });
+
     it('assertIdenticalUniverses fails closed on universe hash or cutoff mismatch', () => {
       const u1 = createFrozenCandidateUniverse({
         universeId: 'univ-1',
@@ -762,6 +789,38 @@ describe('evaluation-baseline', () => {
           observations: [],
         }),
       ).toThrowError(/PROFILE_HORIZON_MISMATCH/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: {
+            ...dummySignal,
+            materializedAt: '2026-02-30T00:00:00.000Z', // Invalid ISO
+          },
+          profile: baseProfile,
+          observations: [],
+        }),
+      ).toThrowError(/SIGNAL_MATERIALIZED_AT_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: dummySignal,
+          profile: baseProfile,
+          observations: [],
+          evaluationTime: '2026-13-01T00:00:00.000Z', // Invalid ISO
+        }),
+      ).toThrowError(/EVALUATION_TIME_INVALID/);
+    });
+
+    it('isValidIso accepts microsecond timestamps and rejects calendar day rollover', () => {
+      expect(isValidIso('2026-03-01T12:00:00Z')).toBe(true);
+      expect(isValidIso('2026-03-01T12:00:00.123Z')).toBe(true);
+      expect(isValidIso('2026-03-01T12:00:00.123456Z')).toBe(true);
+      expect(isValidIso('2026-03-01T12:00:00.123456789Z')).toBe(true);
+
+      expect(isValidIso('2026-02-30T00:00:00.000Z')).toBe(false);
+      expect(isValidIso('2026-02-30T00:00:00.123456Z')).toBe(false);
+      expect(isValidIso('2026-04-31T00:00:00.000Z')).toBe(false);
+      expect(isValidIso('invalid-iso')).toBe(false);
     });
 
     it('enforces universal timing invariant tDelivery >= tDeliveryEligible when materializedAt precedes asOf', () => {

@@ -7,10 +7,18 @@ export const isValidIso = (s: string): boolean => {
   const ms = Date.parse(s);
   if (Number.isNaN(ms)) return false;
   const d = new Date(ms);
-  const normalized = s.includes('.')
-    ? s.replace(/\.(\d+)Z$/, (_, frac) => `.${frac.padEnd(3, '0').slice(0, 3)}Z`)
-    : s.replace('Z', '.000Z');
-  return d.toISOString() === normalized;
+  // Verify date-time prefix to prevent calendar day rollover (e.g. Feb 30 -> Mar 2)
+  if (d.toISOString().slice(0, 19) !== s.slice(0, 19)) return false;
+  // If fractional seconds are present, verify millisecond precision prefix matches
+  const dotIndex = s.indexOf('.');
+  if (dotIndex !== -1) {
+    const frac = s.slice(dotIndex + 1, -1);
+    const expectedMillis = frac.slice(0, 3).padEnd(3, '0');
+    if (d.getUTCMilliseconds().toString().padStart(3, '0') !== expectedMillis) return false;
+  } else {
+    if (d.getUTCMilliseconds() !== 0) return false;
+  }
+  return true;
 };
 
 export const sha256Hex = (data: string): string =>
