@@ -895,38 +895,13 @@ class FactoryController:
             else:
                 if (
                     record.review_dispatch_key == target_dispatch_key
-                    and record.review_dispatch_state == ReviewDispatchState.CLAIMED.value
-                ):
-                    try:
-                        self.ao.trigger_review(record.session_id or "", required_reviewer)
-                        record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
-                        record.status = PackageStatus.REVIEW
-                        record.last_progress_at = utc_now()
-                        self.store.event(
-                            "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
-                            attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
-                            contextDigest=expected_context_digest,
-                        )
-                    except Exception as error:
-                        record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
-                        record.review_dispatch_last_attempt_at = utc_now()
-                        record.last_error = f"AO review trigger failed: {error}"
-                        self.store.event(
-                            "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
-                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
-                            attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
-                        )
-                    return
-                elif (
-                    record.review_dispatch_key == target_dispatch_key
                     and record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
                 ):
                     record.status = PackageStatus.REVIEW
                     return
                 elif (
                     record.review_dispatch_key == target_dispatch_key
-                    and record.review_dispatch_state == ReviewDispatchState.UNKNOWN.value
+                    and record.review_dispatch_state in {ReviewDispatchState.CLAIMED.value, ReviewDispatchState.UNKNOWN.value}
                 ):
                     last_attempt = _parse_iso(record.review_dispatch_last_attempt_at)
                     now = datetime.now(UTC)

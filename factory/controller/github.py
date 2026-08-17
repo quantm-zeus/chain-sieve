@@ -23,6 +23,7 @@ class GitHub:
         self.runner = runner
         self.repo = repo
         self.integration_branch = integration_branch
+        self._actor: str | None = None
 
     def _run(self, argv: list[str], **kwargs: Any):
         return self.runner.run(argv, allowed_env=GH_ENV, **kwargs)
@@ -35,11 +36,13 @@ class GitHub:
             raise RuntimeError(f"command returned invalid JSON: {' '.join(argv[:3])}") from error
 
     def current_actor(self) -> str:
-        value = self._json(["gh", "api", "user"])
-        actor = str(value.get("login", "")).strip()
-        if not actor:
-            raise RuntimeError("authenticated GitHub user has no login")
-        return actor
+        if self._actor is None:
+            value = self._json(["gh", "api", "user"])
+            actor = str(value.get("login", "")).strip()
+            if not actor:
+                raise RuntimeError("authenticated GitHub user has no login")
+            self._actor = actor
+        return self._actor
 
     def issues(self) -> dict[str, Issue]:
         expected_actor = self.current_actor()
