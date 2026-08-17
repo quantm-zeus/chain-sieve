@@ -652,6 +652,102 @@ describe('evaluation-baseline', () => {
           observations: [],
         }),
       ).toThrowError(/POOL_FEE_BPS_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: dummySignal,
+          profile: {
+            ...baseProfile,
+            signalTargetMultiplier: 0.9, // <= 1.0 invalid
+          },
+          observations: [],
+        }),
+      ).toThrowError(/SIGNAL_TARGET_MULTIPLIER_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: dummySignal,
+          profile: {
+            ...baseProfile,
+            signalStopMultiplier: 1.5, // >= 1.0 invalid
+          },
+          observations: [],
+        }),
+      ).toThrowError(/SIGNAL_STOP_MULTIPLIER_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: dummySignal,
+          profile: {
+            ...baseProfile,
+            horizonMs: 0, // <= 0 invalid
+          },
+          observations: [],
+        }),
+      ).toThrowError(/HORIZON_MS_INVALID/);
+    });
+
+    it('enforces universal timing invariant tDelivery >= tDeliveryEligible when materializedAt precedes asOf', () => {
+      const dummySignal = {
+        signalId: 'sig_timing_test',
+        assetId: 'solana:timing_asset',
+        chainId: 'solana-mainnet',
+        asOf: '2026-03-01T12:00:00.000Z',
+        materializedAt: '2026-03-01T11:00:00.000Z', // Stale / prior timestamp
+      } as unknown as SignalRecord;
+
+      const outcome = evaluateOutcome({
+        signal: dummySignal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [],
+      });
+
+      expect(Date.parse(outcome.timing.tDelivery)).toBeGreaterThanOrEqual(
+        Date.parse(outcome.timing.tDeliveryEligible),
+      );
+      expect(Date.parse(outcome.timing.tActionReference)).toBe(
+        Date.parse(outcome.timing.tDelivery) + DEFAULT_OUTCOME_PROFILE.executionScenario.actionDelayMs,
+      );
+    });
+
+    it('filters out immature (PENDING / CENSORED / PARTIALLY_MATURED) outcomes from ranking diagnostics', () => {
+      const outcomes = [
+        {
+          outcomeId: 'out_mature_win',
+          state: 'FULLY_MATURED' as const,
+          score: 0.95,
+          tradableSuccess: true,
+          signalSuccess: true,
+          signalOutcome: 'SIGNAL_WIN' as const,
+          tradableOutcome: 'TRADABLE_SUCCESS' as const,
+          netReturn: 0.4,
+        },
+        {
+          outcomeId: 'out_pending_immature',
+          state: 'PENDING' as const,
+          score: 0.99, // higher score but not fully matured
+          tradableSuccess: false,
+          signalSuccess: false,
+          signalOutcome: 'SIGNAL_PENDING' as const,
+          tradableOutcome: 'PENDING' as const,
+          netReturn: null,
+        },
+        {
+          outcomeId: 'out_censored_immature',
+          state: 'CENSORED' as const,
+          score: 0.85,
+          tradableSuccess: false,
+          signalSuccess: false,
+          signalOutcome: 'SIGNAL_CENSORED' as const,
+          tradableOutcome: 'CENSORED' as const,
+          netReturn: null,
+        },
+      ];
+
+      const metrics = computeEvaluationMetrics(outcomes as unknown as OutcomeRecord[]);
+      // Only out_mature_win should be ranked -> Precision@1 is 1.0 (not depressed by pending/censored)
+      expect(metrics.precisionAt1).toBe(1.0);
+      expect(metrics.meanReciprocalRank).toBe(1.0);
     });
 
     it('computeEvaluationMetrics handles empty or custom outcome arrays deterministically', () => {

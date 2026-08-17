@@ -63,6 +63,15 @@ const validateProfile = (profile: OutcomeProfile): void => {
   if (typeof s.tokenTransferFeeBps !== 'number' || !Number.isFinite(s.tokenTransferFeeBps) || s.tokenTransferFeeBps < 0) {
     throw new EvaluationError('EVAL_MALFORMED', 'TOKEN_TRANSFER_FEE_BPS_INVALID');
   }
+  if (typeof profile.signalTargetMultiplier !== 'number' || !Number.isFinite(profile.signalTargetMultiplier) || profile.signalTargetMultiplier <= 1.0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'SIGNAL_TARGET_MULTIPLIER_INVALID');
+  }
+  if (typeof profile.signalStopMultiplier !== 'number' || !Number.isFinite(profile.signalStopMultiplier) || profile.signalStopMultiplier <= 0 || profile.signalStopMultiplier >= 1.0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'SIGNAL_STOP_MULTIPLIER_INVALID');
+  }
+  if (typeof profile.horizonMs !== 'number' || !Number.isFinite(profile.horizonMs) || profile.horizonMs <= 0) {
+    throw new EvaluationError('EVAL_MALFORMED', 'HORIZON_MS_INVALID');
+  }
   const p = profile.exitPolicy;
   if (!p || typeof p !== 'object') {
     throw new EvaluationError('EVAL_INCOMPLETE', 'EXIT_POLICY_MISSING');
@@ -94,7 +103,7 @@ export interface EvaluateOutcomeInput {
  *
  * Implements AC-040:
  * - Computes separate signal and tradable labels.
- * - Enforces actionable delivery time (T_action_reference = T_delivery + D_action).
+ * - Enforces actionable delivery time (T_action_reference = max(T_delivery, T_delivery_eligible) + D_action).
  * - Applies canonical pool fee, network fee, priority fee, token transfer fee, and modeled price impact.
  * - Enforces liquidity survival and security survival.
  * - Follows PRD Section 8.2 outcome label precedence.
@@ -121,10 +130,18 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   // Universal Timing calculation (PRD Section 8.1)
   const tDecisionReady = signal.asOf;
   const tPolicyDecided = signal.materializedAt ?? signal.asOf;
-  const tDeliveryEligible = Date.parse(tDecisionReady) >= Date.parse(tPolicyDecided) ? tDecisionReady : tPolicyDecided;
-  const tDelivery = signal.materializedAt ?? signal.asOf;
+  const tDecisionReadyMs = Date.parse(tDecisionReady);
+  const tPolicyDecidedMs = Date.parse(tPolicyDecided);
+  const tDeliveryEligibleMs = Math.max(tDecisionReadyMs, tPolicyDecidedMs);
+  const tDeliveryEligible = new Date(tDeliveryEligibleMs).toISOString();
+
+  const rawDeliveryMs = signal.materializedAt ? Date.parse(signal.materializedAt) : tDecisionReadyMs;
+  // Delivery cannot precede eligibility: max(T_delivery, T_delivery_eligible)
+  const tDeliveryMs = Math.max(rawDeliveryMs, tDeliveryEligibleMs);
+  const tDelivery = new Date(tDeliveryMs).toISOString();
+
   const dActionMs = scenario.actionDelayMs;
-  const tActionReferenceMs = Date.parse(tDelivery) + dActionMs;
+  const tActionReferenceMs = Math.max(tDeliveryMs, tDeliveryEligibleMs) + dActionMs;
   const tActionReference = new Date(tActionReferenceMs).toISOString();
 
   const timing: UniversalTiming = {

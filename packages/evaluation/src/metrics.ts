@@ -112,8 +112,9 @@ export const computeEvaluationMetrics = (
   const missedGemsCount = Math.max(0, univTradableWins - tradableSuccessCount);
   const falseDiscoveryRate = matureEvaluated > 0 ? round6(1 - tradablePrecision) : 0;
 
-  // Ranking diagnostics: sort copy by descending signal score (with outcomeId tie-breaker for deterministic stability) per PRD 7.5
-  const rankedOutcomes = [...outcomes].sort(
+  // Ranking diagnostics: sort mature evaluated outcomes by descending signal score (with outcomeId tie-breaker for deterministic stability) per PRD 7.5
+  const matureOutcomes = outcomes.filter((o) => o.state === 'FULLY_MATURED');
+  const rankedOutcomes = [...matureOutcomes].sort(
     (a, b) => (b.score - a.score) || a.outcomeId.localeCompare(b.outcomeId),
   );
 
