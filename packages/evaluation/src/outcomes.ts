@@ -192,7 +192,7 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
         failureReason: 'OBSERVATION_TIMESTAMP_MALFORMED',
       });
     }
-    if (typeof obs.priceUsd !== 'number' || !Number.isFinite(obs.priceUsd) || obs.priceUsd <= 0) {
+    if (typeof obs.priceUsd !== 'number' || !Number.isFinite(obs.priceUsd) || obs.priceUsd < 0) {
       return buildOutcomeRecord({
         signal,
         profile,

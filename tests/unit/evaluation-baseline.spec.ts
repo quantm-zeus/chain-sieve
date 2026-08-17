@@ -442,7 +442,7 @@ describe('evaluation-baseline', () => {
       expect(outcome.failureReason).toBe('NO_ACTIONABLE_OBSERVATIONS_FOUND');
     });
 
-    it('evaluateOutcome marks INVALID_DATA when forward observation price is NaN or non-positive', () => {
+    it('evaluateOutcome marks INVALID_DATA when forward observation price is NaN, Infinity, or negative', () => {
       const corpus = createDefaultEvaluationCorpus();
       const asset = corpus.assets[0]!;
       const signal = {
