@@ -285,13 +285,22 @@ class FactoryController:
                 continue
             assert record.issue_number is not None
             provider, selection_reason = select_implementation_provider(package, record, records, self.config)
-            session_id = self.ao.spawn(
-                key,
-                record.issue_number,
-                provider,
-                worker_prompt(self.root, milestone, package, self.config.integration_branch),
-                self.config.agy_model if provider == "agy" else None,
-            )
+            try:
+                session_id = self.ao.spawn(
+                    key,
+                    record.issue_number,
+                    provider,
+                    worker_prompt(self.root, milestone, package, self.config.integration_branch),
+                    self.config.agy_model if provider == "agy" else None,
+                )
+            except Exception as error:
+                record.last_error = f"spawn failed: {error}"
+                record.last_progress_at = utc_now()
+                if "checked out in another worktree" in str(error).lower() or _local_worktree_has_branch(self.root, f"factory/{key}"):
+                    self._block(milestone.id, package.id, record, f"spawn failed: {error}; branch checked out in existing worktree", key)
+                else:
+                    self._block(milestone.id, package.id, record, f"spawn failed: {error}", key)
+                continue
             record.session_id = session_id
             record.provider = provider
             record.initial_provider = record.initial_provider or provider
@@ -524,16 +533,34 @@ class FactoryController:
             return
         if record.correction_attempts < self.config.max_correction_attempts:
             reason = "stopped making meaningful progress" if stuck else "is waiting for input"
-            self.ao.send(
-                session.id,
-                f"You {reason}. Continue in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
-            )
-            record.correction_attempts += 1
-            record.last_progress_at = utc_now()
-            self.store.event(
-                "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
-            )
+            try:
+                self.ao.send(
+                    session.id,
+                    f"You {reason}. Continue in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
+                )
+                record.correction_attempts += 1
+                record.last_progress_at = utc_now()
+                self.store.event(
+                    "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                    workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                )
+            except Exception as error:
+                record.correction_attempts += 1
+                record.last_error = f"AO send correction failed: {error}"
+                record.last_progress_at = utc_now()
+                self.store.event(
+                    "CORRECTION_FAILED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    provider=record.provider,
+                    aoSessionId=session.id,
+                    attempt=record.correction_attempts,
+                    error=str(error),
+                    reason=str(error),
+                )
+                failure = "worker remained stuck" if stuck else "worker remained waiting for input"
+                self._retry_or_replan(milestone, package, key, record, session, pr, f"{failure} (AO send failed: {error})")
         else:
             failure = "worker remained stuck" if stuck else "worker remained waiting for input"
             self._retry_or_replan(milestone, package, key, record, session, pr, f"{failure} after bounded remediation")
@@ -553,15 +580,41 @@ class FactoryController:
             self._handle_pr(milestone, package, record, pr)
             return
         if record.correction_attempts < self.config.max_correction_attempts:
-            self.ao.restore(session.id)
-            record.correction_attempts += 1
-            record.started_at = utc_now()
-            record.last_progress_at = utc_now()
-            self.store.event(
-                "WORKER_RESTORED", milestoneId=milestone.id, workPackageId=package.id,
-                workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
-            )
-            return
+            try:
+                self.ao.restore(session.id)
+                record.correction_attempts += 1
+                record.started_at = utc_now()
+                record.last_progress_at = utc_now()
+                self.store.event(
+                    "WORKER_RESTORED", milestoneId=milestone.id, workPackageId=package.id,
+                    workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                )
+                return
+            except Exception as error:
+                record.correction_attempts += 1
+                record.last_error = f"AO restore failed: {error}"
+                record.last_progress_at = utc_now()
+                self.store.event(
+                    "WORKER_RESTORE_FAILED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    provider=record.provider,
+                    aoSessionId=session.id,
+                    attempt=record.correction_attempts,
+                    error=str(error),
+                    reason=str(error),
+                )
+                self._retry_or_replan(
+                    milestone,
+                    package,
+                    key,
+                    record,
+                    session,
+                    pr,
+                    f"AO session restore failed: {error}",
+                )
+                return
         self._retry_or_replan(
             milestone,
             package,
@@ -592,13 +645,21 @@ class FactoryController:
             self.root, self.config.integration_branch, f"factory/{key}", session, pr, remote_branch
         )
         if safe:
-            freed = self.ao.kill(session.id)
+            freed = False
+            try:
+                freed = self.ao.kill(session.id)
+            except Exception:
+                pass
             if hasattr(self.ao, "cleanup"):
                 try:
                     self.ao.cleanup()
                 except Exception:
                     pass
-            if not freed and session.workspace_path and Path(session.workspace_path).exists():
+            worktree = _worktree_for_branch(self.root, f"factory/{key}")
+            if not freed and (
+                (session.workspace_path and Path(session.workspace_path).exists())
+                or (worktree and worktree.exists())
+            ):
                 self._escalate_replan(milestone, package, key, record, f"{failure}; AO refused to clean a supposedly clean worktree")
                 return
 
@@ -625,23 +686,50 @@ class FactoryController:
             self._escalate_replan(milestone, package, key, record, f"{failure}; both implementation providers exhausted after clean failures")
             return
         if record.task_attempts < self.config.max_task_attempts:
-            self.ao.kill(session.id)
-            self.ao.restore(session.id)
-            record.task_attempts += 1
-            record.correction_attempts = 0
-            record.started_at = utc_now()
-            record.last_progress_at = utc_now()
-            record.last_error = evidence
-            self.store.event(
-                "WORKER_RESTORED",
-                milestoneId=milestone.id,
-                workPackageId=package.id,
-                workKey=key,
-                provider=record.provider,
-                aoSessionId=session.id,
-                attempt=record.task_attempts,
-            )
-            return
+            try:
+                try:
+                    self.ao.kill(session.id)
+                except Exception:
+                    pass
+                self.ao.restore(session.id)
+                record.task_attempts += 1
+                record.correction_attempts = 0
+                record.started_at = utc_now()
+                record.last_progress_at = utc_now()
+                record.last_error = evidence
+                self.store.event(
+                    "WORKER_RESTORED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    provider=record.provider,
+                    aoSessionId=session.id,
+                    attempt=record.task_attempts,
+                )
+                return
+            except Exception as error:
+                record.task_attempts += 1
+                record.last_error = f"AO restore failed: {error}; preserved work: {evidence}"
+                record.last_progress_at = utc_now()
+                self.store.event(
+                    "WORKER_RESTORE_FAILED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    provider=record.provider,
+                    aoSessionId=session.id,
+                    attempt=record.task_attempts,
+                    error=str(error),
+                    reason=str(error),
+                )
+                self._escalate_replan(
+                    milestone,
+                    package,
+                    key,
+                    record,
+                    f"{failure}; AO restore failed ({error}); preserved work: {evidence}",
+                )
+                return
         self._escalate_replan(
             milestone,
             package,
@@ -1134,6 +1222,24 @@ def _provider_for_attempt(preferred: str, completed_attempts: int) -> str:
     return "agy" if preferred == "muse" else "muse"
 
 
+def _worktree_for_branch(root: Path, branch: str) -> Path | None:
+    import subprocess
+
+    result = subprocess.run(["git", "worktree", "list", "--porcelain"], cwd=root, text=True, capture_output=True, check=False)
+    lines = result.stdout.splitlines()
+    current_worktree: Path | None = None
+    for line in lines:
+        if line.startswith("worktree "):
+            current_worktree = Path(line.removeprefix("worktree ").strip())
+        elif line.startswith("branch ") and current_worktree:
+            ref = line.removeprefix("branch ").strip()
+            if ref in {f"refs/heads/{branch}", branch}:
+                return current_worktree
+        elif not line.strip():
+            current_worktree = None
+    return None
+
+
 def _safe_alternate_retry(
     root: Path,
     integration_branch: str,
@@ -1147,6 +1253,10 @@ def _safe_alternate_retry(
     if remote_branch_exists:
         return False, "a remote implementation branch exists without a correlated PR"
     workspace = Path(session.workspace_path) if session.workspace_path else None
+    if not workspace or not workspace.exists():
+        found = _worktree_for_branch(root, branch)
+        if found and found.exists():
+            workspace = found
     if workspace and workspace.exists():
         return _clean_without_commits(workspace, "HEAD", integration_branch)
     local_branch = _git_ref_exists(root, branch)
@@ -1202,10 +1312,7 @@ def _worktree_count(root: Path) -> int:
 
 
 def _local_worktree_has_branch(root: Path, branch: str) -> bool:
-    import subprocess
-
-    result = subprocess.run(["git", "worktree", "list", "--porcelain"], cwd=root, text=True, capture_output=True, check=False)
-    return f"branch refs/heads/{branch}" in result.stdout.splitlines()
+    return _worktree_for_branch(root, branch) is not None
 
 
 def _review_pending(reason: str) -> bool:
