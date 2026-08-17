@@ -35,6 +35,7 @@ export const EVALUATION_ARTIFACT_CLASSES: readonly EvaluationArtifactClass[] = [
 
 export type OutcomeState =
   | 'PENDING'
+  /** @deprecated Legacy synthetic outcome state from matureSyntheticOutcome. Use FULLY_MATURED for baseline evaluation. */
   | 'MATURE'
   | 'PARTIALLY_MATURED'
   | 'FULLY_MATURED'

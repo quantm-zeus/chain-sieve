@@ -757,6 +757,161 @@ describe('evaluation-baseline', () => {
       expect(emptyMetrics.tradablePrecision).toBe(0);
       expect(emptyMetrics.profitFactor).toBe(0);
       expect(emptyMetrics.netShadowPortfolioUtility).toBe(0);
+      expect(emptyMetrics.precisionAt1).toBe(0);
+      expect(emptyMetrics.precisionAt3).toBe(0);
+      expect(emptyMetrics.precisionAt5).toBe(0);
+      expect(emptyMetrics.meanReciprocalRank).toBe(0);
+      expect(emptyMetrics.ndcgAt5).toBe(0);
+    });
+
+    it('evaluates deterministic PENDING vs CENSORED fallback when no actionable observation is present', () => {
+      const dummySignal = {
+        signalId: 'sig_no_obs',
+        assetId: 'solana:no_obs',
+        chainId: 'solana-mainnet',
+        asOf: '2026-03-01T00:00:00.000Z',
+      } as unknown as SignalRecord;
+
+      // When observations are empty and evaluationTime omitted, defaults deterministically to asOf (PENDING)
+      const outcomePending = evaluateOutcome({
+        signal: dummySignal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [],
+      });
+      expect(outcomePending.state).toBe('PENDING');
+
+      // When observation cutoff is beyond horizon + action delay, returns CENSORED deterministically
+      const outcomeCensored = evaluateOutcome({
+        signal: dummySignal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [
+          {
+            timestamp: '2026-03-05T00:00:00.000Z', // Far beyond horizon, but before tActionReference
+            priceUsd: 1.0,
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+        ],
+      });
+      expect(outcomeCensored.state).toBe('CENSORED');
+      expect(outcomeCensored.failureReason).toBe('NO_ACTIONABLE_OBSERVATIONS_FOUND');
+    });
+
+    it('uses last within-horizon observation for horizon expiration and ignores observations beyond maxHorizonMs', () => {
+      const dummySignal = {
+        signalId: 'sig_horizon_boundary',
+        assetId: 'solana:boundary_asset',
+        chainId: 'solana-mainnet',
+        asOf: '2026-03-01T00:00:00.000Z',
+        materializedAt: '2026-03-01T00:00:00.000Z',
+      } as unknown as SignalRecord;
+
+      const actionTimeMs = Date.parse(dummySignal.asOf) + DEFAULT_OUTCOME_PROFILE.executionScenario.actionDelayMs;
+      const horizonEndMs = actionTimeMs + DEFAULT_OUTCOME_PROFILE.exitPolicy.maxHorizonMs;
+
+      const outcome = evaluateOutcome({
+        signal: dummySignal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [
+          {
+            timestamp: new Date(actionTimeMs).toISOString(),
+            priceUsd: 1.0,
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+          {
+            timestamp: new Date(horizonEndMs - 1000).toISOString(),
+            priceUsd: 1.10, // within horizon price
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+          {
+            timestamp: new Date(horizonEndMs + 60_000).toISOString(),
+            priceUsd: 5.00, // out of horizon price (should NOT be used for exit)
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+        ],
+      });
+
+      expect(outcome.state).toBe('FULLY_MATURED');
+      expect(Date.parse(outcome.exitTime!)).toBeLessThanOrEqual(horizonEndMs);
+      expect(outcome.exitPrice).toBeCloseTo(1.10 * (1 - DEFAULT_OUTCOME_PROFILE.executionScenario.slippageBps / 10000), 2);
+    });
+
+    it('does not promote immature signal winner to UNTRADABLE_SIGNAL_WIN before full maturity', () => {
+      const dummySignal = {
+        signalId: 'sig_immature_winner',
+        assetId: 'solana:immature_winner',
+        chainId: 'solana-mainnet',
+        asOf: '2026-03-01T00:00:00.000Z',
+        materializedAt: '2026-03-01T00:00:00.000Z',
+      } as unknown as SignalRecord;
+
+      const actionTimeMs = Date.parse(dummySignal.asOf) + DEFAULT_OUTCOME_PROFILE.executionScenario.actionDelayMs;
+
+      const outcome = evaluateOutcome({
+        signal: dummySignal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [
+          {
+            timestamp: new Date(actionTimeMs).toISOString(),
+            priceUsd: 1.0,
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+          {
+            timestamp: new Date(actionTimeMs + 60_000).toISOString(), // Well before horizon
+            priceUsd: 2.50, // Hits pure signal target (2.0x) but tradable target (2.0x on executable) not matured yet
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+        ],
+      });
+
+      // Pure signal target was hit early -> signalSuccess = true
+      expect(outcome.signalSuccess).toBe(true);
+      expect(outcome.signalOutcome).toBe('SIGNAL_WIN');
+
+      // But since horizon has not been reached and early exit didn't finish, state is PARTIALLY_MATURED, NOT UNTRADABLE_SIGNAL_WIN
+      // Note: If 2.50 also hit tradable target (2.0x), it would be TRADABLE_SUCCESS and FULLY_MATURED.
+      // Let's test when tradable target is higher (e.g. 3.0x target) so tradable has not exited yet:
+      const outcomeImmature = evaluateOutcome({
+        signal: dummySignal,
+        profile: {
+          ...DEFAULT_OUTCOME_PROFILE,
+          exitPolicy: {
+            ...DEFAULT_OUTCOME_PROFILE.exitPolicy,
+            targetMultiplier: 3.0, // higher than 2.5x
+          },
+        },
+        observations: [
+          {
+            timestamp: new Date(actionTimeMs).toISOString(),
+            priceUsd: 1.0,
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+          {
+            timestamp: new Date(actionTimeMs + 60_000).toISOString(),
+            priceUsd: 2.50, // Hits signalTarget (2.0x) but NOT tradable target (3.0x)
+            poolLiquidityUsd: 100_000,
+            volume24hUsd: 50_000,
+            securityStatus: 'CLEAN',
+          },
+        ],
+      });
+
+      expect(outcomeImmature.state).toBe('PARTIALLY_MATURED');
+      expect(outcomeImmature.signalSuccess).toBe(true);
+      expect(outcomeImmature.tradableOutcome).toBe('PENDING'); // Gated from UNTRADABLE_SIGNAL_WIN
     });
 
     it('evaluateOutcomes evaluates batch of signals with deterministic sorting by outcomeId', () => {

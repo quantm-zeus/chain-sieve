@@ -198,7 +198,8 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
     // No observation at or after actionable time yet
     const asOfMs = Date.parse(signal.asOf);
     const horizonMs = exitPolicy.maxHorizonMs;
-    const nowMs = evaluationTime ? Date.parse(evaluationTime) : Date.now();
+    const lastObsMs = sortedObs.length > 0 ? Date.parse(sortedObs[sortedObs.length - 1]!.timestamp) : asOfMs;
+    const nowMs = evaluationTime ? Date.parse(evaluationTime) : lastObsMs;
 
     if (nowMs > asOfMs + horizonMs + dActionMs) {
       // Past horizon with no observations -> CENSORED
@@ -376,13 +377,23 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
 
   let exitImpactBps = 0;
   let exitFeesUsd = 0;
+  let lastWithinHorizonObs: ForwardObservation = entryObs;
+  let hasForwardObsWithinHorizon = false;
+  let hasObsAtOrBeyondHorizon = false;
 
   for (let i = 0; i < forwardSlice.length; i++) {
     const obs = forwardSlice[i]!;
     const obsTimeMs = Date.parse(obs.timestamp);
 
     if (obsTimeMs > horizonEndMs) {
+      hasObsAtOrBeyondHorizon = true;
       break;
+    }
+
+    lastWithinHorizonObs = obs;
+    hasForwardObsWithinHorizon = true;
+    if (obsTimeMs === horizonEndMs) {
+      hasObsAtOrBeyondHorizon = true;
     }
 
     const price = obs.priceUsd;
@@ -459,34 +470,25 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   const mfe = maxPriceSeen / rawEntryPrice;
   const mae = minPriceSeen / rawEntryPrice;
 
-  // Pure signal outcome resolution
-  let signalSuccess = false;
-  let signalOutcome: SignalOutcomeLabel = 'SIGNAL_NEUTRAL';
-  if (signalTargetHit) {
-    signalSuccess = true;
-    signalOutcome = 'SIGNAL_WIN';
-  } else if (signalStopHit) {
-    signalSuccess = false;
-    signalOutcome = 'SIGNAL_LOSS';
-  } else {
-    signalSuccess = false;
-    signalOutcome = 'SIGNAL_NEUTRAL';
-  }
-
   // Handle expiration at horizon if no early exit triggered
-  const lastObs = forwardSlice.length > 0 ? forwardSlice[forwardSlice.length - 1]! : entryObs;
+  const lastObs = lastWithinHorizonObs;
   const lastObsTimeMs = Date.parse(lastObs.timestamp);
 
   let state: OutcomeState = 'FULLY_MATURED';
 
   if (tradableOutcome === null) {
-    if (lastObsTimeMs < horizonEndMs) {
+    const evalCutoffMs = evaluationTime
+      ? Date.parse(evaluationTime)
+      : (sortedObs.length > 0 ? Date.parse(sortedObs[sortedObs.length - 1]!.timestamp) : lastObsTimeMs);
+    const horizonReached = hasObsAtOrBeyondHorizon || evalCutoffMs >= horizonEndMs;
+
+    if (!horizonReached) {
       // Horizon not reached yet and no terminal event -> PENDING / PARTIALLY_MATURED
-      state = forwardSlice.length > 0 ? 'PARTIALLY_MATURED' : 'PENDING';
+      state = hasForwardObsWithinHorizon ? 'PARTIALLY_MATURED' : 'PENDING';
       tradableOutcome = 'PENDING';
       tradableSuccess = false;
     } else {
-      // Matured at horizon: evaluate final price
+      // Matured at horizon: evaluate final within-horizon price
       const exitImpactRatio = lastObs.poolLiquidityUsd > 0 ? scenario.notionalUsd / lastObs.poolLiquidityUsd : 1.0;
       exitImpactBps = Math.min(scenario.maxImpactBps, exitImpactRatio * scenario.slippageBps);
       const executableExitPrice = lastObs.priceUsd * (1 - exitImpactBps / 10000);
@@ -515,10 +517,28 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
     }
   }
 
+  // Pure signal outcome resolution
+  let signalSuccess = false;
+  let signalOutcome: SignalOutcomeLabel = 'SIGNAL_NEUTRAL';
+  if (signalTargetHit) {
+    signalSuccess = true;
+    signalOutcome = 'SIGNAL_WIN';
+  } else if (signalStopHit) {
+    signalSuccess = false;
+    signalOutcome = 'SIGNAL_LOSS';
+  } else if (state !== 'FULLY_MATURED') {
+    signalSuccess = false;
+    signalOutcome = 'SIGNAL_PENDING';
+  } else {
+    signalSuccess = false;
+    signalOutcome = 'SIGNAL_NEUTRAL';
+  }
+
   // Check for UNTRADABLE_SIGNAL_WIN (AC-040 & PRD Section 8.2)
   // When signal reached target (signalSuccess = true), but tradable execution failed or was untradable.
+  // Gate on state === 'FULLY_MATURED' so immature outcomes (PENDING/PARTIALLY_MATURED) are not prematurely promoted.
   // Preserve terminal security/liquidity outcome when securitySurvives == false or liquiditySurvives == false per AC-040 8.2.
-  if (signalSuccess && !tradableSuccess) {
+  if (state === 'FULLY_MATURED' && signalSuccess && !tradableSuccess) {
     if (securitySurvives && liquiditySurvives) {
       tradableOutcome = 'UNTRADABLE_SIGNAL_WIN';
       if (!failureReason) {
