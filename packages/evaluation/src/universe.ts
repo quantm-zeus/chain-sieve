@@ -6,7 +6,7 @@
 
 import { EvaluationError } from './errors.js';
 import type { FrozenCandidateUniverse } from './types.js';
-import { canonicalize, ISO_DATETIME_RE, sha256Hex } from './canonical.js';
+import { canonicalize, ISO_DATETIME_RE, isValidIso, sha256Hex } from './canonical.js';
 
 const SHA256_RE = /^[a-f0-9]{64}$/;
 
@@ -28,7 +28,7 @@ export const createFrozenCandidateUniverse = (input: CreateUniverseInput): Froze
   if (!input.universeId || typeof input.universeId !== 'string') {
     throw new EvaluationError('EVAL_MALFORMED', 'UNIVERSE_ID_REQUIRED');
   }
-  if (!input.dataCutoff || !ISO_DATETIME_RE.test(input.dataCutoff)) {
+  if (!input.dataCutoff || !isValidIso(input.dataCutoff)) {
     throw new EvaluationError('EVAL_MALFORMED', 'DATA_CUTOFF_INVALID_ISO');
   }
   if (!Array.isArray(input.candidateAssetIds) || input.candidateAssetIds.length === 0) {

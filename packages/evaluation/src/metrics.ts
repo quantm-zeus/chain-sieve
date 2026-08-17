@@ -100,12 +100,17 @@ export const computeEvaluationMetrics = (
 
   const matureEvaluated = fullyMaturedCount;
 
-  // Signal precision & recall
+  // Signal precision & recall (AC-040, AC-041)
+  // When universeSignalWinnersCount is provided (e.g. by executeEvaluationPipeline evaluating the full frozen universe),
+  // signalRecall measures fraction of all universe signal winners captured. When evaluating standalone outcome arrays,
+  // it defaults to evaluated signal winners count.
   const signalPrecision = matureEvaluated > 0 ? round6(signalSuccessCount / matureEvaluated) : 0;
   const univSignalWins = options.universeSignalWinnersCount ?? signalSuccessCount;
   const signalRecall = univSignalWins > 0 ? round6(signalSuccessCount / univSignalWins) : 1.0;
 
-  // Tradable precision & recall (AC-040, AC-041)
+  // Tradable precision, recall, and missed-gems diagnostics (AC-040, AC-041)
+  // universeTradableWinnersCount represents ground-truth tradable winners in the candidate universe.
+  // missedGemsCount = max(0, universeTradableWinnersCount - tradableSuccessCount).
   const tradablePrecision = matureEvaluated > 0 ? round6(tradableSuccessCount / matureEvaluated) : 0;
   const univTradableWins = options.universeTradableWinnersCount ?? tradableSuccessCount;
   const tradableRecall = univTradableWins > 0 ? round6(tradableSuccessCount / univTradableWins) : 1.0;

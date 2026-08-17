@@ -31,7 +31,7 @@ import type {
   PolicyMetadata,
 } from './types.js';
 import { createFrozenCandidateUniverse } from './universe.js';
-import { evaluateOutcomes } from './outcomes.js';
+import { evaluateOutcome, evaluateOutcomes } from './outcomes.js';
 import { generateEvaluationReport } from './report.js';
 
 // ---------------------------------------------------------------------------
@@ -459,8 +459,38 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
     signals,
     outcomeProfile,
     observationsMap,
-    evaluationTime ?? corpus.dataCutoff,
+    evaluationTime,
   );
+
+  // Evaluate all corpus assets to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
+  let universeSignalWinnersCount = 0;
+  let universeTradableWinnersCount = 0;
+  for (const asset of corpus.assets) {
+    const fs = featureSets.get(asset.assetId);
+    const snap = snapshotsMap.get(asset.assetId);
+    const obs = observationsMap.get(asset.assetId) ?? [];
+    if (fs && snap) {
+      const syntheticSig: SignalRecord = {
+        signalId: `sig_univ_${asset.assetId}`,
+        candidateId: `cand_univ_${asset.assetId}`,
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        symbol: asset.symbol,
+        score: fs.features['momentum_10m']?.value ?? 0.5,
+        asOf: corpus.dataCutoff,
+        materializedAt: corpus.dataCutoff,
+        metadata: {},
+      };
+      const univOutcome = evaluateOutcome({
+        signal: syntheticSig,
+        profile: outcomeProfile,
+        observations: obs,
+        evaluationTime,
+      });
+      if (univOutcome.signalSuccess) universeSignalWinnersCount++;
+      if (univOutcome.tradableSuccess) universeTradableWinnersCount++;
+    }
+  }
 
   // 6. Generate canonical evaluation report (FR-EVAL-019, AC-040, AC-042)
   const report = generateEvaluationReport({
@@ -473,6 +503,8 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
       totalCandidates: candidateUniverse.totalAssets,
       eligibleCandidates: funnelOutput.eligibleCount,
       rejectedCandidates: funnelOutput.rejectedCount,
+      universeSignalWinnersCount,
+      universeTradableWinnersCount,
     },
     generatedAt: corpus.dataCutoff,
   });

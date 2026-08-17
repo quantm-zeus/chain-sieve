@@ -141,7 +141,7 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   const tDelivery = new Date(tDeliveryMs).toISOString();
 
   const dActionMs = scenario.actionDelayMs;
-  const tActionReferenceMs = Math.max(tDeliveryMs, tDeliveryEligibleMs) + dActionMs;
+  const tActionReferenceMs = tDeliveryMs + dActionMs;
   const tActionReference = new Date(tActionReferenceMs).toISOString();
 
   const timing: UniversalTiming = {

@@ -399,6 +399,17 @@ describe('evaluation-baseline', () => {
       expect(pending.signalOutcome).toBe('SIGNAL_NEUTRAL');
     });
 
+    it('correctly matures neutral archetype to FULLY_MATURED and TRADABLE_NEUTRAL at horizon', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const { outcomes } = executeEvaluationPipeline({ corpus });
+
+      const neutral = outcomes.find((o) => o.assetId === 'solana:asset-5-neutral')!;
+      expect(neutral).toBeDefined();
+      expect(neutral.state).toBe('FULLY_MATURED');
+      expect(neutral.tradableOutcome).toBe('TRADABLE_NEUTRAL');
+      expect(neutral.signalOutcome).toBe('SIGNAL_NEUTRAL');
+    });
+
     it('correctly reports CENSORED when data cutoff passes horizon with no actionable observations', () => {
       const corpus = createDefaultEvaluationCorpus();
       const asset = corpus.assets[0]!;
@@ -454,6 +465,16 @@ describe('evaluation-baseline', () => {
 
       expect(u1.sha256).toBe(u2.sha256);
       expect(() => validateFrozenUniverse(u1)).not.toThrow();
+    });
+
+    it('createFrozenCandidateUniverse rejects invalid or non-parseable ISO dataCutoff timestamps', () => {
+      expect(() =>
+        createFrozenCandidateUniverse({
+          universeId: 'univ-invalid-iso',
+          dataCutoff: '2026-02-31T00:00:00.000Z', // Non-parseable ISO date
+          candidateAssetIds: ['solana:token-a'],
+        }),
+      ).toThrowError(/DATA_CUTOFF_INVALID_ISO/);
     });
 
     it('assertIdenticalUniverses fails closed on universe hash or cutoff mismatch', () => {
