@@ -99,10 +99,12 @@ export const computeEvaluationMetrics = (
   const matureOutcomesWithReturns = outcomes
     .filter((o) => o.state === 'FULLY_MATURED' && o.netReturn !== null)
     .sort((a, b) => {
-      const timeA = a.timing.actionablePriceTime ?? a.timing.tActionReference;
-      const timeB = b.timing.actionablePriceTime ?? b.timing.tActionReference;
-      const timeCmp = Date.parse(timeA) - Date.parse(timeB);
-      if (timeCmp !== 0) return timeCmp;
+      const timeA = a.timing?.actionablePriceTime ?? a.timing?.tActionReference;
+      const timeB = b.timing?.actionablePriceTime ?? b.timing?.tActionReference;
+      if (timeA && timeB) {
+        const timeCmp = Date.parse(timeA) - Date.parse(timeB);
+        if (timeCmp !== 0) return timeCmp;
+      }
       return a.outcomeId.localeCompare(b.outcomeId);
     });
   const matureReturns = matureOutcomesWithReturns.map((o) => o.netReturn!);

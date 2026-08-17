@@ -541,16 +541,18 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
 
       // Profile-driven horizon outcome resolution (PRD Section 8.2 & AC-040):
       // - TRADABLE_SUCCESS: net return meets or exceeds take-profit target net return (targetMultiplier - 1)
-      // - TRADABLE_FAILURE: net return is negative after fees and execution costs (HORIZON_EXPIRATION_NET_LOSS)
-      // - TRADABLE_NEUTRAL: non-negative return that did not achieve the configured take-profit target multiplier
+      // - TRADABLE_FAILURE: net return breaches stop-loss net loss threshold (stopLossMultiplier - 1)
+      // - TRADABLE_NEUTRAL: price matured within [stopLossMultiplier, targetMultiplier] bounds without triggering stop-loss or take-profit
       const targetNetReturn = exitPolicy.targetMultiplier - 1;
+      const stopLossNetReturn = exitPolicy.stopLossMultiplier - 1;
+
       if (netRet >= targetNetReturn) {
         tradableSuccess = true;
         tradableOutcome = 'TRADABLE_SUCCESS';
-      } else if (netRet < 0) {
+      } else if (netRet <= stopLossNetReturn) {
         tradableSuccess = false;
         tradableOutcome = 'TRADABLE_FAILURE';
-        failureReason = 'HORIZON_EXPIRATION_NET_LOSS';
+        failureReason = 'HORIZON_EXPIRATION_STOP_LOSS';
       } else {
         tradableSuccess = false;
         tradableOutcome = 'TRADABLE_NEUTRAL';
