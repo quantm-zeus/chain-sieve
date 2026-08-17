@@ -790,7 +790,7 @@ describe('evaluation-baseline', () => {
             priceUsd: 1.0,
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
         ],
       });
@@ -819,21 +819,21 @@ describe('evaluation-baseline', () => {
             priceUsd: 1.0,
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
           {
             timestamp: new Date(horizonEndMs - 1000).toISOString(),
             priceUsd: 1.10, // within horizon price
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
           {
             timestamp: new Date(horizonEndMs + 60_000).toISOString(),
             priceUsd: 5.00, // out of horizon price (should NOT be used for exit)
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
         ],
       });
@@ -863,14 +863,14 @@ describe('evaluation-baseline', () => {
             priceUsd: 1.0,
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
           {
             timestamp: new Date(actionTimeMs + 60_000).toISOString(), // Well before horizon
             priceUsd: 2.50, // Hits pure signal target (2.0x) but tradable target (2.0x on executable) not matured yet
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
         ],
       });
@@ -897,14 +897,14 @@ describe('evaluation-baseline', () => {
             priceUsd: 1.0,
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
           {
             timestamp: new Date(actionTimeMs + 60_000).toISOString(),
             priceUsd: 2.50, // Hits signalTarget (2.0x) but NOT tradable target (3.0x)
             poolLiquidityUsd: 100_000,
             volume24hUsd: 50_000,
-            securityStatus: 'CLEAN',
+            securityStatus: 'SAFE',
           },
         ],
       });
