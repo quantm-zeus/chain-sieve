@@ -10,7 +10,6 @@ import type {
   MarketSnapshot,
   FeatureSet,
   FunnelAdapterEvidence,
-  FunnelCandidate,
   FunnelInput,
   FunnelOutput,
   FunnelProfile,
@@ -31,7 +30,7 @@ import type {
   OutcomeRecord,
   PolicyMetadata,
 } from './types.js';
-import { canonicalize, sha256Hex } from './canonical.js';
+import { sha256Hex } from './canonical.js';
 import { createFrozenCandidateUniverse } from './universe.js';
 import { evaluateOutcomes } from './outcomes.js';
 import { generateEvaluationReport } from './report.js';
@@ -464,41 +463,41 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
     evaluationTime,
   );
 
-  // Evaluate all candidates with valid adapter evidence to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
-  // Real candidate score is preserved (defaulting to 0 when rejected prior to scoring) without synthetic promotion
-  const executableCandidates = funnelOutput.candidates.filter((c) => c.adapterEvidence !== null);
-  const eligibleCandidates: FunnelCandidate[] = executableCandidates.map((c, i) => ({
-    ...c,
-    eligible: true,
-    score: c.score ?? 0,
-    rank: i + 1,
-    rejectionReasons: [],
-  }));
-  const baseUniverseFunnel = {
-    funnelVersion: funnelOutput.funnelVersion,
-    profileVersion: funnelOutput.profileVersion,
-    asOf: funnelOutput.asOf,
-    eligibleCount: eligibleCandidates.length,
-    rejectedCount: 0,
-    candidates: eligibleCandidates,
-    orderedEligibleAssetIds: eligibleCandidates.map((c) => c.assetId),
-  };
-  const universeFunnelJson = JSON.stringify(canonicalize(baseUniverseFunnel));
-  const universeFunnelSha256 = sha256Hex(universeFunnelJson);
-  const allCandidatesOutput: FunnelOutput = {
-    ...baseUniverseFunnel,
-    canonicalJson: universeFunnelJson,
-    sha256: universeFunnelSha256,
-    bytes: new TextEncoder().encode(universeFunnelJson).byteLength,
-  };
-  const { signals: allUniverseSignals } = materializeSignals(
-    allCandidatesOutput,
-    featureSets,
-    snapshotsMap,
-    funnelProfile,
-  );
+  // Evaluate ground-truth universe winners for the frozen candidate universe (AC-040, AC-041 recall / missed-gems diagnostics).
+  // Benchmark signals are constructed directly from the frozen universe candidate assets and data cutoff,
+  // completely decoupled from policy-specific funnelProfile thresholds to guarantee an immutable, objective denominator.
+  const universeBenchmarkSignals: SignalRecord[] = candidateUniverse.candidateAssetIds
+    .filter((assetId) => {
+      const obs = observationsMap.get(assetId);
+      return obs !== undefined && obs.length > 0;
+    })
+    .map((assetId) => {
+      const snap = snapshotsMap.get(assetId);
+      const chainId = snap?.chainId ?? 'solana-mainnet';
+      const asOf = corpus.dataCutoff;
+      return {
+        signalId: `sig_universe_${assetId}`,
+        assetId,
+        chainId,
+        asOf,
+        materializedAt: asOf,
+        signalType: 'BREAKOUT_SURGE',
+        direction: 'LONG',
+        status: 'ACTIONABLE',
+        score: 1.0,
+        confidence: 1.0,
+        horizonMs: outcomeProfile.horizonMs,
+        features: {},
+        rejectionReasons: [],
+        metadata: {
+          isUniverseBenchmark: true,
+        },
+        sha256: sha256Hex(`universe_${assetId}_${asOf}`),
+      } as unknown as SignalRecord;
+    });
+
   const universeOutcomes = evaluateOutcomes(
-    allUniverseSignals,
+    universeBenchmarkSignals,
     outcomeProfile,
     observationsMap,
     evaluationTime,

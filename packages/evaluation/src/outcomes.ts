@@ -539,10 +539,15 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
       const totalFeesUsd = entryFeesUsd + exitFeesUsd;
       const netRet = (executableExitPrice - executableEntryPrice) / executableEntryPrice - totalFeesUsd / scenario.notionalUsd;
 
-      if (netRet > 0.05) {
+      // Profile-driven horizon outcome resolution (PRD Section 8.2 & AC-040):
+      // - TRADABLE_SUCCESS: net return meets or exceeds take-profit target net return (targetMultiplier - 1)
+      // - TRADABLE_FAILURE: net return is negative after fees and execution costs (HORIZON_EXPIRATION_NET_LOSS)
+      // - TRADABLE_NEUTRAL: non-negative return that did not achieve the configured take-profit target multiplier
+      const targetNetReturn = exitPolicy.targetMultiplier - 1;
+      if (netRet >= targetNetReturn) {
         tradableSuccess = true;
         tradableOutcome = 'TRADABLE_SUCCESS';
-      } else if (netRet < -0.05) {
+      } else if (netRet < 0) {
         tradableSuccess = false;
         tradableOutcome = 'TRADABLE_FAILURE';
         failureReason = 'HORIZON_EXPIRATION_NET_LOSS';

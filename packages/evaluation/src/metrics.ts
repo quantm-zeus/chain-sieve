@@ -45,8 +45,6 @@ export const computeEvaluationMetrics = (
   let tradableNeutralCount = 0;
   let untradableSignalWinCount = 0;
 
-  const matureReturns: number[] = [];
-
   for (const outcome of outcomes) {
     switch (outcome.state) {
       case 'FULLY_MATURED':
@@ -91,14 +89,23 @@ export const computeEvaluationMetrics = (
           untradableSignalWinCount++;
           break;
       }
-
-      if (outcome.netReturn !== null) {
-        matureReturns.push(outcome.netReturn);
-      }
     }
   }
 
   const matureEvaluated = fullyMaturedCount;
+
+  // Extract mature returns sorted deterministically by chronological execution time (with outcomeId tie-breaker)
+  // to ensure mathematical stability and invariance of path-dependent metrics (e.g. max drawdown) regardless of input ordering (AC-040).
+  const matureOutcomesWithReturns = outcomes
+    .filter((o) => o.state === 'FULLY_MATURED' && o.netReturn !== null)
+    .sort((a, b) => {
+      const timeA = a.timing.actionablePriceTime ?? a.timing.tActionReference;
+      const timeB = b.timing.actionablePriceTime ?? b.timing.tActionReference;
+      const timeCmp = Date.parse(timeA) - Date.parse(timeB);
+      if (timeCmp !== 0) return timeCmp;
+      return a.outcomeId.localeCompare(b.outcomeId);
+    });
+  const matureReturns = matureOutcomesWithReturns.map((o) => o.netReturn!);
 
   // Signal precision & recall (AC-040, AC-041)
   // When universeSignalWinnersCount is provided (e.g. by executeEvaluationPipeline evaluating the full frozen universe),
@@ -143,7 +150,7 @@ export const computeEvaluationMetrics = (
   }
   const meanReciprocalRank = firstWinRank > 0 ? round6(1 / firstWinRank) : 0;
 
-  // NDCG@5 and NDCG@10
+  // NDCG@5 and NDCG@10 (using top-k from global rankedOutcomes relevance for IDCG@k)
   const computeNdcg = (k: number): number => {
     const slice = rankedOutcomes.slice(0, k);
     if (slice.length === 0) return 0;
@@ -154,9 +161,10 @@ export const computeEvaluationMetrics = (
       dcg += (Math.pow(2, rel) - 1) / Math.log2(i + 2);
     }
 
-    const idealRelSorted = slice
+    const idealRelSorted = rankedOutcomes
       .map((o) => (o.tradableSuccess ? Math.max(1.0, 1.0 + (o.netReturn ?? 0)) : 0))
-      .sort((a, b) => b - a);
+      .sort((a, b) => b - a)
+      .slice(0, k);
 
     let idcg = 0;
     for (let i = 0; i < idealRelSorted.length; i++) {

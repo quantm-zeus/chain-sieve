@@ -543,6 +543,14 @@ describe('evaluation-baseline', () => {
       expect(() => validateFrozenUniverse(duplicatedUniverse as unknown as FrozenCandidateUniverse)).toThrowError(
         /CANDIDATE_ASSET_IDS_DUPLICATED/,
       );
+
+      // Mixed-case IDs sorted via UTF-16 code-point order
+      const mixedCaseUniverse = createFrozenCandidateUniverse({
+        universeId: 'univ-mixed',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:Token-b', 'solana:token-a', 'solana:Token-A'],
+      });
+      expect(() => validateFrozenUniverse(mixedCaseUniverse)).not.toThrow();
     });
 
     it('assertIdenticalUniverses fails closed on universe hash or cutoff mismatch', () => {
@@ -898,6 +906,78 @@ describe('evaluation-baseline', () => {
       expect(emptyMetrics.precisionAt5).toBe(0);
       expect(emptyMetrics.meanReciprocalRank).toBe(0);
       expect(emptyMetrics.ndcgAt5).toBe(0);
+    });
+
+    it('computes maxDrawdown and CVaR identically regardless of input outcome array ordering', () => {
+      const outcomeA = {
+        outcomeId: 'out_a',
+        state: 'FULLY_MATURED' as const,
+        score: 0.9,
+        tradableSuccess: true,
+        signalSuccess: true,
+        signalOutcome: 'SIGNAL_WIN' as const,
+        tradableOutcome: 'TRADABLE_SUCCESS' as const,
+        netReturn: 0.5,
+        timing: {
+          actionablePriceTime: '2026-03-01T00:00:10.000Z',
+          tActionReference: '2026-03-01T00:00:05.000Z',
+        },
+      };
+      const outcomeB = {
+        outcomeId: 'out_b',
+        state: 'FULLY_MATURED' as const,
+        score: 0.8,
+        tradableSuccess: false,
+        signalSuccess: false,
+        signalOutcome: 'SIGNAL_LOSS' as const,
+        tradableOutcome: 'TRADABLE_FAILURE' as const,
+        netReturn: -0.3,
+        timing: {
+          actionablePriceTime: '2026-03-01T00:00:20.000Z',
+          tActionReference: '2026-03-01T00:00:15.000Z',
+        },
+      };
+      const outcomeC = {
+        outcomeId: 'out_c',
+        state: 'FULLY_MATURED' as const,
+        score: 0.7,
+        tradableSuccess: true,
+        signalSuccess: true,
+        signalOutcome: 'SIGNAL_WIN' as const,
+        tradableOutcome: 'TRADABLE_SUCCESS' as const,
+        netReturn: 0.2,
+        timing: {
+          actionablePriceTime: '2026-03-01T00:00:30.000Z',
+          tActionReference: '2026-03-01T00:00:25.000Z',
+        },
+      };
+
+      const metricsOrdered = computeEvaluationMetrics([outcomeA, outcomeB, outcomeC] as unknown as OutcomeRecord[]);
+      const metricsShuffled = computeEvaluationMetrics([outcomeC, outcomeA, outcomeB] as unknown as OutcomeRecord[]);
+
+      expect(metricsShuffled.maxDrawdown).toBe(metricsOrdered.maxDrawdown);
+      expect(metricsShuffled.cvar95).toBe(metricsOrdered.cvar95);
+      expect(metricsShuffled.profitFactor).toBe(metricsOrdered.profitFactor);
+      expect(metricsShuffled.netShadowPortfolioUtility).toBe(metricsOrdered.netShadowPortfolioUtility);
+    });
+
+    it('generateEvaluationReport rejects malformed generatedAt ISO timestamps', () => {
+      const u = createFrozenCandidateUniverse({
+        universeId: 'univ-test-rep',
+        dataCutoff: '2026-03-01T00:00:00.000Z',
+        candidateAssetIds: ['solana:asset-1'],
+      });
+
+      expect(() =>
+        generateEvaluationReport({
+          artifactClass: 'BACKTEST',
+          candidateUniverse: u,
+          profile: DEFAULT_OUTCOME_PROFILE,
+          policy: DEFAULT_POLICY_METADATA,
+          outcomes: [],
+          generatedAt: 'invalid-iso-date',
+        }),
+      ).toThrowError(/GENERATED_AT_INVALID_ISO/);
     });
 
     it('evaluates deterministic PENDING vs CENSORED fallback when no actionable observation is present', () => {

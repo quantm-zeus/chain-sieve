@@ -20,7 +20,7 @@ import type {
   PolicyMetadata,
 } from './types.js';
 import { EVALUATION_ARTIFACT_CLASSES } from './types.js';
-import { canonicalize, sha256Hex } from './canonical.js';
+import { canonicalize, sha256Hex, isValidIso } from './canonical.js';
 
 
 export interface GenerateReportInput {
@@ -66,6 +66,10 @@ export const generateEvaluationReport = (input: GenerateReportInput): Evaluation
 
   if (!Array.isArray(outcomes)) {
     throw new EvaluationError('EVAL_MALFORMED', 'OUTCOMES_NOT_ARRAY');
+  }
+
+  if (generatedAt !== undefined && !isValidIso(generatedAt)) {
+    throw new EvaluationError('EVAL_MALFORMED', 'GENERATED_AT_INVALID_ISO');
   }
 
   // Sort outcomes deterministically by outcomeId

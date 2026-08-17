@@ -80,7 +80,7 @@ export const validateFrozenUniverse = (universe: FrozenCandidateUniverse): void 
     throw new EvaluationError('EVAL_MALFORMED', 'UNIVERSE_HASH_MALFORMED');
   }
 
-  // Verify candidateAssetIds are deduplicated and lexicographically sorted (canonical ordering invariant)
+  // Verify candidateAssetIds are deduplicated and lexicographically sorted (canonical ordering invariant matching Array.sort())
   for (let i = 0; i < universe.candidateAssetIds.length; i++) {
     const id = universe.candidateAssetIds[i];
     if (typeof id !== 'string' || id.length === 0) {
@@ -88,11 +88,10 @@ export const validateFrozenUniverse = (universe: FrozenCandidateUniverse): void 
     }
     if (i > 0) {
       const prev = universe.candidateAssetIds[i - 1]!;
-      const cmp = prev.localeCompare(id);
-      if (cmp >= 0) {
+      if (prev >= id) {
         throw new EvaluationError(
           'EVAL_MALFORMED',
-          cmp === 0 ? 'CANDIDATE_ASSET_IDS_DUPLICATED' : 'CANDIDATE_ASSET_IDS_NOT_SORTED',
+          prev === id ? 'CANDIDATE_ASSET_IDS_DUPLICATED' : 'CANDIDATE_ASSET_IDS_NOT_SORTED',
         );
       }
     }
