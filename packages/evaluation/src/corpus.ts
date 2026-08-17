@@ -465,7 +465,10 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
   // Evaluate all candidates with valid adapter evidence to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
   const executableCandidates = funnelOutput.candidates.filter((c) => c.adapterEvidence !== null);
   const allCandidatesOutput: FunnelOutput = {
-    ...funnelOutput,
+    funnelVersion: funnelOutput.funnelVersion,
+    profileVersion: funnelOutput.profileVersion,
+    asOf: funnelOutput.asOf,
+    totalEvaluated: funnelInputs.length,
     eligibleCount: executableCandidates.length,
     rejectedCount: 0,
     candidates: executableCandidates.map((c, i) => ({

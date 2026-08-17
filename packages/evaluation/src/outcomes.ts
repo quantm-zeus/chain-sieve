@@ -85,6 +85,9 @@ const validateProfile = (profile: OutcomeProfile): void => {
   if (typeof p.maxHorizonMs !== 'number' || !Number.isFinite(p.maxHorizonMs) || p.maxHorizonMs <= 0) {
     throw new EvaluationError('EVAL_MALFORMED', 'MAX_HORIZON_MS_INVALID');
   }
+  if (profile.horizonMs !== p.maxHorizonMs) {
+    throw new EvaluationError('EVAL_INCONSISTENT', 'PROFILE_HORIZON_MISMATCH');
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -162,7 +165,7 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   // Sort observations chronologically
   const sortedObs = [...observations].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
 
-  // Chronology validation: check timestamps are valid
+  // Chronology and data validation: check timestamps and prices are valid
   for (const obs of sortedObs) {
     if (!obs.timestamp || !isValidIso(obs.timestamp)) {
       return buildOutcomeRecord({
@@ -187,6 +190,31 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
         liquiditySurvives: false,
         securitySurvives: false,
         failureReason: 'OBSERVATION_TIMESTAMP_MALFORMED',
+      });
+    }
+    if (typeof obs.priceUsd !== 'number' || !Number.isFinite(obs.priceUsd) || obs.priceUsd <= 0) {
+      return buildOutcomeRecord({
+        signal,
+        profile,
+        scenario,
+        timing,
+        state: 'INVALID_DATA',
+        signalSuccess: false,
+        tradableSuccess: false,
+        signalOutcome: 'SIGNAL_INVALID',
+        tradableOutcome: 'INVALID_DATA',
+        entryPrice: null,
+        exitPrice: null,
+        exitTime: null,
+        rawReturn: null,
+        netReturn: null,
+        mfe: null,
+        mae: null,
+        modeledImpactBps: 0,
+        totalFeesUsd: 0,
+        liquiditySurvives: false,
+        securitySurvives: false,
+        failureReason: 'OBSERVATION_PRICE_INVALID',
       });
     }
   }

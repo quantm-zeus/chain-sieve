@@ -440,6 +440,31 @@ describe('evaluation-baseline', () => {
       expect(outcome.signalOutcome).toBe('SIGNAL_CENSORED');
       expect(outcome.failureReason).toBe('NO_ACTIONABLE_OBSERVATIONS_FOUND');
     });
+
+    it('evaluateOutcome marks INVALID_DATA when forward observation price is NaN or non-positive', () => {
+      const corpus = createDefaultEvaluationCorpus();
+      const asset = corpus.assets[0]!;
+      const signal = {
+        signalId: 'sig_test_invalid_price',
+        assetId: asset.assetId,
+        chainId: asset.chainId,
+        asOf: corpus.dataCutoff,
+        materializedAt: corpus.dataCutoff,
+      } as unknown as SignalRecord;
+
+      const outcome = evaluateOutcome({
+        signal,
+        profile: DEFAULT_OUTCOME_PROFILE,
+        observations: [
+          { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: NaN, poolLiquidityUsd: 100000, securityStatus: 'SAFE' },
+        ],
+      });
+
+      expect(outcome.state).toBe('INVALID_DATA');
+      expect(outcome.tradableOutcome).toBe('INVALID_DATA');
+      expect(outcome.signalOutcome).toBe('SIGNAL_INVALID');
+      expect(outcome.failureReason).toBe('OBSERVATION_PRICE_INVALID');
+    });
   });
 
   // -------------------------------------------------------------------------
@@ -475,6 +500,21 @@ describe('evaluation-baseline', () => {
           candidateAssetIds: ['solana:token-a'],
         }),
       ).toThrowError(/DATA_CUTOFF_INVALID_ISO/);
+    });
+
+    it('validateFrozenUniverse rejects invalid or rolled-over ISO dataCutoff timestamps', () => {
+      const invalidUniverse = {
+        universeId: 'univ-crafted-invalid',
+        dataCutoff: '2026-02-30T00:00:00.000Z',
+        candidateAssetIds: ['solana:token-a'],
+        totalAssets: 1,
+        corpusVersion: '1.0.0',
+        sha256: 'a'.repeat(64),
+      };
+
+      expect(() => validateFrozenUniverse(invalidUniverse as unknown as FrozenCandidateUniverse)).toThrowError(
+        /DATA_CUTOFF_INVALID/,
+      );
     });
 
     it('assertIdenticalUniverses fails closed on universe hash or cutoff mismatch', () => {
@@ -706,6 +746,21 @@ describe('evaluation-baseline', () => {
           observations: [],
         }),
       ).toThrowError(/HORIZON_MS_INVALID/);
+
+      expect(() =>
+        evaluateOutcome({
+          signal: dummySignal,
+          profile: {
+            ...baseProfile,
+            horizonMs: 86_400_000,
+            exitPolicy: {
+              ...baseProfile.exitPolicy,
+              maxHorizonMs: 43_200_000, // Mismatched!
+            },
+          },
+          observations: [],
+        }),
+      ).toThrowError(/PROFILE_HORIZON_MISMATCH/);
     });
 
     it('enforces universal timing invariant tDelivery >= tDeliveryEligible when materializedAt precedes asOf', () => {

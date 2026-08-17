@@ -199,7 +199,7 @@ export const computeEvaluationMetrics = (
 
     netExpectancy = round6(winRate * avgWin - lossRate * avgLoss);
 
-    // Max Drawdown calculation
+    // Max Drawdown calculation over deterministic input outcome sequence (ordered by outcomeId / evaluation order)
     let peak = 1.0;
     let equity = 1.0;
     let maxDd = 0;

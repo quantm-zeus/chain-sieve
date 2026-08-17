@@ -7,7 +7,9 @@ export const isValidIso = (s: string): boolean => {
   const ms = Date.parse(s);
   if (Number.isNaN(ms)) return false;
   const d = new Date(ms);
-  const normalized = s.includes('.') ? s : s.replace('Z', '.000Z');
+  const normalized = s.includes('.')
+    ? s.replace(/\.(\d+)Z$/, (_, frac) => `.${frac.padEnd(3, '0').slice(0, 3)}Z`)
+    : s.replace('Z', '.000Z');
   return d.toISOString() === normalized;
 };
 

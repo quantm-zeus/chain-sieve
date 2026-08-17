@@ -70,7 +70,7 @@ export const validateFrozenUniverse = (universe: FrozenCandidateUniverse): void 
   if (!universe.universeId || typeof universe.universeId !== 'string') {
     throw new EvaluationError('EVAL_MALFORMED', 'UNIVERSE_ID_REQUIRED');
   }
-  if (!universe.dataCutoff || !ISO_DATETIME_RE.test(universe.dataCutoff)) {
+  if (!universe.dataCutoff || !isValidIso(universe.dataCutoff)) {
     throw new EvaluationError('EVAL_MALFORMED', 'DATA_CUTOFF_INVALID');
   }
   if (!Array.isArray(universe.candidateAssetIds) || universe.candidateAssetIds.length === 0) {
