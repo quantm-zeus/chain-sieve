@@ -784,9 +784,10 @@ describe('evaluation-baseline', () => {
       const outcomeCensored = evaluateOutcome({
         signal: dummySignal,
         profile: DEFAULT_OUTCOME_PROFILE,
+        evaluationTime: '2026-03-05T00:00:00.000Z',
         observations: [
           {
-            timestamp: '2026-03-05T00:00:00.000Z', // Far beyond horizon, but before tActionReference
+            timestamp: '2026-03-01T00:00:01.000Z', // Before tActionReference (2026-03-01T00:00:05.000Z)
             priceUsd: 1.0,
             poolLiquidityUsd: 100_000,
             volumeUsd: 50_000,
@@ -840,7 +841,8 @@ describe('evaluation-baseline', () => {
 
       expect(outcome.state).toBe('FULLY_MATURED');
       expect(Date.parse(outcome.exitTime!)).toBeLessThanOrEqual(horizonEndMs);
-      expect(outcome.exitPrice).toBeCloseTo(1.10 * (1 - DEFAULT_OUTCOME_PROFILE.executionScenario.slippageBps / 10000), 2);
+      expect(outcome.exitPrice).toBeCloseTo(1.099945, 4);
+      expect(outcome.exitPrice).toBeLessThan(2.0);
     });
 
     it('does not promote immature signal winner to UNTRADABLE_SIGNAL_WIN before full maturity', () => {

@@ -526,9 +526,6 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
   } else if (signalStopHit) {
     signalSuccess = false;
     signalOutcome = 'SIGNAL_LOSS';
-  } else if (state !== 'FULLY_MATURED') {
-    signalSuccess = false;
-    signalOutcome = 'SIGNAL_PENDING';
   } else {
     signalSuccess = false;
     signalOutcome = 'SIGNAL_NEUTRAL';
