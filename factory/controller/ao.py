@@ -42,7 +42,7 @@ class AgentOrchestrator:
                 status=status,
                 activity=str(activity.get("state") or value.get("activityState") or status),
                 issue_id=issue_id,
-                workspace_path=value.get("workspacePath"),
+                workspace_path=value.get("workspacePath") or value.get("workspace_path") or value.get("workspace"),
                 last_activity_at=(
                     activity.get("lastActivityAt")
                     or value.get("lastActivityAt")
