@@ -139,6 +139,7 @@ export interface OutcomeRecord {
   assetId: string;
   chainId: string;
   asOf: string;
+  score: number;
   profileId: string;
   profileVersion: string;
   scenarioId: string;

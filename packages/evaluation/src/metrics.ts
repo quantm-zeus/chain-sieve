@@ -114,7 +114,7 @@ export const computeEvaluationMetrics = (
 
   // Ranking diagnostics: sort copy by descending signal score (with outcomeId tie-breaker for deterministic stability) per PRD 7.5
   const rankedOutcomes = [...outcomes].sort(
-    (a, b) => (b.signal.score - a.signal.score) || a.outcomeId.localeCompare(b.outcomeId),
+    (a, b) => (b.score - a.score) || a.outcomeId.localeCompare(b.outcomeId),
   );
 
   const p1Slice = rankedOutcomes.slice(0, 1);

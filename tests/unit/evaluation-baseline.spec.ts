@@ -36,6 +36,7 @@ import type {
   EvaluationArtifactClass,
   ForwardObservation,
   OutcomeProfile,
+  OutcomeRecord,
 } from '@ciag/evaluation';
 import {
   computeFeatureSet,
@@ -43,6 +44,7 @@ import {
   materializeSignal,
   DEFAULT_FUNNEL_PROFILE,
 } from '@ciag/signal-intelligence';
+import type { SignalRecord } from '@ciag/signal-intelligence';
 
 describe('evaluation-baseline', () => {
   // -------------------------------------------------------------------------
@@ -554,7 +556,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_c_lowest_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.1 } as unknown as SignalRecord,
+          score: 0.1,
           tradableSuccess: false,
           signalSuccess: false,
           signalOutcome: 'SIGNAL_LOSS' as const,
@@ -564,7 +566,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_a_highest_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.9 } as unknown as SignalRecord,
+          score: 0.9,
           tradableSuccess: true,
           signalSuccess: true,
           signalOutcome: 'SIGNAL_WIN' as const,
@@ -574,7 +576,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_b_mid_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.5 } as unknown as SignalRecord,
+          score: 0.5,
           tradableSuccess: false,
           signalSuccess: false,
           signalOutcome: 'SIGNAL_LOSS' as const,
