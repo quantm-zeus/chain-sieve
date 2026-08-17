@@ -64,17 +64,17 @@ describe('evaluation-baseline', () => {
         [...corpus.assets.map((a) => a.assetId)].sort(),
       );
 
-      // 2. Funnel candidates: 6 eligible, 2 rejected (ineligible score + missing adapter)
-      expect(result1.funnelOutput.eligibleCount).toBe(6);
-      expect(result1.funnelOutput.rejectedCount).toBe(2);
+      // 2. Funnel candidates: 7 eligible, 1 rejected (missing adapter)
+      expect(result1.funnelOutput.eligibleCount).toBe(7);
+      expect(result1.funnelOutput.rejectedCount).toBe(1);
       expect(result1.funnelOutput.sha256).toBe(result2.funnelOutput.sha256);
 
-      // 3. Materialized signals: exactly 6 signals for the 6 eligible candidates
-      expect(result1.signals.length).toBe(6);
+      // 3. Materialized signals: exactly 7 signals for the 7 eligible candidates
+      expect(result1.signals.length).toBe(7);
       expect(result1.signals.map((s) => s.signalId)).toEqual(result2.signals.map((s) => s.signalId));
 
       // 4. Outcomes
-      expect(result1.outcomes.length).toBe(6);
+      expect(result1.outcomes.length).toBe(7);
       expect(result1.outcomes.map((o) => o.outcomeId)).toEqual(result2.outcomes.map((o) => o.outcomeId));
 
       // 5. Deterministic report
@@ -87,10 +87,10 @@ describe('evaluation-baseline', () => {
       // 6. Metrics stability
       expect(result1.report.metrics).toEqual(result2.report.metrics);
       expect(result1.report.metrics.totalCandidates).toBe(8);
-      expect(result1.report.metrics.eligibleCandidates).toBe(6);
-      expect(result1.report.metrics.rejectedCandidates).toBe(2);
-      expect(result1.report.metrics.materializedSignals).toBe(6);
-      expect(result1.report.metrics.evaluatedOutcomes).toBe(6);
+      expect(result1.report.metrics.eligibleCandidates).toBe(7);
+      expect(result1.report.metrics.rejectedCandidates).toBe(1);
+      expect(result1.report.metrics.materializedSignals).toBe(7);
+      expect(result1.report.metrics.evaluatedOutcomes).toBe(7);
     });
 
     it('produces frozen immutable structures across all evaluation stages', () => {
@@ -473,9 +473,9 @@ describe('evaluation-baseline', () => {
 
       // Counts
       expect(m.totalCandidates).toBe(8);
-      expect(m.eligibleCandidates).toBe(6);
-      expect(m.materializedSignals).toBe(6);
-      expect(m.evaluatedOutcomes).toBe(6);
+      expect(m.eligibleCandidates).toBe(7);
+      expect(m.materializedSignals).toBe(7);
+      expect(m.evaluatedOutcomes).toBe(7);
 
       // Signal vs Tradable counts
       expect(m.signalSuccessCount).toBeGreaterThan(0);
