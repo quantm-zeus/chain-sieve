@@ -31,7 +31,7 @@ import type {
   PolicyMetadata,
 } from './types.js';
 import { createFrozenCandidateUniverse } from './universe.js';
-import { evaluateOutcome, evaluateOutcomes } from './outcomes.js';
+import { evaluateOutcomes } from './outcomes.js';
 import { generateEvaluationReport } from './report.js';
 
 // ---------------------------------------------------------------------------
@@ -462,35 +462,38 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
     evaluationTime,
   );
 
-  // Evaluate all corpus assets to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
-  let universeSignalWinnersCount = 0;
-  let universeTradableWinnersCount = 0;
-  for (const asset of corpus.assets) {
-    const fs = featureSets.get(asset.assetId);
-    const snap = snapshotsMap.get(asset.assetId);
-    const obs = observationsMap.get(asset.assetId) ?? [];
-    if (fs && snap) {
-      const syntheticSig: SignalRecord = {
-        signalId: `sig_univ_${asset.assetId}`,
-        candidateId: `cand_univ_${asset.assetId}`,
-        assetId: asset.assetId,
-        chainId: asset.chainId,
-        symbol: asset.symbol,
-        score: fs.features['momentum_10m']?.value ?? 0.5,
-        asOf: corpus.dataCutoff,
-        materializedAt: corpus.dataCutoff,
-        metadata: {},
-      };
-      const univOutcome = evaluateOutcome({
-        signal: syntheticSig,
-        profile: outcomeProfile,
-        observations: obs,
-        evaluationTime,
-      });
-      if (univOutcome.signalSuccess) universeSignalWinnersCount++;
-      if (univOutcome.tradableSuccess) universeTradableWinnersCount++;
-    }
-  }
+  // Evaluate all universe candidates to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
+  const allCandidatesOutput: FunnelOutput = {
+    totalEvaluated: funnelInputs.length,
+    eligibleCount: funnelInputs.length,
+    rejectedCount: 0,
+    candidates: funnelInputs.map((fi) => ({
+      assetId: fi.assetId,
+      chainId: fi.chainId,
+      asOf: fi.asOf,
+      funnelPassed: true,
+      score: 0.5,
+      reasons: [],
+      componentScores: {},
+      componentValues: {},
+      featureSet: fi.featureSet,
+      adapterEvidence: fi.adapterEvidence,
+    })),
+  };
+  const { signals: allUniverseSignals } = materializeSignals(
+    allCandidatesOutput,
+    featureSets,
+    snapshotsMap,
+    funnelProfile,
+  );
+  const universeOutcomes = evaluateOutcomes(
+    allUniverseSignals,
+    outcomeProfile,
+    observationsMap,
+    evaluationTime,
+  );
+  const universeSignalWinnersCount = universeOutcomes.filter((o) => o.signalSuccess).length;
+  const universeTradableWinnersCount = universeOutcomes.filter((o) => o.tradableSuccess).length;
 
   // 6. Generate canonical evaluation report (FR-EVAL-019, AC-040, AC-042)
   const report = generateEvaluationReport({
