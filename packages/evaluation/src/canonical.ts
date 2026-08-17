@@ -5,7 +5,10 @@ export const ISO_DATETIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 export const isValidIso = (s: string): boolean => {
   if (!ISO_DATETIME_RE.test(s)) return false;
   const ms = Date.parse(s);
-  return !Number.isNaN(ms);
+  if (Number.isNaN(ms)) return false;
+  const d = new Date(ms);
+  const normalized = s.includes('.') ? s : s.replace('Z', '.000Z');
+  return d.toISOString() === normalized;
 };
 
 export const sha256Hex = (data: string): string =>

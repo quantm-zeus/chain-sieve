@@ -292,7 +292,7 @@ export const createDefaultEvaluationCorpus = (): EvaluationFixtureCorpus => {
         { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: 10.25, poolLiquidityUsd: 310000, securityStatus: 'SAFE' },
         { timestamp: '2026-03-01T08:00:00.000Z', priceUsd: 10.40, poolLiquidityUsd: 315000, securityStatus: 'SAFE' },
         { timestamp: '2026-03-01T16:00:00.000Z', priceUsd: 10.10, poolLiquidityUsd: 305000, securityStatus: 'SAFE' },
-        { timestamp: '2026-03-02T02:00:00.000Z', priceUsd: 10.30, poolLiquidityUsd: 310000, securityStatus: 'SAFE' }, // Expires at horizon within neutral band
+        { timestamp: '2026-03-02T02:01:00.000Z', priceUsd: 10.30, poolLiquidityUsd: 310000, securityStatus: 'SAFE' }, // Expires at horizon within neutral band
       ],
     },
 
