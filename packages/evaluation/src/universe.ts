@@ -6,7 +6,7 @@
 
 import { EvaluationError } from './errors.js';
 import type { FrozenCandidateUniverse } from './types.js';
-import { canonicalize, ISO_DATETIME_RE, isValidIso, sha256Hex } from './canonical.js';
+import { canonicalize, isValidIso, sha256Hex } from './canonical.js';
 
 const SHA256_RE = /^[a-f0-9]{64}$/;
 
