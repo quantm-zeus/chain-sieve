@@ -490,7 +490,6 @@ export const evaluateOutcome = (input: EvaluateOutcomeInput): OutcomeRecord => {
       tradableExitPrice = executableExitPrice;
       tradableExitTime = lastObs.timestamp;
 
-      const rawRet = (lastObs.priceUsd - rawEntryPrice) / rawEntryPrice;
       const totalFeesUsd = entryFeesUsd + exitFeesUsd;
       const netRet = (executableExitPrice - executableEntryPrice) / executableEntryPrice - totalFeesUsd / scenario.notionalUsd;
 
