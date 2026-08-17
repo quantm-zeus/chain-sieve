@@ -10,6 +10,7 @@ import type {
   MarketSnapshot,
   FeatureSet,
   FunnelAdapterEvidence,
+  FunnelCandidate,
   FunnelInput,
   FunnelOutput,
   FunnelProfile,
@@ -30,6 +31,7 @@ import type {
   OutcomeRecord,
   PolicyMetadata,
 } from './types.js';
+import { canonicalize, sha256Hex } from './canonical.js';
 import { createFrozenCandidateUniverse } from './universe.js';
 import { evaluateOutcomes } from './outcomes.js';
 import { generateEvaluationReport } from './report.js';
