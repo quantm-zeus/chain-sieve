@@ -227,9 +227,15 @@ describe('evaluation-baseline', () => {
         funnelProfile: DEFAULT_FUNNEL_PROFILE,
       });
 
-      // Pure signal target reaches 2.0x raw price, but huge fee wipes out tradable execution so netReturn < 0
+      // Pure signal target reaches 2.0x raw price, but tradable target is 3.0x and expires at horizon with fee drag
       const frictionProfile: OutcomeProfile = {
         ...DEFAULT_OUTCOME_PROFILE,
+        signalTargetMultiplier: 2.0,
+        exitPolicy: {
+          ...DEFAULT_OUTCOME_PROFILE.exitPolicy,
+          targetMultiplier: 3.0,
+          maxHorizonMs: 86400_000,
+        },
         executionScenario: {
           ...DEFAULT_OUTCOME_PROFILE.executionScenario,
           notionalUsd: 100,
@@ -239,7 +245,8 @@ describe('evaluation-baseline', () => {
 
       const obs: ForwardObservation[] = [
         { timestamp: '2026-03-01T02:01:00.000Z', priceUsd: 1.0, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
-        { timestamp: '2026-03-01T04:00:00.000Z', priceUsd: 2.5, poolLiquidityUsd: 500000, securityStatus: 'SAFE' },
+        { timestamp: '2026-03-01T04:00:00.000Z', priceUsd: 2.5, poolLiquidityUsd: 500000, securityStatus: 'SAFE' }, // Reaches 2.0x signal target, but not 3.0x tradable target
+        { timestamp: '2026-03-02T02:01:00.000Z', priceUsd: 2.5, poolLiquidityUsd: 500000, securityStatus: 'SAFE' }, // Horizon expiration with net loss after fees
       ];
 
       const outcome = evaluateOutcome({
@@ -597,7 +604,12 @@ describe('evaluation-baseline', () => {
 
     it('validateProfile rejects negative or non-finite scenario and policy parameters', () => {
       const baseProfile = DEFAULT_OUTCOME_PROFILE;
-      const dummySignal = { signalId: 'sig_dummy', assetId: 'solana:dummy' } as unknown as SignalRecord;
+      const dummySignal = {
+        signalId: 'sig_dummy',
+        assetId: 'solana:dummy',
+        chainId: 'solana-mainnet',
+        asOf: '2026-03-01T00:00:00.000Z',
+      } as unknown as SignalRecord;
 
       expect(() =>
         evaluateOutcome({
