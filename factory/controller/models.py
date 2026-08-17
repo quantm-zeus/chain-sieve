@@ -179,6 +179,8 @@ class PackageRecord:
     review_dispatch_attempt: int = 0
     review_dispatch_run_id: str | None = None
     review_dispatch_requested_at: str | None = None
+    review_dispatch_trigger_attempts: int = 0
+    review_dispatch_last_attempt_at: str | None = None
     replan_attempted: bool = False
     blocked_reason: str | None = None
     last_error: str | None = None
@@ -226,6 +228,8 @@ class PackageRecord:
             "review_dispatch_attempt": self.review_dispatch_attempt,
             "review_dispatch_run_id": self.review_dispatch_run_id,
             "review_dispatch_requested_at": self.review_dispatch_requested_at,
+            "review_dispatch_trigger_attempts": self.review_dispatch_trigger_attempts,
+            "review_dispatch_last_attempt_at": self.review_dispatch_last_attempt_at,
             "replan_attempted": self.replan_attempted,
             "blocked_reason": self.blocked_reason,
             "last_error": self.last_error,

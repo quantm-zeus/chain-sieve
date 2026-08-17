@@ -30,6 +30,20 @@ from .store import StateStore, utc_now
 
 
 TERMINAL_SESSION_STATES = {"terminated", "exited", "killed", "completed", "error"}
+REVIEW_DISPATCH_AMBIGUITY_GRACE_SECONDS = 30
+MAX_REVIEW_DISPATCH_TRIGGER_ATTEMPTS = 2
+
+
+def _parse_iso(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=UTC)
+        return dt
+    except Exception:
+        return None
 
 
 @dataclass(frozen=True)
@@ -158,7 +172,8 @@ class FactoryController:
                     record.review_dispatch_state = ReviewDispatchState.STALE.value
                     record.review_verdict = None
                     record.review_sha = None
-                    record.review_attempts = 0
+                    record.review_dispatch_trigger_attempts = 0
+                    record.review_dispatch_last_attempt_at = None
                 if (
                     record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
                     and record.review_dispatch_sha == selected.head_sha
@@ -166,11 +181,9 @@ class FactoryController:
                     record.status = PackageStatus.REVIEW
                 else:
                     record.status = PackageStatus.PR_WAITING
-                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "budget exhausted", "replan", "stagnant")):
+                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "replan", "stagnant")):
                     record.blocked_reason = None
                     record.replan_attempted = False
-                    if record.review_verdict not in {"approved", "pass"}:
-                        record.review_attempts = 0
             elif sessions:
                 _apply_session(record, sessions[0])
                 record.branch = f"factory/{key}"
@@ -809,8 +822,8 @@ class FactoryController:
                 record.review_dispatch_state = ReviewDispatchState.STALE.value
                 record.review_verdict = None
                 record.review_sha = None
-                if record.review_dispatch_sha != pr.head_sha:
-                    record.review_attempts = 0
+                record.review_dispatch_trigger_attempts = 0
+                record.review_dispatch_last_attempt_at = None
 
             reviews = self.ao.reviews(record.session_id or "")
             review_ok, review_reason, reviewer, verdict = review_gate(
@@ -836,6 +849,8 @@ class FactoryController:
                 record.review_dispatch_reviewer = required_reviewer
                 record.review_dispatch_context_digest = expected_context_digest
                 record.review_dispatch_run_id = str(run_id) if run_id else None
+                record.review_dispatch_trigger_attempts = 0
+                record.review_dispatch_last_attempt_at = None
 
                 if run_status not in {"complete", "completed", "delivered"}:
                     record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
@@ -895,14 +910,70 @@ class FactoryController:
                         )
                     except Exception as error:
                         record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                        record.review_dispatch_last_attempt_at = utc_now()
                         record.last_error = f"AO review trigger failed: {error}"
+                        self.store.event(
+                            "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
+                        )
                     return
                 elif (
                     record.review_dispatch_key == target_dispatch_key
-                    and record.review_dispatch_state in {ReviewDispatchState.ACTIVE.value, ReviewDispatchState.UNKNOWN.value}
+                    and record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
                 ):
                     record.status = PackageStatus.REVIEW
                     return
+                elif (
+                    record.review_dispatch_key == target_dispatch_key
+                    and record.review_dispatch_state == ReviewDispatchState.UNKNOWN.value
+                ):
+                    last_attempt = _parse_iso(record.review_dispatch_last_attempt_at)
+                    now = datetime.now(UTC)
+                    elapsed = (now - last_attempt).total_seconds() if last_attempt else float("inf")
+
+                    if elapsed < REVIEW_DISPATCH_AMBIGUITY_GRACE_SECONDS:
+                        record.status = PackageStatus.REVIEW
+                        return
+
+                    if record.review_dispatch_trigger_attempts < MAX_REVIEW_DISPATCH_TRIGGER_ATTEMPTS:
+                        record.review_dispatch_trigger_attempts += 1
+                        record.review_dispatch_last_attempt_at = utc_now()
+                        record.status = PackageStatus.REVIEW
+                        record.last_progress_at = utc_now()
+
+                        current_records = self.store.load()
+                        current_records[work_key(milestone.id, package.id)] = record
+                        self.store.save(current_records, self.store.metadata())
+
+                        try:
+                            self.ao.trigger_review(record.session_id or "", required_reviewer)
+                            record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+                            self.store.event(
+                                "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                                workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                                attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                                contextDigest=expected_context_digest,
+                            )
+                        except Exception as error:
+                            record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                            record.last_error = f"AO review trigger retry failed: {error}"
+                            self.store.event(
+                                "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
+                                workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                                attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
+                            )
+                        return
+                    else:
+                        record.review_dispatch_state = ReviewDispatchState.FAILED.value
+                        self._block(
+                            milestone.id,
+                            package.id,
+                            record,
+                            f"review dispatch trigger recovery exhausted: {record.last_error or 'AO trigger failed'}",
+                            work_key(milestone.id, package.id),
+                        )
+                        return
                 else:
                     if record.review_attempts >= self.config.max_review_cycles:
                         self._block(milestone.id, package.id, record, "machine review budget exhausted", work_key(milestone.id, package.id))
@@ -915,6 +986,8 @@ class FactoryController:
                     record.review_dispatch_reviewer = required_reviewer
                     record.review_dispatch_context_digest = expected_context_digest
                     record.review_dispatch_requested_at = utc_now()
+                    record.review_dispatch_trigger_attempts = 1
+                    record.review_dispatch_last_attempt_at = utc_now()
                     record.review_attempts += 1
                     record.review_dispatch_attempt = record.review_attempts
                     record.status = PackageStatus.REVIEW
@@ -1327,7 +1400,6 @@ def _apply_pr(record: PackageRecord, pr: PullRequest, root: Path | None = None) 
         record.review_verdict = None
         record.last_error = None
         record.ci_status = None
-        record.review_attempts = 0
     record.head_sha = pr.head_sha
 
 
