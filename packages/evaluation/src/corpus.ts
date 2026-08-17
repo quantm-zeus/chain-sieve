@@ -464,20 +464,15 @@ export const executeEvaluationPipeline = (input: ExecutePipelineInput): Pipeline
 
   // Evaluate all universe candidates to determine universe-level ground-truth winners (AC-041 recall / missed-gems)
   const allCandidatesOutput: FunnelOutput = {
-    totalEvaluated: funnelInputs.length,
-    eligibleCount: funnelInputs.length,
+    ...funnelOutput,
+    eligibleCount: funnelOutput.candidates.length,
     rejectedCount: 0,
-    candidates: funnelInputs.map((fi) => ({
-      assetId: fi.assetId,
-      chainId: fi.chainId,
-      asOf: fi.asOf,
-      funnelPassed: true,
-      score: 0.5,
-      reasons: [],
-      componentScores: {},
-      componentValues: {},
-      featureSet: fi.featureSet,
-      adapterEvidence: fi.adapterEvidence,
+    candidates: funnelOutput.candidates.map((c, i) => ({
+      ...c,
+      eligible: true,
+      score: c.score ?? 0.5,
+      rank: i + 1,
+      rejectionReasons: [],
     })),
   };
   const { signals: allUniverseSignals } = materializeSignals(
