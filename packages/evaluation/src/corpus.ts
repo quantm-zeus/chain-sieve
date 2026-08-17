@@ -117,7 +117,7 @@ const makeSnapshot = (
   marketCapUsd: string,
   poolAddress: string,
 ): MarketSnapshot => ({
-  snapshotId: `${chainId}:${assetId}:${asOf}`,
+  snapshotId: `${assetId}:${asOf}`,
   assetId,
   chainId,
   asOf,
