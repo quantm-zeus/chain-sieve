@@ -554,7 +554,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_c_lowest_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.1 } as any,
+          signal: { score: 0.1 } as unknown as SignalRecord,
           tradableSuccess: false,
           signalSuccess: false,
           signalOutcome: 'SIGNAL_LOSS' as const,
@@ -564,7 +564,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_a_highest_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.9 } as any,
+          signal: { score: 0.9 } as unknown as SignalRecord,
           tradableSuccess: true,
           signalSuccess: true,
           signalOutcome: 'SIGNAL_WIN' as const,
@@ -574,7 +574,7 @@ describe('evaluation-baseline', () => {
         {
           outcomeId: 'out_b_mid_score',
           state: 'FULLY_MATURED' as const,
-          signal: { score: 0.5 } as any,
+          signal: { score: 0.5 } as unknown as SignalRecord,
           tradableSuccess: false,
           signalSuccess: false,
           signalOutcome: 'SIGNAL_LOSS' as const,
@@ -583,7 +583,7 @@ describe('evaluation-baseline', () => {
         },
       ];
 
-      const metrics = computeEvaluationMetrics(outcomes as any);
+      const metrics = computeEvaluationMetrics(outcomes as unknown as OutcomeRecord[]);
       // Top 1 by score is Signal A (score 0.9, tradableSuccess = true) -> Precision@1 should be 1.0
       expect(metrics.precisionAt1).toBe(1.0);
       // Top 3 has 1 win out of 3 -> Precision@3 = 1/3 = 0.333333
@@ -595,10 +595,11 @@ describe('evaluation-baseline', () => {
 
     it('validateProfile rejects negative or non-finite scenario and policy parameters', () => {
       const baseProfile = DEFAULT_OUTCOME_PROFILE;
+      const dummySignal = { signalId: 'sig_dummy', assetId: 'solana:dummy' } as unknown as SignalRecord;
 
       expect(() =>
         evaluateOutcome({
-          signal: {} as any,
+          signal: dummySignal,
           profile: {
             ...baseProfile,
             executionScenario: {
@@ -612,7 +613,7 @@ describe('evaluation-baseline', () => {
 
       expect(() =>
         evaluateOutcome({
-          signal: {} as any,
+          signal: dummySignal,
           profile: {
             ...baseProfile,
             executionScenario: {
@@ -626,7 +627,7 @@ describe('evaluation-baseline', () => {
 
       expect(() =>
         evaluateOutcome({
-          signal: {} as any,
+          signal: dummySignal,
           profile: {
             ...baseProfile,
             executionScenario: {
