@@ -1257,7 +1257,7 @@ class FactoryController:
 
         result = None
         if codex_conv_calls >= max_conv_calls:
-            if not metadata.get("migrationConvergenceDone") and not metadata.get("migrationConvergenceAttempted"):
+            if not metadata.get("migrationConvergenceDone"):
                 try:
                     result = reasoning.converge_fallback(milestone)
                     metadata["migrationConvergenceDone"] = True
