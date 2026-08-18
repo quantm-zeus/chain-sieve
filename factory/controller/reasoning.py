@@ -732,15 +732,26 @@ def build_planner_context(
         store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
         raise ReasoningContextUnavailableError(reason)
 
-    catalog_lines: list[str] = []
+    target_group = str(target.get("id", "")).split("-")[0].upper()
+    catalog_lines: list[str] = [
+        f"### Target Milestone ({target_group}) Normative Requirements (Primary Scope):"
+    ]
+    other_ids: list[str] = []
     for req_id, definition in sorted(authoritative_defs.items()):
-        text = definition.get("text") or definition.get("description") or definition.get("title") or ""
-        family = definition.get("family", "")
-        dep = definition.get("dependencyGroup", "")
-        sec = definition.get("section") or definition.get("subsection") or ""
-        meta = [m for m in (family, f"dep: {dep}" if dep else "", f"sec: {sec}" if sec else "") if m]
-        meta_str = f" ({', '.join(meta)})" if meta else ""
-        catalog_lines.append(f"- `{req_id}`{meta_str}: {text}")
+        dep = str(definition.get("dependencyGroup") or "").upper()
+        if dep == target_group or (target_group in req_id):
+            text = definition.get("text") or definition.get("description") or definition.get("title") or ""
+            family = definition.get("family", "")
+            sec = definition.get("section") or definition.get("subsection") or ""
+            meta = [m for m in (family, f"sec: {sec}" if sec else "") if m]
+            meta_str = f" ({', '.join(meta)})" if meta else ""
+            catalog_lines.append(f"- `{req_id}`{meta_str}: {text}")
+        else:
+            other_ids.append(f"`{req_id}`")
+
+    if other_ids:
+        catalog_lines.append(f"\n### Complete Authoritative Normative Requirement ID Index ({len(authoritative_defs)} total):")
+        catalog_lines.append(", ".join(other_ids))
 
     catalog_text = "\n".join(catalog_lines)
 
@@ -1415,7 +1426,7 @@ authorize immutable factory/control-plane paths. Do not modify files.
             argv.extend(("--model", self.config.muse_explicit_model))
         argv.extend((
             "--trust-workspace", "--disable-approval", "--disable-write", "--disable-shell",
-            "--user-input-auto-resolve", "--json", "--max-model-steps", "10",
+            "--user-input-auto-resolve", "--json", "--max-model-steps", "25",
             "--prompt-file", str(prompt_file),
         ))
         try:
