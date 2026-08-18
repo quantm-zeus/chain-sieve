@@ -1181,6 +1181,32 @@ class FactoryController:
         records: dict[str, PackageRecord],
         metadata: dict[str, Any],
     ) -> None:
+        current_head = ""
+        if self.runner and hasattr(self.runner, "run"):
+            try:
+                local_res = self.runner.run(["git", "rev-parse", "HEAD"], check=False)
+                if local_res and getattr(local_res, "returncode", 1) == 0:
+                    current_head = (getattr(local_res, "stdout", "") or "").strip().lower()
+            except Exception:
+                pass
+
+        # If integration head has moved since previous convergence or previous block, clear stale state
+        last_head = metadata.get("convergedHeadSha") or metadata.get("lastBlockedHeadSha")
+        if last_head and current_head and last_head != current_head:
+            metadata["milestoneConverged"] = False
+            metadata["convergedMilestoneId"] = None
+            metadata["convergedHeadSha"] = None
+            metadata["convergedContextDigest"] = None
+            metadata["transitionStage"] = None
+            metadata["targetMilestoneId"] = None
+            metadata["convergenceBlocked"] = False
+            metadata["migrationConvergenceAttempted"] = False
+            metadata["migrationConvergenceClaimed"] = False
+            metadata.pop("lastBlockedHeadSha", None)
+            metadata.pop("validatedPlan", None)
+            metadata.pop("plannerRejectionReason", None)
+            self.store.save(records, metadata)
+
         if (
             metadata.get("convergenceBlocked") is True
             or metadata.get("finalAuditConverged") is True
@@ -1196,10 +1222,6 @@ class FactoryController:
             write_remediation,
         )
 
-        runner = self.runner
-        local_res = runner.run(["git", "rev-parse", "HEAD"], check=False)
-        current_head = (local_res.stdout or "").strip().lower() if local_res.returncode == 0 else ""
-
         # Check existing convergence evidence
         if metadata.get("milestoneConverged") is True or metadata.get("transitionStage") in {
             TransitionStage.CONVERGED.value,
@@ -1214,17 +1236,6 @@ class FactoryController:
             if converged_ms == milestone.id and converged_head == current_head and converged_head:
                 self._advance_or_audit(milestone, records, metadata)
                 return
-            else:
-                # Stale convergence evidence on changed head
-                metadata["milestoneConverged"] = False
-                metadata["convergedMilestoneId"] = None
-                metadata["convergedHeadSha"] = None
-                metadata["convergedContextDigest"] = None
-                metadata["transitionStage"] = None
-                metadata["targetMilestoneId"] = None
-                metadata.pop("validatedPlan", None)
-                metadata.pop("plannerRejectionReason", None)
-                self.store.save(records, metadata)
 
         # Before convergence reasoning: gate on synchronized integration head
         ready, l_head, r_head = self._sync_and_verify_integration_head(milestone.id)
@@ -1548,6 +1559,13 @@ class FactoryController:
         metadata["convergenceBlocked"] = True
         metadata["lastTickFailure"] = reason
         metadata["consecutiveTickFailures"] = 0
+        if self.runner and hasattr(self.runner, "run"):
+            try:
+                local_res = self.runner.run(["git", "rev-parse", "HEAD"], check=False)
+                if local_res and getattr(local_res, "returncode", 1) == 0 and (getattr(local_res, "stdout", "") or "").strip():
+                    metadata["lastBlockedHeadSha"] = local_res.stdout.strip().lower()
+            except Exception:
+                pass
         self.store.event("FATAL_BLOCKER", milestoneId=milestone_id, reason=reason)
         self._notify("FATAL", reason)
         self.store.save(self.store.load(), metadata)
