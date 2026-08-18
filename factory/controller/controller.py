@@ -1181,14 +1181,12 @@ class FactoryController:
         records: dict[str, PackageRecord],
         metadata: dict[str, Any],
     ) -> None:
-        current_head = ""
-        if self.runner and hasattr(self.runner, "run"):
-            try:
-                local_res = self.runner.run(["git", "rev-parse", "HEAD"], check=False)
-                if local_res and getattr(local_res, "returncode", 1) == 0:
-                    current_head = (getattr(local_res, "stdout", "") or "").strip().lower()
-            except Exception:
-                pass
+        # Before convergence reasoning: gate on synchronized integration head
+        ready, l_head, r_head = self._sync_and_verify_integration_head(milestone.id)
+        if not ready:
+            return
+
+        current_head = l_head or ""
 
         # If integration head has moved since previous convergence or previous block, clear stale state
         last_head = metadata.get("convergedHeadSha") or metadata.get("lastBlockedHeadSha")
@@ -1210,9 +1208,11 @@ class FactoryController:
             metadata.pop("plannerRejectionReason", None)
             self.store.save(records, metadata)
 
+        if metadata.get("finalAuditConverged") is True:
+            return
+
         if (
             metadata.get("convergenceBlocked") is True
-            or metadata.get("finalAuditConverged") is True
             or metadata.get("transitionStage") == TransitionStage.TRANSITION_BLOCKED.value
         ):
             return
@@ -1239,11 +1239,6 @@ class FactoryController:
             if converged_ms == milestone.id and converged_head == current_head and converged_head:
                 self._advance_or_audit(milestone, records, metadata)
                 return
-
-        # Before convergence reasoning: gate on synchronized integration head
-        ready, l_head, r_head = self._sync_and_verify_integration_head(milestone.id)
-        if not ready:
-            return
 
         passes = int(metadata.get("convergencePasses", 0))
         if passes >= self.config.max_convergence_passes:
@@ -1423,8 +1418,8 @@ class FactoryController:
                 metadata["plannerRejectionReason"] = metadata.get("plannerRejectionReason") or "Primary planner interrupted"
                 self.store.save(records, metadata)
 
-            # Stage 3: PLANNER_PRIMARY_FAILED -> PLANNER_FALLBACK
-            if stage == TransitionStage.PLANNER_PRIMARY_FAILED.value:
+            # Stage 3: PLANNER_PRIMARY_FAILED / PLANNER_FALLBACK_CLAIMED -> PLANNER_FALLBACK
+            if stage in {TransitionStage.PLANNER_PRIMARY_FAILED.value, TransitionStage.PLANNER_FALLBACK_CLAIMED.value}:
                 stage = TransitionStage.PLANNER_FALLBACK_CLAIMED.value
                 metadata["transitionStage"] = stage
                 self.store.save(records, metadata)
