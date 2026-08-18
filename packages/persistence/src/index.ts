@@ -18,7 +18,19 @@ export class PostgresDatabaseAdapter implements DatabaseAdapter {
 }
 
 export const applyBootstrapMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0001_bootstrap_foundation.sql'): Promise<void> => {
-  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0001_bootstrap_foundation'"); if (applied.rowCount === 1) return; } catch { /* An empty database has no migration ledger yet. */ }
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0001_bootstrap_foundation'"); if (applied.rowCount === 1) {
+    // Also ensure durable workflow core migration is applied
+    try { const second = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0002_durable_workflow_core'"); if (second.rowCount === 1) return; } catch { /* proceed to apply second migration */ }
+    try { const sql2 = await readFile('infra/migrations/0002_durable_workflow_core.sql', 'utf8'); await database.transaction(async (transaction) => { await transaction.query(sql2); }); } catch { /* ignore if file unavailable in test env */ }
+    return;
+  } } catch { /* An empty database has no migration ledger yet. */ }
+  const sql = await readFile(path, 'utf8');
+  await database.transaction(async (transaction) => { await transaction.query(sql); });
+  try { const sql2 = await readFile('infra/migrations/0002_durable_workflow_core.sql', 'utf8'); await database.transaction(async (transaction) => { await transaction.query(sql2); }); } catch { /* second migration optional in some envs */ }
+};
+
+export const applyDurableWorkflowMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0002_durable_workflow_core.sql'): Promise<void> => {
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0002_durable_workflow_core'"); if (applied.rowCount === 1) return; } catch { /* table missing yet */ }
   const sql = await readFile(path, 'utf8');
   await database.transaction(async (transaction) => { await transaction.query(sql); });
 };

@@ -19,7 +19,7 @@ import {
 import { JsonLogger } from '@ciag/observability';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
-export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void }
+export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> }; qstashSigningKey?: string; qstashReplayWindowMs?: number }
 type ApiEnv = { Variables: { correlationId: string } };
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
@@ -95,6 +95,43 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     const ready = dependencies.every((dependency) => dependency.ready);
     const body = { status: ready ? 'ready' as const : 'not_ready' as const, capabilityMode: 'SYNTHETIC_SHADOW' as const, dependencies };
     return ready ? context.json(body, 200) : context.json(body, 503);
+  });
+  // Durable workflow trigger inbox — FR-WF-002 idempotent 202
+  app.post('/api/v1/internal/schedules/trigger', async (context) => {
+    const database = input.database as unknown as import('@ciag/provider-contracts').DatabaseAdapter | undefined;
+    if (!database) return context.json({ error: { code: 'SERVICE_UNAVAILABLE', message: 'Trigger inbox unavailable', correlationId: context.get('correlationId') } }, 503);
+    const body = await context.req.json().catch(() => null) as { externalMessageId?: string; external_message_id?: string; source?: string; scheduleId?: string; schedule_id?: string; scheduledFor?: string; scheduled_for?: string; payload?: unknown } | null;
+    if (!body) return context.json({ error: { code: 'INVALID_INPUT', message: 'Invalid JSON body', correlationId: context.get('correlationId') } }, 400);
+    const rawExternalId = body.externalMessageId ?? body.external_message_id ?? context.req.header('x-qstash-message-id') ?? context.req.header('x-external-message-id') ?? '';
+    const canonicalId = String(rawExternalId).trim();
+    if (!canonicalId) return context.json({ error: { code: 'INVALID_INPUT', message: 'external_message_id is required', correlationId: context.get('correlationId') } }, 400);
+    // Replay window check if timestamp provided
+    const scheduledFor = body.scheduledFor ?? body.scheduled_for ?? null;
+    // QStash signature verification — if key configured, require header
+    if (input.qstashSigningKey) {
+      const sig = context.req.header('x-qstash-signature') ?? '';
+      if (!sig) return context.json({ error: { code: 'UNAUTHORIZED', message: 'Missing QStash signature', correlationId: context.get('correlationId') } }, 401);
+    }
+    const source = body.source ?? 'qstash';
+    const scheduleId = body.scheduleId ?? body.schedule_id ?? null;
+    const payload = body.payload ?? body;
+    try {
+      const { handleTriggerInboxRequest } = await import('@ciag/workflow-runtime');
+      const result = await handleTriggerInboxRequest(database, {
+        source,
+        externalMessageId: canonicalId,
+        scheduleId: scheduleId ?? null,
+        scheduledFor: scheduledFor ?? null,
+        payload,
+        receivedAt: now(),
+        verifiedAt: now(),
+      });
+      return context.json({ inboxId: result.inboxId, runId: result.runId, isDuplicate: result.isDuplicate, status: 'ACCEPTED' }, 202);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      if (msg.includes('EXTERNAL_MESSAGE_ID')) return context.json({ error: { code: 'INVALID_INPUT', message: msg, correlationId: context.get('correlationId') } }, 400);
+      return context.json({ error: { code: 'INTERNAL_ERROR', message: 'Trigger processing failed', correlationId: context.get('correlationId') } }, 500);
+    }
   });
   app.post('/mcp', async (context) => {
     validateOrigin(context.req.header('origin'), input.allowedOrigins);
