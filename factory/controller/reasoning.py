@@ -1408,20 +1408,26 @@ authorize immutable factory/control-plane paths. Do not modify files.
             "Return exactly one JSON object matching this schema:\n"
             f"{schema_text}"
         )
+        prompt_file = output_path.with_suffix(".prompt.tmp")
+        prompt_file.write_text(fallback_prompt, encoding="utf-8")
         argv = ["muse", "exec"]
         if self.config.muse_explicit_model:
             argv.extend(("--model", self.config.muse_explicit_model))
         argv.extend((
             "--trust-workspace", "--disable-approval", "--disable-write", "--disable-shell",
-            "--user-input-auto-resolve", "--json", "--max-model-steps", "10", fallback_prompt,
+            "--user-input-auto-resolve", "--json", "--max-model-steps", "10",
+            "--prompt-file", str(prompt_file),
         ))
-        result = self.runner.run(
-            argv,
-            allowed_env=MUSE_ENV,
-            additions={"MUSE_NO_AUTO_UPDATE": "1"},
-            timeout=self.config.reasoning_timeout_seconds,
-            check=False,
-        )
+        try:
+            result = self.runner.run(
+                argv,
+                allowed_env=MUSE_ENV,
+                additions={"MUSE_NO_AUTO_UPDATE": "1"},
+                timeout=self.config.reasoning_timeout_seconds,
+                check=False,
+            )
+        finally:
+            prompt_file.unlink(missing_ok=True)
         if result is not None and result.returncode == 0:
             try:
                 value = _extract_json(_muse_final_text(result.stdout))
