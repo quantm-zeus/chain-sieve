@@ -1200,8 +1200,9 @@ class FactoryController:
             metadata["transitionStage"] = None
             metadata["targetMilestoneId"] = None
             metadata["convergenceBlocked"] = False
-            metadata["migrationConvergenceAttempted"] = False
-            metadata["migrationConvergenceClaimed"] = False
+            metadata.pop("migrationConvergenceDone", None)
+            metadata.pop("migrationConvergenceAttempted", None)
+            metadata.pop("migrationConvergenceClaimed", None)
             metadata.pop("lastBlockedHeadSha", None)
             metadata.pop("validatedPlan", None)
             metadata.pop("plannerRejectionReason", None)
@@ -1256,13 +1257,12 @@ class FactoryController:
 
         result = None
         if codex_conv_calls >= max_conv_calls:
-            if not metadata.get("migrationConvergenceAttempted"):
-                metadata["migrationConvergenceClaimed"] = True
-                metadata["migrationConvergenceAttempted"] = True
-                self.store.save(records, metadata)
+            if not metadata.get("migrationConvergenceDone") and not metadata.get("migrationConvergenceAttempted"):
                 try:
                     result = reasoning.converge_fallback(milestone)
+                    metadata["migrationConvergenceDone"] = True
                 except Exception as error:
+                    metadata["migrationConvergenceDone"] = True
                     self._block_factory(milestone.id, metadata, f"Transition migration convergence recovery failed: {error}")
                     return
             else:
