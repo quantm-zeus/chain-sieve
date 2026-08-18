@@ -168,6 +168,9 @@ class PackageRecord:
     provider_attempts: dict[str, int] = field(default_factory=dict)
     correction_attempts: int = 0
     review_attempts: int = 0
+    review_corrections_used: int = 0
+    review_correction_authorized_from_sha: str | None = None
+    review_terminal_rejection_sha: str | None = None
     review_sha: str | None = None
     review_verdict: str | None = None
     review_dispatch_key: str | None = None
@@ -217,6 +220,9 @@ class PackageRecord:
             "provider_attempts": self.provider_attempts,
             "correction_attempts": self.correction_attempts,
             "review_attempts": self.review_attempts,
+            "review_corrections_used": self.review_corrections_used,
+            "review_correction_authorized_from_sha": self.review_correction_authorized_from_sha,
+            "review_terminal_rejection_sha": self.review_terminal_rejection_sha,
             "review_sha": self.review_sha,
             "review_verdict": self.review_verdict,
             "review_dispatch_key": self.review_dispatch_key,

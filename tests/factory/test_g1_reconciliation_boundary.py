@@ -288,14 +288,14 @@ class G1ReconciliationAndPlanningBoundaryTests(unittest.TestCase):
         records1, meta1 = reconcile_durable_state(self.store, g1_ms, self.root, mock_ao)
         self.assertIn(key_legit, records1)
         self.assertNotIn(key_old98, records1)
-        self.assertEqual(meta1.get("stateMigrationVersion"), 1)
+        self.assertEqual(meta1.get("stateMigrationVersion"), 2)
         mock_ao.kill.assert_called_with("sess-98")
 
         # Run 2: no-op, perfectly idempotent
         mock_ao.reset_mock()
         records2, meta2 = reconcile_durable_state(self.store, g1_ms, self.root, mock_ao)
         self.assertIn(key_legit, records2)
-        self.assertEqual(meta2.get("stateMigrationVersion"), 1)
+        self.assertEqual(meta2.get("stateMigrationVersion"), 2)
         mock_ao.kill.assert_not_called()
 
     def test_6_planner_validation_rejects_empty_ids_on_product_package(self) -> None:
