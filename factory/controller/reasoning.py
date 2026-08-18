@@ -10,7 +10,7 @@ from typing import Any
 
 from .commands import CommandResult, CommandRunner
 from .config import FactoryConfig
-from .models import Milestone, PackageRecord, PackageStatus, WorkPackage, work_key
+from .models import Milestone, PackageRecord, PackageStatus, ReviewDispatchState, WorkPackage, work_key
 from .store import StateStore
 
 
@@ -1540,6 +1540,120 @@ def reconcile_durable_state(
                 records.pop(key, None)
                 cleaned = True
         metadata["stateMigrationVersion"] = 1
+        cleaned = True
+
+    # Version 2: Review-budget and correction-budget separation migration
+    if migration_version < 2:
+        correction_events_by_key: dict[str, set[tuple[int, str]]] = {}
+        if store.events_path.exists():
+            try:
+                for line in store.events_path.read_text(encoding="utf-8").splitlines():
+                    if not line.strip():
+                        continue
+                    try:
+                        evt = json.loads(line)
+                    except Exception:
+                        continue
+                    if isinstance(evt, dict) and evt.get("type") in {"REVIEW_CORRECTION_STARTED", "REVIEW_CORRECTION_AUTHORIZED"}:
+                        wkey = str(evt.get("workKey", ""))
+                        pr_num = int(evt.get("pr", 0)) if evt.get("pr") is not None else 0
+                        head_sha = str(evt.get("headSha", "") or evt.get("rejectedHeadSha", ""))
+                        if wkey and head_sha:
+                            correction_events_by_key.setdefault(wkey, set()).add((pr_num, head_sha))
+            except Exception:
+                pass
+
+        max_cycles = 2
+        try:
+            cfg_path = root / "factory" / "config.json"
+            if cfg_path.exists():
+                cfg_raw = json.loads(cfg_path.read_text(encoding="utf-8"))
+                max_cycles = int(cfg_raw.get("budgets", {}).get("maxReviewCycles", 2))
+        except Exception:
+            max_cycles = 2
+
+        for key, record in list(records.items()):
+            # 1. Preserve review_attempts as audit evidence
+            # 2. Reconstruct review_corrections_used from unique durable events
+            unique_events = correction_events_by_key.get(key, set())
+            reconstructed_corrections = min(len(unique_events), max_cycles)
+            if record.review_corrections_used == 0 and reconstructed_corrections > 0:
+                record.review_corrections_used = reconstructed_corrections
+                cleaned = True
+
+            # 4. Special legacy recovery rule for observed dead-end:
+            # Package blocked with "machine review budget exhausted", open PR, CI green,
+            # no authoritative review on current exact head, but AO has previous changes_requested on an ancestor head.
+            if (
+                record.status == PackageStatus.BLOCKED
+                and record.blocked_reason
+                and "machine review budget exhausted" in str(record.blocked_reason).lower()
+                and record.pr_number is not None
+                and record.pr_state in {None, "OPEN"}
+                and record.head_sha
+                and record.ci_status == "PASS"
+            ):
+                if ao and record.session_id:
+                    try:
+                        ao_reviews = ao.reviews(record.session_id)
+                        raw_runs = ao_reviews.get("reviews") or ao_reviews.get("data") or []
+                        runs: list[dict[str, Any]] = []
+                        for item in raw_runs:
+                            if not isinstance(item, dict):
+                                continue
+                            runs.append(item)
+                            if isinstance(item.get("latestRun"), dict):
+                                runs.append(item["latestRun"])
+                            if isinstance(item.get("previousRun"), dict):
+                                runs.append(item["previousRun"])
+                            if isinstance(item.get("history"), list):
+                                for h in item["history"]:
+                                    if isinstance(h, dict):
+                                        runs.append(h)
+                            if isinstance(item.get("runs"), list):
+                                for h in item["runs"]:
+                                    if isinstance(h, dict):
+                                        runs.append(h)
+
+                        exact_runs = [
+                            r for r in runs
+                            if isinstance(r, dict)
+                            and r.get("targetSha") == record.head_sha
+                            and str(r.get("status", "")).lower() in {"complete", "completed", "delivered"}
+                        ]
+                        rejected_runs = [
+                            r for r in runs
+                            if isinstance(r, dict)
+                            and r.get("targetSha") != record.head_sha
+                            and str(r.get("status", "")).lower() in {"complete", "completed", "delivered"}
+                            and str(r.get("verdict", "")).lower() in {"changes_requested", "request_changes", "rejected", "reject"}
+                        ]
+                        if not exact_runs and rejected_runs:
+                            latest_rejected = sorted(rejected_runs, key=lambda item: str(item.get("createdAt", "")))[-1]
+                            ancestor_sha = str(latest_rejected.get("targetSha", ""))
+                            if ancestor_sha:
+                                import subprocess
+                                proc = subprocess.run(
+                                    ["git", "-C", str(root), "merge-base", "--is-ancestor", ancestor_sha, record.head_sha],
+                                    capture_output=True,
+                                    check=False,
+                                )
+                                if proc.returncode == 0:
+                                    record.status = PackageStatus.PR_WAITING
+                                    record.blocked_reason = None
+                                    record.last_error = None
+                                    record.review_corrections_used = max_cycles
+                                    record.review_correction_authorized_from_sha = ancestor_sha
+                                    record.review_terminal_rejection_sha = None
+                                    record.review_dispatch_state = ReviewDispatchState.STALE.value
+                                    record.review_verdict = None
+                                    record.review_sha = None
+                                    record.review_dispatch_key = None
+                                    cleaned = True
+                    except Exception:
+                        pass
+
+        metadata["stateMigrationVersion"] = 2
         cleaned = True
 
     # Generic durable reconciliation: remove ONLY records whose remediation was deterministically invalidated

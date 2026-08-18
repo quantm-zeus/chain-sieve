@@ -923,7 +923,7 @@ class ReviewDispatchIdempotencyTests(unittest.TestCase):
         self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
 
     def test_b2_max_review_cycles_exhausted_across_corrected_heads_blocks(self) -> None:
-        """B2 — After max_review_cycles across multiple corrected heads, next review cycle is refused / package blocks."""
+        """B2 — After final review rejects and correction budget exhausted (review_terminal_rejection_sha set), next review cycle is refused / package blocks."""
         store = StateStore(self.temp_root / "state")
         store.prepare()
         _, digest_old = self._setup_review_context(store, self.head_sha_alt)
@@ -931,14 +931,16 @@ class ReviewDispatchIdempotencyTests(unittest.TestCase):
 
         cfg_limited = dataclasses.replace(self.cfg, max_review_cycles=2)
 
-        # Seed with review_attempts=2 (budget exhausted for max_review_cycles=2)
+        # Seed with terminal rejection recorded on old head (review_corrections_used=2, review_terminal_rejection_sha set)
         record = PackageRecord(
             status=PackageStatus.PR_WAITING,
             session_id="chainsieve-88",
             provider="agy",
             pr_number=115,
             head_sha=self.head_sha_alt,
-            review_attempts=2,
+            review_attempts=3,
+            review_corrections_used=2,
+            review_terminal_rejection_sha=self.head_sha_alt,
             review_sha=self.head_sha_alt,
             review_verdict="changes_requested",
             review_dispatch_key="old-key",

@@ -295,7 +295,7 @@ class FactoryController:
                         self._handle_terminated(milestone, package, key, record, session, pr)
                 else:
                     self._handle_activity(milestone, package, key, record, session, pr)
-            elif record.status == PackageStatus.PR_WAITING and pr:
+            elif record.status in {PackageStatus.PR_WAITING, PackageStatus.REVIEW} and pr:
                 if any(records[work_key(milestone.id, dependency)].status != PackageStatus.COMPLETED for dependency in package.dependencies):
                     record.last_error = "dependency integration condition no longer holds"
                 else:
@@ -873,9 +873,11 @@ class FactoryController:
                         )
                     elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
                         record.status = PackageStatus.REVIEW
-                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_attempts < self.config.max_review_cycles:
+                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_corrections_used < self.config.max_review_cycles:
                         token = f"REVIEW:{pr.head_sha}:{verdict}:{review_reason}"
                         if record.last_error != token:
+                            record.review_corrections_used += 1
+                            record.review_correction_authorized_from_sha = pr.head_sha
                             self.ao.send(
                                 record.session_id or "",
                                 f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
@@ -883,15 +885,33 @@ class FactoryController:
                             record.last_error = token
                             record.last_progress_at = utc_now()
                             self.store.event(
+                                "REVIEW_CORRECTION_AUTHORIZED", milestoneId=milestone.id, workPackageId=package.id,
+                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
+                                pr=pr.number, attempt=record.review_corrections_used, headSha=pr.head_sha, reviewRunId=record.review_dispatch_run_id,
+                                contextDigest=expected_context_digest,
+                            )
+                            self.store.event(
                                 "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                                 workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
-                                pr=pr.number, attempt=record.review_attempts, headSha=pr.head_sha,
+                                pr=pr.number, attempt=record.review_corrections_used, headSha=pr.head_sha,
                             )
-                    elif record.review_attempts >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
-                        self._block(milestone.id, package.id, record, f"machine review budget exhausted: {review_reason}", work_key(milestone.id, package.id))
+                        record.status = PackageStatus.PR_WAITING
+                    elif record.review_corrections_used >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
+                        record.review_terminal_rejection_sha = pr.head_sha
+                        self._escalate_replan(
+                            milestone,
+                            package,
+                            work_key(milestone.id, package.id),
+                            record,
+                            f"semantic review correction budget exhausted after final exact-head verification: {review_reason}",
+                        )
                     else:
                         record.status = PackageStatus.REVIEW
                     return
+                else:
+                    record.review_terminal_rejection_sha = None
+                    record.blocked_reason = None
+                    record.last_error = None
             else:
                 if (
                     record.review_dispatch_key == target_dispatch_key
@@ -950,8 +970,14 @@ class FactoryController:
                         )
                         return
                 else:
-                    if record.review_attempts >= self.config.max_review_cycles:
-                        self._block(milestone.id, package.id, record, "machine review budget exhausted", work_key(milestone.id, package.id))
+                    if record.review_terminal_rejection_sha is not None:
+                        self._block(
+                            milestone.id,
+                            package.id,
+                            record,
+                            f"machine review budget exhausted: review terminal rejection recorded at {record.review_terminal_rejection_sha}",
+                            work_key(milestone.id, package.id),
+                        )
                         return
 
                     record.review_dispatch_key = target_dispatch_key
@@ -1307,6 +1333,7 @@ def _progress_fingerprint(
                 "ci_status": record.ci_status,
                 "correction_attempts": record.correction_attempts,
                 "review_attempts": record.review_attempts,
+                "review_corrections_used": record.review_corrections_used,
                 "review_sha": record.review_sha,
                 "review_verdict": record.review_verdict,
             },
