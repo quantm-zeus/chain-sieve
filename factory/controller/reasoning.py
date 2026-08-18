@@ -45,6 +45,11 @@ class ReasoningInfrastructureError(RuntimeError):
     pass
 
 
+class ReasoningBudgetExhaustedError(ReasoningInfrastructureError):
+    """Raised when primary reasoning call budget is exhausted."""
+    pass
+
+
 class ReasoningContextUnavailableError(ReasoningInfrastructureError):
     """Raised when a required convergence/reasoning context source cannot be read."""
     pass
@@ -56,6 +61,14 @@ class ConvergenceOutputRejectedError(RuntimeError):
         super().__init__(message)
         self.failure_class = failure_class
         self.gap_id = gap_id
+
+
+class PlannerOutputRejectedError(RuntimeError):
+    """Raised when planner output fails deterministic schema or semantic validation."""
+    def __init__(self, message: str, failure_class: str = "INVALID_PLAN", artifact_path: Path | None = None) -> None:
+        super().__init__(message)
+        self.failure_class = failure_class
+        self.artifact_path = artifact_path
 
 
 def authoritative_requirement_definitions(root: Path) -> dict[str, dict[str, Any]]:
@@ -644,6 +657,152 @@ Scoped Requirement IDs: {scoped_reqs_str}
 """
 
 
+def build_planner_context(
+    root: Path,
+    config: FactoryConfig,
+    current: Milestone,
+    target: dict[str, Any],
+    store: StateStore,
+    runner: CommandRunner | None = None,
+) -> dict[str, Any]:
+    sources_manifest: dict[str, str] = {}
+
+    constitution_path = root / "factory" / "constitution.md"
+    if not constitution_path.exists() or not constitution_path.is_file():
+        reason = f"constitution missing or unreadable at {constitution_path}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+    constitution_bytes = constitution_path.read_bytes()
+    constitution_text = constitution_bytes.decode("utf-8")
+    sources_manifest["factory/constitution.md"] = hashlib.sha256(constitution_bytes).hexdigest()
+
+    roadmap_path = root / "specs" / "factory" / "roadmap.json"
+    if not roadmap_path.exists() or not roadmap_path.is_file():
+        reason = f"roadmap missing or unreadable at {roadmap_path}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+    roadmap_bytes = roadmap_path.read_bytes()
+    roadmap_text = roadmap_bytes.decode("utf-8")
+    sources_manifest["specs/factory/roadmap.json"] = hashlib.sha256(roadmap_bytes).hexdigest()
+
+    product_map_path = root / "specs" / "factory" / "product-map.md"
+    product_map_text = ""
+    if product_map_path.exists():
+        pm_bytes = product_map_path.read_bytes()
+        product_map_text = pm_bytes.decode("utf-8")
+        sources_manifest["specs/factory/product-map.md"] = hashlib.sha256(pm_bytes).hexdigest()
+
+    spec_dir = root / "docs" / "spec"
+    if not spec_dir.exists() or not list(spec_dir.glob("*.requirements.json")):
+        reason = f"authoritative requirement manifests missing or unreadable in {spec_dir}"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    for req_file in sorted(spec_dir.glob("*.requirements.json")):
+        try:
+            rel = str(req_file.relative_to(root))
+            sources_manifest[rel] = hashlib.sha256(req_file.read_bytes()).hexdigest()
+        except Exception as error:
+            reason = f"unable to read requirement manifest {req_file}: {error}"
+            store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
+            raise ReasoningContextUnavailableError(reason)
+
+    authoritative_defs = authoritative_requirement_definitions(root)
+
+    head_sha: str | None = None
+    try:
+        if runner is not None:
+            res = runner.run(["git", "rev-parse", "HEAD"], check=False)
+            if res.returncode == 0:
+                candidate = (res.stdout or "").strip()
+                if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                    head_sha = candidate.lower()
+        else:
+            import subprocess
+            res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False)
+            if res.returncode == 0:
+                candidate = (res.stdout or "").strip()
+                if len(candidate) == 40 and re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate != "0" * 40:
+                    head_sha = candidate.lower()
+    except Exception:
+        pass
+
+    if not head_sha:
+        reason = "unable to resolve valid git HEAD commit SHA"
+        store.event("REASONING_CONTEXT_UNAVAILABLE", milestoneId=current.id, role="planner", reason=reason)
+        raise ReasoningContextUnavailableError(reason)
+
+    catalog_lines: list[str] = []
+    for req_id, definition in sorted(authoritative_defs.items()):
+        text = definition.get("text") or definition.get("description") or definition.get("title") or ""
+        family = definition.get("family", "")
+        dep = definition.get("dependencyGroup", "")
+        sec = definition.get("section") or definition.get("subsection") or ""
+        meta = [m for m in (family, f"dep: {dep}" if dep else "", f"sec: {sec}" if sec else "") if m]
+        meta_str = f" ({', '.join(meta)})" if meta else ""
+        catalog_lines.append(f"- `{req_id}`{meta_str}: {text}")
+
+    catalog_text = "\n".join(catalog_lines)
+
+    digest_input = f"{current.id}:{target['id']}:{target.get('objective', '')}:{head_sha}:{hashlib.sha256(catalog_text.encode('utf-8')).hexdigest()}:{sources_manifest.get('factory/constitution.md', '')}"
+    context_digest = hashlib.sha256(digest_input.encode("utf-8")).hexdigest()
+
+    return {
+        "headSha": head_sha,
+        "contextDigest": context_digest,
+        "constitution": constitution_text,
+        "roadmap": roadmap_text,
+        "productMap": product_map_text,
+        "catalogText": catalog_text,
+        "target": target,
+        "current": current,
+        "sources": sources_manifest,
+    }
+
+
+def _format_planner_prompt(base_prompt: str, ctx: dict[str, Any], target: dict[str, Any], current: Milestone) -> str:
+    return f"""{base_prompt}
+
+### Controller-Owned Planner Context:
+- Target Roadmap Milestone ID: `{target['id']}`
+- Target Roadmap Objective: {target.get('objective', '')}
+- Completed & Converged Milestone ID: `{current.id}`
+- Completed Milestone Objective: {current.objective}
+- Exact Integration HEAD Git Commit: `{ctx.get('headSha')}`
+- Planning Context Digest: `{ctx.get('contextDigest')}`
+
+### Factory Constitution:
+```markdown
+{ctx.get('constitution', '')}
+```
+
+### Product Map & Architecture Authority:
+```markdown
+{ctx.get('productMap', '')}
+```
+
+### Committed Rolling Roadmap:
+```json
+{ctx.get('roadmap', '')}
+```
+
+### Authoritative Normative Requirements Catalog:
+{ctx.get('catalogText', '')}
+
+### Output Instructions:
+1. Return ONLY a single JSON object conforming to `factory/schemas/milestone-plan.schema.json`.
+2. Work package count must be between 2 and 8 packages.
+3. EVERY product work package MUST contain at least one exact normative requirement ID from the authoritative catalog above in `requirementIds`.
+4. `requirementIds` must NOT be empty (`minItems: 1`, `uniqueItems: true`).
+5. All `requirementIds` must be valid uppercase strings matching `^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{3,4}$` present in committed authority.
+6. Packages must have stable lowercase kebab-case IDs.
+7. Dependencies must reference other packages in this milestone forming a valid DAG.
+8. Never authorize immutable control-plane paths. Elevated product paths require HIGH/CRITICAL risk and exact deterministic authorization.
+9. Set `preferredProvider` to `agy` or `muse`, `risk` to `LOW`, `MEDIUM`, `HIGH`, or `CRITICAL`.
+10. Do not plan subsequent milestones. Do not include factory maintenance tasks.
+"""
+
+
 class ReasoningRunner:
     def __init__(self, root: Path, config: FactoryConfig, store: StateStore, runner: CommandRunner) -> None:
         self.root = root
@@ -856,6 +1015,85 @@ class ReasoningRunner:
         return value
 
 
+    def _validate_milestone_plan(self, value: dict[str, Any], target_id: str) -> Milestone:
+        schema_path = self.root / "factory" / "schemas" / "milestone-plan.schema.json"
+        if schema_path.exists():
+            try:
+                schema_json = json.loads(schema_path.read_text(encoding="utf-8"))
+                _validate_json_schema(value, schema_json)
+            except Exception as error:
+                raise PlannerOutputRejectedError(
+                    f"milestone plan violates schema: {error}",
+                    failure_class="SCHEMA_VALIDATION_FAILED",
+                )
+        try:
+            planned = Milestone.from_dict(value)
+        except Exception as error:
+            raise PlannerOutputRejectedError(
+                f"milestone plan format invalid: {error}",
+                failure_class="MALFORMED_PLAN",
+            )
+        if planned.id != target_id:
+            raise PlannerOutputRejectedError(
+                f"planner returned {planned.id!r}, expected {target_id!r}",
+                failure_class="TARGET_ID_MISMATCH",
+            )
+        try:
+            _validate_requirement_ids(self.root, planned)
+        except Exception as error:
+            raise PlannerOutputRejectedError(
+                str(error),
+                failure_class="INVALID_REQUIREMENT_IDS",
+            )
+        return planned
+
+    def plan_milestone_primary(self, current: Milestone, target: dict[str, Any]) -> dict[str, Any]:
+        output_path = self.config.state_dir / "next-milestone.json"
+        schema = self.root / "factory" / "schemas" / "milestone-plan.schema.json"
+        ctx = build_planner_context(self.root, self.config, current, target, self.store, self.runner)
+        base_prompt = (self.root / "factory" / "prompts" / "planner.md").read_text(encoding="utf-8")
+        prompt = _format_planner_prompt(base_prompt, ctx, target, current)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        self._invoke_codex("planner", current.id, prompt, schema, output_path)
+        try:
+            value = json.loads(output_path.read_text(encoding="utf-8"))
+        except Exception as error:
+            raise PlannerOutputRejectedError(
+                f"unable to parse planner output as JSON: {error}",
+                failure_class="MALFORMED_JSON",
+                artifact_path=output_path,
+            )
+        self._validate_milestone_plan(value, target["id"])
+        return value
+
+    def plan_milestone_fallback(self, current: Milestone, target: dict[str, Any], rejection_reason: str) -> dict[str, Any]:
+        output_path = self.config.state_dir / "next-milestone.json"
+        schema = self.root / "factory" / "schemas" / "milestone-plan.schema.json"
+        ctx = build_planner_context(self.root, self.config, current, target, self.store, self.runner)
+        base_prompt = (self.root / "factory" / "prompts" / "planner.md").read_text(encoding="utf-8")
+        prompt = _format_planner_prompt(base_prompt, ctx, target, current)
+        prompt += f"""
+
+## ONE-SHOT FALLBACK CORRECTION
+Previous planner generation was REJECTED for the following reason:
+{rejection_reason}
+
+Produce a complete, valid milestone plan for `{target['id']}` matching the schema where EVERY work package specifies non-empty exact normative requirement IDs from the authoritative catalog.
+"""
+        usage = self._usage()
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        self._invoke_muse_fallback("planner", current.id, prompt, schema, output_path, usage)
+        try:
+            value = json.loads(output_path.read_text(encoding="utf-8"))
+        except Exception as error:
+            raise PlannerOutputRejectedError(
+                f"unable to parse fallback planner output as JSON: {error}",
+                failure_class="MALFORMED_JSON",
+                artifact_path=output_path,
+            )
+        self._validate_milestone_plan(value, target["id"])
+        return value
+
     def plan_milestone(self, current: Milestone, target: dict[str, Any]) -> dict[str, Any]:
         active_path = self.config.state_dir / "active-milestone.json"
         if active_path.exists():
@@ -863,31 +1101,82 @@ class ReasoningRunner:
             if existing.get("id") == target["id"]:
                 Milestone.from_dict(existing)
                 return existing
-        prompt = (self.root / "factory" / "prompts" / "planner.md").read_text(encoding="utf-8")
-        prompt += f"""
-
-The completed and converged milestone is `{current.id}`.
-Plan exactly the next roadmap milestone:
-  id: `{target['id']}`
-  objective: {target['objective']}
-
-Return only a milestone-plan JSON object. Use exact normative requirement IDs found in committed authority. Do not plan any
-later milestone, edit files, or include work that belongs to the autonomous factory migration itself.
-"""
-        output_path = self.config.state_dir / "next-milestone.json"
-        schema = self.root / "factory" / "schemas" / "milestone-plan.schema.json"
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        self._invoke_codex("planner", current.id, prompt, schema, output_path)
-        value = json.loads(output_path.read_text(encoding="utf-8"))
+        usage, calls = self._codex_budget(current.id, "planner")
+        route = self.config.codex_routes["planner"]
+        value = None
+        if calls < route.max_calls_per_milestone:
+            try:
+                value = self.plan_milestone_primary(current, target)
+            except Exception as error:
+                rejection_reason = str(error)
+                self.store.event(
+                    "PLANNER_OUTPUT_REJECTED",
+                    milestoneId=current.id,
+                    targetMilestoneId=target["id"],
+                    reason=rejection_reason,
+                )
+                value = self.plan_milestone_fallback(current, target, rejection_reason)
+        else:
+            value = self.plan_milestone_fallback(current, target, "Primary Codex planner budget already consumed")
         planned = Milestone.from_dict(value)
-        if planned.id != target["id"]:
-            raise RuntimeError(f"planner returned {planned.id!r}, expected {target['id']!r}")
-        _validate_requirement_ids(self.root, planned)
         temporary = active_path.with_suffix(".json.tmp")
         temporary.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         temporary.chmod(0o640)
         temporary.replace(active_path)
         _write_planning_bundle(self.config.state_dir, planned)
+        return value
+
+    def converge_fallback(self, milestone: Milestone) -> dict[str, Any]:
+        output_path = self.config.state_dir / "convergence-result.json"
+        ctx = build_reasoning_context(self.root, self.config, milestone, self.store, self.runner, role="convergence")
+        expected_head = ctx["headSha"]
+        expected_digest = ctx["contextDigest"]
+
+        base_prompt = (self.root / "factory" / "prompts" / "convergence.md").read_text(encoding="utf-8")
+        prompt = _format_reasoning_prompt(base_prompt, ctx, milestone, role="convergence")
+
+        schema = self.root / "factory" / "schemas" / "convergence.schema.json"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        usage = self._usage()
+        self._invoke_muse_fallback("convergence", milestone.id, prompt, schema, output_path, usage)
+
+        current_head = self._get_head_sha()
+        if current_head != expected_head:
+            reason = f"integration HEAD advanced during convergence from {expected_head} to {current_head}"
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="STALE_INTEGRATION_HEAD",
+                reason=reason,
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(reason, failure_class="STALE_INTEGRATION_HEAD")
+
+        value = json.loads(output_path.read_text(encoding="utf-8"))
+        try:
+            _validate_json_schema(value, json.loads(schema.read_text(encoding="utf-8")))
+        except Exception as error:
+            self.store.event(
+                "CONVERGENCE_OUTPUT_REJECTED",
+                milestoneId=milestone.id,
+                failureClass="SCHEMA_VALIDATION_FAILED",
+                reason=f"convergence output violates schema: {error}",
+                headSha=expected_head,
+                contextDigest=expected_digest,
+            )
+            raise ConvergenceOutputRejectedError(f"convergence output violates schema: {error}", failure_class="SCHEMA_VALIDATION_FAILED")
+
+        if value["status"] == "CONVERGED":
+            value["contextDigest"] = expected_digest
+            value["headSha"] = expected_head
+            output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+            return value
+
+        validate_product_gaps(milestone, value["gaps"], self.root)
+        value["contextDigest"] = expected_digest
+        value["headSha"] = expected_head
+        output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
         return value
 
     def replan(self, milestone: Milestone, failed: WorkPackage, evidence: str) -> dict[str, Any]:
@@ -983,7 +1272,7 @@ authorize immutable factory/control-plane paths. Do not modify files.
         route = self.config.codex_routes[role]
         usage, calls = self._codex_budget(milestone_id, role)
         if calls >= route.max_calls_per_milestone:
-            raise RuntimeError(f"Codex {role} call budget exhausted")
+            raise ReasoningBudgetExhaustedError(f"Codex {role} call budget exhausted")
         self._record_codex_call(usage, milestone_id, role, calls + 1)
         operational = usage.setdefault("reasoningOperations", {})
         operational["preferredProvider"] = "codex"

@@ -21,6 +21,7 @@ from .models import (
     ReviewDispatchState,
     Session,
     Snapshot,
+    TransitionStage,
     review_dispatch_key,
     work_key,
 )
@@ -71,6 +72,49 @@ class FactoryController:
         self.github = github
         self.ao = ao
         self.reasoner = reasoner
+
+    @property
+    def runner(self) -> Any:
+        from .commands import CommandRunner
+        return getattr(self.github, "runner", None) or CommandRunner(self.root)
+
+    def _sync_and_verify_integration_head(self, milestone_id: str) -> tuple[bool, str | None, str | None]:
+        runner = self.runner
+        runner.run(["git", "fetch", "origin", self.config.integration_branch], check=False)
+        local_res = runner.run(["git", "rev-parse", "HEAD"], check=False)
+        local_head = (local_res.stdout or "").strip().lower() if local_res.returncode == 0 else None
+        remote_res = runner.run(["git", "rev-parse", f"origin/{self.config.integration_branch}"], check=False)
+        remote_head = (remote_res.stdout or "").strip().lower() if remote_res.returncode == 0 else None
+
+        if not local_head or not remote_head or len(local_head) != 40 or len(remote_head) != 40:
+            return False, local_head, remote_head
+
+        if local_head != remote_head:
+            dirty_res = runner.run(["git", "status", "--porcelain"], check=False)
+            branch_res = runner.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], check=False)
+            current_branch = (branch_res.stdout or "").strip()
+            anc_res = runner.run(["git", "merge-base", "--is-ancestor", local_head, remote_head], check=False)
+
+            is_clean = dirty_res.returncode == 0 and not (dirty_res.stdout or "").strip()
+            is_int_branch = current_branch == self.config.integration_branch
+            is_ancestor = anc_res.returncode == 0
+
+            if is_clean and is_int_branch and is_ancestor:
+                ff_res = runner.run(["git", "merge", "--ff-only", f"origin/{self.config.integration_branch}"], check=False)
+                if ff_res.returncode == 0:
+                    new_local_res = runner.run(["git", "rev-parse", "HEAD"], check=False)
+                    local_head = (new_local_res.stdout or "").strip().lower() if new_local_res.returncode == 0 else local_head
+
+            if local_head != remote_head:
+                self.store.event(
+                    "INTEGRATION_HEAD_NOT_READY",
+                    milestoneId=milestone_id,
+                    localHead=local_head,
+                    remoteHead=remote_head,
+                )
+                return False, local_head, remote_head
+
+        return True, local_head, remote_head
 
     def sync_issues(self, milestone: Milestone) -> dict[str, Any]:
         issues = self.github.issues()
@@ -473,7 +517,13 @@ class FactoryController:
             liveness = "STALE"
         else:
             liveness = "ACTIVE"
-        if counts[PackageStatus.BLOCKED.value] or counts[PackageStatus.FAILED.value] or counts[PackageStatus.STUCK.value]:
+        if (
+            counts[PackageStatus.BLOCKED.value]
+            or counts[PackageStatus.FAILED.value]
+            or counts[PackageStatus.STUCK.value]
+            or metadata.get("convergenceBlocked") is True
+            or metadata.get("transitionStage") == TransitionStage.TRANSITION_BLOCKED.value
+        ):
             overall = FactoryStatus.BLOCKED
         elif (
             counts[PackageStatus.COMPLETED.value] == len(records)
@@ -1131,54 +1181,131 @@ class FactoryController:
         records: dict[str, PackageRecord],
         metadata: dict[str, Any],
     ) -> None:
-        if metadata.get("convergenceBlocked") is True or metadata.get("finalAuditConverged") is True:
+        if (
+            metadata.get("convergenceBlocked") is True
+            or metadata.get("finalAuditConverged") is True
+            or metadata.get("transitionStage") == TransitionStage.TRANSITION_BLOCKED.value
+        ):
             return
-        if metadata.get("milestoneConverged") is True:
-            self._advance_or_audit(milestone, records, metadata)
-            return
-        passes = int(metadata.get("convergencePasses", 0))
-        if passes >= self.config.max_convergence_passes:
-            self._replan_convergence(milestone, metadata)
-            return
+
         from .reasoning import (
             ConvergenceOutputRejectedError,
+            ReasoningBudgetExhaustedError,
             ReasoningContextUnavailableError,
             ReasoningRunner,
             write_remediation,
         )
 
-        self.store.event("CONVERGENCE_STARTED", milestoneId=milestone.id, attempt=passes + 1)
+        runner = self.runner
+        local_res = runner.run(["git", "rev-parse", "HEAD"], check=False)
+        current_head = (local_res.stdout or "").strip().lower() if local_res.returncode == 0 else ""
+
+        # Check existing convergence evidence
+        if metadata.get("milestoneConverged") is True or metadata.get("transitionStage") in {
+            TransitionStage.CONVERGED.value,
+            TransitionStage.PLANNER_PRIMARY_CLAIMED.value,
+            TransitionStage.PLANNER_PRIMARY_FAILED.value,
+            TransitionStage.PLANNER_FALLBACK_CLAIMED.value,
+            TransitionStage.NEXT_MILESTONE_VALIDATED.value,
+            TransitionStage.NEXT_MILESTONE_INSTALLED.value,
+        }:
+            converged_head = metadata.get("convergedHeadSha")
+            converged_ms = metadata.get("convergedMilestoneId")
+            if converged_ms == milestone.id and converged_head == current_head and converged_head:
+                self._advance_or_audit(milestone, records, metadata)
+                return
+            else:
+                # Stale convergence evidence on changed head
+                metadata["milestoneConverged"] = False
+                metadata["convergedMilestoneId"] = None
+                metadata["convergedHeadSha"] = None
+                metadata["convergedContextDigest"] = None
+                metadata["transitionStage"] = None
+                metadata["targetMilestoneId"] = None
+                metadata.pop("validatedPlan", None)
+                metadata.pop("plannerRejectionReason", None)
+                self.store.save(records, metadata)
+
+        # Before convergence reasoning: gate on synchronized integration head
+        ready, l_head, r_head = self._sync_and_verify_integration_head(milestone.id)
+        if not ready:
+            return
+
+        passes = int(metadata.get("convergencePasses", 0))
+        if passes >= self.config.max_convergence_passes:
+            self._replan_convergence(milestone, metadata)
+            return
+
         reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
-        try:
-            result = reasoning.converge(milestone)
-        except ConvergenceOutputRejectedError as error:
-            self.store.event(
-                "CONVERGENCE_OUTPUT_REJECTED",
-                milestoneId=milestone.id,
-                attempt=passes + 1,
-                reason=str(error),
-                failureClass=error.failure_class,
-                workPackageId=error.gap_id,
-            )
-            raise RuntimeError(f"Convergence output rejected: {error}")
-        except ReasoningContextUnavailableError as error:
-            self.store.event(
-                "REASONING_CONTEXT_UNAVAILABLE",
-                milestoneId=milestone.id,
-                attempt=passes + 1,
-                reason=str(error),
-            )
-            raise RuntimeError(f"Convergence context unavailable: {error}")
+
+        usage = reasoning._usage()
+        milestone_usage = usage.get("milestones", {}).get(milestone.id, {})
+        codex_conv_calls = int(milestone_usage.get("codexCallsByRole", {}).get("convergence", 0))
+        max_conv_calls = self.config.codex_routes["convergence"].max_calls_per_milestone
+
+        result = None
+        if codex_conv_calls >= max_conv_calls:
+            if not metadata.get("migrationConvergenceAttempted"):
+                metadata["migrationConvergenceClaimed"] = True
+                metadata["migrationConvergenceAttempted"] = True
+                self.store.save(records, metadata)
+                try:
+                    result = reasoning.converge_fallback(milestone)
+                except Exception as error:
+                    self._block_factory(milestone.id, metadata, f"Transition migration convergence recovery failed: {error}")
+                    return
+            else:
+                self._block_factory(milestone.id, metadata, "Codex convergence call budget exhausted")
+                return
+        else:
+            self.store.event("CONVERGENCE_STARTED", milestoneId=milestone.id, attempt=passes + 1)
+            try:
+                result = reasoning.converge(milestone)
+            except ReasoningBudgetExhaustedError as error:
+                self._block_factory(milestone.id, metadata, str(error))
+                return
+            except ConvergenceOutputRejectedError as error:
+                self.store.event(
+                    "CONVERGENCE_OUTPUT_REJECTED",
+                    milestoneId=milestone.id,
+                    attempt=passes + 1,
+                    reason=str(error),
+                    failureClass=error.failure_class,
+                    workPackageId=error.gap_id,
+                )
+                raise RuntimeError(f"Convergence output rejected: {error}")
+            except ReasoningContextUnavailableError as error:
+                self.store.event(
+                    "REASONING_CONTEXT_UNAVAILABLE",
+                    milestoneId=milestone.id,
+                    attempt=passes + 1,
+                    reason=str(error),
+                )
+                raise RuntimeError(f"Convergence context unavailable: {error}")
 
         metadata["convergencePasses"] = passes + 1
         if result["status"] == "CONVERGED":
             metadata["milestoneConverged"] = True
-            self.store.event("MILESTONE_CONVERGED", milestoneId=milestone.id, attempt=passes + 1)
+            metadata["convergedMilestoneId"] = milestone.id
+            metadata["convergedHeadSha"] = result.get("headSha") or l_head
+            metadata["convergedContextDigest"] = result.get("contextDigest")
+            metadata["transitionStage"] = TransitionStage.CONVERGED.value
+            self.store.event(
+                "MILESTONE_CONVERGED",
+                milestoneId=milestone.id,
+                attempt=passes + 1,
+                headSha=metadata["convergedHeadSha"],
+                contextDigest=metadata["convergedContextDigest"],
+            )
             self._notify("INFO", f"Milestone {milestone.id} converged")
+            # DURABLE SAVE BEFORE ADVANCE / PLANNING
+            self.store.save(records, metadata)
             self._advance_or_audit(milestone, records, metadata)
             return
+
         write_remediation(self.config, milestone, result["gaps"])
         metadata["milestoneConverged"] = False
+        self.store.save(records, metadata)
         for gap in result["gaps"]:
             self.store.event(
                 "CONVERGENCE_GAP_FOUND", milestoneId=milestone.id,
@@ -1228,19 +1355,144 @@ class FactoryController:
         index = ids.index(milestone.id)
         from .reasoning import (
             ConvergenceOutputRejectedError,
+            PlannerOutputRejectedError,
+            ReasoningBudgetExhaustedError,
             ReasoningContextUnavailableError,
             ReasoningRunner,
             audit_remediation,
             write_remediation,
+            _write_planning_bundle,
         )
 
         reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
         if index + 1 < len(roadmap):
             target = roadmap[index + 1]
-            self.store.archive(milestone.id, records, metadata)
-            value = reasoning.plan_milestone(milestone, target)
-            metadata["nextMilestoneId"] = value["id"]
-            self.store.event("MILESTONE_PLANNED", milestoneId=value["id"], reason=f"after {milestone.id}")
+            metadata["targetMilestoneId"] = target["id"]
+            stage = metadata.get("transitionStage") or TransitionStage.CONVERGED.value
+
+            # Stage 1: CONVERGED -> PLANNER_PRIMARY
+            if stage == TransitionStage.CONVERGED.value:
+                usage = reasoning._usage()
+                planner_calls = int(usage.get("milestones", {}).get(milestone.id, {}).get("codexCallsByRole", {}).get("planner", 0))
+                max_planner_calls = self.config.codex_routes["planner"].max_calls_per_milestone
+
+                if planner_calls >= max_planner_calls:
+                    stage = TransitionStage.PLANNER_PRIMARY_FAILED.value
+                    metadata["transitionStage"] = stage
+                    metadata["plannerRejectionReason"] = "Primary Codex planner budget consumed / previously failed"
+                    self.store.save(records, metadata)
+                else:
+                    stage = TransitionStage.PLANNER_PRIMARY_CLAIMED.value
+                    metadata["transitionStage"] = stage
+                    self.store.save(records, metadata)
+                    try:
+                        plan_data = reasoning.plan_milestone_primary(milestone, target)
+                        stage = TransitionStage.NEXT_MILESTONE_VALIDATED.value
+                        metadata["transitionStage"] = stage
+                        metadata["validatedPlan"] = plan_data
+                        self.store.save(records, metadata)
+                    except Exception as error:
+                        stage = TransitionStage.PLANNER_PRIMARY_FAILED.value
+                        metadata["transitionStage"] = stage
+                        metadata["plannerRejectionReason"] = str(error)
+                        self.store.save(records, metadata)
+                        self.store.event(
+                            "PLANNER_OUTPUT_REJECTED",
+                            milestoneId=milestone.id,
+                            targetMilestoneId=target["id"],
+                            reason=str(error),
+                        )
+
+            # Stage 2: PLANNER_PRIMARY_CLAIMED (recovering from crash during primary claim)
+            if stage == TransitionStage.PLANNER_PRIMARY_CLAIMED.value:
+                stage = TransitionStage.PLANNER_PRIMARY_FAILED.value
+                metadata["transitionStage"] = stage
+                metadata["plannerRejectionReason"] = metadata.get("plannerRejectionReason") or "Primary planner interrupted"
+                self.store.save(records, metadata)
+
+            # Stage 3: PLANNER_PRIMARY_FAILED -> PLANNER_FALLBACK
+            if stage == TransitionStage.PLANNER_PRIMARY_FAILED.value:
+                stage = TransitionStage.PLANNER_FALLBACK_CLAIMED.value
+                metadata["transitionStage"] = stage
+                self.store.save(records, metadata)
+                try:
+                    rejection_reason = metadata.get("plannerRejectionReason", "Previous plan failed validation")
+                    plan_data = reasoning.plan_milestone_fallback(milestone, target, rejection_reason)
+                    stage = TransitionStage.NEXT_MILESTONE_VALIDATED.value
+                    metadata["transitionStage"] = stage
+                    metadata["validatedPlan"] = plan_data
+                    self.store.save(records, metadata)
+                except Exception as error:
+                    stage = TransitionStage.TRANSITION_BLOCKED.value
+                    metadata["transitionStage"] = stage
+                    metadata["lastTickFailure"] = f"Planner fallback failed: {error}"
+                    self.store.save(records, metadata)
+                    self._block_factory(milestone.id, metadata, f"Planner fallback failed: {error}")
+                    return
+
+            # Stage 4: PLANNER_FALLBACK_CLAIMED (recovering from crash during fallback claim)
+            if stage == TransitionStage.PLANNER_FALLBACK_CLAIMED.value:
+                stage = TransitionStage.TRANSITION_BLOCKED.value
+                metadata["transitionStage"] = stage
+                metadata["lastTickFailure"] = "Planner fallback interrupted"
+                self.store.save(records, metadata)
+                self._block_factory(milestone.id, metadata, "Planner fallback interrupted")
+                return
+
+            # Stage 5: NEXT_MILESTONE_VALIDATED -> atomic installation & archive
+            if stage == TransitionStage.NEXT_MILESTONE_VALIDATED.value:
+                plan_data = metadata.get("validatedPlan")
+                if not plan_data:
+                    next_path = self.config.state_dir / "next-milestone.json"
+                    if next_path.exists():
+                        plan_data = json.loads(next_path.read_text(encoding="utf-8"))
+                planned = Milestone.from_dict(plan_data)
+
+                # 1. Archive previous milestone if not already archived
+                archive_dir = self.config.state_dir / "archive"
+                archive_file = archive_dir / f"{milestone.id}.json"
+                if not archive_file.exists():
+                    self.store.archive(milestone.id, records, metadata)
+
+                # 2. Write active-milestone.json atomically
+                active_path = self.config.state_dir / "active-milestone.json"
+                temporary = active_path.with_suffix(".json.tmp")
+                temporary.write_text(json.dumps(plan_data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                temporary.chmod(0o640)
+                temporary.replace(active_path)
+
+                # 3. Write planning bundle
+                _write_planning_bundle(self.config.state_dir, planned)
+
+                # 4. Clean up transition metadata and install next milestone
+                metadata["nextMilestoneId"] = planned.id
+                metadata["milestoneId"] = planned.id
+                metadata["previousMilestoneId"] = milestone.id
+                metadata["transitionStage"] = TransitionStage.NEXT_MILESTONE_INSTALLED.value
+                metadata["milestoneConverged"] = False
+                metadata["convergencePasses"] = 0
+                metadata["milestoneStartedAt"] = utc_now()
+                metadata.pop("validatedPlan", None)
+                metadata.pop("plannerRejectionReason", None)
+                metadata.pop("targetMilestoneId", None)
+                metadata.pop("convergedMilestoneId", None)
+                metadata.pop("convergedHeadSha", None)
+                metadata.pop("convergedContextDigest", None)
+                metadata.pop("migrationConvergenceClaimed", None)
+                metadata.pop("migrationConvergenceAttempted", None)
+
+                # 5. Emit MILESTONE_PLANNED event
+                self.store.event("MILESTONE_PLANNED", milestoneId=planned.id, reason=f"after {milestone.id}")
+                self.store.save({}, metadata)
+                return
+
+            if stage == TransitionStage.NEXT_MILESTONE_INSTALLED.value:
+                return
+
+            if stage == TransitionStage.TRANSITION_BLOCKED.value:
+                self._block_factory(milestone.id, metadata, metadata.get("lastTickFailure") or "Milestone transition blocked")
+                return
+
             return
 
         output = self.config.state_dir / "final-audit.json"
@@ -1295,8 +1547,10 @@ class FactoryController:
     def _block_factory(self, milestone_id: str, metadata: dict[str, Any], reason: str) -> None:
         metadata["convergenceBlocked"] = True
         metadata["lastTickFailure"] = reason
+        metadata["consecutiveTickFailures"] = 0
         self.store.event("FATAL_BLOCKER", milestoneId=milestone_id, reason=reason)
         self._notify("FATAL", reason)
+        self.store.save(self.store.load(), metadata)
 
 
 def _apply_session(record: PackageRecord, session: Session) -> None:
