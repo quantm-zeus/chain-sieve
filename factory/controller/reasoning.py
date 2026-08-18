@@ -2000,6 +2000,32 @@ def _muse_final_text(output: str) -> str:
 
 
 def _extract_json(text: str) -> dict[str, Any]:
+    # 1. Try markdown code block extraction first
+    code_blocks = re.findall(r"```(?:json)?\s*(\{[\s\S]*?\})\s*```", text)
+    for block in code_blocks:
+        try:
+            val = json.loads(block)
+            if isinstance(val, dict):
+                return val
+        except Exception:
+            pass
+
+    # 2. Try raw_decode from every '{' position
+    decoder = json.JSONDecoder()
+    pos = 0
+    while True:
+        start = text.find("{", pos)
+        if start < 0:
+            break
+        try:
+            val, _ = decoder.raw_decode(text[start:])
+            if isinstance(val, dict):
+                return val
+        except Exception:
+            pass
+        pos = start + 1
+
+    # 3. Fallback to start:end
     start = text.find("{")
     end = text.rfind("}")
     if start < 0 or end < start:
