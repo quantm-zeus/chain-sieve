@@ -611,10 +611,21 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         store = StateStore(self.temp_root / "state")
         store.prepare()
 
-        proc = subprocess.run(["git", "rev-parse", "HEAD~1", "HEAD"], cwd=self.repo_root, capture_output=True, text=True)
-        lines = proc.stdout.strip().splitlines()
-        ancestor_sha = lines[0]
-        descendant_sha = lines[1]
+        repo_dir = self.temp_root / "repo"
+        repo_dir.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "init"], cwd=repo_dir, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "ci@chainsieve.local"], cwd=repo_dir, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "CI Bot"], cwd=repo_dir, capture_output=True, check=True)
+
+        (repo_dir / "file.txt").write_text("v1\n", encoding="utf-8")
+        subprocess.run(["git", "add", "file.txt"], cwd=repo_dir, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "commit 1"], cwd=repo_dir, capture_output=True, check=True)
+        ancestor_sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo_dir, capture_output=True, text=True, check=True).stdout.strip()
+
+        (repo_dir / "file.txt").write_text("v2\n", encoding="utf-8")
+        subprocess.run(["git", "add", "file.txt"], cwd=repo_dir, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "commit 2"], cwd=repo_dir, capture_output=True, check=True)
+        descendant_sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo_dir, capture_output=True, text=True, check=True).stdout.strip()
 
         _, digest_descendant = self._setup_review_context(store, descendant_sha)
 
@@ -652,7 +663,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         ao = MockAO(reviews_by_session=reviews)
 
         # Run migration
-        records, meta = reconcile_durable_state(store, self.plan, self.repo_root, ao)
+        records, meta = reconcile_durable_state(store, self.plan, repo_dir, ao)
 
         migrated = records[self.wkey]
         self.assertEqual(migrated.status, PackageStatus.PR_WAITING)
