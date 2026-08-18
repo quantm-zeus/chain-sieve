@@ -1200,6 +1200,8 @@ class FactoryController:
             metadata["transitionStage"] = None
             metadata["targetMilestoneId"] = None
             metadata["convergenceBlocked"] = False
+            metadata["convergencePasses"] = 0
+            metadata["convergenceReplanAttempted"] = False
             metadata.pop("migrationConvergenceDone", None)
             metadata.pop("migrationConvergenceAttempted", None)
             metadata.pop("migrationConvergenceClaimed", None)
