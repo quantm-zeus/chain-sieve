@@ -5,7 +5,7 @@ import json
 import subprocess
 import tempfile
 import unittest
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -1101,6 +1101,344 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         saved2 = store.load()[self.wkey]
         self.assertEqual(saved2.status, PackageStatus.REVIEW)
         self.assertEqual(len(ao.triggered_reviews), 1)
+
+    def test_rl1_review_correction_waiting_worker_remediates(self) -> None:
+        """RL1 — Review correction authorized on B, PR stays on B, session becomes waiting_input -> bounded remediation executes."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_b, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "waiting_input", "needs_input", "104")]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [{
+                    "targetSha": self.head_b,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "changes_requested",
+                    "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                    "createdAt": "2026-08-17T13:00:00Z",
+                }]
+            }
+        }
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        # Seed record: review correction #2 authorized from Head B
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_b,
+            review_attempts=2,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=0,
+        )
+        store.save({self.wkey: record})
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        # Liveness remediation executes through existing bounded mechanism
+        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.review_corrections_used, 2)
+        self.assertEqual(saved.review_correction_authorized_from_sha, self.head_b)
+        self.assertIsNone(saved.review_terminal_rejection_sha)
+        self.assertEqual(len(ao.sent), 1)
+        self.assertIn("FULL AUTONOMOUS MODE", ao.sent[0][1])
+
+        events = store.history(10)
+        corr_events = [e for e in events if e.get("type") == "CORRECTION_STARTED"]
+        self.assertEqual(len(corr_events), 1)
+
+    def test_rl2_review_correction_stuck_worker_recovers(self) -> None:
+        """RL2 — Review correction authorized on B, PR stays on B, session becomes STUCK -> bounded remediation executes."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+
+        twenty_mins_ago = (datetime.now(UTC) - timedelta(minutes=20)).isoformat()
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_b, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+            updated_at=twenty_mins_ago,
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "working", "104", last_activity_at=twenty_mins_ago)]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [{
+                    "targetSha": self.head_b,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "changes_requested",
+                    "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                    "createdAt": "2026-08-17T13:00:00Z",
+                }]
+            }
+        }
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_b,
+            review_attempts=2,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=0,
+            started_at=twenty_mins_ago,
+            last_progress_at=twenty_mins_ago,
+        )
+        store.save({self.wkey: record})
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.review_corrections_used, 2)
+        self.assertIsNone(saved.review_terminal_rejection_sha)
+        self.assertEqual(len(ao.sent), 1)
+        self.assertIn("stopped making meaningful progress", ao.sent[0][1])
+
+    def test_rl3_review_correction_terminated_session_restores(self) -> None:
+        """RL3 — Review correction authorized on B, PR stays on B, session terminates -> existing session is restored."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_b, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "terminated", "exited", "104")]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [{
+                    "targetSha": self.head_b,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "changes_requested",
+                    "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                    "createdAt": "2026-08-17T13:00:00Z",
+                }]
+            }
+        }
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_b,
+            review_attempts=2,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=0,
+        )
+        store.save({self.wkey: record})
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        self.assertEqual(len(ao.restored), 1)
+        self.assertEqual(ao.restored[0], "chainsieve-88")
+        self.assertEqual(len(ao.spawns), 0)
+        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.review_corrections_used, 2)
+        self.assertIsNone(saved.review_terminal_rejection_sha)
+
+        events = store.history(10)
+        restore_events = [e for e in events if e.get("type") == "WORKER_RESTORED"]
+        self.assertEqual(len(restore_events), 1)
+
+    def test_rl4_recovery_produces_head_c_triggers_review(self) -> None:
+        """RL4 — Following recovery on Head B, worker pushes Head C -> review triggered on Head C."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+        _, digest_c = self._setup_review_context(store, self.head_c)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_c, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "working", "104")]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [{
+                    "targetSha": self.head_b,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "changes_requested",
+                    "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                    "createdAt": "2026-08-17T13:00:00Z",
+                }]
+            }
+        }
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_b,
+            review_attempts=2,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=1,
+        )
+        store.save({self.wkey: record})
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.status, PackageStatus.REVIEW)
+        self.assertEqual(len(ao.triggered_reviews), 1)
+        self.assertEqual(ao.triggered_reviews[0], ("chainsieve-88", "muse"))
+
+    def test_rl5_final_head_c_rejection_escalates_replan(self) -> None:
+        """RL5 — When final corrected Head C itself is rejected, terminal budget exhaustion blocks and escalates."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+        _, digest_c = self._setup_review_context(store, self.head_c)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_c, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "working", "104")]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [
+                    {
+                        "targetSha": self.head_b,
+                        "harness": "muse",
+                        "status": "delivered",
+                        "verdict": "changes_requested",
+                        "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                        "createdAt": "2026-08-17T13:00:00Z",
+                    },
+                    {
+                        "targetSha": self.head_c,
+                        "harness": "muse",
+                        "status": "delivered",
+                        "verdict": "changes_requested",
+                        "body": f"Still broken on C\n{PROOF_PREFIX}{digest_c}",
+                        "createdAt": "2026-08-17T14:00:00Z",
+                    },
+                ]
+            }
+        }
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_c,
+            review_attempts=3,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=1,
+        )
+        store.save({self.wkey: record})
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        self.assertEqual(saved.status, PackageStatus.BLOCKED)
+        self.assertEqual(saved.review_terminal_rejection_sha, self.head_c)
+        self.assertEqual(len(ao.sent), 0)
+
+    def test_rl6_restart_persistence_with_outstanding_correction(self) -> None:
+        """RL6 — Persisted outstanding authorized correction on restart evaluates liveness properly."""
+        store = StateStore(self.temp_root / "state")
+        store.prepare()
+        _, digest_b = self._setup_review_context(store, self.head_b)
+
+        issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
+        prs = {self.wkey: [PullRequest(
+            115, "OPEN", f"factory/{self.wkey}", self.head_b, "url/115",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "terminated", "exited", "104")]}
+        reviews: dict[str, Any] = {
+            "chainsieve-88": {
+                "reviews": [{
+                    "targetSha": self.head_b,
+                    "harness": "muse",
+                    "status": "delivered",
+                    "verdict": "changes_requested",
+                    "body": f"Needs changes 2\n{PROOF_PREFIX}{digest_b}",
+                    "createdAt": "2026-08-17T13:00:00Z",
+                }]
+            }
+        }
+
+        # Seed persisted state before restarting controller
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            session_id="chainsieve-88",
+            provider="agy",
+            pr_number=115,
+            head_sha=self.head_b,
+            review_attempts=2,
+            review_corrections_used=2,
+            review_correction_authorized_from_sha=self.head_b,
+            last_error=f"REVIEW:{self.head_b}:changes_requested:Needs changes 2",
+            correction_attempts=0,
+        )
+        store.save({self.wkey: record})
+
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions, reviews)
+        controller = self._create_controller(store, github, ao)
+
+        # Fresh reconcile and tick
+        milestone = controller.config.load_milestone()
+        reconciled = controller.reconcile(milestone)
+        self.assertEqual(reconciled[self.wkey].status, PackageStatus.PR_WAITING)
+        self.assertIsNone(reconciled[self.wkey].review_terminal_rejection_sha)
+
+        controller.tick()
+
+        saved = store.load()[self.wkey]
+        self.assertEqual(len(ao.restored), 1)
+        self.assertEqual(ao.restored[0], "chainsieve-88")
+        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.review_corrections_used, 2)
+        self.assertIsNone(saved.review_terminal_rejection_sha)
 
 
 if __name__ == "__main__":
