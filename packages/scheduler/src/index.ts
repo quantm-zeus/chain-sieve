@@ -826,7 +826,7 @@ export class DatabaseScheduleStore implements ScheduleStore {
     return this.getVersion(schedule.currentVersionId);
   }
 
-  async createIncident(incident: { type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }): Promise<void> {
+  async createIncident(incident: { type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }): Promise<void> {
     const id = randomUUID();
     await this.db.query(
       `INSERT INTO schedule_incidents (id, type, schedule_id, external_schedule_id, detail, created_at) VALUES ($1,$2,$3,$4,$5,$6)`,
@@ -834,9 +834,16 @@ export class DatabaseScheduleStore implements ScheduleStore {
     );
   }
 
-  async listIncidents(): Promise<Array<{ type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }>> {
+  async listIncidents(): Promise<Array<{ type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }>> {
     const result = await this.db.query<Record<string, unknown>>('SELECT type, schedule_id as "scheduleId", external_schedule_id as "externalScheduleId", detail, created_at as "createdAt" FROM schedule_incidents ORDER BY created_at');
-    return result.rows.map(r => ({ type: r.type as string, scheduleId: r.scheduleId as string | undefined ?? undefined, externalScheduleId: r.externalScheduleId as string | undefined ?? undefined, detail: r.detail as string, createdAt: toIso(r.createdAt as string) }));
+    return result.rows.map(r => {
+      const row: { type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string } = { type: r.type as string, detail: r.detail as string, createdAt: toIso(r.createdAt as string) };
+      const sid = r.scheduleId as string | undefined | null;
+      const esid = r.externalScheduleId as string | undefined | null;
+      if (sid) row.scheduleId = sid;
+      if (esid) row.externalScheduleId = esid;
+      return row;
+    });
   }
 }
 
