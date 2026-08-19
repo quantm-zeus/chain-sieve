@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyBootstrapMigration } from '@ciag/persistence';
-import { MemoryPostgresAdapter, VirtualClock, FakeNotificationTransport } from '@ciag/test-fixtures';
+import { MemoryPostgresAdapter, FakeNotificationTransport } from '@ciag/test-fixtures';
 import {
   evaluateAlertPolicy,
   evaluateAlertLifecycle,
@@ -13,12 +13,10 @@ import {
   validateEarlyWatchGuardrails,
   validateAlertSemanticIntegrity,
   ShadowNotificationAdapter,
-  DEFAULT_ALERT_POLICY_CONFIG,
 } from '@ciag/alerts';
 import type {
   AlertCandidateInput,
   AlertEvaluationMetricRecord,
-  AlertRecord,
 } from '@ciag/alerts';
 
 const iso = '2026-03-01T00:00:00.000Z';
@@ -358,6 +356,18 @@ describe('Distinct Rendering & Routing (FR-ALERT-001, FR-ALERT-002)', () => {
 
     expect(rendered.suppressed).toBe(true);
     expect(rendered.headline).toContain('[INVALIDATED OPPORTUNITY]');
+  });
+
+  it('determines appropriate channel and priority routing', () => {
+    const input = makeCandidateInput();
+    const policyResult = evaluateAlertPolicy(input);
+    const routing = determineAlertRouting(policyResult.alertPayload!);
+
+    expect(routing.channel).toBe('telegram');
+    expect(routing.priority).toBe('HIGH');
+
+    const semantic = validateAlertSemanticIntegrity(policyResult.alertPayload!);
+    expect(semantic.valid).toBe(true);
   });
 });
 

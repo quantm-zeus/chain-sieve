@@ -131,6 +131,8 @@ export const validateAlertSemanticIntegrity = (
     violations.push('INVALID_ISO_TIMESTAMPS');
   } else if (asOfMs > validUntilMs) {
     violations.push('AS_OF_AFTER_VALID_UNTIL');
+  } else if ((validUntilMs - asOfMs) / (60 * 1000) > maxTtlMinutes) {
+    violations.push(`ALERT_TTL_EXCEEDS_MAX_LIMIT:${(validUntilMs - asOfMs) / (60 * 1000)}m_max_${maxTtlMinutes}m`);
   }
 
   // Check high conviction language across all classes
