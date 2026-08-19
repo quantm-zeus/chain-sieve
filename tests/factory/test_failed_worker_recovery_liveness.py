@@ -438,6 +438,123 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         self.assertEqual(reviewer_for("agy"), "muse")
         self.assertEqual(reviewer_for("muse"), "agy")
 
+    def test_ci_correction_stale_worker_recovery(self) -> None:
+        """
+        TEST — CI CORRECTION STALE WORKER RECOVERY (Incident Regression)
+        Given: Open PR #135, CI FAIL on head A, same durable session chainsieve-90 exists,
+               first CI correction was dispatched and token persisted,
+               session activity becomes older than maxIdleSeconds while AO still reports working.
+        Assert: Controller does not remain stuck; enters bounded same-session recovery;
+                does not spawn duplicate worker or issue/PR; does not duplicate CI correction token.
+        """
+        pkg = package("workflow-core")
+        wf_key = key("workflow-core")
+        issue = Issue(129, "OPEN", "", "url/129", "factory-bot")
+        head = "106a47efa02705caa425c5661b671267052b17ef"
+        pr = PullRequest(
+            135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
+            checks=({"name": "CI", "conclusion": "FAILURE"},),
+        )
+
+        twenty_mins_ago = (datetime.now(UTC) - timedelta(minutes=20)).isoformat()
+        session = Session("chainsieve-90", f"factory/{wf_key}", "muse", "working", "working", "129", last_activity_at=twenty_mins_ago)
+
+        token = f"CI:{head}:checks not passing: CI"
+        prior_record = PackageRecord(
+            status=PackageStatus.CI,
+            issue_number=129,
+            session_id="chainsieve-90",
+            provider="muse",
+            initial_provider="agy",
+            pr_number=135,
+            head_sha=head,
+            ci_status="FAIL",
+            last_error=token,
+            correction_attempts=1,
+            task_attempts=2,
+            started_at=twenty_mins_ago,
+            last_progress_at=twenty_mins_ago,
+        )
+        self.store.save({wf_key: prior_record})
+
+        ao = MockAO(sessions_by_issue={"129": [session]})
+        github = MockGitHub(issues_dict={wf_key: issue}, prs_dict={wf_key: [pr]})
+        controller = FactoryController(self.repo_root, self.cfg, self.store, github, ao)
+
+        self.cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [pkg]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[wf_key]
+        # Controller recovered same session without spawning new worker
+        self.assertEqual(len(ao.spawns), 0)
+        self.assertEqual(record.session_id, "chainsieve-90")
+        self.assertEqual(record.issue_number, 129)
+        self.assertEqual(record.pr_number, 135)
+        self.assertEqual(record.correction_attempts, 2)
+
+        # Autonomous continuation sent to same session
+        self.assertEqual(len(ao.sent), 1)
+        self.assertEqual(ao.sent[0][0], "chainsieve-90")
+        self.assertIn("FULL AUTONOMOUS MODE", ao.sent[0][1])
+
+        # Events check: CORRECTION_STARTED emitted, but no duplicate CI_CORRECTION_STARTED for same head
+        events = self.store.history(10)
+        ci_events = [e for e in events if e.get("type") == "CI_CORRECTION_STARTED"]
+        corr_events = [e for e in events if e.get("type") == "CORRECTION_STARTED"]
+        self.assertEqual(len(ci_events), 0)
+        self.assertEqual(len(corr_events), 1)
+        self.assertEqual(corr_events[0].get("aoSessionId"), "chainsieve-90")
+
+    def test_ci_correction_fresh_worker_waits(self) -> None:
+        """
+        TEST — CI CORRECTION FRESH WORKER WAITS
+        Given: Open PR, CI FAIL, CI correction dispatched, worker session activity is fresh.
+        Assert: Controller waits without duplicate dispatch or unnecessary intervention.
+        """
+        pkg = package("workflow-core")
+        wf_key = key("workflow-core")
+        issue = Issue(129, "OPEN", "", "url/129", "factory-bot")
+        head = "106a47efa02705caa425c5661b671267052b17ef"
+        pr = PullRequest(
+            135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
+            checks=({"name": "CI", "conclusion": "FAILURE"},),
+        )
+
+        five_secs_ago = (datetime.now(UTC) - timedelta(seconds=5)).isoformat()
+        session = Session("chainsieve-90", f"factory/{wf_key}", "muse", "working", "working", "129", last_activity_at=five_secs_ago)
+
+        token = f"CI:{head}:checks not passing: CI"
+        prior_record = PackageRecord(
+            status=PackageStatus.CI,
+            issue_number=129,
+            session_id="chainsieve-90",
+            provider="muse",
+            initial_provider="agy",
+            pr_number=135,
+            head_sha=head,
+            ci_status="FAIL",
+            last_error=token,
+            correction_attempts=1,
+            task_attempts=2,
+            started_at=five_secs_ago,
+            last_progress_at=five_secs_ago,
+        )
+        self.store.save({wf_key: prior_record})
+
+        ao = MockAO(sessions_by_issue={"129": [session]})
+        github = MockGitHub(issues_dict={wf_key: issue}, prs_dict={wf_key: [pr]})
+        controller = FactoryController(self.repo_root, self.cfg, self.store, github, ao)
+
+        self.cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [pkg]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[wf_key]
+        self.assertEqual(len(ao.sent), 0)
+        self.assertEqual(len(ao.spawns), 0)
+        self.assertEqual(record.correction_attempts, 1)
+        self.assertEqual(record.status, PackageStatus.CI_FIX)
+
 
 if __name__ == "__main__":
     unittest.main()
+
