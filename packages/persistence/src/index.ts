@@ -22,3 +22,9 @@ export const applyBootstrapMigration = async (database: DatabaseAdapter, path = 
   const sql = await readFile(path, 'utf8');
   await database.transaction(async (transaction) => { await transaction.query(sql); });
 };
+
+export const applyDurableWorkflowMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0002_durable_workflow_core.sql'): Promise<void> => {
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0002_durable_workflow_core'"); if (applied.rowCount === 1) return; } catch { /* table missing yet */ }
+  const sql = await readFile(path, 'utf8');
+  await database.transaction(async (transaction) => { await transaction.query(sql); });
+};
