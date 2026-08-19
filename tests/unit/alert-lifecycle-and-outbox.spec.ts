@@ -279,20 +279,28 @@ describe('EARLY_WATCH Guardrails & Language Policy (FR-ALERT-002)', () => {
 });
 
 describe('Alert Lifecycle & Deterioration Updates (FR-ALERT-004, AC-141)', () => {
-  it('generates OPPORTUNITY_EXPIRED update when valid_until lapses', () => {
+  it('generates OPPORTUNITY_EXPIRED update when valid_until lapses (including exact timestamp)', () => {
     const input = makeCandidateInput();
     const policyResult = evaluateAlertPolicy(input);
     const priorAlert = policyResult.alertRecord!;
 
-    // Advance clock past validUntil (validUntil + 1 hour)
-    const futureTime = new Date(Date.parse(priorAlert.validUntil) + 3600 * 1000).toISOString();
-    const updateResult = evaluateAlertLifecycle(priorAlert, null, futureTime);
+    // Clock at exact validUntil instant (inclusive expiry)
+    const exactLapseTime = priorAlert.validUntil;
+    const updateResult = evaluateAlertLifecycle(priorAlert, null, exactLapseTime);
 
     expect(updateResult.decision.transitionType).toBe('OPPORTUNITY_EXPIRED');
     expect(updateResult.decision.actionabilityState).toBe('EXPIRED');
     expect(updateResult.decision.parentAlertId).toBe(priorAlert.alertId);
     expect(updateResult.updatePayload?.alertClass).toBe('OPPORTUNITY_EXPIRED');
     expect(updateResult.outboxEntry?.topic).toBe('alert.production.expired');
+  });
+
+  it('gracefully returns rejection reason when confirmed opportunity contains high conviction language', () => {
+    const candidate = makeCandidateInput({ thesis: 'This is a 100x gem guaranteed profit opportunity' });
+    const result = evaluateAlertPolicy(candidate);
+
+    expect(result.passed).toBe(false);
+    expect(result.rejectionReasons).toContain('HIGH_CONVICTION_LANGUAGE_DETECTED_IN_THESIS');
   });
 
   it('generates THESIS_WEAKENING update when score drops sharply or tradability deteriorates', () => {
@@ -520,7 +528,11 @@ describe('Class-Separated Metrics (FR-ALERT-005, AC-140)', () => {
     expect(metrics.confirmedOpportunity.tradableSuccessCount).toBe(1);
     expect(metrics.confirmedOpportunity.precision).toBe(0.5);
     expect(metrics.confirmedOpportunity.falseDiscoveryRate).toBe(0.5);
-    expect(metrics.confirmedOpportunity.recall).toBe(0.5);
+    // When universe count is omitted, recall is 0 rather than conflating with precision
+    expect(metrics.confirmedOpportunity.recall).toBe(0);
+
+    const metricsWithUniverse = computeAlertClassMetrics(records, { universeTradableSuccessCount: 2 });
+    expect(metricsWithUniverse.confirmedOpportunity.recall).toBe(0.5);
 
     // Early Watch Metrics
     expect(metrics.earlyWatch.totalWatches).toBe(3);
@@ -587,6 +599,31 @@ describe('Transactional Outbox & Delivery Worker (FR-WF-006, AC-141)', () => {
     expect(outboxRows.rows[0]?.state).toBe('PENDING');
   });
 
+  it('does not dispatch when current time is earlier than available_at', async () => {
+    const database = new MemoryPostgresAdapter();
+    await applyBootstrapMigration(database);
+    await applyAlertLifecycleMigration(database);
+
+    const input = makeCandidateInput();
+    const policyResult = evaluateAlertPolicy(input);
+
+    // Outbox entry available in the future
+    const futureAvailableAt = new Date(Date.parse(iso) + 3600 * 1000).toISOString();
+    const delayedOutboxEntry = { ...policyResult.outboxEntry!, availableAt: futureAvailableAt };
+
+    await commitAlertTransaction(database, {
+      alertRecord: policyResult.alertRecord!,
+      outboxEntry: delayedOutboxEntry,
+    });
+
+    const notifications = new FakeNotificationTransport();
+    const result = await processOutboxEntry(database, notifications, delayedOutboxEntry.id, iso);
+
+    expect(result.delivered).toBe(false);
+    expect(result.reason?.startsWith('NOT_YET_AVAILABLE')).toBe(true);
+    expect(notifications.attempts).toBe(0);
+  });
+
   it('delivers from outbox idempotently with retry and state updates', async () => {
     const database = new MemoryPostgresAdapter();
     await applyBootstrapMigration(database);
@@ -650,5 +687,28 @@ describe('Shadow Mode (FR-WF-008)', () => {
     expect(delivery.state).toBe('DELIVERED');
     expect(shadowAdapter.messages).toHaveLength(1);
     expect(shadowAdapter.messages[0]).toContain('shadow.opportunity');
+  });
+
+  it('guarantees no external transport calls in shadow mode even when regular transport is supplied', async () => {
+    const database = new MemoryPostgresAdapter();
+    await applyBootstrapMigration(database);
+    await applyAlertLifecycleMigration(database);
+
+    const shadowCandidate = makeCandidateInput({ shadowMode: true });
+    const policyResult = evaluateAlertPolicy(shadowCandidate);
+
+    await commitAlertTransaction(database, {
+      alertRecord: policyResult.alertRecord!,
+      outboxEntry: policyResult.outboxEntry!,
+    });
+
+    const externalTransport = new FakeNotificationTransport();
+    const delivery = await processOutboxEntry(database, externalTransport, policyResult.outboxEntry!.id, iso, {
+      shadowMode: true,
+    });
+
+    expect(delivery.delivered).toBe(true);
+    expect(delivery.state).toBe('DELIVERED');
+    expect(externalTransport.attempts).toBe(0); // Zero external calls!
   });
 });

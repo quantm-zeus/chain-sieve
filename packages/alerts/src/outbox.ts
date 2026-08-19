@@ -4,6 +4,7 @@
  * @requirement AC-141 - Idempotent delivery worker.
  */
 
+import type { DegradedResult } from '@ciag/domain';
 import type { DatabaseAdapter, NotificationAdapter } from '@ciag/provider-contracts';
 import type { AlertRecord, OutboxEntry, OutboxEntryState } from './types.js';
 
@@ -36,6 +37,18 @@ export interface OutboxDeliveryResult {
   attemptCount: number;
   deliveredAt?: string | null;
   reason?: string;
+}
+
+export class ShadowNotificationAdapter implements NotificationAdapter {
+  readonly messages: string[] = [];
+  async enqueue(input: { outboxId: string; template: string; evidenceKeys?: string[] }): Promise<DegradedResult<{ deliveryId: string }>> {
+    this.messages.push(`${input.outboxId}:${input.template}`);
+    return {
+      status: 'AVAILABLE',
+      capabilityMode: 'SYNTHETIC_SHADOW',
+      value: { deliveryId: `shadow-${input.outboxId}` },
+    };
+  }
 }
 
 /**
@@ -163,14 +176,38 @@ export const processOutboxEntry = async (
     };
   }
 
-  // 3. Dispatch to notification adapter
+  // 3. Availability check: do not dispatch before available_at
+  const nowMs = Date.parse(nowIso);
+  const availableAtMs = Date.parse(String(row.available_at));
+  if (nowMs < availableAtMs) {
+    return {
+      outboxId,
+      delivered: false,
+      state: currentState,
+      attemptCount: currentAttempts,
+      reason: `NOT_YET_AVAILABLE:${row.available_at}`,
+    };
+  }
+
+  // 4. Dispatch to notification adapter (or shadow mode guard)
+  const isShadowTopic = row.topic.startsWith('alert.shadow.');
+  const isShadowMode = Boolean(options.shadowMode || isShadowTopic);
+
+  let deliveryResult: { status: 'AVAILABLE' | 'UNAVAILABLE'; reason?: string };
+
   const payloadObj = typeof row.payload_json === 'string' ? JSON.parse(row.payload_json) : row.payload_json;
   const templateName = row.topic.replace('alert.', '');
-  const deliveryResult = await notifications.enqueue({
-    outboxId,
-    template: templateName,
-    evidenceKeys: payloadObj.materialEvidenceFingerprint ? [payloadObj.materialEvidenceFingerprint] : [],
-  });
+
+  if (isShadowMode && !(notifications instanceof ShadowNotificationAdapter)) {
+    // Prevent external dispatch in shadow mode when non-shadow transport is provided
+    deliveryResult = { status: 'AVAILABLE' };
+  } else {
+    deliveryResult = await notifications.enqueue({
+      outboxId,
+      template: templateName,
+      evidenceKeys: payloadObj.materialEvidenceFingerprint ? [payloadObj.materialEvidenceFingerprint] : [],
+    });
+  }
 
   const nextAttemptCount = currentAttempts + 1;
 

@@ -120,6 +120,7 @@ export const validateEarlyWatchGuardrails = (input: {
 export const validateAlertSemanticIntegrity = (
   payload: AlertPayload,
   maxTtlMinutes = 1440,
+  earlyWatchTtlMinutes = 30,
 ): { valid: boolean; violations: string[] } => {
   const violations: string[] = [];
 
@@ -152,7 +153,7 @@ export const validateAlertSemanticIntegrity = (
       thesis: payload.thesis,
       counterThesis: payload.counterThesis,
       positiveSignals: payload.positiveSignals,
-      ttlMinutesLimit: 30,
+      ttlMinutesLimit: earlyWatchTtlMinutes,
     });
     violations.push(...ewCheck.violations);
   }

@@ -62,8 +62,8 @@ export const evaluateAlertLifecycle = (
     };
   }
 
-  // 1. Expiry Check: valid_until has lapsed
-  if (nowMs > validUntilMs) {
+  // 1. Expiry Check: valid_until has lapsed (inclusive)
+  if (nowMs >= validUntilMs) {
     const updateReason = `Opportunity validity lapsed at ${priorAlert.validUntil}`;
     const alertId = `alt_exp_${createHash('sha256').update(`${priorAlert.alertId}:expired:${nowIso}`).digest('hex').slice(0, 24)}`;
     const traceId = currentCandidate?.traceId ?? `trace_exp_${priorAlert.alertId}_${nowMs}`;

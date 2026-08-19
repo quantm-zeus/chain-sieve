@@ -15,8 +15,7 @@ import type {
   ExecutionImpact,
   MissingDataItem,
   OutboxEntry,
-} from './types.js';
-import { assertNoHighConvictionLanguage, validateEarlyWatchGuardrails } from './guardrails.js';
+import { containsHighConvictionLanguage, validateEarlyWatchGuardrails } from './guardrails.js';
 
 export const DEFAULT_ALERT_POLICY_CONFIG: AlertPolicyConfig = {
   id: 'opportunity-alert',
@@ -332,7 +331,19 @@ export const evaluateAlertPolicy = (
   // Branch B: CONFIRMED_OPPORTUNITY (All 14 gates pass)
   if (candidate.decision === 'ALERT' && reasons.length === 0 && candidate.lifecycleState === 'CONFIRMED') {
     // Check no high-conviction language
-    assertNoHighConvictionLanguage(candidate.thesis, 'Confirmed alert thesis');
+    if (containsHighConvictionLanguage(candidate.thesis)) {
+      return {
+        passed: false,
+        alertClass: null,
+        actionabilityState: null,
+        rejectionReasons: ['HIGH_CONVICTION_LANGUAGE_DETECTED_IN_THESIS'],
+        missingData,
+        alertPayload: null,
+        alertRecord: null,
+        outboxEntry: null,
+        renderedAlert: null,
+      };
+    }
 
     const validUntil = new Date(asOfMs + 6 * 60 * 60 * 1000).toISOString(); // 6h default validity
     const alertId = `alt_opp_${createHash('sha256').update(`${candidate.assetId}:conf:${nowIso}`).digest('hex').slice(0, 24)}`;
