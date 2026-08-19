@@ -41,3 +41,9 @@ export const applySchedulingControlPlaneMigration = async (database: DatabaseAda
   await database.transaction(async (transaction) => { await transaction.query(sql); });
 };
 
+
+export const applyRecoveryContinuityMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0005_durable_recovery_continuity.sql'): Promise<void> => {
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0005_durable_recovery_continuity'"); if (applied.rowCount === 1) return; } catch { /* table missing yet */ }
+  const sql = await readFile(path, 'utf8');
+  await database.transaction(async (transaction) => { await transaction.query(sql); });
+};

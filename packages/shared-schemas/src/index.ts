@@ -379,6 +379,7 @@ export * from './temporal.js';
 export * from './data.js';
 export * from './sig.js';
 export * from './alert.js';
+export * from './dr.js';
 
 
 export const ContractSchemas = {

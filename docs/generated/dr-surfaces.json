@@ -1,0 +1,15 @@
+{
+  "surfaces": [
+    "packages/persistence",
+    "packages/workflow-runtime",
+    "packages/shared-schemas/src/dr.ts"
+  ],
+  "migrations": [
+    "infra/migrations/0005_durable_recovery_continuity.sql"
+  ],
+  "tiers": [
+    "CRITICAL_CONFIG",
+    "CRITICAL_OBSERVATIONS",
+    "REPLAYABLE_RAW"
+  ]
+}

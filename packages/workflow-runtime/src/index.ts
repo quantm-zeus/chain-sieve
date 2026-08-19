@@ -598,3 +598,5 @@ export const handleTriggerInboxRequest = async (
   await linkTriggerToRun(database, result.inboxId, runId);
   return { status: 202, inboxId: result.inboxId, runId, isDuplicate: false };
 };
+
+export * from './recovery-continuity.js';
