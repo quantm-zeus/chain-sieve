@@ -15,6 +15,7 @@ import type {
   ExecutionImpact,
   MissingDataItem,
   OutboxEntry,
+} from './types.js';
 import { containsHighConvictionLanguage, validateEarlyWatchGuardrails } from './guardrails.js';
 
 export const DEFAULT_ALERT_POLICY_CONFIG: AlertPolicyConfig = {
