@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
 import { createRoute, z } from '@hono/zod-openapi';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import { InMemoryScheduleStore, SchedulerService, reconcileSchedules } from '@ciag/scheduler';
@@ -85,7 +84,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Schedules', content: { 'application/json': { schema: z.object({ schedules: z.array(ScheduleSchema) }) } } },
     },
   });
-    app.openapi(listRoute, async (c: any) => {
+  app.openapi(listRoute as never, async (c: any) => {
     const schedules = await store.listSchedules();
     return c.json({ schedules }, 200);
   });
@@ -121,7 +120,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(createRouteDef, async (c: any) => {
+  app.openapi(createRouteDef as never, async (c: any) => {
     const body = c.req.valid('json');
     const correlationId = c.get('correlationId');
     try {
@@ -130,7 +129,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -144,7 +143,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(getRoute, async (c: any) => {
+  app.openapi(getRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     const schedule = await store.getSchedule(id);
@@ -171,7 +170,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(validateRoute, async (c: any) => {
+  app.openapi(validateRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -196,7 +195,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(enableRoute, async (c: any) => {
+  app.openapi(enableRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -215,7 +214,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -230,7 +229,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(pauseRoute, async (c: any) => {
+  app.openapi(pauseRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -243,7 +242,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -258,7 +257,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(resumeRoute, async (c: any) => {
+  app.openapi(resumeRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -271,7 +270,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -289,7 +288,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(runNowRoute, async (c: any) => {
+  app.openapi(runNowRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
     const correlationId = c.get('correlationId');
@@ -303,7 +302,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -320,7 +319,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(dryRunRoute, async (c: any) => {
+  app.openapi(dryRunRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
     const correlationId = c.get('correlationId');
@@ -348,7 +347,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(disableRoute, async (c: any) => {
+  app.openapi(disableRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -360,7 +359,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -375,7 +374,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(deleteRoute, async (c: any) => {
+  app.openapi(deleteRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
     try {
@@ -384,7 +383,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -401,7 +400,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(duplicateRoute, async (c: any) => {
+  app.openapi(duplicateRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { name?: string };
     const correlationId = c.get('correlationId');
@@ -446,7 +445,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
-    app.openapi(editRoute, async (c: any) => {
+  app.openapi(editRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = c.req.valid('json');
     const correlationId = c.get('correlationId');
@@ -456,7 +455,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status);
+      return c.json({ error: { code, message: msg, correlationId } }, status as never);
     }
   });
 
@@ -477,7 +476,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Reconciliation', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string() })), repaired: z.number() }) } } },
     },
   });
-    app.openapi(reconcileRoute, async (c: any) => {
+  app.openapi(reconcileRoute as never, async (c: any) => {
     const body = (await c.req.json().catch(() => ({}))) as { repair?: boolean };
     const repair = body.repair === true;
     const externalReader = {
@@ -512,7 +511,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Incidents', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string(), createdAt: z.string() })) }) } } },
     },
   });
-    app.openapi(incidentsRoute, async (c: any) => {
+  app.openapi(incidentsRoute as never, async (c: any) => {
     const incidents = await store.listIncidents();
     return c.json({ incidents }, 200);
   });
