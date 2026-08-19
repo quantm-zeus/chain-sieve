@@ -13,6 +13,9 @@ export const CandidateLifecycleSchema = z.enum([
 
 export const CandidateRiskStateSchema = z.enum(['UNKNOWN', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL', 'CONFLICTING']);
 
+export type CandidateLifecycle = z.infer<typeof CandidateLifecycleSchema>;
+export type CandidateRiskState = z.infer<typeof CandidateRiskStateSchema>;
+
 export const CandidateStateSchema = z.object({
   lifecycle: CandidateLifecycleSchema,
   risk: CandidateRiskStateSchema,
