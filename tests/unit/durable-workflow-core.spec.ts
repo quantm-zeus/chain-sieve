@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { MemoryPostgresAdapter, VirtualClock } from '@ciag/test-fixtures';
-import { applyBootstrapMigration } from '@ciag/persistence';
+import { applyBootstrapMigration, applyDurableWorkflowMigration } from '@ciag/persistence';
 import {
   insertTriggerInbox,
   handleTriggerInboxRequest,
@@ -17,10 +17,16 @@ import {
 } from '@ciag/workflow-runtime';
 import { createApp } from '../../apps/api/src/app.js';
 
+const setupDb = async () => {
+  const db = new MemoryPostgresAdapter();
+  await applyBootstrapMigration(db);
+  await applyDurableWorkflowMigration(db);
+  return db;
+};
+
 describe('durable workflow core — FR-WF-001/002/003/007', () => {
   it('trigger inbox canonicalizes external_message_id and is idempotent (202)', async () => {
-    const db = new MemoryPostgresAdapter();
-    await applyBootstrapMigration(db);
+    const db = await setupDb();
     const clock = new VirtualClock();
     const r1 = await insertTriggerInbox(db, {
       source: 'qstash',
@@ -59,8 +65,7 @@ describe('durable workflow core — FR-WF-001/002/003/007', () => {
   });
 
   it('workflow steps persist required fields and resume from last checkpoint after crash', async () => {
-    const db = new MemoryPostgresAdapter();
-    await applyBootstrapMigration(db);
+    const db = await setupDb();
     const clock = new VirtualClock();
     const runId = 'run-test-1';
     await createWorkflowRun(db, { id: runId, workflowName: 'discovery', now: clock.now() });
@@ -103,8 +108,7 @@ describe('durable workflow core — FR-WF-001/002/003/007', () => {
   });
 
   it('lease acquisition uses monotonically increasing fencing token; stale commit rejected', async () => {
-    const db = new MemoryPostgresAdapter();
-    await applyBootstrapMigration(db);
+    const db = await setupDb();
     const clock = new VirtualClock();
     const l1 = await acquireLease(db, 'lease-run-1', 'worker-a', 60000, clock.now());
     expect(l1.acquired).toBe(true);
@@ -152,8 +156,7 @@ describe('durable workflow core — FR-WF-001/002/003/007', () => {
   });
 
   it('exhausted steps transition to DEAD_LETTERED with error_class, retryable flag and admin retry from checkpoint', async () => {
-    const db = new MemoryPostgresAdapter();
-    await applyBootstrapMigration(db);
+    const db = await setupDb();
     const clock = new VirtualClock();
     const runId = 'run-dl-1';
     await createWorkflowRun(db, { id: runId, workflowName: 'discovery', now: clock.now() });
@@ -184,8 +187,7 @@ describe('durable workflow core — FR-WF-001/002/003/007', () => {
   });
 
   it('API returns 202 without duplicate workflow creation for duplicate external_message_id', async () => {
-    const db = new MemoryPostgresAdapter();
-    await applyBootstrapMigration(db);
+    const db = await setupDb();
     const clock = new VirtualClock();
     const app = createApp({
       allowedOrigins: ['https://allowed.example'],
