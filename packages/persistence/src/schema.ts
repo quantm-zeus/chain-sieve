@@ -16,3 +16,60 @@ export const workflowSteps = pgTable('workflow_steps', { stepId: text('step_id')
 export const stepAttempts = pgTable('step_attempts', { id: text().primaryKey(), stepId: text('step_id').notNull(), attempt: integer().notNull(), startedAt: timestamp('started_at', { withTimezone: true }).notNull(), completedAt: timestamp('completed_at', { withTimezone: true }), errorClass: text('error_class'), errorMessage: text('error_message'), retryable: boolean(), outputHash: text('output_hash') });
 export const workflowLeases = pgTable('workflow_leases', { leaseKey: text('lease_key').primaryKey(), owner: text().notNull(), version: bigint({ mode: 'number' }).notNull(), acquiredAt: timestamp('acquired_at', { withTimezone: true }).notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), runId: text('run_id') });
 export const deadLetterItems = pgTable('dead_letter_items', { id: text().primaryKey(), runId: text('run_id').notNull(), stepId: text('step_id'), errorClass: text('error_class').notNull(), retryable: boolean().notNull(), attempt: integer().notNull(), payloadJson: jsonb('payload_json'), errorMessage: text('error_message'), status: text().notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), lastRetryAt: timestamp('last_retry_at', { withTimezone: true }) });
+export const schedules = pgTable('schedules', {
+  id: text().primaryKey(),
+  name: text().notNull(),
+  description: text(),
+  state: text().notNull(),
+  currentVersionId: text('current_version_id'),
+  currentVersionNumber: integer('current_version_number'),
+  externalScheduleId: text('external_schedule_id'),
+  paused: boolean().notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+});
+export const scheduleVersions = pgTable(
+  'schedule_versions',
+  {
+    id: text().primaryKey(),
+    scheduleId: text('schedule_id').notNull(),
+    version: integer().notNull(),
+    cron: text().notNull(),
+    timezone: text().notNull(),
+    workflowVersion: text('workflow_version').notNull(),
+    agentProfileVersion: text('agent_profile_version').notNull(),
+    toolProfileVersion: text('tool_profile_version').notNull(),
+    modelProfileVersion: text('model_profile_version'),
+    promptVersion: text('prompt_version'),
+    outcomeProfileId: text('outcome_profile_id'),
+    rankingPolicyId: text('ranking_policy_id'),
+    alertPolicyId: text('alert_policy_id'),
+    budgets: jsonb().notNull(),
+    concurrency: integer().notNull(),
+    destination: text().notNull(),
+    externalId: text('external_id'),
+    targetScope: jsonb('target_scope').notNull(),
+    lifecycle: text().notNull(),
+    configHash: text('config_hash').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+    createdBy: text('created_by').notNull(),
+  },
+  (table) => [uniqueIndex('schedule_versions_schedule_version_idx').on(table.scheduleId, table.version), index('schedule_versions_schedule_idx').on(table.scheduleId)],
+);
+export const scheduleIncidents = pgTable('schedule_incidents', {
+  id: text().primaryKey(),
+  type: text().notNull(),
+  scheduleId: text('schedule_id'),
+  externalScheduleId: text('external_schedule_id'),
+  detail: text().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+});
+export const resolvedRunConfigs = pgTable('resolved_run_configs', {
+  id: text().primaryKey(),
+  scheduleId: text('schedule_id').notNull(),
+  scheduleVersionId: text('schedule_version_id').notNull(),
+  runId: text('run_id').notNull(),
+  resolvedJson: jsonb('resolved_json').notNull(),
+  configHash: text('config_hash').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+});
