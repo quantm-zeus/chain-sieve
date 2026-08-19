@@ -155,8 +155,6 @@ export const hashValue = (value: unknown): string =>
 
 export const hashConfig = (config: Record<string, unknown>): string => hashValue(JSON.stringify(config, Object.keys(config as object).sort()));
 
-const VALID_TIMEZONES = new Set(['UTC', 'America/New_York', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Singapore', 'Australia/Sydney', 'Etc/UTC']);
-
 const CRON_PART_RE = /^(\*|\*\/\d+|\d+(-\d+)?(,\d+(-\d+)?)*)$/;
 
 export const validateCron = (cron: string): ValidationIssue | null => {
@@ -776,7 +774,7 @@ export class DatabaseScheduleStore implements ScheduleStore {
   constructor(private readonly db: DatabaseAdapter) {}
 
   async getSchedule(id: string): Promise<Schedule | null> {
-    const result = await this.db.query<Schedule & Record<string, unknown>>('SELECT id, name, description, state, current_version_id as \"currentVersionId\", current_version_number as \"currentVersionNumber\", external_schedule_id as \"externalScheduleId\", paused, created_at as \"createdAt\", updated_at as \"updatedAt\" FROM schedules WHERE id=$1', [id]);
+    const result = await this.db.query<Schedule & Record<string, unknown>>('SELECT id, name, description, state, current_version_id as "currentVersionId", current_version_number as "currentVersionNumber", external_schedule_id as "externalScheduleId", paused, created_at as "createdAt", updated_at as "updatedAt" FROM schedules WHERE id=$1', [id]);
     if (result.rows.length === 0) return null;
     const row = result.rows[0] as unknown as Schedule;
     // Normalize timestamp fields to ISO strings
@@ -784,7 +782,7 @@ export class DatabaseScheduleStore implements ScheduleStore {
   }
 
   async listSchedules(): Promise<Schedule[]> {
-    const result = await this.db.query<Record<string, unknown>>('SELECT id, name, description, state, current_version_id as \"currentVersionId\", current_version_number as \"currentVersionNumber\", external_schedule_id as \"externalScheduleId\", paused, created_at as \"createdAt\", updated_at as \"updatedAt\" FROM schedules WHERE state != \'DELETED\' ORDER BY created_at');
+    const result = await this.db.query<Record<string, unknown>>('SELECT id, name, description, state, current_version_id as "currentVersionId", current_version_number as "currentVersionNumber", external_schedule_id as "externalScheduleId", paused, created_at as "createdAt", updated_at as "updatedAt" FROM schedules WHERE state != \'DELETED\' ORDER BY created_at');
     return result.rows.map(r => ({ ...r, createdAt: toIso((r as unknown as Schedule).createdAt), updatedAt: toIso((r as unknown as Schedule).updatedAt) } as unknown as Schedule));
   }
 
@@ -798,14 +796,14 @@ export class DatabaseScheduleStore implements ScheduleStore {
   }
 
   async getVersion(id: string): Promise<ScheduleVersion | null> {
-    const result = await this.db.query<Record<string, unknown>>('SELECT id, schedule_id as \"scheduleId\", version, cron, timezone, workflow_version as \"workflowVersion\", agent_profile_version as \"agentProfileVersion\", tool_profile_version as \"toolProfileVersion\", model_profile_version as \"modelProfileVersion\", prompt_version as \"promptVersion\", outcome_profile_id as \"outcomeProfileId\", ranking_policy_id as \"rankingPolicyId\", alert_policy_id as \"alertPolicyId\", budgets, concurrency, destination, external_id as \"externalId\", target_scope as \"targetScope\", lifecycle, config_hash as \"configHash\", created_at as \"createdAt\", created_by as \"createdBy\" FROM schedule_versions WHERE id=$1', [id]);
+    const result = await this.db.query<Record<string, unknown>>('SELECT id, schedule_id as "scheduleId", version, cron, timezone, workflow_version as "workflowVersion", agent_profile_version as "agentProfileVersion", tool_profile_version as "toolProfileVersion", model_profile_version as "modelProfileVersion", prompt_version as "promptVersion", outcome_profile_id as "outcomeProfileId", ranking_policy_id as "rankingPolicyId", alert_policy_id as "alertPolicyId", budgets, concurrency, destination, external_id as "externalId", target_scope as "targetScope", lifecycle, config_hash as "configHash", created_at as "createdAt", created_by as "createdBy" FROM schedule_versions WHERE id=$1', [id]);
     if (result.rows.length === 0) return null;
     const r = result.rows[0] as unknown as ScheduleVersion;
     return { ...r, budgets: parseJson(r.budgets), targetScope: parseJson(r.targetScope), createdAt: toIso(r.createdAt) } as ScheduleVersion;
   }
 
   async listVersions(scheduleId: string): Promise<ScheduleVersion[]> {
-    const result = await this.db.query<Record<string, unknown>>('SELECT id, schedule_id as \"scheduleId\", version, cron, timezone, workflow_version as \"workflowVersion\", agent_profile_version as \"agentProfileVersion\", tool_profile_version as \"toolProfileVersion\", model_profile_version as \"modelProfileVersion\", prompt_version as \"promptVersion\", outcome_profile_id as \"outcomeProfileId\", ranking_policy_id as \"rankingPolicyId\", alert_policy_id as \"alertPolicyId\", budgets, concurrency, destination, external_id as \"externalId\", target_scope as \"targetScope\", lifecycle, config_hash as \"configHash\", created_at as \"createdAt\", created_by as \"createdBy\" FROM schedule_versions WHERE schedule_id=$1 ORDER BY version', [scheduleId]);
+    const result = await this.db.query<Record<string, unknown>>('SELECT id, schedule_id as "scheduleId", version, cron, timezone, workflow_version as "workflowVersion", agent_profile_version as "agentProfileVersion", tool_profile_version as "toolProfileVersion", model_profile_version as "modelProfileVersion", prompt_version as "promptVersion", outcome_profile_id as "outcomeProfileId", ranking_policy_id as "rankingPolicyId", alert_policy_id as "alertPolicyId", budgets, concurrency, destination, external_id as "externalId", target_scope as "targetScope", lifecycle, config_hash as "configHash", created_at as "createdAt", created_by as "createdBy" FROM schedule_versions WHERE schedule_id=$1 ORDER BY version', [scheduleId]);
     return result.rows.map(r => {
       const v = r as unknown as ScheduleVersion;
       return { ...v, budgets: parseJson(v.budgets), targetScope: parseJson(v.targetScope), createdAt: toIso(v.createdAt) } as ScheduleVersion;
@@ -836,7 +834,7 @@ export class DatabaseScheduleStore implements ScheduleStore {
   }
 
   async listIncidents(): Promise<Array<{ type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }>> {
-    const result = await this.db.query<Record<string, unknown>>('SELECT type, schedule_id as \"scheduleId\", external_schedule_id as \"externalScheduleId\", detail, created_at as \"createdAt\" FROM schedule_incidents ORDER BY created_at');
+    const result = await this.db.query<Record<string, unknown>>('SELECT type, schedule_id as "scheduleId", external_schedule_id as "externalScheduleId", detail, created_at as "createdAt" FROM schedule_incidents ORDER BY created_at');
     return result.rows.map(r => ({ type: r.type as string, scheduleId: r.scheduleId as string | undefined ?? undefined, externalScheduleId: r.externalScheduleId as string | undefined ?? undefined, detail: r.detail as string, createdAt: toIso(r.createdAt as string) }));
   }
 }
