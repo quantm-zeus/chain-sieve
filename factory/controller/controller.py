@@ -208,7 +208,7 @@ class FactoryController:
                 record.started_at = record.started_at or selected.updated_at or utc_now()
                 if sessions:
                     _apply_session(record, sessions[0])
-                    observed_at = max(filter(None, [sessions[0].last_activity_at, selected.updated_at]), default=None)
+                    observed_at = _latest_iso(sessions[0].last_activity_at, selected.updated_at)
                     _note_progress(record, _progress_fingerprint(sessions[0], selected, record), observed_at)
                 else:
                     _note_progress(record, _progress_fingerprint(None, selected, record), selected.updated_at)
@@ -1639,11 +1639,33 @@ def _progress_fingerprint(
     )
 
 
+def _latest_iso(*values: Any) -> str | None:
+    best_dt: datetime | None = None
+    best_str: str | None = None
+    for v in values:
+        if not v:
+            continue
+        try:
+            dt = datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=UTC)
+            if best_dt is None or dt > best_dt:
+                best_dt = dt
+                best_str = str(v)
+        except (ValueError, TypeError):
+            continue
+    return best_str
+
+
 def _note_progress(record: PackageRecord, fingerprint: str, observed_at: str | None = None) -> None:
     if record.progress_fingerprint == fingerprint:
         return
     record.progress_fingerprint = fingerprint
-    record.last_progress_at = observed_at or utc_now()
+    candidate = observed_at or utc_now()
+    if not record.last_progress_at:
+        record.last_progress_at = candidate
+    else:
+        record.last_progress_at = _latest_iso(record.last_progress_at, candidate) or candidate
 
 
 def _session_package_status(record: PackageRecord, session: Session, config: FactoryConfig) -> PackageStatus:
@@ -1653,7 +1675,7 @@ def _session_package_status(record: PackageRecord, session: Session, config: Fac
         return PackageStatus.FAILED
     if status in {"needs_input", "waiting_input", "blocked"} or activity in {"needs_input", "waiting_input", "blocked"}:
         return PackageStatus.WAITING_INPUT
-    progress_at = session.last_activity_at or record.last_progress_at or record.started_at
+    progress_at = _latest_iso(session.last_activity_at, record.last_progress_at, record.started_at)
     if status in {"starting", "spawning", "provisioning", "pending"}:
         return PackageStatus.STUCK if progress_at and _expired(progress_at, config.max_starting_seconds) else PackageStatus.STARTING
     if status == "no_signal":

@@ -554,6 +554,59 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         self.assertEqual(record.correction_attempts, 1)
         self.assertEqual(record.status, PackageStatus.CI_FIX)
 
+    def test_ci_correction_stale_activity_fresh_progress_waits(self) -> None:
+        """
+        TEST — CI CORRECTION STALE ACTIVITY FRESH PROGRESS WAITS
+        Given: Open PR, CI FAIL, CI correction dispatched, session.last_activity_at is stale (from yesterday),
+               but record.last_progress_at is fresh (prompt just sent 10 seconds ago).
+        Assert: Controller evaluates session status as ACTIVE, does not treat it as stuck, does not send duplicate prompt, does not replan.
+        """
+        pkg = package("workflow-core")
+        wf_key = key("workflow-core")
+        issue = Issue(129, "OPEN", "", "url/129", "factory-bot")
+        head = "106a47efa02705caa425c5661b671267052b17ef"
+        pr = PullRequest(
+            135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
+            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            updated_at=(datetime.now(UTC) - timedelta(hours=18)).isoformat(),
+        )
+
+        stale_yesterday = (datetime.now(UTC) - timedelta(hours=18)).isoformat()
+        fresh_ten_secs = (datetime.now(UTC) - timedelta(seconds=10)).isoformat()
+        session = Session("chainsieve-90", f"factory/{wf_key}", "muse", "working", "working", "129", last_activity_at=stale_yesterday)
+
+        token = f"CI:{head}:checks not passing: CI"
+        prior_record = PackageRecord(
+            status=PackageStatus.CI_FIX,
+            issue_number=129,
+            session_id="chainsieve-90",
+            provider="muse",
+            initial_provider="agy",
+            pr_number=135,
+            head_sha=head,
+            ci_status="FAIL",
+            last_error=token,
+            correction_attempts=2,
+            task_attempts=2,
+            started_at=stale_yesterday,
+            last_progress_at=fresh_ten_secs,
+        )
+        self.store.save({wf_key: prior_record})
+
+        ao = MockAO(sessions_by_issue={"129": [session]})
+        github = MockGitHub(issues_dict={wf_key: issue}, prs_dict={wf_key: [pr]})
+        controller = FactoryController(self.repo_root, self.cfg, self.store, github, ao)
+
+        self.cfg.plan_path.write_text(json.dumps({"id": "m1", "objective": "test", "workPackages": [pkg]}), encoding="utf-8")
+        records = controller.tick()
+
+        record = records[wf_key]
+        self.assertEqual(len(ao.sent), 0)
+        self.assertEqual(len(ao.spawns), 0)
+        self.assertEqual(record.correction_attempts, 2)
+        self.assertEqual(record.status, PackageStatus.CI_FIX)
+        self.assertFalse(record.replan_attempted)
+
 
 if __name__ == "__main__":
     unittest.main()
