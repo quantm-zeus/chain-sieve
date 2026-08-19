@@ -193,14 +193,18 @@ export const processOutboxEntry = async (
   const isShadowTopic = row.topic.startsWith('alert.shadow.');
   const isShadowMode = Boolean(options.shadowMode || isShadowTopic);
 
-  let deliveryResult: { status: 'AVAILABLE' | 'UNAVAILABLE'; reason?: string };
+  let deliveryResult: DegradedResult<unknown>;
 
   const payloadObj = typeof row.payload_json === 'string' ? JSON.parse(row.payload_json) : row.payload_json;
   const templateName = row.topic.replace('alert.', '');
 
   if (isShadowMode && !(notifications instanceof ShadowNotificationAdapter)) {
     // Prevent external dispatch in shadow mode when non-shadow transport is provided
-    deliveryResult = { status: 'AVAILABLE' };
+    deliveryResult = {
+      status: 'AVAILABLE',
+      capabilityMode: 'SYNTHETIC_SHADOW',
+      value: { deliveryId: `shadow-${outboxId}` },
+    };
   } else {
     deliveryResult = await notifications.enqueue({
       outboxId,
