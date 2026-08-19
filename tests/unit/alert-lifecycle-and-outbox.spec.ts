@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyBootstrapMigration } from '@ciag/persistence';
+import { applyBootstrapMigration, applyAlertLifecycleMigration } from '@ciag/persistence';
 import { MemoryPostgresAdapter, FakeNotificationTransport } from '@ciag/test-fixtures';
 import {
   evaluateAlertPolicy,
@@ -460,6 +460,7 @@ describe('Transactional Outbox & Delivery Worker (FR-WF-006, AC-141)', () => {
   it('commits decision observation, alert record, and outbox entry in one atomic transaction', async () => {
     const database = new MemoryPostgresAdapter();
     await applyBootstrapMigration(database);
+    await applyAlertLifecycleMigration(database);
 
     const input = makeCandidateInput();
     const policyResult = evaluateAlertPolicy(input);
@@ -499,6 +500,7 @@ describe('Transactional Outbox & Delivery Worker (FR-WF-006, AC-141)', () => {
   it('delivers from outbox idempotently with retry and state updates', async () => {
     const database = new MemoryPostgresAdapter();
     await applyBootstrapMigration(database);
+    await applyAlertLifecycleMigration(database);
 
     const input = makeCandidateInput();
     const policyResult = evaluateAlertPolicy(input);
@@ -536,6 +538,7 @@ describe('Shadow Mode (FR-WF-008)', () => {
   it('produces identical evidence and DB persistence without external notification side effects', async () => {
     const database = new MemoryPostgresAdapter();
     await applyBootstrapMigration(database);
+    await applyAlertLifecycleMigration(database);
 
     const shadowCandidate = makeCandidateInput({ shadowMode: true });
     const policyResult = evaluateAlertPolicy(shadowCandidate);
