@@ -263,14 +263,55 @@ export interface LeaseAcquireResult {
 export const acquireLease = async (database: DatabaseAdapter, leaseKey: string, owner: string, ttlMs: number, now: string): Promise<LeaseAcquireResult> => {
   const nowMs = Date.parse(now);
   const expiresAt = new Date(nowMs + ttlMs).toISOString();
-  const toMs = (value: unknown): number => new Date(value as string | Date).getTime();
-  // Try insert
-  const inserted = await database.query<{ lease_key: string; version: number; expires_at: string | Date }>(
-    `INSERT INTO workflow_leases (lease_key, owner, version, acquired_at, expires_at) VALUES ($1,$2,1,$3,$4) ON CONFLICT (lease_key) DO NOTHING RETURNING lease_key, version, expires_at`,
-    [leaseKey, owner, now, expiresAt],
+  const toMs = (value: unknown): number => {
+    if (value instanceof Date) return value.getTime();
+    const parsed = Date.parse(String(value));
+    if (Number.isNaN(parsed)) return new Date(String(value)).getTime();
+    return parsed;
+  };
+  // Check existing first for correctness under pg-mem
+  const preExisting = await database.query<{ owner: string; version: number; expires_at: string | Date }>(
+    `SELECT owner, version, expires_at FROM workflow_leases WHERE lease_key=$1`,
+    [leaseKey],
   );
-  if (inserted.rows.length === 1) return { leaseKey, owner, version: 1, expiresAt: String(inserted.rows[0]!.expires_at), acquired: true };
-  // Existing lease — check expiry
+  if (preExisting.rows.length === 1) {
+    const row = preExisting.rows[0]!;
+    const expired = toMs(row.expires_at) <= nowMs;
+    if (!expired && row.owner !== owner) {
+      return { leaseKey, owner: String(row.owner), version: Number(row.version), expiresAt: String(row.expires_at), acquired: false };
+    }
+    if (!expired && row.owner === owner) {
+      // Renew for same owner if still valid — bump version
+      const nextVersion = Number(row.version) + 1;
+      const updated = await database.query<{ version: number; expires_at: string | Date }>(
+        `UPDATE workflow_leases SET version=$1, expires_at=$2, acquired_at=$3 WHERE lease_key=$4 AND version=$5 RETURNING version, expires_at`,
+        [nextVersion, expiresAt, now, leaseKey, row.version],
+      );
+      if (updated.rows.length === 1) return { leaseKey, owner, version: Number(updated.rows[0]!.version), expiresAt: String(updated.rows[0]!.expires_at), acquired: true };
+      const reread = await database.query<{ owner: string; version: number; expires_at: string | Date }>(`SELECT owner, version, expires_at FROM workflow_leases WHERE lease_key=$1`, [leaseKey]);
+      return { leaseKey, owner: String(reread.rows[0]!.owner), version: Number(reread.rows[0]!.version), expiresAt: String(reread.rows[0]!.expires_at), acquired: String(reread.rows[0]!.owner) === owner };
+    }
+    // Expired — takeover
+    const nextVersion = Number(row.version) + 1;
+    const updated = await database.query<{ version: number; expires_at: string | Date }>(
+      `UPDATE workflow_leases SET owner=$1, version=$2, acquired_at=$3, expires_at=$4 WHERE lease_key=$5 AND version=$6 RETURNING version, expires_at`,
+      [owner, nextVersion, now, expiresAt, leaseKey, row.version],
+    );
+    if (updated.rows.length === 1) return { leaseKey, owner, version: Number(updated.rows[0]!.version), expiresAt: String(updated.rows[0]!.expires_at), acquired: true };
+    const reread = await database.query<{ owner: string; version: number; expires_at: string | Date }>(`SELECT owner, version, expires_at FROM workflow_leases WHERE lease_key=$1`, [leaseKey]);
+    return { leaseKey, owner: String(reread.rows[0]!.owner), version: Number(reread.rows[0]!.version), expiresAt: String(reread.rows[0]!.expires_at), acquired: String(reread.rows[0]!.owner) === owner };
+  }
+  // No existing — try insert
+  try {
+    const inserted = await database.query<{ lease_key: string; version: number; expires_at: string | Date }>(
+      `INSERT INTO workflow_leases (lease_key, owner, version, acquired_at, expires_at) VALUES ($1,$2,1,$3,$4) ON CONFLICT (lease_key) DO NOTHING RETURNING lease_key, version, expires_at`,
+      [leaseKey, owner, now, expiresAt],
+    );
+    if (inserted.rows.length === 1) return { leaseKey, owner, version: 1, expiresAt: String(inserted.rows[0]!.expires_at), acquired: true };
+  } catch {
+    // Fall through to select
+  }
+  // Race — fetch again
   const existing = await database.query<{ owner: string; version: number; expires_at: string | Date }>(`SELECT owner, version, expires_at FROM workflow_leases WHERE lease_key=$1`, [leaseKey]);
   const row = existing.rows[0]!;
   const expired = toMs(row.expires_at) <= nowMs;
