@@ -6,7 +6,6 @@ import {
   resolveConfigPrecedence,
   validateCron,
   validateTimezone,
-  validateScheduleVersion,
 } from '../../packages/scheduler/src/index.js';
 
 describe('Scheduling Control Plane (FR-WF-004, FR-WF-005, FR-ADM-003)', () => {
@@ -164,7 +163,7 @@ describe('Scheduling Control Plane (FR-WF-004, FR-WF-005, FR-ADM-003)', () => {
         externalState.set(externalId, { externalId, cron: s.cron, timezone: s.timezone, paused: false, destination: s.destination, scheduleId: s.scheduleId });
         return { externalId };
       },
-      update: async (id: string, patch: any) => {
+      update: async (id: string, patch: Partial<{ cron: string; timezone: string; paused: boolean; destination: string }>) => {
         const cur = externalState.get(id);
         if (cur) externalState.set(id, { ...cur, ...patch });
       },
