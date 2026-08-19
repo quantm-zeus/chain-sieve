@@ -33,15 +33,15 @@ export interface ScheduleVersion {
   workflowVersion: string;
   agentProfileVersion: string;
   toolProfileVersion: string;
-  modelProfileVersion?: string | null;
-  promptVersion?: string | null;
-  outcomeProfileId?: string | null;
-  rankingPolicyId?: string | null;
-  alertPolicyId?: string | null;
+  modelProfileVersion?: string | null | undefined;
+  promptVersion?: string | null | undefined;
+  outcomeProfileId?: string | null | undefined;
+  rankingPolicyId?: string | null | undefined;
+  alertPolicyId?: string | null | undefined;
   budgets: Record<string, unknown>;
   concurrency: number;
   destination: string;
-  externalId?: string | null;
+  externalId?: string | null | undefined;
   targetScope: Record<string, unknown>;
   lifecycle: ConfigLifecycle;
   configHash: string;
@@ -52,11 +52,11 @@ export interface ScheduleVersion {
 export interface Schedule {
   id: string;
   name: string;
-  description?: string | null;
+  description?: string | null | undefined;
   state: ScheduleState;
-  currentVersionId?: string | null;
-  currentVersionNumber?: number | null;
-  externalScheduleId?: string | null;
+  currentVersionId?: string | null | undefined;
+  currentVersionNumber?: number | null | undefined;
+  externalScheduleId?: string | null | undefined;
   paused: boolean;
   createdAt: string;
   updatedAt: string;
@@ -67,7 +67,7 @@ export interface ResolvedConfig {
   workflowVersion: Record<string, unknown>;
   agentProfileVersion: Record<string, unknown>;
   scheduleVersionOverrides: Record<string, unknown>;
-  explicitRunNowOverrides?: Record<string, unknown> | null;
+  explicitRunNowOverrides?: Record<string, unknown> | null | undefined;
   resolved: Record<string, unknown>;
   configHash: string;
 }
@@ -75,7 +75,7 @@ export interface ResolvedConfig {
 export interface ValidationIssue {
   code: string;
   message: string;
-  field?: string;
+  field?: string | undefined;
 }
 
 export interface ValidationResult {
@@ -85,14 +85,14 @@ export interface ValidationResult {
     estimatedRunsPerDay: number;
     estimatedCostPerDay: number;
     sustainable: boolean;
-    constraints?: string[];
-  };
+    constraints?: string[] | undefined;
+  } | undefined;
 }
 
 export interface ReconciliationIncident {
   type: 'MISSING_EXTERNAL' | 'ORPHAN_EXTERNAL' | 'CRON_MISMATCH' | 'TIMEZONE_MISMATCH' | 'PAUSED_MISMATCH' | 'DESTINATION_MISMATCH' | 'EXTERNAL_ID_MISMATCH';
-  scheduleId?: string;
-  externalScheduleId?: string;
+  scheduleId?: string | undefined;
+  externalScheduleId?: string | undefined;
   detail: string;
 }
 
@@ -108,7 +108,7 @@ export interface ExternalSchedule {
   timezone: string;
   paused: boolean;
   destination: string;
-  scheduleId?: string | null;
+  scheduleId?: string | null | undefined;
 }
 
 export interface ExternalSchedulerReader {
@@ -226,10 +226,10 @@ export const resolveConfigPrecedence = (input: {
 
 export interface ValidateScheduleInput {
   version: Pick<ScheduleVersion, 'cron' | 'timezone' | 'workflowVersion' | 'agentProfileVersion' | 'toolProfileVersion' | 'budgets' | 'concurrency' | 'destination'>;
-  versionExists?: (kind: 'workflow' | 'agentProfile' | 'toolProfile' | 'modelProfile' | 'prompt' | 'outcomeProfile' | 'rankingPolicy' | 'alertPolicy', id: string) => Promise<{ exists: boolean; lifecycle?: string }>;
-  budgetCheck?: (budgets: Record<string, unknown>) => Promise<{ ok: boolean; reason?: string }>;
-  concurrencyCheck?: (concurrency: number) => { ok: boolean; reason?: string };
-  costForecast?: (version: ValidateScheduleInput['version']) => Promise<{ sustainable: boolean; estimatedRunsPerDay: number; estimatedCostPerDay: number; constraints?: string[] }>;
+  versionExists?: ((kind: 'workflow' | 'agentProfile' | 'toolProfile' | 'modelProfile' | 'prompt' | 'outcomeProfile' | 'rankingPolicy' | 'alertPolicy', id: string) => Promise<{ exists: boolean; lifecycle?: string | undefined }>) | undefined;
+  budgetCheck?: ((budgets: Record<string, unknown>) => Promise<{ ok: boolean; reason?: string | undefined }>) | undefined;
+  concurrencyCheck?: ((concurrency: number) => { ok: boolean; reason?: string | undefined }) | undefined;
+  costForecast?: ((version: ValidateScheduleInput['version']) => Promise<{ sustainable: boolean; estimatedRunsPerDay: number; estimatedCostPerDay: number; constraints?: string[] | undefined }>) | undefined;
 }
 
 export const validateScheduleVersion = async (input: ValidateScheduleInput): Promise<ValidationResult> => {
@@ -290,6 +290,7 @@ export const validateScheduleVersion = async (input: ValidateScheduleInput): Pro
     }
   }
 
+  if (costForecast === undefined) return { valid: issues.length === 0, issues };
   return { valid: issues.length === 0, issues, costForecast };
 };
 
@@ -305,14 +306,14 @@ export interface ScheduleStore {
   listVersions(scheduleId: string): Promise<ScheduleVersion[]>;
   putVersion(version: ScheduleVersion): Promise<void>;
   getActiveVersion(scheduleId: string): Promise<ScheduleVersion | null>;
-  createIncident(incident: { type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }): Promise<void>;
-  listIncidents(): Promise<Array<{ type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }>>;
+  createIncident(incident: { type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }): Promise<void>;
+  listIncidents(): Promise<Array<{ type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }>>;
 }
 
 export class InMemoryScheduleStore implements ScheduleStore {
   readonly schedules = new Map<string, Schedule>();
   readonly versions = new Map<string, ScheduleVersion>();
-  readonly incidents: Array<{ type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }> = [];
+  readonly incidents: Array<{ type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }> = [];
 
   async getSchedule(id: string): Promise<Schedule | null> { return this.schedules.get(id) ?? null; }
   async listSchedules(): Promise<Schedule[]> { return [...this.schedules.values()]; }
@@ -325,23 +326,23 @@ export class InMemoryScheduleStore implements ScheduleStore {
     if (!schedule?.currentVersionId) return null;
     return this.versions.get(schedule.currentVersionId) ?? null;
   }
-  async createIncident(incident: { type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }): Promise<void> { this.incidents.push({ ...incident }); }
-  async listIncidents(): Promise<Array<{ type: string; scheduleId?: string; externalScheduleId?: string; detail: string; createdAt: string }>> { return [...this.incidents]; }
+  async createIncident(incident: { type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }): Promise<void> { this.incidents.push({ ...incident }); }
+  async listIncidents(): Promise<Array<{ type: string; scheduleId?: string | undefined; externalScheduleId?: string | undefined; detail: string; createdAt: string }>> { return [...this.incidents]; }
 }
 
 export interface SchedulerServiceDeps {
   store: ScheduleStore;
-  externalScheduler?: ExternalSchedulerWriter | null;
-  now?: () => string;
-  idGenerator?: () => string;
-  versionExists?: ValidateScheduleInput['versionExists'];
-  budgetCheck?: ValidateScheduleInput['budgetCheck'];
-  concurrencyCheck?: ValidateScheduleInput['concurrencyCheck'];
-  costForecast?: ValidateScheduleInput['costForecast'];
+  externalScheduler?: ExternalSchedulerWriter | null | undefined;
+  now?: (() => string) | undefined;
+  idGenerator?: (() => string) | undefined;
+  versionExists?: ValidateScheduleInput['versionExists'] | undefined;
+  budgetCheck?: ValidateScheduleInput['budgetCheck'] | undefined;
+  concurrencyCheck?: ValidateScheduleInput['concurrencyCheck'] | undefined;
+  costForecast?: ValidateScheduleInput['costForecast'] | undefined;
   // resolved config registries for precedence demo
-  systemDefaults?: Record<string, unknown>;
-  workflowRegistry?: Map<string, Record<string, unknown>>;
-  agentProfileRegistry?: Map<string, Record<string, unknown>>;
+  systemDefaults?: Record<string, unknown> | undefined;
+  workflowRegistry?: Map<string, Record<string, unknown>> | undefined;
+  agentProfileRegistry?: Map<string, Record<string, unknown>> | undefined;
 }
 
 export class SchedulerService {
@@ -359,14 +360,14 @@ export class SchedulerService {
 
   // CREATE
   async create(input: {
-    name: string; description?: string | null;
+    name: string; description?: string | null | undefined;
     cron: string; timezone: string;
     workflowVersion: string; agentProfileVersion: string; toolProfileVersion: string;
-    modelProfileVersion?: string | null; promptVersion?: string | null;
-    outcomeProfileId?: string | null; rankingPolicyId?: string | null; alertPolicyId?: string | null;
+    modelProfileVersion?: string | null | undefined; promptVersion?: string | null | undefined;
+    outcomeProfileId?: string | null | undefined; rankingPolicyId?: string | null | undefined; alertPolicyId?: string | null | undefined;
     budgets: Record<string, unknown>; concurrency: number;
-    destination: string; targetScope?: Record<string, unknown>;
-    createdBy?: string;
+    destination: string; targetScope?: Record<string, unknown> | undefined;
+    createdBy?: string | undefined;
   }): Promise<{ schedule: Schedule; version: ScheduleVersion }> {
     if (!input.name || input.name.trim().length === 0) throw new Error('SCHEDULE_NAME_REQUIRED');
     const cronIssue = validateCron(input.cron);
@@ -403,7 +404,7 @@ export class SchedulerService {
   }
 
   // EDIT_DRAFT — creates new immutable version; only allowed in DRAFT
-  async editDraft(scheduleId: string, patch: Partial<Pick<ScheduleVersion, 'cron' | 'timezone' | 'workflowVersion' | 'agentProfileVersion' | 'toolProfileVersion' | 'budgets' | 'concurrency' | 'destination' | 'targetScope'>> & { name?: string; description?: string | null }, actor?: string): Promise<{ schedule: Schedule; version: ScheduleVersion }> {
+  async editDraft(scheduleId: string, patch: Partial<Pick<ScheduleVersion, 'cron' | 'timezone' | 'workflowVersion' | 'agentProfileVersion' | 'toolProfileVersion' | 'budgets' | 'concurrency' | 'destination' | 'targetScope'>> & { name?: string | undefined; description?: string | null | undefined }, actor?: string | undefined): Promise<{ schedule: Schedule; version: ScheduleVersion }> {
     const schedule = await this.deps.store.getSchedule(scheduleId);
     if (!schedule) throw new Error('SCHEDULE_NOT_FOUND');
     if (schedule.state !== 'DRAFT') throw new Error('EDIT_ONLY_IN_DRAFT');
