@@ -1,47 +1,7 @@
-import { createRoute, z } from '@hono/zod-openapi';
+import { z } from 'zod';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import { InMemoryScheduleStore, SchedulerService, reconcileSchedules } from '@ciag/scheduler';
 import type { ApiEnv } from './app.js';
-
-const ScheduleStateSchema = z.enum(['DRAFT', 'ACTIVE', 'PAUSED', 'DEGRADED', 'DISABLED', 'DELETED']);
-const ConfigLifecycleSchema = z.enum(['DRAFT', 'VALIDATED', 'APPROVED', 'ACTIVE', 'DEPRECATED', 'ROLLED_BACK']);
-
-const ScheduleVersionSchema = z.object({
-  id: z.string(),
-  scheduleId: z.string(),
-  version: z.number(),
-  cron: z.string(),
-  timezone: z.string(),
-  workflowVersion: z.string(),
-  agentProfileVersion: z.string(),
-  toolProfileVersion: z.string(),
-  budgets: z.record(z.string(), z.unknown()),
-  concurrency: z.number(),
-  destination: z.string(),
-  lifecycle: ConfigLifecycleSchema,
-  configHash: z.string(),
-  createdAt: z.string(),
-  createdBy: z.string(),
-});
-
-const ScheduleSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().nullable(),
-  state: ScheduleStateSchema,
-  currentVersionId: z.string().nullable(),
-  currentVersionNumber: z.number().nullable(),
-  externalScheduleId: z.string().nullable(),
-  paused: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
-
-const ResolvedConfigSchema = z.object({
-  resolved: z.record(z.string(), z.unknown()),
-  configHash: z.string(),
-  precedence: z.array(z.string()),
-});
 
 export interface SchedulerRouteDeps {
   schedulerService?: SchedulerService | undefined;
@@ -63,10 +23,8 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     agentProfileRegistry: new Map([['agent-v1', { agent: 'agent-v1-defaults' }]]),
   });
 
-  // In-memory external scheduler reader for reconciliation demo
   const externalSchedules: Map<string, { externalId: string; cron: string; timezone: string; paused: boolean; destination: string; scheduleId?: string | null | undefined }> = new Map();
 
-  // Helpers
   const mapError = (error: unknown): { code: string; status: number } => {
     const msg = error instanceof Error ? error.message : String(error);
     if (msg.includes('NOT_FOUND')) return { code: msg.split(':')[0] ?? 'NOT_FOUND', status: 404 };
@@ -77,77 +35,43 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   };
 
   // GET /api/v1/admin/schedules
-  const listRoute = createRoute({
-    method: 'get',
-    path: '/api/v1/admin/schedules',
-    responses: {
-      200: { description: 'Schedules', content: { 'application/json': { schema: z.object({ schedules: z.array(ScheduleSchema) }) } } },
-    },
-  });
-  app.openapi(listRoute, async (c) => {
+  app.get('/api/v1/admin/schedules', async (c) => {
     const schedules = await store.listSchedules();
     return c.json({ schedules }, 200);
   });
 
-  // POST /api/v1/admin/schedules  — CREATE
-  const createRouteDef = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules',
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              name: z.string().min(1),
-              description: z.string().nullable().optional(),
-              cron: z.string().min(1),
-              timezone: z.string().min(1),
-              workflowVersion: z.string().min(1),
-              agentProfileVersion: z.string().min(1),
-              toolProfileVersion: z.string().min(1),
-              budgets: z.record(z.string(), z.unknown()).default({ dailyBudget: 100 }),
-              concurrency: z.number().int().min(1).max(32).default(1),
-              destination: z.string().min(1).default('https://example.com/trigger'),
-              targetScope: z.record(z.string(), z.unknown()).optional(),
-            }),
-          },
-        },
-      },
-    },
-    responses: {
-      201: { description: 'Created', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema }) } } },
-      400: { description: 'Invalid', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      500: { description: 'Internal error', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(createRouteDef, async (c) => {
-    const body = c.req.valid('json');
+  // POST /api/v1/admin/schedules — CREATE
+  app.post('/api/v1/admin/schedules', async (c) => {
     const correlationId = c.get('correlationId');
+    const body = await c.req.json().catch(() => null) as Record<string, unknown> | null;
+    if (!body) return c.json({ error: { code: 'INVALID_INPUT', message: 'Invalid JSON', correlationId } }, 400);
+    const parsed = z.object({
+      name: z.string().min(1),
+      description: z.string().nullable().optional(),
+      cron: z.string().min(1),
+      timezone: z.string().min(1),
+      workflowVersion: z.string().min(1),
+      agentProfileVersion: z.string().min(1),
+      toolProfileVersion: z.string().min(1),
+      budgets: z.record(z.string(), z.unknown()).default({ dailyBudget: 100 }),
+      concurrency: z.number().int().min(1).max(32).default(1),
+      destination: z.string().min(1).default('https://example.com/trigger'),
+      targetScope: z.record(z.string(), z.unknown()).optional(),
+    }).safeParse(body);
+    if (!parsed.success) return c.json({ error: { code: 'INVALID_INPUT', message: parsed.error.message, correlationId } }, 400);
     try {
-      const result = await service.create(body);
+      const result = await service.create(parsed.data as Parameters<SchedulerService['create']>[0]);
       return c.json({ schedule: result.schedule, version: result.version }, 201);
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 400);
     }
   });
 
   // GET /api/v1/admin/schedules/:id
-  const getRoute = createRoute({
-    method: 'get',
-    path: '/api/v1/admin/schedules/{id}',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Schedule', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema.nullable(), versions: z.array(ScheduleVersionSchema), resolvedConfig: ResolvedConfigSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(getRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.get('/api/v1/admin/schedules/:id', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     const schedule = await store.getSchedule(id);
     if (!schedule) return c.json({ error: { code: 'SCHEDULE_NOT_FOUND', message: 'Schedule not found', correlationId } }, 404);
@@ -164,17 +88,8 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   });
 
   // POST /api/v1/admin/schedules/:id/validate
-  const validateRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/validate',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Validation', content: { 'application/json': { schema: z.object({ valid: z.boolean(), issues: z.array(z.object({ code: z.string(), message: z.string(), field: z.string().optional() })), costForecast: z.record(z.string(), z.unknown()).optional() }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(validateRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.post('/api/v1/admin/schedules/:id/validate', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const result = await service.validate(id);
@@ -187,53 +102,26 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   });
 
   // POST /api/v1/admin/schedules/:id/enable
-  const enableRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/enable',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Enabled', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(enableRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.post('/api/v1/admin/schedules/:id/enable', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const result = await service.enable(id);
       if (result.schedule.externalScheduleId) {
-        externalSchedules.set(result.schedule.externalScheduleId, {
-          externalId: result.schedule.externalScheduleId,
-          cron: result.version.cron,
-          timezone: result.version.timezone,
-          paused: false,
-          destination: result.version.destination,
-          scheduleId: id,
-        });
+        const v = await store.getActiveVersion(id);
+        if (v) externalSchedules.set(result.schedule.externalScheduleId, { externalId: result.schedule.externalScheduleId, cron: v.cron, timezone: v.timezone, paused: false, destination: v.destination, scheduleId: id });
       }
       return c.json({ schedule: result.schedule, version: result.version }, 200);
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/schedules/:id/pause
-  const pauseRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/pause',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Paused', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(pauseRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.post('/api/v1/admin/schedules/:id/pause', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const schedule = await service.pause(id);
@@ -245,23 +133,13 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/schedules/:id/resume
-  const resumeRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/resume',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Resumed', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(resumeRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.post('/api/v1/admin/schedules/:id/resume', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const schedule = await service.resume(id);
@@ -273,28 +151,15 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/schedules/:id/run-now
-  const runNowRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/run-now',
-    request: {
-      params: z.object({ id: z.string().min(1) }),
-      body: { content: { 'application/json': { schema: z.object({ overrides: z.record(z.string(), z.unknown()).optional() }).optional() } } },
-    },
-    responses: {
-      200: { description: 'Run created', content: { 'application/json': { schema: z.object({ runId: z.string(), resolvedConfig: ResolvedConfigSchema, schedule: ScheduleSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(runNowRoute, async (c) => {
-    const { id } = c.req.valid('param');
-    const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
+  app.post('/api/v1/admin/schedules/:id/run-now', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
+    const body = await c.req.json().catch(() => ({})) as { overrides?: Record<string, unknown> };
     try {
       const result = await service.runNow(id, body.overrides);
       return c.json({
@@ -305,27 +170,15 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/schedules/:id/dry-run
-  const dryRunRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/dry-run',
-    request: {
-      params: z.object({ id: z.string().min(1) }),
-      body: { content: { 'application/json': { schema: z.object({ overrides: z.record(z.string(), z.unknown()).optional() }).optional() } } },
-    },
-    responses: {
-      200: { description: 'Dry run', content: { 'application/json': { schema: z.object({ validation: z.object({ valid: z.boolean(), issues: z.array(z.object({ code: z.string(), message: z.string(), field: z.string().optional() })) }), resolvedConfig: ResolvedConfigSchema, forecast: z.record(z.string(), z.unknown()).optional() }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(dryRunRoute, async (c) => {
-    const { id } = c.req.valid('param');
-    const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
+  app.post('/api/v1/admin/schedules/:id/dry-run', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
+    const body = await c.req.json().catch(() => ({})) as { overrides?: Record<string, unknown> };
     try {
       const result = await service.dryRun(id, body.overrides);
       return c.json({
@@ -340,18 +193,8 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   });
 
   // POST /api/v1/admin/schedules/:id/disable
-  const disableRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/disable',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Disabled', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(disableRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.post('/api/v1/admin/schedules/:id/disable', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const schedule = await store.getSchedule(id);
@@ -362,23 +205,13 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // DELETE /api/v1/admin/schedules/:id
-  const deleteRoute = createRoute({
-    method: 'delete',
-    path: '/api/v1/admin/schedules/{id}',
-    request: { params: z.object({ id: z.string().min(1) }) },
-    responses: {
-      200: { description: 'Deleted', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(deleteRoute, async (c) => {
-    const { id } = c.req.valid('param');
+  app.delete('/api/v1/admin/schedules/:id', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
     try {
       const result = await service.delete(id);
@@ -386,27 +219,15 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/schedules/:id/duplicate
-  const duplicateRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/schedules/{id}/duplicate',
-    request: {
-      params: z.object({ id: z.string().min(1) }),
-      body: { content: { 'application/json': { schema: z.object({ name: z.string().min(1).optional() }).optional() } } },
-    },
-    responses: {
-      201: { description: 'Duplicated', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(duplicateRoute, async (c) => {
-    const { id } = c.req.valid('param');
-    const body = (await c.req.json().catch(() => ({}))) as { name?: string };
+  app.post('/api/v1/admin/schedules/:id/duplicate', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
+    const body = await c.req.json().catch(() => ({})) as { name?: string };
     try {
       const result = await service.duplicate(id, body.name);
       return c.json({ schedule: result.schedule, version: result.version }, 201);
@@ -417,73 +238,41 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   });
 
   // PATCH /api/v1/admin/schedules/:id — EDIT_DRAFT
-  const editRoute = createRoute({
-    method: 'patch',
-    path: '/api/v1/admin/schedules/{id}',
-    request: {
-      params: z.object({ id: z.string().min(1) }),
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              name: z.string().min(1).optional(),
-              description: z.string().nullable().optional(),
-              cron: z.string().optional(),
-              timezone: z.string().optional(),
-              workflowVersion: z.string().optional(),
-              agentProfileVersion: z.string().optional(),
-              toolProfileVersion: z.string().optional(),
-              budgets: z.record(z.string(), z.unknown()).optional(),
-              concurrency: z.number().int().min(1).max(32).optional(),
-              destination: z.string().optional(),
-              targetScope: z.record(z.string(), z.unknown()).optional(),
-            }),
-          },
-        },
-      },
-    },
-    responses: {
-      200: { description: 'Edited', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema }) } } },
-      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
-    },
-  });
-  app.openapi(editRoute, async (c) => {
-    const { id } = c.req.valid('param');
-    const body = c.req.valid('json');
+  app.patch('/api/v1/admin/schedules/:id', async (c) => {
+    const id = c.req.param('id');
     const correlationId = c.get('correlationId');
+    const body = await c.req.json().catch(() => null) as Record<string, unknown> | null;
+    if (!body) return c.json({ error: { code: 'INVALID_INPUT', message: 'Invalid JSON', correlationId } }, 400);
+    const parsed = z.object({
+      name: z.string().min(1).optional(),
+      description: z.string().nullable().optional(),
+      cron: z.string().optional(),
+      timezone: z.string().optional(),
+      workflowVersion: z.string().optional(),
+      agentProfileVersion: z.string().optional(),
+      toolProfileVersion: z.string().optional(),
+      budgets: z.record(z.string(), z.unknown()).optional(),
+      concurrency: z.number().int().min(1).max(32).optional(),
+      destination: z.string().optional(),
+      targetScope: z.record(z.string(), z.unknown()).optional(),
+    }).safeParse(body);
+    if (!parsed.success) return c.json({ error: { code: 'INVALID_INPUT', message: parsed.error.message, correlationId } }, 400);
     try {
-      const result = await service.editDraft(id, body);
+      const result = await service.editDraft(id, parsed.data as Parameters<SchedulerService['editDraft']>[1]);
       return c.json({ schedule: result.schedule, version: result.version }, 200);
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
+      return c.json({ error: { code, message: msg, correlationId } }, status as 404);
     }
   });
 
   // POST /api/v1/admin/scheduler/reconcile
-  const reconcileRoute = createRoute({
-    method: 'post',
-    path: '/api/v1/admin/scheduler/reconcile',
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({ repair: z.boolean().optional().default(false) }).optional(),
-          },
-        },
-      },
-    },
-    responses: {
-      200: { description: 'Reconciliation', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string() })), repaired: z.number() }) } } },
-    },
-  });
-  app.openapi(reconcileRoute, async (c) => {
-    const body = (await c.req.json().catch(() => ({}))) as { repair?: boolean };
+  app.post('/api/v1/admin/scheduler/reconcile', async (c) => {
+    const body = await c.req.json().catch(() => ({})) as { repair?: boolean };
     const repair = body.repair === true;
     const externalReader = {
-      list: async () => [...externalSchedules.values()].map(e => ({ externalId: e.externalId, cron: e.cron, timezone: e.timezone, paused: e.paused, destination: e.destination, scheduleId: e.scheduleId ?? null })),
+      list: async () => [...externalSchedules.values()].map((e) => ({ externalId: e.externalId, cron: e.cron, timezone: e.timezone, paused: e.paused, destination: e.destination, scheduleId: e.scheduleId ?? null })),
     };
     const externalWriter = {
       ...externalReader,
@@ -507,14 +296,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
   });
 
   // GET /api/v1/admin/scheduler/incidents
-  const incidentsRoute = createRoute({
-    method: 'get',
-    path: '/api/v1/admin/scheduler/incidents',
-    responses: {
-      200: { description: 'Incidents', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string(), createdAt: z.string() })) }) } } },
-    },
-  });
-  app.openapi(incidentsRoute, async (c) => {
+  app.get('/api/v1/admin/scheduler/incidents', async (c) => {
     const incidents = await store.listIncidents();
     return c.json({ incidents }, 200);
   });
