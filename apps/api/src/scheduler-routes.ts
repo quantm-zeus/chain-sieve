@@ -84,6 +84,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Schedules', content: { 'application/json': { schema: z.object({ schedules: z.array(ScheduleSchema) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(listRoute as never, async (c: any) => {
     const schedules = await store.listSchedules();
     return c.json({ schedules }, 200);
@@ -120,6 +121,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(createRouteDef as never, async (c: any) => {
     const body = c.req.valid('json');
     const correlationId = c.get('correlationId');
@@ -143,6 +145,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(getRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -170,6 +173,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(validateRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -195,6 +199,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(enableRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -229,6 +234,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(pauseRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -257,6 +263,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(resumeRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -288,6 +295,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(runNowRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
@@ -319,6 +327,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(dryRunRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { overrides?: Record<string, unknown> };
@@ -347,6 +356,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(disableRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -374,6 +384,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(deleteRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const correlationId = c.get('correlationId');
@@ -400,6 +411,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(duplicateRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = (await c.req.json().catch(() => ({}))) as { name?: string };
@@ -445,6 +457,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(editRoute as never, async (c: any) => {
     const { id } = c.req.valid('param');
     const body = c.req.valid('json');
@@ -476,6 +489,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Reconciliation', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string() })), repaired: z.number() }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(reconcileRoute as never, async (c: any) => {
     const body = (await c.req.json().catch(() => ({}))) as { repair?: boolean };
     const repair = body.repair === true;
@@ -511,6 +525,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       200: { description: 'Incidents', content: { 'application/json': { schema: z.object({ incidents: z.array(z.object({ type: z.string(), scheduleId: z.string().optional(), externalScheduleId: z.string().optional(), detail: z.string(), createdAt: z.string() })) }) } } },
     },
   });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app.openapi(incidentsRoute as never, async (c: any) => {
     const incidents = await store.listIncidents();
     return c.json({ incidents }, 200);
