@@ -17,6 +17,7 @@ import {
   validateToolAllowlist,
 } from '@ciag/security';
 import { JsonLogger } from '@ciag/observability';
+import type { DatabaseAdapter } from '@ciag/provider-contracts';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
 export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> }; qstashSigningKey?: string; qstashReplayWindowMs?: number }
@@ -98,7 +99,7 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   });
   // Durable workflow trigger inbox — FR-WF-002 idempotent 202
   app.post('/api/v1/internal/schedules/trigger', async (context) => {
-    const database = input.database as unknown as import('@ciag/provider-contracts').DatabaseAdapter | undefined;
+    const database = input.database as unknown as DatabaseAdapter | undefined;
     if (!database) return context.json({ error: { code: 'SERVICE_UNAVAILABLE', message: 'Trigger inbox unavailable', correlationId: context.get('correlationId') } }, 503);
     const body = await context.req.json().catch(() => null) as { externalMessageId?: string; external_message_id?: string; source?: string; scheduleId?: string; schedule_id?: string; scheduledFor?: string; scheduled_for?: string; payload?: unknown } | null;
     if (!body) return context.json({ error: { code: 'INVALID_INPUT', message: 'Invalid JSON body', correlationId: context.get('correlationId') } }, 400);
