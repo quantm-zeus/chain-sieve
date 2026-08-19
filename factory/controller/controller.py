@@ -333,8 +333,12 @@ class FactoryController:
             } and session:
                 if session.status.lower() in TERMINAL_SESSION_STATES:
                     if pr:
-                        record.status = PackageStatus.PR_WAITING
-                        self._handle_pr(milestone, package, record, pr)
+                        ci_status, _ = ci_state(pr, self.config.required_checks)
+                        if ci_status == "PASS":
+                            record.status = PackageStatus.PR_WAITING
+                            self._handle_pr(milestone, package, record, pr, session)
+                        else:
+                            self._handle_terminated(milestone, package, key, record, session, pr)
                     else:
                         self._handle_terminated(milestone, package, key, record, session, pr)
                 else:
@@ -343,7 +347,7 @@ class FactoryController:
                 if any(records[work_key(milestone.id, dependency)].status != PackageStatus.COMPLETED for dependency in package.dependencies):
                     record.last_error = "dependency integration condition no longer holds"
                 else:
-                    self._handle_pr(milestone, package, record, pr)
+                    self._handle_pr(milestone, package, record, pr, session)
 
         active = sum(record.status in {
             PackageStatus.STARTING, PackageStatus.ACTIVE, PackageStatus.IDLE, PackageStatus.WAITING_INPUT,
@@ -611,11 +615,13 @@ class FactoryController:
         if not waiting and not stuck:
             return
         if pr is not None and stuck and record.correction_attempts >= self.config.max_correction_attempts:
-            self.ao.kill(session.id)
-            record.status = PackageStatus.PR_WAITING
-            record.last_progress_at = utc_now()
-            self._handle_pr(milestone, package, record, pr)
-            return
+            ci_status, _ = ci_state(pr, self.config.required_checks)
+            if ci_status == "PASS":
+                self.ao.kill(session.id)
+                record.status = PackageStatus.PR_WAITING
+                record.last_progress_at = utc_now()
+                self._handle_pr(milestone, package, record, pr, session)
+                return
         if record.correction_attempts < self.config.max_correction_attempts:
             reason = "stopped making meaningful progress" if stuck else "is waiting for input"
             try:
@@ -660,10 +666,12 @@ class FactoryController:
         pr: PullRequest | None,
     ) -> None:
         if pr is not None and pr.state.upper() == "OPEN":
-            record.status = PackageStatus.PR_WAITING
-            record.last_progress_at = utc_now()
-            self._handle_pr(milestone, package, record, pr)
-            return
+            ci_status, _ = ci_state(pr, self.config.required_checks)
+            if ci_status == "PASS":
+                record.status = PackageStatus.PR_WAITING
+                record.last_progress_at = utc_now()
+                self._handle_pr(milestone, package, record, pr, session)
+                return
         if record.correction_attempts < self.config.max_correction_attempts:
             try:
                 self.ao.restore(session.id)
@@ -721,10 +729,12 @@ class FactoryController:
         failure: str,
     ) -> None:
         if pr is not None and pr.state.upper() == "OPEN":
-            record.status = PackageStatus.PR_WAITING
-            record.last_progress_at = utc_now()
-            self._handle_pr(milestone, package, record, pr)
-            return
+            ci_status, _ = ci_state(pr, self.config.required_checks)
+            if ci_status == "PASS":
+                record.status = PackageStatus.PR_WAITING
+                record.last_progress_at = utc_now()
+                self._handle_pr(milestone, package, record, pr, session)
+                return
         remote_branch = self.github.branch_exists(f"factory/{key}")
         safe, evidence = _safe_alternate_retry(
             self.root, self.config.integration_branch, f"factory/{key}", session, pr, remote_branch
@@ -823,7 +833,14 @@ class FactoryController:
             f"{failure}; task attempts exhausted; preserved work: {evidence}",
         )
 
-    def _handle_pr(self, milestone: Milestone, package: Any, record: PackageRecord, pr: PullRequest) -> None:
+    def _handle_pr(
+        self,
+        milestone: Milestone,
+        package: Any,
+        record: PackageRecord,
+        pr: PullRequest,
+        session: Session | None = None,
+    ) -> None:
         if record.status == PackageStatus.BLOCKED:
             return
         ci_status, ci_reason = ci_state(pr, self.config.required_checks)
@@ -850,6 +867,16 @@ class FactoryController:
                     workKey=work_key(milestone.id, package.id), provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
                     attempt=record.correction_attempts, headSha=pr.head_sha,
                 )
+                return
+            if record.session_id and record.last_error == token and session is not None:
+                if session.status.lower() in TERMINAL_SESSION_STATES:
+                    self._handle_terminated(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                    return
+                session_status = _session_package_status(record, session, self.config)
+                if session_status in {PackageStatus.STUCK, PackageStatus.WAITING_INPUT}:
+                    record.status = session_status
+                    self._handle_activity(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                    return
             return
 
         if review_required(package):
