@@ -149,7 +149,8 @@ describe('Scheduling Control Plane (FR-WF-004, FR-WF-005, FR-ADM-003)', () => {
     });
     await service.enable(schedule.id);
 
-    const externalState = new Map([
+    type ExtSched = { externalId: string; cron: string; timezone: string; paused: boolean; destination: string; scheduleId?: string | null };
+    const externalState = new Map<string, ExtSched>([
       ['ext-orphan', { externalId: 'ext-orphan', cron: '* * * * *', timezone: 'UTC', paused: false, destination: 'https://other.local', scheduleId: null }],
     ]);
 
