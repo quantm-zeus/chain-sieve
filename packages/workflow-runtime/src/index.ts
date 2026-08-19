@@ -191,7 +191,7 @@ export const createWorkflowStep = async (database: DatabaseAdapter, input: Creat
   return { stepId: existing.rows[0]!.step_id, inserted: false };
 };
 
-export interface StepRecord {
+export interface StepRecord extends Record<string, unknown> {
   step_id: string;
   run_id: string;
   step_type: string;
@@ -444,7 +444,7 @@ export const recordStepSuccess = async (database: DatabaseAdapter, stepId: strin
 
 // ----- Dead Letter -----
 
-export interface DeadLetterItem {
+export interface DeadLetterItem extends Record<string, unknown> {
   id: string;
   run_id: string;
   step_id: string | null;

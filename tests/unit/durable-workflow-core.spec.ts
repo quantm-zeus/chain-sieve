@@ -177,7 +177,7 @@ describe('durable workflow core — FR-WF-001/002/003/007', () => {
     expect(dls.length).toBe(1);
     expect(dls[0]?.error_class).toBe('HTTP_5XX');
     expect(dls[0]?.retryable).toBe(false);
-    const retry = await retryDeadLetterFromCheckpoint(db, dls[0].id, clock.now());
+    const retry = await retryDeadLetterFromCheckpoint(db, dls[0]!.id, clock.now());
     expect(retry.retried).toBe(true);
     const steps2 = await getWorkflowSteps(db, runId);
     expect(steps2[0]?.status).toBe('PENDING');
