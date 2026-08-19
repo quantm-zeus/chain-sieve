@@ -118,6 +118,9 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
       201: { description: 'Created', content: { 'application/json': { schema: z.object({ schedule: ScheduleSchema, version: ScheduleVersionSchema }) } } },
       400: { description: 'Invalid', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
       422: { description: 'Validation failed', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
+      404: { description: 'Not found', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
+      409: { description: 'Conflict', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
+      500: { description: 'Internal error', content: { 'application/json': { schema: z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) }) } } },
     },
   });
   app.openapi(createRouteDef, async (c) => {
@@ -129,7 +132,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -214,7 +217,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -242,7 +245,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -270,7 +273,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -302,7 +305,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -359,7 +362,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -383,7 +386,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
@@ -455,7 +458,7 @@ export const createSchedulerRoutes = (app: OpenAPIHono<ApiEnv>, deps: SchedulerR
     } catch (error) {
       const { code, status } = mapError(error);
       const msg = error instanceof Error ? error.message : String(error);
-      return c.json({ error: { code, message: msg, correlationId } }, status as never);
+      return c.json({ error: { code, message: msg, correlationId } }, status as unknown as 404);
     }
   });
 
