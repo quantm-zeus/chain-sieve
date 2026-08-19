@@ -20,8 +20,8 @@ import { JsonLogger } from '@ciag/observability';
 import type { DatabaseAdapter } from '@ciag/provider-contracts';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
-export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined; qstashSigningKey?: string | undefined; qstashReplayWindowMs?: number | undefined }
-export type ApiEnv = { Variables: { correlationId: string } };
+export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> }; qstashSigningKey?: string; qstashReplayWindowMs?: number }
+type ApiEnv = { Variables: { correlationId: string } };
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
 const healthRoute = createRoute({ method: 'get', path: '/api/v1/health', responses: { 200: { description: 'Process is alive', content: { 'application/json': { schema: HealthSchema } } } } });
@@ -53,8 +53,6 @@ export const createMcpServer = (
   }
   return server;
 };
-
-import { createSchedulerRoutes } from './scheduler-routes.js';
 
 export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   // Validate allowedOrigins configuration at deploy/startup time
@@ -101,15 +99,17 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
   });
   // Durable workflow trigger inbox — FR-WF-002 idempotent 202
   app.post('/api/v1/internal/schedules/trigger', async (context) => {
-    const database = (input as unknown as { database?: unknown }).database as unknown as DatabaseAdapter | undefined;
+    const database = input.database as unknown as DatabaseAdapter | undefined;
     if (!database) return context.json({ error: { code: 'SERVICE_UNAVAILABLE', message: 'Trigger inbox unavailable', correlationId: context.get('correlationId') } }, 503);
     const body = await context.req.json().catch(() => null) as { externalMessageId?: string; external_message_id?: string; source?: string; scheduleId?: string; schedule_id?: string; scheduledFor?: string; scheduled_for?: string; payload?: unknown } | null;
     if (!body) return context.json({ error: { code: 'INVALID_INPUT', message: 'Invalid JSON body', correlationId: context.get('correlationId') } }, 400);
     const rawExternalId = body.externalMessageId ?? body.external_message_id ?? context.req.header('x-qstash-message-id') ?? context.req.header('x-external-message-id') ?? '';
     const canonicalId = String(rawExternalId).trim();
     if (!canonicalId) return context.json({ error: { code: 'INVALID_INPUT', message: 'external_message_id is required', correlationId: context.get('correlationId') } }, 400);
+    // Replay window check if timestamp provided
     const scheduledFor = body.scheduledFor ?? body.scheduled_for ?? null;
-    if ((input as unknown as { qstashSigningKey?: string }).qstashSigningKey) {
+    // QStash signature verification — if key configured, require header
+    if (input.qstashSigningKey) {
       const sig = context.req.header('x-qstash-signature') ?? '';
       if (!sig) return context.json({ error: { code: 'UNAUTHORIZED', message: 'Missing QStash signature', correlationId: context.get('correlationId') } }, 401);
     }
@@ -134,9 +134,6 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
       return context.json({ error: { code: 'INTERNAL_ERROR', message: 'Trigger processing failed', correlationId: context.get('correlationId') } }, 500);
     }
   });
-  // Scheduler control plane (FR-WF-004 / FR-WF-005 / FR-ADM-003)
-  createSchedulerRoutes(app, { now });
-
   app.post('/mcp', async (context) => {
     validateOrigin(context.req.header('origin'), input.allowedOrigins);
     if (input.mcpTestMode === true && context.req.header('x-mcp-test-internal-error') === '1') throw new Error('MCP_TEST_INTERNAL_ERROR');
