@@ -218,6 +218,9 @@ class FactoryController:
                     record.review_sha = None
                     record.review_dispatch_trigger_attempts = 0
                     record.review_dispatch_last_attempt_at = None
+                if record.review_terminal_rejection_sha and record.review_terminal_rejection_sha != selected.head_sha:
+                    if record.review_correction_authorized_from_sha == record.review_terminal_rejection_sha:
+                        record.review_terminal_rejection_sha = None
                 if (
                     record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
                     and record.review_dispatch_sha == selected.head_sha
@@ -225,9 +228,20 @@ class FactoryController:
                     record.status = PackageStatus.REVIEW
                 else:
                     record.status = PackageStatus.PR_WAITING
-                if record.blocked_reason and any(token in record.blocked_reason.lower() for token in ("wall-clock", "replan", "stagnant")):
-                    record.blocked_reason = None
-                    record.replan_attempted = False
+                if record.blocked_reason and any(
+                    token in record.blocked_reason.lower()
+                    for token in (
+                        "wall-clock",
+                        "replan",
+                        "stagnant",
+                        "machine review budget exhausted",
+                        "review terminal rejection",
+                    )
+                ):
+                    if record.review_terminal_rejection_sha is None:
+                        record.blocked_reason = None
+                        record.last_error = None
+                        record.replan_attempted = False
             elif sessions:
                 _apply_session(record, sessions[0])
                 record.branch = f"factory/{key}"
@@ -334,7 +348,7 @@ class FactoryController:
                 if session.status.lower() in TERMINAL_SESSION_STATES:
                     if pr:
                         ci_status, _ = ci_state(pr, self.config.required_checks)
-                        if ci_status == "PASS":
+                        if ci_status == "PASS" and record.review_correction_authorized_from_sha != pr.head_sha:
                             record.status = PackageStatus.PR_WAITING
                             self._handle_pr(milestone, package, record, pr, session)
                         else:
@@ -616,7 +630,7 @@ class FactoryController:
             return
         if pr is not None and stuck and record.correction_attempts >= self.config.max_correction_attempts:
             ci_status, _ = ci_state(pr, self.config.required_checks)
-            if ci_status == "PASS":
+            if ci_status == "PASS" and record.review_correction_authorized_from_sha != pr.head_sha:
                 self.ao.kill(session.id)
                 record.status = PackageStatus.PR_WAITING
                 record.last_progress_at = utc_now()
@@ -667,7 +681,7 @@ class FactoryController:
     ) -> None:
         if pr is not None and pr.state.upper() == "OPEN":
             ci_status, _ = ci_state(pr, self.config.required_checks)
-            if ci_status == "PASS":
+            if ci_status == "PASS" and record.review_correction_authorized_from_sha != pr.head_sha:
                 record.status = PackageStatus.PR_WAITING
                 record.last_progress_at = utc_now()
                 self._handle_pr(milestone, package, record, pr, session)
@@ -730,7 +744,7 @@ class FactoryController:
     ) -> None:
         if pr is not None and pr.state.upper() == "OPEN":
             ci_status, _ = ci_state(pr, self.config.required_checks)
-            if ci_status == "PASS":
+            if ci_status == "PASS" and record.review_correction_authorized_from_sha != pr.head_sha:
                 record.status = PackageStatus.PR_WAITING
                 record.last_progress_at = utc_now()
                 self._handle_pr(milestone, package, record, pr, session)
@@ -901,6 +915,11 @@ class FactoryController:
                 record.review_sha = None
                 record.review_dispatch_trigger_attempts = 0
                 record.review_dispatch_last_attempt_at = None
+                if (
+                    record.review_terminal_rejection_sha
+                    and record.review_correction_authorized_from_sha == record.review_terminal_rejection_sha
+                ):
+                    record.review_terminal_rejection_sha = None
 
             reviews = self.ao.reviews(record.session_id or "")
             review_ok, review_reason, reviewer, verdict = review_gate(
@@ -972,7 +991,35 @@ class FactoryController:
                                 workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
                                 pr=pr.number, attempt=record.review_corrections_used, headSha=pr.head_sha,
                             )
+                            record.status = PackageStatus.PR_WAITING
+                            return
                         record.status = PackageStatus.PR_WAITING
+                        if record.session_id and session is not None:
+                            if session.status.lower() in TERMINAL_SESSION_STATES:
+                                self._handle_terminated(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                                return
+                            session_status = _session_package_status(record, session, self.config)
+                            if session_status in {PackageStatus.STUCK, PackageStatus.WAITING_INPUT} or session.activity.lower() in {"waiting_input", "blocked", "needs_input"}:
+                                record.status = session_status
+                                self._handle_activity(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                                return
+                        return
+                    elif (
+                        record.review_corrections_used >= self.config.max_review_cycles
+                        and verdict not in {"approved", "pass"}
+                        and record.review_correction_authorized_from_sha == pr.head_sha
+                    ):
+                        record.status = PackageStatus.PR_WAITING
+                        if record.session_id and session is not None:
+                            if session.status.lower() in TERMINAL_SESSION_STATES:
+                                self._handle_terminated(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                                return
+                            session_status = _session_package_status(record, session, self.config)
+                            if session_status in {PackageStatus.STUCK, PackageStatus.WAITING_INPUT} or session.activity.lower() in {"waiting_input", "blocked", "needs_input"}:
+                                record.status = session_status
+                                self._handle_activity(milestone, package, work_key(milestone.id, package.id), record, session, pr)
+                                return
+                        return
                     elif record.review_corrections_used >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
                         record.review_terminal_rejection_sha = pr.head_sha
                         self._escalate_replan(
@@ -1048,14 +1095,17 @@ class FactoryController:
                         return
                 else:
                     if record.review_terminal_rejection_sha is not None:
-                        self._block(
-                            milestone.id,
-                            package.id,
-                            record,
-                            f"machine review budget exhausted: review terminal rejection recorded at {record.review_terminal_rejection_sha}",
-                            work_key(milestone.id, package.id),
-                        )
-                        return
+                        if record.review_correction_authorized_from_sha == record.review_terminal_rejection_sha:
+                            record.review_terminal_rejection_sha = None
+                        else:
+                            self._block(
+                                milestone.id,
+                                package.id,
+                                record,
+                                f"machine review budget exhausted: review terminal rejection recorded at {record.review_terminal_rejection_sha}",
+                                work_key(milestone.id, package.id),
+                            )
+                            return
 
                     record.review_dispatch_key = target_dispatch_key
                     record.review_dispatch_state = ReviewDispatchState.CLAIMED.value

@@ -950,7 +950,7 @@ class ReviewDispatchIdempotencyTests(unittest.TestCase):
 
         issues = {self.wkey: Issue(104, "OPEN", "", "url/104", "author")}
         prs = {self.wkey: [PullRequest(
-            115, "OPEN", f"factory/{self.wkey}", self.head_sha, "url/115",
+            115, "OPEN", f"factory/{self.wkey}", self.head_sha_alt, "url/115",
             "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
         )]}
         sessions = {"104": [Session("chainsieve-88", f"factory/{self.wkey}", "agy", "working", "active", "104")]}

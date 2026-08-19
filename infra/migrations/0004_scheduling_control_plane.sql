@@ -60,4 +60,4 @@ CREATE TABLE IF NOT EXISTS resolved_run_configs (
   created_at timestamptz NOT NULL
 );
 
-INSERT INTO schema_migrations (version, applied_at) VALUES ('0003_scheduling_control_plane', now()) ON CONFLICT (version) DO NOTHING;
+INSERT INTO schema_migrations (version, applied_at) VALUES ('0004_scheduling_control_plane', now()) ON CONFLICT (version) DO NOTHING;

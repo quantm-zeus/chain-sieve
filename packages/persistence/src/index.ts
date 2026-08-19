@@ -28,3 +28,16 @@ export const applyDurableWorkflowMigration = async (database: DatabaseAdapter, p
   const sql = await readFile(path, 'utf8');
   await database.transaction(async (transaction) => { await transaction.query(sql); });
 };
+
+export const applyAlertLifecycleMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0003_alert_lifecycle_and_outbox.sql'): Promise<void> => {
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0003_alert_lifecycle_and_outbox'"); if (applied.rowCount === 1) return; } catch { /* table missing yet */ }
+  const sql = await readFile(path, 'utf8');
+  await database.transaction(async (transaction) => { await transaction.query(sql); });
+};
+
+export const applySchedulingControlPlaneMigration = async (database: DatabaseAdapter, path = 'infra/migrations/0004_scheduling_control_plane.sql'): Promise<void> => {
+  try { const applied = await database.query<{ version: string }>("SELECT version FROM schema_migrations WHERE version='0004_scheduling_control_plane'"); if (applied.rowCount === 1) return; } catch { /* table missing yet */ }
+  const sql = await readFile(path, 'utf8');
+  await database.transaction(async (transaction) => { await transaction.query(sql); });
+};
+

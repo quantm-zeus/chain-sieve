@@ -171,6 +171,9 @@ importers:
       '@ciag/runtime-cache':
         specifier: workspace:*
         version: link:../../packages/runtime-cache
+      '@ciag/scheduler':
+        specifier: workspace:*
+        version: link:../../packages/scheduler
       '@ciag/security':
         specifier: workspace:*
         version: link:../../packages/security

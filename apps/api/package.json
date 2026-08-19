@@ -4,5 +4,5 @@
   "private": true,
   "type": "module",
   "scripts": { "dev": "tsx watch src/main.ts", "start": "tsx src/main.ts", "build:production": "esbuild src/main.ts --bundle --platform=node --format=cjs --outfile=../../dist/api/main.cjs --external:pg-native", "start:production": "node ../../dist/api/main.cjs", "typecheck": "tsc -p tsconfig.json --noEmit" },
-  "dependencies": { "@ciag/config": "workspace:*", "@ciag/mcp-adapter": "workspace:*", "@ciag/observability": "workspace:*", "@ciag/persistence": "workspace:*", "@ciag/object-store": "workspace:*", "@ciag/runtime-cache": "workspace:*", "@ciag/security": "workspace:*", "@ciag/shared-schemas": "workspace:*", "@ciag/tool-core": "workspace:*" }
+  "dependencies": { "@ciag/config": "workspace:*", "@ciag/mcp-adapter": "workspace:*", "@ciag/observability": "workspace:*", "@ciag/persistence": "workspace:*", "@ciag/object-store": "workspace:*", "@ciag/runtime-cache": "workspace:*", "@ciag/scheduler": "workspace:*", "@ciag/security": "workspace:*", "@ciag/shared-schemas": "workspace:*", "@ciag/tool-core": "workspace:*" }
 }
