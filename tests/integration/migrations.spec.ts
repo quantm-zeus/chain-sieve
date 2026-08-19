@@ -13,9 +13,10 @@ describe('authoritative bootstrap migration', () => {
   it('keeps authoritative SQL table names mirrored by Drizzle without speculative production schema', async () => {
     const sql1 = await readFile('infra/migrations/0001_bootstrap_foundation.sql', 'utf8');
     const sql2 = await readFile('infra/migrations/0002_durable_workflow_core.sql', 'utf8');
-    const sqlTables = [...(sql1 + sql2).matchAll(/CREATE TABLE IF NOT EXISTS\s+([a-z_]+)/g)].map((match) => match[1]).sort();
+    const sql3 = await readFile('infra/migrations/0003_scheduling_control_plane.sql', 'utf8');
+    const sqlTables = [...(sql1 + sql2 + sql3).matchAll(/CREATE TABLE IF NOT EXISTS\s+([a-z_]+)/g)].map((match) => match[1]).sort();
     const drizzleTables = Object.values(schema).map((table) => getTableName(table)).sort();
     expect(drizzleTables).toEqual(sqlTables);
-    expect(sqlTables).toHaveLength(16);
+    expect(sqlTables).toHaveLength(20);
   });
 });
