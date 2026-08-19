@@ -202,8 +202,8 @@ export const evaluateAlertPolicy = (
   // 9. Quiet Hours
   if (policy.quietHours?.enabled) {
     const currentUtcHour = new Date(asOfMs).getUTCHours();
-    const startH = policy.quietHours.startHour ?? 22;
-    const endH = policy.quietHours.endHour ?? 6;
+    const startH = policy.quietHours.startUtcHour ?? 22;
+    const endH = policy.quietHours.endUtcHour ?? 6;
     const inQuietHours = startH <= endH
       ? currentUtcHour >= startH && currentUtcHour < endH
       : currentUtcHour >= startH || currentUtcHour < endH;

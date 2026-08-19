@@ -12,14 +12,21 @@ import {
   assertNoHighConvictionLanguage,
   validateEarlyWatchGuardrails,
   validateAlertSemanticIntegrity,
+  DEFAULT_ALERT_POLICY_CONFIG,
   ShadowNotificationAdapter,
 } from '@ciag/alerts';
 import type {
   AlertCandidateInput,
   AlertEvaluationMetricRecord,
+  AlertPolicyConfig,
 } from '@ciag/alerts';
 
 const iso = '2026-03-01T00:00:00.000Z';
+
+const makePolicyConfig = (overrides: Partial<AlertPolicyConfig> = {}): AlertPolicyConfig => ({
+  ...DEFAULT_ALERT_POLICY_CONFIG,
+  ...overrides,
+});
 
 const makeCandidateInput = (overrides: Partial<AlertCandidateInput> = {}): AlertCandidateInput => ({
   assetId: 'solana:asset-gem-01',
@@ -197,7 +204,7 @@ describe('Alert Policy & Classification (FR-ALERT-001, FR-ALERT-003)', () => {
     // 5. Quiet hours active
     const quietFailed = evaluateAlertPolicy(
       makeCandidateInput({ asOf: '2026-03-01T23:30:00.000Z' }),
-      { ...makePolicyConfig(), quietHours: { enabled: true, startHour: 22, endHour: 6 } },
+      { ...makePolicyConfig(), quietHours: { enabled: true, startUtcHour: 22, endUtcHour: 6 } },
     );
     expect(quietFailed.passed).toBe(false);
     expect(quietFailed.rejectionReasons).toContain('QUIET_HOURS_ACTIVE');
