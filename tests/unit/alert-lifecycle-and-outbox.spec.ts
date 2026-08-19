@@ -556,6 +556,6 @@ describe('Shadow Mode (FR-WF-008)', () => {
     expect(delivery.delivered).toBe(true);
     expect(delivery.state).toBe('DELIVERED');
     expect(shadowAdapter.messages).toHaveLength(1);
-    expect(shadowAdapter.messages[0]).toContain('shadow-');
+    expect(shadowAdapter.messages[0]).toContain('shadow.opportunity');
   });
 });

@@ -384,7 +384,7 @@ export const evaluateAlertPolicy = (
 
   // Branch C: EARLY_WATCH (Qualifies as emerging candidate or watch-eligible with explicit missing data and short TTL)
   const isEarlyWatchEligible =
-    (candidate.decision === 'WATCH' || candidate.decision === 'ALERT' || candidate.lifecycleState === 'EMERGING') &&
+    (candidate.decision === 'WATCH' || candidate.lifecycleState === 'EMERGING' || candidate.lifecycleState === 'QUALIFIED') &&
     candidate.riskState !== 'CRITICAL' &&
     candidate.riskState !== 'CONFLICTING' &&
     missingData.length > 0 &&
