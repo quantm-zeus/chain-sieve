@@ -160,6 +160,48 @@ describe('Alert Policy & Classification (FR-ALERT-001, FR-ALERT-003)', () => {
     expect(result.passed).toBe(false);
     expect(result.rejectionReasons.some((r) => r.startsWith('TRADABILITY_NOT_EXECUTABLE'))).toBe(true);
   });
+
+  it('enforces conservative execution, p90 action delay, statistical gate, source dependence, and quiet hours', () => {
+    // 1. Conservative execution pass failure
+    const consFailed = evaluateAlertPolicy(
+      makeCandidateInput({ tradability: { ...makeCandidateInput().tradability, conservativeExecutionPass: false } }),
+      { ...makePolicyConfig(), requireConservativeExecutionPass: true },
+    );
+    expect(consFailed.passed).toBe(false);
+    expect(consFailed.rejectionReasons).toContain('CONSERVATIVE_EXECUTION_GATE_FAILED');
+
+    // 2. P90 action delay pass failure
+    const p90Failed = evaluateAlertPolicy(
+      makeCandidateInput({ tradability: { ...makeCandidateInput().tradability, p90ActionDelayPass: false } }),
+      { ...makePolicyConfig(), requireP90ActionDelayPass: true },
+    );
+    expect(p90Failed.passed).toBe(false);
+    expect(p90Failed.rejectionReasons).toContain('P90_ACTION_DELAY_GATE_FAILED');
+
+    // 3. Statistical gate pass failure
+    const statFailed = evaluateAlertPolicy(
+      makeCandidateInput({ statisticalGatePass: false }),
+      { ...makePolicyConfig(), requireActiveStatisticalGate: true },
+    );
+    expect(statFailed.passed).toBe(false);
+    expect(statFailed.rejectionReasons).toContain('ACTIVE_STATISTICAL_GATE_FAILED');
+
+    // 4. Source dependence exceeds allowed maximum
+    const depFailed = evaluateAlertPolicy(
+      makeCandidateInput({ sourceDependenceState: 'HIGHLY_DEPENDENT' }),
+      { ...makePolicyConfig(), maximumSourceDependenceState: 'PARTIALLY_DEPENDENT' },
+    );
+    expect(depFailed.passed).toBe(false);
+    expect(depFailed.rejectionReasons.some((r) => r.startsWith('SOURCE_DEPENDENCE_EXCEEDS_MAXIMUM'))).toBe(true);
+
+    // 5. Quiet hours active
+    const quietFailed = evaluateAlertPolicy(
+      makeCandidateInput({ asOf: '2026-03-01T23:30:00.000Z' }),
+      { ...makePolicyConfig(), quietHours: { enabled: true, startHour: 22, endHour: 6 } },
+    );
+    expect(quietFailed.passed).toBe(false);
+    expect(quietFailed.rejectionReasons).toContain('QUIET_HOURS_ACTIVE');
+  });
 });
 
 describe('EARLY_WATCH Guardrails & Language Policy (FR-ALERT-002)', () => {
@@ -312,9 +354,41 @@ describe('Alert Lifecycle & Deterioration Updates (FR-ALERT-004, AC-141)', () =>
     expect(updateResult.updatePayload).toBeNull();
     expect(updateResult.outboxEntry).toBeNull();
   });
+
+  it('does not suppress deterioration update even if materialEvidenceFingerprint is unchanged', () => {
+    const input = makeCandidateInput();
+    const policyResult = evaluateAlertPolicy(input);
+    const priorAlert = policyResult.alertRecord!;
+
+    // Same fingerprint, but non-executable tradability
+    const deterioratedCandidate = makeCandidateInput({
+      tradability: {
+        ...input.tradability,
+        executable: false,
+        reason: 'SLIPPAGE_TOLERANCE_EXCEEDED',
+      },
+      materialEvidenceFingerprint: input.materialEvidenceFingerprint, // identical fingerprint!
+    });
+
+    const updateResult = evaluateAlertLifecycle(priorAlert, deterioratedCandidate, iso);
+    expect(updateResult.decision.isIdempotentNoOp).toBe(false);
+    expect(updateResult.decision.transitionType).toBe('THESIS_WEAKENING');
+    expect(updateResult.decision.actionabilityState).toBe('DETERIORATED');
+  });
 });
 
 describe('Distinct Rendering & Routing (FR-ALERT-001, FR-ALERT-002)', () => {
+  it('renders deterministically with renderedAt matching payload.asOf by default', () => {
+    const input = makeCandidateInput();
+    const policyResult = evaluateAlertPolicy(input);
+    const rendered = renderAlert(policyResult.alertPayload!);
+
+    expect(rendered.renderedAt).toBe(policyResult.alertPayload!.asOf);
+
+    const customRendered = renderAlert(policyResult.alertPayload!, false, { renderedAt: '2026-05-01T00:00:00.000Z' });
+    expect(customRendered.renderedAt).toBe('2026-05-01T00:00:00.000Z');
+  });
+
   it('renders CONFIRMED_OPPORTUNITY with execution impact and research disclaimer', () => {
     const input = makeCandidateInput();
     const policyResult = evaluateAlertPolicy(input);
@@ -439,6 +513,7 @@ describe('Class-Separated Metrics (FR-ALERT-005, AC-140)', () => {
     expect(metrics.confirmedOpportunity.tradableSuccessCount).toBe(1);
     expect(metrics.confirmedOpportunity.precision).toBe(0.5);
     expect(metrics.confirmedOpportunity.falseDiscoveryRate).toBe(0.5);
+    expect(metrics.confirmedOpportunity.recall).toBe(0.5);
 
     // Early Watch Metrics
     expect(metrics.earlyWatch.totalWatches).toBe(3);
@@ -457,7 +532,7 @@ describe('Class-Separated Metrics (FR-ALERT-005, AC-140)', () => {
 });
 
 describe('Transactional Outbox & Delivery Worker (FR-WF-006, AC-141)', () => {
-  it('commits decision observation, alert record, and outbox entry in one atomic transaction', async () => {
+  it('commits decision observation, alert record, and outbox entry in one atomic transaction and is rerun safe', async () => {
     const database = new MemoryPostgresAdapter();
     await applyBootstrapMigration(database);
     await applyAlertLifecycleMigration(database);
@@ -481,6 +556,14 @@ describe('Transactional Outbox & Delivery Worker (FR-WF-006, AC-141)', () => {
       alertRecord: policyResult.alertRecord!,
       outboxEntry: policyResult.outboxEntry!,
     });
+
+    // Re-commit exact same transaction (must safely no-op without mutation)
+    await expect(
+      commitAlertTransaction(database, {
+        alertRecord: policyResult.alertRecord!,
+        outboxEntry: policyResult.outboxEntry!,
+      }),
+    ).resolves.toBeUndefined();
 
     const alertRows = await database.query<{ alert_id: string; alert_class: string }>(
       'SELECT alert_id, alert_class FROM alerts WHERE alert_id=$1',

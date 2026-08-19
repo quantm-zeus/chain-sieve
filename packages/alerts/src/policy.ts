@@ -141,6 +141,18 @@ export const evaluateAlertPolicy = (
     reasons.push(`INSUFFICIENT_INDEPENDENCE_GROUPS:${candidate.effectiveIndependenceGroups}_min_${policy.minimumEffectiveIndependenceGroups}`);
   }
 
+  const DEPENDENCE_RANKS: Record<string, number> = {
+    INDEPENDENT: 0,
+    PARTIALLY_DEPENDENT: 1,
+    HIGHLY_DEPENDENT: 2,
+    UNKNOWN_DEPENDENCE: 3,
+  };
+  const candidateDepRank = DEPENDENCE_RANKS[candidate.sourceDependenceState] ?? 3;
+  const maxAllowedDepRank = DEPENDENCE_RANKS[policy.maximumSourceDependenceState] ?? 1;
+  if (candidateDepRank > maxAllowedDepRank) {
+    reasons.push(`SOURCE_DEPENDENCE_EXCEEDS_MAXIMUM:${candidate.sourceDependenceState}_max_${policy.maximumSourceDependenceState}`);
+  }
+
   // 5. Security Invariants (Deterministic Solana Checks)
   if (!candidate.security.mintAuthorityRevokedOrDisabled) {
     reasons.push('SECURITY_MINT_AUTHORITY_NOT_REVOKED');
@@ -165,8 +177,19 @@ export const evaluateAlertPolicy = (
   if (candidate.tradability.netReturnEstimate <= 0) {
     reasons.push(`NET_RETURN_NON_POSITIVE:${candidate.tradability.netReturnEstimate}`);
   }
+  if (policy.requireConservativeExecutionPass && candidate.tradability.conservativeExecutionPass === false) {
+    reasons.push('CONSERVATIVE_EXECUTION_GATE_FAILED');
+  }
+  if (policy.requireP90ActionDelayPass && candidate.tradability.p90ActionDelayPass === false) {
+    reasons.push('P90_ACTION_DELAY_GATE_FAILED');
+  }
 
-  // 7. Cost Policy (STRICT_FREE enforcement)
+  // 7. Statistical Gate
+  if (policy.requireActiveStatisticalGate && candidate.statisticalGatePass === false) {
+    reasons.push('ACTIVE_STATISTICAL_GATE_FAILED');
+  }
+
+  // 8. Cost Policy (STRICT_FREE enforcement)
   if (policy.costPolicy === 'STRICT_FREE') {
     if (candidate.cost.costUsd > 0) {
       reasons.push(`COST_POLICY_VIOLATION_PAID_OP:${candidate.cost.costUsd}usd`);
@@ -176,7 +199,21 @@ export const evaluateAlertPolicy = (
     }
   }
 
-  // 8. Cooldown / Duplicate check against prior alert
+  // 9. Quiet Hours
+  if (policy.quietHours?.enabled) {
+    const currentUtcHour = new Date(asOfMs).getUTCHours();
+    const startH = policy.quietHours.startHour ?? 22;
+    const endH = policy.quietHours.endHour ?? 6;
+    const inQuietHours = startH <= endH
+      ? currentUtcHour >= startH && currentUtcHour < endH
+      : currentUtcHour >= startH || currentUtcHour < endH;
+
+    if (inQuietHours && candidate.decision === 'ALERT') {
+      reasons.push('QUIET_HOURS_ACTIVE');
+    }
+  }
+
+  // 10. Cooldown / Duplicate check against prior alert
   if (priorAlert && priorAlert.assetId === candidate.assetId) {
     const priorAlertTime = Date.parse(priorAlert.createdAt);
     const elapsedMinutes = (asOfMs - priorAlertTime) / (60 * 1000);
@@ -185,14 +222,21 @@ export const evaluateAlertPolicy = (
     const cooldownLimit = isConfirmedAlert ? policy.cooldownMinutes : policy.earlyWatchCooldownMinutes;
 
     if (elapsedMinutes < cooldownLimit) {
-      // Allow repeat only if material evidence fingerprint or risk/thesis changed materially
-      if (priorAlert.payload.materialEvidenceFingerprint === candidate.materialEvidenceFingerprint) {
+      // Cooldown only blocks duplicate positive alerts when thesis, score, risk, and tradability remain stable.
+      // Material deteriorations or risk escalations must NOT be suppressed by cooldown.
+      const isMaterialDeterioration =
+        candidate.riskState === 'CRITICAL' ||
+        candidate.riskState === 'CONFLICTING' ||
+        candidate.tradability.executable === false ||
+        (priorAlert.payload.score !== null && candidate.score !== null && candidate.score < priorAlert.payload.score * 0.7);
+
+      if (!isMaterialDeterioration && priorAlert.payload.materialEvidenceFingerprint === candidate.materialEvidenceFingerprint) {
         reasons.push(`COOLDOWN_ACTIVE:${Math.round(elapsedMinutes)}m_required_${cooldownLimit}m`);
       }
     }
   }
 
-  // 9. Daily limits
+  // 11. Daily limits
   if (context?.alertsSentToday !== undefined && context.alertsSentToday >= policy.maxConfirmedAlertsPerDay) {
     reasons.push(`DAILY_CONFIRMED_ALERT_LIMIT_REACHED:${context.alertsSentToday}_max_${policy.maxConfirmedAlertsPerDay}`);
   }

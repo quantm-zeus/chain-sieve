@@ -68,17 +68,11 @@ export const commitAlertTransaction = async (
       );
     }
 
-    // 2. Insert Alert Record into alerts table
+    // 2. Insert Alert Record into alerts table (immutable exactly-once snapshot)
     await tx.query(
       `INSERT INTO alerts (alert_id, asset_id, alert_class, actionability_state, fingerprint, valid_until, payload_json, canonical_json, sha256, bytes, created_at, shadow_mode, trace_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-       ON CONFLICT (alert_id) DO UPDATE SET
-         actionability_state = EXCLUDED.actionability_state,
-         valid_until = EXCLUDED.valid_until,
-         payload_json = EXCLUDED.payload_json,
-         canonical_json = EXCLUDED.canonical_json,
-         sha256 = EXCLUDED.sha256,
-         bytes = EXCLUDED.bytes`,
+       ON CONFLICT (alert_id) DO NOTHING`,
       [
         input.alertRecord.alertId,
         input.alertRecord.assetId,

@@ -20,6 +20,8 @@ export interface AlertTradabilityInput {
   maxExecutableNotionalUsd?: string;
   minLiquidityUsd: number;
   currentLiquidityUsd: number;
+  conservativeExecutionPass?: boolean;
+  p90ActionDelayPass?: boolean;
   reason?: string;
 }
 
@@ -59,6 +61,7 @@ export interface AlertCandidateInput {
   dataCoverage: number;
   effectiveIndependenceGroups: number;
   sourceDependenceState: 'INDEPENDENT' | 'PARTIALLY_DEPENDENT' | 'HIGHLY_DEPENDENT' | 'UNKNOWN_DEPENDENCE';
+  statisticalGatePass?: boolean;
   freshness: AlertFreshnessInput;
   tradability: AlertTradabilityInput;
   security: AlertSecurityInput;

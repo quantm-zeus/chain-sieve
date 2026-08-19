@@ -49,9 +49,10 @@ export const determineAlertRouting = (
 export const renderAlert = (
   payload: AlertPayload,
   isShadowMode = false,
+  options?: { renderedAt?: string },
 ): RenderedAlert => {
   const { channel, priority } = determineAlertRouting(payload, isShadowMode);
-  const renderedAt = new Date().toISOString();
+  const renderedAt = options?.renderedAt ?? payload.asOf;
 
   // Check contradiction / expiry conditions that mandate suppressing positive headlines
   const hasCriticalRisk = payload.riskState === 'CRITICAL' || payload.riskState === 'CONFLICTING';

@@ -61,8 +61,10 @@ export const computeAlertClassMetrics = (
 
   const confirmedPrecision = totalConfirmed > 0 ? round6(confirmedTradableWins / totalConfirmed) : 0;
   const falseDiscoveryRate = totalConfirmed > 0 ? round6(1 - confirmedPrecision) : 0;
-  const univWins = options.universeTradableSuccessCount ?? confirmedTradableWins;
-  const confirmedRecall = univWins > 0 ? round6(confirmedTradableWins / univWins) : 1.0;
+  const confirmedRecall =
+    options.universeTradableSuccessCount !== undefined
+      ? (options.universeTradableSuccessCount > 0 ? round6(confirmedTradableWins / options.universeTradableSuccessCount) : 0)
+      : (totalConfirmed > 0 ? round6(confirmedTradableWins / totalConfirmed) : 0);
 
   // 3. Early Watch Metrics (Explicitly separated from confirmed opportunity precision)
   const totalWatches = earlyWatchRecords.length;

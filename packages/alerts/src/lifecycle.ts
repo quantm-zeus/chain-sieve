@@ -66,6 +66,7 @@ export const evaluateAlertLifecycle = (
   if (nowMs > validUntilMs) {
     const updateReason = `Opportunity validity lapsed at ${priorAlert.validUntil}`;
     const alertId = `alt_exp_${createHash('sha256').update(`${priorAlert.alertId}:expired:${nowIso}`).digest('hex').slice(0, 24)}`;
+    const traceId = currentCandidate?.traceId ?? `trace_exp_${priorAlert.alertId}_${nowMs}`;
     const updateFingerprint = computeAlertFingerprint({
       assetId: priorAlert.assetId,
       profileId: priorAlert.payload.profileId,
@@ -81,10 +82,11 @@ export const evaluateAlertLifecycle = (
       alertClass: 'OPPORTUNITY_EXPIRED',
       actionabilityState: 'EXPIRED',
       asOf: nowIso,
+      validUntil: nowIso,
       parentAlertId: priorAlert.alertId,
       updateReason,
       shadowMode: priorAlert.shadowMode,
-      traceId: priorAlert.traceId,
+      traceId,
     };
 
     const canonicalJson = JSON.stringify(canonicalize(updatePayload));
@@ -97,14 +99,14 @@ export const evaluateAlertLifecycle = (
       alertClass: 'OPPORTUNITY_EXPIRED',
       actionabilityState: 'EXPIRED',
       fingerprint: updateFingerprint,
-      validUntil: priorAlert.validUntil,
+      validUntil: nowIso,
       payload: updatePayload,
       canonicalJson,
       sha256,
       bytes,
       createdAt: nowIso,
       shadowMode: priorAlert.shadowMode,
-      traceId: priorAlert.traceId,
+      traceId,
     };
 
     const outboxEntry: OutboxEntry = {
@@ -114,7 +116,7 @@ export const evaluateAlertLifecycle = (
       state: 'PENDING',
       attemptCount: 0,
       availableAt: nowIso,
-      traceId: priorAlert.traceId,
+      traceId,
     };
 
     return {
@@ -151,10 +153,19 @@ export const evaluateAlertLifecycle = (
     };
   }
 
-  // Check idempotency: if candidate evidence has not materially changed
-  if (currentCandidate.materialEvidenceFingerprint === priorAlert.payload.materialEvidenceFingerprint &&
-      currentCandidate.riskState === priorAlert.payload.riskState &&
-      currentCandidate.lifecycleState === priorAlert.payload.lifecycleState) {
+  // Check idempotency: if candidate evidence has not materially changed and no deterioration is present
+  const isTradabilityDegraded = !currentCandidate.tradability.executable || currentCandidate.tradability.netReturnEstimate <= 0;
+  const isScoreMateriallyDropped = priorAlert.payload.score !== null && currentCandidate.score !== null && currentCandidate.score < priorAlert.payload.score * 0.7;
+  const isRiskStateEscalated = currentCandidate.riskState === 'CRITICAL' || currentCandidate.riskState === 'CONFLICTING' || (priorAlert.payload.riskState === 'LOW' && currentCandidate.riskState === 'HIGH');
+
+  if (
+    !isTradabilityDegraded &&
+    !isScoreMateriallyDropped &&
+    !isRiskStateEscalated &&
+    currentCandidate.materialEvidenceFingerprint === priorAlert.payload.materialEvidenceFingerprint &&
+    currentCandidate.riskState === priorAlert.payload.riskState &&
+    currentCandidate.lifecycleState === priorAlert.payload.lifecycleState
+  ) {
     return {
       decision: {
         transitionType: 'NONE',

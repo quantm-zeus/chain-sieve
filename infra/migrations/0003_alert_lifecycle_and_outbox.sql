@@ -17,9 +17,6 @@ CREATE TABLE IF NOT EXISTS alerts (
 CREATE INDEX IF NOT EXISTS alerts_asset_class_idx ON alerts(asset_id, alert_class);
 CREATE INDEX IF NOT EXISTS alerts_fingerprint_idx ON alerts(fingerprint);
 
-ALTER TABLE outbox DROP CONSTRAINT IF EXISTS outbox_state_check;
-ALTER TABLE outbox ADD CONSTRAINT outbox_state_check CHECK (state IN ('PENDING','DELIVERED','RETRY','EXPIRED','CANCELLED','FAILED'));
-
 INSERT INTO schema_migrations (version, applied_at)
 VALUES ('0003_alert_lifecycle_and_outbox', now())
 ON CONFLICT (version) DO NOTHING;
