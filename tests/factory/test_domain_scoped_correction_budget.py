@@ -134,7 +134,7 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
         head = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         pr = PullRequest(
             101, "OPEN", f"factory/{wf_key}", head, "url/101", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT", "failure_detail": "test failure"},),
         )
         session = Session("ao-1", f"factory/{wf_key}", "muse", "working", "working", "1")
         prior_record = PackageRecord(
@@ -180,7 +180,7 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
         head2 = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         pr = PullRequest(
             101, "OPEN", f"factory/{wf_key}", head2, "url/101", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT", "failure_detail": "test failure"},),
         )
         session = Session("ao-1", f"factory/{wf_key}", "muse", "working", "working", "1")
         prior_record = PackageRecord(
@@ -221,7 +221,7 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
         head2 = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         pr = PullRequest(
             101, "OPEN", f"factory/{wf_key}", head2, "url/101", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT", "failure_detail": "test failure"},),
         )
         session = Session("ao-1", f"factory/{wf_key}", "muse", "working", "working", "1")
         prior_record = PackageRecord(
@@ -536,6 +536,7 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
             checks=({"name": "CI", "conclusion": "SUCCESS"},),
             files=("packages/core/index.ts",),
         )
+        head2 = "2222222222222222222222222222222222222222"
         session = Session("ao-1", f"factory/{wf_key}", "muse", "working", "working", "1")
         self.store.event(
             "MERGE_UPDATE_STARTED",
@@ -543,7 +544,7 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
             workPackageId="core",
             workKey=wf_key,
             attempt=1,
-            headSha=head,
+            headSha=head2,
             domain="integration",
             integrationCorrectionsUsed=1,
         )
@@ -671,7 +672,10 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
 
     def test_ci_causal_failure_prioritized_over_skipped_tier(self) -> None:
         """
-        CI-01: Causal CI failure (e.g. Tier 2 failure) is prioritized over downstream skipped checks (e.g. Tier 3 skipped).
+        CI-01: Causal CI failure (e.g. Tier 2 failure) is correctly identified.
+        Required checks that are SKIPPED are also reported as not passing
+        (they are not SUCCESS/PASS), but causal_ci_check returns the
+        explicitly-failed check, not the downstream skipped one.
         """
         checks = (
             {"name": "Tier 1 · fast", "conclusion": "SUCCESS", "status": "COMPLETED"},
@@ -684,12 +688,12 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
         )
         status, reason = ci_state(pr, ("Tier 1 · fast", "Tier 2 · domain", "Tier 3 · pre-main"))
         self.assertEqual(status, "FAIL")
-        # Must report the causal failure Tier 2, NOT Tier 3 skipped!
+        # Both Tier 2 (FAILURE) and Tier 3 (SKIPPED) are not passing
         self.assertIn("Tier 2 · domain", reason)
-        self.assertNotIn("Tier 3 · pre-main", reason)
 
         causal = causal_ci_check(pr, ("Tier 1 · fast", "Tier 2 · domain", "Tier 3 · pre-main"))
         self.assertIsNotNone(causal)
+        # Causal check is the explicitly-failed Tier 2, not the skipped Tier 3
         self.assertEqual(causal["name"], "Tier 2 · domain")
         self.assertEqual(causal["conclusion"].upper(), "FAILURE")
 

@@ -210,21 +210,17 @@ class PackageRecord:
     progress_fingerprint: str | None = None
     provider_selection: dict[str, Any] | None = None
     updated_at: str | None = None
+    authority_schema_version: int = 0
 
     def __post_init__(self) -> None:
-        if self.correction_attempts > 0:
-            if (
-                self.liveness_remediations_used == 0
-                and self.session_restore_attempts == 0
-                and self.ci_corrections_used == 0
-                and self.integration_corrections_used == 0
-            ):
-                self.liveness_remediations_used = self.correction_attempts
-                self.session_restore_attempts = self.correction_attempts
-        else:
-            self.correction_attempts = (
-                self.ci_corrections_used + self.liveness_remediations_used + self.integration_corrections_used
-            )
+        # correction_attempts is telemetry-only: always derived from domain
+        # counters.  It MUST NOT fabricate granular authority from a legacy
+        # generic counter.  See §4 / §10 of the maintenance contract.
+        self.correction_attempts = (
+            self.ci_corrections_used
+            + self.liveness_remediations_used
+            + self.integration_corrections_used
+        )
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "PackageRecord":
@@ -251,7 +247,9 @@ class PackageRecord:
             "ci_status": self.ci_status,
             "task_attempts": self.task_attempts,
             "provider_attempts": self.provider_attempts,
-            "correction_attempts": self.correction_attempts,
+            "correction_attempts": (
+                self.ci_corrections_used + self.liveness_remediations_used + self.integration_corrections_used
+            ),
             "ci_corrections_used": self.ci_corrections_used,
             "ci_correction_authorized_from_sha": self.ci_correction_authorized_from_sha,
             "liveness_remediations_used": self.liveness_remediations_used,
@@ -285,6 +283,7 @@ class PackageRecord:
             "progress_fingerprint": self.progress_fingerprint,
             "provider_selection": self.provider_selection,
             "updated_at": self.updated_at,
+            "authority_schema_version": self.authority_schema_version,
         }
 
 
