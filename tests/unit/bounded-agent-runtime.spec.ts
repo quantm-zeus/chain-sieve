@@ -366,11 +366,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
         return { pairs: [] };
       });
 
-      // Budget with zero allowed model cost
-      const zeroCostBudget: AgentBudget = {
+      // Budget with maxInputTokens lower than tool estimated tokens (100)
+      const tightTokenBudget: AgentBudget = {
         maxSteps: 5,
         maxToolCalls: 5,
-        maxModelCostUsd: 0,
+        maxInputTokens: 50,
       };
 
       await expect(
@@ -378,7 +378,7 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           candidate: sampleCandidate,
           profileId: 'fast-triage-v1',
           envelope: sampleEnvelope,
-          budget: zeroCostBudget,
+          budget: tightTokenBudget,
         }),
       ).rejects.toThrow(BudgetExceededError);
 
