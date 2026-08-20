@@ -273,7 +273,7 @@ export class AdminStore {
 
     // Active schedules — from DB if available, otherwise empty
     let activeSchedules: OverviewResponse['activeSchedules'] = [];
-    let scheduleDrift: ScheduleDrift[] = [];
+    const scheduleDrift: ScheduleDrift[] = [];
     if (this.database) {
       try {
         const result = await this.database.query<{ id: string; name: string; state: string; cron: string; timezone: string; paused: boolean }>(
@@ -313,7 +313,7 @@ export class AdminStore {
     }
 
     // Workflow states — from DB if available
-    let workflowStates: WorkflowStates = { running: 0, waiting: 0, deadLettered: 0, pending: 0, completed: 0, failed: 0 };
+    const workflowStates: WorkflowStates = { running: 0, waiting: 0, deadLettered: 0, pending: 0, completed: 0, failed: 0 };
     if (this.database) {
       try {
         const wf = await this.database.query<{ status: string; count: string }>(`SELECT status, COUNT(*)::text AS count FROM workflow_runs GROUP BY status`);
@@ -338,7 +338,7 @@ export class AdminStore {
     }
 
     // Candidate counts — from DB if available; uses synthetic_observations as proxy for candidate funnel if needed
-    let candidateCounts: CandidateCounts = {
+    const candidateCounts: CandidateCounts = {
       byLifecycle: { DISCOVERED: 0, QUALIFIED: 0, EMERGING: 0, CONFIRMED: 0, MONITORING: 0, DECAYING: 0, REJECTED: 0, ARCHIVED: 0 },
       byRisk: { UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0, CONFLICTING: 0 },
       total: 0,

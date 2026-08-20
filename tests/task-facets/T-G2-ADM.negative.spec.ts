@@ -7,7 +7,7 @@ async function request(app: ReturnType<typeof createApp>, path: string, init?: R
   const res = await app.request(path, init);
   const body = await res.text();
   let json: unknown = null;
-  try { json = JSON.parse(body); } catch {}
+  try { json = JSON.parse(body); } catch { /* ignore parse */ }
   return { status: res.status, json, body };
 }
 
