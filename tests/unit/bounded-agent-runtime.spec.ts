@@ -15,7 +15,7 @@ import type {
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
-import { AgentDecisionSchema } from '@ciag/shared-schemas';
+import { AgentBudgetSchema, AgentDecisionSchema } from '@ciag/shared-schemas';
 
 describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)', () => {
   const sampleCandidate = {
