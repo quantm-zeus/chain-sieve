@@ -143,13 +143,10 @@ export class ToolArgumentConfinementValidator {
     if (
       envelope.allowedProviders &&
       envelope.allowedProviders.length > 0 &&
-      (lowerKey === 'provider' ||
-        lowerKey === 'dataprovider' ||
-        lowerKey === 'modelprovider' ||
+      (lowerKey.includes('provider') ||
         lowerKey === 'source' ||
         lowerKey === 'sourceid' ||
-        lowerKey === 'feed' ||
-        lowerKey === 'feedprovider')
+        lowerKey.includes('feed'))
     ) {
       if (typeof value === 'string') {
         const allowed = envelope.allowedProviders.map((p) => p.toLowerCase());
@@ -193,8 +190,7 @@ export class ToolArgumentConfinementValidator {
     if (
       envelope.allowedChains &&
       envelope.allowedChains.length > 0 &&
-      (lowerKey === 'chain' ||
-        lowerKey === 'chainid' ||
+      (lowerKey.includes('chain') ||
         lowerKey === 'network' ||
         lowerKey === 'blockchain' ||
         lowerKey === 'ecosystem')
@@ -225,18 +221,11 @@ export class ToolArgumentConfinementValidator {
     if (
       envelope.allowedAddresses &&
       envelope.allowedAddresses.length > 0 &&
-      (lowerKey === 'address' ||
-        lowerKey === 'addresses' ||
-        lowerKey === 'contractaddress' ||
-        lowerKey === 'tokenaddress' ||
-        lowerKey === 'pooladdress' ||
-        lowerKey === 'mint' ||
-        lowerKey === 'mintaddress' ||
+      (lowerKey.includes('address') ||
+        lowerKey.includes('mint') ||
         lowerKey === 'account' ||
-        lowerKey === 'owneraddress' ||
-        lowerKey === 'walletaddress' ||
-        lowerKey === 'recipient' ||
-        lowerKey === 'targetaddress')
+        lowerKey.includes('recipient') ||
+        lowerKey.includes('wallet'))
     ) {
       const allowed = envelope.allowedAddresses.map((a) => this.normalizeAddress(a));
       if (typeof value === 'string') {
