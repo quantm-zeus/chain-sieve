@@ -137,6 +137,7 @@ describe('Recovery Continuity — FR-DR-003/004/005/006', () => {
 
     const finalChain = await verifyBackupAuditChain(db);
     expect(finalChain.valid).toBe(true);
+    await db.close();
   });
 
   it('destructive restore drill rebuilds clean env, verifies hashes/chains, replays migrations, restores cross-store refs, re-establishes checkpoints and measures RPO/RTO', async () => {
@@ -222,6 +223,7 @@ describe('Recovery Continuity — FR-DR-003/004/005/006', () => {
     // Exit degraded, alerts re-enabled
     await exitDegradedMode(db, 'CRITICAL_CONFIG', clock.now());
     expect(await isConfirmedOpportunityDisabled(db)).toBe(false);
+    await db.close();
   });
 
   it('post-recovery reconciliation reconciles all domains and rejects stale fencing tokens before resuming', async () => {
@@ -273,6 +275,7 @@ describe('Recovery Continuity — FR-DR-003/004/005/006', () => {
     const stale = await validateFencingToken(db, 'lease-fence', 'owner-1', l1.version - 1);
     // version -1 doesn't exist — stale
     expect(stale.valid).toBe(false);
+    await db.close();
   });
 
   it('tier miss auto-degrades per degraded-mode matrix and disables confirmed opportunity until continuity restored', async () => {
@@ -298,5 +301,6 @@ describe('Recovery Continuity — FR-DR-003/004/005/006', () => {
     expect(stillDisabled).toBe(false);
     await exitDegradedMode(db, 'REPLAYABLE_RAW', clock.now());
     expect(await isConfirmedOpportunityDisabled(db)).toBe(false);
+    await db.close();
   });
 });
