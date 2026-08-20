@@ -16,11 +16,12 @@ import {
   validateOrigin,
   validateToolAllowlist,
 } from '@ciag/security';
+import { createAdminRouter } from './routes/admin/router.js';
 import { JsonLogger } from '@ciag/observability';
 import type { DatabaseAdapter } from '@ciag/provider-contracts';
 
 export interface ReadinessDependency { name: string; ready(): Promise<boolean>; detail: string }
-export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> }; qstashSigningKey?: string; qstashReplayWindowMs?: number }
+export interface ApiDependencies { dependencies: ReadinessDependency[]; allowedOrigins: string[]; allowedTools?: string[]; logger?: JsonLogger; now?: () => string; nowMs?: () => number; readinessTimeoutMs?: number; mcpAuthToken?: string; mcpMaxBodyBytes?: number; mcpMaxConcurrent?: number; mcpRatePerMinute?: number; mcpMaxTrackedClients?: number; mcpTimeoutMs?: number; mcpTestMode?: boolean; mcpTestSlowToolDelayMs?: number; onMcpTestSideEffect?: () => void; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined; qstashSigningKey?: string; qstashReplayWindowMs?: number }
 type ApiEnv = { Variables: { correlationId: string } };
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
@@ -87,6 +88,11 @@ export const createApp = (input: ApiDependencies): OpenAPIHono<ApiEnv> => {
     const code = originError ? 'ORIGIN_FORBIDDEN' : 'INTERNAL_ERROR';
     return context.json(ErrorSchema.parse({ error: { code, message: code === 'INTERNAL_ERROR' ? 'Internal server error' : 'Origin is not allowed', correlationId } }), originError ? 403 : 500);
   });
+  // Admin overview, incidents, kill switches — FR-ADM-001 / FR-ADM-007 (refresh never triggers provider calls)
+  {
+    const adminRouter = createAdminRouter({ now, database: input.database as unknown as { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined });
+    app.route('/', adminRouter);
+  }
   app.openapi(healthRoute, (context) => context.json({ status: 'ok', service: 'ciag-api', time: now() }, 200));
   app.openapi(readinessRoute, async (context) => {
     const dependencies = await Promise.all(input.dependencies.map(async (dependency) => {
