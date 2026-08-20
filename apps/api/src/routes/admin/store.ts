@@ -185,10 +185,10 @@ export class AdminStore {
     severity: IncidentSeverity;
     owner: string;
     affectedScopes: string[];
-    automatedContainment?: { action: string; success: boolean; detail?: string | undefined } | null;
-    evidenceRefs?: string[];
-    revalidationRequirements?: string[];
-    rootCause?: string;
+    automatedContainment?: { action: string; success: boolean; detail?: string | undefined } | null | undefined;
+    evidenceRefs?: string[] | undefined;
+    revalidationRequirements?: string[] | undefined;
+    rootCause?: string | undefined;
   }): Incident {
     const now = this.now();
     const id = `inc_${randomUUID().slice(0, 8)}`;
