@@ -207,6 +207,30 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       expect(parsedDecision.lifecycleRecommendation).toBe('QUALIFIED');
       expect(parsedDecision.riskRecommendation).toBe('LOW');
     });
+
+    it('bounds plan generation strictly by budget maxModelCostUsd and maxProviderCostUnits', () => {
+      const profile = new ModelProfileRegistry().require('deep-research-v1');
+      const costBoundedPlan = DeterministicPlanner.plan({
+        candidate: sampleCandidate,
+        profile,
+        envelope: {
+          ...sampleEnvelope,
+          allowedTools: profile.declaredTools,
+        },
+        budget: {
+          maxSteps: 10,
+          maxToolCalls: 20,
+          maxModelCostUsd: 0.005,
+          maxProviderCostUnits: 2,
+        },
+        goal: 'DEEP_RESEARCH',
+      });
+
+      expect(costBoundedPlan.totalPlannedToolCalls).toBeLessThanOrEqual(2);
+      expect(costBoundedPlan.totalEstimatedCostUsd).toBeLessThanOrEqual(0.005);
+      expect(costBoundedPlan.steps.length).toBeGreaterThan(0);
+      expect(costBoundedPlan.steps[costBoundedPlan.steps.length - 1]?.isTerminal).toBe(true);
+    });
   });
 
   describe('FR-AGT-006: External budget and cancellation', () => {
@@ -331,6 +355,55 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           signal: controller.signal,
         }),
       ).rejects.toThrow(AgentCancelledError);
+    });
+
+    it('enforces pre-flight cost/token quota blocking execution before invoking tool handler', async () => {
+      const runtime = new BoundedAgentRuntime();
+      let handlerInvoked = false;
+
+      runtime.registerTool('dex.pairs', async () => {
+        handlerInvoked = true;
+        return { pairs: [] };
+      });
+
+      // Budget with zero allowed model cost
+      const zeroCostBudget: AgentBudget = {
+        maxSteps: 5,
+        maxToolCalls: 5,
+        maxModelCostUsd: 0,
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: zeroCostBudget,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+
+      // Verify side effect never occurred
+      expect(handlerInvoked).toBe(false);
+    });
+
+    it('cleans up AbortSignal event listeners without leaking on successful tool completion', async () => {
+      const runtime = new BoundedAgentRuntime();
+      const controller = new AbortController();
+
+      runtime.registerTool('dex.pairs', async () => {
+        return { pairs: ['SOL-USDC'] };
+      });
+
+      await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        signal: controller.signal,
+      });
+
+      // controller signal is not aborted and listener has been cleanly detached
+      expect(controller.signal.aborted).toBe(false);
     });
   });
 

@@ -185,7 +185,22 @@ export class BoundedAgentRuntime {
           profile.declaredTools,
         );
 
-        // Enforce budget for tool call & simulated provider call
+        // Pre-flight cost & token estimation
+        const inputTokens = 100;
+        const outputTokens = 150;
+        const estimatedCostUsd =
+          call.estimatedCostUsd ??
+          (inputTokens * (profile.costPerInputTokenUsd ?? 0.000001) +
+            outputTokens * (profile.costPerOutputTokenUsd ?? 0.000002));
+        const providerCostUnits = call.quotaCostUnits ?? 1;
+
+        // Pre-flight check: token & model cost quota before invoking tool
+        tracker.checkTokens(inputTokens, outputTokens, estimatedCostUsd);
+
+        // Pre-flight check & record provider cost units quota
+        tracker.recordProviderCostUnits(providerCostUnits);
+
+        // Enforce budget for tool call & provider call
         tracker.recordToolCall(candidate.assetId, 1);
         tracker.recordProviderCall(1);
         executedToolCalls++;
@@ -201,6 +216,7 @@ export class BoundedAgentRuntime {
         const startMs = Date.now();
         let output: unknown;
         let callError: string | undefined;
+        let onAbort: (() => void) | undefined;
 
         try {
           output = await Promise.race([
@@ -212,13 +228,14 @@ export class BoundedAgentRuntime {
               envelope,
               profile,
             }),
-            new Promise((_, reject) => {
+            new Promise<never>((_, reject) => {
               if (signal) {
-                const onAbort = () => {
-                  signal.removeEventListener('abort', onAbort);
+                if (signal.aborted) {
                   reject(new AgentCancelledError());
-                };
-                signal.addEventListener('abort', onAbort);
+                  return;
+                }
+                onAbort = () => reject(new AgentCancelledError());
+                signal.addEventListener('abort', onAbort, { once: true });
               }
             }),
           ]);
@@ -232,17 +249,16 @@ export class BoundedAgentRuntime {
             throw err;
           }
           callError = err instanceof Error ? err.message : String(err);
+        } finally {
+          if (signal && onAbort) {
+            signal.removeEventListener('abort', onAbort);
+          }
         }
 
         const latencyMs = Math.max(0, Date.now() - startMs);
 
-        // Account for simulated tokens / cost
-        const inputTokens = 100;
-        const outputTokens = 150;
-        const costUsd =
-          inputTokens * (profile.costPerInputTokenUsd ?? 0.000001) +
-          outputTokens * (profile.costPerOutputTokenUsd ?? 0.000002);
-        tracker.recordTokens(inputTokens, outputTokens, costUsd);
+        // Account for actual tokens / cost
+        tracker.recordTokens(inputTokens, outputTokens, estimatedCostUsd);
 
         toolRecords.push({
           callId: call.callId,

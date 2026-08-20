@@ -92,11 +92,16 @@ export class DeterministicPlanner {
     let toolCallSeq = 1;
     let totalPlannedCalls = 0;
     let totalCost = 0;
+    let totalProviderUnits = 0;
     const maxSteps = Math.min(budget.maxSteps, stages.length > 0 ? stages.length : 1);
     const maxCalls = budget.maxToolCalls;
+    const maxCostUsd = budget.maxModelCostUsd;
+    const maxProviderUnits = budget.maxProviderCostUnits;
 
     for (let stepIndex = 0; stepIndex < maxSteps; stepIndex++) {
       if (totalPlannedCalls >= maxCalls) break;
+      if (maxCostUsd !== undefined && totalCost >= maxCostUsd) break;
+      if (maxProviderUnits !== undefined && totalProviderUnits >= maxProviderUnits) break;
 
       const stage = stages[stepIndex];
       if (!stage) break;
@@ -105,6 +110,16 @@ export class DeterministicPlanner {
 
       for (const toolName of stage.tools) {
         if (totalPlannedCalls + stepCalls.length >= maxCalls) break;
+
+        const estimatedCost = this.estimateToolCost(toolName, profile);
+        const quotaCostUnits = 1;
+
+        if (maxCostUsd !== undefined && totalCost + estimatedCost > maxCostUsd) {
+          break;
+        }
+        if (maxProviderUnits !== undefined && totalProviderUnits + quotaCostUnits > maxProviderUnits) {
+          break;
+        }
 
         const callArgs = this.generateDeterministicArguments(
           toolName,
@@ -120,8 +135,8 @@ export class DeterministicPlanner {
           profile.declaredTools,
         );
 
-        const estimatedCost = this.estimateToolCost(toolName, profile);
         totalCost += estimatedCost;
+        totalProviderUnits += quotaCostUnits;
 
         const callId = `call_${candidate.assetId}_${stepIndex}_${toolCallSeq++}`;
         stepCalls.push({
@@ -130,20 +145,37 @@ export class DeterministicPlanner {
           arguments: callArgs,
           purpose: `Execute ${toolName} for stage ${stage.name}`,
           estimatedCostUsd: estimatedCost,
-          quotaCostUnits: 1,
+          quotaCostUnits,
         });
       }
 
+      if (stepCalls.length === 0 && steps.length > 0) {
+        break;
+      }
+
       totalPlannedCalls += stepCalls.length;
+      const isTerminal =
+        stepIndex === maxSteps - 1 ||
+        totalPlannedCalls >= maxCalls ||
+        (maxCostUsd !== undefined && totalCost >= maxCostUsd) ||
+        (maxProviderUnits !== undefined && totalProviderUnits >= maxProviderUnits);
+
       steps.push({
         stepIndex,
         stage: stage.name,
         toolCalls: stepCalls,
-        isTerminal: stepIndex === maxSteps - 1 || totalPlannedCalls >= maxCalls,
+        isTerminal,
       });
+
+      if (
+        (maxCostUsd !== undefined && totalCost >= maxCostUsd) ||
+        (maxProviderUnits !== undefined && totalProviderUnits >= maxProviderUnits)
+      ) {
+        break;
+      }
     }
 
-    // Ensure at least one terminal step if no tools were planned
+    // Ensure at least one step and ensure the final step is terminal
     if (steps.length === 0) {
       steps.push({
         stepIndex: 0,
@@ -151,6 +183,8 @@ export class DeterministicPlanner {
         toolCalls: [],
         isTerminal: true,
       });
+    } else {
+      steps[steps.length - 1]!.isTerminal = true;
     }
 
     const planDataForHash = {
