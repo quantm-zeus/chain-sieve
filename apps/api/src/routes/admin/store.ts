@@ -35,14 +35,14 @@ export interface AdminStoreDependencies {
   // Optional DB adapter — when provided we read/write schedules/workflows/candidates/backups from DB
   database?: {
     query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }>;
-  };
+  } | undefined;
 }
 
 // In-memory singleton stores — sufficient for product since no migration is authorized.
 // All access is via synchronous in-memory structures; no external provider calls are made.
 export class AdminStore {
   private readonly now: () => string;
-  private readonly database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> };
+  private readonly database: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined;
 
   // Kill switches
   private killSwitches: Map<KillSwitchName, KillSwitchState> = new Map();
@@ -185,7 +185,7 @@ export class AdminStore {
     severity: IncidentSeverity;
     owner: string;
     affectedScopes: string[];
-    automatedContainment?: { action: string; success: boolean; detail?: string } | null;
+    automatedContainment?: { action: string; success: boolean; detail?: string | undefined } | null;
     evidenceRefs?: string[];
     revalidationRequirements?: string[];
     rootCause?: string;
@@ -204,7 +204,12 @@ export class AdminStore {
       resolvedAt: null,
       affectedScopes: input.affectedScopes,
       automatedContainment: input.automatedContainment
-        ? { action: input.automatedContainment.action, appliedAt: now, success: input.automatedContainment.success, detail: input.automatedContainment.detail }
+        ? {
+            action: input.automatedContainment.action,
+            appliedAt: now,
+            success: input.automatedContainment.success,
+            ...(input.automatedContainment.detail !== undefined ? { detail: input.automatedContainment.detail } : {}),
+          }
         : null,
       evidenceRefs: input.evidenceRefs ?? [],
       revalidationRequirements: input.revalidationRequirements ?? [],
@@ -276,7 +281,7 @@ export class AdminStore {
     const scheduleDrift: ScheduleDrift[] = [];
     if (this.database) {
       try {
-        const result = await this.database.query<{ id: string; name: string; state: string; cron: string; timezone: string; paused: boolean }>(
+        const result = await this.database.query(
           `SELECT s.id, s.name, s.state, sv.cron, sv.timezone, s.paused FROM schedules s LEFT JOIN schedule_versions sv ON sv.id = s.current_version_id WHERE s.state IN ('ACTIVE','PAUSED') LIMIT 100`,
         );
         activeSchedules = (result.rows as Array<{ id: string; name: string; state: string; cron: string; timezone: string; paused: boolean }>).map((r) => ({
@@ -292,7 +297,7 @@ export class AdminStore {
       }
       // Schedule drift from schedule_incidents or schedule_reconciliation — best effort
       try {
-        const drift = await this.database.query<{ schedule_id: string | null; detail: string }>(
+        const drift = await this.database.query(
           `SELECT schedule_id, detail FROM schedule_incidents WHERE type LIKE '%DRIFT%' OR type LIKE '%MISMATCH%' ORDER BY created_at DESC LIMIT 20`,
         );
         for (const row of drift.rows as Array<{ schedule_id: string | null; detail: string }>) {
@@ -316,7 +321,7 @@ export class AdminStore {
     const workflowStates: WorkflowStates = { running: 0, waiting: 0, deadLettered: 0, pending: 0, completed: 0, failed: 0 };
     if (this.database) {
       try {
-        const wf = await this.database.query<{ status: string; count: string }>(`SELECT status, COUNT(*)::text AS count FROM workflow_runs GROUP BY status`);
+        const wf = await this.database.query(`SELECT status, COUNT(*)::text AS count FROM workflow_runs GROUP BY status`);
         for (const row of wf.rows as Array<{ status: string; count: string }>) {
           const c = Number(row.count);
           const s = String(row.status).toUpperCase();
@@ -327,7 +332,7 @@ export class AdminStore {
           else if (s === 'FAILED') workflowStates.failed = c;
         }
         try {
-          const dl = await this.database.query<{ count: string }>(`SELECT COUNT(*)::text AS count FROM dead_letter_items WHERE status='OPEN'`);
+          const dl = await this.database.query(`SELECT COUNT(*)::text AS count FROM dead_letter_items WHERE status='OPEN'`);
           workflowStates.deadLettered = Number((dl.rows[0] as { count: string } | undefined)?.count ?? 0);
         } catch {
           // no DL table yet
@@ -346,9 +351,9 @@ export class AdminStore {
     if (this.database) {
       try {
         // Try candidate table if exists; fallback to synthetic_observations
-        const cand = await this.database.query<{ lifecycle: string; risk: string; count: string }>(
-          `SELECT COALESCE(lifecycle,'DISCOVERED') AS lifecycle, COALESCE(risk,'UNKNOWN') AS risk, COUNT(*)::text AS count FROM synthetic_observations GROUP BY lifecycle, risk`,
-        ).catch(() => ({ rows: [], rowCount: 0 } as { rows: unknown[]; rowCount: number }));
+        const cand = await this.database
+          .query(`SELECT COALESCE(lifecycle,'DISCOVERED') AS lifecycle, COALESCE(risk,'UNKNOWN') AS risk, COUNT(*)::text AS count FROM synthetic_observations GROUP BY lifecycle, risk`)
+          .catch(() => ({ rows: [], rowCount: 0 } as { rows: unknown[]; rowCount: number }));
         if (cand.rows.length > 0) {
           for (const row of cand.rows as Array<{ lifecycle: string; risk: string; count: string }>) {
             const c = Number(row.count);
@@ -358,7 +363,7 @@ export class AdminStore {
           }
         } else {
           // Single total from observations
-          const tot = await this.database.query<{ count: string }>(`SELECT COUNT(*)::text AS count FROM synthetic_observations`);
+          const tot = await this.database.query(`SELECT COUNT(*)::text AS count FROM synthetic_observations`);
           const n = Number((tot.rows[0] as { count: string } | undefined)?.count ?? 0);
           candidateCounts.total = n;
           candidateCounts.byLifecycle['DISCOVERED'] = n;
@@ -380,7 +385,7 @@ export class AdminStore {
     };
     if (this.database) {
       try {
-        const br = await this.database.query<{ tier: string; created_at: string; location: string }>(
+        const br = await this.database.query(
           `SELECT tier, created_at, location FROM backup_records ORDER BY created_at DESC LIMIT 1`,
         );
         if (br.rows.length > 0) {

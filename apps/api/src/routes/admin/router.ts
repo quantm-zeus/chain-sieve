@@ -27,7 +27,7 @@ const isReauthVerified = (headers: Record<string, string | undefined>): boolean 
 
 const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.string(), correlationId: z.string() }) });
 
-export const createAdminRouter = (deps?: { now?: () => string; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } }): OpenAPIHono<AdminEnv> => {
+export const createAdminRouter = (deps?: { now?: () => string; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined }): OpenAPIHono<AdminEnv> => {
   const app = new OpenAPIHono<AdminEnv>();
 
   const getStore = () => getAdminStore(deps);
@@ -131,6 +131,7 @@ export const createAdminRouter = (deps?: { now?: () => string; database?: { quer
       200: { description: 'Acknowledged', content: { 'application/json': { schema: IncidentSchema } } },
       404: { description: 'Not found', content: { 'application/json': { schema: ErrorSchema } } },
       409: { description: 'Conflict', content: { 'application/json': { schema: ErrorSchema } } },
+      500: { description: 'Internal error', content: { 'application/json': { schema: ErrorSchema } } },
     },
   });
   app.openapi(ackIncidentRoute, async (c) => {
