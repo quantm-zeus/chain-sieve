@@ -420,7 +420,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         # Step 2: Worker pushes Head B (product fix), but CI fails
         prs[self.wkey] = [PullRequest(
             115, "OPEN", f"factory/{self.wkey}", self.head_b, "url/115",
-            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "FAILURE"},),
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT"},),
         )]
         controller.tick()
         s2 = store.load()[self.wkey]
@@ -1263,7 +1263,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         self.assertEqual(len(ao.restored), 1)
         self.assertEqual(ao.restored[0], "chainsieve-88")
         self.assertEqual(len(ao.spawns), 0)
-        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.correction_attempts, 0)  # telemetry-only: ci(0)+liveness(0)+integration(0)
         self.assertEqual(saved.review_corrections_used, 2)
         self.assertIsNone(saved.review_terminal_rejection_sha)
 
@@ -1436,7 +1436,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         saved = store.load()[self.wkey]
         self.assertEqual(len(ao.restored), 1)
         self.assertEqual(ao.restored[0], "chainsieve-88")
-        self.assertEqual(saved.correction_attempts, 1)
+        self.assertEqual(saved.correction_attempts, 0)  # telemetry-only: ci(0)+liveness(0)+integration(0)
         self.assertEqual(saved.review_corrections_used, 2)
         self.assertIsNone(saved.review_terminal_rejection_sha)
 

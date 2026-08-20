@@ -403,7 +403,8 @@ class WallClockAndRecoveryTests(unittest.TestCase):
             session_id="chainsieve-6",
             provider="agy",
             task_attempts=1,
-            correction_attempts=2,
+            liveness_remediations_used=2,
+            session_restore_attempts=2,
         )
         self.store.save({int_key: prior_record})
 
@@ -419,7 +420,8 @@ class WallClockAndRecoveryTests(unittest.TestCase):
         self.assertIn("chainsieve-6", ao.restored)
         record = records[int_key]
         self.assertEqual(record.task_attempts, 2)
-        self.assertEqual(record.correction_attempts, 0)
+        self.assertEqual(record.liveness_remediations_used, 0)
+        self.assertEqual(record.session_restore_attempts, 0)
         self.assertNotEqual(record.status, PackageStatus.BLOCKED)
 
     def test_regression_2_no_signal_with_clean_workspace(self) -> None:
@@ -441,7 +443,8 @@ class WallClockAndRecoveryTests(unittest.TestCase):
             session_id="chainsieve-6",
             provider="agy",
             task_attempts=1,
-            correction_attempts=2,
+            liveness_remediations_used=2,
+            session_restore_attempts=2,
         )
         self.store.save({int_key: prior_record})
 
@@ -561,7 +564,8 @@ class WallClockAndRecoveryTests(unittest.TestCase):
             session_id="chainsieve-6",
             provider="agy",
             task_attempts=2,
-            correction_attempts=2,
+            liveness_remediations_used=2,
+            session_restore_attempts=2,
         )
         self.store.save({int_key: prior_record})
 
@@ -595,7 +599,8 @@ class WallClockAndRecoveryTests(unittest.TestCase):
             session_id="chainsieve-6",
             provider="agy",
             task_attempts=2,
-            correction_attempts=2,
+            liveness_remediations_used=2,
+            session_restore_attempts=2,
             replan_attempted=True,
         )
         self.store.save({int_key: prior_record})

@@ -212,16 +212,24 @@ def ci_gate(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[bool, st
 
 
 def causal_ci_check(pr: PullRequest, required_checks: tuple[str, ...] = ()) -> dict[str, Any] | None:
-    active_failures = [
-        c for c in pr.checks
-        if str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper() in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}
-    ]
-    if active_failures:
-        return active_failures[0]
+    """Return the causal required-check failure, or None.
+
+    Only REQUIRED checks can be causal (§8).  Optional/non-required check
+    failures are ignored for causal failure selection.
+    """
+    required_set = set(required_checks)
+    # First pass: find required checks with explicit failure conclusions.
+    for c in pr.checks:
+        name = str(c.get("name") or c.get("context") or "")
+        if not required_set or name in required_set:
+            conclusion = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+            if conclusion in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}:
+                return c
+    # Second pass: required checks with non-success/non-pending status.
     if required_checks:
         for c in pr.checks:
             name = str(c.get("name") or c.get("context") or "")
-            if name in required_checks:
+            if name in required_set:
                 status = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
                 if status not in {"SUCCESS", "PASS", "", "EXPECTED", "PENDING", "QUEUED", "IN_PROGRESS", "REQUESTED", "WAITING"}:
                     return c
@@ -229,6 +237,11 @@ def causal_ci_check(pr: PullRequest, required_checks: tuple[str, ...] = ()) -> d
 
 
 def ci_state(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[str, str]:
+    """Determine CI pass/fail state based ONLY on required checks (§8).
+
+    Optional/non-required check failures CANNOT gate merge or consume
+    correction authority.
+    """
     by_name: dict[str, str] = {}
     for check in pr.checks:
         name = str(check.get("name") or check.get("context") or "")
@@ -236,14 +249,7 @@ def ci_state(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[str, st
         if name:
             by_name[name] = status
 
-    active_failures = [
-        c for c in pr.checks
-        if str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper() in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}
-    ]
-    if active_failures:
-        failing_names = [str(c.get("name") or c.get("context") or "") for c in active_failures]
-        return "FAIL", f"checks not passing: {', '.join(failing_names)}"
-
+    # Only required checks determine CI state.
     missing = [name for name in required_checks if name not in by_name]
     if missing:
         return "WAIT", f"missing required checks: {', '.join(missing)}"
@@ -339,13 +345,17 @@ def classify_ci_failure(
                                 f"verification step '{step.get('name')}' failed in job '{job.get('name')}'",
                                 run_id,
                             )
-        except Exception:
-            pass
+        except Exception as evidence_error:
+            # §7: If authoritative evidence cannot be obtained, classify as
+            # UNKNOWN.  Tier name alone does NOT prove product attribution.
+            return (
+                "UNKNOWN",
+                f"evidence retrieval failed ({type(evidence_error).__name__}: {evidence_error}); "
+                f"check '{causal_check.get('name')}'",
+                run_id,
+            )
 
-    check_name = str(causal_check.get("name") or causal_check.get("context") or "").lower()
-    if any(pattern in check_name for pattern in ("canary", "tier 0", "tier 1", "tier 2", "tier 3", "control plane")):
-        return "PRODUCT", f"causal failure in test check '{causal_check.get('name')}'", run_id
-
+    # No structured step evidence matched any known pattern.
     return "UNKNOWN", f"unclassified check '{causal_check.get('name')}'", run_id
 
 

@@ -61,13 +61,25 @@ def _reconstruct_authorities_from_events(
     work_key_str: str,
     package_id: str,
 ) -> dict[str, Any] | None:
+    """Reconstruct granular authority counters from historical events.
+
+    Authority epoch rules (§5 / §12):
+    - LIVENESS: scoped to current session/worker-attempt epoch.
+      ALTERNATE_PROVIDER_REQUEUED resets to zero.
+    - SESSION RESTORE: scoped to current session/provider-attempt epoch.
+      ALTERNATE_PROVIDER_REQUEUED resets to zero.
+    - CI CORRECTIONS: PR/work-package lifecycle, deduplicated by
+      authorization SHA (same head → one correction).
+    - INTEGRATION: PR/integration lifecycle, deduplicated by authorized head.
+    """
     if not events_path.exists():
         return None
-    ci_corrections = 0
+
+    ci_correction_shas: set[str] = set()
     last_ci_sha: str | None = None
     liveness_remediations = 0
     session_restores = 0
-    integration_corrections = 0
+    integration_heads: set[str] = set()
     found_any = False
 
     try:
@@ -83,16 +95,30 @@ def _reconstruct_authorities_from_events(
                     continue
                 found_any = True
                 ev_type = ev.get("type")
+
+                # Epoch boundary: clean alternate-provider requeue resets
+                # session-scoped authority (liveness + restore).
+                if ev_type == "ALTERNATE_PROVIDER_REQUEUED":
+                    liveness_remediations = 0
+                    session_restores = 0
+                    continue
+
                 if ev_type == "CI_CORRECTION_STARTED":
-                    ci_corrections += 1
-                    if ev.get("headSha"):
-                        last_ci_sha = str(ev.get("headSha"))
+                    head = ev.get("headSha")
+                    if head and head not in ci_correction_shas:
+                        ci_correction_shas.add(head)
+                    if head:
+                        last_ci_sha = str(head)
                 elif ev_type in {"CORRECTION_STARTED", "LIVENESS_REMEDIATION_STARTED"}:
                     liveness_remediations += 1
                 elif ev_type in {"WORKER_RESTORED", "SESSION_RESTORE_STARTED"}:
                     session_restores += 1
                 elif ev_type in {"MERGE_UPDATE_STARTED", "INTEGRATION_CORRECTION_AUTHORIZED"}:
-                    integration_corrections += 1
+                    head = ev.get("headSha")
+                    if head:
+                        integration_heads.add(head)
+                    else:
+                        integration_heads.add(f"_anon_{len(integration_heads)}")
     except Exception:
         return None
 
@@ -100,11 +126,11 @@ def _reconstruct_authorities_from_events(
         return None
 
     return {
-        "ci_corrections_used": ci_corrections,
+        "ci_corrections_used": len(ci_correction_shas),
         "ci_correction_authorized_from_sha": last_ci_sha,
         "liveness_remediations_used": liveness_remediations,
         "session_restore_attempts": session_restores,
-        "integration_corrections_used": integration_corrections,
+        "integration_corrections_used": len(integration_heads),
     }
 
 
@@ -238,9 +264,12 @@ class FactoryController:
             terminal = [item for item in all_sessions if item.status.lower() in TERMINAL_SESSION_STATES]
 
             if not merged:
-                events_info = _reconstruct_authorities_from_events(self.store.events_path, key, package.id)
-                if events_info is not None:
-                    if (
+                # Schema-versioned migration (§11): run exactly once per
+                # package.  authority_schema_version=0 → legacy unmigrated;
+                # authority_schema_version=1 → DOMAIN_AUTHORITY_V1 (migrated).
+                if record.authority_schema_version < 1:
+                    events_info = _reconstruct_authorities_from_events(self.store.events_path, key, package.id)
+                    needs_migration = (
                         record.ci_corrections_used == 0
                         and record.liveness_remediations_used == 0
                         and record.correction_attempts > 0
@@ -248,7 +277,8 @@ class FactoryController:
                         record.status == PackageStatus.BLOCKED
                         and record.blocked_reason
                         and "ci correction budget exhausted" in record.blocked_reason.lower()
-                    ):
+                    )
+                    if needs_migration and events_info is not None:
                         old_generic = record.correction_attempts
                         record.ci_corrections_used = events_info["ci_corrections_used"]
                         if events_info["ci_correction_authorized_from_sha"]:
@@ -281,6 +311,20 @@ class FactoryController:
                                 reconstructedIntegrationCorrectionsUsed=record.integration_corrections_used,
                                 clearedBlockedReason=old_reason,
                             )
+                    elif needs_migration and events_info is None:
+                        # Fail closed (§4): legacy counter > 0 but no events
+                        # to prove the breakdown.  Do NOT fabricate authority.
+                        self.store.event(
+                            "LEGACY_MIGRATION_AMBIGUOUS",
+                            milestoneId=milestone.id,
+                            workPackageId=package.id,
+                            workKey=key,
+                            oldGenericCorrectionAttempts=record.correction_attempts,
+                            reason="no usable historical events to reconstruct domain authority",
+                        )
+                    # Mark migration complete regardless of whether events
+                    # existed — prevents double-counting on restart (§11).
+                    record.authority_schema_version = 1
 
             if len(open_prs) > 1 or len(sessions) > 1:
                 record.status = PackageStatus.BLOCKED
@@ -750,9 +794,6 @@ class FactoryController:
                     f"You {reason}. Continue in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
                 )
                 record.liveness_remediations_used += 1
-                record.correction_attempts = (
-                    record.liveness_remediations_used + record.ci_corrections_used + record.integration_corrections_used
-                )
                 record.last_progress_at = utc_now()
                 self.store.event(
                     "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
@@ -762,9 +803,6 @@ class FactoryController:
                 )
             except Exception as error:
                 record.liveness_remediations_used += 1
-                record.correction_attempts = (
-                    record.liveness_remediations_used + record.ci_corrections_used + record.integration_corrections_used
-                )
                 record.last_error = f"AO send correction failed: {error}"
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -806,9 +844,6 @@ class FactoryController:
             try:
                 self.ao.restore(session.id)
                 record.session_restore_attempts += 1
-                record.correction_attempts = (
-                    record.session_restore_attempts + record.ci_corrections_used + record.integration_corrections_used
-                )
                 record.started_at = utc_now()
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -820,9 +855,6 @@ class FactoryController:
                 return
             except Exception as error:
                 record.session_restore_attempts += 1
-                record.correction_attempts = (
-                    record.session_restore_attempts + record.ci_corrections_used + record.integration_corrections_used
-                )
                 record.last_error = f"AO restore failed: {error}"
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -902,7 +934,6 @@ class FactoryController:
                 previous_provider = record.provider
                 record.status = PackageStatus.READY
                 record.session_id = None
-                record.correction_attempts = 0
                 record.ci_corrections_used = 0
                 record.ci_correction_authorized_from_sha = None
                 record.liveness_remediations_used = 0
@@ -936,7 +967,6 @@ class FactoryController:
                     pass
                 self.ao.restore(session.id)
                 record.task_attempts += 1
-                record.correction_attempts = 0
                 record.liveness_remediations_used = 0
                 record.session_restore_attempts = 0
                 record.started_at = utc_now()
@@ -1005,14 +1035,20 @@ class FactoryController:
             failure_kind, failure_detail, run_id = classify_ci_failure(pr, causal_check, self.github)
 
             if failure_kind == "INFRASTRUCTURE" and run_id is not None:
+                # Idempotency (§9): derive a durable key from head+run+attempt
+                # to prevent duplicate reruns across ticks/restarts.
+                infra_idempotency_token = f"CI_INFRA_RETRY:{pr.head_sha}:{run_id}:{record.ci_infra_retries_used}"
+                if record.last_error == infra_idempotency_token:
+                    # Already dispatched for this exact run attempt — wait.
+                    return
                 if record.ci_infra_retries_used < self.config.max_ci_infra_retries:
                     try:
                         self.github.rerun_failed_jobs(run_id)
                         record.ci_infra_retries_used += 1
                         record.ci_infra_retry_authorized_from_sha = pr.head_sha
                         record.last_progress_at = utc_now()
-                        token = f"CI_INFRA_RETRY:{pr.head_sha}:{record.ci_infra_retries_used}"
-                        record.last_error = token
+                        infra_idempotency_token = f"CI_INFRA_RETRY:{pr.head_sha}:{run_id}:{record.ci_infra_retries_used}"
+                        record.last_error = infra_idempotency_token
                         self.store.event(
                             "CI_INFRA_RETRY_STARTED",
                             milestoneId=milestone.id,
@@ -1026,10 +1062,27 @@ class FactoryController:
                             runId=run_id,
                             detail=failure_detail,
                             domain="ci_infrastructure",
+                            idempotencyKey=infra_idempotency_token,
                         )
                         return
                     except Exception as error:
-                        pass
+                        # DEFECT C (§6): rerun dispatch failure MUST NOT fall
+                        # through to product correction path.
+                        record.last_error = f"CI_INFRA_RETRY_DISPATCH_FAILED:{pr.head_sha}:{run_id}"
+                        self.store.event(
+                            "CI_INFRA_RETRY_DISPATCH_FAILED",
+                            milestoneId=milestone.id,
+                            workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id),
+                            pr=pr.number,
+                            headSha=pr.head_sha,
+                            runId=run_id,
+                            infraRetryAttempt=record.ci_infra_retries_used,
+                            exceptionClass=type(error).__name__,
+                            exceptionMessage=str(error)[:500],
+                            domain="ci_infrastructure",
+                        )
+                        return
                 else:
                     self._block(
                         milestone.id,
@@ -1042,6 +1095,23 @@ class FactoryController:
 
             token = f"CI:{pr.head_sha}:{ci_reason}"
             if record.session_id and record.last_error != token:
+                # DEFECT D (§7): UNKNOWN classification MUST NOT consume product
+                # CI correction budget or prompt the worker to edit code.
+                if failure_kind == "UNKNOWN":
+                    record.last_error = f"CI_UNKNOWN:{pr.head_sha}:{failure_detail}"
+                    self.store.event(
+                        "CI_FAILURE_CLASSIFICATION_UNKNOWN",
+                        milestoneId=milestone.id,
+                        workPackageId=package.id,
+                        workKey=work_key(milestone.id, package.id),
+                        pr=pr.number,
+                        headSha=pr.head_sha,
+                        causalCheck=str((causal_check or {}).get("name", "")),
+                        detail=failure_detail,
+                        runId=run_id,
+                    )
+                    return
+
                 already_authorized_for_head = (record.ci_correction_authorized_from_sha == pr.head_sha)
                 if not already_authorized_for_head:
                     if record.ci_corrections_used >= self.config.max_ci_correction_rounds:
@@ -1055,9 +1125,6 @@ class FactoryController:
                         return
                     record.ci_corrections_used += 1
                     record.ci_correction_authorized_from_sha = pr.head_sha
-                    record.correction_attempts = (
-                        record.ci_corrections_used + record.liveness_remediations_used + record.integration_corrections_used
-                    )
 
                 self.ao.send(
                     record.session_id,
@@ -1366,9 +1433,6 @@ class FactoryController:
                 )
                 record.integration_corrections_used += 1
                 record.integration_correction_authorized_for_head = pr.head_sha
-                record.correction_attempts = (
-                    record.integration_corrections_used + record.ci_corrections_used + record.liveness_remediations_used
-                )
                 record.last_error = token
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -1886,7 +1950,9 @@ def _progress_fingerprint(
             },
             "record": None if record is None else {
                 "ci_status": record.ci_status,
-                "correction_attempts": record.correction_attempts,
+                "correction_attempts": (
+                    record.ci_corrections_used + record.liveness_remediations_used + record.integration_corrections_used
+                ),
                 "ci_corrections_used": record.ci_corrections_used,
                 "ci_correction_authorized_from_sha": record.ci_correction_authorized_from_sha,
                 "liveness_remediations_used": record.liveness_remediations_used,

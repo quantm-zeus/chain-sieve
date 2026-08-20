@@ -396,7 +396,7 @@ class SafetyTests(unittest.TestCase):
         record = PackageRecord(session_id="ao-1", provider="muse")
         pr = PullRequest(
             7, "OPEN", "factory/a", "a" * 40, "url/7", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT"},),
         )
         controller._handle_pr(milestone(work_to_dict(work)), work, record, pr)
         controller._handle_pr(milestone(work_to_dict(work)), work, record, pr)
@@ -465,7 +465,7 @@ class SafetyTests(unittest.TestCase):
         cfg = replace(config(self.root), max_task_attempts=2)
         ao = ActionAO()
         controller = FactoryController(self.root, cfg, StateStore(cfg.state_dir), FakeGitHub(Snapshot()), ao)
-        record = PackageRecord(status=PackageStatus.ACTIVE, task_attempts=1, correction_attempts=cfg.max_correction_attempts)
+        record = PackageRecord(status=PackageStatus.ACTIVE, task_attempts=1, liveness_remediations_used=cfg.max_liveness_remediations, session_restore_attempts=cfg.max_session_restores)
         session = Session("ao-1", "factory/a", "muse", "working", "waiting_input", "1")
         plan = milestone(package("a"))
         controller._handle_activity(plan, plan.packages[0], key("a"), record, session, None)

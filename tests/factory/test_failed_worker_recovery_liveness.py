@@ -161,7 +161,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
 
         self.assertIn("chainsieve-88", ao.restored)
         record = records[eval_key]
-        self.assertEqual(record.correction_attempts, 1)
+        self.assertEqual(record.session_restore_attempts, 1)
         self.assertEqual(record.session_id, "chainsieve-88")
 
         events = self.store.history(10)
@@ -278,6 +278,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
             initial_provider="agy",
             task_attempts=1,
             correction_attempts=2,  # Budget already exhausted
+            session_restore_attempts=2,  # Restore budget exhausted
         )
         self.store.save({eval_key: prior_record})
 
@@ -322,6 +323,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
             initial_provider="agy",
             task_attempts=1,
             correction_attempts=2,  # Correction attempts exhausted, but task attempt 1 -> restore
+            session_restore_attempts=2,  # Session restore budget exhausted
         )
         self.store.save({eval_key: prior_record})
 
@@ -453,7 +455,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         head = "106a47efa02705caa425c5661b671267052b17ef"
         pr = PullRequest(
             135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT"},),
         )
 
         twenty_mins_ago = (datetime.now(UTC) - timedelta(minutes=20)).isoformat()
@@ -471,6 +473,8 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
             ci_status="FAIL",
             last_error=token,
             correction_attempts=1,
+            ci_corrections_used=1,
+            ci_correction_authorized_from_sha=head,
             task_attempts=2,
             started_at=twenty_mins_ago,
             last_progress_at=twenty_mins_ago,
@@ -490,7 +494,8 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         self.assertEqual(record.session_id, "chainsieve-90")
         self.assertEqual(record.issue_number, 129)
         self.assertEqual(record.pr_number, 135)
-        self.assertEqual(record.correction_attempts, 2)
+        self.assertEqual(record.liveness_remediations_used, 1)
+        self.assertEqual(record.ci_corrections_used, 1)
 
         # Autonomous continuation sent to same session
         self.assertEqual(len(ao.sent), 1)
@@ -517,7 +522,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         head = "106a47efa02705caa425c5661b671267052b17ef"
         pr = PullRequest(
             135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT"},),
         )
 
         five_secs_ago = (datetime.now(UTC) - timedelta(seconds=5)).isoformat()
@@ -535,6 +540,8 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
             ci_status="FAIL",
             last_error=token,
             correction_attempts=1,
+            ci_corrections_used=1,
+            ci_correction_authorized_from_sha=head,
             task_attempts=2,
             started_at=five_secs_ago,
             last_progress_at=five_secs_ago,
@@ -551,7 +558,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         record = records[wf_key]
         self.assertEqual(len(ao.sent), 0)
         self.assertEqual(len(ao.spawns), 0)
-        self.assertEqual(record.correction_attempts, 1)
+        self.assertEqual(record.ci_corrections_used, 1)
         self.assertEqual(record.status, PackageStatus.CI_FIX)
 
     def test_ci_correction_stale_activity_fresh_progress_waits(self) -> None:
@@ -567,7 +574,7 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
         head = "106a47efa02705caa425c5661b671267052b17ef"
         pr = PullRequest(
             135, "OPEN", f"factory/{wf_key}", head, "url/135", "MERGEABLE", "CLEAN",
-            checks=({"name": "CI", "conclusion": "FAILURE"},),
+            checks=({"name": "CI", "conclusion": "FAILURE", "failure_kind": "PRODUCT"},),
             updated_at=(datetime.now(UTC) - timedelta(hours=18)).isoformat(),
         )
 
@@ -587,6 +594,8 @@ class FailedWorkerRecoveryLivenessTests(unittest.TestCase):
             ci_status="FAIL",
             last_error=token,
             correction_attempts=2,
+            ci_corrections_used=2,
+            ci_correction_authorized_from_sha=head,
             task_attempts=2,
             started_at=stale_yesterday,
             last_progress_at=fresh_ten_secs,
