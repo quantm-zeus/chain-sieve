@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { CandidateLifecycleSchema, CandidateRiskStateSchema } from './sig.js';
-import { MissingDataItemSchema, type MissingDataItem } from './alert.js';
+import { MissingDataItemSchema } from './alert.js';
 
 export const ModelClassSchema = z.enum([
   'TRIAGE',
