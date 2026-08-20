@@ -92,6 +92,18 @@ export const DEFAULT_MODEL_PROFILES: readonly ModelProfile[] = [
   },
 ] as const;
 
+function compareSemver(a: string, b: string): number {
+  const pa = a.split('.').map((x) => parseInt(x, 10) || 0);
+  const pb = b.split('.').map((x) => parseInt(x, 10) || 0);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const na = pa[i] ?? 0;
+    const nb = pb[i] ?? 0;
+    if (na > nb) return 1;
+    if (na < nb) return -1;
+  }
+  return 0;
+}
+
 export class ModelProfileRegistry {
   private readonly profiles = new Map<string, ModelProfile>();
 
@@ -105,12 +117,20 @@ export class ModelProfileRegistry {
     return version ? `${id}@${version}` : id;
   }
 
-  register(profile: ModelProfile): void {
+  register(profile: ModelProfile, options?: { isDefault?: boolean }): void {
     const validated = ModelProfileSchema.parse(profile);
     const keyWithVersion = `${validated.id}@${validated.version}`;
     this.profiles.set(keyWithVersion, structuredClone(validated));
-    // Also index without version to allow resolving default/latest registered
-    this.profiles.set(validated.id, structuredClone(validated));
+
+    // Update bare ID entry deterministically: highest semver or explicit default
+    const currentDefault = this.profiles.get(validated.id);
+    if (
+      !currentDefault ||
+      options?.isDefault === true ||
+      compareSemver(validated.version, currentDefault.version) >= 0
+    ) {
+      this.profiles.set(validated.id, structuredClone(validated));
+    }
   }
 
   get(id: string, version?: string): ModelProfile | undefined {

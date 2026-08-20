@@ -249,32 +249,36 @@ export class BoundedAgentRuntime {
           );
         }
 
+        const executionContext: ToolExecutionContext = {
+          candidate,
+          signal,
+          stepIndex: step.stepIndex,
+          callId: call.callId,
+          envelope,
+          profile,
+        };
+
         const startMs = Date.now();
         let output: unknown;
         let callError: string | undefined;
         let onAbort: (() => void) | undefined;
 
         try {
-          output = await Promise.race([
-            toolHandler(call.arguments, {
-              candidate,
-              signal,
-              stepIndex: step.stepIndex,
-              callId: call.callId,
-              envelope,
-              profile,
-            }),
-            new Promise<never>((_, reject) => {
-              if (signal) {
+          if (signal) {
+            output = await Promise.race([
+              toolHandler(call.arguments, executionContext),
+              new Promise<never>((_, reject) => {
                 if (signal.aborted) {
                   reject(new AgentCancelledError());
                   return;
                 }
                 onAbort = () => reject(new AgentCancelledError());
                 signal.addEventListener('abort', onAbort, { once: true });
-              }
-            }),
-          ]);
+              }),
+            ]);
+          } else {
+            output = await toolHandler(call.arguments, executionContext);
+          }
 
           accumulatedEvidence[call.toolName] = output;
         } catch (err) {

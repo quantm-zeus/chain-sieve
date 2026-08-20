@@ -80,6 +80,41 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       expect(retrieved.declaredTools).toEqual(['dex.pairs', 'contract.audit']);
     });
 
+    it('resolves default version deterministically based on highest semver', () => {
+      const registry = new ModelProfileRegistry([]);
+      const v1: ModelProfile = {
+        id: 'multi-ver',
+        version: '1.0.0',
+        modelClass: 'TRIAGE',
+        provider: 'google',
+        modelId: 'gemini-2.5-flash',
+        declaredTools: ['dex.pairs'],
+        maxTokens: 2048,
+        maxContextTokens: 32000,
+        temperature: 0,
+      };
+      const v2: ModelProfile = {
+        id: 'multi-ver',
+        version: '2.0.0',
+        modelClass: 'TRIAGE',
+        provider: 'google',
+        modelId: 'gemini-2.5-pro',
+        declaredTools: ['dex.pairs', 'market.summary'],
+        maxTokens: 4096,
+        maxContextTokens: 64000,
+        temperature: 0,
+      };
+
+      // Register v2 first then v1
+      registry.register(v2);
+      registry.register(v1);
+
+      // Default should still be v2 (highest semver)
+      const defaultProf = registry.require('multi-ver');
+      expect(defaultProf.version).toBe('2.0.0');
+      expect(defaultProf.modelId).toBe('gemini-2.5-pro');
+    });
+
     it('fails closed with typed UnknownModelProfileError on unknown profile or unknown version', () => {
       const registry = new ModelProfileRegistry();
 
@@ -164,6 +199,37 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       expect(plan1.planId).toBe(plan2.planId);
       expect(plan1.totalPlannedToolCalls).toBe(plan2.totalPlannedToolCalls);
       expect(plan1.steps).toEqual(plan2.steps);
+    });
+
+    it('produces distinct planId hashes for differing envelopes and budgets', () => {
+      const profile = new ModelProfileRegistry().require('deep-research-v1');
+      const baseInput = {
+        candidate: sampleCandidate,
+        profile,
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+      };
+
+      const planA = DeterministicPlanner.plan(baseInput);
+
+      const planDiffEnvelope = DeterministicPlanner.plan({
+        ...baseInput,
+        envelope: {
+          ...sampleEnvelope,
+          maxLimit: 200, // Different limit
+        },
+      });
+
+      const planDiffBudget = DeterministicPlanner.plan({
+        ...baseInput,
+        budget: {
+          ...sampleBudget,
+          maxSteps: 10, // Different step budget
+        },
+      });
+
+      expect(planA.planId).not.toBe(planDiffEnvelope.planId);
+      expect(planA.planId).not.toBe(planDiffBudget.planId);
     });
 
     it('generates stage-specific tool sequence for skeptic goal', () => {
@@ -653,6 +719,36 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       }
     });
 
+    it('rejects bare domain and custom domain key violations (e.g. domainName, target, bare hostname)', () => {
+      const bareDomainArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        domainName: 'evil-unauthorized.com',
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          bareDomainArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+
+      const targetArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        target: 'evil-site.org/exfiltrate',
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          targetArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+    });
+
     it('rejects broadening of chain scope', () => {
       const broadChainArgs = {
         chain: 'ethereum', // sampleEnvelope allows only 'solana'
@@ -736,6 +832,36 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           expect(err.violationType).toBe('TIME_RANGE_NOT_ALLOWED');
         }
       }
+    });
+
+    it('rejects temporal bypass keys (e.g. timestampFrom, fromTime, createdAt, start, since)', () => {
+      const futureTimestampFromArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        timestampFrom: '2026-08-21T00:00:00Z',
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          futureTimestampFromArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+
+      const futureCreatedAtArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        createdAt: '2026-08-25T00:00:00Z',
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          futureCreatedAtArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
     });
 
     it('rejects broadening of output size or limit', () => {

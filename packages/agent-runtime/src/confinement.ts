@@ -25,14 +25,31 @@ export class ToolArgumentConfinementValidator {
 
   private static extractHost(value: string): string {
     try {
-      if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('ws://') || value.startsWith('wss://')) {
-        const url = new URL(value);
+      let candidate = value.trim();
+      if (
+        candidate.startsWith('http://') ||
+        candidate.startsWith('https://') ||
+        candidate.startsWith('ws://') ||
+        candidate.startsWith('wss://')
+      ) {
+        const url = new URL(candidate);
         return url.hostname.toLowerCase();
       }
-      // If it's a domain name (e.g., api.dexscreener.com)
-      const firstSegment = value.split('/')[0] ?? '';
-      const sanitized = (firstSegment.split(':')[0] ?? '').toLowerCase();
-      return sanitized;
+      // Remove path component if present
+      candidate = candidate.split('/')[0] ?? '';
+      // If bracketed IPv6 like [::1]:8080
+      if (candidate.startsWith('[')) {
+        const closeIdx = candidate.indexOf(']');
+        if (closeIdx !== -1) {
+          return candidate.slice(1, closeIdx).toLowerCase();
+        }
+      }
+      // Strip port: split by colon (if single colon for host:port)
+      const parts = candidate.split(':');
+      if (parts.length === 2 && parts[0]) {
+        return parts[0].toLowerCase();
+      }
+      return candidate.toLowerCase();
     } catch {
       return value.toLowerCase();
     }
@@ -164,15 +181,20 @@ export class ToolArgumentConfinementValidator {
     if (
       envelope.allowedDomains &&
       envelope.allowedDomains.length > 0 &&
-      (lowerKey === 'url' ||
-        lowerKey === 'endpoint' ||
-        lowerKey === 'domain' ||
-        lowerKey === 'uri' ||
-        lowerKey === 'link' ||
-        lowerKey === 'href' ||
-        lowerKey === 'host' ||
-        lowerKey === 'hostname' ||
-        (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))))
+      (lowerKey.includes('domain') ||
+        lowerKey.includes('host') ||
+        lowerKey.includes('url') ||
+        lowerKey.includes('endpoint') ||
+        lowerKey.includes('uri') ||
+        lowerKey.includes('link') ||
+        lowerKey.includes('href') ||
+        lowerKey.includes('target') ||
+        (typeof value === 'string' &&
+          (value.startsWith('http://') ||
+            value.startsWith('https://') ||
+            value.startsWith('ws://') ||
+            value.startsWith('wss://') ||
+            /^[a-z0-9-]+(\.[a-z0-9-]+)+/i.test(value.trim()))))
     ) {
       if (typeof value === 'string' && value.trim().length > 0) {
         const host = this.extractHost(value);
@@ -256,19 +278,17 @@ export class ToolArgumentConfinementValidator {
     // Time range check
     if (
       envelope.timeRange &&
-      (lowerKey === 'from' ||
+      (lowerKey.includes('time') ||
+        lowerKey.includes('stamp') ||
+        lowerKey.includes('asof') ||
+        lowerKey.includes('date') ||
+        lowerKey.includes('since') ||
+        lowerKey.includes('until') ||
+        lowerKey.includes('created') ||
+        lowerKey === 'from' ||
         lowerKey === 'to' ||
-        lowerKey === 'starttime' ||
-        lowerKey === 'endtime' ||
-        lowerKey === 'timestamp' ||
-        lowerKey === 'asof' ||
-        lowerKey === 'mintimestamp' ||
-        lowerKey === 'maxtimestamp' ||
-        lowerKey === 'since' ||
-        lowerKey === 'until' ||
-        lowerKey === 'eventtime' ||
-        lowerKey === 'observedat' ||
-        lowerKey === 'blocktime')
+        lowerKey === 'start' ||
+        lowerKey === 'end')
     ) {
       const tsMs = this.parseTimestampToMs(value);
       if (tsMs !== undefined) {
