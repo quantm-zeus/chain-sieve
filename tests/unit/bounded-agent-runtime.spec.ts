@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   BoundedAgentRuntime,
   ModelProfileRegistry,
-  DEFAULT_MODEL_PROFILES,
   DeterministicPlanner,
   ToolArgumentConfinementValidator,
   AgentBudgetTracker,
@@ -89,9 +88,12 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
 
       try {
         registry.require('non-existent-profile');
-      } catch (e: any) {
-        expect(e.code).toBe('UNKNOWN_MODEL_PROFILE');
-        expect(e.profileId).toBe('non-existent-profile');
+      } catch (err) {
+        expect(err).toBeInstanceOf(UnknownModelProfileError);
+        if (err instanceof UnknownModelProfileError) {
+          expect(err.code).toBe('UNKNOWN_MODEL_PROFILE');
+          expect(err.profileId).toBe('non-existent-profile');
+        }
       }
     });
 
@@ -221,10 +223,13 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
 
       try {
         tracker.recordStep(1);
-      } catch (err: any) {
-        expect(err.code).toBe('BUDGET_EXCEEDED');
-        expect(err.dimension).toBe('STEPS');
-        expect(err.limit).toBe(2);
+      } catch (err) {
+        expect(err).toBeInstanceOf(BudgetExceededError);
+        if (err instanceof BudgetExceededError) {
+          expect(err.code).toBe('BUDGET_EXCEEDED');
+          expect(err.dimension).toBe('STEPS');
+          expect(err.limit).toBe(2);
+        }
       }
     });
 
@@ -278,8 +283,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
 
       try {
         tracker.checkStep(1);
-      } catch (e: any) {
-        expect(e.dimension).toBe('DEADLINE');
+      } catch (err) {
+        expect(err).toBeInstanceOf(BudgetExceededError);
+        if (err instanceof BudgetExceededError) {
+          expect(err.dimension).toBe('DEADLINE');
+        }
       }
     });
 
@@ -366,9 +374,12 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           {},
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('TOOL_NOT_ALLOWED');
-        expect(e.code).toBe('ENVELOPE_TOOL_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('TOOL_NOT_ALLOWED');
+          expect(err.code).toBe('ENVELOPE_TOOL_NOT_ALLOWED');
+        }
       }
 
       // 2. Tool in envelope allowedTools but not in profile declaredTools
@@ -403,8 +414,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           broadProviderArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('PROVIDER_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('PROVIDER_NOT_ALLOWED');
+        }
       }
     });
 
@@ -429,8 +443,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           broadUrlArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('URL_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('URL_NOT_ALLOWED');
+        }
       }
     });
 
@@ -454,8 +471,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           broadChainArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('CHAIN_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('CHAIN_NOT_ALLOWED');
+        }
       }
     });
 
@@ -479,8 +499,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           broadAddressArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('ADDRESS_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('ADDRESS_NOT_ALLOWED');
+        }
       }
     });
 
@@ -505,8 +528,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           futureTimeArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('TIME_RANGE_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('TIME_RANGE_NOT_ALLOWED');
+        }
       }
     });
 
@@ -531,8 +557,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           oversizedArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('OUTPUT_SIZE_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('OUTPUT_SIZE_NOT_ALLOWED');
+        }
       }
     });
 
@@ -557,8 +586,11 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           highCostArgs,
           sampleEnvelope,
         );
-      } catch (e: any) {
-        expect(e.violationType).toBe('COST_NOT_ALLOWED');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('COST_NOT_ALLOWED');
+        }
       }
     });
 

@@ -10,16 +10,11 @@ import {
   DeterministicPlanner,
   type CandidateTarget,
   type DeterministicPlan,
-  type PlanStep,
-  type PlannedToolCall,
 } from './deterministic-planner.js';
 import {
   AgentCancelledError,
   AgentRuntimeError,
   BudgetExceededError,
-  ConfinementViolationError,
-  MaxStepsExceededError,
-  UnknownModelProfileError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
 

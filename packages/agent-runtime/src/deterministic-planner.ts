@@ -5,7 +5,6 @@ import type {
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { ToolArgumentConfinementValidator } from './confinement.js';
-import { AgentRuntimeError } from './errors.js';
 
 export interface PlannedToolCall {
   callId: string;
