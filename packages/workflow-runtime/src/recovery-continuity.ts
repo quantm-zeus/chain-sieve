@@ -38,23 +38,42 @@ const allowedRoles: Record<string, BackupAccessRole[]> = {
 // Backup audit hash chain
 // ---------------------------------------------------------------------------
 
+const toIso = (v: unknown): string => {
+  if (v instanceof Date) return v.toISOString();
+  const d = new Date(String(v));
+  return Number.isNaN(d.getTime()) ? String(v) : d.toISOString();
+};
+
+const normalizePayload = (p: unknown): string => {
+  if (typeof p === 'string') {
+    try {
+      return JSON.stringify(JSON.parse(p));
+    } catch {
+      return JSON.stringify(p);
+    }
+  }
+  return JSON.stringify(p ?? null);
+};
+
 export const appendBackupAudit = async (
   database: DatabaseAdapter,
   action: string,
   actor: string,
   payload: unknown,
   now: string,
-  id = randomUUID(),
+  id: string = randomUUID(),
 ): Promise<{ id: string; recordHash: string; previousHash: string | null }> => {
   const last = await database.query<{ record_hash: string }>(
-    `SELECT record_hash FROM backup_audit_log ORDER BY recorded_at DESC LIMIT 1`,
+    `SELECT record_hash FROM backup_audit_log WHERE record_hash NOT IN (SELECT previous_hash FROM backup_audit_log WHERE previous_hash IS NOT NULL) LIMIT 1`,
   );
   const previousHash = last.rows[0]?.record_hash ?? null;
-  const recordHash = sha256(`${previousHash ?? ''}:${action}:${actor}:${JSON.stringify(payload)}:${now}:${id}`);
+  const recordedAtIso = toIso(now);
+  const payloadStr = normalizePayload(payload);
+  const recordHash = sha256(`${previousHash ?? ''}:${action}:${actor}:${payloadStr}:${recordedAtIso}:${id}`);
   await database.query(
     `INSERT INTO backup_audit_log (id, action, actor, payload_json, previous_hash, record_hash, recorded_at)
      VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-    [id, action, actor, JSON.stringify(payload), previousHash, recordHash, now],
+    [id, action, actor, payloadStr, previousHash, recordHash, recordedAtIso],
   );
   return { id, recordHash, previousHash };
 };
@@ -62,20 +81,54 @@ export const appendBackupAudit = async (
 export const verifyBackupAuditChain = async (
   database: DatabaseAdapter,
 ): Promise<{ valid: boolean; gapIndex: number | null; expected?: string; actual?: string }> => {
-  const rows = await database.query<{ record_hash: string; previous_hash: string | null; action: string; actor: string; payload_json: unknown; recorded_at: string; id: string }>(
-    `SELECT record_hash, previous_hash, action, actor, payload_json, recorded_at, id FROM backup_audit_log ORDER BY recorded_at ASC`,
-  );
-  let prev: string | null = null;
-  for (const [idx, row] of rows.rows.entries()) {
-    const expected = sha256(`${prev ?? ''}:${row.action}:${row.actor}:${JSON.stringify(row.payload_json)}:${String(row.recorded_at)}:${row.id}`);
-    if (expected !== row.record_hash) {
-      return { valid: false, gapIndex: idx, expected, actual: row.record_hash };
+  const res = await database.query<{
+    record_hash: string;
+    previous_hash: string | null;
+    action: string;
+    actor: string;
+    payload_json: unknown;
+    recorded_at: string | Date;
+    id: string;
+  }>(`SELECT record_hash, previous_hash, action, actor, payload_json, recorded_at, id FROM backup_audit_log`);
+
+  if (res.rows.length === 0) return { valid: true, gapIndex: null };
+
+  const byPrev = new Map<string | null, typeof res.rows[0]>();
+  for (const row of res.rows) {
+    if (byPrev.has(row.previous_hash)) {
+      return { valid: false, gapIndex: 0, expected: 'unique_previous_hash', actual: 'fork_detected' };
     }
-    if (row.previous_hash !== prev) {
-      return { valid: false, gapIndex: idx, expected: prev ?? 'null', actual: row.previous_hash ?? 'null' };
-    }
-    prev = row.record_hash;
+    byPrev.set(row.previous_hash, row);
   }
+
+  const root = byPrev.get(null);
+  if (!root) {
+    return { valid: false, gapIndex: 0, expected: 'root_with_null_previous_hash', actual: 'missing_root' };
+  }
+
+  let curr: typeof res.rows[0] | undefined = root;
+  let prev: string | null = null;
+  let visitedCount = 0;
+
+  while (curr) {
+    const recordedAtIso = toIso(curr.recorded_at);
+    const payloadStr = normalizePayload(curr.payload_json);
+    const expected = sha256(`${prev ?? ''}:${curr.action}:${curr.actor}:${payloadStr}:${recordedAtIso}:${curr.id}`);
+    if (expected !== curr.record_hash) {
+      return { valid: false, gapIndex: visitedCount, expected, actual: curr.record_hash };
+    }
+    if (curr.previous_hash !== prev) {
+      return { valid: false, gapIndex: visitedCount, expected: prev ?? 'null', actual: curr.previous_hash ?? 'null' };
+    }
+    prev = curr.record_hash;
+    visitedCount += 1;
+    curr = byPrev.get(curr.record_hash);
+  }
+
+  if (visitedCount !== res.rows.length) {
+    return { valid: false, gapIndex: visitedCount, expected: `${res.rows.length}_continuous_records`, actual: `${visitedCount}_visited` };
+  }
+
   return { valid: true, gapIndex: null };
 };
 
@@ -100,7 +153,7 @@ export const createRetentionPolicy = async (
   database: DatabaseAdapter,
   input: CreateRetentionPolicyInput,
 ): Promise<{ id: string; version: number }> => {
-  if (!allowedRoles['RETENTION_CREATED'].includes(input.role)) throw new Error('RETENTION_ACCESS_DENIED');
+  if (!allowedRoles['RETENTION_CREATED']?.includes(input.role)) throw new Error('RETENTION_ACCESS_DENIED');
   if (input.role === 'viewer' || input.role === 'auditor') throw new Error('RETENTION_ACCESS_DENIED');
 
   // Version = max existing + 1 for tier
@@ -165,7 +218,7 @@ export const createBackupRecord = async (
   database: DatabaseAdapter,
   input: CreateBackupRecordInput,
 ): Promise<{ id: string; expiresAt: string }> => {
-  if (!allowedRoles['BACKUP_CREATED'].includes(input.role)) throw new Error('BACKUP_ACCESS_DENIED');
+  if (!allowedRoles['BACKUP_CREATED']?.includes(input.role)) throw new Error('BACKUP_ACCESS_DENIED');
   const policy = await database.query<{ retention_days: number }>(
     `SELECT retention_days FROM backup_retention_policies WHERE id=$1`,
     [input.retentionPolicyId],
@@ -208,7 +261,7 @@ export const enforceRetentionAndDelete = async (
   actor: string,
   role: BackupAccessRole,
 ): Promise<{ deleted: string[]; held: string[]; audited: boolean }> => {
-  if (!allowedRoles['BACKUP_DELETED'].includes(role)) throw new Error('RETENTION_DELETE_ACCESS_DENIED');
+  if (!allowedRoles['BACKUP_DELETED']?.includes(role)) throw new Error('RETENTION_DELETE_ACCESS_DENIED');
   const expired = await database.query<{ id: string }>(
     `SELECT id FROM backup_records WHERE expires_at <= $1 AND deleted_at IS NULL`,
     [now],
@@ -242,9 +295,9 @@ export const createLegalHold = async (
   actor: string,
   role: BackupAccessRole,
   now: string,
-  id = randomUUID(),
+  id: string = randomUUID(),
 ): Promise<{ id: string }> => {
-  if (!allowedRoles['LEGAL_HOLD_CREATED'].includes(role)) throw new Error('LEGAL_HOLD_ACCESS_DENIED');
+  if (!allowedRoles['LEGAL_HOLD_CREATED']?.includes(role)) throw new Error('LEGAL_HOLD_ACCESS_DENIED');
   await database.query(
     `INSERT INTO backup_legal_holds (id, backup_record_id, reason, created_at, created_by, active) VALUES ($1,$2,$3,$4,$5,true)`,
     [id, backupRecordId, reason, now, actor],
@@ -260,7 +313,7 @@ export const releaseLegalHold = async (
   role: BackupAccessRole,
   now: string,
 ): Promise<void> => {
-  if (!allowedRoles['LEGAL_HOLD_RELEASED'].includes(role)) throw new Error('LEGAL_HOLD_RELEASE_ACCESS_DENIED');
+  if (!allowedRoles['LEGAL_HOLD_RELEASED']?.includes(role)) throw new Error('LEGAL_HOLD_RELEASE_ACCESS_DENIED');
   await database.query(`UPDATE backup_legal_holds SET active=false, released_at=$1 WHERE id=$2`, [now, legalHoldId]);
   await appendBackupAudit(database, 'LEGAL_HOLD_RELEASED', actor, { legalHoldId }, now);
 };
@@ -298,7 +351,7 @@ export const enterDegradedMode = async (
   tier: BackupTier,
   reason: string,
   now: string,
-  id = randomUUID(),
+  id: string = randomUUID(),
 ): Promise<{ id: string; confirmedOpportunityAlertsDisabled: boolean }> => {
   const matrix = degradedModeMatrix[tier];
   const disabled = matrix.disableConfirmedOpportunity;
@@ -431,12 +484,13 @@ export const runDestructiveRestoreDrill = async (
     // If audit_records uses hash chain, verify that no gap exists (allow empty)
     let prev: string | null = null;
     for (const row of auditRows.rows) {
+      if (!/^[a-f0-9]{64}$/.test(row.record_hash)) {
+        auditChainVerified = false;
+        break;
+      }
       if (row.previous_hash !== prev) {
-        // If chain is broken, mark unverified — but do not fail if audit_records empty
-        if (auditRows.rows.length > 0 && prev !== null) {
-          // Check if chain is self-consistent by recomputing? We trust stored chain for now.
-          // We just check previous_hash linkage is not null-skipped when it shouldn't be
-        }
+        auditChainVerified = false;
+        break;
       }
       prev = row.record_hash;
     }
@@ -566,18 +620,45 @@ export const reconcileAfterRecovery = async (
     [input.recoveryId],
   );
 
-  // ---- Provider calls & quota — check for pending provider-related rows if tables exist ----
+  // ---- 1. Provider calls & quota — verify bounded and valid state ----
   let providerCallsReconciled = true;
-  let quotaReservationsReconciled = true;
-  // These are logical — we verify no orphaned pending states remain
-  // For now, treat as reconciled if no pending workflow steps stuck in RUNNING with expired leases
-
-  // ---- Workflow leases — validate fencing tokens, reject stale ----
-  let staleTokensRejected = 0;
-  const staleLeases = await database.query<{ lease_key: string; expires_at: string | Date; owner: string }>(
-    `SELECT lease_key, expires_at, owner FROM workflow_leases WHERE expires_at <= $1`,
-    [now],
+  const runningSteps = await database.query<{ step_id: string; lease_owner: string | null; lease_expires_at: string | Date | null }>(
+    `SELECT step_id, lease_owner, lease_expires_at FROM workflow_steps WHERE status='RUNNING'`,
   );
+  for (const step of runningSteps.rows) {
+    if (!step.lease_owner || !step.lease_expires_at) {
+      providerCallsReconciled = false;
+    }
+  }
+
+  let quotaReservationsReconciled = true;
+  const runConfigs = await database.query<{ id: string; resolved_json: unknown; config_hash: string }>(
+    `SELECT id, resolved_json, config_hash FROM resolved_run_configs`,
+  );
+  for (const rc of runConfigs.rows) {
+    if (!rc.resolved_json || typeof rc.resolved_json !== 'object' || !rc.config_hash) {
+      quotaReservationsReconciled = false;
+    }
+  }
+
+  // ---- 2. Workflow leases — validate fencing tokens, reject stale ----
+  let staleTokensRejected = 0;
+  let workflowLeasesReconciled = true;
+  let fencingTokensValidated = true;
+
+  const staleLeases = await database.query<{ lease_key: string; version: number; expires_at: string | Date; owner: string }>(
+    `SELECT lease_key, version, expires_at, owner FROM workflow_leases`,
+  );
+  for (const lease of staleLeases.rows) {
+    if (Number(lease.version) <= 0 || !lease.lease_key || !lease.owner || Number.isNaN(toMs(lease.expires_at))) {
+      workflowLeasesReconciled = false;
+      fencingTokensValidated = false;
+    }
+    if (toMs(lease.expires_at) <= Date.parse(now)) {
+      staleTokensRejected += 1;
+    }
+  }
+
   // Any workflow_steps with lease_owner not matching current lease owner/version is stale
   const stepsWithLease = await database.query<{ step_id: string; lease_owner: string | null; lease_version: number }>(
     `SELECT step_id, lease_owner, lease_version FROM workflow_steps WHERE lease_owner IS NOT NULL`,
@@ -588,7 +669,10 @@ export const reconcileAfterRecovery = async (
       `SELECT owner, version, expires_at FROM workflow_leases WHERE lease_key=$1`,
       [`lease-${step.step_id}`],
     );
-    if (lease.rows.length === 0) continue;
+    if (lease.rows.length === 0) {
+      staleTokensRejected += 1;
+      continue;
+    }
     const current = lease.rows[0]!;
     if (current.owner !== step.lease_owner || Number(current.version) !== Number(step.lease_version)) {
       staleTokensRejected += 1;
@@ -597,47 +681,108 @@ export const reconcileAfterRecovery = async (
       staleTokensRejected += 1;
     }
   }
-  // Count also expired leases
-  staleTokensRejected += staleLeases.rows.length;
 
-  let workflowLeasesReconciled = true;
-  const fencingTokensValidated = true;
-
-  // ---- Trigger inbox/outbox reconciliation ----
+  // ---- 3. Trigger inbox reconciliation ----
   let inboxReconciled = true;
-  const inboxPending = await database.query<{ id: string }>(
-    `SELECT id FROM trigger_inbox WHERE status='RECEIVED' AND processed_run_id IS NULL`,
+  const inboxPending = await database.query<{ id: string; status: string; processed_run_id: string | null; payload_hash: string }>(
+    `SELECT id, status, processed_run_id, payload_hash FROM trigger_inbox`,
   );
-  // Link any orphan inbox entries to runs if possible (already handled by workflow runtime)
-  // For reconciliation, we mark inbox reconciled if we have processed count
-  inboxReconciled = true;
+  for (const entry of inboxPending.rows) {
+    if (!entry.payload_hash || typeof entry.payload_hash !== 'string' || entry.payload_hash.trim().length === 0) {
+      inboxReconciled = false;
+    }
+    if (entry.status === 'PROCESSED' && !entry.processed_run_id) {
+      inboxReconciled = false;
+    }
+    if (!['RECEIVED', 'PROCESSING', 'PROCESSED', 'DUPLICATE', 'FAILED'].includes(entry.status)) {
+      inboxReconciled = false;
+    }
+  }
 
+  // ---- 4. Outbox reconciliation ----
   let outboxReconciled = true;
-  const outboxPending = await database.query<{ id: string }>(
-    `SELECT id FROM outbox WHERE state='PENDING' OR state='RETRY'`,
+  const outboxPending = await database.query<{ id: string; topic: string; state: string; attempt_count: number; trace_id: string }>(
+    `SELECT id, topic, state, attempt_count, trace_id FROM outbox`,
   );
-  // Outbox pending is okay — they will be retried; reconciliation marks them as known
-  outboxReconciled = true;
+  for (const msg of outboxPending.rows) {
+    if (!msg.topic || !msg.trace_id || Number(msg.attempt_count) < 0) {
+      outboxReconciled = false;
+    }
+    if (!['PENDING', 'DELIVERED', 'RETRY', 'EXPIRED'].includes(msg.state)) {
+      outboxReconciled = false;
+    }
+  }
 
-  // ---- Alerts reconciliation ----
+  // ---- 5. Alerts reconciliation ----
   let alertsReconciled = true;
-  const alerts = await database.query<{ alert_id: string }>(`SELECT alert_id FROM alerts`);
-  alertsReconciled = true;
+  const alerts = await database.query<{
+    alert_id: string;
+    alert_class: string;
+    actionability_state: string;
+    sha256: string;
+    fingerprint: string;
+  }>(`SELECT alert_id, alert_class, actionability_state, sha256, fingerprint FROM alerts`);
+  for (const alt of alerts.rows) {
+    if (!alt.fingerprint || !alt.sha256 || typeof alt.sha256 !== 'string' || alt.sha256.trim().length === 0) {
+      alertsReconciled = false;
+    }
+    if (
+      !['EARLY_WATCH', 'CONFIRMED_OPPORTUNITY', 'THESIS_STRENGTHENING', 'THESIS_WEAKENING', 'OPPORTUNITY_EXPIRED', 'RISK_ALERT'].includes(
+        alt.alert_class,
+      )
+    ) {
+      alertsReconciled = false;
+    }
+    if (!['ACTIONABLE', 'DETERIORATED', 'EXPIRED', 'CANCELLED', 'WATCH_ONLY'].includes(alt.actionability_state)) {
+      alertsReconciled = false;
+    }
+  }
 
-  // ---- Collector gaps ----
+  // ---- 6. Collector gaps reconciliation ----
   let collectorGapsReconciled = true;
-  const gaps = await database.query<{ partition: string }>(`SELECT partition FROM collector_checkpoints`);
-  collectorGapsReconciled = true;
+  const gaps = await database.query<{ partition: string; slot: number; sequence: number }>(
+    `SELECT partition, slot, sequence FROM collector_checkpoints`,
+  );
+  for (const cp of gaps.rows) {
+    if (Number(cp.slot) < 0 || Number(cp.sequence) < 0) {
+      collectorGapsReconciled = false;
+    }
+    const obsCount = await database.query<{ cnt: string }>(
+      `SELECT COUNT(*)::text as cnt FROM synthetic_observations WHERE asset_id=$1`,
+      [cp.partition],
+    );
+    if (Number(cp.slot) > 0 && Number(obsCount.rows[0]?.cnt ?? 0) === 0) {
+      collectorGapsReconciled = false;
+    }
+  }
 
-  // ---- Artifacts and audit checkpoints ----
+  // ---- 7. Artifacts and audit checkpoints ----
   let artifactsVerified = true;
   const artifactRows = await database.query<{ sha256: string }>(`SELECT sha256 FROM artifact_metadata`);
   for (const r of artifactRows.rows) {
     if (!/^[a-f0-9]{64}$/.test(r.sha256)) artifactsVerified = false;
   }
+
   let auditCheckpointsVerified = true;
   const auditChain = await verifyBackupAuditChain(database);
   auditCheckpointsVerified = auditChain.valid;
+  if (auditCheckpointsVerified) {
+    const auditRows = await database.query<{ record_hash: string; previous_hash: string | null }>(
+      `SELECT record_hash, previous_hash FROM audit_records ORDER BY recorded_at ASC`,
+    );
+    let prev: string | null = null;
+    for (const row of auditRows.rows) {
+      if (!/^[a-f0-9]{64}$/.test(row.record_hash)) {
+        auditCheckpointsVerified = false;
+        break;
+      }
+      if (row.previous_hash !== prev) {
+        auditCheckpointsVerified = false;
+        break;
+      }
+      prev = row.record_hash;
+    }
+  }
 
   const degraded = !(artifactsVerified && auditCheckpointsVerified);
 

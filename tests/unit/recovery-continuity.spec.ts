@@ -15,6 +15,7 @@ import {
   releaseLegalHold,
   requestRestoreAccess,
   verifyBackupAuditChain,
+  appendBackupAudit,
   runDestructiveRestoreDrill,
   reconcileAfterRecovery,
   enterDegradedMode,
@@ -301,6 +302,156 @@ describe('Recovery Continuity — FR-DR-003/004/005/006', () => {
     expect(stillDisabled).toBe(false);
     await exitDegradedMode(db, 'REPLAYABLE_RAW', clock.now());
     expect(await isConfirmedOpportunityDisabled(db)).toBe(false);
+    await db.close();
+  });
+
+  it('negative: broken audit linkage fails verification and blocks resume', async () => {
+    const db = await setupDb();
+    const clock = new VirtualClock();
+
+    // 1. Broken backup_audit_log chain (tampered record_hash)
+    await appendBackupAudit(db, 'DRILL_STARTED', 'owner@chainsieve', { drillId: 'd1' }, clock.now(), 'id-1');
+    // Tamper record directly in db
+    await db.query(`UPDATE backup_audit_log SET record_hash=$1 WHERE id='id-1'`, ['0'.repeat(64)]);
+    const chainCheck = await verifyBackupAuditChain(db);
+    expect(chainCheck.valid).toBe(false);
+
+    // Reconciliation with broken audit chain fails closed
+    const recon = await reconcileAfterRecovery(db, { recoveryId: 'rec-broken-audit', now: clock.now() });
+    expect(recon.degraded).toBe(true);
+    expect(recon.allReconciled).toBe(false);
+    expect(recon.canResume).toBe(false);
+    const dbState = await db.query<{ audit_checkpoints_verified: boolean }>(
+      `SELECT audit_checkpoints_verified FROM recovery_reconciliation_state WHERE recovery_id='rec-broken-audit'`,
+    );
+    expect(dbState.rows[0]?.audit_checkpoints_verified).toBe(false);
+
+    // 2. Broken audit_records chain in restore drill
+    const db2 = await setupDb();
+    const policy = await createRetentionPolicy(db2, {
+      tier: 'CRITICAL_CONFIG',
+      retentionDays: 30,
+      geographicLocation: 'us-east-1',
+      encryption: { algorithm: 'AES-256-GCM', keyId: 'k1', keyVersion: 1 },
+      rightsConstraints: [{ dataClass: 'config', retentionAllowed: true }],
+      actor: 'owner@chainsieve',
+      role: 'owner',
+      now: clock.now(),
+    });
+    const backup = await createBackupRecord(db2, {
+      tier: 'CRITICAL_CONFIG',
+      location: 's3://bucket/backup',
+      geographicLocation: 'us-east-1',
+      encryption: { algorithm: 'AES-256-GCM', keyId: 'k1', keyVersion: 1 },
+      hash: 'a'.repeat(64),
+      sizeBytes: 1024,
+      retentionPolicyId: policy.id,
+      now: clock.now(),
+      actor: 'owner@chainsieve',
+      role: 'owner',
+    });
+    // Insert broken audit_records (previous_hash points to non-existent hash)
+    await db2.query(
+      `INSERT INTO audit_records (id, event_type, actor, payload_json, previous_hash, record_hash, recorded_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      ['audit-1', 'TEST', 'system', JSON.stringify({}), 'wrong-prev-hash', 'e'.repeat(64), clock.now()],
+    );
+    const drillResult = await runDestructiveRestoreDrill(db2, {
+      tier: 'CRITICAL_CONFIG',
+      backupRecordId: backup.id,
+      now: clock.now(),
+      actor: 'owner@chainsieve',
+      role: 'owner',
+    });
+    expect(drillResult.auditChainVerified).toBe(false);
+    expect(drillResult.status).toBe('FAILED');
+
+    await db.close();
+    await db2.close();
+  });
+
+  it('negative: invalid artifacts, corrupted inbox/outbox/alerts, and collector gaps prevent resume', async () => {
+    const db = await setupDb();
+    const clock = new VirtualClock();
+
+    // 1. Invalid artifact sha256 (64 non-hex chars — passes SQL length=64 but fails hex integrity)
+    await db.query(
+      `INSERT INTO artifact_metadata (artifact_key, sha256, media_type, bytes, created_at, frozen, trace_id) VALUES ($1,$2,$3,$4,$5,true,$6)`,
+      ['evidence/bad.json', 'z'.repeat(64), 'application/json', 100, clock.now(), 'trace-1'],
+    );
+    const reconArtifact = await reconcileAfterRecovery(db, { recoveryId: 'rec-bad-art', now: clock.now() });
+    expect(reconArtifact.degraded).toBe(true);
+    expect(reconArtifact.canResume).toBe(false);
+    const stateArtifact = await db.query<{ artifacts_verified: boolean }>(
+      `SELECT artifacts_verified FROM recovery_reconciliation_state WHERE recovery_id='rec-bad-art'`,
+    );
+    expect(stateArtifact.rows[0]?.artifacts_verified).toBe(false);
+
+    // Fix artifact sha256
+    await db.query(`UPDATE artifact_metadata SET sha256=$1 WHERE artifact_key='evidence/bad.json'`, ['a'.repeat(64)]);
+
+    // 2. Corrupted trigger inbox (marked PROCESSED but missing processed_run_id)
+    await db.query(
+      `INSERT INTO trigger_inbox (id, source, external_message_id, payload_hash, received_at, status, processed_run_id, created_at) VALUES ($1,$2,$3,$4,$5,'PROCESSED',NULL,$5)`,
+      ['inbox-bad', 'test', 'msg-bad', 'h1', clock.now()],
+    );
+    const reconInbox = await reconcileAfterRecovery(db, { recoveryId: 'rec-bad-inbox', now: clock.now() });
+    expect(reconInbox.allReconciled).toBe(false);
+    expect(reconInbox.canResume).toBe(false);
+    const stateInbox = await db.query<{ inbox_reconciled: boolean }>(
+      `SELECT inbox_reconciled FROM recovery_reconciliation_state WHERE recovery_id='rec-bad-inbox'`,
+    );
+    expect(stateInbox.rows[0]?.inbox_reconciled).toBe(false);
+
+    // Fix inbox
+    await db.query(`UPDATE trigger_inbox SET status='RECEIVED' WHERE id='inbox-bad'`);
+
+    // 3. Corrupted outbox entry (empty topic)
+    await db.query(
+      `INSERT INTO outbox (id, topic, payload_json, state, attempt_count, available_at, trace_id) VALUES ($1,'', $2,'PENDING',0,$3,$4)`,
+      ['outbox-bad', JSON.stringify({}), clock.now(), 'trace-1'],
+    );
+    const reconOutbox = await reconcileAfterRecovery(db, { recoveryId: 'rec-bad-outbox', now: clock.now() });
+    expect(reconOutbox.allReconciled).toBe(false);
+    expect(reconOutbox.canResume).toBe(false);
+    const stateOutbox = await db.query<{ outbox_reconciled: boolean }>(
+      `SELECT outbox_reconciled FROM recovery_reconciliation_state WHERE recovery_id='rec-bad-outbox'`,
+    );
+    expect(stateOutbox.rows[0]?.outbox_reconciled).toBe(false);
+
+    // Fix outbox
+    await db.query(`UPDATE outbox SET topic='test.valid.topic' WHERE id='outbox-bad'`);
+
+    // 4. Corrupted alert (empty fingerprint)
+    await db.query(
+      `INSERT INTO alerts (alert_id, asset_id, alert_class, actionability_state, fingerprint, valid_until, payload_json, canonical_json, sha256, bytes, created_at, shadow_mode, trace_id) VALUES ($1,$2,$3,$4,'', $5,$6,$7,$8,$9,$10,$11,$12)`,
+      ['alert-bad', 'asset-1', 'CONFIRMED_OPPORTUNITY', 'ACTIONABLE', clock.now(), JSON.stringify({}), '{}', 'b'.repeat(64), 100, clock.now(), false, 'trace-1'],
+    );
+    const reconAlert = await reconcileAfterRecovery(db, { recoveryId: 'rec-bad-alert', now: clock.now() });
+    expect(reconAlert.allReconciled).toBe(false);
+    expect(reconAlert.canResume).toBe(false);
+    const stateAlert = await db.query<{ alerts_reconciled: boolean }>(
+      `SELECT alerts_reconciled FROM recovery_reconciliation_state WHERE recovery_id='rec-bad-alert'`,
+    );
+    expect(stateAlert.rows[0]?.alerts_reconciled).toBe(false);
+
+    // Fix alert
+    await db.query(`UPDATE alerts SET fingerprint='fp-valid' WHERE alert_id='alert-bad'`);
+
+    // 5. Collector checkpoint with non-zero slot but zero observations (hidden gap)
+    await db.query(`INSERT INTO collector_checkpoints (partition, slot, sequence, updated_at) VALUES ($1,$2,$3,$4)`, [
+      'partition-gap',
+      100,
+      1,
+      clock.now(),
+    ]);
+    const reconGap = await reconcileAfterRecovery(db, { recoveryId: 'rec-bad-gap', now: clock.now() });
+    expect(reconGap.allReconciled).toBe(false);
+    expect(reconGap.canResume).toBe(false);
+    const stateGap = await db.query<{ collector_gaps_reconciled: boolean }>(
+      `SELECT collector_gaps_reconciled FROM recovery_reconciliation_state WHERE recovery_id='rec-bad-gap'`,
+    );
+    expect(stateGap.rows[0]?.collector_gaps_reconciled).toBe(false);
+
     await db.close();
   });
 });
