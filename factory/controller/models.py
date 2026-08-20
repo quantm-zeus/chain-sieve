@@ -177,6 +177,14 @@ class PackageRecord:
     task_attempts: int = 0
     provider_attempts: dict[str, int] = field(default_factory=dict)
     correction_attempts: int = 0
+    ci_corrections_used: int = 0
+    ci_correction_authorized_from_sha: str | None = None
+    liveness_remediations_used: int = 0
+    session_restore_attempts: int = 0
+    integration_corrections_used: int = 0
+    integration_correction_authorized_for_head: str | None = None
+    ci_infra_retries_used: int = 0
+    ci_infra_retry_authorized_from_sha: str | None = None
     review_attempts: int = 0
     review_corrections_used: int = 0
     review_correction_authorized_from_sha: str | None = None
@@ -202,6 +210,21 @@ class PackageRecord:
     progress_fingerprint: str | None = None
     provider_selection: dict[str, Any] | None = None
     updated_at: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.correction_attempts > 0:
+            if (
+                self.liveness_remediations_used == 0
+                and self.session_restore_attempts == 0
+                and self.ci_corrections_used == 0
+                and self.integration_corrections_used == 0
+            ):
+                self.liveness_remediations_used = self.correction_attempts
+                self.session_restore_attempts = self.correction_attempts
+        else:
+            self.correction_attempts = (
+                self.ci_corrections_used + self.liveness_remediations_used + self.integration_corrections_used
+            )
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "PackageRecord":
@@ -229,6 +252,14 @@ class PackageRecord:
             "task_attempts": self.task_attempts,
             "provider_attempts": self.provider_attempts,
             "correction_attempts": self.correction_attempts,
+            "ci_corrections_used": self.ci_corrections_used,
+            "ci_correction_authorized_from_sha": self.ci_correction_authorized_from_sha,
+            "liveness_remediations_used": self.liveness_remediations_used,
+            "session_restore_attempts": self.session_restore_attempts,
+            "integration_corrections_used": self.integration_corrections_used,
+            "integration_correction_authorized_for_head": self.integration_correction_authorized_for_head,
+            "ci_infra_retries_used": self.ci_infra_retries_used,
+            "ci_infra_retry_authorized_from_sha": self.ci_infra_retry_authorized_from_sha,
             "review_attempts": self.review_attempts,
             "review_corrections_used": self.review_corrections_used,
             "review_correction_authorized_from_sha": self.review_correction_authorized_from_sha,

@@ -161,7 +161,8 @@ class StateStore:
         if len(head_sha) != 40 or any(character not in "0123456789abcdefABCDEF" for character in head_sha):
             raise ValueError("review context requires a 40-character hexadecimal PR head SHA")
         head_sha = head_sha.lower()
-        key = f"{milestone_id}--{package.id}"
+        pkg_id = package["id"] if isinstance(package, dict) else package.id
+        key = f"{milestone_id}--{pkg_id}"
         directory = self.review_dir / key
         directory.mkdir(parents=True, exist_ok=True, mode=0o750)
         path = directory / f"{head_sha}.json"

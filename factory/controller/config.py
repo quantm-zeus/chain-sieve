@@ -53,12 +53,37 @@ class FactoryConfig:
     notification_command: tuple[str, ...]
     codex_routes: dict[str, CodexRoute]
     agy_model: str
+    _max_ci_correction_rounds: int | None = None
+    _max_liveness_remediations: int | None = None
+    _max_session_restores: int | None = None
+    _max_integration_corrections: int | None = None
+    _max_ci_infra_retries: int | None = None
     reasoning_timeout_seconds: int = 300
     muse_model: str = "muse-spark-1.2-contributor"
     muse_explicit_model: str | None = None
     agy_explicit_model: str | None = None
     provider_cooldown_seconds: int = 60
     implementation_weights: dict[str, int] = field(default_factory=lambda: {"agy": 2, "muse": 1})
+
+    @property
+    def max_ci_correction_rounds(self) -> int:
+        return self._max_ci_correction_rounds if self._max_ci_correction_rounds is not None else self.max_correction_attempts
+
+    @property
+    def max_liveness_remediations(self) -> int:
+        return self._max_liveness_remediations if self._max_liveness_remediations is not None else self.max_correction_attempts
+
+    @property
+    def max_session_restores(self) -> int:
+        return self._max_session_restores if self._max_session_restores is not None else self.max_correction_attempts
+
+    @property
+    def max_integration_corrections(self) -> int:
+        return self._max_integration_corrections if self._max_integration_corrections is not None else self.max_correction_attempts
+
+    @property
+    def max_ci_infra_retries(self) -> int:
+        return self._max_ci_infra_retries if self._max_ci_infra_retries is not None else self.max_correction_attempts
 
     @classmethod
     def load(cls, root: Path, path: Path) -> "FactoryConfig":
@@ -78,7 +103,12 @@ class FactoryConfig:
             default_branch=str(raw.get("defaultBranch", "main")),
             max_active_workers=int(budgets["maxActiveWorkers"]),
             max_task_attempts=int(budgets["maxTaskAttempts"]),
-            max_correction_attempts=int(budgets["maxCorrectionAttempts"]),
+            max_correction_attempts=int(budgets.get("maxCorrectionAttempts", 2)),
+            _max_ci_correction_rounds=int(budgets["maxCiCorrectionRounds"]) if "maxCiCorrectionRounds" in budgets else None,
+            _max_liveness_remediations=int(budgets["maxLivenessRemediations"]) if "maxLivenessRemediations" in budgets else None,
+            _max_session_restores=int(budgets["maxSessionRestores"]) if "maxSessionRestores" in budgets else None,
+            _max_integration_corrections=int(budgets["maxIntegrationCorrections"]) if "maxIntegrationCorrections" in budgets else None,
+            _max_ci_infra_retries=int(budgets["maxCiInfraRetries"]) if "maxCiInfraRetries" in budgets else None,
             max_review_cycles=int(budgets["maxReviewCycles"]),
             max_final_audit_cycles=int(budgets.get("maxFinalAuditCycles", 3)),
             max_convergence_passes=int(budgets["maxConvergencePasses"]),
@@ -126,6 +156,11 @@ class FactoryConfig:
         for name in (
             "max_task_attempts",
             "max_correction_attempts",
+            "max_ci_correction_rounds",
+            "max_liveness_remediations",
+            "max_session_restores",
+            "max_integration_corrections",
+            "max_ci_infra_retries",
             "max_review_cycles",
             "max_final_audit_cycles",
             "max_convergence_passes",

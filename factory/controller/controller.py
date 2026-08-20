@@ -11,7 +11,7 @@ from typing import Any
 
 from .ao import AgentOrchestrator, review_gate
 from .config import FactoryConfig
-from .github import GitHub, ci_state
+from .github import GitHub, causal_ci_check, ci_state, classify_ci_failure
 from .models import (
     FactoryStatus,
     Milestone,
@@ -54,6 +54,58 @@ class ResourceState:
     free_disk_gib: float
     free_memory_mib: int | None
     worktrees: int
+
+
+def _reconstruct_authorities_from_events(
+    events_path: Path,
+    work_key_str: str,
+    package_id: str,
+) -> dict[str, Any] | None:
+    if not events_path.exists():
+        return None
+    ci_corrections = 0
+    last_ci_sha: str | None = None
+    liveness_remediations = 0
+    session_restores = 0
+    integration_corrections = 0
+    found_any = False
+
+    try:
+        with events_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    ev = json.loads(line)
+                except Exception:
+                    continue
+                if ev.get("workKey") != work_key_str and ev.get("workPackageId") != package_id:
+                    continue
+                found_any = True
+                ev_type = ev.get("type")
+                if ev_type == "CI_CORRECTION_STARTED":
+                    ci_corrections += 1
+                    if ev.get("headSha"):
+                        last_ci_sha = str(ev.get("headSha"))
+                elif ev_type in {"CORRECTION_STARTED", "LIVENESS_REMEDIATION_STARTED"}:
+                    liveness_remediations += 1
+                elif ev_type in {"WORKER_RESTORED", "SESSION_RESTORE_STARTED"}:
+                    session_restores += 1
+                elif ev_type in {"MERGE_UPDATE_STARTED", "INTEGRATION_CORRECTION_AUTHORIZED"}:
+                    integration_corrections += 1
+    except Exception:
+        return None
+
+    if not found_any:
+        return None
+
+    return {
+        "ci_corrections_used": ci_corrections,
+        "ci_correction_authorized_from_sha": last_ci_sha,
+        "liveness_remediations_used": liveness_remediations,
+        "session_restore_attempts": session_restores,
+        "integration_corrections_used": integration_corrections,
+    }
 
 
 class FactoryController:
@@ -184,6 +236,51 @@ class FactoryController:
             all_sessions = snapshot.sessions.get(key, [])
             sessions = [item for item in all_sessions if item.status.lower() not in TERMINAL_SESSION_STATES]
             terminal = [item for item in all_sessions if item.status.lower() in TERMINAL_SESSION_STATES]
+
+            if not merged:
+                events_info = _reconstruct_authorities_from_events(self.store.events_path, key, package.id)
+                if events_info is not None:
+                    if (
+                        record.ci_corrections_used == 0
+                        and record.liveness_remediations_used == 0
+                        and record.correction_attempts > 0
+                    ) or (
+                        record.status == PackageStatus.BLOCKED
+                        and record.blocked_reason
+                        and "ci correction budget exhausted" in record.blocked_reason.lower()
+                    ):
+                        old_generic = record.correction_attempts
+                        record.ci_corrections_used = events_info["ci_corrections_used"]
+                        if events_info["ci_correction_authorized_from_sha"]:
+                            record.ci_correction_authorized_from_sha = events_info["ci_correction_authorized_from_sha"]
+                        record.liveness_remediations_used = events_info["liveness_remediations_used"]
+                        record.session_restore_attempts = events_info["session_restore_attempts"]
+                        record.integration_corrections_used = events_info["integration_corrections_used"]
+
+                        if (
+                            record.status == PackageStatus.BLOCKED
+                            and record.blocked_reason
+                            and "ci correction budget exhausted" in record.blocked_reason.lower()
+                            and record.ci_corrections_used < self.config.max_ci_correction_rounds
+                        ):
+                            old_reason = record.blocked_reason
+                            record.blocked_reason = None
+                            record.last_error = None
+                            record.replan_attempted = False
+                            self.store.event(
+                                "LEGACY_CORRECTION_BUDGET_RECONCILED",
+                                milestoneId=milestone.id,
+                                workPackageId=package.id,
+                                workKey=key,
+                                pr=record.pr_number or (open_prs[0].number if open_prs else None),
+                                headSha=record.head_sha or (open_prs[0].head_sha if open_prs else None),
+                                oldGenericCorrectionAttempts=old_generic,
+                                reconstructedCiCorrectionsUsed=record.ci_corrections_used,
+                                reconstructedLivenessRemediationsUsed=record.liveness_remediations_used,
+                                reconstructedSessionRestores=record.session_restore_attempts,
+                                reconstructedIntegrationCorrectionsUsed=record.integration_corrections_used,
+                                clearedBlockedReason=old_reason,
+                            )
 
             if len(open_prs) > 1 or len(sessions) > 1:
                 record.status = PackageStatus.BLOCKED
@@ -580,7 +677,16 @@ class FactoryController:
             "reasoningOperation": reasoning_operation,
             "usage": {
                 "workerStarts": sum(record.task_attempts for record in records.values()),
-                "corrections": sum(record.correction_attempts for record in records.values()),
+                "corrections": sum(
+                    (record.ci_corrections_used + record.liveness_remediations_used + record.integration_corrections_used)
+                    if (record.ci_corrections_used or record.liveness_remediations_used or record.integration_corrections_used)
+                    else record.correction_attempts
+                    for record in records.values()
+                ),
+                "ciCorrections": sum(record.ci_corrections_used for record in records.values()),
+                "livenessRemediations": sum(record.liveness_remediations_used for record in records.values()),
+                "sessionRestores": sum(record.session_restore_attempts for record in records.values()),
+                "integrationCorrections": sum(record.integration_corrections_used for record in records.values()),
                 "reviews": sum(record.review_attempts for record in records.values()),
                 "codex": codex_usage,
                 "codexPlannerCalls": codex_usage["plannerCalls"],
@@ -628,7 +734,7 @@ class FactoryController:
         stuck = record.status == PackageStatus.STUCK
         if not waiting and not stuck:
             return
-        if pr is not None and stuck and record.correction_attempts >= self.config.max_correction_attempts:
+        if pr is not None and stuck and record.liveness_remediations_used >= self.config.max_liveness_remediations:
             ci_status, _ = ci_state(pr, self.config.required_checks)
             if ci_status == "PASS" and record.review_correction_authorized_from_sha != pr.head_sha:
                 self.ao.kill(session.id)
@@ -636,21 +742,29 @@ class FactoryController:
                 record.last_progress_at = utc_now()
                 self._handle_pr(milestone, package, record, pr, session)
                 return
-        if record.correction_attempts < self.config.max_correction_attempts:
+        if record.liveness_remediations_used < self.config.max_liveness_remediations:
             reason = "stopped making meaningful progress" if stuck else "is waiting for input"
             try:
                 self.ao.send(
                     session.id,
                     f"You {reason}. Continue in FULL AUTONOMOUS MODE. Do not wait for owner input. Resolve ordinary ambiguity from committed authority and evidence. If a tool permission prompt caused this state, exit it and continue with the preconfigured non-interactive permission mode.",
                 )
-                record.correction_attempts += 1
+                record.liveness_remediations_used += 1
+                record.correction_attempts = (
+                    record.liveness_remediations_used + record.ci_corrections_used + record.integration_corrections_used
+                )
                 record.last_progress_at = utc_now()
                 self.store.event(
                     "CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                    workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                    workKey=key, provider=record.provider, aoSessionId=session.id,
+                    attempt=record.liveness_remediations_used, domain="liveness",
+                    remediationsUsed=record.liveness_remediations_used,
                 )
             except Exception as error:
-                record.correction_attempts += 1
+                record.liveness_remediations_used += 1
+                record.correction_attempts = (
+                    record.liveness_remediations_used + record.ci_corrections_used + record.integration_corrections_used
+                )
                 record.last_error = f"AO send correction failed: {error}"
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -660,7 +774,9 @@ class FactoryController:
                     workKey=key,
                     provider=record.provider,
                     aoSessionId=session.id,
-                    attempt=record.correction_attempts,
+                    attempt=record.liveness_remediations_used,
+                    domain="liveness",
+                    remediationsUsed=record.liveness_remediations_used,
                     error=str(error),
                     reason=str(error),
                 )
@@ -686,19 +802,27 @@ class FactoryController:
                 record.last_progress_at = utc_now()
                 self._handle_pr(milestone, package, record, pr, session)
                 return
-        if record.correction_attempts < self.config.max_correction_attempts:
+        if record.session_restore_attempts < self.config.max_session_restores:
             try:
                 self.ao.restore(session.id)
-                record.correction_attempts += 1
+                record.session_restore_attempts += 1
+                record.correction_attempts = (
+                    record.session_restore_attempts + record.ci_corrections_used + record.integration_corrections_used
+                )
                 record.started_at = utc_now()
                 record.last_progress_at = utc_now()
                 self.store.event(
                     "WORKER_RESTORED", milestoneId=milestone.id, workPackageId=package.id,
-                    workKey=key, provider=record.provider, aoSessionId=session.id, attempt=record.correction_attempts,
+                    workKey=key, provider=record.provider, aoSessionId=session.id,
+                    attempt=record.session_restore_attempts, domain="session_restore",
+                    sessionRestores=record.session_restore_attempts,
                 )
                 return
             except Exception as error:
-                record.correction_attempts += 1
+                record.session_restore_attempts += 1
+                record.correction_attempts = (
+                    record.session_restore_attempts + record.ci_corrections_used + record.integration_corrections_used
+                )
                 record.last_error = f"AO restore failed: {error}"
                 record.last_progress_at = utc_now()
                 self.store.event(
@@ -708,7 +832,9 @@ class FactoryController:
                     workKey=key,
                     provider=record.provider,
                     aoSessionId=session.id,
-                    attempt=record.correction_attempts,
+                    attempt=record.session_restore_attempts,
+                    domain="session_restore",
+                    sessionRestores=record.session_restore_attempts,
                     error=str(error),
                     reason=str(error),
                 )
@@ -729,7 +855,7 @@ class FactoryController:
             record,
             session,
             pr,
-            "AO session terminated after bounded restore",
+            "terminated AO session exceeded restore budget",
         )
 
     def _retry_or_replan(
@@ -777,6 +903,14 @@ class FactoryController:
                 record.status = PackageStatus.READY
                 record.session_id = None
                 record.correction_attempts = 0
+                record.ci_corrections_used = 0
+                record.ci_correction_authorized_from_sha = None
+                record.liveness_remediations_used = 0
+                record.session_restore_attempts = 0
+                record.integration_corrections_used = 0
+                record.integration_correction_authorized_for_head = None
+                record.ci_infra_retries_used = 0
+                record.ci_infra_retry_authorized_from_sha = None
                 record.ao_status = "terminated-clean"
                 record.ao_activity = "requeued"
                 record.started_at = None
@@ -803,6 +937,8 @@ class FactoryController:
                 self.ao.restore(session.id)
                 record.task_attempts += 1
                 record.correction_attempts = 0
+                record.liveness_remediations_used = 0
+                record.session_restore_attempts = 0
                 record.started_at = utc_now()
                 record.last_progress_at = utc_now()
                 record.last_error = evidence
@@ -864,22 +1000,83 @@ class FactoryController:
             if ci_status == "WAIT":
                 record.last_error = ci_reason
                 return
+
+            causal_check = causal_ci_check(pr, self.config.required_checks)
+            failure_kind, failure_detail, run_id = classify_ci_failure(pr, causal_check, self.github)
+
+            if failure_kind == "INFRASTRUCTURE" and run_id is not None:
+                if record.ci_infra_retries_used < self.config.max_ci_infra_retries:
+                    try:
+                        self.github.rerun_failed_jobs(run_id)
+                        record.ci_infra_retries_used += 1
+                        record.ci_infra_retry_authorized_from_sha = pr.head_sha
+                        record.last_progress_at = utc_now()
+                        token = f"CI_INFRA_RETRY:{pr.head_sha}:{record.ci_infra_retries_used}"
+                        record.last_error = token
+                        self.store.event(
+                            "CI_INFRA_RETRY_STARTED",
+                            milestoneId=milestone.id,
+                            workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id),
+                            provider=record.provider,
+                            aoSessionId=record.session_id,
+                            pr=pr.number,
+                            attempt=record.ci_infra_retries_used,
+                            headSha=pr.head_sha,
+                            runId=run_id,
+                            detail=failure_detail,
+                            domain="ci_infrastructure",
+                        )
+                        return
+                    except Exception as error:
+                        pass
+                else:
+                    self._block(
+                        milestone.id,
+                        package.id,
+                        record,
+                        f"CI infrastructure retry budget exhausted on head {pr.head_sha}: {ci_reason}",
+                        work_key(milestone.id, package.id),
+                    )
+                    return
+
             token = f"CI:{pr.head_sha}:{ci_reason}"
             if record.session_id and record.last_error != token:
-                if record.correction_attempts >= self.config.max_correction_attempts:
-                    self._block(milestone.id, package.id, record, f"CI correction budget exhausted: {ci_reason}", work_key(milestone.id, package.id))
-                    return
+                already_authorized_for_head = (record.ci_correction_authorized_from_sha == pr.head_sha)
+                if not already_authorized_for_head:
+                    if record.ci_corrections_used >= self.config.max_ci_correction_rounds:
+                        self._block(
+                            milestone.id,
+                            package.id,
+                            record,
+                            f"CI correction budget exhausted: {ci_reason}",
+                            work_key(milestone.id, package.id),
+                        )
+                        return
+                    record.ci_corrections_used += 1
+                    record.ci_correction_authorized_from_sha = pr.head_sha
+                    record.correction_attempts = (
+                        record.ci_corrections_used + record.liveness_remediations_used + record.integration_corrections_used
+                    )
+
                 self.ao.send(
                     record.session_id,
                     f"Required CI is not green for PR #{pr.number} at {pr.head_sha}: {ci_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
                 )
-                record.correction_attempts += 1
                 record.last_error = token
                 record.last_progress_at = utc_now()
                 self.store.event(
-                    "CI_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                    workKey=work_key(milestone.id, package.id), provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
-                    attempt=record.correction_attempts, headSha=pr.head_sha,
+                    "CI_CORRECTION_STARTED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=work_key(milestone.id, package.id),
+                    provider=record.provider,
+                    aoSessionId=record.session_id,
+                    pr=pr.number,
+                    attempt=record.ci_corrections_used,
+                    headSha=pr.head_sha,
+                    domain="product_ci",
+                    ciCorrectionsUsed=record.ci_corrections_used,
                 )
                 return
             if record.session_id and record.last_error == token and session is not None:
@@ -1152,7 +1349,7 @@ class FactoryController:
             integration_state = "CONFLICTING" if pr.mergeable.upper() == "CONFLICTING" else pr.merge_state.upper()
             token = f"MERGE:{pr.head_sha}:{integration_state}"
             if record.session_id and record.last_error != token:
-                if record.correction_attempts >= self.config.max_correction_attempts:
+                if record.integration_corrections_used >= self.config.max_integration_corrections:
                     self._escalate_replan(
                         milestone,
                         package,
@@ -1167,13 +1364,25 @@ class FactoryController:
                     f"{self.config.integration_branch}. Merge that exact target into your branch, resolve any "
                     "ordinary conflict from committed authority, rerun focused checks, and normal push. Do not amend, rebase, or force-push.",
                 )
-                record.correction_attempts += 1
+                record.integration_corrections_used += 1
+                record.integration_correction_authorized_for_head = pr.head_sha
+                record.correction_attempts = (
+                    record.integration_corrections_used + record.ci_corrections_used + record.liveness_remediations_used
+                )
                 record.last_error = token
                 record.last_progress_at = utc_now()
                 self.store.event(
-                    "MERGE_UPDATE_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                    workKey=work_key(milestone.id, package.id), provider=record.provider, aoSessionId=record.session_id, pr=pr.number,
-                    attempt=record.correction_attempts, headSha=pr.head_sha,
+                    "MERGE_UPDATE_STARTED",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=work_key(milestone.id, package.id),
+                    provider=record.provider,
+                    aoSessionId=record.session_id,
+                    pr=pr.number,
+                    attempt=record.integration_corrections_used,
+                    headSha=pr.head_sha,
+                    domain="integration",
+                    integrationCorrectionsUsed=record.integration_corrections_used,
                 )
             record.status = PackageStatus.PR_WAITING
             return
@@ -1678,6 +1887,12 @@ def _progress_fingerprint(
             "record": None if record is None else {
                 "ci_status": record.ci_status,
                 "correction_attempts": record.correction_attempts,
+                "ci_corrections_used": record.ci_corrections_used,
+                "ci_correction_authorized_from_sha": record.ci_correction_authorized_from_sha,
+                "liveness_remediations_used": record.liveness_remediations_used,
+                "session_restore_attempts": record.session_restore_attempts,
+                "integration_corrections_used": record.integration_corrections_used,
+                "ci_infra_retries_used": record.ci_infra_retries_used,
                 "review_attempts": record.review_attempts,
                 "review_corrections_used": record.review_corrections_used,
                 "review_sha": record.review_sha,

@@ -192,10 +192,40 @@ class GitHub:
         actor = self.current_actor()
         return True, f"gh CLI user {actor} can access {self.repo}"
 
+    def rerun_failed_jobs(self, run_id: int | str) -> None:
+        self._run(["gh", "run", "rerun", str(run_id), "--failed", "--repo", self.repo], timeout=180)
+
+    def get_run_jobs(self, run_id: int | str) -> list[dict[str, Any]]:
+        raw = self._json(["gh", "api", f"repos/{self.repo}/actions/runs/{run_id}/jobs"])
+        return list(raw.get("jobs", []))
+
+
+class CIFailureKind(re.Enum if hasattr(re, "Enum") else str):
+    PRODUCT = "PRODUCT"
+    INFRASTRUCTURE = "INFRASTRUCTURE"
+    UNKNOWN = "UNKNOWN"
+
 
 def ci_gate(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[bool, str]:
     state, reason = ci_state(pr, required_checks)
     return state == "PASS", reason
+
+
+def causal_ci_check(pr: PullRequest, required_checks: tuple[str, ...] = ()) -> dict[str, Any] | None:
+    active_failures = [
+        c for c in pr.checks
+        if str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper() in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}
+    ]
+    if active_failures:
+        return active_failures[0]
+    if required_checks:
+        for c in pr.checks:
+            name = str(c.get("name") or c.get("context") or "")
+            if name in required_checks:
+                status = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+                if status not in {"SUCCESS", "PASS", "", "EXPECTED", "PENDING", "QUEUED", "IN_PROGRESS", "REQUESTED", "WAITING"}:
+                    return c
+    return None
 
 
 def ci_state(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[str, str]:
@@ -205,6 +235,15 @@ def ci_state(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[str, st
         status = str(check.get("conclusion") or check.get("state") or check.get("status") or "").upper()
         if name:
             by_name[name] = status
+
+    active_failures = [
+        c for c in pr.checks
+        if str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper() in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}
+    ]
+    if active_failures:
+        failing_names = [str(c.get("name") or c.get("context") or "") for c in active_failures]
+        return "FAIL", f"checks not passing: {', '.join(failing_names)}"
+
     missing = [name for name in required_checks if name not in by_name]
     if missing:
         return "WAIT", f"missing required checks: {', '.join(missing)}"
@@ -216,6 +255,98 @@ def ci_state(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[str, st
     if failed:
         return "FAIL", f"checks not passing: {', '.join(failed)}"
     return "PASS", "required CI checks pass"
+
+
+INFRASTRUCTURE_STEP_PATTERNS = (
+    "start minio",
+    "start postgres",
+    "set up job",
+    "set up",
+    "setup",
+    "actions/checkout",
+    "actions/setup-",
+    "actions/setup_",
+    "pnpm/action-setup",
+    "run pnpm install",
+    "pnpm install",
+    "docker run",
+    "docker exec",
+    "install playwright",
+)
+
+PRODUCT_STEP_PATTERNS = (
+    "test",
+    "verify",
+    "lint",
+    "typecheck",
+    "build",
+    "scan",
+    "spec",
+    "harness",
+    "mutation",
+)
+
+
+def classify_ci_failure(
+    pr: PullRequest,
+    causal_check: dict[str, Any] | None,
+    github: GitHub | None = None,
+) -> tuple[str, str, int | None]:
+    if causal_check is None:
+        return "UNKNOWN", "no causal check failure identified", None
+
+    details_url = str(
+        causal_check.get("detailsUrl")
+        or causal_check.get("details_url")
+        or causal_check.get("html_url")
+        or causal_check.get("target_url")
+        or ""
+    )
+    run_id: int | None = None
+    job_id: int | None = None
+    if details_url:
+        match = re.search(r"/actions/runs/(\d+)(?:/job/(\d+))?", details_url)
+        if match:
+            run_id = int(match.group(1))
+            if match.group(2):
+                job_id = int(match.group(2))
+
+    if "failure_kind" in causal_check:
+        kind_str = str(causal_check["failure_kind"]).upper()
+        if kind_str in {"PRODUCT", "INFRASTRUCTURE", "UNKNOWN"}:
+            return kind_str, str(causal_check.get("failure_detail") or "explicit test metadata"), run_id
+
+    if github is not None and run_id is not None:
+        try:
+            jobs = github.get_run_jobs(run_id)
+            for job in jobs:
+                if job_id and job.get("id") != job_id:
+                    continue
+                failed_steps = [s for s in job.get("steps", []) if str(s.get("conclusion", "")).lower() in {"failure", "timed_out", "cancelled"}]
+                for step in failed_steps:
+                    step_name = str(step.get("name", "")).lower()
+                    for pattern in INFRASTRUCTURE_STEP_PATTERNS:
+                        if pattern in step_name:
+                            return (
+                                "INFRASTRUCTURE",
+                                f"setup step '{step.get('name')}' failed before product tests in job '{job.get('name')}'",
+                                run_id,
+                            )
+                    for pattern in PRODUCT_STEP_PATTERNS:
+                        if pattern in step_name:
+                            return (
+                                "PRODUCT",
+                                f"verification step '{step.get('name')}' failed in job '{job.get('name')}'",
+                                run_id,
+                            )
+        except Exception:
+            pass
+
+    check_name = str(causal_check.get("name") or causal_check.get("context") or "").lower()
+    if any(pattern in check_name for pattern in ("canary", "tier 0", "tier 1", "tier 2", "tier 3", "control plane")):
+        return "PRODUCT", f"causal failure in test check '{causal_check.get('name')}'", run_id
+
+    return "UNKNOWN", f"unclassified check '{causal_check.get('name')}'", run_id
 
 
 def dump_evidence(path: Path, value: dict[str, Any]) -> None:
