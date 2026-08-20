@@ -29,13 +29,13 @@ export const ModelProfileSchema = z.object({
 export type ModelProfile = z.infer<typeof ModelProfileSchema>;
 
 export const AgentBudgetSchema = z.object({
-  maxCandidates: z.number().int().positive().optional(),
-  maxSteps: z.number().int().positive(),
-  maxToolCalls: z.number().int().positive(),
-  maxToolCallsPerCandidate: z.number().int().positive().optional(),
-  maxProviderCalls: z.number().int().positive().optional(),
-  maxInputTokens: z.number().int().positive().optional(),
-  maxOutputTokens: z.number().int().positive().optional(),
+  maxCandidates: z.number().int().nonnegative().optional(),
+  maxSteps: z.number().int().nonnegative(),
+  maxToolCalls: z.number().int().nonnegative(),
+  maxToolCallsPerCandidate: z.number().int().nonnegative().optional(),
+  maxProviderCalls: z.number().int().nonnegative().optional(),
+  maxInputTokens: z.number().int().nonnegative().optional(),
+  maxOutputTokens: z.number().int().nonnegative().optional(),
   maxModelCostUsd: z.number().nonnegative().optional(),
   maxProviderCostUnits: z.number().nonnegative().optional(),
   deadlineAt: z.string().datetime().optional(),

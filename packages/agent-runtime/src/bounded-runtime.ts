@@ -15,6 +15,7 @@ import {
   AgentCancelledError,
   AgentRuntimeError,
   BudgetExceededError,
+  ConfinementViolationError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
 
@@ -136,9 +137,12 @@ export class BoundedAgentRuntime {
     // 1. Fail closed on unknown profile before any execution
     const profile = this.registry.require(profileId, profileVersion);
 
-    // 2. Budget tracker setup and pre-flight deadline check
+    // 2. Budget tracker setup and unconditional pre-flight deadline & step checks
     const tracker = new AgentBudgetTracker(budget);
     tracker.checkDeadline();
+    if (budget.maxSteps <= 0) {
+      tracker.checkStep(1);
+    }
 
     // 3. Pre-flight cancellation check
     if (signal?.aborted) {
@@ -152,9 +156,6 @@ export class BoundedAgentRuntime {
 
     // 5. If tools are available for this execution, enforce pre-flight external budget gates
     if (availableTools.length > 0) {
-      if (budget.maxSteps <= 0) {
-        tracker.checkStep(1);
-      }
       if (budget.maxToolCalls <= 0) {
         tracker.checkToolCall(candidate.assetId, 1);
       }
@@ -282,11 +283,11 @@ export class BoundedAgentRuntime {
 
           accumulatedEvidence[call.toolName] = output;
         } catch (err) {
+          if (err instanceof BudgetExceededError || err instanceof ConfinementViolationError) {
+            throw err;
+          }
           if (err instanceof AgentCancelledError || signal?.aborted) {
             throw new AgentCancelledError();
-          }
-          if (err instanceof BudgetExceededError) {
-            throw err;
           }
           callError = err instanceof Error ? err.message : String(err);
         } finally {

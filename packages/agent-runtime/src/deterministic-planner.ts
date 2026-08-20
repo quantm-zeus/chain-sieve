@@ -195,6 +195,8 @@ export class DeterministicPlanner {
       profileVersion: profile.version,
       goal,
       seed: input.deterministicSeedRef ?? 'deterministic-default',
+      initialEvidence: input.initialEvidence ?? null,
+      requestedEvidenceFamilies: input.requestedEvidenceFamilies ?? null,
       envelope: {
         allowedTools: envelope.allowedTools,
         allowedProviders: envelope.allowedProviders,

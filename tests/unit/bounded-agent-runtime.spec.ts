@@ -232,6 +232,34 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       expect(planA.planId).not.toBe(planDiffBudget.planId);
     });
 
+    it('produces distinct planId hashes for differing initialEvidence and requestedEvidenceFamilies', () => {
+      const profile = new ModelProfileRegistry().require('deep-research-v1');
+      const baseInput = {
+        candidate: sampleCandidate,
+        profile,
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+      };
+
+      const plan1 = DeterministicPlanner.plan({
+        ...baseInput,
+        initialEvidence: { 'dex.pairs': { pairs: ['SOL-USDC'] } },
+      });
+
+      const plan2 = DeterministicPlanner.plan({
+        ...baseInput,
+        initialEvidence: { 'dex.pairs': { pairs: ['SOL-USDT'] } },
+      });
+
+      const plan3 = DeterministicPlanner.plan({
+        ...baseInput,
+        requestedEvidenceFamilies: ['LIQUIDITY', 'SECURITY'],
+      });
+
+      expect(plan1.planId).not.toBe(plan2.planId);
+      expect(plan1.planId).not.toBe(plan3.planId);
+    });
+
     it('generates stage-specific tool sequence for skeptic goal', () => {
       const profile = new ModelProfileRegistry().require('skeptic-v1');
       const skepticEnvelope: ToolAuthorizationEnvelope = {
@@ -600,6 +628,64 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
       // controller signal is not aborted and listener has been cleanly detached
       expect(controller.signal.aborted).toBe(false);
     });
+
+    it('validates AgentBudgetSchema with 0-value limits without rejection', () => {
+      const zeroBudget = {
+        maxSteps: 0,
+        maxToolCalls: 0,
+        maxInputTokens: 0,
+        maxOutputTokens: 0,
+        maxModelCostUsd: 0,
+      };
+
+      const parsed = AgentBudgetSchema.parse(zeroBudget);
+      expect(parsed.maxSteps).toBe(0);
+      expect(parsed.maxToolCalls).toBe(0);
+      expect(parsed.maxModelCostUsd).toBe(0);
+    });
+
+    it('enforces pre-flight deadline even when no tools are available or requested', async () => {
+      const runtime = new BoundedAgentRuntime();
+      const noToolsEnvelope: ToolAuthorizationEnvelope = {
+        ...sampleEnvelope,
+        allowedTools: [],
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: noToolsEnvelope,
+          budget: {
+            maxSteps: 5,
+            maxToolCalls: 5,
+            deadlineAt: '2020-01-01T00:00:00Z', // Expired deadline
+          },
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+    });
+
+    it('preserves typed ConfinementViolationError and BudgetExceededError when abort signal is concurrently triggered', async () => {
+      const runtime = new BoundedAgentRuntime();
+      const controller = new AbortController();
+
+      runtime.registerTool('dex.pairs', async () => {
+        // Concurrently abort signal
+        controller.abort();
+        // But throw BudgetExceededError
+        throw new BudgetExceededError('MODEL_COST_USD', 10, 5);
+      });
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: sampleBudget,
+          signal: controller.signal,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+    });
   });
 
   describe('FR-AGT-012: Tool-argument confinement against deterministic planner envelope', () => {
@@ -744,6 +830,66 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
         ToolArgumentConfinementValidator.assertConforms(
           'dex.pairs',
           targetArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+    });
+
+    it('rejects credential URLs (user:pass@host) as forbidden', () => {
+      const credentialUrlArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        url: 'https://evil.com@jup.ag/path',
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          credentialUrlArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+
+      try {
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          credentialUrlArgs,
+          sampleEnvelope,
+        );
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConfinementViolationError);
+        if (err instanceof ConfinementViolationError) {
+          expect(err.violationType).toBe('URL_NOT_ALLOWED');
+        }
+      }
+    });
+
+    it('rejects unallowed addresses and temporal violations passed via generic/innocuous keys', () => {
+      // Unallowed Solana address passed via generic key 'token'
+      const genericAddressArgs = {
+        chain: 'solana',
+        token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC, outside allowedAddresses
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          genericAddressArgs,
+          sampleEnvelope,
+        ),
+      ).toThrow(ConfinementViolationError);
+
+      // Future timestamp passed via generic key 'future'
+      const genericTimeArgs = {
+        chain: 'solana',
+        address: 'So11111111111111111111111111111111111111112',
+        future: 9999999999, // Future epoch
+      };
+
+      expect(() =>
+        ToolArgumentConfinementValidator.assertConforms(
+          'dex.pairs',
+          genericTimeArgs,
           sampleEnvelope,
         ),
       ).toThrow(ConfinementViolationError);

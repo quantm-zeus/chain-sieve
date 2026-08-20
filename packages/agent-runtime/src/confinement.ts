@@ -23,36 +23,61 @@ export class ToolArgumentConfinementValidator {
     return undefined;
   }
 
-  private static extractHost(value: string): string {
-    try {
-      let candidate = value.trim();
-      if (
-        candidate.startsWith('http://') ||
-        candidate.startsWith('https://') ||
-        candidate.startsWith('ws://') ||
-        candidate.startsWith('wss://')
-      ) {
+  private static extractHost(value: string, toolName = 'unknown'): string {
+    const candidate = value.trim();
+
+    // Check for credential / userinfo injection before parsing
+    if (
+      candidate.startsWith('http://') ||
+      candidate.startsWith('https://') ||
+      candidate.startsWith('ws://') ||
+      candidate.startsWith('wss://')
+    ) {
+      try {
         const url = new URL(candidate);
-        return url.hostname.toLowerCase();
-      }
-      // Remove path component if present
-      candidate = candidate.split('/')[0] ?? '';
-      // If bracketed IPv6 like [::1]:8080
-      if (candidate.startsWith('[')) {
-        const closeIdx = candidate.indexOf(']');
-        if (closeIdx !== -1) {
-          return candidate.slice(1, closeIdx).toLowerCase();
+        if (url.username !== '' || url.password !== '') {
+          throw new ConfinementViolationError(
+            'URL_NOT_ALLOWED',
+            `Credential/userinfo syntax (user:pass@host) is strictly forbidden in URL: "${value}"`,
+            toolName,
+          );
         }
+        return url.hostname.toLowerCase();
+      } catch (err) {
+        if (err instanceof ConfinementViolationError) throw err;
+        throw new ConfinementViolationError(
+          'URL_NOT_ALLOWED',
+          `Malformed URL string: "${value}"`,
+          toolName,
+        );
       }
-      // Strip port: split by colon (if single colon for host:port)
-      const parts = candidate.split(':');
-      if (parts.length === 2 && parts[0]) {
-        return parts[0].toLowerCase();
-      }
-      return candidate.toLowerCase();
-    } catch {
-      return value.toLowerCase();
     }
+
+    // Bare hostname / domain check - ensure no userinfo injection (e.g. evil.com@jup.ag)
+    const hostSegment = candidate.split('/')[0] ?? '';
+    if (hostSegment.includes('@')) {
+      throw new ConfinementViolationError(
+        'URL_NOT_ALLOWED',
+        `Credential/userinfo syntax (@) is strictly forbidden in domain/host: "${value}"`,
+        toolName,
+      );
+    }
+
+    // Bracketed IPv6
+    if (hostSegment.startsWith('[')) {
+      const closeIdx = hostSegment.indexOf(']');
+      if (closeIdx !== -1) {
+        return hostSegment.slice(1, closeIdx).toLowerCase();
+      }
+    }
+
+    // Strip port if present
+    const parts = hostSegment.split(':');
+    if (parts.length === 2 && parts[0]) {
+      return parts[0].toLowerCase();
+    }
+
+    return hostSegment.toLowerCase();
   }
 
   private static isDomainAllowed(host: string, allowedDomains: readonly string[]): boolean {
@@ -209,16 +234,28 @@ export class ToolArgumentConfinementValidator {
     }
 
     // Chain check
-    if (
-      envelope.allowedChains &&
-      envelope.allowedChains.length > 0 &&
-      (lowerKey.includes('chain') ||
+    if (envelope.allowedChains && envelope.allowedChains.length > 0) {
+      const isChainKey =
+        lowerKey.includes('chain') ||
         lowerKey === 'network' ||
         lowerKey === 'blockchain' ||
-        lowerKey === 'ecosystem')
-    ) {
+        lowerKey === 'ecosystem';
+      const KNOWN_CHAINS = [
+        'solana',
+        'ethereum',
+        'base',
+        'arbitrum',
+        'polygon',
+        'optimism',
+        'avalanche',
+        'bsc',
+        'mainnet',
+      ];
+      const isChainValue = (v: unknown): boolean =>
+        typeof v === 'string' && KNOWN_CHAINS.includes(v.toLowerCase());
+
       const allowed = envelope.allowedChains.map((c) => c.toLowerCase());
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && (isChainKey || isChainValue(value))) {
         if (!allowed.includes(value.toLowerCase())) {
           throw new ConfinementViolationError(
             'CHAIN_NOT_ALLOWED',
@@ -228,29 +265,36 @@ export class ToolArgumentConfinementValidator {
         }
       } else if (Array.isArray(value)) {
         for (const item of value) {
-          if (typeof item === 'string' && !allowed.includes(item.toLowerCase())) {
-            throw new ConfinementViolationError(
-              'CHAIN_NOT_ALLOWED',
-              `Chain "${item}" in list is outside envelope allowedChains: [${envelope.allowedChains.join(', ')}]`,
-              toolName,
-            );
+          if (typeof item === 'string' && (isChainKey || isChainValue(item))) {
+            if (!allowed.includes(item.toLowerCase())) {
+              throw new ConfinementViolationError(
+                'CHAIN_NOT_ALLOWED',
+                `Chain "${item}" in list is outside envelope allowedChains: [${envelope.allowedChains.join(', ')}]`,
+                toolName,
+              );
+            }
           }
         }
       }
     }
 
-    // Address check
-    if (
-      envelope.allowedAddresses &&
-      envelope.allowedAddresses.length > 0 &&
-      (lowerKey.includes('address') ||
+    // Address check (key-based or value-pattern based)
+    if (envelope.allowedAddresses && envelope.allowedAddresses.length > 0) {
+      const isAddressKey =
+        lowerKey.includes('address') ||
         lowerKey.includes('mint') ||
         lowerKey === 'account' ||
         lowerKey.includes('recipient') ||
-        lowerKey.includes('wallet'))
-    ) {
+        lowerKey.includes('wallet') ||
+        lowerKey.includes('token') ||
+        lowerKey === 'contract';
+
+      const isAddressValue = (v: unknown): boolean =>
+        typeof v === 'string' &&
+        (/^0x[a-fA-F0-9]{40}$/.test(v) || /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v));
+
       const allowed = envelope.allowedAddresses.map((a) => this.normalizeAddress(a));
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && (isAddressKey || isAddressValue(value))) {
         const normalized = this.normalizeAddress(value);
         if (!allowed.includes(normalized)) {
           throw new ConfinementViolationError(
@@ -261,7 +305,7 @@ export class ToolArgumentConfinementValidator {
         }
       } else if (Array.isArray(value)) {
         for (const item of value) {
-          if (typeof item === 'string') {
+          if (typeof item === 'string' && (isAddressKey || isAddressValue(item))) {
             const normalized = this.normalizeAddress(item);
             if (!allowed.includes(normalized)) {
               throw new ConfinementViolationError(
@@ -276,38 +320,44 @@ export class ToolArgumentConfinementValidator {
     }
 
     // Time range check
-    if (
-      envelope.timeRange &&
-      (lowerKey.includes('time') ||
+    if (envelope.timeRange) {
+      const isTimeKey =
+        lowerKey.includes('time') ||
         lowerKey.includes('stamp') ||
         lowerKey.includes('asof') ||
         lowerKey.includes('date') ||
         lowerKey.includes('since') ||
         lowerKey.includes('until') ||
         lowerKey.includes('created') ||
+        lowerKey.includes('future') ||
         lowerKey === 'from' ||
         lowerKey === 'to' ||
         lowerKey === 'start' ||
-        lowerKey === 'end')
-    ) {
-      const tsMs = this.parseTimestampToMs(value);
-      if (tsMs !== undefined) {
-        const maxMs = new Date(envelope.timeRange.maxTimestamp).getTime();
-        if (tsMs > maxMs) {
-          throw new ConfinementViolationError(
-            'TIME_RANGE_NOT_ALLOWED',
-            `Timestamp "${value}" (${new Date(tsMs).toISOString()}) exceeds envelope maxTimestamp "${envelope.timeRange.maxTimestamp}"`,
-            toolName,
-          );
-        }
-        if (envelope.timeRange.minTimestamp) {
-          const minMs = new Date(envelope.timeRange.minTimestamp).getTime();
-          if (tsMs < minMs) {
+        lowerKey === 'end';
+      const isTimeValue =
+        (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) ||
+        (typeof value === 'number' && value > 1_000_000_000);
+
+      if (isTimeKey || isTimeValue) {
+        const tsMs = this.parseTimestampToMs(value);
+        if (tsMs !== undefined) {
+          const maxMs = new Date(envelope.timeRange.maxTimestamp).getTime();
+          if (tsMs > maxMs) {
             throw new ConfinementViolationError(
               'TIME_RANGE_NOT_ALLOWED',
-              `Timestamp "${value}" (${new Date(tsMs).toISOString()}) precedes envelope minTimestamp "${envelope.timeRange.minTimestamp}"`,
+              `Timestamp "${value}" (${new Date(tsMs).toISOString()}) exceeds envelope maxTimestamp "${envelope.timeRange.maxTimestamp}"`,
               toolName,
             );
+          }
+          if (envelope.timeRange.minTimestamp) {
+            const minMs = new Date(envelope.timeRange.minTimestamp).getTime();
+            if (tsMs < minMs) {
+              throw new ConfinementViolationError(
+                'TIME_RANGE_NOT_ALLOWED',
+                `Timestamp "${value}" (${new Date(tsMs).toISOString()}) precedes envelope minTimestamp "${envelope.timeRange.minTimestamp}"`,
+                toolName,
+              );
+            }
           }
         }
       }
