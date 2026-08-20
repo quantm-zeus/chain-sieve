@@ -15,9 +15,10 @@ describe('authoritative bootstrap migration', () => {
     const sql2 = await readFile('infra/migrations/0002_durable_workflow_core.sql', 'utf8');
     const sql3 = await readFile('infra/migrations/0003_alert_lifecycle_and_outbox.sql', 'utf8');
     const sql4 = await readFile('infra/migrations/0004_scheduling_control_plane.sql', 'utf8');
-    const sqlTables = [...(sql1 + sql2 + sql3 + sql4).matchAll(/CREATE TABLE IF NOT EXISTS\s+([a-z_]+)/g)].map((match) => match[1]).sort();
+    const sql5 = await readFile('infra/migrations/0005_durable_recovery_continuity.sql', 'utf8');
+    const sqlTables = [...(sql1 + sql2 + sql3 + sql4 + sql5).matchAll(/CREATE TABLE IF NOT EXISTS\s+([a-z_]+)/g)].map((match) => match[1]).sort();
     const drizzleTables = Object.values(schema).map((table) => getTableName(table)).sort();
     expect(drizzleTables).toEqual(sqlTables);
-    expect(sqlTables).toHaveLength(21);
+    expect(sqlTables).toHaveLength(29);
   });
 });
