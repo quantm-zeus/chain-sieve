@@ -11,8 +11,8 @@ export interface PlannedToolCall {
   toolName: string;
   arguments: Record<string, unknown>;
   purpose: string;
-  estimatedCostUsd?: number;
-  quotaCostUnits?: number;
+  estimatedCostUsd?: number | undefined;
+  quotaCostUnits?: number | undefined;
 }
 
 export interface PlanStep {
@@ -39,18 +39,18 @@ export interface CandidateTarget {
   assetId: string;
   chainId: string;
   contractAddress: string;
-  symbol?: string;
+  symbol?: string | undefined;
 }
 
 export interface PlannerInput {
   candidate: CandidateTarget;
-  goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR';
+  goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   profile: ModelProfile;
   envelope: ToolAuthorizationEnvelope;
   budget: AgentBudget;
-  initialEvidence?: Record<string, unknown>;
-  requestedEvidenceFamilies?: readonly string[];
-  deterministicSeedRef?: string | number;
+  initialEvidence?: Record<string, unknown> | undefined;
+  requestedEvidenceFamilies?: readonly string[] | undefined;
+  deterministicSeedRef?: string | number | undefined;
 }
 
 function stableHash(value: unknown): string {

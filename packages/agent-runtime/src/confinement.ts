@@ -30,7 +30,8 @@ export class ToolArgumentConfinementValidator {
         return url.hostname.toLowerCase();
       }
       // If it's a domain name (e.g., api.dexscreener.com)
-      const sanitized = value.split('/')[0].split(':')[0].toLowerCase();
+      const firstSegment = value.split('/')[0] ?? '';
+      const sanitized = (firstSegment.split(':')[0] ?? '').toLowerCase();
       return sanitized;
     } catch {
       return value.toLowerCase();
@@ -40,7 +41,8 @@ export class ToolArgumentConfinementValidator {
   private static isDomainAllowed(host: string, allowedDomains: readonly string[]): boolean {
     const normalizedHost = host.toLowerCase();
     return allowedDomains.some((allowed) => {
-      const normalizedAllowed = allowed.toLowerCase().replace(/^https?:\/\//, '').split('/')[0];
+      const allowedFirst = allowed.toLowerCase().replace(/^https?:\/\//, '').split('/')[0] ?? '';
+      const normalizedAllowed = allowedFirst;
       return (
         normalizedHost === normalizedAllowed ||
         normalizedHost.endsWith(`.${normalizedAllowed}`)

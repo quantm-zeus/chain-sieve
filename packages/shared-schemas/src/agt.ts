@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CandidateLifecycleSchema, CandidateRiskStateSchema } from './sig.js';
+import { MissingDataItemSchema, type MissingDataItem } from './alert.js';
 
 export const ModelClassSchema = z.enum([
   'TRIAGE',
@@ -128,13 +129,6 @@ export const ClaimRefSchema = z.object({
   confidence: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
 });
 export type ClaimRef = z.infer<typeof ClaimRefSchema>;
-
-export const MissingDataItemSchema = z.object({
-  field: z.string().min(1),
-  reason: z.string().min(1),
-  criticality: z.enum(['OPTIONAL', 'IMPORTANT', 'BLOCKING']),
-});
-export type MissingDataItem = z.infer<typeof MissingDataItemSchema>;
 
 export const AgentDecisionSchema = z.object({
   candidate: z.object({

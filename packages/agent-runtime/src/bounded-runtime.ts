@@ -20,7 +20,7 @@ import { ModelProfileRegistry } from './model-profiles.js';
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;
-  signal?: AbortSignal;
+  signal?: AbortSignal | undefined;
   stepIndex: number;
   callId: string;
   envelope: ToolAuthorizationEnvelope;
@@ -38,7 +38,7 @@ export interface ToolExecutionRecord {
   toolName: string;
   arguments: Record<string, unknown>;
   output?: unknown;
-  error?: string;
+  error?: string | undefined;
   latencyMs: number;
   executedAt: string;
 }
@@ -46,13 +46,13 @@ export interface ToolExecutionRecord {
 export interface AgentExecutionOptions {
   candidate: CandidateTarget;
   profileId: string;
-  profileVersion?: string;
+  profileVersion?: string | undefined;
   envelope: ToolAuthorizationEnvelope;
   budget: AgentBudget;
-  signal?: AbortSignal;
-  initialEvidence?: Record<string, unknown>;
-  goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR';
-  deterministicSeedRef?: string | number;
+  signal?: AbortSignal | undefined;
+  initialEvidence?: Record<string, unknown> | undefined;
+  goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
+  deterministicSeedRef?: string | number | undefined;
 }
 
 export interface AgentExecutionResult {

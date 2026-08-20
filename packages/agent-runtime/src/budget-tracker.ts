@@ -5,12 +5,12 @@ export interface BudgetUsageSnapshot {
   steps: { current: number; limit: number; remaining: number };
   toolCalls: { current: number; limit: number; remaining: number };
   toolCallsByCandidate: Record<string, number>;
-  providerCalls: { current: number; limit?: number; remaining?: number };
-  inputTokens: { current: number; limit?: number; remaining?: number };
-  outputTokens: { current: number; limit?: number; remaining?: number };
-  modelCostUsd: { current: number; limit?: number; remaining?: number };
-  providerCostUnits: { current: number; limit?: number; remaining?: number };
-  deadlineAt?: string;
+  providerCalls: { current: number; limit?: number | undefined; remaining?: number | undefined };
+  inputTokens: { current: number; limit?: number | undefined; remaining?: number | undefined };
+  outputTokens: { current: number; limit?: number | undefined; remaining?: number | undefined };
+  modelCostUsd: { current: number; limit?: number | undefined; remaining?: number | undefined };
+  providerCostUnits: { current: number; limit?: number | undefined; remaining?: number | undefined };
+  deadlineAt?: string | undefined;
   isExpired: boolean;
 }
 
