@@ -41,8 +41,8 @@ export interface AdminStoreDependencies {
 // In-memory singleton stores — sufficient for product since no migration is authorized.
 // All access is via synchronous in-memory structures; no external provider calls are made.
 export class AdminStore {
-  private readonly now: () => string;
-  private readonly database: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined;
+  private now: () => string;
+  private database: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined;
 
   // Kill switches
   private killSwitches: Map<KillSwitchName, KillSwitchState> = new Map();
@@ -69,6 +69,11 @@ export class AdminStore {
         auditLogged: false,
       });
     }
+  }
+
+  attachDeps(deps: AdminStoreDependencies): void {
+    if (deps.database && !this.database) this.database = deps.database;
+    if (deps.now) this.now = deps.now;
   }
 
   // For testing: reset singleton state
@@ -458,15 +463,7 @@ export class AdminStore {
 let globalStore: AdminStore | null = null;
 export const getAdminStore = (deps?: AdminStoreDependencies): AdminStore => {
   if (!globalStore) globalStore = new AdminStore(deps);
-  // If deps provides database and store doesn't have one, attach
-  if (deps?.database && !globalStore['database']) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalStore as any).database = deps.database;
-  }
-  if (deps?.now) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalStore as any).now = deps.now;
-  }
+  if (deps) globalStore.attachDeps(deps);
   return globalStore;
 };
 export const resetAdminStore = (): void => {
