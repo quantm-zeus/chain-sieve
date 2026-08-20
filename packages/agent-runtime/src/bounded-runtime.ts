@@ -325,7 +325,7 @@ export class BoundedAgentRuntime {
               {
                 field: 'market_data',
                 reason: 'No evidence gathered',
-                criticality: 'BLOCKING',
+                severity: 'HIGH',
               },
             ]
           : [],
