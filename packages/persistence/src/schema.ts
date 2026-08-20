@@ -74,3 +74,110 @@ export const resolvedRunConfigs = pgTable('resolved_run_configs', {
   configHash: text('config_hash').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 });
+
+// --- Recovery Continuity — FR-DR-003/004/005/006 ---
+export const backupRetentionPolicies = pgTable('backup_retention_policies', {
+  id: text().primaryKey(),
+  tier: text().notNull(),
+  retentionDays: integer('retention_days').notNull(),
+  version: integer().notNull(),
+  geographicLocation: text('geographic_location').notNull(),
+  encryptionJson: jsonb('encryption_json').notNull(),
+  rightsConstraintsJson: jsonb('rights_constraints_json').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  createdBy: text('created_by').notNull(),
+  previousVersionId: text('previous_version_id'),
+});
+
+export const backupRecords = pgTable('backup_records', {
+  id: text().primaryKey(),
+  tier: text().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  location: text().notNull(),
+  geographicLocation: text('geographic_location').notNull(),
+  encryptionJson: jsonb('encryption_json').notNull(),
+  hash: text().notNull(),
+  sizeBytes: bigint('size_bytes', { mode: 'number' }).notNull(),
+  retentionPolicyId: text('retention_policy_id').notNull(),
+  version: integer().notNull(),
+  rightsConstraintsJson: jsonb('rights_constraints_json').notNull(),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+});
+
+export const backupLegalHolds = pgTable('backup_legal_holds', {
+  id: text().primaryKey(),
+  backupRecordId: text('backup_record_id').notNull(),
+  reason: text().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  createdBy: text('created_by').notNull(),
+  releasedAt: timestamp('released_at', { withTimezone: true }),
+  active: boolean().notNull(),
+});
+
+export const restoreDrills = pgTable('restore_drills', {
+  id: text().primaryKey(),
+  tier: text().notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  targetRpoMinutes: integer('target_rpo_minutes').notNull(),
+  targetRtoMinutes: integer('target_rto_minutes').notNull(),
+  achievedRpoMinutes: integer('achieved_rpo_minutes'),
+  achievedRtoMinutes: integer('achieved_rto_minutes'),
+  artifactsVerified: boolean('artifacts_verified').notNull(),
+  auditChainVerified: boolean('audit_chain_verified').notNull(),
+  migrationsReplayed: boolean('migrations_replayed').notNull(),
+  crossStoreReferencesRestored: boolean('cross_store_references_restored').notNull(),
+  collectorCheckpointsReestablished: boolean('collector_checkpoints_reestablished').notNull(),
+  hiddenGapsDetected: integer('hidden_gaps_detected').notNull(),
+  status: text().notNull(),
+  evidenceJson: jsonb('evidence_json'),
+});
+
+export const recoveryReconciliationState = pgTable('recovery_reconciliation_state', {
+  id: text().primaryKey(),
+  recoveryId: text('recovery_id').notNull(),
+  providerCallsReconciled: boolean('provider_calls_reconciled').notNull(),
+  quotaReservationsReconciled: boolean('quota_reservations_reconciled').notNull(),
+  workflowLeasesReconciled: boolean('workflow_leases_reconciled').notNull(),
+  inboxReconciled: boolean('inbox_reconciled').notNull(),
+  outboxReconciled: boolean('outbox_reconciled').notNull(),
+  alertsReconciled: boolean('alerts_reconciled').notNull(),
+  collectorGapsReconciled: boolean('collector_gaps_reconciled').notNull(),
+  artifactsVerified: boolean('artifacts_verified').notNull(),
+  auditCheckpointsVerified: boolean('audit_checkpoints_verified').notNull(),
+  fencingTokensValidated: boolean('fencing_tokens_validated').notNull(),
+  staleTokensRejected: integer('stale_tokens_rejected').notNull(),
+  resumedAt: timestamp('resumed_at', { withTimezone: true }),
+  degraded: boolean().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+});
+
+export const degradedModeState = pgTable('degraded_mode_state', {
+  id: text().primaryKey(),
+  tier: text().notNull(),
+  reason: text().notNull(),
+  degradedAt: timestamp('degraded_at', { withTimezone: true }).notNull(),
+  restoredAt: timestamp('restored_at', { withTimezone: true }),
+  confirmedOpportunityAlertsDisabled: boolean('confirmed_opportunity_alerts_disabled').notNull(),
+  capabilityMatrixJson: jsonb('capability_matrix_json').notNull(),
+  active: boolean().notNull(),
+});
+
+export const backupAuditLog = pgTable('backup_audit_log', {
+  id: text().primaryKey(),
+  action: text().notNull(),
+  actor: text().notNull(),
+  payloadJson: jsonb('payload_json').notNull(),
+  previousHash: text('previous_hash'),
+  recordHash: text('record_hash').notNull(),
+  recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull(),
+});
+
+export const collectorCheckpoints = pgTable('collector_checkpoints', {
+  partition: text().primaryKey(),
+  slot: bigint({ mode: 'number' }).notNull(),
+  sequence: bigint({ mode: 'number' }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+});
