@@ -136,15 +136,51 @@ export class BoundedAgentRuntime {
     // 1. Fail closed on unknown profile before any execution
     const profile = this.registry.require(profileId, profileVersion);
 
-    // 2. Budget tracker setup
+    // 2. Budget tracker setup and pre-flight deadline check
     const tracker = new AgentBudgetTracker(budget);
+    tracker.checkDeadline();
 
     // 3. Pre-flight cancellation check
     if (signal?.aborted) {
       throw new AgentCancelledError();
     }
 
-    // 4. Generate deterministic plan
+    // 4. Determine available tools for this profile and envelope
+    const availableTools = profile.declaredTools.filter((tool) =>
+      envelope.allowedTools.includes(tool),
+    );
+
+    // 5. If tools are available for this execution, enforce pre-flight external budget gates
+    if (availableTools.length > 0) {
+      if (budget.maxSteps <= 0) {
+        tracker.checkStep(1);
+      }
+      if (budget.maxToolCalls <= 0) {
+        tracker.checkToolCall(candidate.assetId, 1);
+      }
+      if (budget.maxProviderCalls !== undefined && budget.maxProviderCalls <= 0) {
+        tracker.checkProviderCall(1);
+      }
+      if (budget.maxProviderCostUnits !== undefined && budget.maxProviderCostUnits <= 0) {
+        tracker.checkProviderCostUnits(1);
+      }
+
+      const minInputTokens = 100;
+      const minOutputTokens = 150;
+      const minEstimatedCostUsd =
+        minInputTokens * (profile.costPerInputTokenUsd ?? 0.000001) +
+        minOutputTokens * (profile.costPerOutputTokenUsd ?? 0.000002);
+
+      if (
+        (budget.maxModelCostUsd !== undefined && budget.maxModelCostUsd < minEstimatedCostUsd) ||
+        (budget.maxInputTokens !== undefined && budget.maxInputTokens < minInputTokens) ||
+        (budget.maxOutputTokens !== undefined && budget.maxOutputTokens < minOutputTokens)
+      ) {
+        tracker.checkTokens(minInputTokens, minOutputTokens, minEstimatedCostUsd);
+      }
+    }
+
+    // 6. Generate deterministic plan
     const plan = DeterministicPlanner.plan({
       candidate,
       profile,

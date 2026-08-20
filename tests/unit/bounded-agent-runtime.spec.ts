@@ -366,7 +366,114 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
         return { pairs: [] };
       });
 
-      // Budget with maxInputTokens lower than tool estimated tokens (100)
+      // Budget with zero allowed model cost
+      const zeroCostBudget: AgentBudget = {
+        maxSteps: 5,
+        maxToolCalls: 5,
+        maxModelCostUsd: 0,
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: zeroCostBudget,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+
+      // Verify side effect never occurred
+      expect(handlerInvoked).toBe(false);
+    });
+
+    it('enforces pre-flight provider cost units quota blocking execution before invoking tool handler', async () => {
+      const runtime = new BoundedAgentRuntime();
+      let handlerInvoked = false;
+
+      runtime.registerTool('dex.pairs', async () => {
+        handlerInvoked = true;
+        return { pairs: [] };
+      });
+
+      const zeroProviderUnitsBudget: AgentBudget = {
+        maxSteps: 5,
+        maxToolCalls: 5,
+        maxProviderCostUnits: 0,
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: zeroProviderUnitsBudget,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+
+      expect(handlerInvoked).toBe(false);
+    });
+
+    it('enforces pre-flight maxToolCalls=0 blocking execution when tool execution is required', async () => {
+      const runtime = new BoundedAgentRuntime();
+      let handlerInvoked = false;
+
+      runtime.registerTool('dex.pairs', async () => {
+        handlerInvoked = true;
+        return { pairs: [] };
+      });
+
+      const zeroToolCallsBudget: AgentBudget = {
+        maxSteps: 5,
+        maxToolCalls: 0,
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: zeroToolCallsBudget,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+
+      expect(handlerInvoked).toBe(false);
+    });
+
+    it('enforces pre-flight maxSteps=0 blocking execution when tool execution is required', async () => {
+      const runtime = new BoundedAgentRuntime();
+      let handlerInvoked = false;
+
+      runtime.registerTool('dex.pairs', async () => {
+        handlerInvoked = true;
+        return { pairs: [] };
+      });
+
+      const zeroStepsBudget: AgentBudget = {
+        maxSteps: 0,
+        maxToolCalls: 5,
+      };
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: zeroStepsBudget,
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+
+      expect(handlerInvoked).toBe(false);
+    });
+
+    it('enforces pre-flight token quota blocking execution when input/output token budget is exhausted', async () => {
+      const runtime = new BoundedAgentRuntime();
+      let handlerInvoked = false;
+
+      runtime.registerTool('dex.pairs', async () => {
+        handlerInvoked = true;
+        return { pairs: [] };
+      });
+
       const tightTokenBudget: AgentBudget = {
         maxSteps: 5,
         maxToolCalls: 5,
@@ -382,8 +489,30 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
         }),
       ).rejects.toThrow(BudgetExceededError);
 
-      // Verify side effect never occurred
       expect(handlerInvoked).toBe(false);
+    });
+
+    it('allows legitimate no-evidence / no-tool-needed plan when envelope allows no tools', async () => {
+      const runtime = new BoundedAgentRuntime();
+      const noToolsEnvelope: ToolAuthorizationEnvelope = {
+        ...sampleEnvelope,
+        allowedTools: [],
+      };
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        envelope: noToolsEnvelope,
+        budget: {
+          maxSteps: 5,
+          maxToolCalls: 5,
+          maxModelCostUsd: 0,
+        },
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(result.executedToolCalls).toBe(0);
     });
 
     it('cleans up AbortSignal event listeners without leaking on successful tool completion', async () => {
