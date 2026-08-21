@@ -24,6 +24,7 @@ export interface PlanStep {
 
 export interface DeterministicPlan {
   planId: string;
+  inputHash: string;
   candidateId: string;
   profileId: string;
   profileVersion: string;
@@ -228,10 +229,12 @@ export class DeterministicPlanner {
       })),
     };
 
-    const planId = `plan_${candidate.assetId}_${stableHash(planDataForHash).slice(0, 16)}`;
+    const inputHash = stableHash(planDataForHash);
+    const planId = `plan_${candidate.assetId}_${inputHash.slice(0, 16)}`;
 
     return {
       planId,
+      inputHash,
       candidateId: candidate.assetId,
       profileId: profile.id,
       profileVersion: profile.version,
