@@ -1,7 +1,9 @@
+import { createHash } from 'node:crypto';
 import type {
   AgentBudget,
   AgentDecision,
   ModelProfile,
+  SkepticArtifact,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
@@ -406,26 +408,91 @@ export class BoundedAgentRuntime {
 
     let skepticResult: SkepticExecutionResult | undefined;
     if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
-      const skepticAgent = new ConditionalSkepticAgent(
-        options.skepticTriggerPolicy,
-        this.registry,
-      );
-      for (const [name, handler] of this.tools.entries()) {
-        skepticAgent.registerTool(name, handler);
+      try {
+        const skepticAgent = new ConditionalSkepticAgent(
+          options.skepticTriggerPolicy,
+          this.registry,
+        );
+        for (const [name, handler] of this.tools.entries()) {
+          skepticAgent.registerTool(name, handler);
+        }
+        skepticResult = await skepticAgent.execute({
+          candidate,
+          parentDecision: decision,
+          parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
+          runId: plan.planId,
+          envelope,
+          skepticBudget: options.skepticBudget,
+          triggerContext: {
+            candidateScore: options.candidateScore,
+            ...(options.skepticTriggerContext ?? {}),
+          },
+          signal,
+        });
+      } catch (err) {
+        if (err instanceof AgentCancelledError || signal?.aborted) {
+          throw new AgentCancelledError();
+        }
+        // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
+        const errMsg = err instanceof Error ? err.message : String(err);
+        const parentDecisionId = `dec_${candidate.assetId}_${plan.planId}`;
+        const artifactId = `skeptic_${candidate.assetId}_${plan.planId}_failed_closed`;
+        const asOf = new Date().toISOString();
+        const rawArtifact = {
+          id: artifactId,
+          parentDecisionId,
+          candidateId: candidate.assetId,
+          runId: plan.planId,
+          policyVersion: options.skepticTriggerPolicy?.version ?? '1.0.0',
+          triggered: true,
+          triggerReasons: ['OPPORTUNITY_RISK_VECTOR_DISAGREEMENT'] as const,
+          triggerMetrics: {},
+          profileId: envelope.profileId,
+          profileVersion: envelope.profileVersion,
+          status: 'SKIPPED_POLICY' as const,
+          verdict: 'INSUFFICIENT_EVIDENCE' as const,
+          confidence: 'LOW' as const,
+          challengeFindings: [`Skeptic runtime execution error: ${errMsg}`],
+          counterThesis: `Skeptic evaluation failed closed: ${errMsg}`,
+          invalidationConditions: decision.thesisInvalidationConditions ?? [],
+          suggestedDecision: decision.decision,
+          suggestedRiskLevel: decision.riskRecommendation,
+          decisionChanged: false,
+          evidenceIds: [] as string[],
+          executedToolRecords: [],
+          budgetUsage: {},
+          createdAt: asOf,
+        };
+
+        const canonicalize = (val: unknown): unknown => {
+          if (val === null || val === undefined) return val;
+          if (Array.isArray(val)) return val.map(canonicalize);
+          if (typeof val === 'object') {
+            return Object.fromEntries(
+              Object.entries(val as Record<string, unknown>)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([k, v]) => [k, canonicalize(v)]),
+            );
+          }
+          return val;
+        };
+        const sha256 = createHash('sha256')
+          .update(JSON.stringify(canonicalize(rawArtifact)))
+          .digest('hex');
+
+        const fallbackArtifact: SkepticArtifact = {
+          ...rawArtifact,
+          sha256,
+        };
+
+        skepticResult = {
+          artifact: fallbackArtifact,
+          decisionRevised: false,
+          revisedDecision: decision,
+          toolRecords: [],
+          budgetUsage: {},
+        };
       }
-      skepticResult = await skepticAgent.execute({
-        candidate,
-        parentDecision: decision,
-        parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
-        runId: plan.planId,
-        envelope,
-        skepticBudget: options.skepticBudget,
-        triggerContext: {
-          candidateScore: options.candidateScore,
-          ...(options.skepticTriggerContext ?? {}),
-        },
-        signal,
-      });
     }
 
     if (options.persistenceRepository) {

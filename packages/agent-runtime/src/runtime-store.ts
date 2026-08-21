@@ -187,9 +187,18 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
     if (decisions.length === 0) return null;
     const first = decisions[0];
     if (!first) return null;
-    const requested = decisions.filter((d) => d.state === 'REQUESTED');
+    const REQUESTED_ACQUISITION_STATES: ReadonlySet<EvidenceAcquisitionDecision['state']> = new Set([
+      'REQUESTED',
+      'RETURNED',
+      'RETURNED_EMPTY',
+      'PROVIDER_UNAVAILABLE',
+      'FAILED',
+    ]);
+    const requested = decisions.filter((d) => REQUESTED_ACQUISITION_STATES.has(d.state));
     const requestedFamilies = requested.map((d) => d.evidenceFamily);
-    const skippedFamilies = decisions.filter((d) => d.state !== 'REQUESTED').map((d) => d.evidenceFamily);
+    const skippedFamilies = decisions
+      .filter((d) => !REQUESTED_ACQUISITION_STATES.has(d.state))
+      .map((d) => d.evidenceFamily);
     const totalCost = requested.reduce((acc, d) => acc + (d.estimatedCost?.monetaryCostUsd ?? 0), 0);
     const totalQuota = requested.reduce((acc, d) => acc + (d.estimatedCost?.quotaCostUnits ?? 0), 0);
 

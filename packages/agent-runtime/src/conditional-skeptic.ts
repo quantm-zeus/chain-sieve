@@ -309,8 +309,9 @@ export class ConditionalSkepticAgent {
     const tracker = new AgentBudgetTracker(skepticBudget);
 
     // 5. Select skeptic tools available in envelope and profile
+    const allowedToolsSet = new Set(envelope.allowedTools);
     const allowedSkepticTools = profile.declaredTools.filter((t) =>
-      envelope.allowedTools.includes(t),
+      allowedToolsSet.has(t),
     );
 
     if (allowedSkepticTools.length === 0) {
@@ -381,13 +382,33 @@ export class ConditionalSkepticAgent {
       }
 
       // Confinement verification for skeptic tool arguments
-      const toolArgs = this.generateSkepticToolArguments(toolName, candidate, envelope);
-      ToolArgumentConfinementValidator.assertConforms(
-        toolName,
-        toolArgs,
-        envelope,
-        profile.declaredTools,
-      );
+      let toolArgs: Record<string, unknown>;
+      try {
+        toolArgs = this.generateSkepticToolArguments(toolName, candidate, envelope);
+        ToolArgumentConfinementValidator.assertConforms(
+          toolName,
+          toolArgs,
+          envelope,
+          profile.declaredTools,
+        );
+      } catch (err) {
+        if (err instanceof AgentCancelledError || signal?.aborted) {
+          throw new AgentCancelledError();
+        }
+        const callError = err instanceof Error ? err.message : String(err);
+        challengeFindings.push(`Skeptic confinement violation for ${toolName}: ${callError}`);
+        toolRecords.push({
+          callId: `skeptic_call_${candidate.assetId}_${stepIndex++}`,
+          stepIndex: stepIndex - 1,
+          toolName,
+          arguments: {},
+          output: undefined,
+          error: callError,
+          latencyMs: 0,
+          executedAt: new Date().toISOString(),
+        });
+        continue;
+      }
 
       const handler = this.tools.get(toolName);
       const callId = `skeptic_call_${candidate.assetId}_${stepIndex++}`;
@@ -413,9 +434,9 @@ export class ConditionalSkepticAgent {
             throw new AgentCancelledError();
           }
           if (err instanceof ConfinementViolationError) {
-            throw err;
-          }
-          if (
+            callError = `Confinement violation: ${err.message}`;
+            challengeFindings.push(`Skeptic tool confinement violation for ${toolName}: ${callError}`);
+          } else if (
             err instanceof BudgetExceededError ||
             (err instanceof Error &&
               (err.name === 'BudgetExceededError' ||

@@ -1050,6 +1050,162 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(executedSql).toContain('budget_usage_json = EXCLUDED.budget_usage_json');
       expect(executedSql).toContain('decision_changed = EXCLUDED.decision_changed');
     });
+
+    it('DatabaseAgentPersistenceRepository.getVoiPlan correctly computes totals for reconciled decision states', async () => {
+      const storedRows: Array<Record<string, unknown>> = [
+        {
+          id: 'dec-1',
+          candidate_id: 'cand-1',
+          run_id: 'run-reconciled-1',
+          evidence_family: 'core.token_overview',
+          policy_version: 'v1.0.0',
+          state: 'RETURNED',
+          requested_fields_json: JSON.stringify(['symbol']),
+          estimated_cost_json: JSON.stringify({ monetaryCostUsd: 0.005, quotaCostUnits: 1 }),
+          actual_cost_json: JSON.stringify({ monetaryCostUsd: 0.004, quotaCostUnits: 1 }),
+          randomized: false,
+          decided_at: '2026-08-21T10:00:00.000Z',
+          completed_at: '2026-08-21T10:00:01.000Z',
+          evidence_ids_json: JSON.stringify(['ev-1']),
+          reason_codes_json: JSON.stringify(['CORE_MANDATORY']),
+          actual_decision_change: 'NONE',
+        },
+        {
+          id: 'dec-2',
+          candidate_id: 'cand-1',
+          run_id: 'run-reconciled-1',
+          evidence_family: 'holder.distribution',
+          policy_version: 'v1.0.0',
+          state: 'RETURNED_EMPTY',
+          requested_fields_json: JSON.stringify(['top10Holders']),
+          estimated_cost_json: JSON.stringify({ monetaryCostUsd: 0.010, quotaCostUnits: 2 }),
+          actual_cost_json: JSON.stringify({ monetaryCostUsd: 0.008, quotaCostUnits: 2 }),
+          randomized: false,
+          decided_at: '2026-08-21T10:00:00.000Z',
+          completed_at: '2026-08-21T10:00:01.000Z',
+          evidence_ids_json: JSON.stringify([]),
+          reason_codes_json: JSON.stringify(['HIGH_EVOI']),
+          actual_decision_change: 'NONE',
+        },
+        {
+          id: 'dec-3',
+          candidate_id: 'cand-1',
+          run_id: 'run-reconciled-1',
+          evidence_family: 'social.sentiment',
+          policy_version: 'v1.0.0',
+          state: 'NOT_REQUESTED_BY_POLICY',
+          requested_fields_json: JSON.stringify([]),
+          estimated_cost_json: JSON.stringify({ monetaryCostUsd: 0.050, quotaCostUnits: 5 }),
+          randomized: false,
+          decided_at: '2026-08-21T10:00:00.000Z',
+          evidence_ids_json: JSON.stringify([]),
+          reason_codes_json: JSON.stringify(['EXCEEDS_BUDGET']),
+          actual_decision_change: 'NONE',
+        },
+      ];
+
+      const mockDatabase: DatabaseAdapter = {
+        query: async <T extends Record<string, unknown> = Record<string, unknown>>() => {
+          return { rows: storedRows as unknown as T[], rowCount: storedRows.length };
+        },
+        transaction: async <T>(work: (db: DatabaseAdapter) => Promise<T>) => work(mockDatabase),
+        ready: async () => true,
+        close: async () => {},
+      };
+
+      const dbRepo = new DatabaseAgentPersistenceRepository(mockDatabase);
+      const plan = await dbRepo.getVoiPlan('run-reconciled-1');
+
+      expect(plan).not.toBeNull();
+      expect(plan?.requestedFamilies).toEqual(['core.token_overview', 'holder.distribution']);
+      expect(plan?.skippedFamilies).toEqual(['social.sentiment']);
+      expect(plan?.totalEstimatedMonetaryCostUsd).toBeCloseTo(0.015, 6);
+      expect(plan?.totalEstimatedQuotaUnits).toBe(3);
+    });
+
+    it('BoundedAgentRuntime fails closed when skeptic throws unexpected error without failing parent run', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+
+      runtime.registerTool('risk.honeypot_scan', async () => {
+        throw new Error('Unexpected remote provider fatal socket error');
+      });
+
+      const inMemory = new InMemoryAgentPersistenceRepository();
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableVoi: true,
+        enableSkeptic: true,
+        candidateScore: 0.85,
+        persistenceRepository: inMemory,
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      expect(result.decision).toBeDefined();
+      expect(result.skepticResult).toBeDefined();
+      expect(result.skepticResult?.artifact.verdict).toBe('INSUFFICIENT_EVIDENCE');
+      expect(result.skepticResult?.artifact.status).toBeDefined();
+      expect(result.skepticResult?.artifact.sha256).toMatch(/^[a-f0-9]{64}$/);
+
+      const persistedArtifact = await inMemory.getSkepticArtifact(result.plan.planId);
+      expect(persistedArtifact).not.toBeNull();
+      expect(persistedArtifact?.sha256).toMatch(/^[a-f0-9]{64}$/);
+    });
+
+    it('asserts NOT_REQUESTED_BY_POLICY never penalizes score compared to negative inferred missingness', () => {
+      const planner = new VoiPlanner();
+
+      const notRequestedScored = planner.scoreWithMissingnessAwareness({
+        featureValues: { 'liquidity.lock': null },
+        acquisitionDecisions: [
+          {
+            id: 'd-1',
+            candidateId: 'c-1',
+            runId: 'r-1',
+            evidenceFamily: 'liquidity.lock',
+            policyVersion: 'v1.0.0',
+            state: 'NOT_REQUESTED_BY_POLICY',
+            requestedFields: [],
+            randomized: false,
+            decidedAt: '2026-08-21T10:00:00.000Z',
+            evidenceIds: [],
+            reasonCodes: [],
+          },
+        ],
+        featureWeights: { 'liquidity.lock': 1.0 },
+        baselineCohortScores: { 'liquidity.lock': 0.70 },
+      });
+
+      const failedPenalizedScored = planner.scoreWithMissingnessAwareness({
+        featureValues: { 'liquidity.lock': null },
+        acquisitionDecisions: [
+          {
+            id: 'd-2',
+            candidateId: 'c-1',
+            runId: 'r-1',
+            evidenceFamily: 'liquidity.lock',
+            policyVersion: 'v1.0.0',
+            state: 'FAILED',
+            requestedFields: [],
+            randomized: false,
+            decidedAt: '2026-08-21T10:00:00.000Z',
+            evidenceIds: [],
+            reasonCodes: [],
+          },
+        ],
+        featureWeights: { 'liquidity.lock': 1.0 },
+        baselineCohortScores: { 'liquidity.lock': 0.70 },
+      });
+
+      expect(notRequestedScored.evaluatedFeatures['liquidity.lock']?.isNegativeInferred).toBe(false);
+      expect(notRequestedScored.evaluatedFeatures['liquidity.lock']?.imputedValue).toBe(0.70);
+      expect(failedPenalizedScored.evaluatedFeatures['liquidity.lock']?.isNegativeInferred).toBe(true);
+      expect(failedPenalizedScored.evaluatedFeatures['liquidity.lock']?.imputedValue).toBe(0.50);
+      expect(notRequestedScored.compositeScore).toBeGreaterThan(failedPenalizedScored.compositeScore);
+    });
   });
 });
 
