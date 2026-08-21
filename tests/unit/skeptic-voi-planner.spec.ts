@@ -236,8 +236,8 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
     it('executes with independent budget and produces auditable artifact linked to parent decision', async () => {
       const skepticAgent = new ConditionalSkepticAgent();
       const independentBudget: AgentBudget = {
-        maxSteps: 3,
-        maxToolCalls: 4,
+        maxSteps: 6,
+        maxToolCalls: 6,
         maxModelCostUsd: 0.05,
         maxProviderCostUnits: 10,
         maxInputTokens: 3000,
@@ -393,8 +393,9 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
 
       expect(planResult.requestedFamilies).toContain('TOKEN_PROFILE');
       expect(planResult.requestedFamilies).toContain('CONTRACT_SECURITY');
-      expect(planResult.requestedFamilies).toContain('LIQUIDITY_LOCK');
-      expect(planResult.requestedFamilies).toContain('SELL_SIMULATION');
+      expect(planResult.requestedFamilies).toContain('MARKET_MICROSTRUCTURE');
+      expect(planResult.requestedFamilies).toContain('HOLDER_DISTRIBUTION');
+      expect(planResult.requestedFamilies).toContain('TRANSACTION_TRACE');
       expect(planResult.totalEstimatedMonetaryCostUsd).toBeGreaterThan(0);
       expect(planResult.totalEstimatedQuotaUnits).toBeGreaterThan(0);
     });
