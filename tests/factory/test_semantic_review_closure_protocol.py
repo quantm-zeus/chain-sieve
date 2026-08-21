@@ -655,11 +655,13 @@ class SemanticReviewClosureProtocolTests(unittest.TestCase):
             baseline_head=self.head_a,
             baseline_context_digest="digest-base",
             frozen_findings=[],
+            previous_reviewed_head=self.head_a,
             pr_number=115,
             implementation_provider="agy",
             reviewer_provider="muse",
         )
         digest = json.loads(context_path.read_text())["contextDigest"]
+
 
         issues = {self.wkey: Issue(149, "OPEN", f"<!-- chainsieve-work-package:{self.wkey} -->\n", "url/149", "author")}
         prs = {self.wkey: [PullRequest(

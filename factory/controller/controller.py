@@ -9,7 +9,15 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .ao import AgentOrchestrator, _parse_review_payload, review_gate
+from .ao import (
+    AgentOrchestrator,
+    ReviewAuthorityResult,
+    ReviewSemanticResult,
+    _parse_review_payload,
+    evaluate_review_semantics,
+    review_gate,
+    validate_review_authority,
+)
 from .config import FactoryConfig
 from .findings import (
     FindingSeverity,
@@ -34,8 +42,14 @@ from .models import (
     work_key,
 )
 from .policy import protected_path_violations, review_required, reviewer_for, select_implementation_provider
-from .prompts import build_focused_worker_correction_prompt, issue_body, worker_prompt
+from .prompts import (
+    build_closure_review_prompt,
+    build_focused_worker_correction_prompt,
+    issue_body,
+    worker_prompt,
+)
 from .store import StateStore, utc_now
+
 
 
 TERMINAL_SESSION_STATES = {"terminated", "exited", "killed", "completed", "error"}
@@ -1264,7 +1278,8 @@ class FactoryController:
                 baseline_head=record.review_baseline_head,
                 baseline_context_digest=record.review_baseline_context_digest,
                 frozen_findings=record.review_findings,
-                previous_reviewed_head=record.review_sha,
+                previous_reviewed_head=record.review_baseline_head or record.review_correction_authorized_from_sha or record.review_sha,
+
                 pr_number=pr.number,
                 implementation_provider=record.provider or package.preferred_provider,
                 reviewer_provider=required_reviewer,
@@ -1279,6 +1294,31 @@ class FactoryController:
                 expected_context_digest,
             )
 
+            if current_review_mode == ReviewMode.CLOSURE_VERIFY.value:
+                review_prompt = build_closure_review_prompt(
+                    milestone,
+                    package,
+                    pr.number,
+                    pr.head_sha,
+                    record.review_baseline_head or pr.head_sha,
+                    record.review_baseline_context_digest or expected_context_digest,
+                    record.review_findings,
+                    review_mode=ReviewMode.CLOSURE_VERIFY.value,
+                )
+            elif current_review_mode == ReviewMode.FINAL_CONFIRMATION.value:
+                review_prompt = build_closure_review_prompt(
+                    milestone,
+                    package,
+                    pr.number,
+                    pr.head_sha,
+                    record.review_baseline_head or pr.head_sha,
+                    record.review_baseline_context_digest or expected_context_digest,
+                    record.review_findings,
+                    review_mode=ReviewMode.FINAL_CONFIRMATION.value,
+                )
+            else:
+                review_prompt = None
+
             if record.review_dispatch_key and record.review_dispatch_key != target_dispatch_key:
                 record.review_dispatch_state = ReviewDispatchState.STALE.value
                 record.review_verdict = None
@@ -1292,14 +1332,11 @@ class FactoryController:
                     record.review_terminal_rejection_sha = None
 
             reviews = self.ao.reviews(record.session_id or "")
-            allowed_digests = {expected_context_digest, str(context.get("baseContextDigest", expected_context_digest))}
-            review_ok, review_reason, reviewer, verdict = review_gate(
+            auth = validate_review_authority(
                 reviews,
                 pr.head_sha,
-                required_reviewer,
-                allowed_digests,
-                review_mode=current_review_mode,
-                frozen_findings=record.review_findings,
+                required_reviewer=required_reviewer,
+                expected_context_digest=expected_context_digest,
             )
 
             raw_runs = reviews.get("reviews") or reviews.get("data") or []
@@ -1321,8 +1358,6 @@ class FactoryController:
                 record.review_dispatch_reviewer = required_reviewer
                 record.review_dispatch_context_digest = expected_context_digest
                 record.review_dispatch_run_id = str(run_id) if run_id else None
-                record.review_dispatch_trigger_attempts = 0
-                record.review_dispatch_last_attempt_at = None
 
                 if run_status not in {"complete", "completed", "delivered"}:
                     record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
@@ -1330,18 +1365,51 @@ class FactoryController:
                     record.last_progress_at = utc_now()
                     return
 
-                raw_body = str(matching_run.get("body", ""))
-                parsed_payload = _parse_review_payload(raw_body)
-                frozen_objs = [ReviewFinding.from_dict(f) for f in (record.review_findings or [])]
-                updated_findings, blocking_reasons = parse_and_reconcile_review(
-                    raw_body,
-                    parsed_payload,
+                # PHASE 2: Semantic authority validation before parsing or mutating finding state!
+                if not auth.ok:
+                    if auth.raw_verdict in {"approved", "pass"}:
+                        self._block(
+                            milestone.id,
+                            package.id,
+                            record,
+                            f"approved machine review failed semantic authority proof: {auth.reason}",
+                            work_key(milestone.id, package.id),
+                        )
+                        return
+
+                    self.store.event(
+                        "REVIEW_AUTHORITY_INVALID",
+                        milestoneId=milestone.id,
+                        workPackageId=package.id,
+                        workKey=work_key(milestone.id, package.id),
+                        pr=pr.number,
+                        headSha=pr.head_sha,
+                        reviewRunId=str(run_id) if run_id else None,
+                        reviewer=required_reviewer,
+                        failureReason=auth.reason,
+                        expectedDigest=expected_context_digest,
+                        observedMarkers=list(auth.observed_markers),
+                    )
+                    record.review_verdict = None
+                    record.review_sha = None
+                    record.review_dispatch_state = ReviewDispatchState.STALE.value
+                    record.review_dispatch_trigger_attempts = 0
+                    record.review_dispatch_last_attempt_at = None
+                    record.status = PackageStatus.REVIEW
+                    return
+
+
+                # PHASE 3: Authority verified -> Process semantic payload
+                sem = evaluate_review_semantics(
+                    auth.body,
+                    auth.raw_verdict,
                     pr.head_sha,
                     str(run_id),
-                    current_review_mode,
-                    frozen_objs,
+                    review_mode=current_review_mode,
+                    frozen_findings=record.review_findings,
+                    reviewer=required_reviewer,
                 )
-                record.review_findings = [f.to_dict() for f in updated_findings]
+                record.review_findings = [f.to_dict() for f in sem.updated_ledger]
 
                 if current_review_mode == ReviewMode.FULL_BASELINE.value:
                     record.review_baseline_id = str(run_id or target_dispatch_key)
@@ -1356,8 +1424,8 @@ class FactoryController:
                         headSha=pr.head_sha,
                         baselineId=record.review_baseline_id,
                         contextDigest=expected_context_digest,
-                        openFindings=[f.fingerprint for f in updated_findings if f.blocking and f.status == FindingStatus.OPEN.value],
-                        followUps=[f.fingerprint for f in updated_findings if f.status == FindingStatus.FOLLOW_UP.value],
+                        openFindings=[f.fingerprint for f in sem.updated_ledger if f.blocking and f.status == FindingStatus.OPEN.value],
+                        followUps=[f.fingerprint for f in sem.updated_ledger if f.status == FindingStatus.FOLLOW_UP.value],
                     )
                 elif current_review_mode == ReviewMode.CLOSURE_VERIFY.value:
                     record.review_closure_round += 1
@@ -1365,34 +1433,29 @@ class FactoryController:
                     record.final_confirmation_used = True
 
                 record.review_sha = pr.head_sha
-                record.review_verdict = verdict
+                record.review_verdict = sem.effective_verdict
                 record.review_dispatch_state = ReviewDispatchState.COMPLETED.value
+                record.review_dispatch_trigger_attempts = 0
+                record.review_dispatch_last_attempt_at = None
 
-                if not review_ok:
-                    if reviewer is not None and verdict in {"approved", "pass"}:
-                        self._block(
-                            milestone.id,
-                            package.id,
-                            record,
-                            f"approved machine review failed semantic authority proof: {review_reason}",
-                            work_key(milestone.id, package.id),
-                        )
-                    elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
-                        record.status = PackageStatus.REVIEW
-                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_corrections_used_in_epoch < self.config.max_review_cycles:
-                        token = f"REVIEW:{pr.head_sha}:{verdict}:{review_reason}"
+                if sem.ok:
+                    record.review_terminal_rejection_sha = None
+                    record.blocked_reason = None
+                    record.last_error = None
+                else:
+                    if record.review_corrections_used_in_epoch < self.config.max_review_cycles:
+                        token = f"REVIEW:{pr.head_sha}:{sem.effective_verdict}:{sem.reason}"
                         if record.last_error != token:
                             record.review_corrections_used_in_epoch += 1
                             record.review_corrections_used += 1
                             record.review_correction_authorized_from_sha = pr.head_sha
-                            
-                            open_blockers = [f for f in updated_findings if f.blocking and f.status in {FindingStatus.OPEN.value, FindingStatus.REGRESSION.value}]
+
                             worker_msg = build_focused_worker_correction_prompt(
-                                reviewer,
+                                required_reviewer,
                                 pr.number,
                                 pr.head_sha,
-                                [f.to_dict() for f in open_blockers],
-                                review_reason,
+                                [f.to_dict() for f in sem.open_blockers],
+                                sem.reason,
                             )
                             self.ao.send(
                                 record.session_id or "",
@@ -1402,14 +1465,14 @@ class FactoryController:
                             record.last_progress_at = utc_now()
                             self.store.event(
                                 "REVIEW_CORRECTION_AUTHORIZED", milestoneId=milestone.id, workPackageId=package.id,
-                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
+                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=required_reviewer, aoSessionId=record.session_id,
                                 pr=pr.number, attempt=record.review_corrections_used_in_epoch, cumulativeAttempt=record.review_corrections_used, headSha=pr.head_sha, reviewRunId=record.review_dispatch_run_id,
                                 contextDigest=expected_context_digest, epoch=record.recovery_epoch,
-                                openFindings=[f.fingerprint for f in open_blockers],
+                                openFindings=[f.fingerprint for f in sem.open_blockers],
                             )
                             self.store.event(
                                 "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
-                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
+                                workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=required_reviewer, aoSessionId=record.session_id,
                                 pr=pr.number, attempt=record.review_corrections_used_in_epoch, cumulativeAttempt=record.review_corrections_used, headSha=pr.head_sha,
                                 epoch=record.recovery_epoch,
                             )
@@ -1428,7 +1491,7 @@ class FactoryController:
                         return
                     elif (
                         record.review_corrections_used_in_epoch >= self.config.max_review_cycles
-                        and verdict not in {"approved", "pass"}
+                        and sem.effective_verdict not in {"approved", "pass"}
                         and record.review_correction_authorized_from_sha == pr.head_sha
                     ):
                         record.status = PackageStatus.PR_WAITING
@@ -1442,24 +1505,21 @@ class FactoryController:
                                 self._handle_activity(milestone, package, work_key(milestone.id, package.id), record, session, pr)
                                 return
                         return
-                    elif record.review_corrections_used_in_epoch >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
+                    elif record.review_corrections_used_in_epoch >= self.config.max_review_cycles and sem.effective_verdict not in {"approved", "pass"}:
                         record.review_terminal_rejection_sha = pr.head_sha
                         self._escalate_replan(
                             milestone,
                             package,
                             work_key(milestone.id, package.id),
                             record,
-                            f"semantic review correction budget exhausted after final exact-head verification: {review_reason}",
+                            f"semantic review correction budget exhausted after final exact-head verification: {sem.reason}",
                             pr=pr,
                             session=session,
                         )
+                        return
                     else:
                         record.status = PackageStatus.REVIEW
                     return
-                else:
-                    record.review_terminal_rejection_sha = None
-                    record.blocked_reason = None
-                    record.last_error = None
             else:
                 if (
                     record.review_dispatch_key == target_dispatch_key
@@ -1490,8 +1550,15 @@ class FactoryController:
                         self.store.save(current_records, self.store.metadata())
 
                         try:
-                            self.ao.trigger_review(record.session_id or "", required_reviewer)
+                            if review_prompt:
+                                try:
+                                    self.ao.trigger_review(record.session_id or "", required_reviewer, prompt=review_prompt)
+                                except TypeError:
+                                    self.ao.trigger_review(record.session_id or "", required_reviewer)
+                            else:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer)
                             record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+
                             self.store.event(
                                 "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                                 workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
@@ -1550,8 +1617,15 @@ class FactoryController:
                     self.store.save(current_records, self.store.metadata())
 
                     try:
-                        self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        if review_prompt:
+                            try:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer, prompt=review_prompt)
+                            except TypeError:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        else:
+                            self.ao.trigger_review(record.session_id or "", required_reviewer)
                         record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+
                         self.store.event(
                             "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                             workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
@@ -1567,6 +1641,7 @@ class FactoryController:
                             attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
                         )
                     return
+
 
         violations = protected_path_violations(pr.files, self.config.protected_paths, package)
         if violations:

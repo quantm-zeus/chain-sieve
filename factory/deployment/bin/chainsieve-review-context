@@ -2,4 +2,20 @@
 set -euo pipefail
 
 python_binary="${CHAINSIEVE_FACTORY_PYTHON:-python3}"
-exec "$python_binary" -m factory.controller.review_context "$@"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." 2>/dev/null && pwd || echo "")"
+if [ -n "${CHAINSIEVE_REPO_PATH:-}" ]; then
+  control_plane_repo="${CHAINSIEVE_REPO_PATH}"
+elif [ -n "${SCRIPT_DIR}" ] && [ -f "${SCRIPT_DIR}/factory/controller/review_context.py" ]; then
+  control_plane_repo="${SCRIPT_DIR}"
+else
+  control_plane_repo="/home/minhquan_eth/chain-sieve"
+fi
+
+
+# Ensure Python loads modules exclusively from the deployed control-plane repo,
+# not from the reviewer's current working directory (which may be a stale product worktree).
+# Preserving the reviewer's CWD is required because git state inspection inside the resolver
+# inspects the current reviewer workspace.
+PYTHONPATH="${control_plane_repo}${PYTHONPATH:+:${PYTHONPATH}}" \
+PYTHONSAFEPATH=1 \
+exec "$python_binary" -P -m factory.controller.review_context "$@"

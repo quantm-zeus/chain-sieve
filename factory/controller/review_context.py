@@ -10,7 +10,10 @@ from pathlib import Path
 from typing import Any, Sequence
 
 
-CONTEXT_SCHEMA_VERSION = 2
+CONTEXT_SCHEMA_VERSION_V2 = 2
+CONTEXT_SCHEMA_VERSION_V3 = 3
+SUPPORTED_SCHEMA_VERSIONS = {CONTEXT_SCHEMA_VERSION_V2, CONTEXT_SCHEMA_VERSION_V3}
+CONTEXT_SCHEMA_VERSION = CONTEXT_SCHEMA_VERSION_V3
 PROOF_PREFIX = "CHAINSIEVE_REVIEW_CONTEXT_SHA256:"
 PROOF_PATTERN = re.compile(rf"(?<![A-Za-z0-9_]){PROOF_PREFIX}([0-9a-f]{{64}})(?![0-9a-f])")
 TASK_HEAD_PATTERN = re.compile(r"\(head commit ([0-9a-f]{40}), run [^)]+\)")
@@ -32,6 +35,7 @@ CLOSURE_AUTHORITY_FIELDS = (
     "baselineHead",
     "baselineContextDigest",
     "frozenBlockerLedger",
+    "previousReviewedHead",
     "prNumber",
     "implementationProvider",
     "reviewerProvider",
@@ -113,7 +117,7 @@ def build_review_context(
     base_digest = canonical_context_digest({k: authority[k] for k in AUTHORITY_FIELDS if k in authority})
 
     return {
-        "schemaVersion": CONTEXT_SCHEMA_VERSION,
+        "schemaVersion": CONTEXT_SCHEMA_VERSION_V3,
         **authority,
         "baseContextDigest": base_digest,
         "contextDigest": canonical_context_digest(authority),
@@ -123,11 +127,24 @@ def build_review_context(
 def validate_review_context(value: Any, *, work_key: str, target_sha: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError("review context must be a JSON object")
+    schema_version = value.get("schemaVersion")
+    if schema_version not in SUPPORTED_SCHEMA_VERSIONS:
+        raise ValueError("review context schema version is unsupported")
+
     required_base = {"schemaVersion", "contextDigest", *AUTHORITY_FIELDS}
     if not required_base.issubset(set(value)):
         raise ValueError("review context has missing or unexpected fields")
-    if value.get("schemaVersion") != CONTEXT_SCHEMA_VERSION:
-        raise ValueError("review context schema version is unsupported")
+
+    allowed_v2 = {"schemaVersion", "contextDigest", "baseContextDigest", *AUTHORITY_FIELDS}
+    allowed_v3 = {"schemaVersion", "contextDigest", "baseContextDigest", *AUTHORITY_FIELDS, *CLOSURE_AUTHORITY_FIELDS}
+
+    if schema_version == CONTEXT_SCHEMA_VERSION_V2:
+        if not set(value).issubset(allowed_v2):
+            raise ValueError("review context has missing or unexpected fields")
+    elif schema_version == CONTEXT_SCHEMA_VERSION_V3:
+        if not set(value).issubset(allowed_v3):
+            raise ValueError("review context has unknown fields")
+
     scalar_fields = ("workKey", "milestoneId", "workPackageId", "objective", "targetSha", "contextDigest")
     if any(not isinstance(value.get(field), str) or not value[field] for field in scalar_fields):
         raise ValueError("review context has an invalid scalar field")
@@ -143,14 +160,29 @@ def validate_review_context(value: Any, *, work_key: str, target_sha: str) -> di
         raise ValueError("review context workKey is internally inconsistent")
     if value["targetSha"] != target_sha.lower():
         raise ValueError("review context targetSha does not match the AO review task")
+
+    if schema_version == CONTEXT_SCHEMA_VERSION_V3:
+        review_mode = value.get("reviewMode")
+        if review_mode is not None and review_mode not in {"FULL_BASELINE", "CLOSURE_VERIFY", "FINAL_CONFIRMATION"}:
+            raise ValueError("review context has invalid reviewMode")
+        frozen_ledger = value.get("frozenBlockerLedger")
+        if frozen_ledger is not None:
+            if not isinstance(frozen_ledger, list):
+                raise ValueError("review context frozenBlockerLedger must be a list")
+            for item in frozen_ledger:
+                if not isinstance(item, dict) or not item.get("fingerprint") or not item.get("status"):
+                    raise ValueError("review context frozenBlockerLedger has invalid finding entries")
+
     authority = {field: value[field] for field in AUTHORITY_FIELDS}
-    for field in CLOSURE_AUTHORITY_FIELDS:
-        if field in value and value[field] is not None:
-            authority[field] = value[field]
+    if schema_version == CONTEXT_SCHEMA_VERSION_V3:
+        for field in CLOSURE_AUTHORITY_FIELDS:
+            if field in value and value[field] is not None:
+                authority[field] = value[field]
     expected_digest = canonical_context_digest(authority)
     if value["contextDigest"] != expected_digest:
         raise ValueError("review context digest is invalid")
     return dict(value)
+
 
 
 def proof_markers(body: str) -> tuple[str, ...]:

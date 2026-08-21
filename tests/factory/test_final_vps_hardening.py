@@ -358,11 +358,17 @@ class FinalVPSHardeningTests(unittest.TestCase):
         head_a = "a" * 40
         head_b = "b" * 40
 
+        cfg = config(self.root)
+        store = StateStore(cfg.state_dir)
+        work = WorkPackage.from_dict(package("a"))
+        ctx_a_path = store.write_review_context("m1", work, head_a, pr_number=81, implementation_provider="muse", reviewer_provider="agy")
+        ctx_a = json.loads(ctx_a_path.read_text())
+
         class ReusedReviewerAO:
             def __init__(self) -> None:
                 self.payload: dict[str, object] = {"reviews": [{"latestRun": {
                     "targetSha": head_a, "status": "delivered", "verdict": "changes_requested",
-                    "harness": "agy", "body": "acceptance is not met",
+                    "harness": "agy", "body": f"- general: acceptance is not met\n{PROOF_PREFIX}{ctx_a['contextDigest']}",
                 }}]}
                 self.sent: list[tuple[str, str]] = []
                 self.triggered: list[tuple[str, str]] = []
@@ -373,16 +379,14 @@ class FinalVPSHardeningTests(unittest.TestCase):
             def send(self, session_id: str, message: str) -> None:
                 self.sent.append((session_id, message))
 
-            def trigger_review(self, session_id: str, reviewer: str) -> None:
+            def trigger_review(self, session_id: str, reviewer: str, prompt: str | None = None) -> None:
                 self.triggered.append((session_id, reviewer))
 
-        cfg = config(self.root)
-        store = StateStore(cfg.state_dir)
         github = MergeGitHub()
         ao = ReusedReviewerAO()
         controller = FactoryController(self.root, cfg, store, github, ao)
-        work = WorkPackage.from_dict(package("a"))
         record = PackageRecord(session_id="ao-reused-pane", provider="muse", review_attempts=1)
+
 
         def pr(head: str) -> PullRequest:
             return PullRequest(
