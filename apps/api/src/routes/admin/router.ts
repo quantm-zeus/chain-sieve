@@ -234,6 +234,89 @@ export const createAdminRouter = (deps?: { now?: () => string; database?: { quer
     return c.json({ audit: store.getAuditLog() }, 200);
   });
 
+  // FR-AGT-007 decision lineage: frozen explain vs versioned re-evaluate
+  // In-memory lineage store is sufficient for product without migration; backed by DecisionLineageStore singleton
+  // These endpoints never mutate frozen artifacts; re-evaluate creates a new versioned run
+  {
+    const getLineage = async () => {
+      const mod = await import('@ciag/agent-runtime');
+      return (mod as { getDecisionLineageStore: () => InstanceType<typeof mod.DecisionLineageStore> }).getDecisionLineageStore();
+    };
+
+    app.post('/api/v1/admin/decisions', async (c) => {
+      const body = (await c.req.json().catch(() => null)) as
+        | { candidateId?: string; decision?: unknown; evidenceSnapshot?: unknown[]; profileId?: string; profileVersion?: string }
+        | null;
+      if (!body?.candidateId || !body?.decision) {
+        return c.json({ error: { code: 'INVALID_INPUT', message: 'candidateId and decision are required', correlationId: c.get('correlationId') } }, 400);
+      }
+      const store = await getLineage();
+      try {
+        const run = store.createRun({
+          candidateId: body.candidateId,
+          decision: body.decision as never,
+          evidenceSnapshot: (body.evidenceSnapshot as never[]) ?? [],
+          profileId: body.profileId ?? 'unknown',
+          profileVersion: body.profileVersion ?? null,
+        });
+        return c.json(run, 201);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return c.json({ error: { code: 'CONFLICT', message: msg, correlationId: c.get('correlationId') } }, 409);
+      }
+    });
+
+    app.get('/api/v1/admin/decisions/:id', async (c) => {
+      const id = c.req.param('id');
+      const store = await getLineage();
+      const run = store.getRun(id);
+      if (!run) return c.json({ error: { code: 'NOT_FOUND', message: `Decision run ${id} not found`, correlationId: c.get('correlationId') } }, 404);
+      return c.json(run, 200);
+    });
+
+    // EXPLAIN_ORIGINAL_DECISION — frozen evidence/decision snapshot, read-only
+    app.get('/api/v1/admin/decisions/:id/explain', async (c) => {
+      const id = c.req.param('id');
+      const store = await getLineage();
+      const run = store.getExplainOriginal(id);
+      if (!run) return c.json({ error: { code: 'NOT_FOUND', message: `Decision run ${id} not found`, correlationId: c.get('correlationId') } }, 404);
+      return c.json({ mode: 'EXPLAIN_ORIGINAL_DECISION', frozen: true, run }, 200);
+    });
+
+    // RE_EVALUATE_WITH_CURRENT_DATA — creates separate versioned run without mutating frozen artifacts
+    app.post('/api/v1/admin/decisions/:id/re-evaluate', async (c) => {
+      const id = c.req.param('id');
+      const body = (await c.req.json().catch(() => ({}))) as { evidenceSnapshot?: unknown[]; decision?: unknown; profileId?: string };
+      const store = await getLineage();
+      const original = store.getRun(id);
+      if (!original) return c.json({ error: { code: 'NOT_FOUND', message: `Decision run ${id} not found`, correlationId: c.get('correlationId') } }, 404);
+      try {
+        const newRun = store.reEvaluate({
+          originalRunId: id,
+          newEvidenceSnapshot: (body.evidenceSnapshot as never[]) ?? [],
+          newDecision: (body.decision as never) ?? original.decision,
+          profileId: body.profileId,
+        });
+        return c.json({ mode: 'RE_EVALUATE_WITH_CURRENT_DATA', originalId: id, run: newRun }, 201);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        if (msg.includes('ORIGINAL_RUN_NOT_FOUND')) return c.json({ error: { code: 'NOT_FOUND', message: msg, correlationId: c.get('correlationId') } }, 404);
+        return c.json({ error: { code: 'INTERNAL_ERROR', message: msg, correlationId: c.get('correlationId') } }, 500);
+      }
+    });
+
+    app.get('/api/v1/admin/decisions', async (c) => {
+      const candidateId = c.req.query('candidateId');
+      const store = await getLineage();
+      if (candidateId) {
+        const runs = store.listRunsForCandidate(candidateId);
+        return c.json({ runs }, 200);
+      }
+      // list all not implemented, return empty for now
+      return c.json({ runs: [] }, 200);
+    });
+  }
+
   // Internal reset for tests — not exposed in production route list but allowed for test harness
   app.post('/api/v1/internal/admin/reset', async (c) => {
     // Only allow in test mode when header present to avoid accidental prod reset
