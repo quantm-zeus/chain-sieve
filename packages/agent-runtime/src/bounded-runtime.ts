@@ -18,6 +18,12 @@ import {
   ConfinementViolationError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
+import { VoiPlanner, type VoiPlanResult, type VoiPolicy } from './voi-planner.js';
+import {
+  ConditionalSkepticAgent,
+  type SkepticExecutionResult,
+  type SkepticTriggerPolicy,
+} from './conditional-skeptic.js';
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;
@@ -54,6 +60,12 @@ export interface AgentExecutionOptions {
   initialEvidence?: Record<string, unknown> | undefined;
   goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   deterministicSeedRef?: string | number | undefined;
+  enableVoi?: boolean | undefined;
+  voiPolicy?: Partial<VoiPolicy> | undefined;
+  enableSkeptic?: boolean | undefined;
+  skepticBudget?: AgentBudget | undefined;
+  skepticTriggerPolicy?: SkepticTriggerPolicy | undefined;
+  candidateScore?: number | undefined;
 }
 
 export interface AgentExecutionResult {
@@ -65,6 +77,8 @@ export interface AgentExecutionResult {
   executedSteps: number;
   executedToolCalls: number;
   completedAt: string;
+  voiPlanResult?: VoiPlanResult | undefined;
+  skepticResult?: SkepticExecutionResult | undefined;
 }
 
 export class BoundedAgentRuntime {
@@ -323,6 +337,49 @@ export class BoundedAgentRuntime {
       toolRecords,
     );
 
+    let voiPlanResult: VoiPlanResult | undefined;
+    if (options.enableVoi) {
+      const voiPlanner = new VoiPlanner(options.voiPolicy);
+      const initialPlan = voiPlanner.planAcquisitions({
+        candidate,
+        runId: plan.planId,
+        envelope,
+        budget,
+        profile,
+        currentCandidateScore: options.candidateScore,
+        knownEvidence: accumulatedEvidence,
+      });
+      initialPlan.decisions = voiPlanner.reconcileDecisions({
+        decisions: initialPlan.decisions,
+        toolRecords,
+        finalDecision: decision,
+      });
+      voiPlanResult = initialPlan;
+    }
+
+    let skepticResult: SkepticExecutionResult | undefined;
+    if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
+      const skepticAgent = new ConditionalSkepticAgent(
+        options.skepticTriggerPolicy,
+        this.registry,
+      );
+      for (const [name, handler] of this.tools.entries()) {
+        skepticAgent.registerTool(name, handler);
+      }
+      skepticResult = await skepticAgent.execute({
+        candidate,
+        parentDecision: decision,
+        parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
+        runId: plan.planId,
+        envelope,
+        skepticBudget: options.skepticBudget,
+        triggerContext: {
+          candidateScore: options.candidateScore,
+        },
+        signal,
+      });
+    }
+
     return {
       plan,
       status: 'SUCCESS',
@@ -332,6 +389,8 @@ export class BoundedAgentRuntime {
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
+      voiPlanResult,
+      skepticResult,
     };
   }
 

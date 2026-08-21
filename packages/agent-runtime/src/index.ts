@@ -17,3 +17,7 @@ export * from './budget-tracker.js';
 export * from './confinement.js';
 export * from './deterministic-planner.js';
 export * from './bounded-runtime.js';
+export * from './evidence-families.js';
+export * from './voi-planner.js';
+export * from './conditional-skeptic.js';
+

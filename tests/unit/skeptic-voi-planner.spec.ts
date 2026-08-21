@@ -1,0 +1,647 @@
+import { describe, expect, it } from 'vitest';
+import {
+  ConditionalSkepticAgent,
+  DEFAULT_EVIDENCE_FAMILIES,
+  DEFAULT_SKEPTIC_TRIGGER_POLICY,
+  DEFAULT_VOI_POLICY,
+  EvidenceFamilyRegistry,
+  ModelProfileRegistry,
+  SkepticTriggerPolicy,
+  VoiPlanner,
+} from '@ciag/agent-runtime';
+import type {
+  AgentBudget,
+  AgentDecision,
+  ToolAuthorizationEnvelope,
+} from '@ciag/shared-schemas';
+import {
+  EvidenceAcquisitionDecisionSchema,
+  SkepticArtifactSchema,
+} from '@ciag/shared-schemas';
+
+describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-AGT-009)', () => {
+  const sampleCandidate = {
+    assetId: 'solana:token:DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+    chainId: 'solana',
+    contractAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+    symbol: 'BONK',
+  };
+
+  const sampleEnvelope: ToolAuthorizationEnvelope = {
+    allowedTools: [
+      'token.profile',
+      'dex.pairs',
+      'dex.screener',
+      'pool.liquidity',
+      'contract.audit',
+      'risk.honeypot_scan',
+      'liquidity.lock',
+      'simulation.sell',
+      'simulation.execution',
+      'holder.distribution',
+      'solana.transaction_trace',
+      'signal.score',
+      'market.summary',
+    ],
+    allowedProviders: ['jupiter', 'dexscreener', 'helius'],
+    allowedDomains: ['dexscreener.com', 'helius-rpc.com', 'jup.ag'],
+    allowedChains: ['solana'],
+    allowedAddresses: ['DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'],
+    timeRange: {
+      minTimestamp: '2025-01-01T00:00:00Z',
+      maxTimestamp: '2026-08-20T12:00:00Z',
+    },
+    maxLimit: 100,
+    maxOutputSizeBytes: 65536,
+    maxCostUsd: 0.5,
+  };
+
+  const sampleBudget: AgentBudget = {
+    maxSteps: 10,
+    maxToolCalls: 20,
+    maxToolCallsPerCandidate: 20,
+    maxProviderCalls: 30,
+    maxInputTokens: 20000,
+    maxOutputTokens: 20000,
+    maxModelCostUsd: 0.20,
+    maxProviderCostUnits: 50,
+  };
+
+  const sampleParentDecision: AgentDecision = {
+    candidate: sampleCandidate,
+    profileId: 'deep-research-v1',
+    decision: 'ALERT',
+    alertClassRecommendation: 'CONFIRMED_OPPORTUNITY',
+    costPolicyResult: 'PASS',
+    lifecycleRecommendation: 'CONFIRMED',
+    riskRecommendation: 'LOW',
+    thesis: 'High volume breakout with verified liquidity and low holder concentration',
+    counterThesis: 'Potential hidden fee or unlock schedule risk',
+    observedFacts: [
+      {
+        claim: 'Liquidity pairs verified on Raydium',
+        evidenceIds: ['call_dex_pairs_1'],
+        confidence: 'HIGH',
+      },
+    ],
+    derivedFacts: [],
+    inferences: [],
+    hypotheses: [],
+    positiveSignals: ['VERIFIED_LIQUIDITY', 'HIGH_VOLUME_MOMENTUM'],
+    riskSignals: [],
+    missingData: [],
+    providerConflicts: [],
+    thesisInvalidationConditions: ['Liquidity falls below 0k', 'Deployer dumps balance'],
+    reasoningAssessment: 'HIGH',
+  };
+
+  describe('FR-AGT-005: Conditional Skeptic Agent and Versioned Trigger Policy', () => {
+    it('evaluates versioned trigger policy and identifies all trigger reasons', () => {
+      const policy = new SkepticTriggerPolicy({
+        policyVersion: '1.0.0',
+        nearAlertScoreThreshold: 0.70,
+        maxAcceptableProviderConflicts: 0,
+        minDataCoverageRatio: 0.75,
+      });
+
+      expect(policy.config.policyVersion).toBe('1.0.0');
+
+      const nearAlertEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        candidateScore: 0.75,
+      });
+      expect(nearAlertEval.triggered).toBe(true);
+      expect(nearAlertEval.triggerReasons).toContain('CANDIDATE_NEAR_ALERT');
+      expect(nearAlertEval.policyVersion).toBe('1.0.0');
+
+      const conflictDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'WATCH',
+        alertClassRecommendation: undefined,
+        providerConflicts: ['DEXScreener vs Birdeye price divergence 12%'],
+      };
+      const conflictEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: conflictDecision,
+        candidateScore: 0.50,
+      });
+      expect(conflictEval.triggered).toBe(true);
+      expect(conflictEval.triggerReasons).toContain('PROVIDER_CONFLICT_EXCEEDS_THRESHOLD');
+
+      const disagreementDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'WATCH',
+        alertClassRecommendation: undefined,
+        positiveSignals: ['LIQUIDITY_SURGE', 'VIRAL_ENGAGEMENT'],
+        riskSignals: ['UNRENOUNCED_OWNERSHIP'],
+        riskRecommendation: 'HIGH',
+      };
+      const disagreeEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: disagreementDecision,
+        candidateScore: 0.55,
+      });
+      expect(disagreeEval.triggered).toBe(true);
+      expect(disagreeEval.triggerReasons).toContain('OPPORTUNITY_RISK_VECTOR_DISAGREEMENT');
+
+      const coverageEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: { ...sampleParentDecision, decision: 'WATCH', alertClassRecommendation: undefined },
+        candidateScore: 0.50,
+        dataCoverageRatio: 0.60,
+      });
+      expect(coverageEval.triggered).toBe(true);
+      expect(coverageEval.triggerReasons).toContain('DATA_COVERAGE_MARGINAL');
+
+      const extendedEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: { ...sampleParentDecision, decision: 'WATCH', alertClassRecommendation: undefined },
+        candidateScore: 0.50,
+        unusuallyExtended: true,
+      });
+      expect(extendedEval.triggered).toBe(true);
+      expect(extendedEval.triggerReasons).toContain('CANDIDATE_UNUSUALLY_EXTENDED');
+
+      const weakFactsDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'WATCH',
+        alertClassRecommendation: undefined,
+        observedFacts: [{ claim: 'Unverified rumor', evidenceIds: [], confidence: 'LOW' }],
+      };
+      const weakEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: weakFactsDecision,
+        candidateScore: 0.50,
+      });
+      expect(weakEval.triggered).toBe(true);
+      expect(weakEval.triggerReasons).toContain('RESEARCHER_CLAIMS_WEAKLY_SUPPORTED');
+
+      const fragileEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: { ...sampleParentDecision, decision: 'WATCH', alertClassRecommendation: undefined },
+        candidateScore: 0.50,
+        fragilityDetected: true,
+      });
+      expect(fragileEval.triggered).toBe(true);
+      expect(fragileEval.triggerReasons).toContain('THRESHOLD_SENSITIVITY_FRAGILITY');
+
+      const dominantEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: { ...sampleParentDecision, decision: 'WATCH', alertClassRecommendation: undefined },
+        candidateScore: 0.50,
+        dominantProviderRatio: 0.90,
+      });
+      expect(dominantEval.triggered).toBe(true);
+      expect(dominantEval.triggerReasons).toContain('DOMINANT_SINGLE_PROVIDER_DEPENDENCE');
+    });
+
+    it('skips execution and returns NOT_TRIGGERED when no trigger condition holds', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+      const quietDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'IGNORE',
+        alertClassRecommendation: undefined,
+        positiveSignals: [],
+        riskSignals: [],
+        riskRecommendation: 'LOW',
+        lifecycleRecommendation: 'DISCOVERED',
+        observedFacts: [{ claim: 'Token exists', evidenceIds: ['ev_1'], confidence: 'HIGH' }],
+      };
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: quietDecision,
+        runId: 'run-test-not-triggered',
+        envelope: sampleEnvelope,
+        triggerContext: {
+          candidateScore: 0.30,
+          dataCoverageRatio: 1.0,
+          providerConflictsCount: 0,
+        },
+      });
+
+      expect(result.status).toBe('NOT_TRIGGERED');
+      expect(result.artifact.triggered).toBe(false);
+      expect(result.artifact.status).toBe('NOT_TRIGGERED');
+      expect(result.artifact.verdict).toBe('CONFIRM');
+      expect(result.artifact.decisionChanged).toBe(false);
+      expect(result.toolRecords.length).toBe(0);
+      expect(result.artifact.sha256).toBeDefined();
+
+      const parsed = SkepticArtifactSchema.parse(result.artifact);
+      expect(parsed.id).toContain('skeptic_');
+      expect(parsed.parentDecisionId).toBeDefined();
+    });
+
+    it('executes with independent budget and produces auditable artifact linked to parent decision', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+      const independentBudget: AgentBudget = {
+        maxSteps: 3,
+        maxToolCalls: 4,
+        maxModelCostUsd: 0.05,
+        maxProviderCostUnits: 10,
+        maxInputTokens: 3000,
+        maxOutputTokens: 3000,
+      };
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        parentDecisionId: 'parent-dec-12345',
+        runId: 'run-skeptic-001',
+        envelope: sampleEnvelope,
+        skepticBudget: independentBudget,
+        triggerContext: {
+          candidateScore: 0.85,
+        },
+      });
+
+      expect(result.status).toBe('EXECUTED');
+      expect(result.artifact.triggered).toBe(true);
+      expect(result.artifact.parentDecisionId).toBe('parent-dec-12345');
+      expect(result.artifact.candidateId).toBe(sampleCandidate.assetId);
+      expect(result.artifact.runId).toBe('run-skeptic-001');
+      expect(result.artifact.policyVersion).toBe(DEFAULT_SKEPTIC_TRIGGER_POLICY.policyVersion);
+      expect(result.artifact.triggerReasons).toContain('CANDIDATE_NEAR_ALERT');
+      expect(result.artifact.profileId).toBe('skeptic-v1');
+      expect(result.artifact.sha256).toBeDefined();
+      expect(result.artifact.sha256?.length).toBe(64);
+      expect(result.toolRecords.length).toBeGreaterThan(0);
+
+      const validated = SkepticArtifactSchema.parse(result.artifact);
+      expect(validated.verdict).toBe('CONFIRM');
+      expect(validated.decisionChanged).toBe(false);
+    });
+
+    it('vetoes candidate and changes parent decision when honeypot or sell failure is detected', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+
+      skepticAgent.registerTool('risk.honeypot_scan', async () => ({
+        isHoneypot: true,
+        sellTax: 0.99,
+        reason: 'Transfer fee 99% configured in bytecode',
+      }));
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        parentDecisionId: 'parent-dec-honeypot',
+        runId: 'run-skeptic-honeypot',
+        envelope: sampleEnvelope,
+        triggerContext: {
+          candidateScore: 0.80,
+        },
+      });
+
+      expect(result.status).toBe('EXECUTED');
+      expect(result.artifact.verdict).toBe('VETO');
+      expect(result.artifact.suggestedDecision).toBe('REJECT');
+      expect(result.artifact.suggestedRiskLevel).toBe('CRITICAL');
+      expect(result.artifact.decisionChanged).toBe(true);
+      expect(result.artifact.challengeFindings).toContain('CRITICAL_SECURITY_HONEYPOT_CONFIRMED');
+      expect(result.artifact.counterThesis).toContain('Critical failure hazards');
+    });
+
+    it('challenges candidate when unlocked liquidity or unrenounced mint is detected', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+
+      skepticAgent.registerTool('liquidity.lock', async () => ({
+        lockedPercentage: 10,
+        isBurned: false,
+      }));
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        parentDecisionId: 'parent-dec-unlock',
+        runId: 'run-skeptic-unlock',
+        envelope: sampleEnvelope,
+        triggerContext: {
+          candidateScore: 0.78,
+        },
+      });
+
+      expect(result.status).toBe('EXECUTED');
+      expect(result.artifact.verdict).toBe('CHALLENGE');
+      expect(result.artifact.suggestedDecision).toBe('WATCH');
+      expect(result.artifact.suggestedRiskLevel).toBe('HIGH');
+      expect(result.artifact.decisionChanged).toBe(true);
+      expect(result.artifact.challengeFindings).toContain('UNLOCKED_LIQUIDITY_HAZARD_10_PERCENT_LOCKED');
+    });
+
+    it('handles skeptic budget exhaustion fail-closed without corrupting parent run', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+      const exhaustedBudget: AgentBudget = {
+        maxSteps: 0,
+        maxToolCalls: 0,
+        maxModelCostUsd: 0,
+        maxProviderCostUnits: 0,
+      };
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        runId: 'run-budget-exhaust',
+        envelope: sampleEnvelope,
+        skepticBudget: exhaustedBudget,
+        triggerContext: {
+          candidateScore: 0.82,
+        },
+      });
+
+      expect(result.status).toBe('BUDGET_EXCEEDED');
+      expect(result.artifact.status).toBe('BUDGET_EXCEEDED');
+      expect(result.artifact.triggered).toBe(true);
+      expect(result.toolRecords.length).toBe(0);
+    });
+  });
+
+  describe('FR-AGT-009: Value-of-Information Planner', () => {
+    const profile = new ModelProfileRegistry().require('deep-research-v1');
+
+    it('persists a decision record for every eligible optional evidence family', () => {
+      const planner = new VoiPlanner();
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-001',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.80,
+      });
+
+      expect(planResult.policyVersion).toBe(DEFAULT_VOI_POLICY.policyVersion);
+      expect(planResult.decisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+
+      for (const decision of planResult.decisions) {
+        const validated = EvidenceAcquisitionDecisionSchema.parse(decision);
+        expect(validated.policyVersion).toBe(DEFAULT_VOI_POLICY.policyVersion);
+        expect(validated.candidateId).toBe(sampleCandidate.assetId);
+        expect(validated.runId).toBe('run-voi-001');
+        expect(validated.expectedInformationValue).toBeDefined();
+        expect(validated.estimatedCost).toBeDefined();
+        expect(validated.decidedAt).toBeDefined();
+
+        if (validated.state === 'NOT_REQUESTED_BY_POLICY') {
+          expect(validated.skipReason).toBeDefined();
+          expect(validated.reasonCodes.length).toBeGreaterThan(0);
+        } else if (validated.state === 'REQUESTED') {
+          expect(validated.requestReason).toBeDefined();
+          expect(validated.requestedFields.length).toBeGreaterThan(0);
+        }
+      }
+
+      expect(planResult.requestedFamilies).toContain('TOKEN_PROFILE');
+      expect(planResult.requestedFamilies).toContain('CONTRACT_SECURITY');
+      expect(planResult.requestedFamilies).toContain('LIQUIDITY_LOCK');
+      expect(planResult.requestedFamilies).toContain('SELL_SIMULATION');
+      expect(planResult.totalEstimatedMonetaryCostUsd).toBeGreaterThan(0);
+      expect(planResult.totalEstimatedQuotaUnits).toBeGreaterThan(0);
+    });
+
+    it('renders skipped families as NOT_REQUESTED_BY_POLICY and distinct from provider failure', () => {
+      const planner = new VoiPlanner({ minExpectedInformationValue: 0.60 });
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-skipped',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.35,
+      });
+
+      const skipped = planResult.decisions.filter((d) => d.state === 'NOT_REQUESTED_BY_POLICY');
+      expect(skipped.length).toBeGreaterThan(0);
+
+      for (const d of skipped) {
+        expect(d.state).toBe('NOT_REQUESTED_BY_POLICY');
+        expect(d.skipReason).toBeDefined();
+        expect(d.reasonCodes).toContain('DIMINISHING_MARGINAL_UTILITY');
+        expect(d.state).not.toBe('RETURNED_EMPTY');
+        expect(d.state).not.toBe('FAILED');
+        expect(d.state).not.toBe('PROVIDER_UNAVAILABLE');
+      }
+
+      const rendered = planner.renderEvidenceAcquisitions(planResult.decisions);
+      expect(rendered).toContain('[NOT_REQUESTED_BY_POLICY]');
+      expect(rendered).toContain('Missingness is neutral; not unfavorable');
+    });
+
+    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when hard rejection is proven', () => {
+      const planner = new VoiPlanner();
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-hard-reject',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        hardRejectionProven: true,
+      });
+
+      const optionalDecisions = planResult.decisions.filter((d) => d.evidenceFamily !== 'TOKEN_PROFILE');
+      for (const d of optionalDecisions) {
+        expect(d.state).toBe('NOT_REQUESTED_BY_POLICY');
+        expect(d.skipReason).toContain('Hard rejection already proven');
+        expect(d.reasonCodes).toContain('HARD_REJECTION_PROVEN');
+      }
+    });
+
+    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when alert threshold is unreachable', () => {
+      const planner = new VoiPlanner();
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-unreachable',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        alertThresholdUnreachable: true,
+      });
+
+      const optionalDecisions = planResult.decisions.filter((d) => d.evidenceFamily !== 'TOKEN_PROFILE');
+      for (const d of optionalDecisions) {
+        expect(d.state).toBe('NOT_REQUESTED_BY_POLICY');
+        expect(d.skipReason).toContain('Alert threshold unreachable');
+        expect(d.reasonCodes).toContain('ALERT_THRESHOLD_UNREACHABLE');
+      }
+    });
+
+    it('marks families as COST_BLOCKED or QUOTA_BLOCKED when budget is constrained', () => {
+      const planner = new VoiPlanner();
+      const tightBudget: AgentBudget = {
+        maxSteps: 5,
+        maxToolCalls: 10,
+        maxModelCostUsd: 0.0002,
+        maxProviderCostUnits: 1,
+      };
+
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-cost-blocked',
+        envelope: sampleEnvelope,
+        budget: tightBudget,
+        profile,
+        currentCandidateScore: 0.85,
+      });
+
+      const blocked = planResult.decisions.filter(
+        (d) => d.state === 'COST_BLOCKED' || d.state === 'QUOTA_BLOCKED',
+      );
+      expect(blocked.length).toBeGreaterThan(0);
+      for (const b of blocked) {
+        expect(b.skipReason).toBeDefined();
+        expect(
+          b.reasonCodes.includes('BUDGET_COST_EXCEEDED') ||
+            b.reasonCodes.includes('BUDGET_QUOTA_EXCEEDED'),
+        ).toBe(true);
+      }
+    });
+
+    it('supports stratified randomized evidence probe allocation with provenance metadata', () => {
+      const planner = new VoiPlanner({
+        enableRandomizedProbes: true,
+        randomizedProbeRate: 1.0,
+        randomizationSeedRef: 'test-seed-xyz',
+      });
+
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-voi-randomized',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+      });
+
+      const randomizedDecisions = planResult.decisions.filter((d) => d.randomized);
+      expect(randomizedDecisions.length).toBeGreaterThan(0);
+      for (const d of randomizedDecisions) {
+        expect(d.assignmentProbability).toBe('1');
+        expect(d.randomizationStratum).toBe('solana');
+        expect(d.randomizationSeedRef).toBe('test-seed-xyz');
+        expect(d.reasonCodes).toContain('RANDOMIZED_EVIDENCE_PROBE');
+      }
+    });
+
+    it('reconciles decisions after execution, updating actual cost and decision change status', () => {
+      const planner = new VoiPlanner();
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-reconcile-001',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.75,
+      });
+
+      const initialDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'WATCH',
+        lifecycleRecommendation: 'QUALIFIED',
+      };
+
+      const finalDecision: AgentDecision = {
+        ...sampleParentDecision,
+        decision: 'ALERT',
+        lifecycleRecommendation: 'CONFIRMED',
+      };
+
+      const reconciled = planner.reconcileDecisions({
+        decisions: planResult.decisions,
+        toolRecords: [
+          { toolName: 'token.profile', callId: 'call_tok_1', output: { name: 'BONK' } },
+          { toolName: 'contract.audit', callId: 'call_aud_1', output: { isHoneypot: false } },
+        ],
+        previousDecision: initialDecision,
+        finalDecision,
+        actualCost: { monetaryCostUsd: 0.0012, quotaCostUnits: 4 },
+      });
+
+      const contractSecurityDecision = reconciled.find((d) => d.evidenceFamily === 'CONTRACT_SECURITY');
+      expect(contractSecurityDecision).toBeDefined();
+      expect(contractSecurityDecision?.state).toBe('RETURNED');
+      expect(contractSecurityDecision?.evidenceIds).toContain('call_aud_1');
+      expect(contractSecurityDecision?.actualDecisionChange).toBe('ALERT');
+      expect(contractSecurityDecision?.completedAt).toBeDefined();
+      expect(contractSecurityDecision?.actualCost?.monetaryCostUsd).toBe(0.0012);
+    });
+
+    it('treats NOT_REQUESTED_BY_POLICY as neutral missingness in downstream scoring without negative inference', () => {
+      const planner = new VoiPlanner();
+      const planResult = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-scoring-test',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.40,
+      });
+
+      const featureValues: Record<string, number | null> = {
+        'token.profile': 0.90,
+        'contract.audit': null,
+        'simulation.sell': null,
+        'social.sentiment': 0.80,
+      };
+
+      const featureWeights: Record<string, number> = {
+        'token.profile': 1.0,
+        'contract.audit': 1.0,
+        'simulation.sell': 1.0,
+        'social.sentiment': 1.0,
+      };
+
+      const baselineCohortScores: Record<string, number> = {
+        'contract.audit': 0.60,
+        'simulation.sell': 0.60,
+      };
+
+      const scored = planner.scoreWithMissingnessAwareness({
+        featureValues,
+        acquisitionDecisions: planResult.decisions,
+        featureWeights,
+        baselineCohortScores,
+      });
+
+      expect(scored.compositeScore).toBeGreaterThan(0.60);
+      expect(scored.evaluatedFeatures['contract.audit']?.isMissing).toBe(true);
+      expect(scored.evaluatedFeatures['contract.audit']?.isNegativeInferred).toBe(false);
+      expect(scored.evaluatedFeatures['contract.audit']?.imputedValue).toBe(0.60);
+    });
+  });
+
+  // =========================================================================
+  // Pipeline Integration: Bounded Runtime with VOI and Conditional Skeptic
+  // =========================================================================
+  describe('BoundedAgentRuntime Pipeline Integration with VOI and Skeptic', () => {
+    it('executes research pipeline with VOI planning and conditional skeptic seamlessly', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableVoi: true,
+        enableSkeptic: true,
+        candidateScore: 0.82,
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      expect(result.decision).toBeDefined();
+
+      // Check VOI plan result
+      expect(result.voiPlanResult).toBeDefined();
+      expect(result.voiPlanResult?.decisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+      expect(result.voiPlanResult?.requestedFamilies).toContain('CONTRACT_SECURITY');
+
+      // Check Skeptic execution result
+      expect(result.skepticResult).toBeDefined();
+      expect(result.skepticResult?.status).toBe('EXECUTED');
+      expect(result.skepticResult?.artifact.triggered).toBe(true);
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('CANDIDATE_NEAR_ALERT');
+      expect(result.skepticResult?.artifact.sha256).toBeDefined();
+    });
+  });
+});
+
