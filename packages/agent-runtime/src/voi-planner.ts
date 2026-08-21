@@ -65,6 +65,7 @@ export interface VoiPlanInput {
   envelope: ToolAuthorizationEnvelope;
   budget: AgentBudget;
   profile: ModelProfile;
+  plan?: DeterministicPlan | undefined;
   policyVersion?: string | undefined;
   currentCandidateScore?: number | undefined;
   currentRiskState?: string | undefined;
@@ -153,9 +154,6 @@ export class VoiPlanner {
     const { candidate, envelope, budget, profile } = input;
     const goal = input.goal ?? (profile.modelClass as VoiPlanInput['goal']) ?? 'TRIAGE';
     const policyVersion = input.policyVersion ?? policy.policyVersion ?? profile.version;
-    const runId =
-      input.runId ??
-      `run_${candidate.assetId}_${stableHash({ candidate: candidate.assetId, profile: profile.id, seed: input.deterministicSeedRef }).slice(0, 12)}`;
     const store = input.store ?? getEvidenceAcquisitionStore();
     const asOf = input.asOf ?? envelope.timeRange?.maxTimestamp ?? new Date().toISOString();
 
@@ -177,6 +175,11 @@ export class VoiPlanner {
       return (b.defaultPriority ?? 5) - (a.defaultPriority ?? 5);
     });
 
+    // Temporary runId to construct decisions (resolved with planId below)
+    const provisionalRunId =
+      input.runId ??
+      `run_${candidate.assetId}_${stableHash({ candidate: candidate.assetId, profile: profile.id, seed: input.deterministicSeedRef }).slice(0, 12)}`;
+
     const decisions: EvidenceAcquisitionDecision[] = [];
 
     let accumulatedEstimatedCostUsd = 0;
@@ -189,7 +192,6 @@ export class VoiPlanner {
 
     for (const family of families) {
       const familyId = family.familyId ?? family.id ?? 'UNKNOWN';
-      const decisionId = `acq_${runId}_${candidate.assetId}_${familyId}_${policyVersion}`;
       const estimatedCostUsd = family.monetaryCostUsd ?? family.defaultMonetaryCostUsd ?? 0.0001;
       const quotaCostUnits = family.providerQuotaCost ?? family.defaultQuotaUnits ?? 1;
       const estimatedCost = {
@@ -313,7 +315,7 @@ export class VoiPlanner {
         accumulatedEstimatedCostUsd += estimatedCostUsd;
         accumulatedQuotaUnits += quotaCostUnits;
         accumulatedToolCalls += tools.length;
-      } else if (evoi >= (input.minVoiThreshold ?? policy.minExpectedInformationValue) || !family.isOptional || (family.isMandatoryForGoals && family.isMandatoryForGoals.includes(goal))) {
+      } else if (evoi >= (input.minVoiThreshold ?? policy.minExpectedInformationValue) || !family.isOptional) {
         state = 'REQUESTED';
         requestReason = !family.isOptional
           ? 'Mandatory core evidence family for initial candidate characterization'
@@ -344,9 +346,9 @@ export class VoiPlanner {
       }
 
       const decision: EvidenceAcquisitionDecision = {
-        id: decisionId,
+        id: `acq_${provisionalRunId}_${candidate.assetId}_${familyId}_${policyVersion}`,
         candidateId: candidate.assetId,
-        runId,
+        runId: provisionalRunId,
         evidenceFamily: familyId,
         policyVersion,
         state,
@@ -378,13 +380,6 @@ export class VoiPlanner {
       .filter((d) => d.state === 'COST_BLOCKED' || d.state === 'QUOTA_BLOCKED' || d.state === 'RIGHTS_BLOCKED' || d.state === 'UNSUPPORTED')
       .map((d) => d.evidenceFamily);
 
-    // Persist decisions to EvidenceAcquisitionStore before retrieval
-    try {
-      store.recordDecisions(decisions);
-    } catch {
-      // Ignore conflict if re-planning same run
-    }
-
     // Construct tool calls and steps only for REQUESTED evidence families
     const activeTools = new Set<string>();
     for (const famId of requestedFamilies) {
@@ -409,22 +404,40 @@ export class VoiPlanner {
       maxCostUsd: Math.min(accumulatedEstimatedCostUsd, envelope.maxCostUsd ?? accumulatedEstimatedCostUsd),
     };
 
-    const plan = DeterministicPlanner.plan({
-      candidate,
-      profile,
-      envelope: boundedEnvelope,
-      budget,
-      goal,
-      initialEvidence: input.initialEvidence,
-      requestedEvidenceFamilies: requestedFamilies,
-      deterministicSeedRef: input.deterministicSeedRef,
-    });
+    const plan =
+      input.plan ??
+      DeterministicPlanner.plan({
+        candidate,
+        profile,
+        envelope: boundedEnvelope,
+        budget,
+        goal,
+        initialEvidence: input.initialEvidence,
+        requestedEvidenceFamilies: requestedFamilies,
+        deterministicSeedRef: input.deterministicSeedRef,
+      });
+
+    const runId = input.runId ?? plan.planId;
+
+    // Harmonize final decision IDs and runId
+    const finalDecisions = decisions.map((d) => ({
+      ...d,
+      id: `acq_${runId}_${candidate.assetId}_${d.evidenceFamily}_${policyVersion}`,
+      runId,
+    }));
+
+    // Persist decisions to EvidenceAcquisitionStore before retrieval
+    try {
+      store.recordDecisions(finalDecisions);
+    } catch {
+      // Ignore conflict if re-planning same run
+    }
 
     return {
       policyVersion,
       candidateId: candidate.assetId,
       runId,
-      decisions,
+      decisions: finalDecisions,
       requestedFamilies,
       skippedFamilies,
       blockedFamilies,

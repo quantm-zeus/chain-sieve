@@ -255,6 +255,7 @@ export class BoundedAgentRuntime {
       budget,
       goal: options.goal,
       runId,
+      plan: initialPlan,
       policyVersion,
       eligibleEvidenceFamilies: options.eligibleEvidenceFamilies,
       initialEvidence: options.initialEvidence,
@@ -263,6 +264,7 @@ export class BoundedAgentRuntime {
       randomizationStratum: options.randomizationStratum,
       minVoiThreshold: options.minVoiThreshold,
       policy: options.voiPolicy,
+
       store,
       deterministicSeedRef: options.deterministicSeedRef,
     });
