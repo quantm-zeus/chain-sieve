@@ -10,6 +10,7 @@ import {
   ModelProfileRegistry,
   SkepticTriggerPolicy,
   VoiPlanner,
+  type AgentRuntimePersistenceRepository,
 } from '@ciag/agent-runtime';
 import type {
   AgentBudget,
@@ -1285,6 +1286,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
         envelope: restrictedEnvelope,
         profile,
         budget: sampleBudget,
+        runId: 'run-rights-1',
       });
 
       const liquidityDecision = result.decisions.find((d) => d.evidenceFamily === 'LIQUIDITY_LOCK');
