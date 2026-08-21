@@ -54,7 +54,14 @@ const DEFAULT_GATE_CONFIG: Required<DecisionGateConfig> = {
 
 export class StructuredDecisionEngine {
   public static decide(input: StructuredDecisionInput): StructuredDecisionResult {
-    const gateConfig = { ...DEFAULT_GATE_CONFIG, ...(input.gateConfig ?? {}) };
+    const gateConfig: Required<DecisionGateConfig> = {
+      minObservedFacts: input.gateConfig?.minObservedFacts ?? DEFAULT_GATE_CONFIG.minObservedFacts,
+      minEvidenceCount: input.gateConfig?.minEvidenceCount ?? DEFAULT_GATE_CONFIG.minEvidenceCount,
+      minIndependenceGroups: input.gateConfig?.minIndependenceGroups ?? DEFAULT_GATE_CONFIG.minIndependenceGroups,
+      maxFreshnessMs: input.gateConfig?.maxFreshnessMs ?? DEFAULT_GATE_CONFIG.maxFreshnessMs,
+      requireValidatorPass: input.gateConfig?.requireValidatorPass ?? DEFAULT_GATE_CONFIG.requireValidatorPass,
+      criticalRiskBlocksAlert: input.gateConfig?.criticalRiskBlocksAlert ?? DEFAULT_GATE_CONFIG.criticalRiskBlocksAlert,
+    };
     const proposed = input.proposedDecision;
 
     // Run deterministic validator first
