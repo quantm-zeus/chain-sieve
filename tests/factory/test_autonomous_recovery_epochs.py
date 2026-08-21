@@ -590,13 +590,11 @@ class AutonomousRecoveryEpochsTests(unittest.TestCase):
         reconciled_events = [e for e in events if e.get("type") == "LEGACY_REPLAN_BLOCK_RECONCILED"]
         self.assertEqual(len(reconciled_events), 1)
 
-        # Tick autonomously enters Recovery Epoch 1
+        # Tick authorizes review correction pass 1 within Epoch 0
         controller.tick()
         saved = self.store.load()[self.wkey]
-        self.assertEqual(saved.recovery_epoch, 1)
-        self.assertEqual(saved.status, PackageStatus.PR_WAITING)
-        self.assertEqual(saved.review_corrections_used_in_epoch, 0)
-        self.assertEqual(len(reasoner.replan_calls), 1)
+        self.assertEqual(saved.recovery_epoch, 0)
+        self.assertEqual(saved.review_corrections_used_in_epoch, 1)
 
     # AUTO-09: maxReviewCycles=2 limits corrections PER EPOCH, not lifetime package corrections
     def test_auto_09_max_review_cycles_is_epoch_scoped_not_lifetime(self) -> None:
@@ -736,6 +734,89 @@ class AutonomousRecoveryEpochsTests(unittest.TestCase):
         self.assertEqual(reloaded_record.replan_cycles_used, 2)
         self.assertEqual(reloaded_record.recovery_epoch_plan_digest, "abc123digest")
 
+    # AUTO-15: CI corrections are epoch-scoped and escalate to replan
+    def test_auto_15_ci_corrections_epoch_scoped_and_escalate(self) -> None:
+        issues = {self.wkey: Issue(101, "OPEN", "", "url/101", "author")}
+        checks_tuple = tuple(
+            {"name": name, "conclusion": "FAILURE", "failure_kind": "PRODUCT", "failure_detail": "typecheck error"}
+            for name in self.cfg.required_checks
+        )
+        prs = {self.wkey: [PullRequest(
+            156, "OPEN", f"factory/{self.wkey}", self.head_b, "url/156",
+            "MERGEABLE", "CLEAN", checks=checks_tuple,
+        )]}
+        sessions = {"101": [Session("chainsieve-100", f"factory/{self.wkey}", "agy", "working", "active", "101")]}
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+        reasoner = MockReasoner(plan_result={
+            "status": "RECOVERY_PLAN",
+            "recoveryPlan": {
+                "strategy": "Fix typecheck errors",
+                "remediationActions": ["Fix persistence types"],
+                "affectedFiles": ["packages/agent-runtime/src/persistence.ts"],
+                "recommendedProvider": "agy",
+                "repairPrompt": "Fix typecheck errors in persistence.ts",
+            },
+        })
+
+        record = PackageRecord(
+            status=PackageStatus.PR_WAITING,
+            issue_number=101,
+            session_id="chainsieve-100",
+            provider="agy",
+            pr_number=156,
+            head_sha=self.head_b,
+            ci_corrections_used=4,
+            ci_corrections_used_in_epoch=2, # max reached in epoch 0
+            recovery_epoch=0,
+            replan_cycles_used=0,
+            authority_schema_version=1,
+        )
+        self.store.save({self.wkey: record})
+
+        controller = self._create_controller(self.store, github, ao, reasoner=reasoner)
+        controller.tick()
+
+        updated = self.store.load()[self.wkey]
+        self.assertEqual(updated.recovery_epoch, 1)
+        self.assertEqual(updated.ci_corrections_used_in_epoch, 0)
+        self.assertEqual(updated.replan_cycles_used, 1)
+
+    # AUTO-16: Reconcile false CI correction budget exhausted blocks
+    def test_auto_16_reconcile_ci_exhaustion_legacy_block(self) -> None:
+        issues = {self.wkey: Issue(101, "OPEN", "", "url/101", "author")}
+        prs = {self.wkey: [PullRequest(
+            156, "OPEN", f"factory/{self.wkey}", self.head_a, "url/156",
+            "MERGEABLE", "CLEAN", checks=({"name": "CI", "conclusion": "SUCCESS"},),
+        )]}
+        sessions = {"101": [Session("chainsieve-100", f"factory/{self.wkey}", "agy", "working", "active", "101")]}
+        github = MockGitHub(issues, prs)
+        ao = MockAO(sessions)
+
+        record = PackageRecord(
+            status=PackageStatus.BLOCKED,
+            blocked_reason="CI correction budget exhausted: checks not passing: Tier 3 · pre-main",
+            last_error="CI correction budget exhausted: checks not passing: Tier 3 · pre-main",
+            session_id="chainsieve-100",
+            provider="agy",
+            pr_number=156,
+            head_sha=self.head_a,
+            ci_corrections_used=2,
+            recovery_epoch=0,
+            replan_cycles_used=0,
+            authority_schema_version=1,
+        )
+        self.store.save({self.wkey: record})
+
+        controller = self._create_controller(self.store, github, ao)
+        controller.tick()
+
+        updated = self.store.load()[self.wkey]
+        self.assertIn(updated.status, {PackageStatus.PR_WAITING, PackageStatus.REVIEW})
+        self.assertIsNone(updated.blocked_reason)
+        self.assertEqual(updated.ci_corrections_used_in_epoch, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
+
