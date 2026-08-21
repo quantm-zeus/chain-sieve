@@ -64,6 +64,11 @@ class FactoryConfig:
     agy_explicit_model: str | None = None
     provider_cooldown_seconds: int = 60
     implementation_weights: dict[str, int] = field(default_factory=lambda: {"agy": 2, "muse": 1})
+    causal_checks: tuple[str, ...] = ()
+
+    @property
+    def effective_causal_checks(self) -> tuple[str, ...]:
+        return self.causal_checks if self.causal_checks else self.required_checks
 
     @property
     def max_ci_correction_rounds(self) -> int:
@@ -120,6 +125,11 @@ class FactoryConfig:
             memory_min_free_mib=int(resources["memoryMinFreeMiB"]),
             max_worktrees=int(resources["maxWorktrees"]),
             required_checks=tuple(str(item) for item in integration["requiredChecks"]),
+            causal_checks=(
+                tuple(str(item) for item in integration["causalChecks"])
+                if "causalChecks" in integration
+                else tuple(str(item) for item in integration["requiredChecks"])
+            ),
             protected_paths=tuple(str(item) for item in integration["protectedPaths"]),
             integration_branch=str(
                 os.environ.get("CHAINSIEVE_INTEGRATION_BRANCH", integration.get("targetBranch", raw.get("defaultBranch", "main")))
@@ -169,6 +179,8 @@ class FactoryConfig:
                 raise ValueError(f"{name} cannot be negative")
         if not self.required_checks:
             raise ValueError("at least one required CI check is required")
+        if self.causal_checks and not all(isinstance(c, str) and c.strip() for c in self.causal_checks):
+            raise ValueError("causal_checks must contain non-empty strings")
         if self.max_task_wall_clock_seconds <= 0 or self.max_milestone_wall_clock_seconds <= 0:
             raise ValueError("task and milestone wall-clock budgets must be positive")
         if self.max_idle_seconds <= 0 or self.max_starting_seconds <= 0:

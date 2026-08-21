@@ -77,6 +77,15 @@
     "requiredChecks": [
       "Tier 3 · pre-main"
     ],
+    "causalChecks": [
+      "Factory · deterministic control plane",
+      "Tier 0 · static and unit",
+      "Tier 1 · task contracts",
+      "Tier 2 · cluster integration",
+      "Tier 3 · production image (api, linux/amd64)",
+      "Tier 3 · production image (dashboard, linux/amd64)",
+      "Tier 3 · pre-main"
+    ],
     "protectedPaths": [
       "docs/spec/**",
       "artifacts/spec/**",

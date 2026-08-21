@@ -211,27 +211,56 @@ def ci_gate(pr: PullRequest, required_checks: tuple[str, ...]) -> tuple[bool, st
     return state == "PASS", reason
 
 
-def causal_ci_check(pr: PullRequest, required_checks: tuple[str, ...] = ()) -> dict[str, Any] | None:
-    """Return the causal required-check failure, or None.
+def causal_ci_check(
+    pr: PullRequest,
+    required_checks: tuple[str, ...] = (),
+    causal_checks: tuple[str, ...] = (),
+) -> dict[str, Any] | None:
+    """Return the causal check failure, or None.
 
-    Only REQUIRED checks can be causal (§8).  Optional/non-required check
-    failures are ignored for causal failure selection.
+    Inspects the authoritative causal dependency closure of the merge gate.
+    Only authoritative causal checks can be causal (§8). Optional/unrelated
+    check failures are ignored for causal failure selection.
     """
-    required_set = set(required_checks)
-    # First pass: find required checks with explicit failure conclusions.
-    for c in pr.checks:
-        name = str(c.get("name") or c.get("context") or "")
-        if not required_set or name in required_set:
-            conclusion = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
-            if conclusion in {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}:
-                return c
-    # Second pass: required checks with non-success/non-pending status.
-    if required_checks:
+    causal_pool = causal_checks if causal_checks else required_checks
+    causal_set = set(causal_pool)
+
+    # First pass: find authoritative checks with explicit failure conclusions.
+    explicit_failures = {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"}
+    if causal_pool:
+        checks_by_name: dict[str, list[dict[str, Any]]] = {}
         for c in pr.checks:
             name = str(c.get("name") or c.get("context") or "")
-            if name in required_set:
+            checks_by_name.setdefault(name, []).append(c)
+
+        for name in causal_pool:
+            for c in checks_by_name.get(name, []):
+                conclusion = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+                if conclusion in explicit_failures:
+                    return c
+
+    for c in pr.checks:
+        name = str(c.get("name") or c.get("context") or "")
+        if not causal_set or name in causal_set:
+            conclusion = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+            if conclusion in explicit_failures:
+                return c
+
+    # Second pass: authoritative checks with non-success/non-pending status.
+    non_pending_ok = {"SUCCESS", "PASS", "", "EXPECTED", "PENDING", "QUEUED", "IN_PROGRESS", "REQUESTED", "WAITING"}
+    if causal_pool:
+        for name in causal_pool:
+            for c in checks_by_name.get(name, []):
                 status = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
-                if status not in {"SUCCESS", "PASS", "", "EXPECTED", "PENDING", "QUEUED", "IN_PROGRESS", "REQUESTED", "WAITING"}:
+                if status not in non_pending_ok:
+                    return c
+
+    if causal_set:
+        for c in pr.checks:
+            name = str(c.get("name") or c.get("context") or "")
+            if name in causal_set:
+                status = str(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+                if status not in non_pending_ok:
                     return c
     return None
 
@@ -278,6 +307,8 @@ INFRASTRUCTURE_STEP_PATTERNS = (
     "docker run",
     "docker exec",
     "install playwright",
+    "setup-node",
+    "setup-python",
 )
 
 PRODUCT_STEP_PATTERNS = (
@@ -290,6 +321,12 @@ PRODUCT_STEP_PATTERNS = (
     "spec",
     "harness",
     "mutation",
+    "prd",
+    "requirements",
+    "architecture",
+    "placeholder",
+    "prohibited",
+    "migration",
 )
 
 
@@ -322,13 +359,27 @@ def classify_ci_failure(
         if kind_str in {"PRODUCT", "INFRASTRUCTURE", "UNKNOWN"}:
             return kind_str, str(causal_check.get("failure_detail") or "explicit test metadata"), run_id
 
+    causal_check_name = str(causal_check.get("name") or "")
+
     if github is not None and run_id is not None:
         try:
             jobs = github.get_run_jobs(run_id)
-            for job in jobs:
-                if job_id and job.get("id") != job_id:
-                    continue
-                failed_steps = [s for s in job.get("steps", []) if str(s.get("conclusion", "")).lower() in {"failure", "timed_out", "cancelled"}]
+            matching_jobs = []
+            if job_id:
+                matching_jobs = [j for j in jobs if j.get("id") == job_id]
+            if not matching_jobs and causal_check_name:
+                matching_jobs = [j for j in jobs if j.get("name") == causal_check_name]
+            if not matching_jobs:
+                matching_jobs = [
+                    j for j in jobs
+                    if str(j.get("conclusion", "")).lower() in {"failure", "timed_out", "cancelled"}
+                ]
+
+            for job in matching_jobs:
+                failed_steps = [
+                    s for s in job.get("steps", [])
+                    if str(s.get("conclusion", "")).lower() in {"failure", "timed_out", "cancelled"}
+                ]
                 for step in failed_steps:
                     step_name = str(step.get("name", "")).lower()
                     for pattern in INFRASTRUCTURE_STEP_PATTERNS:
