@@ -262,7 +262,9 @@ def parse_and_reconcile_review(
     run_id: str | None,
     review_mode: str,
     frozen_findings: list[ReviewFinding] | None = None,
+    raw_verdict: str | None = None,
 ) -> tuple[list[ReviewFinding], list[str]]:
+
     """Parse review results and update/freeze blocker ledger.
 
     Returns:
@@ -375,10 +377,13 @@ def parse_and_reconcile_review(
     updated_ledger: list[ReviewFinding] = []
     
     body_lower = body_text.lower()
+    raw_v_lower = (raw_verdict or "").lower().strip()
     is_general_pass = (
-        (payload and payload.get("verdict") in {"approved", "pass"})
+        raw_v_lower in {"approved", "pass"}
+        or (payload and payload.get("verdict") in {"approved", "pass"})
         or any(p in body_lower for p in ("verdict: pass", "verdict: approved", "all blockers resolved", "all baseline blockers", "approved", "passes current head"))
     )
+
 
     for f in frozen:
         f_copy = ReviewFinding.from_dict(f.to_dict())

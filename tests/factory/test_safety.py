@@ -420,17 +420,23 @@ class SafetyTests(unittest.TestCase):
 
     def test_review_finding_is_returned_to_worker(self) -> None:
         head = "b" * 40
+        cfg = config(self.root)
+        store = StateStore(cfg.state_dir)
+        work = WorkPackage.from_dict(package("a"))
+        ctx_path = store.write_review_context("m1", work, head, pr_number=8, implementation_provider="muse", reviewer_provider="agy")
+        ctx = json.loads(ctx_path.read_text(encoding="utf-8"))
+        digest = ctx["contextDigest"]
         reviews = {"reviews": [{"latestRun": {
             "targetSha": head,
             "status": "completed",
             "verdict": "changes_requested",
             "harness": "agy",
+            "body": f"- general: fix something\nCHAINSIEVE_REVIEW_CONTEXT_SHA256:{digest}",
             "createdAt": "2026-01-01T00:00:00Z",
+
         }}]}
-        cfg = config(self.root)
         ao = ActionAO(reviews)
-        controller = FactoryController(self.root, cfg, StateStore(cfg.state_dir), object(), ao)
-        work = WorkPackage.from_dict(package("a"))
+        controller = FactoryController(self.root, cfg, store, object(), ao)
         record = PackageRecord(session_id="ao-1", provider="muse")
         pr = PullRequest(
             8, "OPEN", "factory/a", head, "url/8", "MERGEABLE", "CLEAN",
@@ -438,7 +444,10 @@ class SafetyTests(unittest.TestCase):
         )
         controller._handle_pr(milestone(work_to_dict(work)), work, record, pr)
         self.assertEqual(len(ao.sent), 1)
-        self.assertIn("independent agy review rejected", ao.sent[0][1])
+        self.assertIn("independent agy review", ao.sent[0][1])
+        self.assertIn("requested changes", ao.sent[0][1])
+
+
 
     def test_disk_pressure_opens_resource_gate_without_deleting_state(self) -> None:
         cfg = replace(config(self.root), disk_min_free_gib=10**9)

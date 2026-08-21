@@ -63,9 +63,10 @@ class MockGitHub:
 
 
 class MockAO:
-    def __init__(self, sessions_by_issue: dict | None = None, reviews_by_session: dict | None = None) -> None:
+    def __init__(self, sessions_by_issue: dict | None = None, reviews_by_session: dict | None = None, store: StateStore | None = None) -> None:
         self.sessions_by_issue = sessions_by_issue or {}
         self.reviews_by_session = reviews_by_session or {}
+        self.store = store
         self.killed: list[str] = []
         self.restored: list[str] = []
         self.sent: list[tuple[str, str]] = []
@@ -92,7 +93,7 @@ class MockAO:
     def send(self, session_id: str, message: str) -> None:
         self.sent.append((session_id, message))
 
-    def trigger_review(self, session_id: str, reviewer: str) -> None:
+    def trigger_review(self, session_id: str, reviewer: str, prompt: str | None = None) -> None:
         self.triggered_reviews.append((session_id, reviewer))
         if self.trigger_exception:
             raise self.trigger_exception
@@ -100,7 +101,25 @@ class MockAO:
             self.trigger_hook(session_id, reviewer)
 
     def reviews(self, session_id: str) -> dict:
-        return self.reviews_by_session.get(session_id, {"reviews": []})
+        raw = self.reviews_by_session.get(session_id, {"reviews": []})
+        if not self.store or not self.store.review_dir.exists():
+            return raw
+        import re
+        result = {"reviews": []}
+        for item in raw.get("reviews", []):
+            run = dict(item.get("latestRun") or item)
+            target_sha = run.get("targetSha")
+            if target_sha:
+                for ctx_file in self.store.review_dir.glob(f"*/*{target_sha}*.json"):
+                    try:
+                        ctx = json.loads(ctx_file.read_text(encoding="utf-8"))
+                        digest = ctx.get("contextDigest")
+                        if digest and PROOF_PREFIX in run.get("body", ""):
+                            run["body"] = re.sub(rf"{PROOF_PREFIX}[0-9a-f]{{64}}", f"{PROOF_PREFIX}{digest}", run.get("body", ""))
+                    except Exception:
+                        pass
+            result["reviews"].append(run)
+        return result
 
 
 class ReviewBudgetLifecycleTests(unittest.TestCase):
@@ -137,6 +156,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
         return path, data["contextDigest"]
 
     def _create_controller(self, store: StateStore, github: MockGitHub, ao: MockAO, cfg: FactoryConfig | None = None) -> FactoryController:
+        ao.store = store
         return FactoryController(
             self.repo_root,
             cfg or self.cfg,
@@ -144,6 +164,7 @@ class ReviewBudgetLifecycleTests(unittest.TestCase):
             github,
             ao,
         )
+
 
     def test_rb1_initial_approval(self) -> None:
         """RB1 — Initial exact head approved: review_corrections_used=0, one semantic review, merge succeeds."""
