@@ -9,10 +9,12 @@ import type {
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
 import { ToolArgumentConfinementValidator } from './confinement.js';
-import type {
-  CandidateTarget,
-  DeterministicPlan,
+import {
+  DeterministicPlanner,
+  type CandidateTarget,
+  type DeterministicPlan,
 } from './deterministic-planner.js';
+
 import {
   AgentCancelledError,
   AgentRuntimeError,
@@ -240,9 +242,9 @@ export class BoundedAgentRuntime {
       budget,
       goal: options.goal,
       initialEvidence: options.initialEvidence,
-      requestedEvidenceFamilies: options.requestedEvidenceFamilies,
       deterministicSeedRef: options.deterministicSeedRef,
     });
+
 
     const runId = options.runId ?? initialPlan.planId;
 
