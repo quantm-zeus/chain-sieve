@@ -198,7 +198,11 @@ export class VoiPlanner {
           : isNearAlert
             ? `High expected information value (${evoi.toFixed(3)}) near alert threshold`
             : `Expected information value (${evoi.toFixed(3)}) satisfies policy threshold (${policy.minExpectedInformationValue})`;
-        reasonCodes.push('VOI_THRESHOLD_SATISFIED');
+        if (!family.isOptional) {
+          reasonCodes.push('MANDATORY_CORE_EVIDENCE');
+        } else {
+          reasonCodes.push('VOI_THRESHOLD_SATISFIED');
+        }
         accumulatedEstimatedCostUsd += family.monetaryCostUsd;
         accumulatedQuotaUnits += family.providerQuotaCost;
       } else {
