@@ -1031,7 +1031,7 @@ class FactoryController:
                 record.last_error = ci_reason
                 return
 
-            causal_check = causal_ci_check(pr, self.config.required_checks)
+            causal_check = causal_ci_check(pr, self.config.required_checks, self.config.effective_causal_checks)
             failure_kind, failure_detail, run_id = classify_ci_failure(pr, causal_check, self.github)
 
             if failure_kind == "INFRASTRUCTURE" and run_id is not None:
@@ -1126,9 +1126,19 @@ class FactoryController:
                     record.ci_corrections_used += 1
                     record.ci_correction_authorized_from_sha = pr.head_sha
 
+                causal_name = str((causal_check or {}).get("name") or "CI")
+                details_url = str(
+                    (causal_check or {}).get("detailsUrl")
+                    or (causal_check or {}).get("details_url")
+                    or (causal_check or {}).get("html_url")
+                    or ""
+                )
+                url_part = f" ({details_url})" if details_url else (f" (run {run_id})" if run_id else "")
                 self.ao.send(
                     record.session_id,
-                    f"Required CI is not green for PR #{pr.number} at {pr.head_sha}: {ci_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
+                    f"Required CI is not green for PR #{pr.number} at {pr.head_sha}: {failure_detail} in check '{causal_name}'{url_part}. "
+                    f"Fix only these demonstrated CI defects. Create a new additive correction commit and normal push. "
+                    f"Do not amend, rebase, or force-push the existing reviewed history.",
                 )
                 record.last_error = token
                 record.last_progress_at = utc_now()
