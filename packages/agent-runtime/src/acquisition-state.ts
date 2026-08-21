@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import type {
   EvidenceAcquisitionDecision,
   EvidenceAcquisitionState,
@@ -36,22 +35,8 @@ export interface UpdateAcquisitionOutcomeParams {
   reasonCodes?: string[] | undefined;
 }
 
-const canonicalize = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(canonicalize);
-  if (value !== null && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, child]) => [k, canonicalize(child)]),
-    );
-  }
-  return value;
-};
-
-const canonicalJson = (value: unknown): string => JSON.stringify(canonicalize(value));
-const sha256 = (value: string): string => createHash('sha256').update(value).digest('hex');
-
 export class EvidenceAcquisitionStore {
+
   private readonly records = new Map<string, EvidenceAcquisitionDecision>();
   private readonly byRunCandidate = new Map<string, string[]>(); // `${runId}::${candidateId}` -> keys
   private readonly byCandidate = new Map<string, string[]>(); // candidateId -> keys

@@ -9,10 +9,9 @@ import type {
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
 import { ToolArgumentConfinementValidator } from './confinement.js';
-import {
-  DeterministicPlanner,
-  type CandidateTarget,
-  type DeterministicPlan,
+import type {
+  CandidateTarget,
+  DeterministicPlan,
 } from './deterministic-planner.js';
 import {
   AgentCancelledError,
@@ -23,7 +22,6 @@ import {
 import { ModelProfileRegistry } from './model-profiles.js';
 import {
   VoiPlanner,
-  VoiDecisionPlanner,
   type VoiPlanResult,
   type VoiPolicy,
   type RandomProbeConfig,
@@ -38,7 +36,7 @@ import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
 import {
-  EvidenceAcquisitionStore,
+  type EvidenceAcquisitionStore,
   getEvidenceAcquisitionStore,
 } from './acquisition-state.js';
 import {
@@ -46,6 +44,7 @@ import {
   type EvidenceFamilyDefinition,
 } from './evidence-families.js';
 import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
+
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;

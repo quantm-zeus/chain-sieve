@@ -14,7 +14,6 @@ import type {
   AgentBudget,
   AgentDecision,
   EvidenceAcquisitionDecision,
-  EvidenceAcquisitionState,
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
@@ -24,15 +23,14 @@ import {
   type DeterministicPlan,
 } from './deterministic-planner.js';
 import {
-  DEFAULT_EVIDENCE_FAMILIES,
   EvidenceFamilyRegistry,
   type EvidenceFamilyDefinition,
 } from './evidence-families.js';
 import {
-  EvidenceAcquisitionStore,
+  type EvidenceAcquisitionStore,
   getEvidenceAcquisitionStore,
 } from './acquisition-state.js';
-import { ToolArgumentConfinementValidator } from './confinement.js';
+
 
 export interface VoiPolicy {
   policyVersion: string;

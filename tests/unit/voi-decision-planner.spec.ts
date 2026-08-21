@@ -2,10 +2,8 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import {
   VoiDecisionPlanner,
   EvidenceAcquisitionStore,
-  getEvidenceAcquisitionStore,
   resetEvidenceAcquisitionStore,
   EVIDENCE_FAMILIES,
-  EvidenceFamilyRegistry,
   imputeFeatureWithMissingnessPolicy,
   assertMissingnessInvariants,
   isSubstantiveNegativeEvidence,
@@ -18,10 +16,10 @@ import {
 import type {
   AgentBudget,
   EvidenceAcquisitionDecision,
-  EvidenceAcquisitionState,
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
+
 
 describe('Deterministic VOI Decision Planner & Missingness (FR-AGT-009, FR-AGT-012, FR-DATA-011, FR-DATA-012, AC-242, INV-022)', () => {
   const candidate = {
