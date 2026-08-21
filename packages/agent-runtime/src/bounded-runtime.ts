@@ -4,6 +4,7 @@ import type {
   AgentDecision,
   ModelProfile,
   SkepticArtifact,
+  SkepticTriggerReason,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
@@ -443,12 +444,12 @@ export class BoundedAgentRuntime {
           parentDecisionId,
           candidateId: candidate.assetId,
           runId: plan.planId,
-          policyVersion: options.skepticTriggerPolicy?.version ?? '1.0.0',
+          policyVersion: options.skepticTriggerPolicy?.config.policyVersion ?? '1.0.0',
           triggered: true,
-          triggerReasons: ['OPPORTUNITY_RISK_VECTOR_DISAGREEMENT'] as const,
+          triggerReasons: ['OPPORTUNITY_RISK_VECTOR_DISAGREEMENT' as SkepticTriggerReason],
           triggerMetrics: {},
-          profileId: envelope.profileId,
-          profileVersion: envelope.profileVersion,
+          profileId: profile.id,
+          profileVersion: profile.version,
           status: 'SKIPPED_POLICY' as const,
           verdict: 'INSUFFICIENT_EVIDENCE' as const,
           confidence: 'LOW' as const,
@@ -487,10 +488,8 @@ export class BoundedAgentRuntime {
 
         skepticResult = {
           artifact: fallbackArtifact,
-          decisionRevised: false,
-          revisedDecision: decision,
+          status: 'SKIPPED_POLICY',
           toolRecords: [],
-          budgetUsage: {},
         };
       }
     }
