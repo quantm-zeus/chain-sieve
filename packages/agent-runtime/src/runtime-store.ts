@@ -216,19 +216,26 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
       totalEstimatedCostUsd: totalCost,
       totalEstimatedQuotaUnits: totalQuota,
       totalQuotaUnits: totalQuota,
-      plannedAt: first.decidedAt,
       plan: {
         planId: runId,
+        candidateId: first.candidateId,
+        profileId: 'default',
+        profileVersion: first.policyVersion,
         steps: [],
+        totalPlannedToolCalls: 0,
         totalEstimatedCostUsd: totalCost,
-        totalQuotaUnits: totalQuota,
-        isComplete: true,
+        envelope: {
+          allowedTools: requestedFamilies,
+        },
+        maxSteps: 10,
+        generatedAt: first.decidedAt,
       },
       envelope: {
         allowedTools: requestedFamilies,
       },
     };
   }
+
 
 
   public async getSkepticArtifact(runId: string): Promise<SkepticArtifact | null> {
