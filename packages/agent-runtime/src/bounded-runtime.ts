@@ -233,13 +233,26 @@ export class BoundedAgentRuntime {
     const store = options.acquisitionStore ?? getEvidenceAcquisitionStore();
     const policyVersion = options.policyVersion ?? profile.version;
 
+    const initialPlan = DeterministicPlanner.plan({
+      candidate,
+      profile,
+      envelope,
+      budget,
+      goal: options.goal,
+      initialEvidence: options.initialEvidence,
+      requestedEvidenceFamilies: options.requestedEvidenceFamilies,
+      deterministicSeedRef: options.deterministicSeedRef,
+    });
+
+    const runId = options.runId ?? initialPlan.planId;
+
     const voiResult = voiPlanner.plan({
       candidate,
       profile,
       envelope,
       budget,
       goal: options.goal,
-      runId: options.runId,
+      runId,
       policyVersion,
       eligibleEvidenceFamilies: options.eligibleEvidenceFamilies,
       initialEvidence: options.initialEvidence,
@@ -253,7 +266,7 @@ export class BoundedAgentRuntime {
     });
 
     const plan = voiResult.plan;
-    const runId = voiResult.runId;
+
 
     const toolRecords: ToolExecutionRecord[] = [];
     let executedSteps = 0;
