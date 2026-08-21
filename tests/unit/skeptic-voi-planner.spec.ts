@@ -352,6 +352,8 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.status).toBe('BUDGET_EXCEEDED');
       expect(result.artifact.status).toBe('BUDGET_EXCEEDED');
       expect(result.artifact.triggered).toBe(true);
+      expect(result.artifact.verdict).toBe('INSUFFICIENT_EVIDENCE');
+      expect(result.artifact.confidence).toBe('LOW');
       expect(result.toolRecords.length).toBe(0);
     });
   });
@@ -396,6 +398,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(planResult.requestedFamilies).toContain('MARKET_MICROSTRUCTURE');
       expect(planResult.requestedFamilies).toContain('HOLDER_DISTRIBUTION');
       expect(planResult.requestedFamilies).toContain('TRANSACTION_TRACE');
+      expect(planResult.requestedFamilies.length + planResult.skippedFamilies.length).toBe(planResult.decisions.length);
       expect(planResult.totalEstimatedMonetaryCostUsd).toBeGreaterThan(0);
       expect(planResult.totalEstimatedQuotaUnits).toBeGreaterThan(0);
     });
@@ -634,6 +637,11 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.voiPlanResult).toBeDefined();
       expect(result.voiPlanResult?.decisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
       expect(result.voiPlanResult?.requestedFamilies).toContain('CONTRACT_SECURITY');
+      expect(result.voiPlanResult?.requestedFamilies.length! + result.voiPlanResult?.skippedFamilies.length!).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+      const contractSecDecision = result.voiPlanResult?.decisions.find((d) => d.evidenceFamily === 'CONTRACT_SECURITY');
+      expect(contractSecDecision?.completedAt).toBeDefined();
+      expect(contractSecDecision?.actualCost).toBeDefined();
+      expect(contractSecDecision?.actualDecisionChange).toBeDefined();
 
       // Check Skeptic execution result
       expect(result.skepticResult).toBeDefined();

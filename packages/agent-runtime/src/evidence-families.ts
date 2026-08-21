@@ -193,4 +193,21 @@ export class EvidenceFamilyRegistry {
   public findByTool(toolName: string): EvidenceFamilyDefinition[] {
     return this.list().filter((f) => f.tools.includes(toolName));
   }
+
+  public findByField(fieldName: string): EvidenceFamilyDefinition | undefined {
+    return this.list().find((f) => f.fieldsProduced.includes(fieldName));
+  }
+
+  public getFieldToFamilyMap(): Map<string, string> {
+    const map = new Map<string, string>();
+    for (const fam of this.list()) {
+      for (const field of fam.fieldsProduced) {
+        map.set(field, fam.familyId);
+      }
+      for (const tool of fam.tools) {
+        map.set(tool, fam.familyId);
+      }
+    }
+    return map;
+  }
 }

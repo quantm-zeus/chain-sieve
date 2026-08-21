@@ -240,7 +240,7 @@ export class VoiPlanner {
       .filter((d) => d.state === 'REQUESTED')
       .map((d) => d.evidenceFamily);
     const skippedFamilies = decisions
-      .filter((d) => d.state === 'NOT_REQUESTED_BY_POLICY')
+      .filter((d) => d.state !== 'REQUESTED')
       .map((d) => d.evidenceFamily);
 
     return {
@@ -391,11 +391,29 @@ export class VoiPlanner {
         }
       }
 
+      // Update actual cost
+      let decisionActualCost: CostMetrics = decision.estimatedCost;
+      if (actualCost) {
+        decisionActualCost = actualCost;
+      } else if (matchingToolRecords.length > 0 && family) {
+        decisionActualCost = {
+          monetaryCostUsd: Number((matchingToolRecords.length * family.monetaryCostUsd).toFixed(6)),
+          providerQuotaUnits: matchingToolRecords.length * family.providerQuotaCost,
+          modelContextTokens: matchingToolRecords.length * family.estimatedModelContextTokens,
+        };
+      } else if (decision.state !== 'REQUESTED') {
+        decisionActualCost = {
+          monetaryCostUsd: 0,
+          providerQuotaUnits: 0,
+          modelContextTokens: 0,
+        };
+      }
+
       return {
         ...decision,
         state: finalState,
         completedAt: now,
-        actualCost: actualCost ?? decision.estimatedCost,
+        actualCost: decisionActualCost,
         actualDecisionChange,
         evidenceIds: evidenceIds.length > 0 ? evidenceIds : decision.evidenceIds,
       };
@@ -448,6 +466,7 @@ export class VoiPlanner {
     const { featureValues, acquisitionDecisions, featureWeights, baselineCohortScores = {} } = params;
 
     const decisionByFamily = new Map(acquisitionDecisions.map((d) => [d.evidenceFamily, d]));
+    const fieldToFamilyMap = this.registry.getFieldToFamilyMap();
     const evaluatedFeatures: Record<
       string,
       {
@@ -467,15 +486,12 @@ export class VoiPlanner {
       const weight = featureWeights[featureKey] ?? 1.0;
       totalWeight += weight;
 
-      // Find matching decision
-      let acquisitionState = 'REQUESTED';
-      for (const [familyId, decision] of decisionByFamily.entries()) {
-        const fam = this.registry.get(familyId);
-        if (fam && (fam.fieldsProduced.includes(featureKey) || fam.tools.some((t) => featureKey.startsWith(t)))) {
-          acquisitionState = decision.state;
-          break;
-        }
-      }
+      // Find matching decision via explicit field/tool to family index
+      const familyId = fieldToFamilyMap.get(featureKey) ??
+        this.registry.findByField(featureKey)?.familyId ??
+        this.registry.findByTool(featureKey)[0]?.familyId;
+      const decision = familyId ? decisionByFamily.get(familyId) : undefined;
+      const acquisitionState = decision ? decision.state : 'REQUESTED';
 
       const isMissing = rawValue === null || rawValue === undefined;
       let imputedValue = 0.5; // neutral baseline default

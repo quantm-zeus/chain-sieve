@@ -244,35 +244,34 @@ export class ConditionalSkepticAgent {
     // 2. If not triggered, return auditable NOT_TRIGGERED artifact without burning tool budget
     if (!triggerEval.triggered) {
       const artifactId = `skeptic_${candidate.assetId}_${runId}_not_triggered`;
-      const notTriggeredArtifact: SkepticArtifact = {
+      const canonicalNotTriggeredData = {
         id: artifactId,
         parentDecisionId,
         candidateId: candidate.assetId,
         runId,
         policyVersion: triggerEval.policyVersion,
         triggered: false,
-        triggerReasons: [],
+        triggerReasons: [] as string[],
         triggerMetrics: triggerEval.triggerMetrics,
         profileId: profile.id,
         profileVersion: profile.version,
-        status: 'NOT_TRIGGERED',
-        verdict: 'CONFIRM',
-        confidence: 'HIGH',
-        challengeFindings: [],
+        status: 'NOT_TRIGGERED' as const,
+        verdict: 'CONFIRM' as const,
+        confidence: 'HIGH' as const,
+        challengeFindings: [] as string[],
         counterThesis: 'No conditional skeptic triggers satisfied; parent research thesis confirmed without adversarial challenge.',
         invalidationConditions: parentDecision.thesisInvalidationConditions,
         suggestedDecision: parentDecision.decision,
         suggestedRiskLevel: parentDecision.riskRecommendation,
         decisionChanged: false,
-        evidenceIds: [],
+        evidenceIds: [] as string[],
         executedToolRecords: [],
-        sha256: this.computeArtifactHash({
-          id: artifactId,
-          parentDecisionId,
-          triggered: false,
-          verdict: 'CONFIRM',
-        }),
         createdAt: asOf,
+      };
+
+      const notTriggeredArtifact: SkepticArtifact = {
+        ...canonicalNotTriggeredData,
+        sha256: this.computeArtifactHash(canonicalNotTriggeredData),
       };
 
       return {
@@ -392,7 +391,7 @@ export class ConditionalSkepticAgent {
       ? 'VETO'
       : isChallenged
         ? 'CHALLENGE'
-        : toolRecords.length === 0 && !budgetExceeded
+        : toolRecords.length === 0 || budgetExceeded
           ? 'INSUFFICIENT_EVIDENCE'
           : 'CONFIRM';
 
@@ -416,7 +415,11 @@ export class ConditionalSkepticAgent {
       ? `Adversarial skeptic veto: Critical failure hazards or security vulnerabilities identified (${challengeFindings.join('; ')})`
       : isChallenged
         ? `Adversarial skeptic challenge: High-risk latent vulnerabilities or conflicting signals detected (${challengeFindings.join('; ')})`
-        : 'Adversarial skeptic evaluation verified security invariants without finding fatal counter-evidence.';
+        : verdict === 'INSUFFICIENT_EVIDENCE'
+          ? (budgetExceeded
+            ? 'Adversarial skeptic budget exceeded before completing verification; insufficient evidence for confirmation.'
+            : 'Adversarial skeptic had no authorized tools to execute; insufficient evidence.')
+          : 'Adversarial skeptic evaluation verified security invariants without finding fatal counter-evidence.';
 
     const status: SkepticArtifact['status'] = budgetExceeded
       ? 'BUDGET_EXCEEDED'
@@ -436,7 +439,7 @@ export class ConditionalSkepticAgent {
       profileVersion: profile.version,
       status,
       verdict,
-      confidence: (isVetoed || verdict === 'CONFIRM' ? 'HIGH' : 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
+      confidence: (isVetoed || verdict === 'CONFIRM' ? 'HIGH' : verdict === 'INSUFFICIENT_EVIDENCE' ? 'LOW' : 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
       challengeFindings,
       counterThesis,
       invalidationConditions: [

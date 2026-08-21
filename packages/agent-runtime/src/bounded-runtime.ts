@@ -217,6 +217,30 @@ export class BoundedAgentRuntime {
       ...(options.initialEvidence ?? {}),
     };
 
+    // Synthesize baseline decision prior to evidence acquisition
+    const baselineDecision = this.synthesizeDecision(
+      candidate,
+      profile,
+      accumulatedEvidence,
+      [],
+    );
+
+    // Pre-execution VOI planning: evaluate EVOI and establish per-family acquisition plan
+    let initialVoiPlan: VoiPlanResult | undefined;
+    let voiPlanner: VoiPlanner | undefined;
+    if (options.enableVoi) {
+      voiPlanner = new VoiPlanner(options.voiPolicy);
+      initialVoiPlan = voiPlanner.planAcquisitions({
+        candidate,
+        runId: plan.planId,
+        envelope,
+        budget,
+        profile,
+        currentCandidateScore: options.candidateScore,
+        knownEvidence: accumulatedEvidence,
+      });
+    }
+
     // 5. Bounded tool execution loop
     for (const step of plan.steps) {
       if (signal?.aborted) {
@@ -343,8 +367,10 @@ export class BoundedAgentRuntime {
 
     let voiPlanResult: VoiPlanResult | undefined;
     if (options.enableVoi) {
-      const voiPlanner = new VoiPlanner(options.voiPolicy);
-      const initialPlan = voiPlanner.planAcquisitions({
+      if (!voiPlanner) {
+        voiPlanner = new VoiPlanner(options.voiPolicy);
+      }
+      const planToReconcile = initialVoiPlan ?? voiPlanner.planAcquisitions({
         candidate,
         runId: plan.planId,
         envelope,
@@ -353,12 +379,23 @@ export class BoundedAgentRuntime {
         currentCandidateScore: options.candidateScore,
         knownEvidence: accumulatedEvidence,
       });
-      initialPlan.decisions = voiPlanner.reconcileDecisions({
-        decisions: initialPlan.decisions,
+
+      const actualCostSnapshot = tracker.getSnapshot();
+      const actualCost = {
+        monetaryCostUsd: Number(actualCostSnapshot.monetaryCostUsd.toFixed(6)),
+        providerQuotaUnits: actualCostSnapshot.providerCostUnits,
+        modelContextTokens: actualCostSnapshot.inputTokens + actualCostSnapshot.outputTokens,
+      };
+
+      planToReconcile.decisions = voiPlanner.reconcileDecisions({
+        decisions: planToReconcile.decisions,
         toolRecords,
+        previousDecision: baselineDecision,
         finalDecision: decision,
+        actualCost,
+        completedAt: new Date().toISOString(),
       });
-      voiPlanResult = initialPlan;
+      voiPlanResult = planToReconcile;
     }
 
     let skepticResult: SkepticExecutionResult | undefined;
