@@ -254,3 +254,98 @@ Required Remediation Actions:
 Create new additive correction commit(s) with focused test coverage and normal push. Do not amend, rebase, or force-push.
 """.strip()
 
+
+def build_closure_review_prompt(
+    milestone: Milestone,
+    package: WorkPackage,
+    pr_number: int,
+    head_sha: str,
+    baseline_head: str,
+    baseline_context_digest: str,
+    frozen_findings: Sequence[dict[str, Any]],
+    review_mode: str = "CLOSURE_VERIFY",
+) -> str:
+    open_findings = [f for f in frozen_findings if f.get("status") in {"OPEN", "REGRESSION"} and f.get("blocking", True)]
+    resolved_findings = [f for f in frozen_findings if f.get("status") == "RESOLVED"]
+    follow_ups = [f for f in frozen_findings if f.get("status") == "FOLLOW_UP" or not f.get("blocking", True)]
+
+    open_lines = "\n".join(
+        f"- FINDING {f.get('fingerprint')}: [{f.get('requirement_id') or 'GENERAL'}] ({f.get('file_or_component', 'general')}) {f.get('normalized_summary')}"
+        for f in open_findings
+    ) if open_findings else "None (all baseline blockers previously marked resolved)"
+
+    resolved_lines = "\n".join(
+        f"- FINDING {f.get('fingerprint')}: [{f.get('requirement_id') or 'GENERAL'}] {f.get('normalized_summary')}"
+        for f in resolved_findings
+    ) if resolved_findings else "None"
+
+    follow_up_lines = "\n".join(
+        f"- [{f.get('requirement_id') or 'GENERAL'}] {f.get('normalized_summary')}"
+        for f in follow_ups
+    ) if follow_ups else "None"
+
+    return f"""REVIEW MODE: {review_mode}
+
+Work package: {package.id}
+Milestone: {milestone.id}
+PR: #{pr_number}
+Target reviewed head: {head_sha}
+Baseline head: {baseline_head}
+Baseline context digest: {baseline_context_digest}
+
+=== FROZEN BLOCKER LEDGER ===
+OPEN BLOCKERS TO VERIFY:
+{open_lines}
+
+ALREADY RESOLVED FINDINGS:
+{resolved_lines}
+
+NON-BLOCKING FOLLOW-UPS:
+{follow_up_lines}
+
+=== REVIEW INSTRUCTIONS ===
+1. Verify each OPEN blocking finding in the frozen ledger. State explicitly whether each is RESOLVED or OPEN with evidence.
+2. Confirm RESOLVED findings remain resolved where affected by current delta.
+3. Inspect ONLY the correction delta plus directly affected dependency/invariant surfaces for regressions.
+4. DO NOT restart a full architecture audit of the entire PR.
+5. DO NOT reopen resolved findings without regression evidence.
+6. DO NOT promote pre-existing non-critical late discoveries to blockers.
+7. Any pre-existing medium/minor observation discovered late MUST be classified as NON_BLOCKING_FOLLOW_UP.
+8. Only a demonstrable CORRECTION_REGRESSION or a CRITICAL_LATE_BLOCKER (security vulnerability, data corruption, direct AC violation) may block closure.
+""".strip()
+
+
+def build_focused_worker_correction_prompt(
+    reviewer: str,
+    pr_number: int,
+    head_sha: str,
+    open_findings: Sequence[dict[str, Any]],
+    review_reason: str,
+) -> str:
+    if not open_findings:
+        return f"The independent {reviewer} review rejected PR #{pr_number} at {head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history."
+
+    finding_items = []
+    for f in open_findings:
+        fp = f.get("fingerprint", "")
+        req = f.get("requirement_id") or "GENERAL"
+        comp = f.get("file_or_component") or "general"
+        summary = f.get("normalized_summary") or f.get("summary") or ""
+        finding_items.append(f"- [{fp}] [{req}] ({comp}): {summary}")
+
+    findings_text = "\n".join(finding_items)
+    return f"""The independent {reviewer} review on PR #{pr_number} at {head_sha} requested changes for the following specific OPEN blockers:
+
+{findings_text}
+
+Summary: {review_reason}
+
+Instructions:
+1. Implement focused corrections specifically addressing each open blocker listed above.
+2. Add the smallest necessary regression tests to prove each fix.
+3. Do not rewrite unrelated subsystems.
+4. Create new additive correction commit(s) and normal push.
+5. Do not amend, rebase, or force-push the existing reviewed history.
+""".strip()
+
+

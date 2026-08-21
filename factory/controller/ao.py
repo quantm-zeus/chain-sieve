@@ -8,6 +8,15 @@ from pathlib import Path
 from typing import Any
 
 from .commands import CommandRunner
+from .findings import (
+    FindingSeverity,
+    FindingStatus,
+    ReviewFinding,
+    ReviewMode,
+    is_critical_late_blocker,
+    is_non_blocking_follow_up,
+    parse_and_reconcile_review,
+)
 from .models import Session
 from .review_context import proof_markers
 
@@ -95,7 +104,6 @@ class AgentOrchestrator:
             check=False,
         )
 
-
     def trigger_review(self, session_id: str, reviewer: str) -> None:
         self._request("PUT", f"sessions/{session_id}/reviewer", {"harness": reviewer})
         try:
@@ -148,6 +156,8 @@ def review_gate(
     head_sha: str,
     required_reviewer: str | None = None,
     expected_context_digest: str | None = None,
+    review_mode: str = ReviewMode.FULL_BASELINE.value,
+    frozen_findings: list[dict[str, Any]] | None = None,
 ) -> tuple[bool, str, str | None, str | None]:
     reviews = raw.get("reviews") or raw.get("data") or []
     runs: list[dict[str, Any]] = []
@@ -167,21 +177,34 @@ def review_gate(
     status = str(latest.get("status", "")).lower()
     raw_verdict = str(latest.get("verdict", "")).lower()
     reviewer = str(latest.get("harness", "")) or None
-    # Pinned AO v0.12.3 serializes ReviewRunComplete as "complete" and
-    # ReviewRunDelivered as "delivered". Retain "completed" for compatible
-    # external/future evidence, but never require delivery: approved reviews
-    # ordinarily remain complete because only change requests are auto-injected.
+    run_id = str(latest.get("id") or latest.get("reviewId") or "")
+
     if status not in {"complete", "completed", "delivered"}:
         return False, f"machine review is {status or 'pending'}", reviewer, raw_verdict or None
 
     body_str = str(latest.get("body", ""))
     payload = _parse_review_payload(body_str)
-    blocking_findings: list[dict[str, Any]] = []
+
+    frozen_objs = [ReviewFinding.from_dict(f) for f in (frozen_findings or [])]
+    updated_ledger, blocking_reasons = parse_and_reconcile_review(
+        body_str,
+        payload,
+        head_sha,
+        run_id,
+        review_mode,
+        frozen_objs,
+    )
+
+    open_blockers = [
+        f for f in updated_ledger
+        if f.blocking and f.status in {FindingStatus.OPEN.value, FindingStatus.REGRESSION.value}
+    ]
+
+    blocking_findings = []
     if payload:
         if "blockingFindings" in payload and isinstance(payload["blockingFindings"], list):
             blocking_findings = [f for f in payload["blockingFindings"] if isinstance(f, dict)]
         elif "findings" in payload and isinstance(payload["findings"], list):
-            # Legacy findings field: check if findings are blocking
             for finding in payload["findings"]:
                 if isinstance(finding, dict):
                     severity = str(finding.get("severity", "")).upper()
@@ -191,30 +214,41 @@ def review_gate(
                     ):
                         blocking_findings.append(finding)
 
-    # If payload explicitly provides verdict and blockingFindings
-    if payload and "blockingFindings" in payload:
-        if len(blocking_findings) == 0:
-            effective_verdict = "approved"
-        else:
-            effective_verdict = "changes_requested"
-    elif raw_verdict in {"approved", "pass"}:
-        if len(blocking_findings) == 0:
-            effective_verdict = "approved"
-        else:
-            effective_verdict = "changes_requested"
-    elif raw_verdict in {"changes_requested", "findings"}:
-        if payload and "blockingFindings" in payload and len(blocking_findings) == 0:
-            effective_verdict = "approved"
+    if review_mode in {ReviewMode.CLOSURE_VERIFY.value, ReviewMode.FINAL_CONFIRMATION.value} and frozen_findings:
+        if len(open_blockers) == 0:
+            if raw_verdict in {"approved", "pass"} or (payload and payload.get("verdict") in {"approved", "pass"}):
+                effective_verdict = "approved"
+            elif raw_verdict in {"commented", "missing"}:
+                effective_verdict = raw_verdict or "missing"
+            else:
+                effective_verdict = "approved"
         else:
             effective_verdict = "changes_requested"
     else:
-        effective_verdict = raw_verdict or "missing"
+        # Standard FULL_BASELINE mode
+        if payload and "blockingFindings" in payload:
+            if len(blocking_findings) == 0:
+                effective_verdict = "approved"
+            else:
+                effective_verdict = "changes_requested"
+        elif raw_verdict in {"approved", "pass"}:
+            if len(blocking_findings) == 0 and len(open_blockers) == 0:
+                effective_verdict = "approved"
+            else:
+                effective_verdict = "changes_requested"
+        elif raw_verdict in {"changes_requested", "findings"}:
+            if payload and "blockingFindings" in payload and len(blocking_findings) == 0:
+                effective_verdict = "approved"
+            else:
+                effective_verdict = "changes_requested"
+        else:
+            effective_verdict = raw_verdict or "missing"
 
     if effective_verdict not in {"approved", "pass"}:
-        if blocking_findings:
+        if open_blockers:
             findings_summary = "; ".join(
-                f"{f.get('file', 'general')}: {f.get('issue', f.get('severity', 'blocking finding'))}"
-                for f in blocking_findings[:3]
+                f"{f.file_or_component}: {f.normalized_summary}"
+                for f in open_blockers[:3]
             )
             return False, f"machine review reported blocking findings: {findings_summary}", reviewer, "changes_requested"
         return False, f"machine review verdict is {effective_verdict or 'missing'}", reviewer, effective_verdict or None
@@ -223,7 +257,7 @@ def review_gate(
         markers = proof_markers(body_str)
         if len(markers) != 1:
             return False, "machine review is missing one exact semantic context digest", reviewer, effective_verdict
-        if markers[0] != expected_context_digest:
+        valid_digests = {expected_context_digest} if isinstance(expected_context_digest, str) else set(expected_context_digest)
+        if markers[0] not in valid_digests:
             return False, "machine review semantic context digest is stale or belongs to another work package", reviewer, effective_verdict
     return True, "machine review passes current head", reviewer, "approved"
-

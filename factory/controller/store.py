@@ -157,7 +157,22 @@ class StateStore:
             finally:
                 temporary.unlink(missing_ok=True)
 
-    def write_review_context(self, milestone_id: str, package: Any, head_sha: str) -> Path:
+    def write_review_context(
+        self,
+        milestone_id: str,
+        package: Any,
+        head_sha: str,
+        *,
+        review_mode: str = "FULL_BASELINE",
+        baseline_id: str | None = None,
+        baseline_head: str | None = None,
+        baseline_context_digest: str | None = None,
+        frozen_findings: Sequence[dict[str, Any]] | None = None,
+        previous_reviewed_head: str | None = None,
+        pr_number: int | None = None,
+        implementation_provider: str | None = None,
+        reviewer_provider: str | None = None,
+    ) -> Path:
         if len(head_sha) != 40 or any(character not in "0123456789abcdefABCDEF" for character in head_sha):
             raise ValueError("review context requires a 40-character hexadecimal PR head SHA")
         head_sha = head_sha.lower()
@@ -175,6 +190,15 @@ class StateStore:
                 "docs/spec/crypto_intelligence_agent_gateway_PRD_FINAL_v6.0.requirements.json",
                 "specs/factory/current-milestone.json",
             ),
+            review_mode=review_mode,
+            baseline_id=baseline_id,
+            baseline_head=baseline_head,
+            baseline_context_digest=baseline_context_digest,
+            frozen_findings=frozen_findings,
+            previous_reviewed_head=previous_reviewed_head,
+            pr_number=pr_number,
+            implementation_provider=implementation_provider,
+            reviewer_provider=reviewer_provider,
         )
         descriptor, name = tempfile.mkstemp(prefix=".review-context.", dir=directory)
         temporary = Path(name)

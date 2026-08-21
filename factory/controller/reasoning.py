@@ -1975,6 +1975,136 @@ def reconcile_durable_state(
         metadata["stateMigrationVersion"] = 2
         cleaned = True
 
+    # Version 3: Semantic review closure protocol & PR #156 historical reconciliation (§20)
+    if migration_version < 3:
+        migrated_v3 = False
+        for key, record in list(records.items()):
+            if key == "g3-model-assisted-research--skeptic-voi-planner" and record.pr_number == 156:
+                from .findings import (
+                    FindingSeverity,
+                    FindingStatus,
+                    ReviewFinding,
+                    ReviewMode,
+                    generate_finding_fingerprint,
+                )
+
+                baseline_sha = "7013e9c82e07c39b58cb2c3f367a11e084260d90"
+                baseline_digest = "15f5f864ea6f15f7fd70e967a8c7e8214d08f845f08661fba6e13e291f55b53f"
+                baseline_run_id = "addae250-2b39-4bc1-9cf6-eccbef75dce6"
+
+                reconciled_findings = [
+                    ReviewFinding(
+                        fingerprint=generate_finding_fingerprint(
+                            "FR-AGT-005", "runtime-store.ts",
+                            "isolate persistence errors in runtime-store for skeptic artifact",
+                        ),
+                        requirement_id="FR-AGT-005",
+                        severity=FindingSeverity.HIGH.value,
+                        category="CORRECTNESS",
+                        file_or_component="runtime-store.ts",
+                        normalized_summary="isolate persistence errors in runtime-store for skeptic artifact",
+                        blocking=True,
+                        status=FindingStatus.OPEN.value,
+                        first_seen_head=baseline_sha,
+                        last_verified_head=baseline_sha,
+                        source_review_run_id=baseline_run_id,
+                    ),
+                    ReviewFinding(
+                        fingerprint=generate_finding_fingerprint(
+                            "FR-AGT-005", "bounded-runtime.ts",
+                            "preserve real trigger context in fallback skeptic artifact",
+                        ),
+                        requirement_id="FR-AGT-005",
+                        severity=FindingSeverity.HIGH.value,
+                        category="CORRECTNESS",
+                        file_or_component="bounded-runtime.ts",
+                        normalized_summary="preserve real trigger context in fallback skeptic artifact",
+                        blocking=True,
+                        status=FindingStatus.OPEN.value,
+                        first_seen_head=baseline_sha,
+                        last_verified_head=baseline_sha,
+                        source_review_run_id=baseline_run_id,
+                    ),
+                    ReviewFinding(
+                        fingerprint=generate_finding_fingerprint(
+                            "FR-AGT-009", "voi-planner.ts",
+                            "filter voi plan totals to requested families and prioritize acquisition order",
+                        ),
+                        requirement_id="FR-AGT-009",
+                        severity=FindingSeverity.MEDIUM.value,
+                        category="CORRECTNESS",
+                        file_or_component="voi-planner.ts",
+                        normalized_summary="filter voi plan totals to requested families and prioritize acquisition order",
+                        blocking=True,
+                        status=FindingStatus.RESOLVED.value,
+                        first_seen_head="220a0b179efb6050425fc6df3eb42b320686300c",
+                        last_verified_head=baseline_sha,
+                        source_review_run_id=baseline_run_id,
+                        resolution_evidence="Verified resolved in commit 220a0b1 / 7013e9c",
+                    ),
+                    ReviewFinding(
+                        fingerprint=generate_finding_fingerprint(
+                            "FR-AGT-005", "runtime-store.ts",
+                            "expand skeptic artifact upsert columns and ensure persistence idempotency",
+                        ),
+                        requirement_id="FR-AGT-005",
+                        severity=FindingSeverity.MEDIUM.value,
+                        category="CORRECTNESS",
+                        file_or_component="runtime-store.ts",
+                        normalized_summary="expand skeptic artifact upsert columns and ensure persistence idempotency",
+                        blocking=True,
+                        status=FindingStatus.RESOLVED.value,
+                        first_seen_head="deddcabe7e6ca90abb969979b0ed90073809b340",
+                        last_verified_head=baseline_sha,
+                        source_review_run_id=baseline_run_id,
+                        resolution_evidence="Verified resolved in commit deddcab / 7013e9c",
+                    ),
+                    ReviewFinding(
+                        fingerprint=generate_finding_fingerprint(
+                            "AC-242", "skeptic-voi-planner.spec.ts",
+                            "full AC-242/243/244 acceptance suites remain PLANNED per requirements.json and can be added in conformance pass",
+                        ),
+                        requirement_id="AC-242",
+                        severity=FindingSeverity.INFORMATIONAL.value,
+                        category="CONFORMANCE",
+                        file_or_component="skeptic-voi-planner.spec.ts",
+                        normalized_summary="full AC-242/243/244 acceptance suites planned for conformance pass",
+                        blocking=False,
+                        status=FindingStatus.FOLLOW_UP.value,
+                        first_seen_head=baseline_sha,
+                        last_verified_head=baseline_sha,
+                        source_review_run_id=baseline_run_id,
+                    ),
+                ]
+
+                record.review_baseline_id = baseline_run_id
+                record.review_baseline_head = baseline_sha
+                record.review_baseline_context_digest = baseline_digest
+                record.review_mode = ReviewMode.CLOSURE_VERIFY.value
+                record.review_findings = [f.to_dict() for f in reconciled_findings]
+
+                open_fps = [f.fingerprint for f in reconciled_findings if f.blocking and f.status == FindingStatus.OPEN.value]
+                resolved_fps = [f.fingerprint for f in reconciled_findings if f.status == FindingStatus.RESOLVED.value]
+                followup_fps = [f.fingerprint for f in reconciled_findings if f.status == FindingStatus.FOLLOW_UP.value]
+
+                store.event(
+                    "LEGACY_REVIEW_HISTORY_RECONCILED",
+                    workKey=key,
+                    pr=record.pr_number,
+                    headSha=record.head_sha or baseline_sha,
+                    baselineReviewRunId=baseline_run_id,
+                    baselineDigest=baseline_digest,
+                    openFindingFingerprints=open_fps,
+                    resolvedFindingFingerprints=resolved_fps,
+                    followUpFingerprints=followup_fps,
+                    reviewMode=ReviewMode.CLOSURE_VERIFY.value,
+                )
+                migrated_v3 = True
+
+        if migrated_v3 or (active_milestone and active_milestone.id == "g3-model-assisted-research" and any(r.pr_number == 156 for r in records.values())):
+            metadata["stateMigrationVersion"] = 3
+            cleaned = True
+
     # Generic durable reconciliation: remove ONLY records whose remediation was deterministically invalidated
     for key, record in list(records.items()):
         if key in purged_remediation_keys:
