@@ -813,7 +813,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       const parentDecisionId = `dec_${sampleCandidate.assetId}_${result.plan.planId}`;
       const artifactsByParent = await repository.getSkepticArtifactsByParentDecision(parentDecisionId);
       expect(artifactsByParent.length).toBe(1);
-      expect(artifactsByParent[0].id).toBe(result.skepticResult?.artifact.id);
+      expect(artifactsByParent[0]?.id).toBe(result.skepticResult?.artifact.id);
     });
 
     it('handles AC-243 randomized probe stratum matching eligibility stratum and metadata', () => {

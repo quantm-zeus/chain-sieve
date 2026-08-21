@@ -337,7 +337,7 @@ export class ConditionalSkepticAgent {
         decisionChanged: false,
         evidenceIds: [] as string[],
         executedToolRecords: [],
-        budgetUsage: tracker.getSnapshot(),
+        budgetUsage: tracker.getSnapshot() as unknown as Record<string, unknown>,
         createdAt: asOf,
       };
 

@@ -157,6 +157,7 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
     const decisions = await this.getVoiDecisions(runId);
     if (decisions.length === 0) return null;
     const first = decisions[0];
+    if (!first) return null;
     const requestedFamilies = decisions.filter((d) => d.state === 'REQUESTED').map((d) => d.evidenceFamily);
     const skippedFamilies = decisions.filter((d) => d.state !== 'REQUESTED').map((d) => d.evidenceFamily);
     const totalCost = decisions.reduce((acc, d) => acc + (d.estimatedCost?.monetaryCostUsd ?? 0), 0);
@@ -181,7 +182,9 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
       [runId],
     );
     if (result.rowCount === 0) return null;
-    return this.mapSkepticRow(result.rows[0]);
+    const row = result.rows[0];
+    if (!row) return null;
+    return this.mapSkepticRow(row);
   }
 
   public async getSkepticArtifactsByParentDecision(parentDecisionId: string): Promise<SkepticArtifact[]> {
