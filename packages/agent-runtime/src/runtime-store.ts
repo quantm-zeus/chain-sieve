@@ -216,7 +216,9 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
       totalEstimatedCostUsd: totalCost,
       totalEstimatedQuotaUnits: totalQuota,
       totalQuotaUnits: totalQuota,
+      plannedAt: first.decidedAt,
       plan: {
+
         planId: runId,
         candidateId: first.candidateId,
         profileId: 'default',
