@@ -18,6 +18,7 @@
     "maxIntegrationCorrections": 2,
     "maxCiInfraRetries": 2,
     "maxReviewCycles": 2,
+    "maxAutonomousRecoveryEpochs": 3,
     "maxFinalAuditCycles": 3,
     "maxConvergencePasses": 3,
     "maxTaskWallClockSeconds": 14400,

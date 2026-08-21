@@ -159,6 +159,36 @@ def review_dispatch_key(
     return f"{work_key_str}:{pr_number}:{head_sha.lower()}:{reviewer.lower()}:{context_digest.lower()}"
 
 
+class BlockerClass(StrEnum):
+    HUMAN_REQUIRED_CREDENTIAL = "HUMAN_REQUIRED_CREDENTIAL"
+    HUMAN_REQUIRED_PERMISSION = "HUMAN_REQUIRED_PERMISSION"
+    HUMAN_REQUIRED_SPEC_CONFLICT = "HUMAN_REQUIRED_SPEC_CONFLICT"
+    HUMAN_REQUIRED_DESTRUCTIVE_ACTION = "HUMAN_REQUIRED_DESTRUCTIVE_ACTION"
+    AUTONOMOUS_RECOVERY_EXHAUSTED = "AUTONOMOUS_RECOVERY_EXHAUSTED"
+    EXTERNAL_INFRASTRUCTURE_EXHAUSTED = "EXTERNAL_INFRASTRUCTURE_EXHAUSTED"
+    DOMAIN_BUDGET_EXHAUSTED = "DOMAIN_BUDGET_EXHAUSTED"
+    GENERIC_BLOCKED = "GENERIC_BLOCKED"
+
+
+def classify_blocker(reason: str) -> str:
+    r = (reason or "").lower()
+    if any(k in r for k in ("credential", "missing secret", "missing token", "gh_token", "github_token", "auth header", "login required")):
+        return BlockerClass.HUMAN_REQUIRED_CREDENTIAL.value
+    if any(k in r for k in ("permission", "unauthorized protected-path", "push denied", "write access forbidden", "protected-path changes")):
+        return BlockerClass.HUMAN_REQUIRED_PERMISSION.value
+    if any(k in r for k in ("architecture contradiction", "contradiction", "irreconcilable", "spec conflict", "spec contradiction", "specification conflict", "normative conflict")):
+        return BlockerClass.HUMAN_REQUIRED_SPEC_CONFLICT.value
+    if any(k in r for k in ("destructive", "delete repo", "drop table", "purge production", "destructive external action", "destructive action", "force wipe")):
+        return BlockerClass.HUMAN_REQUIRED_DESTRUCTIVE_ACTION.value
+    if any(k in r for k in ("autonomous recovery exhausted", "recovery epochs exhausted", "max recovery epochs", "replan calls exhausted", "replan budget exhausted", "escalation loop", "no-progress", "no progress")):
+        return BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value
+    if any(k in r for k in ("external service", "network unreachable", "github outage", "dns failure", "external infrastructure", "500 error", "api 500")):
+        return BlockerClass.EXTERNAL_INFRASTRUCTURE_EXHAUSTED.value
+    if "budget exhausted" in r:
+        return BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value
+    return BlockerClass.GENERIC_BLOCKED.value
+
+
 @dataclass
 class PackageRecord:
     status: PackageStatus = PackageStatus.PLANNED
@@ -187,6 +217,7 @@ class PackageRecord:
     ci_infra_retry_authorized_from_sha: str | None = None
     review_attempts: int = 0
     review_corrections_used: int = 0
+    review_corrections_used_in_epoch: int = 0
     review_correction_authorized_from_sha: str | None = None
     review_terminal_rejection_sha: str | None = None
     review_sha: str | None = None
@@ -203,6 +234,13 @@ class PackageRecord:
     review_dispatch_trigger_attempts: int = 0
     review_dispatch_last_attempt_at: str | None = None
     replan_attempted: bool = False
+    recovery_epoch: int = 0
+    replan_cycles_used: int = 0
+    recovery_epoch_started_from_sha: str | None = None
+    recovery_epoch_reason: str | None = None
+    recovery_epoch_plan_digest: str | None = None
+    no_progress_epochs: int = 0
+    blocker_class: str | None = None
     blocked_reason: str | None = None
     last_error: str | None = None
     started_at: str | None = None
@@ -221,6 +259,10 @@ class PackageRecord:
             + self.liveness_remediations_used
             + self.integration_corrections_used
         )
+        if self.replan_cycles_used > 0:
+            self.replan_attempted = True
+        if self.recovery_epoch == 0 and self.review_corrections_used_in_epoch == 0 and self.review_corrections_used > 0:
+            self.review_corrections_used_in_epoch = self.review_corrections_used
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "PackageRecord":
@@ -260,6 +302,7 @@ class PackageRecord:
             "ci_infra_retry_authorized_from_sha": self.ci_infra_retry_authorized_from_sha,
             "review_attempts": self.review_attempts,
             "review_corrections_used": self.review_corrections_used,
+            "review_corrections_used_in_epoch": self.review_corrections_used_in_epoch,
             "review_correction_authorized_from_sha": self.review_correction_authorized_from_sha,
             "review_terminal_rejection_sha": self.review_terminal_rejection_sha,
             "review_sha": self.review_sha,
@@ -276,6 +319,13 @@ class PackageRecord:
             "review_dispatch_trigger_attempts": self.review_dispatch_trigger_attempts,
             "review_dispatch_last_attempt_at": self.review_dispatch_last_attempt_at,
             "replan_attempted": self.replan_attempted,
+            "recovery_epoch": self.recovery_epoch,
+            "replan_cycles_used": self.replan_cycles_used,
+            "recovery_epoch_started_from_sha": self.recovery_epoch_started_from_sha,
+            "recovery_epoch_reason": self.recovery_epoch_reason,
+            "recovery_epoch_plan_digest": self.recovery_epoch_plan_digest,
+            "no_progress_epochs": self.no_progress_epochs,
+            "blocker_class": self.blocker_class,
             "blocked_reason": self.blocked_reason,
             "last_error": self.last_error,
             "started_at": self.started_at,

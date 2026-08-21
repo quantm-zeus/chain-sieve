@@ -1190,8 +1190,17 @@ Produce a complete, valid milestone plan for `{target['id']}` matching the schem
         output_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
         return value
 
-    def replan(self, milestone: Milestone, failed: WorkPackage, evidence: str) -> dict[str, Any]:
-        prompt = f"""You are the bounded ChainSieve deadlock replanner.
+    def replan(
+        self,
+        milestone: Milestone,
+        failed: WorkPackage,
+        evidence: str,
+        custom_prompt: str | None = None,
+    ) -> dict[str, Any]:
+        if custom_prompt:
+            prompt = custom_prompt
+        else:
+            prompt = f"""You are the bounded ChainSieve deadlock replanner.
 
 Milestone `{milestone.id}` has exhausted safe implementation-provider handling for work package `{failed.id}`.
 Evidence: {evidence}
@@ -1223,21 +1232,25 @@ authorize immutable factory/control-plane paths. Do not modify files.
         value = json.loads(output_path.read_text(encoding="utf-8"))
         if value.get("status") == "ARCHITECTURE_CONTRADICTION":
             return value
-        if value.get("status") != "REPLANNED" or not isinstance(value.get("plan"), dict):
-            raise RuntimeError(f"Codex {role} returned no deterministic plan")
-        planned = Milestone.from_dict(value["plan"])
-        if planned.id != milestone.id:
-            raise RuntimeError(f"Codex {role} changed milestone identity")
-        if failed.id in {item.id for item in planned.packages}:
-            raise RuntimeError(f"Codex {role} reused exhausted work-package ID {failed.id!r}")
-        _validate_requirement_ids(self.root, planned)
-        active_path = self.config.state_dir / "active-milestone.json"
-        temporary = active_path.with_suffix(".json.tmp")
-        temporary.write_text(json.dumps(value["plan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        temporary.chmod(0o640)
-        temporary.replace(active_path)
-        _write_planning_bundle(self.config.state_dir, planned)
-        return value
+        if value.get("recoveryPlan") and isinstance(value["recoveryPlan"], dict):
+            return value
+        if value.get("status") in {"REPLANNED", "RECOVERY_PLAN"} and isinstance(value.get("plan"), dict):
+            planned = Milestone.from_dict(value["plan"])
+            if planned.id != milestone.id:
+                raise RuntimeError(f"Codex {role} changed milestone identity")
+            if failed.id in {item.id for item in planned.packages}:
+                raise RuntimeError(f"Codex {role} reused exhausted work-package ID {failed.id!r}")
+            _validate_requirement_ids(self.root, planned)
+            active_path = self.config.state_dir / "active-milestone.json"
+            temporary = active_path.with_suffix(".json.tmp")
+            temporary.write_text(json.dumps(value["plan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            temporary.chmod(0o640)
+            temporary.replace(active_path)
+            _write_planning_bundle(self.config.state_dir, planned)
+            return value
+        if value.get("status") in {"REPLANNED", "RECOVERY_PLAN"}:
+            return value
+        raise RuntimeError(f"Codex {role} returned no deterministic plan")
 
     def _codex_budget(self, milestone_id: str, role: str) -> tuple[dict[str, Any], int]:
         usage = self._usage()

@@ -5,13 +5,25 @@
   "additionalProperties": false,
   "required": ["status", "reason", "plan"],
   "properties": {
-    "status": {"type": "string", "enum": ["REPLANNED", "ARCHITECTURE_CONTRADICTION"]},
+    "status": {"type": "string", "enum": ["REPLANNED", "ARCHITECTURE_CONTRADICTION", "RECOVERY_PLAN"]},
     "reason": {"type": "string", "minLength": 1},
     "plan": {
       "oneOf": [
         {"type": "null"},
         {"$ref": "#/$defs/milestonePlan"}
       ]
+    },
+    "recoveryPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "remediationActions", "affectedFiles"],
+      "properties": {
+        "strategy": {"type": "string", "minLength": 1},
+        "remediationActions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "affectedFiles": {"type": "array", "items": {"type": "string"}},
+        "recommendedProvider": {"type": "string", "enum": ["muse", "agy"]},
+        "repairPrompt": {"type": "string"}
+      }
     }
   },
   "$defs": {

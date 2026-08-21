@@ -58,6 +58,8 @@ class FactoryConfig:
     _max_session_restores: int | None = None
     _max_integration_corrections: int | None = None
     _max_ci_infra_retries: int | None = None
+    _max_autonomous_recovery_epochs: int | None = None
+    _max_replan_cycles_per_package: int | None = None
     reasoning_timeout_seconds: int = 300
     muse_model: str = "muse-spark-1.2-contributor"
     muse_explicit_model: str | None = None
@@ -90,6 +92,18 @@ class FactoryConfig:
     def max_ci_infra_retries(self) -> int:
         return self._max_ci_infra_retries if self._max_ci_infra_retries is not None else self.max_correction_attempts
 
+    @property
+    def max_autonomous_recovery_epochs(self) -> int:
+        return self._max_autonomous_recovery_epochs if self._max_autonomous_recovery_epochs is not None else 3
+
+    @property
+    def max_replan_cycles_per_package(self) -> int:
+        return (
+            self._max_replan_cycles_per_package
+            if self._max_replan_cycles_per_package is not None
+            else self.max_autonomous_recovery_epochs
+        )
+
     @classmethod
     def load(cls, root: Path, path: Path) -> "FactoryConfig":
         raw = json.loads(path.read_text(encoding="utf-8"))
@@ -114,6 +128,16 @@ class FactoryConfig:
             _max_session_restores=int(budgets["maxSessionRestores"]) if "maxSessionRestores" in budgets else None,
             _max_integration_corrections=int(budgets["maxIntegrationCorrections"]) if "maxIntegrationCorrections" in budgets else None,
             _max_ci_infra_retries=int(budgets["maxCiInfraRetries"]) if "maxCiInfraRetries" in budgets else None,
+            _max_autonomous_recovery_epochs=(
+                int(budgets["maxAutonomousRecoveryEpochs"])
+                if "maxAutonomousRecoveryEpochs" in budgets
+                else (int(budgets["maxReplanCyclesPerPackage"]) if "maxReplanCyclesPerPackage" in budgets else None)
+            ),
+            _max_replan_cycles_per_package=(
+                int(budgets["maxReplanCyclesPerPackage"])
+                if "maxReplanCyclesPerPackage" in budgets
+                else None
+            ),
             max_review_cycles=int(budgets["maxReviewCycles"]),
             max_final_audit_cycles=int(budgets.get("maxFinalAuditCycles", 3)),
             max_convergence_passes=int(budgets["maxConvergencePasses"]),
@@ -172,6 +196,8 @@ class FactoryConfig:
             "max_integration_corrections",
             "max_ci_infra_retries",
             "max_review_cycles",
+            "max_autonomous_recovery_epochs",
+            "max_replan_cycles_per_package",
             "max_final_audit_cycles",
             "max_convergence_passes",
         ):
