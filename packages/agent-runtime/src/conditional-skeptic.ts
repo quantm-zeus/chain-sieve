@@ -80,6 +80,15 @@ export class SkepticTriggerPolicy {
     metrics.providerConflicts = conflicts;
     metrics.parentDecision = parentDecision.decision;
     metrics.parentRisk = parentDecision.riskRecommendation;
+    if (context.dominantProviderRatio !== undefined) {
+      metrics.dominantProviderRatio = context.dominantProviderRatio;
+    }
+    if (context.unusuallyExtended !== undefined) {
+      metrics.unusuallyExtended = context.unusuallyExtended;
+    }
+    if (context.fragilityDetected !== undefined) {
+      metrics.fragilityDetected = context.fragilityDetected;
+    }
 
     // 1. Candidate is close to alert or already marked ALERT / WATCH
     if (

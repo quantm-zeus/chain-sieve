@@ -1278,9 +1278,9 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       const planner = new VoiPlanner();
       const profile = new ModelProfileRegistry().require('deep-research-v1');
 
-      // Envelope authorizes contract.audit and token.overview, but excludes liquidity.lock
+      // Envelope authorizes contract.audit and token.profile, but excludes holder.distribution (declared in deep-research-v1)
       const restrictedEnvelope: ToolAuthorizationEnvelope = {
-        allowedTools: ['contract.audit', 'core.token_overview'],
+        allowedTools: ['contract.audit', 'token.profile'],
       };
 
       const result = planner.planAcquisitions({
@@ -1291,11 +1291,11 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
         runId: 'run-rights-1',
       });
 
-      const liquidityDecision = result.decisions.find((d) => d.evidenceFamily === 'LIQUIDITY_LOCK');
-      expect(liquidityDecision).toBeDefined();
-      expect(liquidityDecision?.state).toBe('RIGHTS_BLOCKED');
-      expect(liquidityDecision?.reasonCodes).toContain('RIGHTS_BLOCKED_BY_POLICY');
-      expect(liquidityDecision?.skipReason).toContain('not permitted by authorization envelope');
+      const holderDecision = result.decisions.find((d) => d.evidenceFamily === 'HOLDER_DISTRIBUTION');
+      expect(holderDecision).toBeDefined();
+      expect(holderDecision?.state).toBe('RIGHTS_BLOCKED');
+      expect(holderDecision?.reasonCodes).toContain('RIGHTS_BLOCKED_BY_POLICY');
+      expect(holderDecision?.skipReason).toContain('not permitted by authorization envelope');
     });
   });
 });
