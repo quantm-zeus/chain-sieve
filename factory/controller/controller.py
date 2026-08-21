@@ -326,6 +326,43 @@ class FactoryController:
                     # existed — prevents double-counting on restart (§11).
                     record.authority_schema_version = 1
 
+                is_legacy_replan_blocked = (
+                    record.status == PackageStatus.BLOCKED
+                    and record.blocked_reason
+                    and any(
+                        token in record.blocked_reason.lower()
+                        for token in (
+                            "replan already attempted",
+                            "refusing escalation loop",
+                        )
+                    )
+                )
+                if is_legacy_replan_blocked and open_prs:
+                    old_reason = record.blocked_reason
+                    old_replan = record.replan_attempted
+                    old_review_corrections = record.review_corrections_used
+                    record.replan_cycles_used = max(record.replan_cycles_used, 1 if record.replan_attempted else 0)
+                    record.status = PackageStatus.PR_WAITING
+                    record.blocked_reason = None
+                    record.last_error = None
+                    record.review_terminal_rejection_sha = None
+                    record.review_corrections_used_in_epoch = 0
+                    self.store.event(
+                        "LEGACY_REPLAN_BLOCK_RECONCILED",
+                        milestoneId=milestone.id,
+                        workPackageId=package.id,
+                        workKey=key,
+                        pr=record.pr_number or (open_prs[0].number if open_prs else None),
+                        headSha=record.head_sha or (open_prs[0].head_sha if open_prs else None),
+                        oldBlockedReason=old_reason,
+                        priorReviewCorrections=old_review_corrections,
+                        priorReplanState=old_replan,
+                        newRecoveryEpoch=record.recovery_epoch,
+                        replanCyclesUsed=record.replan_cycles_used,
+                    )
+                elif record.replan_attempted and record.replan_cycles_used == 0:
+                    record.replan_cycles_used = 1
+
             if len(open_prs) > 1 or len(sessions) > 1:
                 record.status = PackageStatus.BLOCKED
                 record.blocked_reason = "ambiguous duplicate PR/session state; preserving existing work"
@@ -382,7 +419,6 @@ class FactoryController:
                     if record.review_terminal_rejection_sha is None:
                         record.blocked_reason = None
                         record.last_error = None
-                        record.replan_attempted = False
             elif sessions:
                 _apply_session(record, sessions[0])
                 record.branch = f"factory/{key}"
@@ -1243,9 +1279,10 @@ class FactoryController:
                         )
                     elif reviewer is not None and verdict not in {"approved", "pass"} and _review_pending(review_reason):
                         record.status = PackageStatus.REVIEW
-                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_corrections_used < self.config.max_review_cycles:
+                    elif reviewer is not None and verdict not in {"approved", "pass"} and record.review_corrections_used_in_epoch < self.config.max_review_cycles:
                         token = f"REVIEW:{pr.head_sha}:{verdict}:{review_reason}"
                         if record.last_error != token:
+                            record.review_corrections_used_in_epoch += 1
                             record.review_corrections_used += 1
                             record.review_correction_authorized_from_sha = pr.head_sha
                             self.ao.send(
@@ -1257,13 +1294,14 @@ class FactoryController:
                             self.store.event(
                                 "REVIEW_CORRECTION_AUTHORIZED", milestoneId=milestone.id, workPackageId=package.id,
                                 workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
-                                pr=pr.number, attempt=record.review_corrections_used, headSha=pr.head_sha, reviewRunId=record.review_dispatch_run_id,
-                                contextDigest=expected_context_digest,
+                                pr=pr.number, attempt=record.review_corrections_used_in_epoch, cumulativeAttempt=record.review_corrections_used, headSha=pr.head_sha, reviewRunId=record.review_dispatch_run_id,
+                                contextDigest=expected_context_digest, epoch=record.recovery_epoch,
                             )
                             self.store.event(
                                 "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
                                 workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
-                                pr=pr.number, attempt=record.review_corrections_used, headSha=pr.head_sha,
+                                pr=pr.number, attempt=record.review_corrections_used_in_epoch, cumulativeAttempt=record.review_corrections_used, headSha=pr.head_sha,
+                                epoch=record.recovery_epoch,
                             )
                             record.status = PackageStatus.PR_WAITING
                             return
@@ -1279,7 +1317,7 @@ class FactoryController:
                                 return
                         return
                     elif (
-                        record.review_corrections_used >= self.config.max_review_cycles
+                        record.review_corrections_used_in_epoch >= self.config.max_review_cycles
                         and verdict not in {"approved", "pass"}
                         and record.review_correction_authorized_from_sha == pr.head_sha
                     ):
@@ -1294,7 +1332,7 @@ class FactoryController:
                                 self._handle_activity(milestone, package, work_key(milestone.id, package.id), record, session, pr)
                                 return
                         return
-                    elif record.review_corrections_used >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
+                    elif record.review_corrections_used_in_epoch >= self.config.max_review_cycles and verdict not in {"approved", "pass"}:
                         record.review_terminal_rejection_sha = pr.head_sha
                         self._escalate_replan(
                             milestone,
@@ -1302,6 +1340,8 @@ class FactoryController:
                             work_key(milestone.id, package.id),
                             record,
                             f"semantic review correction budget exhausted after final exact-head verification: {review_reason}",
+                            pr=pr,
+                            session=session,
                         )
                     else:
                         record.status = PackageStatus.REVIEW
@@ -1433,6 +1473,8 @@ class FactoryController:
                         work_key(milestone.id, package.id),
                         record,
                         "repeated material integration conflict exhausted merge-update correction budget",
+                        pr=pr,
+                        session=session,
                     )
                     return
                 self.ao.send(
@@ -1485,38 +1527,298 @@ class FactoryController:
         self.store.event("WORK_PACKAGE_COMPLETED", milestoneId=milestone.id, workPackageId=package.id, workKey=work_key(milestone.id, package.id))
 
     def _block(
-        self, milestone_id: str, package_id: str, record: PackageRecord, reason: str, key: str | None = None
+        self,
+        milestone_id: str,
+        package_id: str,
+        record: PackageRecord,
+        reason: str,
+        key: str | None = None,
+        blocker_class: str | None = None,
     ) -> None:
+        from .models import classify_blocker
+
         record.status = PackageStatus.BLOCKED
         record.blocked_reason = reason
         record.last_error = reason
-        self.store.event("CIRCUIT_BREAKER_OPENED", milestoneId=milestone_id, workPackageId=package_id, workKey=key, reason=reason)
-        self._notify("FATAL", f"{package_id}: {reason}")
+        record.blocker_class = blocker_class or classify_blocker(reason)
+        self.store.event(
+            "CIRCUIT_BREAKER_OPENED",
+            milestoneId=milestone_id,
+            workPackageId=package_id,
+            workKey=key,
+            reason=reason,
+            blockerClass=record.blocker_class,
+        )
+        self._notify("FATAL", f"{package_id}: {reason} [{record.blocker_class}]")
 
     def _escalate_replan(
-        self, milestone: Milestone, package: Any, key: str, record: PackageRecord, reason: str
+        self,
+        milestone: Milestone,
+        package: Any,
+        key: str,
+        record: PackageRecord,
+        reason: str,
+        pr: PullRequest | None = None,
+        session: Session | None = None,
     ) -> None:
-        if record.replan_attempted:
-            self._block(milestone.id, package.id, record, "replan already attempted; refusing escalation loop", key)
-            return
-        record.replan_attempted = True
+        from .models import BlockerClass, classify_blocker
+        from .prompts import (
+            build_recovery_replan_prompt,
+            build_recovery_worker_prompt,
+            compute_recovery_plan_digest,
+            extract_and_categorize_review_findings,
+        )
         from .reasoning import ReasoningRunner
 
+        # Check global autonomous recovery exhaustion
+        if (
+            record.recovery_epoch >= self.config.max_autonomous_recovery_epochs
+            or record.replan_cycles_used >= self.config.max_replan_cycles_per_package
+        ):
+            self._block(
+                milestone.id,
+                package.id,
+                record,
+                f"autonomous recovery exhausted: exceeded max recovery epochs ({record.recovery_epoch}/{self.config.max_autonomous_recovery_epochs})",
+                key,
+                blocker_class=BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value,
+            )
+            return
+
         reasoning = self.reasoner or ReasoningRunner(self.root, self.config, self.store, self.github.runner)
-        self.store.event("REPLAN_STARTED", milestoneId=milestone.id, workPackageId=package.id, workKey=key, reason=reason)
+
+        # If we have an open PR, conduct recovery epoch on the existing PR
+        if pr is not None and pr.state.upper() == "OPEN":
+            reviews_data = self.ao.reviews(record.session_id or "") if record.session_id else {}
+            findings_data = extract_and_categorize_review_findings(reviews_data, pr.head_sha)
+
+            replan_prompt = build_recovery_replan_prompt(
+                milestone=milestone,
+                package=package,
+                pr_number=pr.number,
+                pr_url=pr.url,
+                head_sha=pr.head_sha,
+                findings_data=findings_data,
+                prior_strategy=record.recovery_epoch_reason or record.last_error or reason,
+                prior_provider=record.provider,
+                recovery_epoch=record.recovery_epoch,
+            )
+
+            self.store.event(
+                "REPLAN_STARTED",
+                milestoneId=milestone.id,
+                workPackageId=package.id,
+                workKey=key,
+                reason=reason,
+                epoch=record.recovery_epoch,
+                replanCyclesUsed=record.replan_cycles_used + 1,
+                pr=pr.number,
+                headSha=pr.head_sha,
+            )
+
+            try:
+                result = reasoning.replan(milestone, package, reason, custom_prompt=replan_prompt)
+            except Exception as error:
+                self._block(
+                    milestone.id,
+                    package.id,
+                    record,
+                    f"Codex replan unavailable or budget exhausted: {error}",
+                    key,
+                    blocker_class=classify_blocker(str(error)),
+                )
+                return
+
+            if result.get("status") == "ARCHITECTURE_CONTRADICTION":
+                try:
+                    result = reasoning.emergency(milestone, package, str(result.get("reason") or reason))
+                except Exception as error:
+                    self._block(
+                        milestone.id,
+                        package.id,
+                        record,
+                        f"Codex emergency unavailable or budget exhausted: {error}",
+                        key,
+                        blocker_class=classify_blocker(str(error)),
+                    )
+                    return
+                if result.get("status") == "ARCHITECTURE_CONTRADICTION":
+                    self._block(
+                        milestone.id,
+                        package.id,
+                        record,
+                        f"irreconcilable architecture contradiction: {result.get('reason') or reason}",
+                        key,
+                        blocker_class=BlockerClass.HUMAN_REQUIRED_SPEC_CONFLICT.value,
+                    )
+                    return
+
+            # Extract recovery plan payload
+            plan_payload = result.get("recoveryPlan") or (
+                result.get("plan") if isinstance(result.get("plan"), dict) and "workPackages" not in result.get("plan", {}) else {}
+            )
+            if not plan_payload and result.get("status") in {"REPLANNED", "RECOVERY_PLAN"}:
+                plan_payload = {
+                    "strategy": result.get("reason") or reason,
+                    "remediationActions": findings_data.get("still_open_findings") or [reason],
+                    "affectedFiles": list(pr.files),
+                    "recommendedProvider": record.provider,
+                    "repairPrompt": f"Autonomous recovery repair for PR #{pr.number} at {pr.head_sha}: {reason}",
+                }
+
+            plan_digest = compute_recovery_plan_digest(pr.head_sha, findings_data.get("latest_body") or reason, plan_payload)
+
+            # Novelty check
+            if record.recovery_epoch_plan_digest == plan_digest:
+                record.no_progress_epochs += 1
+                self.store.event(
+                    "RECOVERY_PLAN_NO_PROGRESS",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    planDigest=plan_digest,
+                    noProgressEpochs=record.no_progress_epochs,
+                )
+                if (
+                    record.no_progress_epochs >= 2
+                    or record.replan_cycles_used + 1 >= self.config.max_replan_cycles_per_package
+                ):
+                    self._block(
+                        milestone.id,
+                        package.id,
+                        record,
+                        "autonomous recovery exhausted: repeated identical recovery plan without progress",
+                        key,
+                        blocker_class=BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value,
+                    )
+                    return
+            else:
+                record.no_progress_epochs = 0
+
+            # Advance epoch!
+            record.recovery_epoch += 1
+            record.replan_cycles_used += 1
+            record.replan_attempted = True
+            record.recovery_epoch_started_from_sha = pr.head_sha
+            record.recovery_epoch_reason = reason
+            record.recovery_epoch_plan_digest = plan_digest
+            record.review_corrections_used_in_epoch = 0
+            record.review_correction_authorized_from_sha = None
+            record.review_terminal_rejection_sha = None
+            record.blocked_reason = None
+            record.last_error = None
+            record.status = PackageStatus.PR_WAITING
+
+            # Provider escalation if recommended
+            recommended_provider = str(plan_payload.get("recommendedProvider") or plan_payload.get("provider") or "").lower().strip()
+            if recommended_provider in {"agy", "muse"} and recommended_provider != record.provider:
+                record.provider = recommended_provider
+                record.review_dispatch_key = None  # Reset so opposite reviewer will be dispatched
+                record.review_dispatch_state = None
+
+            # Deliver repair instructions to worker
+            worker_prompt = build_recovery_worker_prompt(
+                milestone,
+                package,
+                pr.number,
+                pr.head_sha,
+                plan_payload,
+                record.recovery_epoch,
+            )
+            if record.session_id:
+                try:
+                    self.ao.send(record.session_id, worker_prompt)
+                except Exception as error:
+                    record.last_error = f"AO send recovery prompt failed: {error}"
+
+            record.last_progress_at = utc_now()
+            self.store.event(
+                "RECOVERY_EPOCH_STARTED",
+                milestoneId=milestone.id,
+                workPackageId=package.id,
+                workKey=key,
+                epoch=record.recovery_epoch,
+                replanCyclesUsed=record.replan_cycles_used,
+                headSha=pr.head_sha,
+                planDigest=plan_digest,
+                provider=record.provider,
+                strategy=plan_payload.get("strategy", ""),
+            )
+            self.store.event(
+                "REPLAN_COMPLETED",
+                milestoneId=milestone.id,
+                workPackageId=package.id,
+                workKey=key,
+                epoch=record.recovery_epoch,
+                replanCyclesUsed=record.replan_cycles_used,
+            )
+            return
+
+        # Milestone-level replanning (when no PR exists)
+        if record.replan_attempted:
+            self._block(
+                milestone.id,
+                package.id,
+                record,
+                "replan already attempted; refusing escalation loop",
+                key,
+                blocker_class=BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value,
+            )
+            return
+        record.replan_cycles_used += 1
+        record.replan_attempted = True
+        self.store.event(
+            "REPLAN_STARTED",
+            milestoneId=milestone.id,
+            workPackageId=package.id,
+            workKey=key,
+            reason=reason,
+            replanCyclesUsed=record.replan_cycles_used,
+        )
         try:
             result = reasoning.replan(milestone, package, reason)
         except Exception as error:
-            self._block(milestone.id, package.id, record, f"Codex replan unavailable or budget exhausted: {error}", key)
+            self._block(
+                milestone.id,
+                package.id,
+                record,
+                f"Codex replan unavailable or budget exhausted: {error}",
+                key,
+                blocker_class=classify_blocker(str(error)),
+            )
             return
         if result.get("status") == "ARCHITECTURE_CONTRADICTION":
             try:
                 result = reasoning.emergency(milestone, package, str(result.get("reason") or reason))
             except Exception as error:
-                self._block(milestone.id, package.id, record, f"Codex emergency unavailable or budget exhausted: {error}", key)
+                self._block(
+                    milestone.id,
+                    package.id,
+                    record,
+                    f"Codex emergency unavailable or budget exhausted: {error}",
+                    key,
+                    blocker_class=classify_blocker(str(error)),
+                )
+                return
+            if result.get("status") == "ARCHITECTURE_CONTRADICTION":
+                self._block(
+                    milestone.id,
+                    package.id,
+                    record,
+                    f"irreconcilable architecture contradiction: {result.get('reason') or reason}",
+                    key,
+                    blocker_class=BlockerClass.HUMAN_REQUIRED_SPEC_CONFLICT.value,
+                )
                 return
         if result.get("status") != "REPLANNED":
-            self._block(milestone.id, package.id, record, "Codex escalation did not produce a safe deterministic plan", key)
+            self._block(
+                milestone.id,
+                package.id,
+                record,
+                "Codex escalation did not produce a safe deterministic plan",
+                key,
+                blocker_class=BlockerClass.AUTONOMOUS_RECOVERY_EXHAUSTED.value,
+            )
             return
         record.status = PackageStatus.BLOCKED
         record.blocked_reason = "superseded by bounded Codex replan"
