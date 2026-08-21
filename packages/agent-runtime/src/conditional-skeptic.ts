@@ -96,7 +96,7 @@ export class SkepticTriggerPolicy {
       reasons.push('PROVIDER_CONFLICT_EXCEEDS_THRESHOLD');
     }
 
-    // 3. Opportunity and risk vectors strongly disagree
+    // 3. Opportunity and risk vectors strongly disagree (or forced on high risk)
     const hasStrongPositive =
       parentDecision.positiveSignals.length >= 2 ||
       parentDecision.lifecycleRecommendation === 'CONFIRMED' ||
@@ -107,8 +107,15 @@ export class SkepticTriggerPolicy {
       parentDecision.riskRecommendation === 'HIGH' ||
       parentDecision.riskRecommendation === 'CRITICAL' ||
       parentDecision.riskRecommendation === 'CONFLICTING';
+    const isHighRisk =
+      parentDecision.riskRecommendation === 'HIGH' ||
+      parentDecision.riskRecommendation === 'CRITICAL' ||
+      parentDecision.riskRecommendation === 'CONFLICTING';
 
-    if (hasStrongPositive && hasElevatedRisk) {
+    if (
+      (hasStrongPositive && hasElevatedRisk) ||
+      (this.config.forceSkepticOnHighRisk && isHighRisk)
+    ) {
       reasons.push('OPPORTUNITY_RISK_VECTOR_DISAGREEMENT');
     }
 
@@ -363,11 +370,22 @@ export class ConditionalSkepticAgent {
           if (err instanceof AgentCancelledError || signal?.aborted) {
             throw new AgentCancelledError();
           }
-          if (err instanceof ConfinementViolationError || err instanceof BudgetExceededError) {
+          if (err instanceof ConfinementViolationError) {
             throw err;
           }
-          callError = err instanceof Error ? err.message : String(err);
-          challengeFindings.push(`Skeptic tool execution error for ${toolName}: ${callError}`);
+          if (
+            err instanceof BudgetExceededError ||
+            (err instanceof Error &&
+              (err.name === 'BudgetExceededError' ||
+                (err as { code?: string }).code === 'BUDGET_EXCEEDED' ||
+                err.message.toLowerCase().includes('budget exceeded')))
+          ) {
+            budgetExceeded = true;
+            callError = 'Skeptic tool budget exceeded';
+          } else {
+            callError = err instanceof Error ? err.message : String(err);
+            challengeFindings.push(`Skeptic tool execution error for ${toolName}: ${callError}`);
+          }
         }
 
         toolRecords.push({
@@ -380,6 +398,10 @@ export class ConditionalSkepticAgent {
           latencyMs: Math.max(0, Date.now() - startMs),
           executedAt: new Date().toISOString(),
         });
+
+        if (budgetExceeded) {
+          break;
+        }
       }
     }
 

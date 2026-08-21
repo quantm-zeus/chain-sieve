@@ -137,6 +137,7 @@ export class VoiPlanner {
         hasKnownEvidence,
         isHardRejected,
         isUnreachable,
+        costWeight: policy.costWeight,
       });
 
       // 4. Randomized probe check
@@ -271,6 +272,7 @@ export class VoiPlanner {
     hasKnownEvidence: boolean;
     isHardRejected: boolean;
     isUnreachable: boolean;
+    costWeight?: number | undefined;
   }): number {
     const { family, candidateScore, isNearAlert, hasKnownEvidence, isHardRejected, isUnreachable } = params;
 
@@ -303,6 +305,13 @@ export class VoiPlanner {
       if (family.familyId === 'CONTRACT_SECURITY' || family.familyId === 'SELL_SIMULATION') {
         baseValue += 0.25;
       }
+    }
+
+    // Cost penalty: penalize higher monetary cost and provider quota cost scaled by costWeight
+    const costWeight = params.costWeight ?? 5.0;
+    if (family.isOptional && costWeight > 0) {
+      const normalizedCost = (family.monetaryCostUsd * 2) + (family.providerQuotaCost * 0.001);
+      baseValue -= Math.min(0.20, costWeight * normalizedCost);
     }
 
     // Reliability weighting
@@ -395,20 +404,20 @@ export class VoiPlanner {
         }
       }
 
-      // Update actual cost
+      // Update actual cost per family based on executed tool records
       let decisionActualCost: typeof decision.estimatedCost;
-      if (decision.state !== 'REQUESTED') {
+      if (decision.state !== 'REQUESTED' || matchingToolRecords.length === 0) {
         decisionActualCost = {
           monetaryCostUsd: 0,
           quotaCostUnits: 0,
         };
-      } else if (actualCost) {
-        decisionActualCost = actualCost;
-      } else if (matchingToolRecords.length > 0 && family) {
+      } else if (family) {
         decisionActualCost = {
           monetaryCostUsd: Number((matchingToolRecords.length * family.monetaryCostUsd).toFixed(6)),
           quotaCostUnits: matchingToolRecords.length * family.providerQuotaCost,
         };
+      } else if (actualCost) {
+        decisionActualCost = actualCost;
       } else {
         decisionActualCost = {
           monetaryCostUsd: 0,

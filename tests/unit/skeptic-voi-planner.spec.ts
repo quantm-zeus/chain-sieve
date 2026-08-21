@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BudgetExceededError,
   ConditionalSkepticAgent,
   DEFAULT_EVIDENCE_FAMILIES,
   DEFAULT_SKEPTIC_TRIGGER_POLICY,
@@ -329,6 +330,23 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.artifact.challengeFindings).toContain('UNLOCKED_LIQUIDITY_HAZARD_10_PERCENT_LOCKED');
     });
 
+    it('triggers skeptic on HIGH risk when forceSkepticOnHighRisk is enabled even without strong positive', () => {
+      const policy = new SkepticTriggerPolicy({ forceSkepticOnHighRisk: true, nearAlertScoreThreshold: 0.90 });
+      const highRiskEval = policy.evaluate({
+        candidate: sampleCandidate,
+        parentDecision: {
+          ...sampleParentDecision,
+          decision: 'IGNORE',
+          alertClassRecommendation: undefined,
+          positiveSignals: [],
+          riskRecommendation: 'HIGH',
+        },
+        candidateScore: 0.40,
+      });
+      expect(highRiskEval.triggered).toBe(true);
+      expect(highRiskEval.triggerReasons).toContain('OPPORTUNITY_RISK_VECTOR_DISAGREEMENT');
+    });
+
     it('handles skeptic budget exhaustion fail-closed without corrupting parent run', async () => {
       const skepticAgent = new ConditionalSkepticAgent();
       const exhaustedBudget: AgentBudget = {
@@ -356,10 +374,61 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.artifact.confidence).toBe('LOW');
       expect(result.toolRecords.length).toBe(0);
     });
+
+    it('gracefully handles BudgetExceededError thrown inside tool handler without escaping skeptic execution', async () => {
+      const skepticAgent = new ConditionalSkepticAgent();
+      skepticAgent.registerTool('contract.audit', async () => {
+        throw new BudgetExceededError('TOOL_CALLS', 1, 0, 1);
+      });
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        runId: 'run-handler-budget-exhaust',
+        envelope: sampleEnvelope,
+        triggerContext: {
+          candidateScore: 0.85,
+        },
+      });
+
+      expect(result.status).toBe('BUDGET_EXCEEDED');
+      expect(result.artifact.status).toBe('BUDGET_EXCEEDED');
+      expect(result.artifact.verdict).toBe('INSUFFICIENT_EVIDENCE');
+      expect(result.artifact.confidence).toBe('LOW');
+      expect(result.toolRecords.length).toBe(1);
+      expect(result.toolRecords[0]?.error).toContain('Skeptic tool budget exceeded');
+    });
   });
 
   describe('FR-AGT-009: Value-of-Information Planner', () => {
     const profile = new ModelProfileRegistry().require('deep-research-v1');
+
+    it('applies costWeight to penalize expensive optional evidence families', () => {
+      const lowCostWeightPlanner = new VoiPlanner({ costWeight: 0.0 });
+      const highCostWeightPlanner = new VoiPlanner({ costWeight: 20.0 });
+
+      const lowResult = lowCostWeightPlanner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-cost-low',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.50,
+      });
+
+      const highResult = highCostWeightPlanner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-cost-high',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile,
+        currentCandidateScore: 0.50,
+      });
+
+      const lowDec = lowResult.decisions.find((d) => d.evidenceFamily === 'CONTRACT_SECURITY');
+      const highDec = highResult.decisions.find((d) => d.evidenceFamily === 'CONTRACT_SECURITY');
+      expect(lowDec?.expectedInformationValue).toBeGreaterThan(highDec?.expectedInformationValue ?? 0);
+    });
 
     it('persists a decision record for every eligible optional evidence family', () => {
       const planner = new VoiPlanner();
@@ -577,8 +646,14 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(contractSecurityDecision?.evidenceIds).toContain('call_aud_1');
       expect(contractSecurityDecision?.actualDecisionChange).toBe('ALERT');
       expect(contractSecurityDecision?.completedAt).toBeDefined();
-      expect(contractSecurityDecision?.actualCost?.monetaryCostUsd).toBe(0.0012);
-      expect(contractSecurityDecision?.actualCost?.quotaCostUnits).toBe(4);
+      expect(contractSecurityDecision?.actualCost?.monetaryCostUsd).toBe(0.0008);
+      expect(contractSecurityDecision?.actualCost?.quotaCostUnits).toBe(3);
+
+      const tokenProfileDecision = reconciled.find((d) => d.evidenceFamily === 'TOKEN_PROFILE');
+      expect(tokenProfileDecision).toBeDefined();
+      expect(tokenProfileDecision?.state).toBe('RETURNED');
+      expect(tokenProfileDecision?.actualCost?.monetaryCostUsd).toBe(0.0001);
+      expect(tokenProfileDecision?.actualCost?.quotaCostUnits).toBe(1);
 
       // Skipped families must have actualCost of 0
       const skippedDecisions = reconciled.filter((d) => d.state === 'NOT_REQUESTED_BY_POLICY');
