@@ -93,15 +93,16 @@ export interface VoiPlanResult {
   decisions: EvidenceAcquisitionDecision[];
   requestedFamilies: string[];
   skippedFamilies: string[];
-  blockedFamilies: string[];
+  blockedFamilies?: string[] | undefined;
   totalEstimatedMonetaryCostUsd: number;
-  totalEstimatedCostUsd: number;
+  totalEstimatedCostUsd?: number | undefined;
   totalEstimatedQuotaUnits: number;
-  totalQuotaUnits: number;
+  totalQuotaUnits?: number | undefined;
   plannedAt: string;
-  plan: DeterministicPlan;
-  envelope: ToolAuthorizationEnvelope;
+  plan?: DeterministicPlan | undefined;
+  envelope?: ToolAuthorizationEnvelope | undefined;
 }
+
 
 export type VoiPlannerResult = VoiPlanResult;
 
@@ -708,7 +709,7 @@ export class VoiPlanner {
     familyId: string,
     policy: VoiPolicy,
     stratum: string,
-  ): { selected: boolean; probability?: string; stratum?: string; seedRef?: string } {
+  ): { selected: boolean; probability?: string | undefined; stratum?: string | undefined; seedRef?: string | undefined } {
     if (!policy.enableRandomizedProbes || !policy.randomizedProbeRate || policy.randomizedProbeRate <= 0) {
       return { selected: false };
     }
@@ -719,13 +720,17 @@ export class VoiPlanner {
     const pseudoRandom = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
 
     const selected = pseudoRandom < policy.randomizedProbeRate;
+    if (!selected) {
+      return { selected: false };
+    }
     return {
-      selected,
-      probability: selected ? String(policy.randomizedProbeRate) : undefined,
-      stratum: selected ? stratum : undefined,
-      seedRef: selected ? seedRef : undefined,
+      selected: true,
+      probability: String(policy.randomizedProbeRate),
+      stratum,
+      seedRef,
     };
   }
 }
 
 export class VoiDecisionPlanner extends VoiPlanner {}
+
