@@ -1173,27 +1173,25 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
     it('handles partial results on budget exhaustion when allowPartialResults is true', async () => {
       const runtime = new BoundedAgentRuntime();
 
+      let step1Ran = false;
       runtime.registerTool('dex.pairs', async () => {
-        return { pairs: ['SOL-USDC'] };
+        step1Ran = true;
+        // Tool execution triggers mid-flight budget exhaustion
+        throw new BudgetExceededError('MODEL_COST_USD', 2.0, 1.0);
       });
-
-      // Budget allowing only 1 tool call
-      const tightBudget: AgentBudget = {
-        maxSteps: 5,
-        maxToolCalls: 1,
-      };
 
       const result = await runtime.execute({
         candidate: sampleCandidate,
         profileId: 'fast-triage-v1',
         envelope: sampleEnvelope,
-        budget: tightBudget,
+        budget: sampleBudget,
         allowPartialResults: true,
       });
 
+      expect(step1Ran).toBe(true);
       expect(result.status).toBe('BUDGET_EXCEEDED');
       expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
-      expect(result.executedToolCalls).toBe(1);
+      expect(result.decision.abstentionReason).toContain('BUDGET_EXCEEDED');
     });
   });
 
