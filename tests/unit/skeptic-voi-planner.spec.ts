@@ -601,7 +601,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(randomizedDecisions.length).toBeGreaterThan(0);
       for (const d of randomizedDecisions) {
         expect(d.assignmentProbability).toBe('1');
-        expect(d.randomizationStratum).toBe('solana');
+        expect(d.randomizationStratum).toBe('GENERAL_ELIGIBLE');
         expect(d.randomizationSeedRef).toBe('test-seed-xyz');
         expect(d.reasonCodes).toContain('RANDOMIZED_EVIDENCE_PROBE');
       }
