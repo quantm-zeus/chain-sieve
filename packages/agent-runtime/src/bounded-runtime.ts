@@ -1,7 +1,9 @@
+import { createHash } from 'node:crypto';
 import type {
   AgentBudget,
   AgentDecision,
   ModelProfile,
+  SkepticArtifact,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
@@ -18,9 +20,18 @@ import {
   ConfinementViolationError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
+import { VoiPlanner, type VoiPlanResult, type VoiPolicy } from './voi-planner.js';
+import {
+  ConditionalSkepticAgent,
+  SkepticTriggerPolicy,
+  type SkepticExecutionResult,
+  type SkepticTriggerContext,
+} from './conditional-skeptic.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
+import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
+
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;
@@ -57,6 +68,15 @@ export interface AgentExecutionOptions {
   initialEvidence?: Record<string, unknown> | undefined;
   goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   deterministicSeedRef?: string | number | undefined;
+  enableVoi?: boolean | undefined;
+  voiPolicy?: Partial<VoiPolicy> | undefined;
+  enableSkeptic?: boolean | undefined;
+  skepticBudget?: AgentBudget | undefined;
+  skepticTriggerPolicy?: SkepticTriggerPolicy | undefined;
+  candidateScore?: number | undefined;
+  skepticTriggerContext?: Partial<SkepticTriggerContext> | undefined;
+  randomizationStratum?: string | undefined;
+  persistenceRepository?: AgentRuntimePersistenceRepository | undefined;
 }
 
 export interface AgentExecutionResult {
@@ -68,6 +88,8 @@ export interface AgentExecutionResult {
   executedSteps: number;
   executedToolCalls: number;
   completedAt: string;
+  voiPlanResult?: VoiPlanResult | undefined;
+  skepticResult?: SkepticExecutionResult | undefined;
 }
 
 export class BoundedAgentRuntime {
@@ -202,6 +224,31 @@ export class BoundedAgentRuntime {
       ...(options.initialEvidence ?? {}),
     };
 
+    // Synthesize baseline decision prior to evidence acquisition
+    const baselineDecision = this.synthesizeDecision(
+      candidate,
+      profile,
+      accumulatedEvidence,
+      [],
+    );
+
+    // Pre-execution VOI planning: evaluate EVOI and establish per-family acquisition plan
+    let initialVoiPlan: VoiPlanResult | undefined;
+    let voiPlanner: VoiPlanner | undefined;
+    if (options.enableVoi) {
+      voiPlanner = new VoiPlanner(options.voiPolicy);
+      initialVoiPlan = voiPlanner.planAcquisitions({
+        candidate,
+        runId: plan.planId,
+        envelope,
+        budget,
+        profile,
+        currentCandidateScore: options.candidateScore,
+        knownEvidence: accumulatedEvidence,
+        randomizationStratum: options.randomizationStratum,
+      });
+    }
+
     // 5. Bounded tool execution loop
     for (const step of plan.steps) {
       if (signal?.aborted) {
@@ -326,6 +373,150 @@ export class BoundedAgentRuntime {
       toolRecords,
     );
 
+    let voiPlanResult: VoiPlanResult | undefined;
+    if (options.enableVoi) {
+      if (!voiPlanner) {
+        voiPlanner = new VoiPlanner(options.voiPolicy);
+      }
+      const planToReconcile = initialVoiPlan ?? voiPlanner.planAcquisitions({
+        candidate,
+        runId: plan.planId,
+        envelope,
+        budget,
+        profile,
+        currentCandidateScore: options.candidateScore,
+        knownEvidence: accumulatedEvidence,
+        randomizationStratum: options.randomizationStratum,
+      });
+
+      const actualCostSnapshot = tracker.getSnapshot();
+      const actualCost = {
+        monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
+        quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
+      };
+
+      planToReconcile.decisions = voiPlanner.reconcileDecisions({
+        decisions: planToReconcile.decisions,
+        toolRecords,
+        previousDecision: baselineDecision,
+        finalDecision: decision,
+        actualCost,
+        completedAt: new Date().toISOString(),
+      });
+      voiPlanResult = planToReconcile;
+    }
+
+    let skepticResult: SkepticExecutionResult | undefined;
+    if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
+      const skepticPolicy = options.skepticTriggerPolicy ?? new SkepticTriggerPolicy();
+      const skepticTriggerContext = {
+        candidateScore: options.candidateScore,
+        ...(options.skepticTriggerContext ?? {}),
+      };
+      // Pre-evaluate trigger so error fallbacks preserve actual policy evaluation and audit metrics
+      const triggerEval = skepticPolicy.evaluate({
+        candidate,
+        parentDecision: decision,
+        ...skepticTriggerContext,
+      });
+
+      try {
+        const skepticAgent = new ConditionalSkepticAgent(
+          skepticPolicy,
+          this.registry,
+        );
+        for (const [name, handler] of this.tools.entries()) {
+          skepticAgent.registerTool(name, handler);
+        }
+        skepticResult = await skepticAgent.execute({
+          candidate,
+          parentDecision: decision,
+          parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
+          runId: plan.planId,
+          envelope,
+          skepticBudget: options.skepticBudget,
+          triggerContext: skepticTriggerContext,
+          triggerPolicy: skepticPolicy,
+          signal,
+        });
+      } catch (err) {
+        if (err instanceof AgentCancelledError || signal?.aborted) {
+          throw new AgentCancelledError();
+        }
+        // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
+        const errMsg = err instanceof Error ? err.message : String(err);
+        const parentDecisionId = `dec_${candidate.assetId}_${plan.planId}`;
+        const artifactId = `skeptic_${candidate.assetId}_${plan.planId}_failed_closed`;
+        const asOf = new Date().toISOString();
+        const rawArtifact = {
+          id: artifactId,
+          parentDecisionId,
+          candidateId: candidate.assetId,
+          runId: plan.planId,
+          policyVersion: triggerEval.policyVersion,
+          triggered: triggerEval.triggered,
+          triggerReasons: triggerEval.triggerReasons,
+          triggerMetrics: triggerEval.triggerMetrics,
+          profileId: profile.id,
+          profileVersion: profile.version,
+          status: 'SKIPPED_POLICY' as const,
+          verdict: 'INSUFFICIENT_EVIDENCE' as const,
+          confidence: 'LOW' as const,
+          challengeFindings: [`Skeptic runtime execution error: ${errMsg}`],
+          counterThesis: `Skeptic evaluation failed closed: ${errMsg}`,
+          invalidationConditions: decision.thesisInvalidationConditions ?? [],
+          suggestedDecision: decision.decision,
+          suggestedRiskLevel: decision.riskRecommendation,
+          decisionChanged: false,
+          evidenceIds: [] as string[],
+          executedToolRecords: [],
+          budgetUsage: {},
+          createdAt: asOf,
+        };
+
+        const canonicalize = (val: unknown): unknown => {
+          if (val === null || val === undefined) return val;
+          if (Array.isArray(val)) return val.map(canonicalize);
+          if (typeof val === 'object') {
+            return Object.fromEntries(
+              Object.entries(val as Record<string, unknown>)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([k, v]) => [k, canonicalize(v)]),
+            );
+          }
+          return val;
+        };
+        const sha256 = createHash('sha256')
+          .update(JSON.stringify(canonicalize(rawArtifact)))
+          .digest('hex');
+
+        const fallbackArtifact: SkepticArtifact = {
+          ...rawArtifact,
+          sha256,
+        };
+
+        skepticResult = {
+          artifact: fallbackArtifact,
+          status: 'SKIPPED_POLICY',
+          toolRecords: [],
+        };
+      }
+    }
+
+    if (options.persistenceRepository) {
+      try {
+        if (voiPlanResult) {
+          await options.persistenceRepository.saveVoiPlan(voiPlanResult);
+        }
+        if (skepticResult) {
+          await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+        }
+      } catch {
+        // Isolate persistence write-through failures to prevent transient database unavailability
+        // from aborting successful parent research decision execution.
+      }
+    }
+
     return {
       plan,
       status: 'SUCCESS',
@@ -335,6 +526,8 @@ export class BoundedAgentRuntime {
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
+      voiPlanResult,
+      skepticResult,
     };
   }
 
