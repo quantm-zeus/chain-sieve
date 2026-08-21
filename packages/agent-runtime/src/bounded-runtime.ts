@@ -4,7 +4,6 @@ import type {
   AgentDecision,
   ModelProfile,
   SkepticArtifact,
-  SkepticTriggerReason,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
@@ -512,7 +511,7 @@ export class BoundedAgentRuntime {
         if (skepticResult) {
           await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
         }
-      } catch (_persistenceErr) {
+      } catch {
         // Isolate persistence write-through failures to prevent transient database unavailability
         // from aborting successful parent research decision execution.
       }
