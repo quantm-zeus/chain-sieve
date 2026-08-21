@@ -28,7 +28,7 @@ import {
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
-import type { AgentRuntimePersistenceRepository } from './persistence.js';
+import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
 
 
 export interface ToolExecutionContext {
