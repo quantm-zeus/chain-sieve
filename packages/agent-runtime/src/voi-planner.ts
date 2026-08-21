@@ -127,7 +127,8 @@ export class VoiPlanner {
       // 1. Check tool authorization and profile declared tools
       const toolsInEnvelope = family.tools.filter((t) => envelope.allowedTools.includes(t));
       const toolsInProfile = family.tools.filter((t) => profile.declaredTools.includes(t));
-      const isToolAuthorized = toolsInEnvelope.length > 0 && toolsInProfile.length > 0;
+      const isProfileSupported = toolsInProfile.length > 0;
+      const isRightsAuthorized = toolsInEnvelope.length > 0;
 
       // 2. Check if evidence is already known
       const hasKnownEvidence = family.fieldsProduced.some(
@@ -179,10 +180,14 @@ export class VoiPlanner {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Alert threshold unreachable under current state; additional optional evidence skipped by policy';
         reasonCodes.push('ALERT_THRESHOLD_UNREACHABLE', 'POLICY_STOP_CONDITION');
-      } else if (!isToolAuthorized) {
+      } else if (!isProfileSupported) {
         state = 'UNSUPPORTED';
-        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not permitted by profile or envelope`;
-        reasonCodes.push('TOOL_NOT_AUTHORIZED_IN_ENVELOPE_OR_PROFILE');
+        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not declared in model profile ${profile.id}`;
+        reasonCodes.push('TOOL_NOT_SUPPORTED_IN_PROFILE');
+      } else if (!isRightsAuthorized) {
+        state = 'RIGHTS_BLOCKED';
+        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not permitted by authorization envelope`;
+        reasonCodes.push('TOOL_NOT_AUTHORIZED_IN_ENVELOPE', 'RIGHTS_BLOCKED_BY_POLICY');
       } else if (hasKnownEvidence) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Sufficient evidence for family already collected in run context';
@@ -529,11 +534,14 @@ export class VoiPlanner {
       let imputedValue = 0.5; // neutral baseline default
 
       if (isMissing) {
-        if (acquisitionState === 'NOT_REQUESTED_BY_POLICY') {
-          // Neutral cohort baseline prior - NO negative penalty
-          imputedValue = baselineCohortScores[featureKey] ?? 0.5;
-        } else if (acquisitionState === 'COST_BLOCKED' || acquisitionState === 'QUOTA_BLOCKED') {
-          // Unobserved due to resource bounds - neutral prior
+        if (
+          acquisitionState === 'NOT_REQUESTED_BY_POLICY' ||
+          acquisitionState === 'COST_BLOCKED' ||
+          acquisitionState === 'QUOTA_BLOCKED' ||
+          acquisitionState === 'RIGHTS_BLOCKED' ||
+          acquisitionState === 'UNSUPPORTED'
+        ) {
+          // Unobserved due to policy, budget bounds, or authorization constraints - neutral cohort baseline prior (NO negative penalty)
           imputedValue = baselineCohortScores[featureKey] ?? 0.5;
         } else {
           // Truly missing provider data

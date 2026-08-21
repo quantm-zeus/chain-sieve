@@ -24,8 +24,8 @@ import { ModelProfileRegistry } from './model-profiles.js';
 import { VoiPlanner, type VoiPlanResult, type VoiPolicy } from './voi-planner.js';
 import {
   ConditionalSkepticAgent,
+  SkepticTriggerPolicy,
   type SkepticExecutionResult,
-  type SkepticTriggerPolicy,
   type SkepticTriggerContext,
 } from './conditional-skeptic.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
@@ -409,9 +409,21 @@ export class BoundedAgentRuntime {
 
     let skepticResult: SkepticExecutionResult | undefined;
     if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
+      const skepticPolicy = options.skepticTriggerPolicy ?? new SkepticTriggerPolicy();
+      const skepticTriggerContext = {
+        candidateScore: options.candidateScore,
+        ...(options.skepticTriggerContext ?? {}),
+      };
+      // Pre-evaluate trigger so error fallbacks preserve actual policy evaluation and audit metrics
+      const triggerEval = skepticPolicy.evaluate({
+        candidate,
+        parentDecision: decision,
+        ...skepticTriggerContext,
+      });
+
       try {
         const skepticAgent = new ConditionalSkepticAgent(
-          options.skepticTriggerPolicy,
+          skepticPolicy,
           this.registry,
         );
         for (const [name, handler] of this.tools.entries()) {
@@ -424,10 +436,8 @@ export class BoundedAgentRuntime {
           runId: plan.planId,
           envelope,
           skepticBudget: options.skepticBudget,
-          triggerContext: {
-            candidateScore: options.candidateScore,
-            ...(options.skepticTriggerContext ?? {}),
-          },
+          triggerContext: skepticTriggerContext,
+          triggerPolicy: skepticPolicy,
           signal,
         });
       } catch (err) {
@@ -444,10 +454,10 @@ export class BoundedAgentRuntime {
           parentDecisionId,
           candidateId: candidate.assetId,
           runId: plan.planId,
-          policyVersion: options.skepticTriggerPolicy?.config.policyVersion ?? '1.0.0',
-          triggered: true,
-          triggerReasons: ['OPPORTUNITY_RISK_VECTOR_DISAGREEMENT' as SkepticTriggerReason],
-          triggerMetrics: {},
+          policyVersion: triggerEval.policyVersion,
+          triggered: triggerEval.triggered,
+          triggerReasons: triggerEval.triggerReasons,
+          triggerMetrics: triggerEval.triggerMetrics,
           profileId: profile.id,
           profileVersion: profile.version,
           status: 'SKIPPED_POLICY' as const,
@@ -495,11 +505,16 @@ export class BoundedAgentRuntime {
     }
 
     if (options.persistenceRepository) {
-      if (voiPlanResult) {
-        await options.persistenceRepository.saveVoiPlan(voiPlanResult);
-      }
-      if (skepticResult) {
-        await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+      try {
+        if (voiPlanResult) {
+          await options.persistenceRepository.saveVoiPlan(voiPlanResult);
+        }
+        if (skepticResult) {
+          await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+        }
+      } catch (_persistenceErr) {
+        // Isolate persistence write-through failures to prevent transient database unavailability
+        // from aborting successful parent research decision execution.
       }
     }
 

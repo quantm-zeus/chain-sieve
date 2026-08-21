@@ -1206,6 +1206,94 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(failedPenalizedScored.evaluatedFeatures['liquidity.lock']?.imputedValue).toBe(0.50);
       expect(notRequestedScored.compositeScore).toBeGreaterThan(failedPenalizedScored.compositeScore);
     });
+
+    it('BoundedAgentRuntime isolates persistence write-through errors without failing parent research execution', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+
+      const failingPersistence: AgentRuntimePersistenceRepository = {
+        saveVoiPlan: async () => {
+          throw new Error('Transient database socket timeout during VOI save');
+        },
+        getVoiPlan: async () => null,
+        saveSkepticArtifact: async () => {
+          throw new Error('Transient database deadlock during skeptic save');
+        },
+        getSkepticArtifact: async () => null,
+      };
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableVoi: true,
+        enableSkeptic: true,
+        candidateScore: 0.85,
+        persistenceRepository: failingPersistence,
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      expect(result.decision).toBeDefined();
+      expect(result.decision.decision).toBeDefined();
+      expect(result.voiPlanResult).toBeDefined();
+      expect(result.skepticResult).toBeDefined();
+    });
+
+    it('BoundedAgentRuntime preserves evaluated triggerContext in fail-closed fallback artifact when skeptic agent execution throws', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+
+      runtime.registerTool('risk.honeypot_scan', async () => {
+        throw new Error('Unexpected fatal engine fault');
+      });
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableVoi: true,
+        enableSkeptic: true,
+        candidateScore: 0.82,
+        skepticTriggerContext: {
+          dominantProviderRatio: 0.95, // fires DOMINANT_SINGLE_PROVIDER_DEPENDENCE
+        },
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      expect(result.skepticResult).toBeDefined();
+      expect(result.skepticResult?.artifact.triggered).toBe(true);
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('DOMINANT_SINGLE_PROVIDER_DEPENDENCE');
+      expect(result.skepticResult?.artifact.triggerMetrics).toMatchObject({
+        dominantProviderRatio: 0.95,
+      });
+      expect(result.skepticResult?.artifact.sha256).toMatch(/^[a-f0-9]{64}$/);
+    });
+
+    it('VoiPlanner emits RIGHTS_BLOCKED when tools in family are supported by profile but excluded from authorization envelope', () => {
+      const planner = new VoiPlanner();
+      const profile = new ModelProfileRegistry().require('deep-research-v1');
+
+      // Envelope authorizes contract.audit and token.overview, but excludes liquidity.lock
+      const restrictedEnvelope: ToolAuthorizationEnvelope = {
+        allowedTools: ['contract.audit', 'core.token_overview'],
+      };
+
+      const result = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        envelope: restrictedEnvelope,
+        profile,
+        budget: sampleBudget,
+      });
+
+      const liquidityDecision = result.decisions.find((d) => d.evidenceFamily === 'LIQUIDITY_LOCK');
+      expect(liquidityDecision).toBeDefined();
+      expect(liquidityDecision?.state).toBe('RIGHTS_BLOCKED');
+      expect(liquidityDecision?.reasonCodes).toContain('RIGHTS_BLOCKED_BY_POLICY');
+      expect(liquidityDecision?.skipReason).toContain('not permitted by authorization envelope');
+    });
   });
 });
+
 
