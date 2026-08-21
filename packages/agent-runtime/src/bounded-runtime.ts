@@ -19,7 +19,7 @@ import {
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
-import { EvidenceValidator, type EvidenceRecord } from './evidence-validator.js';
+import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
 
 export interface ToolExecutionContext {

@@ -6,7 +6,6 @@ import { UntrustedContentIsolator } from '@ciag/agent-runtime';
 import { ToolArgumentConfinementValidator } from '@ciag/agent-runtime';
 import type { AgentDecision } from '@ciag/shared-schemas';
 
-const nowIso = new Date().toISOString();
 const decisionTime = '2026-08-20T12:00:00.000Z';
 
 const makeEvidence = (overrides: Partial<EvidenceRecord> & Pick<EvidenceRecord, 'id'>): EvidenceRecord => ({

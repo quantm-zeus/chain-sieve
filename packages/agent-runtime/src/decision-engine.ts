@@ -1,4 +1,4 @@
-import type { AgentDecision, ClaimRef } from '@ciag/shared-schemas';
+import type { AgentDecision } from '@ciag/shared-schemas';
 import { EvidenceValidator, type EvidenceRecord, type ValidatorOptions } from './evidence-validator.js';
 
 /**
