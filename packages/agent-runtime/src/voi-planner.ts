@@ -71,7 +71,7 @@ export interface VoiPlanResult {
 
 export interface ReconcileExecutionOptions {
   decisions: readonly EvidenceAcquisitionDecision[];
-  toolRecords?: Array<{ toolName: string; callId: string; output?: unknown; error?: string }> | undefined;
+  toolRecords?: Array<{ toolName: string; callId: string; output?: unknown; error?: string | undefined }> | undefined;
   previousDecision?: AgentDecision | undefined;
   finalDecision: AgentDecision;
   actualCost?: { monetaryCostUsd?: number; quotaCostUnits?: number } | undefined;
