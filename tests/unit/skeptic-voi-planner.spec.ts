@@ -637,7 +637,10 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.voiPlanResult).toBeDefined();
       expect(result.voiPlanResult?.decisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
       expect(result.voiPlanResult?.requestedFamilies).toContain('CONTRACT_SECURITY');
-      expect(result.voiPlanResult?.requestedFamilies.length! + result.voiPlanResult?.skippedFamilies.length!).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+      expect(
+        (result.voiPlanResult?.requestedFamilies.length ?? 0) +
+          (result.voiPlanResult?.skippedFamilies.length ?? 0),
+      ).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
       const contractSecDecision = result.voiPlanResult?.decisions.find((d) => d.evidenceFamily === 'CONTRACT_SECURITY');
       expect(contractSecDecision?.completedAt).toBeDefined();
       expect(contractSecDecision?.actualCost).toBeDefined();
