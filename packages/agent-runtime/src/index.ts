@@ -21,3 +21,5 @@ export * from './evidence-validator.js';
 export * from './decision-engine.js';
 export * from './decision-lineage.js';
 export * from './untrusted-isolation.js';
+export * from './randomized-probe.js';
+export * from './model-assisted-planner.js';
