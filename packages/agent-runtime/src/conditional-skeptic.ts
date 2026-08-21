@@ -274,6 +274,9 @@ export class ConditionalSkepticAgent {
         sha256: this.computeArtifactHash(canonicalNotTriggeredData),
       };
 
+      // Validate schema
+      SkepticArtifactSchema.parse(notTriggeredArtifact);
+
       return {
         artifact: notTriggeredArtifact,
         status: 'NOT_TRIGGERED',

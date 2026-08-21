@@ -154,11 +154,11 @@ export class VoiPlanner {
       const reasonCodes: string[] = [];
       let expectedDecisionImpact = `Information value: ${evoi.toFixed(3)}`;
 
-      if (isHardRejected) {
+      if (isHardRejected && family.isOptional) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Hard rejection already proven; additional optional evidence skipped by policy';
         reasonCodes.push('HARD_REJECTION_PROVEN', 'POLICY_STOP_CONDITION');
-      } else if (isUnreachable) {
+      } else if (isUnreachable && family.isOptional) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Alert threshold unreachable under current state; additional optional evidence skipped by policy';
         reasonCodes.push('ALERT_THRESHOLD_UNREACHABLE', 'POLICY_STOP_CONDITION');
@@ -270,7 +270,7 @@ export class VoiPlanner {
   }): number {
     const { family, candidateScore, isNearAlert, hasKnownEvidence, isHardRejected, isUnreachable } = params;
 
-    if (hasKnownEvidence || isHardRejected || isUnreachable) {
+    if (hasKnownEvidence || (family.isOptional && (isHardRejected || isUnreachable))) {
       return 0.0;
     }
 
@@ -392,15 +392,20 @@ export class VoiPlanner {
       }
 
       // Update actual cost
-      let decisionActualCost: typeof decision.estimatedCost = decision.estimatedCost;
-      if (actualCost) {
+      let decisionActualCost: typeof decision.estimatedCost;
+      if (decision.state !== 'REQUESTED') {
+        decisionActualCost = {
+          monetaryCostUsd: 0,
+          quotaCostUnits: 0,
+        };
+      } else if (actualCost) {
         decisionActualCost = actualCost;
       } else if (matchingToolRecords.length > 0 && family) {
         decisionActualCost = {
           monetaryCostUsd: Number((matchingToolRecords.length * family.monetaryCostUsd).toFixed(6)),
           quotaCostUnits: matchingToolRecords.length * family.providerQuotaCost,
         };
-      } else if (decision.state !== 'REQUESTED') {
+      } else {
         decisionActualCost = {
           monetaryCostUsd: 0,
           quotaCostUnits: 0,

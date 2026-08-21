@@ -431,7 +431,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(rendered).toContain('Missingness is neutral; not unfavorable');
     });
 
-    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when hard rejection is proven', () => {
+    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when hard rejection is proven while retaining mandatory core family', () => {
       const planner = new VoiPlanner();
       const planResult = planner.planAcquisitions({
         candidate: sampleCandidate,
@@ -442,7 +442,13 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
         hardRejectionProven: true,
       });
 
+      const tokenProfileDecision = planResult.decisions.find((d) => d.evidenceFamily === 'TOKEN_PROFILE');
+      expect(tokenProfileDecision).toBeDefined();
+      expect(tokenProfileDecision?.state).toBe('REQUESTED');
+      expect(tokenProfileDecision?.reasonCodes).toContain('MANDATORY_CORE_EVIDENCE');
+
       const optionalDecisions = planResult.decisions.filter((d) => d.evidenceFamily !== 'TOKEN_PROFILE');
+      expect(optionalDecisions.length).toBeGreaterThan(0);
       for (const d of optionalDecisions) {
         expect(d.state).toBe('NOT_REQUESTED_BY_POLICY');
         expect(d.skipReason).toContain('Hard rejection already proven');
@@ -450,7 +456,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       }
     });
 
-    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when alert threshold is unreachable', () => {
+    it('skips all optional evidence as NOT_REQUESTED_BY_POLICY when alert threshold is unreachable while retaining mandatory core family', () => {
       const planner = new VoiPlanner();
       const planResult = planner.planAcquisitions({
         candidate: sampleCandidate,
@@ -461,7 +467,13 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
         alertThresholdUnreachable: true,
       });
 
+      const tokenProfileDecision = planResult.decisions.find((d) => d.evidenceFamily === 'TOKEN_PROFILE');
+      expect(tokenProfileDecision).toBeDefined();
+      expect(tokenProfileDecision?.state).toBe('REQUESTED');
+      expect(tokenProfileDecision?.reasonCodes).toContain('MANDATORY_CORE_EVIDENCE');
+
       const optionalDecisions = planResult.decisions.filter((d) => d.evidenceFamily !== 'TOKEN_PROFILE');
+      expect(optionalDecisions.length).toBeGreaterThan(0);
       for (const d of optionalDecisions) {
         expect(d.state).toBe('NOT_REQUESTED_BY_POLICY');
         expect(d.skipReason).toContain('Alert threshold unreachable');
@@ -526,7 +538,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
     });
 
     it('reconciles decisions after execution, updating actual cost and decision change status', () => {
-      const planner = new VoiPlanner();
+      const planner = new VoiPlanner({ minExpectedInformationValue: 0.60 });
       const planResult = planner.planAcquisitions({
         candidate: sampleCandidate,
         runId: 'run-reconcile-001',
@@ -566,6 +578,15 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(contractSecurityDecision?.actualDecisionChange).toBe('ALERT');
       expect(contractSecurityDecision?.completedAt).toBeDefined();
       expect(contractSecurityDecision?.actualCost?.monetaryCostUsd).toBe(0.0012);
+      expect(contractSecurityDecision?.actualCost?.quotaCostUnits).toBe(4);
+
+      // Skipped families must have actualCost of 0
+      const skippedDecisions = reconciled.filter((d) => d.state === 'NOT_REQUESTED_BY_POLICY');
+      expect(skippedDecisions.length).toBeGreaterThan(0);
+      for (const skipped of skippedDecisions) {
+        expect(skipped.actualCost?.monetaryCostUsd).toBe(0);
+        expect(skipped.actualCost?.quotaCostUnits).toBe(0);
+      }
     });
 
     it('treats NOT_REQUESTED_BY_POLICY as neutral missingness in downstream scoring without negative inference', () => {
