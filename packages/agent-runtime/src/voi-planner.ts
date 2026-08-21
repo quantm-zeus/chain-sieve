@@ -17,7 +17,6 @@ import type {
 import type { CandidateTarget } from './deterministic-planner.js';
 import {
   EvidenceFamilyRegistry,
-  DEFAULT_EVIDENCE_FAMILIES,
   type EvidenceFamilyDefinition,
 } from './evidence-families.js';
 

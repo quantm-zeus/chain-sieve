@@ -8,7 +8,6 @@ import type {
   AgentBudget,
   AgentDecision,
   CandidateRiskState,
-  ModelProfile,
   SkepticArtifact,
   SkepticTriggerReason,
   SkepticVerdict,
@@ -71,7 +70,7 @@ export class SkepticTriggerPolicy {
     const reasons: SkepticTriggerReason[] = [];
     const metrics: Record<string, string | number | boolean> = {};
 
-    const { candidate, parentDecision } = context;
+    const { parentDecision } = context;
     const score = context.candidateScore ?? 0.5;
     const coverage = context.dataCoverageRatio ?? 1.0;
     const conflicts = context.providerConflictsCount ?? parentDecision.providerConflicts.length;

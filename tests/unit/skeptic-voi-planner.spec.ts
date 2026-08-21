@@ -4,7 +4,6 @@ import {
   DEFAULT_EVIDENCE_FAMILIES,
   DEFAULT_SKEPTIC_TRIGGER_POLICY,
   DEFAULT_VOI_POLICY,
-  EvidenceFamilyRegistry,
   ModelProfileRegistry,
   SkepticTriggerPolicy,
   VoiPlanner,
