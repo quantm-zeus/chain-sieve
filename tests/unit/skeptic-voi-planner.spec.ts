@@ -5,6 +5,7 @@ import {
   DEFAULT_EVIDENCE_FAMILIES,
   DEFAULT_SKEPTIC_TRIGGER_POLICY,
   DEFAULT_VOI_POLICY,
+  DatabaseAgentPersistenceRepository,
   InMemoryAgentPersistenceRepository,
   ModelProfileRegistry,
   SkepticTriggerPolicy,
@@ -870,6 +871,69 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.artifact.confidence).toBe('LOW');
       expect(result.artifact.counterThesis).toContain('skipped by policy');
       expect(result.artifact.sha256).toBeDefined();
+    });
+
+    it('DatabaseAgentPersistenceRepository preserves round-trip fidelity for VoiPlan totals over requested families only', async () => {
+      const rows: Record<string, unknown>[] = [];
+      const mockDatabase = {
+        query: async (sql: string, params: unknown[] = []) => {
+          if (sql.startsWith('INSERT INTO voi_acquisition_decisions')) {
+            rows.push({
+              id: params[0],
+              candidate_id: params[1],
+              run_id: params[2],
+              evidence_family: params[3],
+              policy_version: params[4],
+              state: params[5],
+              requested_fields_json: params[6],
+              expected_decision_impact: params[7],
+              expected_information_value: params[8],
+              estimated_cost_json: params[9],
+              actual_cost_json: params[10],
+              randomized: params[11],
+              assignment_probability: params[12],
+              randomization_stratum: params[13],
+              randomization_seed_ref: params[14],
+              decided_at: params[15],
+              completed_at: params[16],
+              evidence_ids_json: params[17],
+              reason_codes_json: params[18],
+              skip_reason: params[19],
+              request_reason: params[20],
+              actual_decision_change: params[21],
+            });
+            return { rows: [] };
+          }
+          if (sql.startsWith('SELECT * FROM voi_acquisition_decisions')) {
+            return { rows };
+          }
+          return { rows: [] };
+        },
+      };
+
+      const dbRepo = new DatabaseAgentPersistenceRepository(mockDatabase as any);
+      const planner = new VoiPlanner({ minExpectedInformationValue: 0.60 });
+      const plan = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'run-db-fidelity-test',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile: new ModelProfileRegistry().get('deep-research-v1')!,
+        currentCandidateScore: 0.40, // some requested, some skipped
+      });
+
+      // Verify that the plan has both requested and skipped families
+      expect(plan.requestedFamilies.length).toBeGreaterThan(0);
+      expect(plan.skippedFamilies.length).toBeGreaterThan(0);
+
+      await dbRepo.saveVoiPlan(plan);
+      const reconstructed = await dbRepo.getVoiPlan('run-db-fidelity-test');
+
+      expect(reconstructed).not.toBeNull();
+      expect(reconstructed?.totalEstimatedMonetaryCostUsd).toBe(plan.totalEstimatedMonetaryCostUsd);
+      expect(reconstructed?.totalEstimatedQuotaUnits).toBe(plan.totalEstimatedQuotaUnits);
+      expect(reconstructed?.requestedFamilies).toEqual(plan.requestedFamilies);
+      expect(reconstructed?.skippedFamilies).toEqual(plan.skippedFamilies);
     });
   });
 });

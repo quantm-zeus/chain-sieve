@@ -68,9 +68,15 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
         ON CONFLICT (id) DO UPDATE SET
           state = EXCLUDED.state,
+          expected_decision_impact = EXCLUDED.expected_decision_impact,
+          expected_information_value = EXCLUDED.expected_information_value,
+          estimated_cost_json = EXCLUDED.estimated_cost_json,
           actual_cost_json = EXCLUDED.actual_cost_json,
           completed_at = EXCLUDED.completed_at,
           evidence_ids_json = EXCLUDED.evidence_ids_json,
+          reason_codes_json = EXCLUDED.reason_codes_json,
+          skip_reason = EXCLUDED.skip_reason,
+          request_reason = EXCLUDED.request_reason,
           actual_decision_change = EXCLUDED.actual_decision_change`,
         [
           decision.id,
@@ -158,10 +164,11 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
     if (decisions.length === 0) return null;
     const first = decisions[0];
     if (!first) return null;
-    const requestedFamilies = decisions.filter((d) => d.state === 'REQUESTED').map((d) => d.evidenceFamily);
+    const requested = decisions.filter((d) => d.state === 'REQUESTED');
+    const requestedFamilies = requested.map((d) => d.evidenceFamily);
     const skippedFamilies = decisions.filter((d) => d.state !== 'REQUESTED').map((d) => d.evidenceFamily);
-    const totalCost = decisions.reduce((acc, d) => acc + (d.estimatedCost?.monetaryCostUsd ?? 0), 0);
-    const totalQuota = decisions.reduce((acc, d) => acc + (d.estimatedCost?.quotaCostUnits ?? 0), 0);
+    const totalCost = requested.reduce((acc, d) => acc + (d.estimatedCost?.monetaryCostUsd ?? 0), 0);
+    const totalQuota = requested.reduce((acc, d) => acc + (d.estimatedCost?.quotaCostUnits ?? 0), 0);
 
     return {
       policyVersion: first.policyVersion,

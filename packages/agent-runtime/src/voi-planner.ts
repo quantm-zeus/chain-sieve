@@ -106,7 +106,12 @@ export class VoiPlanner {
     const isHardRejected = input.hardRejectionProven === true;
     const isUnreachable = input.alertThresholdUnreachable === true;
 
-    const families = registry.list();
+    // Prioritize mandatory core families first, then optional families by defaultPriority
+    const families = [...registry.list()].sort((a, b) => {
+      if (!a.isOptional && b.isOptional) return -1;
+      if (a.isOptional && !b.isOptional) return 1;
+      return b.defaultPriority - a.defaultPriority;
+    });
     const decisions: EvidenceAcquisitionDecision[] = [];
 
     let accumulatedEstimatedCostUsd = 0;
