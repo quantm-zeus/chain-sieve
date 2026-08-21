@@ -32,7 +32,12 @@ export class InMemoryAgentPersistenceRepository implements AgentRuntimePersisten
   public async saveSkepticArtifact(artifact: SkepticArtifact): Promise<void> {
     this.skepticArtifactsByRun.set(artifact.runId, artifact);
     const existing = this.skepticArtifactsByParent.get(artifact.parentDecisionId) ?? [];
-    existing.push(artifact);
+    const index = existing.findIndex((item) => item.id === artifact.id);
+    if (index >= 0) {
+      existing[index] = artifact;
+    } else {
+      existing.push(artifact);
+    }
     this.skepticArtifactsByParent.set(artifact.parentDecisionId, existing);
   }
 
@@ -117,11 +122,29 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
         sha256, created_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
       ON CONFLICT (id) DO UPDATE SET
+        parent_decision_id = EXCLUDED.parent_decision_id,
+        candidate_id = EXCLUDED.candidate_id,
+        run_id = EXCLUDED.run_id,
+        policy_version = EXCLUDED.policy_version,
+        triggered = EXCLUDED.triggered,
+        trigger_reasons_json = EXCLUDED.trigger_reasons_json,
+        trigger_metrics_json = EXCLUDED.trigger_metrics_json,
+        profile_id = EXCLUDED.profile_id,
+        profile_version = EXCLUDED.profile_version,
         status = EXCLUDED.status,
         verdict = EXCLUDED.verdict,
         confidence = EXCLUDED.confidence,
+        challenge_findings_json = EXCLUDED.challenge_findings_json,
         counter_thesis = EXCLUDED.counter_thesis,
-        sha256 = EXCLUDED.sha256`,
+        invalidation_conditions_json = EXCLUDED.invalidation_conditions_json,
+        suggested_decision = EXCLUDED.suggested_decision,
+        suggested_risk_level = EXCLUDED.suggested_risk_level,
+        decision_changed = EXCLUDED.decision_changed,
+        evidence_ids_json = EXCLUDED.evidence_ids_json,
+        executed_tool_records_json = EXCLUDED.executed_tool_records_json,
+        budget_usage_json = EXCLUDED.budget_usage_json,
+        sha256 = EXCLUDED.sha256,
+        created_at = EXCLUDED.created_at`,
       [
         artifact.id,
         artifact.parentDecisionId,

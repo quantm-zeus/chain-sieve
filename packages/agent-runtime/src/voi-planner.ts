@@ -523,7 +523,7 @@ export class VoiPlanner {
         this.registry.findByField(featureKey)?.familyId ??
         this.registry.findByTool(featureKey)[0]?.familyId;
       const decision = familyId ? decisionByFamily.get(familyId) : undefined;
-      const acquisitionState = decision ? decision.state : 'REQUESTED';
+      const acquisitionState = decision ? decision.state : 'NOT_REQUESTED_BY_POLICY';
 
       const isMissing = rawValue === null || rawValue === undefined;
       let imputedValue = 0.5; // neutral baseline default

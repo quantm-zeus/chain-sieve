@@ -709,6 +709,27 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(scored.evaluatedFeatures['contract.audit']?.isNegativeInferred).toBe(false);
       expect(scored.evaluatedFeatures['contract.audit']?.imputedValue).toBe(0.60);
     });
+
+    it('defaults unmapped features to NOT_REQUESTED_BY_POLICY with cohort neutral prior', () => {
+      const planner = new VoiPlanner();
+      const scored = planner.scoreWithMissingnessAwareness({
+        featureValues: {
+          'custom.unmapped.metric': null,
+        },
+        acquisitionDecisions: [],
+        featureWeights: {
+          'custom.unmapped.metric': 1.0,
+        },
+        baselineCohortScores: {
+          'custom.unmapped.metric': 0.75,
+        },
+      });
+
+      expect(scored.evaluatedFeatures['custom.unmapped.metric']?.acquisitionState).toBe('NOT_REQUESTED_BY_POLICY');
+      expect(scored.evaluatedFeatures['custom.unmapped.metric']?.isMissing).toBe(true);
+      expect(scored.evaluatedFeatures['custom.unmapped.metric']?.isNegativeInferred).toBe(false);
+      expect(scored.evaluatedFeatures['custom.unmapped.metric']?.imputedValue).toBe(0.75);
+    });
   });
 
   // =========================================================================
@@ -942,6 +963,91 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(reconstructed?.totalEstimatedQuotaUnits).toBe(plan.totalEstimatedQuotaUnits);
       expect(reconstructed?.requestedFamilies).toEqual(plan.requestedFamilies);
       expect(reconstructed?.skippedFamilies).toEqual(plan.skippedFamilies);
+    });
+
+    it('InMemoryAgentPersistenceRepository maintains idempotency when saving duplicate skeptic artifact id', async () => {
+      const inMemory = new InMemoryAgentPersistenceRepository();
+      const artifact1: SkepticArtifact = {
+        id: 'skeptic-idempotency-1',
+        parentDecisionId: 'parent-decision-1',
+        candidateId: 'cand-1',
+        runId: 'run-1',
+        policyVersion: 'v1.0.0',
+        triggered: true,
+        triggerReasons: ['CANDIDATE_NEAR_ALERT'],
+        profileId: 'skeptic-v1',
+        status: 'EXECUTED',
+        verdict: 'CHALLENGE',
+        confidence: 'HIGH',
+        challengeFindings: ['Finding 1'],
+        counterThesis: 'Thesis 1',
+        invalidationConditions: ['Condition 1'],
+        decisionChanged: true,
+        evidenceIds: ['ev-1'],
+        executedToolRecords: [],
+        createdAt: '2026-08-21T12:00:00.000Z',
+      };
+
+      await inMemory.saveSkepticArtifact(artifact1);
+      const afterFirst = await inMemory.getSkepticArtifactsByParentDecision('parent-decision-1');
+      expect(afterFirst.length).toBe(1);
+
+      // Re-save with updated fields and same ID
+      const artifact2: SkepticArtifact = {
+        ...artifact1,
+        verdict: 'VETO',
+        counterThesis: 'Updated thesis',
+      };
+      await inMemory.saveSkepticArtifact(artifact2);
+      const afterSecond = await inMemory.getSkepticArtifactsByParentDecision('parent-decision-1');
+      expect(afterSecond.length).toBe(1);
+      expect(afterSecond[0]?.verdict).toBe('VETO');
+      expect(afterSecond[0]?.counterThesis).toBe('Updated thesis');
+    });
+
+    it('DatabaseAgentPersistenceRepository.saveSkepticArtifact upserts all mutable columns on conflict', async () => {
+      let executedSql = '';
+      const mockDatabase: DatabaseAdapter = {
+        query: async <T extends Record<string, unknown> = Record<string, unknown>>(
+          sql: string,
+        ) => {
+          executedSql = sql;
+          return { rows: [] as T[], rowCount: 1 };
+        },
+        transaction: async <T>(work: (db: DatabaseAdapter) => Promise<T>) => work(mockDatabase),
+        ready: async () => true,
+        close: async () => {},
+      };
+
+      const dbRepo = new DatabaseAgentPersistenceRepository(mockDatabase);
+      const artifact: SkepticArtifact = {
+        id: 'skeptic-db-upsert-1',
+        parentDecisionId: 'parent-1',
+        candidateId: 'cand-1',
+        runId: 'run-1',
+        policyVersion: 'v1.0.0',
+        triggered: true,
+        triggerReasons: ['CANDIDATE_NEAR_ALERT'],
+        profileId: 'skeptic-v1',
+        status: 'EXECUTED',
+        verdict: 'CHALLENGE',
+        confidence: 'HIGH',
+        challengeFindings: ['Finding 1'],
+        counterThesis: 'Thesis 1',
+        invalidationConditions: ['Condition 1'],
+        decisionChanged: true,
+        evidenceIds: ['ev-1'],
+        executedToolRecords: [],
+        createdAt: '2026-08-21T12:00:00.000Z',
+      };
+
+      await dbRepo.saveSkepticArtifact(artifact);
+      expect(executedSql).toContain('ON CONFLICT (id) DO UPDATE SET');
+      expect(executedSql).toContain('trigger_reasons_json = EXCLUDED.trigger_reasons_json');
+      expect(executedSql).toContain('evidence_ids_json = EXCLUDED.evidence_ids_json');
+      expect(executedSql).toContain('executed_tool_records_json = EXCLUDED.executed_tool_records_json');
+      expect(executedSql).toContain('budget_usage_json = EXCLUDED.budget_usage_json');
+      expect(executedSql).toContain('decision_changed = EXCLUDED.decision_changed');
     });
   });
 });
