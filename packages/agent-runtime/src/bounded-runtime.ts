@@ -1,6 +1,7 @@
 import type {
   AgentBudget,
   AgentDecision,
+  EvidenceAcquisitionDecision,
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
@@ -21,6 +22,18 @@ import { ModelProfileRegistry } from './model-profiles.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
+import {
+  VoiDecisionPlanner,
+  type RandomProbeConfig,
+} from './voi-planner.js';
+import {
+  EvidenceAcquisitionStore,
+  getEvidenceAcquisitionStore,
+} from './acquisition-state.js';
+import {
+  EvidenceFamilyRegistry,
+  type EvidenceFamilyDefinition,
+} from './evidence-families.js';
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;
@@ -57,18 +70,27 @@ export interface AgentExecutionOptions {
   initialEvidence?: Record<string, unknown> | undefined;
   goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   deterministicSeedRef?: string | number | undefined;
+  runId?: string | undefined;
+  policyVersion?: string | undefined;
+  randomProbeConfig?: RandomProbeConfig | undefined;
+  eligibleEvidenceFamilies?: readonly EvidenceFamilyDefinition[] | readonly string[] | undefined;
+  minVoiThreshold?: number | undefined;
+  acquisitionStore?: EvidenceAcquisitionStore | undefined;
 }
 
 export interface AgentExecutionResult {
+  runId: string;
   plan: DeterministicPlan;
   status: 'SUCCESS' | 'ABSTAINED' | 'BUDGET_EXCEEDED' | 'CANCELLED' | 'FAILED';
   decision: AgentDecision;
+  acquisitionDecisions: EvidenceAcquisitionDecision[];
   toolRecords: ToolExecutionRecord[];
   budgetUsage: BudgetUsageSnapshot;
   executedSteps: number;
   executedToolCalls: number;
   completedAt: string;
 }
+
 
 export class BoundedAgentRuntime {
   private readonly tools = new Map<string, ToolHandler>();
@@ -184,16 +206,30 @@ export class BoundedAgentRuntime {
       }
     }
 
-    // 6. Generate deterministic plan
-    const plan = DeterministicPlanner.plan({
+    // 6. Generate deterministic VOI plan and persist initial acquisition decisions
+    const familyRegistry = new EvidenceFamilyRegistry();
+    const voiPlanner = new VoiDecisionPlanner(familyRegistry);
+    const store = options.acquisitionStore ?? getEvidenceAcquisitionStore();
+    const policyVersion = options.policyVersion ?? profile.version;
+
+    const voiResult = voiPlanner.plan({
       candidate,
       profile,
       envelope,
       budget,
       goal: options.goal,
+      runId: options.runId,
+      policyVersion,
+      eligibleEvidenceFamilies: options.eligibleEvidenceFamilies,
       initialEvidence: options.initialEvidence,
+      randomProbeConfig: options.randomProbeConfig,
+      minVoiThreshold: options.minVoiThreshold,
+      store,
       deterministicSeedRef: options.deterministicSeedRef,
     });
+
+    const plan = voiResult.plan;
+    const runId = voiResult.runId;
 
     const toolRecords: ToolExecutionRecord[] = [];
     let executedSteps = 0;
@@ -304,6 +340,45 @@ export class BoundedAgentRuntime {
         // Account for actual tokens / cost
         tracker.recordTokens(inputTokens, outputTokens, estimatedCostUsd);
 
+        // Update acquisition record outcome if this tool maps to an evidence family
+        const fam = familyRegistry.findByTool(call.toolName);
+        if (fam) {
+          try {
+            if (callError) {
+              const isUnavailable =
+                callError.includes('503') ||
+                callError.includes('UNAVAILABLE') ||
+                callError.includes('TIMEOUT') ||
+                callError.includes('ETIMEDOUT');
+              store.updateOutcome({
+                runId,
+                candidateId: candidate.assetId,
+                evidenceFamily: fam.id,
+                policyVersion,
+                state: isUnavailable ? 'PROVIDER_UNAVAILABLE' : 'FAILED',
+                reasonCodes: [callError],
+              });
+            } else {
+              const isEmpty =
+                output === null ||
+                output === undefined ||
+                (Array.isArray(output) && output.length === 0) ||
+                (typeof output === 'object' && Object.keys(output as object).length === 0);
+
+              store.updateOutcome({
+                runId,
+                candidateId: candidate.assetId,
+                evidenceFamily: fam.id,
+                policyVersion,
+                state: isEmpty ? 'RETURNED_EMPTY' : 'RETURNED',
+                evidenceIds: isEmpty ? [] : [call.callId],
+              });
+            }
+          } catch {
+            // Already updated or blocked pre-flight
+          }
+        }
+
         toolRecords.push({
           callId: call.callId,
           stepIndex: step.stepIndex,
@@ -326,16 +401,21 @@ export class BoundedAgentRuntime {
       toolRecords,
     );
 
+    const acquisitionDecisions = store.listDecisionsForCandidateAndRun(runId, candidate.assetId);
+
     return {
+      runId,
       plan,
       status: 'SUCCESS',
       decision,
+      acquisitionDecisions,
       toolRecords,
       budgetUsage: tracker.getSnapshot(),
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
     };
+
   }
 
   private synthesizeDecision(

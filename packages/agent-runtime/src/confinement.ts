@@ -399,6 +399,89 @@ export class ToolArgumentConfinementValidator {
       }
     }
 
+    // Entity check
+    if (envelope.allowedEntities && envelope.allowedEntities.length > 0) {
+      const isEntityKey =
+        lowerKey.includes('entity') ||
+        lowerKey.includes('asset') ||
+        lowerKey.includes('candidate');
+
+      if (typeof value === 'string' && isEntityKey) {
+        if (!envelope.allowedEntities.includes(value)) {
+          throw new ConfinementViolationError(
+            'ENTITY_NOT_ALLOWED',
+            `Entity "${value}" is outside envelope allowedEntities: [${envelope.allowedEntities.join(', ')}]`,
+            toolName,
+          );
+        }
+      } else if (Array.isArray(value) && isEntityKey) {
+        for (const item of value) {
+          if (typeof item === 'string' && !envelope.allowedEntities.includes(item)) {
+            throw new ConfinementViolationError(
+              'ENTITY_NOT_ALLOWED',
+              `Entity "${item}" in list is outside envelope allowedEntities: [${envelope.allowedEntities.join(', ')}]`,
+              toolName,
+            );
+          }
+        }
+      }
+    }
+
+    // Allowed fields check
+    if (envelope.allowedFields) {
+      const toolAllowedFields = envelope.allowedFields[toolName];
+      const isFieldListKey =
+        lowerKey === 'fields' ||
+        lowerKey === 'requestedfields' ||
+        lowerKey === 'columns' ||
+        lowerKey === 'properties' ||
+        lowerKey === 'attributes';
+
+      if (toolAllowedFields && isFieldListKey) {
+        if (typeof value === 'string') {
+          if (!toolAllowedFields.includes(value)) {
+            throw new ConfinementViolationError(
+              'FIELD_NOT_ALLOWED',
+              `Field "${value}" is outside envelope allowedFields for ${toolName}: [${toolAllowedFields.join(', ')}]`,
+              toolName,
+            );
+          }
+        } else if (Array.isArray(value)) {
+          for (const item of value) {
+            if (typeof item === 'string' && !toolAllowedFields.includes(item)) {
+              throw new ConfinementViolationError(
+                'FIELD_NOT_ALLOWED',
+                `Field "${item}" in list is outside envelope allowedFields for ${toolName}: [${toolAllowedFields.join(', ')}]`,
+                toolName,
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // Deadline check
+    if (envelope.deadlineAt) {
+      const deadlineMs = new Date(envelope.deadlineAt).getTime();
+      const isTimeKey =
+        lowerKey.includes('time') ||
+        lowerKey.includes('stamp') ||
+        lowerKey.includes('asof') ||
+        lowerKey.includes('date') ||
+        lowerKey.includes('since') ||
+        lowerKey.includes('until');
+      if (isTimeKey) {
+        const tsMs = this.parseTimestampToMs(value);
+        if (tsMs !== undefined && tsMs > deadlineMs) {
+          throw new ConfinementViolationError(
+            'TIME_RANGE_NOT_ALLOWED',
+            `Timestamp "${value}" (${new Date(tsMs).toISOString()}) exceeds envelope deadlineAt "${envelope.deadlineAt}"`,
+            toolName,
+          );
+        }
+      }
+    }
+
     // Cost check
     if (
       envelope.maxCostUsd !== undefined &&
@@ -418,3 +501,4 @@ export class ToolArgumentConfinementValidator {
     }
   }
 }
+

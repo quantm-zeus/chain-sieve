@@ -48,6 +48,8 @@ export const ToolAuthorizationEnvelopeSchema = z.object({
   allowedDomains: z.array(z.string().min(1)).optional(),
   allowedChains: z.array(z.string().min(1)).optional(),
   allowedAddresses: z.array(z.string().min(1)).optional(),
+  allowedEntities: z.array(z.string().min(1)).optional(),
+  allowedFields: z.record(z.string(), z.array(z.string().min(1))).optional(),
   timeRange: z
     .object({
       minTimestamp: z.string().datetime().optional(),
@@ -57,8 +59,23 @@ export const ToolAuthorizationEnvelopeSchema = z.object({
   maxOutputSizeBytes: z.number().int().positive().optional(),
   maxLimit: z.number().int().positive().optional(),
   maxCostUsd: z.number().nonnegative().optional(),
+  deadlineAt: z.string().datetime().optional(),
 });
 export type ToolAuthorizationEnvelope = z.infer<typeof ToolAuthorizationEnvelopeSchema>;
+
+export const EvidenceAcquisitionStateSchema = z.enum([
+  'NOT_REQUESTED_BY_POLICY',
+  'REQUESTED',
+  'COST_BLOCKED',
+  'QUOTA_BLOCKED',
+  'RIGHTS_BLOCKED',
+  'UNSUPPORTED',
+  'PROVIDER_UNAVAILABLE',
+  'FAILED',
+  'RETURNED_EMPTY',
+  'RETURNED',
+]);
+export type EvidenceAcquisitionState = z.infer<typeof EvidenceAcquisitionStateSchema>;
 
 export const EvidenceAcquisitionDecisionSchema = z.object({
   id: z.string().min(1),
@@ -66,18 +83,7 @@ export const EvidenceAcquisitionDecisionSchema = z.object({
   runId: z.string().min(1),
   evidenceFamily: z.string().min(1),
   policyVersion: z.string().min(1),
-  state: z.enum([
-    'NOT_REQUESTED_BY_POLICY',
-    'REQUESTED',
-    'COST_BLOCKED',
-    'QUOTA_BLOCKED',
-    'RIGHTS_BLOCKED',
-    'UNSUPPORTED',
-    'PROVIDER_UNAVAILABLE',
-    'FAILED',
-    'RETURNED_EMPTY',
-    'RETURNED',
-  ]),
+  state: EvidenceAcquisitionStateSchema,
   requestedFields: z.array(z.string().min(1)),
   expectedDecisionImpact: z.string().optional(),
   estimatedCost: z
