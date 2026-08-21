@@ -1,7 +1,5 @@
 import { createHash } from 'node:crypto';
 import type {
-  AgentBudget,
-  ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { ToolArgumentConfinementValidator } from './confinement.js';

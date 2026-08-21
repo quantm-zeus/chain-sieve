@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BoundedAgentRuntime,
   ModelAssistedPlanner,
   StratifiedRandomizedProbeAllocator,
   ToolArgumentConfinementValidator,
@@ -9,8 +8,6 @@ import {
 } from '@ciag/agent-runtime';
 import {
   DesignBasedEstimators,
-  createFrozenCandidateUniverse,
-  AgentSelectionEvaluator,
 } from '@ciag/evaluation';
 import type {
   AgentBudget,

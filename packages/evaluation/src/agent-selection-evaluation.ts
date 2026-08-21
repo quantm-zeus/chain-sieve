@@ -5,13 +5,13 @@ import type {
   AgentSelectionArmSummary,
   AgentSelectionArmType,
   AgentSelectionComparisonReport,
+  DesignBasedEstimate,
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
-import type { FrozenCandidateUniverse, OutcomeRecord } from './types.js';
+import type { FrozenCandidateUniverse } from './types.js';
 import {
   BoundedAgentRuntime,
-  DeterministicPlanner,
   ModelAssistedPlanner,
   StratifiedRandomizedProbeAllocator,
   type CandidateTarget,
@@ -392,7 +392,7 @@ export class AgentSelectionEvaluator {
     totalCostUsd: number;
     averageLatencyMs: number;
     controlDecisions: readonly AgentDecision[];
-    designEstimates?: Record<string, any> | undefined;
+    designBasedEstimates?: Record<string, DesignBasedEstimate> | undefined;
   }): AgentSelectionArmSummary {
     const {
       arm,
@@ -403,7 +403,7 @@ export class AgentSelectionEvaluator {
       totalCostUsd,
       averageLatencyMs,
       controlDecisions,
-      designEstimates,
+      designBasedEstimates,
     } = options;
 
     let alertCount = 0;

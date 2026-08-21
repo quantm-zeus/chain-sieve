@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto';
 import type {
-  AgentBudget,
   EvidenceAcquisitionDecision,
   RandomizedEvidenceProbe,
   StratifiedProbeConfig,
@@ -135,7 +134,7 @@ export class StratifiedRandomizedProbeAllocator {
     }
 
     // Check exploration budget and protected reserve limits
-    let costPerProbeEst = 0.005; // estimated default USD cost per probe
+    const costPerProbeEst = 0.005; // estimated default USD cost per probe
     let maxAllowedByBudget = config.maxProbeCandidates;
 
     if (config.maxProbeCostUsd !== undefined && config.maxProbeCostUsd > 0) {
