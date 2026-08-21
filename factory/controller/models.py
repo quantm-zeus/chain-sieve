@@ -248,6 +248,13 @@ class PackageRecord:
     last_progress_at: str | None = None
     progress_fingerprint: str | None = None
     provider_selection: dict[str, Any] | None = None
+    review_baseline_id: str | None = None
+    review_baseline_head: str | None = None
+    review_baseline_context_digest: str | None = None
+    review_mode: str | None = None
+    review_findings: list[dict[str, Any]] = field(default_factory=list)
+    review_closure_round: int = 0
+    final_confirmation_used: bool = False
     updated_at: str | None = None
     authority_schema_version: int = 0
 
@@ -340,6 +347,13 @@ class PackageRecord:
             "last_progress_at": self.last_progress_at,
             "progress_fingerprint": self.progress_fingerprint,
             "provider_selection": self.provider_selection,
+            "review_baseline_id": self.review_baseline_id,
+            "review_baseline_head": self.review_baseline_head,
+            "review_baseline_context_digest": self.review_baseline_context_digest,
+            "review_mode": self.review_mode,
+            "review_findings": self.review_findings,
+            "review_closure_round": self.review_closure_round,
+            "final_confirmation_used": self.final_confirmation_used,
             "updated_at": self.updated_at,
             "authority_schema_version": self.authority_schema_version,
         }

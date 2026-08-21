@@ -9,8 +9,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .ao import AgentOrchestrator, review_gate
+from .ao import AgentOrchestrator, _parse_review_payload, review_gate
 from .config import FactoryConfig
+from .findings import (
+    FindingSeverity,
+    FindingStatus,
+    ReviewFinding,
+    ReviewMode,
+    detect_material_scope_change,
+    parse_and_reconcile_review,
+)
 from .github import GitHub, causal_ci_check, ci_state, classify_ci_failure
 from .models import (
     FactoryStatus,
@@ -26,7 +34,7 @@ from .models import (
     work_key,
 )
 from .policy import protected_path_violations, review_required, reviewer_for, select_implementation_provider
-from .prompts import issue_body, worker_prompt
+from .prompts import build_focused_worker_correction_prompt, issue_body, worker_prompt
 from .store import StateStore, utc_now
 
 
@@ -227,7 +235,7 @@ class FactoryController:
         sessions: dict[str, list[Session]] = {}
         issue_to_package = {str(issue.number): package_id for package_id, issue in issues.items()}
         for issue_id, values in raw_sessions.items():
-            normalized = issue_id.removeprefix("#")
+            normalized = str(issue_id).removeprefix("#")
             package_id = issue_to_package.get(normalized)
             if not package_id:
                 digits = "".join(ch for ch in normalized if ch.isdigit())
@@ -1226,10 +1234,43 @@ class FactoryController:
             if not record.session_id:
                 self._block(milestone.id, package.id, record, "review-required PR has no correlated AO session", work_key(milestone.id, package.id))
                 return
-            context_path = self.store.write_review_context(milestone.id, package, pr.head_sha)
+
+            material_scope_change = False
+            if record.review_baseline_id and record.review_baseline_context_digest:
+                material_scope_change = detect_material_scope_change(package, getattr(record, "_baseline_context", None))
+
+            if not record.review_baseline_id or material_scope_change:
+                current_review_mode = ReviewMode.FULL_BASELINE.value
+            else:
+                frozen_findings = [ReviewFinding.from_dict(f) for f in (record.review_findings or [])]
+                open_blockers = [
+                    f for f in frozen_findings
+                    if f.blocking and f.status in {FindingStatus.OPEN.value, FindingStatus.REGRESSION.value}
+                ]
+                if len(open_blockers) == 0 and record.ci_status == "PASS":
+                    current_review_mode = ReviewMode.FINAL_CONFIRMATION.value
+                else:
+                    current_review_mode = ReviewMode.CLOSURE_VERIFY.value
+
+            record.review_mode = current_review_mode
+            required_reviewer = reviewer_for(record.provider or package.preferred_provider)
+
+            context_path = self.store.write_review_context(
+                milestone.id,
+                package,
+                pr.head_sha,
+                review_mode=current_review_mode,
+                baseline_id=record.review_baseline_id,
+                baseline_head=record.review_baseline_head,
+                baseline_context_digest=record.review_baseline_context_digest,
+                frozen_findings=record.review_findings,
+                previous_reviewed_head=record.review_sha,
+                pr_number=pr.number,
+                implementation_provider=record.provider or package.preferred_provider,
+                reviewer_provider=required_reviewer,
+            )
             context = json.loads(context_path.read_text(encoding="utf-8"))
             expected_context_digest = str(context["contextDigest"])
-            required_reviewer = reviewer_for(record.provider or package.preferred_provider)
             target_dispatch_key = review_dispatch_key(
                 work_key(milestone.id, package.id),
                 pr.number,
@@ -1251,8 +1292,14 @@ class FactoryController:
                     record.review_terminal_rejection_sha = None
 
             reviews = self.ao.reviews(record.session_id or "")
+            allowed_digests = {expected_context_digest, str(context.get("baseContextDigest", expected_context_digest))}
             review_ok, review_reason, reviewer, verdict = review_gate(
-                reviews, pr.head_sha, required_reviewer, expected_context_digest,
+                reviews,
+                pr.head_sha,
+                required_reviewer,
+                allowed_digests,
+                review_mode=current_review_mode,
+                frozen_findings=record.review_findings,
             )
 
             raw_runs = reviews.get("reviews") or reviews.get("data") or []
@@ -1283,6 +1330,40 @@ class FactoryController:
                     record.last_progress_at = utc_now()
                     return
 
+                raw_body = str(matching_run.get("body", ""))
+                parsed_payload = _parse_review_payload(raw_body)
+                frozen_objs = [ReviewFinding.from_dict(f) for f in (record.review_findings or [])]
+                updated_findings, blocking_reasons = parse_and_reconcile_review(
+                    raw_body,
+                    parsed_payload,
+                    pr.head_sha,
+                    str(run_id),
+                    current_review_mode,
+                    frozen_objs,
+                )
+                record.review_findings = [f.to_dict() for f in updated_findings]
+
+                if current_review_mode == ReviewMode.FULL_BASELINE.value:
+                    record.review_baseline_id = str(run_id or target_dispatch_key)
+                    record.review_baseline_head = pr.head_sha
+                    record.review_baseline_context_digest = expected_context_digest
+                    record.review_closure_round = 0
+                    self.store.event(
+                        "REVIEW_BASELINE_FROZEN",
+                        milestoneId=milestone.id,
+                        workPackageId=package.id,
+                        workKey=work_key(milestone.id, package.id),
+                        headSha=pr.head_sha,
+                        baselineId=record.review_baseline_id,
+                        contextDigest=expected_context_digest,
+                        openFindings=[f.fingerprint for f in updated_findings if f.blocking and f.status == FindingStatus.OPEN.value],
+                        followUps=[f.fingerprint for f in updated_findings if f.status == FindingStatus.FOLLOW_UP.value],
+                    )
+                elif current_review_mode == ReviewMode.CLOSURE_VERIFY.value:
+                    record.review_closure_round += 1
+                elif current_review_mode == ReviewMode.FINAL_CONFIRMATION.value:
+                    record.final_confirmation_used = True
+
                 record.review_sha = pr.head_sha
                 record.review_verdict = verdict
                 record.review_dispatch_state = ReviewDispatchState.COMPLETED.value
@@ -1304,9 +1385,18 @@ class FactoryController:
                             record.review_corrections_used_in_epoch += 1
                             record.review_corrections_used += 1
                             record.review_correction_authorized_from_sha = pr.head_sha
+                            
+                            open_blockers = [f for f in updated_findings if f.blocking and f.status in {FindingStatus.OPEN.value, FindingStatus.REGRESSION.value}]
+                            worker_msg = build_focused_worker_correction_prompt(
+                                reviewer,
+                                pr.number,
+                                pr.head_sha,
+                                [f.to_dict() for f in open_blockers],
+                                review_reason,
+                            )
                             self.ao.send(
                                 record.session_id or "",
-                                f"The independent {reviewer} review rejected PR #{pr.number} at {pr.head_sha}: {review_reason}. Create a new additive correction commit and normal push. Do not amend, rebase, or force-push the existing reviewed history.",
+                                worker_msg,
                             )
                             record.last_error = token
                             record.last_progress_at = utc_now()
@@ -1315,6 +1405,7 @@ class FactoryController:
                                 workKey=work_key(milestone.id, package.id), provider=record.provider, reviewer=reviewer, aoSessionId=record.session_id,
                                 pr=pr.number, attempt=record.review_corrections_used_in_epoch, cumulativeAttempt=record.review_corrections_used, headSha=pr.head_sha, reviewRunId=record.review_dispatch_run_id,
                                 contextDigest=expected_context_digest, epoch=record.recovery_epoch,
+                                openFindings=[f.fingerprint for f in open_blockers],
                             )
                             self.store.event(
                                 "REVIEW_CORRECTION_STARTED", milestoneId=milestone.id, workPackageId=package.id,
@@ -2352,8 +2443,8 @@ def _session_package_status(record: PackageRecord, session: Session, config: Fac
     return PackageStatus.ACTIVE
 
 
-def _is_descendant(repo: Path | None, base_sha: str | None, head_sha: str | None) -> bool:
-    if not repo or not base_sha or not head_sha or base_sha == head_sha:
+def _is_descendant(repo: Path, base_sha: str, head_sha: str) -> bool:
+    if base_sha == head_sha:
         return True
     try:
         import subprocess
@@ -2362,6 +2453,8 @@ def _is_descendant(repo: Path | None, base_sha: str | None, head_sha: str | None
             capture_output=True,
             check=False,
         )
+        if result.returncode == 128:
+            return True
         return result.returncode == 0
     except Exception:
         return True
