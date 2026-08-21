@@ -232,6 +232,8 @@ class FactoryConfig:
                 raise ValueError(f"Codex call limit for {role} cannot be negative")
         if self.codex_routes["final_audit"].max_calls_per_milestone < self.max_final_audit_cycles:
             raise ValueError("final_audit Codex call limit must cover maxFinalAuditCycles")
+        if self.codex_routes["replan"].max_calls_per_milestone < self.max_autonomous_recovery_epochs:
+            raise ValueError("replan Codex call limit must cover maxAutonomousRecoveryEpochs")
         if self.max_convergence_passes > 0 and self.codex_routes["convergence"].max_calls_per_milestone < self.max_convergence_passes:
             raise ValueError("convergence Codex call limit must cover maxConvergencePasses")
         if not self.muse_model or not self.agy_model:

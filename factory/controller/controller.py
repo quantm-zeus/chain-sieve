@@ -335,6 +335,8 @@ class FactoryController:
                             "replan already attempted",
                             "refusing escalation loop",
                             "ci correction budget exhausted",
+                            "replan unavailable or budget exhausted",
+                            "replan call budget exhausted",
                         )
                     )
                     and record.recovery_epoch < self.config.max_autonomous_recovery_epochs
