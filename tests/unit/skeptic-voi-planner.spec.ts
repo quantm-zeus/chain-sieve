@@ -14,6 +14,7 @@ import {
 import type {
   AgentBudget,
   AgentDecision,
+  SkepticArtifact,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import {
