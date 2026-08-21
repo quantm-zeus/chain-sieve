@@ -251,7 +251,7 @@ export class ConditionalSkepticAgent {
         runId,
         policyVersion: triggerEval.policyVersion,
         triggered: false,
-        triggerReasons: [] as string[],
+        triggerReasons: [] as SkepticTriggerReason[],
         triggerMetrics: triggerEval.triggerMetrics,
         profileId: profile.id,
         profileVersion: profile.version,

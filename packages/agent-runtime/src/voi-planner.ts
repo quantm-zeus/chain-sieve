@@ -392,7 +392,7 @@ export class VoiPlanner {
       }
 
       // Update actual cost
-      let decisionActualCost: CostMetrics = decision.estimatedCost;
+      let decisionActualCost: typeof decision.estimatedCost = decision.estimatedCost;
       if (actualCost) {
         decisionActualCost = actualCost;
       } else if (matchingToolRecords.length > 0 && family) {
