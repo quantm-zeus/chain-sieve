@@ -334,8 +334,11 @@ class FactoryController:
                         for token in (
                             "replan already attempted",
                             "refusing escalation loop",
+                            "ci correction budget exhausted",
                         )
                     )
+                    and record.recovery_epoch < self.config.max_autonomous_recovery_epochs
+                    and record.review_terminal_rejection_sha is None
                 )
                 if is_legacy_replan_blocked and open_prs:
                     old_reason = record.blocked_reason
@@ -347,6 +350,8 @@ class FactoryController:
                     record.last_error = None
                     record.review_terminal_rejection_sha = None
                     record.review_corrections_used_in_epoch = 0
+                    record.ci_corrections_used_in_epoch = 0
+                    record.ci_correction_authorized_from_sha = None
                     self.store.event(
                         "LEGACY_REPLAN_BLOCK_RECONCILED",
                         milestoneId=milestone.id,
@@ -1150,16 +1155,28 @@ class FactoryController:
 
                 already_authorized_for_head = (record.ci_correction_authorized_from_sha == pr.head_sha)
                 if not already_authorized_for_head:
-                    if record.ci_corrections_used >= self.config.max_ci_correction_rounds:
-                        self._block(
-                            milestone.id,
-                            package.id,
-                            record,
-                            f"CI correction budget exhausted: {ci_reason}",
-                            work_key(milestone.id, package.id),
-                        )
+                    if record.ci_corrections_used_in_epoch >= self.config.max_ci_correction_rounds:
+                        if record.recovery_epoch < self.config.max_autonomous_recovery_epochs:
+                            self._escalate_replan(
+                                milestone,
+                                package,
+                                work_key(milestone.id, package.id),
+                                record,
+                                f"CI correction budget exhausted in epoch {record.recovery_epoch}: {ci_reason}",
+                                pr=pr,
+                                session=session,
+                            )
+                        else:
+                            self._block(
+                                milestone.id,
+                                package.id,
+                                record,
+                                f"CI correction budget exhausted: {ci_reason}",
+                                work_key(milestone.id, package.id),
+                            )
                         return
                     record.ci_corrections_used += 1
+                    record.ci_corrections_used_in_epoch += 1
                     record.ci_correction_authorized_from_sha = pr.head_sha
 
                 causal_name = str((causal_check or {}).get("name") or "CI")
@@ -1705,6 +1722,9 @@ class FactoryController:
             record.review_corrections_used_in_epoch = 0
             record.review_correction_authorized_from_sha = None
             record.review_terminal_rejection_sha = None
+            record.ci_corrections_used_in_epoch = 0
+            record.ci_correction_authorized_from_sha = None
+            record.ci_infra_retries_used = 0
             record.blocked_reason = None
             record.last_error = None
             record.status = PackageStatus.PR_WAITING

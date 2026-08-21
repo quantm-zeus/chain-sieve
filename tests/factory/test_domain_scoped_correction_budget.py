@@ -234,8 +234,10 @@ class DomainScopedCorrectionBudgetTests(unittest.TestCase):
             ci_status="FAIL",
             last_error=f"CI:{head1}:checks not passing: CI",
             ci_corrections_used=2,
+            ci_corrections_used_in_epoch=2,
             ci_correction_authorized_from_sha=head1,
             task_attempts=1,
+            recovery_epoch=3,
         )
         self.store.save({wf_key: prior_record})
 

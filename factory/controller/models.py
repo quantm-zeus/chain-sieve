@@ -208,6 +208,7 @@ class PackageRecord:
     provider_attempts: dict[str, int] = field(default_factory=dict)
     correction_attempts: int = 0
     ci_corrections_used: int = 0
+    ci_corrections_used_in_epoch: int | None = None
     ci_correction_authorized_from_sha: str | None = None
     liveness_remediations_used: int = 0
     session_restore_attempts: int = 0
@@ -217,7 +218,7 @@ class PackageRecord:
     ci_infra_retry_authorized_from_sha: str | None = None
     review_attempts: int = 0
     review_corrections_used: int = 0
-    review_corrections_used_in_epoch: int = 0
+    review_corrections_used_in_epoch: int | None = None
     review_correction_authorized_from_sha: str | None = None
     review_terminal_rejection_sha: str | None = None
     review_sha: str | None = None
@@ -261,8 +262,14 @@ class PackageRecord:
         )
         if self.replan_cycles_used > 0:
             self.replan_attempted = True
-        if self.recovery_epoch == 0 and self.review_corrections_used_in_epoch == 0 and self.review_corrections_used > 0:
-            self.review_corrections_used_in_epoch = self.review_corrections_used
+        if self.review_corrections_used_in_epoch is None:
+            self.review_corrections_used_in_epoch = (
+                self.review_corrections_used if self.recovery_epoch == 0 else 0
+            )
+        if self.ci_corrections_used_in_epoch is None:
+            self.ci_corrections_used_in_epoch = (
+                self.ci_corrections_used if self.recovery_epoch == 0 else 0
+            )
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "PackageRecord":
@@ -293,6 +300,7 @@ class PackageRecord:
                 self.ci_corrections_used + self.liveness_remediations_used + self.integration_corrections_used
             ),
             "ci_corrections_used": self.ci_corrections_used,
+            "ci_corrections_used_in_epoch": self.ci_corrections_used_in_epoch,
             "ci_correction_authorized_from_sha": self.ci_correction_authorized_from_sha,
             "liveness_remediations_used": self.liveness_remediations_used,
             "session_restore_attempts": self.session_restore_attempts,
