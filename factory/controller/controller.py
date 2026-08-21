@@ -1377,6 +1377,15 @@ class FactoryController:
                         )
                         return
 
+                    if (
+                        record.review_dispatch_state == ReviewDispatchState.ACTIVE.value
+                        and record.review_dispatch_key == target_dispatch_key
+                        and run_id
+                        and str(run_id) == str(record.review_dispatch_run_id)
+                    ):
+                        record.status = PackageStatus.REVIEW
+                        return
+
                     self.store.event(
                         "REVIEW_AUTHORITY_INVALID",
                         milestoneId=milestone.id,
@@ -1392,11 +1401,51 @@ class FactoryController:
                     )
                     record.review_verdict = None
                     record.review_sha = None
-                    record.review_dispatch_state = ReviewDispatchState.STALE.value
-                    record.review_dispatch_trigger_attempts = 0
-                    record.review_dispatch_last_attempt_at = None
+                    record.review_dispatch_state = ReviewDispatchState.CLAIMED.value
+                    record.review_dispatch_key = target_dispatch_key
+                    record.review_dispatch_pr = pr.number
+                    record.review_dispatch_sha = pr.head_sha
+                    record.review_dispatch_reviewer = required_reviewer
+                    record.review_dispatch_context_digest = expected_context_digest
+                    record.review_dispatch_requested_at = utc_now()
+                    record.review_dispatch_trigger_attempts = 1
+                    record.review_dispatch_last_attempt_at = utc_now()
+                    record.review_attempts += 1
+                    record.review_dispatch_attempt = record.review_attempts
+                    record.review_dispatch_run_id = str(run_id) if run_id else None
                     record.status = PackageStatus.REVIEW
+                    record.last_progress_at = utc_now()
+
+                    current_records = self.store.load()
+                    current_records[work_key(milestone.id, package.id)] = record
+                    self.store.save(current_records, self.store.metadata())
+
+                    try:
+                        if review_prompt:
+                            try:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer, prompt=review_prompt)
+                            except TypeError:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        else:
+                            self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+                        self.store.event(
+                            "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                            contextDigest=expected_context_digest,
+                        )
+                    except Exception as error:
+                        record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                        record.last_error = f"AO review trigger failed: {error}"
+                        self.store.event(
+                            "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
+                        )
                     return
+
+
 
 
                 # PHASE 3: Authority verified -> Process semantic payload

@@ -677,16 +677,13 @@ class ReviewAuthorityContextTests(unittest.TestCase):
         ao = MockAO(sessions, reviews)
         controller = self._create_controller(store, github, ao)
 
-        # First tick encounters invalid authority -> emits REVIEW_AUTHORITY_INVALID and marks STALE
+        # First tick encounters invalid authority -> emits REVIEW_AUTHORITY_INVALID and triggers fresh authoritative review
         controller.tick()
         saved = store.load()[self.wkey]
         self.assertEqual(saved.review_corrections_used_in_epoch, 0)
-        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.STALE.value)
+        self.assertEqual(saved.review_dispatch_state, ReviewDispatchState.ACTIVE.value)
+        self.assertEqual(len(ao.triggered_reviews), 1)
 
-        # Clear invalid review and simulate new trigger
-        ao._reviews = {"chainsieve-100": {"reviews": []}}
-        controller.tick()
-        self.assertTrue(len(ao.triggered_reviews) >= 1)
 
     # AUTHCTX-17: repeated tick idempotency
     def test_authctx_17_repeated_tick_idempotency(self) -> None:
