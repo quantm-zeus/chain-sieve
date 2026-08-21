@@ -1217,10 +1217,12 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
           throw new Error('Transient database socket timeout during VOI save');
         },
         getVoiPlan: async () => null,
+        getVoiDecisions: async () => [],
         saveSkepticArtifact: async () => {
           throw new Error('Transient database deadlock during skeptic save');
         },
         getSkepticArtifact: async () => null,
+        getSkepticArtifactsByParentDecision: async () => [],
       };
 
       const result = await runtime.execute({
