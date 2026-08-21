@@ -93,15 +93,16 @@ export interface VoiPlanResult {
   decisions: EvidenceAcquisitionDecision[];
   requestedFamilies: string[];
   skippedFamilies: string[];
-  blockedFamilies?: string[] | undefined;
+  blockedFamilies: string[];
   totalEstimatedMonetaryCostUsd: number;
-  totalEstimatedCostUsd?: number | undefined;
+  totalEstimatedCostUsd: number;
   totalEstimatedQuotaUnits: number;
-  totalQuotaUnits?: number | undefined;
+  totalQuotaUnits: number;
   plannedAt: string;
-  plan?: DeterministicPlan | undefined;
-  envelope?: ToolAuthorizationEnvelope | undefined;
+  plan: DeterministicPlan;
+  envelope: ToolAuthorizationEnvelope;
 }
+
 
 
 export type VoiPlannerResult = VoiPlanResult;
