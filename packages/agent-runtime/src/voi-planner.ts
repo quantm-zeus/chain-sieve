@@ -154,11 +154,7 @@ export class VoiPlanner {
       const reasonCodes: string[] = [];
       let expectedDecisionImpact = `Information value: ${evoi.toFixed(3)}`;
 
-      if (!isToolAuthorized) {
-        state = 'UNSUPPORTED';
-        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not permitted by profile or envelope`;
-        reasonCodes.push('TOOL_NOT_AUTHORIZED_IN_ENVELOPE_OR_PROFILE');
-      } else if (isHardRejected) {
+      if (isHardRejected) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Hard rejection already proven; additional optional evidence skipped by policy';
         reasonCodes.push('HARD_REJECTION_PROVEN', 'POLICY_STOP_CONDITION');
@@ -166,6 +162,10 @@ export class VoiPlanner {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Alert threshold unreachable under current state; additional optional evidence skipped by policy';
         reasonCodes.push('ALERT_THRESHOLD_UNREACHABLE', 'POLICY_STOP_CONDITION');
+      } else if (!isToolAuthorized) {
+        state = 'UNSUPPORTED';
+        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not permitted by profile or envelope`;
+        reasonCodes.push('TOOL_NOT_AUTHORIZED_IN_ENVELOPE_OR_PROFILE');
       } else if (hasKnownEvidence) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Sufficient evidence for family already collected in run context';
@@ -205,6 +205,10 @@ export class VoiPlanner {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = `Expected information value (${evoi.toFixed(3)}) below policy acquisition threshold (${policy.minExpectedInformationValue})`;
         reasonCodes.push('DIMINISHING_MARGINAL_UTILITY', 'LOW_EXPECTED_VOI');
+      }
+
+      if (probeCheck.selected && !reasonCodes.includes('RANDOMIZED_EVIDENCE_PROBE')) {
+        reasonCodes.push('RANDOMIZED_EVIDENCE_PROBE');
       }
 
       const decision: EvidenceAcquisitionDecision = {

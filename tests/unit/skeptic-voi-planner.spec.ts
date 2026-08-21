@@ -565,7 +565,7 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
     });
 
     it('treats NOT_REQUESTED_BY_POLICY as neutral missingness in downstream scoring without negative inference', () => {
-      const planner = new VoiPlanner();
+      const planner = new VoiPlanner({ minExpectedInformationValue: 0.60 });
       const planResult = planner.planAcquisitions({
         candidate: sampleCandidate,
         runId: 'run-scoring-test',

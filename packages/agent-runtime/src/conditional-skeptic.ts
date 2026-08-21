@@ -289,12 +289,12 @@ export class ConditionalSkepticAgent {
 
     // 4. Setup independent skeptic budget
     const defaultSkepticBudget: AgentBudget = {
-      maxSteps: 3,
-      maxToolCalls: 5,
-      maxModelCostUsd: 0.05,
-      maxProviderCostUnits: 15,
-      maxInputTokens: 5000,
-      maxOutputTokens: 5000,
+      maxSteps: 10,
+      maxToolCalls: 10,
+      maxModelCostUsd: 0.10,
+      maxProviderCostUnits: 30,
+      maxInputTokens: 10000,
+      maxOutputTokens: 10000,
     };
     const skepticBudget = options.skepticBudget ?? defaultSkepticBudget;
     const tracker = new AgentBudgetTracker(skepticBudget);
