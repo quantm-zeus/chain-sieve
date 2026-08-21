@@ -80,7 +80,14 @@ export const EvidenceAcquisitionDecisionSchema = z.object({
   ]),
   requestedFields: z.array(z.string().min(1)),
   expectedDecisionImpact: z.string().optional(),
+  expectedInformationValue: z.number().optional(),
   estimatedCost: z
+    .object({
+      monetaryCostUsd: z.number().nonnegative().optional(),
+      quotaCostUnits: z.number().nonnegative().optional(),
+    })
+    .optional(),
+  actualCost: z
     .object({
       monetaryCostUsd: z.number().nonnegative().optional(),
       quotaCostUnits: z.number().nonnegative().optional(),
@@ -97,8 +104,66 @@ export const EvidenceAcquisitionDecisionSchema = z.object({
     .optional(),
   evidenceIds: z.array(z.string().min(1)).default([]),
   reasonCodes: z.array(z.string().min(1)).default([]),
+  skipReason: z.string().optional(),
+  requestReason: z.string().optional(),
 });
 export type EvidenceAcquisitionDecision = z.infer<typeof EvidenceAcquisitionDecisionSchema>;
+
+export const SkepticTriggerReasonSchema = z.enum([
+  'CANDIDATE_NEAR_ALERT',
+  'PROVIDER_CONFLICT_EXCEEDS_THRESHOLD',
+  'OPPORTUNITY_RISK_VECTOR_DISAGREEMENT',
+  'DATA_COVERAGE_MARGINAL',
+  'CANDIDATE_UNUSUALLY_EXTENDED',
+  'RESEARCHER_CLAIMS_WEAKLY_SUPPORTED',
+  'THRESHOLD_SENSITIVITY_FRAGILITY',
+  'DOMINANT_SINGLE_PROVIDER_DEPENDENCE',
+]);
+export type SkepticTriggerReason = z.infer<typeof SkepticTriggerReasonSchema>;
+
+export const SkepticVerdictSchema = z.enum([
+  'CONFIRM',
+  'CHALLENGE',
+  'VETO',
+  'INSUFFICIENT_EVIDENCE',
+]);
+export type SkepticVerdict = z.infer<typeof SkepticVerdictSchema>;
+
+export const SkepticArtifactSchema = z.object({
+  id: z.string().min(1),
+  parentDecisionId: z.string().min(1),
+  candidateId: z.string().min(1),
+  runId: z.string().min(1),
+  policyVersion: z.string().min(1),
+  triggered: z.boolean(),
+  triggerReasons: z.array(SkepticTriggerReasonSchema).default([]),
+  triggerMetrics: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  profileId: z.string().min(1),
+  profileVersion: z.string().optional(),
+  status: z.enum([
+    'EXECUTED',
+    'NOT_TRIGGERED',
+    'BUDGET_EXCEEDED',
+    'CANCELLED',
+    'SKIPPED_POLICY',
+  ]),
+  verdict: SkepticVerdictSchema,
+  confidence: z.enum(['LOW', 'MEDIUM', 'HIGH']),
+  challengeFindings: z.array(z.string()).default([]),
+  counterThesis: z.string(),
+  invalidationConditions: z.array(z.string()).default([]),
+  suggestedDecision: z
+    .enum(['ALERT', 'WATCH', 'IGNORE', 'REJECT', 'INSUFFICIENT_DATA'])
+    .optional(),
+  suggestedRiskLevel: CandidateRiskStateSchema.optional(),
+  decisionChanged: z.boolean().default(false),
+  evidenceIds: z.array(z.string().min(1)).default([]),
+  executedToolRecords: z.array(z.record(z.string(), z.unknown())).default([]),
+  budgetUsage: z.record(z.string(), z.unknown()).optional(),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+  createdAt: z.string().datetime(),
+});
+export type SkepticArtifact = z.infer<typeof SkepticArtifactSchema>;
 
 export const ModelExecutionManifestSchema = z.object({
   provider: z.string().min(1),
