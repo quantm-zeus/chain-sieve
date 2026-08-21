@@ -1,8 +1,10 @@
+import { createHash } from 'node:crypto';
 import type {
   AgentBudget,
   AgentDecision,
   EvidenceAcquisitionDecision,
   ModelProfile,
+  SkepticArtifact,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
 import { AgentBudgetTracker, type BudgetUsageSnapshot } from './budget-tracker.js';
@@ -19,13 +21,22 @@ import {
   ConfinementViolationError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
+import {
+  VoiPlanner,
+  VoiDecisionPlanner,
+  type VoiPlanResult,
+  type VoiPolicy,
+  type RandomProbeConfig,
+} from './voi-planner.js';
+import {
+  ConditionalSkepticAgent,
+  SkepticTriggerPolicy,
+  type SkepticExecutionResult,
+  type SkepticTriggerContext,
+} from './conditional-skeptic.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
-import {
-  VoiDecisionPlanner,
-  type RandomProbeConfig,
-} from './voi-planner.js';
 import {
   EvidenceAcquisitionStore,
   getEvidenceAcquisitionStore,
@@ -34,6 +45,7 @@ import {
   EvidenceFamilyRegistry,
   type EvidenceFamilyDefinition,
 } from './evidence-families.js';
+import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
 
 export interface ToolExecutionContext {
   candidate: CandidateTarget;
@@ -76,6 +88,15 @@ export interface AgentExecutionOptions {
   eligibleEvidenceFamilies?: readonly EvidenceFamilyDefinition[] | readonly string[] | undefined;
   minVoiThreshold?: number | undefined;
   acquisitionStore?: EvidenceAcquisitionStore | undefined;
+  enableVoi?: boolean | undefined;
+  voiPolicy?: Partial<VoiPolicy> | undefined;
+  enableSkeptic?: boolean | undefined;
+  skepticBudget?: AgentBudget | undefined;
+  skepticTriggerPolicy?: SkepticTriggerPolicy | undefined;
+  candidateScore?: number | undefined;
+  skepticTriggerContext?: Partial<SkepticTriggerContext> | undefined;
+  randomizationStratum?: string | undefined;
+  persistenceRepository?: AgentRuntimePersistenceRepository | undefined;
 }
 
 export interface AgentExecutionResult {
@@ -89,8 +110,9 @@ export interface AgentExecutionResult {
   executedSteps: number;
   executedToolCalls: number;
   completedAt: string;
+  voiPlanResult?: VoiPlanResult | undefined;
+  skepticResult?: SkepticExecutionResult | undefined;
 }
-
 
 export class BoundedAgentRuntime {
   private readonly tools = new Map<string, ToolHandler>();
@@ -208,7 +230,7 @@ export class BoundedAgentRuntime {
 
     // 6. Generate deterministic VOI plan and persist initial acquisition decisions
     const familyRegistry = new EvidenceFamilyRegistry();
-    const voiPlanner = new VoiDecisionPlanner(familyRegistry);
+    const voiPlanner = new VoiPlanner(options.voiPolicy, familyRegistry);
     const store = options.acquisitionStore ?? getEvidenceAcquisitionStore();
     const policyVersion = options.policyVersion ?? profile.version;
 
@@ -222,8 +244,11 @@ export class BoundedAgentRuntime {
       policyVersion,
       eligibleEvidenceFamilies: options.eligibleEvidenceFamilies,
       initialEvidence: options.initialEvidence,
+      currentCandidateScore: options.candidateScore,
       randomProbeConfig: options.randomProbeConfig,
+      randomizationStratum: options.randomizationStratum,
       minVoiThreshold: options.minVoiThreshold,
+      policy: options.voiPolicy,
       store,
       deterministicSeedRef: options.deterministicSeedRef,
     });
@@ -238,7 +263,7 @@ export class BoundedAgentRuntime {
       ...(options.initialEvidence ?? {}),
     };
 
-    // 5. Bounded tool execution loop
+    // 7. Bounded tool execution loop
     for (const step of plan.steps) {
       if (signal?.aborted) {
         throw new AgentCancelledError();
@@ -343,6 +368,7 @@ export class BoundedAgentRuntime {
         // Update acquisition record outcome if this tool maps to an evidence family
         const fam = familyRegistry.findByTool(call.toolName);
         if (fam) {
+          const famId = fam.familyId ?? fam.id;
           try {
             if (callError) {
               const isUnavailable =
@@ -353,7 +379,7 @@ export class BoundedAgentRuntime {
               store.updateOutcome({
                 runId,
                 candidateId: candidate.assetId,
-                evidenceFamily: fam.id,
+                evidenceFamily: famId,
                 policyVersion,
                 state: isUnavailable ? 'PROVIDER_UNAVAILABLE' : 'FAILED',
                 reasonCodes: [callError],
@@ -368,7 +394,7 @@ export class BoundedAgentRuntime {
               store.updateOutcome({
                 runId,
                 candidateId: candidate.assetId,
-                evidenceFamily: fam.id,
+                evidenceFamily: famId,
                 policyVersion,
                 state: isEmpty ? 'RETURNED_EMPTY' : 'RETURNED',
                 evidenceIds: isEmpty ? [] : [call.callId],
@@ -401,21 +427,150 @@ export class BoundedAgentRuntime {
       toolRecords,
     );
 
+    const actualCostSnapshot = tracker.getSnapshot();
+    const actualCost = {
+      monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
+      quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
+    };
+
+    const reconciledDecisions = voiPlanner.reconcileExecution({
+      decisions: voiResult.decisions,
+      toolRecords,
+      finalDecision: decision,
+      actualCost,
+      completedAt: new Date().toISOString(),
+    });
+
     const acquisitionDecisions = store.listDecisionsForCandidateAndRun(runId, candidate.assetId);
+
+    let skepticResult: SkepticExecutionResult | undefined;
+    if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
+      const skepticPolicy = options.skepticTriggerPolicy ?? new SkepticTriggerPolicy();
+      const skepticTriggerContext = {
+        candidateScore: options.candidateScore,
+        ...(options.skepticTriggerContext ?? {}),
+      };
+      // Pre-evaluate trigger so error fallbacks preserve actual policy evaluation and audit metrics
+      const triggerEval = skepticPolicy.evaluate({
+        candidate,
+        parentDecision: decision,
+        ...skepticTriggerContext,
+      });
+
+      try {
+        const skepticAgent = new ConditionalSkepticAgent(
+          skepticPolicy,
+          this.registry,
+        );
+        for (const [name, handler] of this.tools.entries()) {
+          skepticAgent.registerTool(name, handler);
+        }
+        skepticResult = await skepticAgent.execute({
+          candidate,
+          parentDecision: decision,
+          parentDecisionId: `dec_${candidate.assetId}_${runId}`,
+          runId,
+          envelope,
+          skepticBudget: options.skepticBudget,
+          triggerContext: skepticTriggerContext,
+          triggerPolicy: skepticPolicy,
+          signal,
+        });
+      } catch (err) {
+        if (err instanceof AgentCancelledError || signal?.aborted) {
+          throw new AgentCancelledError();
+        }
+        // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
+        const errMsg = err instanceof Error ? err.message : String(err);
+        const parentDecisionId = `dec_${candidate.assetId}_${runId}`;
+        const artifactId = `skeptic_${candidate.assetId}_${runId}_failed_closed`;
+        const asOf = new Date().toISOString();
+        const rawArtifact = {
+          id: artifactId,
+          parentDecisionId,
+          candidateId: candidate.assetId,
+          runId,
+          policyVersion: triggerEval.policyVersion,
+          triggered: triggerEval.triggered,
+          triggerReasons: triggerEval.triggerReasons,
+          triggerMetrics: triggerEval.triggerMetrics,
+          profileId: profile.id,
+          profileVersion: profile.version,
+          status: 'SKIPPED_POLICY' as const,
+          verdict: 'INSUFFICIENT_EVIDENCE' as const,
+          confidence: 'LOW' as const,
+          challengeFindings: [`Skeptic runtime execution error: ${errMsg}`],
+          counterThesis: `Skeptic evaluation failed closed: ${errMsg}`,
+          invalidationConditions: decision.thesisInvalidationConditions ?? [],
+          suggestedDecision: decision.decision,
+          suggestedRiskLevel: decision.riskRecommendation,
+          decisionChanged: false,
+          evidenceIds: [] as string[],
+          executedToolRecords: [],
+          budgetUsage: {},
+          createdAt: asOf,
+        };
+
+        const canonicalize = (val: unknown): unknown => {
+          if (val === null || val === undefined) return val;
+          if (Array.isArray(val)) return val.map(canonicalize);
+          if (typeof val === 'object') {
+            return Object.fromEntries(
+              Object.entries(val as Record<string, unknown>)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([k, v]) => [k, canonicalize(v)]),
+            );
+          }
+          return val;
+        };
+        const sha256 = createHash('sha256')
+          .update(JSON.stringify(canonicalize(rawArtifact)))
+          .digest('hex');
+
+        const fallbackArtifact: SkepticArtifact = {
+          ...rawArtifact,
+          sha256,
+        };
+
+        skepticResult = {
+          artifact: fallbackArtifact,
+          status: 'SKIPPED_POLICY',
+          toolRecords: [],
+        };
+      }
+    }
+
+    const finalVoiPlanResult: VoiPlanResult = {
+      ...voiResult,
+      decisions: reconciledDecisions,
+    };
+
+    if (options.persistenceRepository) {
+      try {
+        await options.persistenceRepository.saveVoiPlan(finalVoiPlanResult);
+        if (skepticResult) {
+          await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+        }
+      } catch {
+        // Isolate persistence write-through failures to prevent transient database unavailability
+        // from aborting successful parent research decision execution.
+      }
+    }
 
     return {
       runId,
       plan,
       status: 'SUCCESS',
       decision,
-      acquisitionDecisions,
+      acquisitionDecisions: acquisitionDecisions.length > 0 ? acquisitionDecisions : reconciledDecisions,
       toolRecords,
       budgetUsage: tracker.getSnapshot(),
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
+      voiPlanResult: finalVoiPlanResult,
+      skepticResult,
     };
-
   }
 
   private synthesizeDecision(
