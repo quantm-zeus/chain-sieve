@@ -7,12 +7,12 @@ import { EvidenceValidator, type EvidenceRecord, type ValidatorOptions } from '.
  */
 
 export interface DecisionGateConfig {
-  minObservedFacts?: number | undefined;
-  minEvidenceCount?: number | undefined;
-  minIndependenceGroups?: number | undefined;
-  maxFreshnessMs?: number | undefined;
-  requireValidatorPass?: boolean | undefined;
-  criticalRiskBlocksAlert?: boolean | undefined;
+  minObservedFacts?: number;
+  minEvidenceCount?: number;
+  minIndependenceGroups?: number;
+  maxFreshnessMs?: number;
+  requireValidatorPass?: boolean;
+  criticalRiskBlocksAlert?: boolean;
 }
 
 export interface StructuredDecisionInput {
