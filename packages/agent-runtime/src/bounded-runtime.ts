@@ -23,10 +23,12 @@ import {
   ConditionalSkepticAgent,
   type SkepticExecutionResult,
   type SkepticTriggerPolicy,
+  type SkepticTriggerContext,
 } from './conditional-skeptic.js';
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
+import type { AgentRuntimePersistenceRepository } from './persistence.js';
 
 
 export interface ToolExecutionContext {
@@ -70,6 +72,9 @@ export interface AgentExecutionOptions {
   skepticBudget?: AgentBudget | undefined;
   skepticTriggerPolicy?: SkepticTriggerPolicy | undefined;
   candidateScore?: number | undefined;
+  skepticTriggerContext?: Partial<SkepticTriggerContext> | undefined;
+  randomizationStratum?: string | undefined;
+  persistenceRepository?: AgentRuntimePersistenceRepository | undefined;
 }
 
 export interface AgentExecutionResult {
@@ -238,6 +243,7 @@ export class BoundedAgentRuntime {
         profile,
         currentCandidateScore: options.candidateScore,
         knownEvidence: accumulatedEvidence,
+        randomizationStratum: options.randomizationStratum,
       });
     }
 
@@ -378,6 +384,7 @@ export class BoundedAgentRuntime {
         profile,
         currentCandidateScore: options.candidateScore,
         knownEvidence: accumulatedEvidence,
+        randomizationStratum: options.randomizationStratum,
       });
 
       const actualCostSnapshot = tracker.getSnapshot();
@@ -415,9 +422,19 @@ export class BoundedAgentRuntime {
         skepticBudget: options.skepticBudget,
         triggerContext: {
           candidateScore: options.candidateScore,
+          ...(options.skepticTriggerContext ?? {}),
         },
         signal,
       });
+    }
+
+    if (options.persistenceRepository) {
+      if (voiPlanResult) {
+        await options.persistenceRepository.saveVoiPlan(voiPlanResult);
+      }
+      if (skepticResult) {
+        await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+      }
     }
 
     return {

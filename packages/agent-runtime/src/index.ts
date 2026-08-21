@@ -24,4 +24,5 @@ export * from './untrusted-isolation.js';
 export * from './evidence-families.js';
 export * from './voi-planner.js';
 export * from './conditional-skeptic.js';
+export * from './persistence.js';
 

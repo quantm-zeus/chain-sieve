@@ -313,6 +313,48 @@ export class ConditionalSkepticAgent {
       envelope.allowedTools.includes(t),
     );
 
+    if (allowedSkepticTools.length === 0) {
+      const artifactId = `skeptic_${candidate.assetId}_${runId}_skipped_policy`;
+      const canonicalSkippedData = {
+        id: artifactId,
+        parentDecisionId,
+        candidateId: candidate.assetId,
+        runId,
+        policyVersion: triggerEval.policyVersion,
+        triggered: true,
+        triggerReasons: triggerEval.triggerReasons,
+        triggerMetrics: triggerEval.triggerMetrics,
+        profileId: profile.id,
+        profileVersion: profile.version,
+        status: 'SKIPPED_POLICY' as const,
+        verdict: 'INSUFFICIENT_EVIDENCE' as const,
+        confidence: 'LOW' as const,
+        challengeFindings: ['No authorized skeptic tools permitted in envelope or profile'],
+        counterThesis: 'Adversarial skeptic triggered but skipped by policy: no skeptic tools authorized by profile or envelope.',
+        invalidationConditions: parentDecision.thesisInvalidationConditions,
+        suggestedDecision: parentDecision.decision,
+        suggestedRiskLevel: parentDecision.riskRecommendation,
+        decisionChanged: false,
+        evidenceIds: [] as string[],
+        executedToolRecords: [],
+        budgetUsage: tracker.getSnapshot(),
+        createdAt: asOf,
+      };
+
+      const skippedArtifact: SkepticArtifact = {
+        ...canonicalSkippedData,
+        sha256: this.computeArtifactHash(canonicalSkippedData),
+      };
+
+      SkepticArtifactSchema.parse(skippedArtifact);
+
+      return {
+        artifact: skippedArtifact,
+        status: 'SKIPPED_POLICY',
+        toolRecords: [],
+      };
+    }
+
     const toolRecords: ToolExecutionRecord[] = [];
     const challengeFindings: string[] = [];
     let isVetoed = false;

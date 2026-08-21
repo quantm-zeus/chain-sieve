@@ -52,6 +52,7 @@ export interface VoiPlanInput {
   knownEvidence?: Record<string, unknown> | undefined;
   hardRejectionProven?: boolean | undefined;
   alertThresholdUnreachable?: boolean | undefined;
+  randomizationStratum?: string | undefined;
   policy?: Partial<VoiPolicy> | undefined;
   registry?: EvidenceFamilyRegistry | undefined;
   asOf?: string | undefined;
@@ -140,12 +141,22 @@ export class VoiPlanner {
         costWeight: policy.costWeight,
       });
 
-      // 4. Randomized probe check
+      // 4. Randomized probe check using explicit eligibility stratum (AC-243)
+      const stratum =
+        input.randomizationStratum ??
+        (isNearAlert
+          ? 'NEAR_ALERT'
+          : input.currentRiskState
+            ? `RISK_${input.currentRiskState}`
+            : input.currentLifecycleState
+              ? `LIFECYCLE_${input.currentLifecycleState}`
+              : 'GENERAL_ELIGIBLE');
+
       const probeCheck = this.evaluateRandomizedProbe(
         candidate.assetId,
         family.familyId,
         policy,
-        candidate.chainId,
+        stratum,
       );
 
       // 5. Decision state & reason resolution
@@ -350,7 +361,7 @@ export class VoiPlanner {
     return {
       selected,
       probability: String(policy.randomizedProbeRate),
-      stratum: stratum ?? 'default',
+      stratum: stratum ?? 'GENERAL_ELIGIBLE',
       seedRef: seed,
     };
   }

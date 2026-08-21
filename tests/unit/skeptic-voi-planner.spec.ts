@@ -5,6 +5,7 @@ import {
   DEFAULT_EVIDENCE_FAMILIES,
   DEFAULT_SKEPTIC_TRIGGER_POLICY,
   DEFAULT_VOI_POLICY,
+  InMemoryAgentPersistenceRepository,
   ModelProfileRegistry,
   SkepticTriggerPolicy,
   VoiPlanner,
@@ -748,6 +749,127 @@ describe('Conditional Skeptic and Value-of-Information Planner (FR-AGT-005, FR-A
       expect(result.skepticResult?.artifact.triggered).toBe(true);
       expect(result.skepticResult?.artifact.triggerReasons).toContain('CANDIDATE_NEAR_ALERT');
       expect(result.skepticResult?.artifact.sha256).toBeDefined();
+    });
+
+    it('plumbs full skepticTriggerContext through BoundedAgentRuntime to trigger skeptic', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableSkeptic: true,
+        candidateScore: 0.40, // not near alert
+        skepticTriggerContext: {
+          unusuallyExtended: true,
+          fragilityDetected: true,
+          dominantProviderRatio: 0.90,
+          dataCoverageRatio: 0.50,
+        },
+      });
+
+      expect(result.skepticResult).toBeDefined();
+      expect(result.skepticResult?.status).toBe('EXECUTED');
+      expect(result.skepticResult?.artifact.triggered).toBe(true);
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('CANDIDATE_UNUSUALLY_EXTENDED');
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('THRESHOLD_SENSITIVITY_FRAGILITY');
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('DOMINANT_SINGLE_PROVIDER_DEPENDENCE');
+      expect(result.skepticResult?.artifact.triggerReasons).toContain('DATA_COVERAGE_MARGINAL');
+    });
+
+    it('persists VOI decisions and skeptic artifacts via persistence repository write-through', async () => {
+      const { BoundedAgentRuntime } = await import('@ciag/agent-runtime');
+      const runtime = new BoundedAgentRuntime();
+      const repository = new InMemoryAgentPersistenceRepository();
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        enableVoi: true,
+        enableSkeptic: true,
+        candidateScore: 0.85,
+        persistenceRepository: repository,
+      });
+
+      expect(result.status).toBe('SUCCESS');
+
+      // Verify persistence write-through
+      const savedVoiPlan = await repository.getVoiPlan(result.plan.planId);
+      expect(savedVoiPlan).toBeDefined();
+      expect(savedVoiPlan?.decisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+
+      const savedVoiDecisions = await repository.getVoiDecisions(result.plan.planId);
+      expect(savedVoiDecisions.length).toBe(DEFAULT_EVIDENCE_FAMILIES.length);
+
+      const savedSkepticArtifact = await repository.getSkepticArtifact(result.plan.planId);
+      expect(savedSkepticArtifact).toBeDefined();
+      expect(savedSkepticArtifact?.id).toBe(result.skepticResult?.artifact.id);
+      expect(savedSkepticArtifact?.sha256).toBe(result.skepticResult?.artifact.sha256);
+
+      const parentDecisionId = `dec_${sampleCandidate.assetId}_${result.plan.planId}`;
+      const artifactsByParent = await repository.getSkepticArtifactsByParentDecision(parentDecisionId);
+      expect(artifactsByParent.length).toBe(1);
+      expect(artifactsByParent[0].id).toBe(result.skepticResult?.artifact.id);
+    });
+
+    it('handles AC-243 randomized probe stratum matching eligibility stratum and metadata', () => {
+      const planner = new VoiPlanner({
+        enableRandomizedProbes: true,
+        randomizedProbeRate: 1.0,
+        randomizationSeedRef: 'test-stratum-seed-1',
+      });
+
+      const plan = planner.planAcquisitions({
+        candidate: sampleCandidate,
+        runId: 'plan_stratum_test_1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        profile: new ModelProfileRegistry().get('deep-research-v1')!,
+        currentCandidateScore: 0.75, // isNearAlert
+        currentRiskState: 'HIGH',
+        randomizationStratum: 'NEAR_ALERT_HIGH_RISK_STRATUM',
+      });
+
+      const requestedProbes = plan.decisions.filter((d) => d.randomized);
+      expect(requestedProbes.length).toBeGreaterThan(0);
+      for (const probe of requestedProbes) {
+        expect(probe.randomizationStratum).toBe('NEAR_ALERT_HIGH_RISK_STRATUM');
+        expect(probe.assignmentProbability).toBe('1');
+        expect(probe.randomizationSeedRef).toBe('test-stratum-seed-1');
+        expect(probe.reasonCodes).toContain('RANDOMIZED_EVIDENCE_PROBE');
+      }
+    });
+
+    it('returns SKIPPED_POLICY when no skeptic tools are authorized in envelope', async () => {
+      const skepticAgent = new ConditionalSkepticAgent(
+        new SkepticTriggerPolicy(),
+        new ModelProfileRegistry(),
+      );
+
+      // Restrict envelope to exclude all skeptic tools
+      const emptyEnvelope: ToolAuthorizationEnvelope = {
+        ...sampleEnvelope,
+        allowedTools: ['dex.screener'], // none of skeptic tools (contract.audit, risk.honeypot_scan, etc.)
+      };
+
+      const result = await skepticAgent.execute({
+        candidate: sampleCandidate,
+        parentDecision: sampleParentDecision,
+        parentDecisionId: 'dec_test_skipped_policy',
+        runId: 'run_skipped_policy',
+        envelope: emptyEnvelope,
+      });
+
+      expect(result.status).toBe('SKIPPED_POLICY');
+      expect(result.artifact.status).toBe('SKIPPED_POLICY');
+      expect(result.artifact.verdict).toBe('INSUFFICIENT_EVIDENCE');
+      expect(result.artifact.confidence).toBe('LOW');
+      expect(result.artifact.counterThesis).toContain('skipped by policy');
+      expect(result.artifact.sha256).toBeDefined();
     });
   });
 });
