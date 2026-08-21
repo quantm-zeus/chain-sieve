@@ -271,12 +271,12 @@ export const StratifiedProbeConfigSchema = z.object({
   policyVersion: z.string().min(1),
   seedProvenance: z.string().min(1),
   strata: z.array(StratumDefinitionSchema).min(1),
-  defaultSampleFraction: z.number().positive().max(1).default(0.1),
-  minInclusionProbability: z.number().positive().max(1).default(0.01),
+  defaultSampleFraction: z.number().positive().max(1).optional().default(0.1),
+  minInclusionProbability: z.number().positive().max(1).optional().default(0.01),
   maxProbeCandidates: z.number().int().positive(),
   maxProbeCostUsd: z.number().nonnegative().optional(),
   maxProbeToolCalls: z.number().int().positive().optional(),
-  reserveProtectionUsd: z.number().nonnegative().default(0),
+  reserveProtectionUsd: z.number().nonnegative().optional().default(0),
   requestedEvidenceFamilies: z.array(z.string().min(1)).min(1),
 });
 export type StratifiedProbeConfig = z.infer<typeof StratifiedProbeConfigSchema>;

@@ -92,6 +92,7 @@ describe('T-G3-AGT-02 Negative Facets (FR-AGT-010, FR-AGT-011, FR-AGT-012, AC-24
         defaultSampleFraction: 1.0,
         minInclusionProbability: 0.1,
         maxProbeCandidates: 10,
+        reserveProtectionUsd: 0,
         requestedEvidenceFamilies: ['dex.pairs'],
       };
 
@@ -223,7 +224,10 @@ describe('T-G3-AGT-02 Negative Facets (FR-AGT-010, FR-AGT-011, FR-AGT-012, AC-24
         policyVersion: '1.0.0',
         seedProvenance: 'seed1',
         strata: [{ stratumId: 'STRATUM_1', name: 'S1', targetSampleSize: 1, minInclusionProbability: 0.5 }],
+        defaultSampleFraction: 0.5,
+        minInclusionProbability: 0.1,
         maxProbeCandidates: 1,
+        reserveProtectionUsd: 0,
         requestedEvidenceFamilies: ['dex.pairs'],
       };
 

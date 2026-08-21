@@ -109,7 +109,7 @@ export class AgentSelectionEvaluator {
       });
       noEvidenceDecisions.push(res.decision);
       noEvidenceStepsTotal += res.executedSteps;
-      noEvidenceCostTotal += res.budgetUsage.consumedModelCostUsd;
+      noEvidenceCostTotal += res.budgetUsage.modelCostUsd.current;
     }
 
     const noEvidenceSummary = this.summarizeArm({
@@ -142,7 +142,7 @@ export class AgentSelectionEvaluator {
       deterministicDecisions.push(res.decision);
       deterministicStepsTotal += res.executedSteps;
       deterministicToolCallsTotal += res.executedToolCalls;
-      deterministicCostTotal += res.budgetUsage.consumedModelCostUsd;
+      deterministicCostTotal += res.budgetUsage.modelCostUsd.current;
     }
 
     const deterministicSummary = this.summarizeArm({
@@ -192,7 +192,7 @@ export class AgentSelectionEvaluator {
       modelAssistedDecisions.push(res.decision);
       modelAssistedStepsTotal += modelPlan.steps.length;
       modelAssistedToolCallsTotal += modelPlan.totalPlannedToolCalls;
-      modelAssistedCostTotal += res.budgetUsage.consumedModelCostUsd * 1.1; // slight model overhead
+      modelAssistedCostTotal += res.budgetUsage.modelCostUsd.current * 1.1; // slight model overhead
     }
 
     const modelAssistedSummary = this.summarizeArm({
@@ -224,6 +224,7 @@ export class AgentSelectionEvaluator {
         maxProbeCandidates: Math.max(1, Math.round(candidateCount * 0.5)),
         maxProbeCostUsd: symmetricBudget.maxModelCostUsd,
         maxProbeToolCalls: symmetricBudget.maxToolCalls,
+        reserveProtectionUsd: 0,
         requestedEvidenceFamilies: ['dex.pairs', 'holder.distribution', 'contract.audit'],
       },
       candidates: candidates.map((c) => ({
@@ -260,7 +261,7 @@ export class AgentSelectionEvaluator {
       randomizedDecisions.push(res.decision);
       randomizedStepsTotal += res.executedSteps;
       randomizedToolCallsTotal += isProbed ? res.executedToolCalls : 0;
-      randomizedCostTotal += isProbed ? res.budgetUsage.consumedModelCostUsd : 0;
+      randomizedCostTotal += isProbed ? res.budgetUsage.modelCostUsd.current : 0;
     }
 
     // Compute design-based Horvitz-Thompson & Hájek estimates for the randomized probe arm
@@ -308,7 +309,7 @@ export class AgentSelectionEvaluator {
       totalCostUsd: randomizedCostTotal,
       averageLatencyMs: 30,
       controlDecisions: noEvidenceDecisions,
-      designEstimates: {
+      designBasedEstimates: {
         horvitzThompson: htEstimate,
         hajek: hajekEstimate,
       },

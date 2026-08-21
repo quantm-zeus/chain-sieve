@@ -235,6 +235,7 @@ export class StratifiedRandomizedProbeAllocator {
           requestedEvidenceFamilies: [...config.requestedEvidenceFamilies],
           requestedFields: ['dex.pairs', 'holder.distribution', 'contract.audit'],
           selectedAt: selectedAtIso,
+          evidenceIds: [],
           estimatedCostUsd: isSelected ? costPerProbeEst : 0,
         };
 

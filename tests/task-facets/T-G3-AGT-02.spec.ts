@@ -355,6 +355,7 @@ describe('T-G3-AGT-02 Positive Facets (FR-AGT-010, FR-AGT-011, AC-242, AC-243, A
   describe('FR-AGT-011: Agent/tool-selection evaluation across 4 symmetric arms', () => {
     it('compares deterministic planner, model-assisted planner, randomized probe, and no-additional-evidence controls under symmetric budgets', async () => {
       const universe = createFrozenCandidateUniverse({
+        universeId: 'univ_eval_test_001',
         dataCutoff: '2026-08-20T12:00:00Z',
         candidateAssetIds: sampleCandidates.map((c) => c.candidate.assetId),
         corpusVersion: '1.0.0',
