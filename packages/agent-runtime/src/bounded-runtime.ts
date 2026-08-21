@@ -383,10 +383,7 @@ export class BoundedAgentRuntime {
       const actualCostSnapshot = tracker.getSnapshot();
       const actualCost = {
         monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
-        providerQuotaUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
-        modelContextTokens:
-          (actualCostSnapshot.inputTokens.current ?? 0) +
-          (actualCostSnapshot.outputTokens.current ?? 0),
+        quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
       };
 
       planToReconcile.decisions = voiPlanner.reconcileDecisions({

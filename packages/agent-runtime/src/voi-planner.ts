@@ -398,14 +398,12 @@ export class VoiPlanner {
       } else if (matchingToolRecords.length > 0 && family) {
         decisionActualCost = {
           monetaryCostUsd: Number((matchingToolRecords.length * family.monetaryCostUsd).toFixed(6)),
-          providerQuotaUnits: matchingToolRecords.length * family.providerQuotaCost,
-          modelContextTokens: matchingToolRecords.length * family.estimatedModelContextTokens,
+          quotaCostUnits: matchingToolRecords.length * family.providerQuotaCost,
         };
       } else if (decision.state !== 'REQUESTED') {
         decisionActualCost = {
           monetaryCostUsd: 0,
-          providerQuotaUnits: 0,
-          modelContextTokens: 0,
+          quotaCostUnits: 0,
         };
       }
 
