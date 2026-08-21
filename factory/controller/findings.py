@@ -319,12 +319,18 @@ def parse_and_reconcile_review(
 
     # 2. Parse textual review body if needed
     body_text = body or ""
+    for match in re.finditer(r"(FND-[A-Z0-9_\-]+)[^\n]*?\b(RESOLVED|OPEN|REGRESSION|FOLLOW_UP)\b", body_text, re.IGNORECASE):
+        fp_clean = match.group(1).strip()
+        status_clean = match.group(2).upper().strip()
+        disposition_map[fp_clean] = status_clean
+
     finding_blocks = re.findall(r"FINDING\s+([A-Z0-9_\-]+)\s*\n\s*(RESOLVED|OPEN)(?:\s*\n\s*evidence:\s*([^\n]+))?", body_text, re.IGNORECASE)
     for fp, status, ev in finding_blocks:
         fp_clean = fp.strip()
         disposition_map[fp_clean] = status.upper().strip()
         if ev:
             evidence_map[fp_clean] = ev.strip()
+
 
     extracted = [] if (payload and ("findings" in payload or "blockingFindings" in payload)) else extract_raw_findings_from_text(body_text)
 
@@ -443,9 +449,15 @@ def parse_and_reconcile_review(
         existing_fps.add(fp)
 
         # Classify late finding (§14)
-        is_regression = any(w in summary.lower() for w in ("regression", "introduced by", "broke", "broken by"))
-        is_critical = is_critical_late_blocker(summary, sev)
+        s_lower = summary.lower()
+        has_negation = any(neg in s_lower for neg in ("no regression", "no correction_regression", "without regression", "not a regression", "zero regression", "no new blockers", "no critical_late_blocker"))
+        is_regression = (
+            not has_negation
+            and any(w in s_lower for w in ("regression", "introduced by", "broke", "broken by"))
+        )
+        is_critical = not has_negation and is_critical_late_blocker(summary, sev)
         is_follow_up = is_non_blocking_follow_up(summary, sev)
+
 
         if is_regression:
             status = FindingStatus.REGRESSION.value
