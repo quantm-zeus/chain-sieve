@@ -436,6 +436,7 @@ describe('Decision Validation Lineage (FR-AGT-003, FR-AGT-004, FR-AGT-007, FR-AG
       const envelope = {
         allowedTools: ['dex.pairs', 'token.profile'],
         allowedDomains: ['dexscreener.com'],
+        allowedProviders: ['dexscreener'],
         allowedChains: ['solana'],
         allowedAddresses: ['So11111111111111111111111111111111111111112'],
         maxLimit: 10,
