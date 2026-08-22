@@ -1,0 +1,16 @@
+{
+  "phase": "production_write_canary",
+  "generated_at": "2026-08-22T05:40:24.371223+00:00",
+  "head": "e00f56afeafbb34b9371f1bf3175d8b6d90411b5",
+  "before_commands": 0,
+  "after_commands": 0,
+  "delta": 0,
+  "result": {
+    "observed_at": "2026-08-22T05:40:19.346191Z",
+    "work_items": 4,
+    "results": [],
+    "prs": 20,
+    "ci": 20
+  },
+  "verdict": "PASS"
+}

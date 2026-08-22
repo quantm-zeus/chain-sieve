@@ -1,0 +1,168 @@
+{
+  "phase": "soak_final_20",
+  "ticks": [
+    {
+      "tick": 1,
+      "observed_at": "2026-08-22T05:42:44.713252Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 2,
+      "observed_at": "2026-08-22T05:42:51.252629Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 3,
+      "observed_at": "2026-08-22T05:42:58.346361Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 4,
+      "observed_at": "2026-08-22T05:43:05.041035Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 5,
+      "observed_at": "2026-08-22T05:43:12.923500Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 6,
+      "observed_at": "2026-08-22T05:43:18.948465Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 7,
+      "observed_at": "2026-08-22T05:43:24.876563Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 8,
+      "observed_at": "2026-08-22T05:43:31.211067Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 9,
+      "observed_at": "2026-08-22T05:43:38.324615Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 10,
+      "observed_at": "2026-08-22T05:43:45.541103Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 11,
+      "observed_at": "2026-08-22T05:43:52.202717Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 12,
+      "observed_at": "2026-08-22T05:43:59.454380Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 13,
+      "observed_at": "2026-08-22T05:44:06.210777Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 14,
+      "observed_at": "2026-08-22T05:44:12.476009Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 15,
+      "observed_at": "2026-08-22T05:44:19.452418Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 16,
+      "observed_at": "2026-08-22T05:44:26.669194Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 17,
+      "observed_at": "2026-08-22T05:44:34.585091Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 18,
+      "observed_at": "2026-08-22T05:44:42.193154Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 19,
+      "observed_at": "2026-08-22T05:44:51.526180Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    },
+    {
+      "tick": 20,
+      "observed_at": "2026-08-22T05:44:59.606592Z",
+      "work_items": 4,
+      "prs": 20,
+      "ci": 20,
+      "results": 0
+    }
+  ],
+  "total": 20,
+  "generated_at": "2026-08-22T05:45:06.737106+00:00",
+  "head": "e00f56afeafbb34b9371f1bf3175d8b6d90411b5"
+}

@@ -1,0 +1,209 @@
+{
+  "mode": "live_shadow_zero_write_real",
+  "phase": "shadow_20_ticks",
+  "generated_at": "2026-08-22T05:40:19.338883+00:00",
+  "head": "e00f56afeafbb34b9371f1bf3175d8b6d90411b5",
+  "ticks": [
+    {
+      "tick": 1,
+      "observed_at": "2026-08-22T05:37:53.032067Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 2,
+      "observed_at": "2026-08-22T05:37:59.480622Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 3,
+      "observed_at": "2026-08-22T05:38:06.973792Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 4,
+      "observed_at": "2026-08-22T05:38:15.283065Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 5,
+      "observed_at": "2026-08-22T05:38:23.388673Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 6,
+      "observed_at": "2026-08-22T05:38:30.095485Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 7,
+      "observed_at": "2026-08-22T05:38:36.830060Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 8,
+      "observed_at": "2026-08-22T05:38:43.957303Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 9,
+      "observed_at": "2026-08-22T05:38:51.327062Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 10,
+      "observed_at": "2026-08-22T05:38:59.418566Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 11,
+      "observed_at": "2026-08-22T05:39:07.213606Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 12,
+      "observed_at": "2026-08-22T05:39:14.437886Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 13,
+      "observed_at": "2026-08-22T05:39:20.571685Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 14,
+      "observed_at": "2026-08-22T05:39:28.397001Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 15,
+      "observed_at": "2026-08-22T05:39:35.698198Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 16,
+      "observed_at": "2026-08-22T05:39:42.133711Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 17,
+      "observed_at": "2026-08-22T05:39:49.714552Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 18,
+      "observed_at": "2026-08-22T05:39:56.375556Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 19,
+      "observed_at": "2026-08-22T05:40:04.274416Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    },
+    {
+      "tick": 20,
+      "observed_at": "2026-08-22T05:40:11.948064Z",
+      "prs": 20,
+      "ci": 20,
+      "workers": 16,
+      "commands": 0,
+      "delta": 0,
+      "zero_writes": true
+    }
+  ],
+  "writes": 0
+}
