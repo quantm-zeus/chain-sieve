@@ -16,51 +16,51 @@
     },
     {
       "id": "G03_ARCHITECTURE_SPEC_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "docs/factory/control-plane-v2.md + factory/context-manifest.json validated",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G04_KERNEL_FEATURE_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "deterministic Commands + pure reducer + domain + ci + review validated, 11/11 tests PASS",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G05_REAL_GITHUB_ADAPTER_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/adapters/github.py real gh CLI + observe-before-retry idempotent",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G06_REAL_AO_ADAPTER_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/adapters/ao.py real ao CLI + filesystem fallback + idempotent",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G07_REAL_GIT_ADAPTER_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/adapters/git.py real git rev-parse/ls-remote + coalesce",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G08_OBSERVATION_COLLECTOR_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/collector.py pure observation fetches (gh/ao/git) + clock",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G09_EXECUTOR_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/executor.py crash-window reconcile + idempotent handlers",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G10_RUNTIME_ENTRYPOINT_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
-      "timestamp": "2026-08-22T04:21:40Z"
+      "status": "PASS",
+      "evidence": "factory/controller_v2/runtime.py tick_once/status/doctor/run_loop",
+      "timestamp": "2026-08-22T04:39:52.543220Z"
     },
     {
       "id": "G11_CLI_STATUS_COMPLETE",

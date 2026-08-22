@@ -103,8 +103,13 @@ class Store:
         return self.conn  # caller uses BEGIN/COMMIT
 
     def insert_work_item(self, item: dict[str, Any]) -> None:
+        # Use UPSERT with history: INSERT ... ON CONFLICT updates mutable fields, prior state preserved in events table
         self.conn.execute(
-            "INSERT OR REPLACE INTO work_items(workId,gapKey,strategyEpoch,status,issue_number,branch,pr_number,session_id,head_sha,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO work_items(workId,gapKey,strategyEpoch,status,issue_number,branch,pr_number,session_id,head_sha,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) "
+            "ON CONFLICT(workId) DO UPDATE SET status=excluded.status, issue_number=COALESCE(excluded.issue_number, work_items.issue_number), "
+            "branch=COALESCE(excluded.branch, work_items.branch), pr_number=COALESCE(excluded.pr_number, work_items.pr_number), "
+            "session_id=COALESCE(excluded.session_id, work_items.session_id), head_sha=COALESCE(excluded.head_sha, work_items.head_sha), "
+            "strategyEpoch=excluded.strategyEpoch, updated_at=excluded.updated_at",
             (
                 item["workId"],
                 item["gapKey"],
@@ -117,6 +122,12 @@ class Store:
                 item.get("head_sha"),
                 item.get("updated_at"),
             ),
+        )
+        # also append to events for audit/history (append-only)
+        import json as _json, datetime as _dt
+        self.conn.execute(
+            "INSERT INTO events(type, workId, payload, created_at) VALUES (?,?,?,?)",
+            ("work_item_upsert", item["workId"], _json.dumps(item), _dt.datetime.utcnow().isoformat()+"Z"),
         )
 
     def insert_command(self, cmd: dict[str, Any]) -> None:
