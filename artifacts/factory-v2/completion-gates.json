@@ -64,243 +64,243 @@
     },
     {
       "id": "G11_CLI_STATUS_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/cli.py status cmd + factory/controller/runtime.py status() => artifacts/factory-v2/pr-merged-evidence.json",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259858Z"
     },
     {
       "id": "G12_CLI_DOCTOR_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/cli.py doctor cmd + runtime.doctor() github/git/ao/store checks => doctor pass",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259934Z"
     },
     {
       "id": "G13_STRUCTURED_REVIEW_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/review.py BASELINE/VERIFY only, strict JSON, malformed=>None, stale head/scope/digest zero-effect",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259961Z"
     },
     {
       "id": "G14_EXACT_HEAD_CI_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/ci.py classify_failure ValueError on PASS, ci_is_stale exact-head binding",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259971Z"
     },
     {
       "id": "G15_RECOVERY_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/recovery.py isolated budgets + strategyEpoch bump, HUMAN_REQUIRED typed only",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259981Z"
     },
     {
       "id": "G16_PLAN_DELTA_COMPLETE",
-      "status": "PASS",
-      "evidence": "identity canonical_gap_key stable, workId survives replan, strategyEpoch increment",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259990Z"
     },
     {
       "id": "G17_MERGE_PREDICATE_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/transitions.py can_merge single MERGE_PR producer, exact-head CI+VERIFY PASS",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.259996Z"
     },
     {
       "id": "G18_SQLITE_STORE_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller/store.py WAL/FK, UPSERT + events history, not OR REPLACE",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260002Z"
     },
     {
       "id": "G19_IDEMPOTENCY_COMPLETE",
-      "status": "PASS",
-      "evidence": "executor crash-window + adapter observe-before-retry, artifacts/factory-v2/idempotency-evidence.json",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260010Z"
     },
     {
       "id": "G20_FULL_INVARIANT_SUITE_PASS",
-      "status": "PASS",
-      "evidence": "PYTHONPATH=. uv run pytest tests/factory_v2/test_invariants.py 7/7 PASS",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260017Z"
     },
     {
       "id": "G21_MODEL_BASED_SUITE_PASS",
-      "status": "PASS",
-      "evidence": "uv run pytest tests/factory_v2/test_model.py Hypothesis RuleBasedStateMachine PASS",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260027Z"
     },
     {
       "id": "G22_TRANSITION_TABLE_PASS",
-      "status": "PASS",
-      "evidence": "factory/controller/reducer.py ALLOWED_TRANSITIONS exhaustive, tests/factory_v2/test_architecture 3/3",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260035Z"
     },
     {
       "id": "G23_REAL_HISTORICAL_REPLAY_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/historical-replay-evidence.json 12 incidents replayed via reducer",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260044Z"
     },
     {
       "id": "G24_REAL_MIGRATOR_COMPLETE",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/migrator-evidence.json V1->V2 canonical mapping, tools/offline-v1-controller archived",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260054Z"
     },
     {
       "id": "G25_REAL_MIGRATION_DRY_RUN_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/migration-dry-run.json run1==run2 deterministic hash",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260062Z"
     },
     {
       "id": "G26_LIVE_SHADOW_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/shadow-20-ticks.json live shadow 20 ticks healthy, no duplicate",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260071Z"
     },
     {
       "id": "G27_SHADOW_RESTART_PASS",
-      "status": "PASS",
-      "evidence": "shadow restart pass, artifact shadow-20-ticks.json restart_pass true",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260079Z"
     },
     {
       "id": "G28_PR_A_MERGED",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/pr-merged-evidence.json PR_A 181 exact-head CI+agy merged",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260087Z"
     },
     {
       "id": "G29_PR_B_MERGED",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/pr-merged-evidence.json PR_B 182 exact-head merged",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260095Z"
     },
     {
       "id": "G30_CUTOVER_PR_MERGED",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/pr-merged-evidence.json PR_C_cutover 183 merged",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260104Z"
     },
     {
       "id": "G31_PRODUCTION_MIGRATION_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/production-migration.json migrated true, head 5eb6481de2b3",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260111Z"
     },
     {
       "id": "G32_V2_WRITE_CANARY_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/production-migration.json v2_write_canary pr 999 PASS",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260121Z"
     },
     {
       "id": "G33_EXISTING_WORK_ADOPTED",
-      "status": "PASS",
-      "evidence": "migrator work_preserved 12, issues/prs/ao sessions adopted",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260132Z"
     },
     {
       "id": "G34_V1_WRITE_AUTHORITY_DISABLED",
-      "status": "PASS",
-      "evidence": "production-migration.json v1_write_disabled true, V1 zero authority",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260139Z"
     },
     {
       "id": "G35_FIRST_20_TICK_SOAK_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/soak-first-20.json 20 ticks all_healthy true",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260151Z"
     },
     {
       "id": "G36_CONTROLLED_RESTART_PASS",
-      "status": "PASS",
-      "evidence": "soak controlled_restart true, shadow restart_pass true",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260161Z"
     },
     {
       "id": "G37_LEGACY_DETOX_COMPLETE",
-      "status": "PASS",
-      "evidence": "factory/controller promoted, tools/offline-v1-controller holds legacy, FINAL_CONFIRMATION removed, whole-plan replan removed",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260173Z"
     },
     {
       "id": "G38_CONTROLLER_V2_PROMOTED_TO_CONTROLLER",
-      "status": "PASS",
-      "evidence": "factory/controller now sole canonical (19 py files, LOC 1454), factory/context-manifest.json points to controller",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260184Z"
     },
     {
       "id": "G39_V1_RUNTIME_REMOVED",
-      "status": "PASS",
-      "evidence": "factory/controller_v2 mirror retained but canonical is factory/controller, V1 files archived offline",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260193Z"
     },
     {
       "id": "G40_LEGACY_RUNTIME_IMPORTS_ZERO",
-      "status": "PASS",
-      "evidence": "grep factory/controller_v2 in factory/controller => none, grep legacy in controller => none",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260203Z"
     },
     {
       "id": "G41_CONTEXT_FOOTPRINT_REMEASURED",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/context-footprint-final.json loc 1454 mods 19 measured post-promotion",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260212Z"
     },
     {
       "id": "G42_FINAL_CONTEXT_BUDGET_PASS",
-      "status": "PASS",
-      "evidence": "check-factory-context-budget.py PASS loc 1454 <=2000 mods 19 <=20",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260222Z"
     },
     {
       "id": "G43_FINAL_AGY_SEMANTIC_PASS",
-      "status": "PASS",
-      "evidence": "pr-merged-evidence.json agy_review independent PASS all 4 PRs",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260232Z"
     },
     {
       "id": "G44_FINAL_CLEANUP_PR_MERGED",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/pr-merged-evidence.json PR_D_final 184 merged",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260241Z"
     },
     {
       "id": "G45_FINAL_PRODUCTION_DEPLOY_PASS",
-      "status": "PASS",
-      "evidence": "production deploy of promoted head 5eb6481de2b3 (systemd active, doctor pass)",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260251Z"
     },
     {
       "id": "G46_FINAL_20_TICK_SOAK_PASS",
-      "status": "PASS",
-      "evidence": "artifacts/factory-v2/soak-final-20.json 20 ticks all_healthy",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260315Z"
     },
     {
       "id": "G47_PRODUCT_AUTONOMY_RESUMED",
-      "status": "PASS",
-      "evidence": "migration preserved, work adopted, autonomous ticks healthy",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260330Z"
     },
     {
       "id": "G48_NO_DUPLICATE_SIDE_EFFECTS",
-      "status": "PASS",
-      "evidence": "idempotency-evidence.json duplicate_side_effects 0, shadow no_duplicate true",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260338Z"
     },
     {
       "id": "G49_MAIN_WORKTREE_CLEAN",
-      "status": "PASS",
-      "evidence": "main worktree clean after merge (will be true post-merge), maintenance worktree holds canonical",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260346Z"
     },
     {
       "id": "G50_COMPLETION_REPORT_EVIDENCE_COMPLETE",
-      "status": "PASS",
-      "evidence": "all 50 gates evidence files present under artifacts/factory-v2/",
-      "timestamp": "2026-08-22T04:47:54.154003Z"
+      "status": "PENDING",
+      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
+      "timestamp": "2026-08-22T04:52:27.260355Z"
     }
   ]
 }
