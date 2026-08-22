@@ -209,8 +209,8 @@ def validate_review_authority(
     current = [
         item for item in runs
         if item
-        and item.get("targetSha") == head_sha
-        and (required_reviewer is None or str(item.get("harness", "")) == required_reviewer)
+        and (item.get("targetSha") == head_sha or item.get("commit_sha") == head_sha or item.get("target_sha") == head_sha)
+        and (required_reviewer is None or str(item.get("harness") or item.get("reviewer") or "") == required_reviewer)
     ]
     if not current:
         qualifier = f" by required {required_reviewer} reviewer" if required_reviewer else ""
@@ -224,7 +224,7 @@ def validate_review_authority(
     latest = sorted(current, key=lambda item: str(item.get("createdAt", "")))[-1]
     status = str(latest.get("status", "")).lower()
     raw_verdict = str(latest.get("verdict", "")).lower()
-    reviewer = str(latest.get("harness", "")) or None
+    reviewer = str(latest.get("harness") or latest.get("reviewer") or "") or None
     run_id = str(latest.get("id") or latest.get("reviewId") or "")
     body_str = str(latest.get("body", ""))
 
@@ -313,7 +313,7 @@ def evaluate_review_semantics(
     reviewer: str | None = None,
 ) -> ReviewSemanticResult:
     payload = _parse_review_payload(body_str)
-    raw_v = (raw_verdict or "").lower()
+    raw_v = (raw_verdict or "").lower().strip()
 
     frozen_objs = [ReviewFinding.from_dict(f) for f in (frozen_findings or [])]
     updated_ledger, blocking_reasons = parse_and_reconcile_review(
@@ -325,7 +325,6 @@ def evaluate_review_semantics(
         frozen_objs,
         raw_verdict=raw_v,
     )
-
 
     open_blockers = [
         f for f in updated_ledger
@@ -340,69 +339,81 @@ def evaluate_review_semantics(
             for finding in payload["findings"]:
                 if isinstance(finding, dict):
                     severity = str(finding.get("severity", "")).upper()
-                    issue_text = str(finding.get("issue", "")).lower()
-                    if severity in {"HIGH", "CRITICAL", "MEDIUM"} or not any(
+                    issue_text = str(finding.get("issue", "") or finding.get("summary", "")).lower()
+                    is_blocking = finding.get("blocking", True)
+                    if (severity in {"HIGH", "CRITICAL", "MEDIUM"} or is_blocking) and not any(
                         token in issue_text for token in ("nit", "optional", "consider", "style", "could improve", "cleanup")
                     ):
                         blocking_findings.append(finding)
 
-    if review_mode in {ReviewMode.CLOSURE_VERIFY.value, ReviewMode.FINAL_CONFIRMATION.value} and frozen_findings is not None:
-        if raw_v in {"commented", "missing"}:
-            effective_verdict = raw_v or "missing"
-        elif len(open_blockers) == 0 and (raw_v in {"approved", "pass"} or (payload and payload.get("verdict") in {"approved", "pass"})):
-            effective_verdict = "approved"
-        else:
-            effective_verdict = "changes_requested"
-
-    else:
-        # Standard FULL_BASELINE mode
-        if payload and "blockingFindings" in payload:
-            if len(blocking_findings) == 0:
-                effective_verdict = "approved"
-            else:
-                effective_verdict = "changes_requested"
-        elif raw_v in {"approved", "pass"}:
-            if len(blocking_findings) == 0 and len(open_blockers) == 0:
-                effective_verdict = "approved"
-            else:
-                effective_verdict = "changes_requested"
-        elif raw_v in {"changes_requested", "findings"}:
-            if payload and "blockingFindings" in payload and len(blocking_findings) == 0:
-                effective_verdict = "approved"
-            else:
-                effective_verdict = "changes_requested"
-        else:
-            effective_verdict = raw_v or "missing"
-
-    if effective_verdict not in {"approved", "pass"}:
-        if open_blockers:
-            findings_summary = "; ".join(
-                f"{f.file_or_component}: {f.normalized_summary}"
-                for f in open_blockers[:3]
-            )
+    # 1. Contradiction Check (CASE D)
+    if raw_v in {"approved", "pass"} or (payload and payload.get("verdict") in {"approved", "pass"}):
+        if len(open_blockers) > 0 or len(blocking_findings) > 0:
             return ReviewSemanticResult(
                 ok=False,
-                effective_verdict="changes_requested",
-                reason=f"machine review reported blocking findings: {findings_summary}",
+                effective_verdict="semantic_payload_contradiction",
+                reason="machine review verdict is approved but contains explicit blocking findings",
                 reviewer=reviewer,
                 updated_ledger=updated_ledger,
                 open_blockers=open_blockers,
                 blocking_findings=blocking_findings,
             )
+        # CASE A: Approved verdict without structured blocking findings
+        return ReviewSemanticResult(
+            ok=True,
+            effective_verdict="approved",
+            reason="machine review passes current head",
+            reviewer=reviewer,
+            updated_ledger=updated_ledger,
+            open_blockers=[],
+            blocking_findings=[],
+        )
+
+    # 2. Mode-specific closure pass resolution
+    if review_mode in {ReviewMode.CLOSURE_VERIFY.value, ReviewMode.FINAL_CONFIRMATION.value} and frozen_findings is not None:
+        if len(open_blockers) == 0 and len(blocking_findings) == 0:
+            return ReviewSemanticResult(
+                ok=True,
+                effective_verdict="approved",
+                reason="machine review passes current head in closure pass",
+                reviewer=reviewer,
+                updated_ledger=updated_ledger,
+                open_blockers=[],
+                blocking_findings=[],
+            )
+
+    # 3. Changes Requested with valid blockers (CASE B)
+    if open_blockers or blocking_findings:
+        findings_summary = "; ".join(
+            f"{f.file_or_component}: {f.normalized_summary}"
+            for f in open_blockers[:3]
+        )
         return ReviewSemanticResult(
             ok=False,
-            effective_verdict=effective_verdict or "missing",
-            reason=f"machine review verdict is {effective_verdict or 'missing'}",
+            effective_verdict="changes_requested",
+            reason=f"machine review reported blocking findings: {findings_summary}" if findings_summary else "machine review reported blocking findings",
             reviewer=reviewer,
             updated_ledger=updated_ledger,
             open_blockers=open_blockers,
             blocking_findings=blocking_findings,
         )
 
+    # 4. Changes Requested without parseable blockers (CASE C)
+    if raw_v in {"changes_requested", "findings"} or (payload and payload.get("verdict") in {"changes_requested", "findings"}):
+        return ReviewSemanticResult(
+            ok=False,
+            effective_verdict="semantic_payload_invalid",
+            reason="machine review changes_requested without parseable structured blocking findings",
+            reviewer=reviewer,
+            updated_ledger=updated_ledger,
+            open_blockers=[],
+            blocking_findings=[],
+        )
+
     return ReviewSemanticResult(
-        ok=True,
-        effective_verdict="approved",
-        reason="machine review passes current head",
+        ok=False,
+        effective_verdict=raw_v or "missing",
+        reason=f"machine review verdict is {raw_v or 'missing'}",
         reviewer=reviewer,
         updated_ledger=updated_ledger,
         open_blockers=open_blockers,

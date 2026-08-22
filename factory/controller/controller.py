@@ -38,6 +38,7 @@ from .models import (
     Session,
     Snapshot,
     TransitionStage,
+    generate_gap_fingerprint,
     review_dispatch_key,
     work_key,
 )
@@ -220,26 +221,80 @@ class FactoryController:
         issues = self.github.issues()
         created: list[int] = []
         updated: list[int] = []
+        records = self.store.load()
+        records_updated = False
+
         for package in milestone.packages:
             key = work_key(milestone.id, package.id)
+            pkg_gap = package.gap_fingerprint or generate_gap_fingerprint(
+                milestone.id, package.requirement_ids, package.acceptance, package.objective
+            )
             expected_title = f"[{milestone.id}/{package.id}] {package.objective[:120]}"
-            expected_body = f"<!-- chainsieve-work-package:{key} -->\n\n{issue_body(milestone, package).rstrip()}\n"
+            expected_body = f"<!-- chainsieve-work-package:{key} -->\n<!-- chainsieve-gap-fingerprint:{pkg_gap} -->\n\n{issue_body(milestone, package).rstrip()}\n"
+            
+            # 1. Exact work key match
             if key in issues:
                 existing = issues[key]
-                body_changed = existing.body.strip() != expected_body.strip()
+                expected_marker = f"<!-- chainsieve-work-package:{key} -->"
+                body_content = issue_body(milestone, package).strip()
+                body_changed = (expected_marker not in existing.body) or (body_content not in existing.body.strip())
                 title_changed = bool(existing.title and existing.title.strip() != expected_title.strip())
                 if (body_changed or title_changed) and hasattr(self.github, "update_issue"):
                     self.github.update_issue(existing.number, expected_title, expected_body)
                     updated.append(existing.number)
+                if key in records and records[key].issue_number != existing.number:
+                    records[key].issue_number = existing.number
+                    records_updated = True
                 continue
+
+            # 2. Duplicate-gap guard: does an existing issue represent this canonical product gap?
+            existing_gap_issue: Issue | None = None
+            for iss in issues.values():
+                if f"<!-- chainsieve-gap-fingerprint:{pkg_gap} -->" in iss.body:
+                    existing_gap_issue = iss
+                    break
+                if f"/{package.id}]" in iss.title or f"<!-- chainsieve-work-package:{key} -->" in iss.body:
+                    existing_gap_issue = iss
+                    break
+
+            if existing_gap_issue is not None:
+                issues[key] = existing_gap_issue
+                if key in records:
+                    records[key].issue_number = existing_gap_issue.number
+                    records_updated = True
+                self.store.event(
+                    "WORK_PACKAGE_ADOPTED_ISSUE",
+                    milestoneId=milestone.id,
+                    workPackageId=package.id,
+                    workKey=key,
+                    gapFingerprint=pkg_gap,
+                    adoptedIssue=existing_gap_issue.number,
+                )
+                continue
+
+            # 3. Create issue if genuinely new product gap
             issue = self.github.create_issue(
                 key,
                 expected_title,
-                issue_body(milestone, package),
+                expected_body,
             )
             issues[key] = issue
             created.append(issue.number)
-            self.store.event("WORK_PACKAGE_PLANNED", milestoneId=milestone.id, workPackageId=package.id, workKey=key, issue=issue.number)
+            if key in records:
+                records[key].issue_number = issue.number
+                records_updated = True
+            self.store.event(
+                "WORK_PACKAGE_PLANNED",
+                milestoneId=milestone.id,
+                workPackageId=package.id,
+                workKey=key,
+                gapFingerprint=pkg_gap,
+                issue=issue.number,
+            )
+
+        if records_updated:
+            self.store.save(records, self.store.metadata())
+
         return {"created": created, "updated": updated, "total": len(issues)}
 
     def snapshot(self) -> Snapshot:
@@ -1367,7 +1422,12 @@ class FactoryController:
 
                 # PHASE 2: Semantic authority validation before parsing or mutating finding state!
                 if not auth.ok:
-                    if auth.raw_verdict in {"approved", "pass"}:
+                    is_historical_phase_review = (
+                        record.review_baseline_context_digest is not None
+                        and record.review_baseline_context_digest in auth.observed_markers
+                        and current_review_mode != ReviewMode.FULL_BASELINE.value
+                    )
+                    if auth.raw_verdict in {"approved", "pass"} and not is_historical_phase_review:
                         self._block(
                             milestone.id,
                             package.id,
@@ -1445,9 +1505,6 @@ class FactoryController:
                         )
                     return
 
-
-
-
                 # PHASE 3: Authority verified -> Process semantic payload
                 sem = evaluate_review_semantics(
                     auth.body,
@@ -1458,6 +1515,65 @@ class FactoryController:
                     frozen_findings=record.review_findings,
                     reviewer=required_reviewer,
                 )
+
+                if sem.effective_verdict in {"semantic_payload_invalid", "semantic_payload_contradiction"}:
+                    self.store.event(
+                        "REVIEW_PAYLOAD_INVALID",
+                        milestoneId=milestone.id,
+                        workPackageId=package.id,
+                        workKey=work_key(milestone.id, package.id),
+                        pr=pr.number,
+                        headSha=pr.head_sha,
+                        reviewRunId=str(run_id) if run_id else None,
+                        reviewer=required_reviewer,
+                        failureReason=sem.reason,
+                        effectiveVerdict=sem.effective_verdict,
+                    )
+                    record.review_verdict = None
+                    record.review_sha = None
+                    record.review_dispatch_state = ReviewDispatchState.CLAIMED.value
+                    record.review_dispatch_key = target_dispatch_key
+                    record.review_dispatch_pr = pr.number
+                    record.review_dispatch_sha = pr.head_sha
+                    record.review_dispatch_reviewer = required_reviewer
+                    record.review_dispatch_context_digest = expected_context_digest
+                    record.review_dispatch_requested_at = utc_now()
+                    record.review_dispatch_trigger_attempts = 1
+                    record.review_dispatch_last_attempt_at = utc_now()
+                    record.review_attempts += 1
+                    record.review_dispatch_attempt = record.review_attempts
+                    record.review_dispatch_run_id = str(run_id) if run_id else None
+                    record.status = PackageStatus.REVIEW
+                    record.last_progress_at = utc_now()
+
+                    current_records = self.store.load()
+                    current_records[work_key(milestone.id, package.id)] = record
+                    self.store.save(current_records, self.store.metadata())
+
+                    try:
+                        if review_prompt:
+                            try:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer, prompt=review_prompt)
+                            except TypeError:
+                                self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        else:
+                            self.ao.trigger_review(record.session_id or "", required_reviewer)
+                        record.review_dispatch_state = ReviewDispatchState.ACTIVE.value
+                        self.store.event(
+                            "REVIEW_STARTED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, reviewContext=str(context_path),
+                            contextDigest=expected_context_digest,
+                        )
+                    except Exception as error:
+                        record.review_dispatch_state = ReviewDispatchState.UNKNOWN.value
+                        record.last_error = f"AO review trigger failed: {error}"
+                        self.store.event(
+                            "REVIEW_TRIGGER_FAILED", milestoneId=milestone.id, workPackageId=package.id,
+                            workKey=work_key(milestone.id, package.id), provider=required_reviewer, aoSessionId=record.session_id, pr=pr.number,
+                            attempt=record.review_attempts, headSha=pr.head_sha, error=str(error),
+                        )
+                    return
                 record.review_findings = [f.to_dict() for f in sem.updated_ledger]
 
                 if current_review_mode == ReviewMode.FULL_BASELINE.value:

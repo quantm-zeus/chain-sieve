@@ -164,8 +164,40 @@ def is_non_blocking_follow_up(
     return any(indicator in text_lower for indicator in follow_up_indicators)
 
 
-def extract_raw_findings_from_text(body: str) -> list[dict[str, Any]]:
-    """Extract individual finding chunks from markdown review text."""
+NON_FINDING_HEADER_KEYWORDS = (
+    "summary of changes",
+    "summary",
+    "what was reviewed",
+    "what was checked",
+    "verification",
+    "verification evidence",
+    "testing",
+    "positive findings",
+    "positive observations",
+    "acceptance criteria satisfied",
+    "acceptance criteria",
+    "requirements covered",
+    "requirements:",
+    "walkthrough",
+    "overview",
+    "files modified",
+    "scope",
+)
+
+FINDING_HEADER_KEYWORDS = (
+    "blocking findings",
+    "blocking issues",
+    "critical / blocking findings",
+    "review findings",
+    "findings",
+    "issues",
+    "defects",
+    "problems",
+)
+
+
+def extract_raw_findings_from_text(body: str, raw_verdict: str | None = None) -> list[dict[str, Any]]:
+    """Extract individual finding chunks from markdown review text, excluding summary/verification sections."""
     findings: list[dict[str, Any]] = []
     if not body:
         return findings
@@ -175,14 +207,47 @@ def extract_raw_findings_from_text(body: str) -> list[dict[str, Any]]:
     current_file = "general"
     current_req = None
     current_sev = "MEDIUM"
+    in_non_finding_section = False
 
     for line in lines:
         stripped = line.strip()
+        
+        # Check headings
+        heading_match = re.match(r"^#+\s+(.*)$", stripped)
+        if heading_match:
+            header_title = heading_match.group(1).lower().strip()
+            if any(k in header_title for k in NON_FINDING_HEADER_KEYWORDS):
+                in_non_finding_section = True
+            else:
+                in_non_finding_section = False
+            
+            if current_finding:
+                full_text = " ".join(current_finding)
+                if len(full_text) > 5:
+                    findings.append({
+                        "summary": full_text,
+                        "file": current_file,
+                        "requirement_id": current_req,
+                        "severity": current_sev,
+                    })
+                current_finding = []
+            continue
+
+        # Explicit finding marker prefixes can clear non-finding section state
+        is_explicit_finding_line = bool(
+            re.match(r"^(?:FINDING\s+[A-Z0-9_\-]+|BLOCKER:|DEFECT:|BUG:|CRITICAL:|HIGH:)", stripped, re.IGNORECASE)
+        )
+        if is_explicit_finding_line:
+            in_non_finding_section = False
+
+        if in_non_finding_section:
+            continue
+
         req_match = REQ_PATTERN.search(stripped)
         if req_match:
             current_req = req_match.group(1)
 
-        file_match = re.search(r"[']", stripped)
+        file_match = re.search(r"['`]([a-zA-Z0-9_\-./]+\.[a-zA-Z0-9]+)['`]", stripped)
         if file_match:
             current_file = file_match.group(1)
 
@@ -198,7 +263,7 @@ def extract_raw_findings_from_text(body: str) -> list[dict[str, Any]]:
             if not any(content.lower().startswith(p) for p in ("what was reviewed", "what was checked", "diff ", "authority:", "alignment vs")):
                 if current_finding:
                     full_text = " ".join(current_finding)
-                    if len(full_text) > 15:
+                    if len(full_text) > 5:
                         findings.append({
                             "summary": full_text,
                             "file": current_file,
@@ -210,14 +275,51 @@ def extract_raw_findings_from_text(body: str) -> list[dict[str, Any]]:
         elif current_finding and stripped and not stripped.startswith("#"):
             current_finding.append(stripped)
 
-    if current_finding:
+    if current_finding and not in_non_finding_section:
         full_text = " ".join(current_finding)
-        if len(full_text) > 15 and not any(full_text.lower().startswith(p) for p in ("what was reviewed", "diff ")):
+        if len(full_text) > 5 and not any(full_text.lower().startswith(p) for p in ("what was reviewed", "diff ")):
             findings.append({
                 "summary": full_text,
                 "file": current_file,
                 "requirement_id": current_req,
                 "severity": current_sev,
+            })
+
+    raw_v = (raw_verdict or "").lower().strip()
+    if not findings and raw_v in {"changes_requested", "findings"}:
+        prose_lines: list[str] = []
+        in_skip = False
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            heading_match = re.match(r"^#+\s+(.*)$", stripped)
+            if heading_match:
+                header_title = heading_match.group(1).lower().strip()
+                if any(k in header_title for k in NON_FINDING_HEADER_KEYWORDS):
+                    in_skip = True
+                else:
+                    in_skip = False
+                continue
+            if in_skip:
+                continue
+            if (
+                "CHAINSIEVE_REVIEW_CONTEXT" in stripped
+                or stripped.lower().startswith("verdict:")
+                or stripped.startswith("<!--")
+                or stripped.upper().startswith("FINDING ")
+                or stripped.upper() in {"RESOLVED", "OPEN", "REGRESSION", "FOLLOW_UP"}
+                or stripped.lower().startswith("evidence:")
+            ):
+                continue
+            if not any(stripped.lower().startswith(p) for p in ("what was reviewed", "what was checked", "diff ", "authority:", "alignment vs")):
+                prose_lines.append(stripped)
+        if prose_lines:
+            findings.append({
+                "summary": " ".join(prose_lines),
+                "file": "general",
+                "requirement_id": None,
+                "severity": "MEDIUM",
             })
 
     return findings
@@ -332,7 +434,8 @@ def parse_and_reconcile_review(
             evidence_map[fp_clean] = ev.strip()
 
 
-    extracted = [] if (payload and ("findings" in payload or "blockingFindings" in payload)) else extract_raw_findings_from_text(body_text)
+    raw_v = (raw_verdict or "").lower().strip()
+    extracted = [] if (payload and ("findings" in payload or "blockingFindings" in payload)) else extract_raw_findings_from_text(body_text, raw_verdict=raw_v)
 
     # 3. Apply mode-specific rules
     if review_mode == ReviewMode.FULL_BASELINE.value:

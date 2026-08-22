@@ -10,6 +10,7 @@ from .models import Issue, PullRequest
 
 
 WORK_PACKAGE_MARKER = re.compile(r"<!-- chainsieve-work-package:([a-z0-9-]+--[a-z0-9-]+) -->")
+GAP_FINGERPRINT_MARKER = re.compile(r"<!-- chainsieve-gap-fingerprint:([A-Za-z0-9_\-]+) -->")
 GH_ENV = ("GH_HOST", "GH_CONFIG_DIR")
 
 
@@ -56,10 +57,18 @@ class GitHub:
         for value in raw:
             body = value.get("body") or ""
             author = (value.get("author") or {}).get("login", "")
-            marker = WORK_PACKAGE_MARKER.search(body)
-            if not marker or author != expected_actor:
+            if author != expected_actor:
                 continue
-            package_id = marker.group(1)
+            marker = WORK_PACKAGE_MARKER.search(body)
+            if marker:
+                package_id = marker.group(1)
+            else:
+                title_match = re.match(r"^\[([a-z0-9-]+)/([a-z0-9-]+)\]", str(value.get("title") or ""))
+                if title_match:
+                    package_id = f"{title_match.group(1)}--{title_match.group(2)}"
+                else:
+                    continue
+
             issue = Issue(
                 int(value["number"]),
                 str(value["state"]),
@@ -74,8 +83,12 @@ class GitHub:
             result[package_id] = issue
         return result
 
-    def create_issue(self, package_id: str, title: str, body: str) -> Issue:
-        payload = f"<!-- chainsieve-work-package:{package_id} -->\n\n{body.rstrip()}\n"
+    def create_issue(self, package_id: str, title: str, body: str, gap_fingerprint: str | None = None) -> Issue:
+        gap_header = f"<!-- chainsieve-gap-fingerprint:{gap_fingerprint} -->\n" if gap_fingerprint and f"<!-- chainsieve-gap-fingerprint:" not in body else ""
+        if f"<!-- chainsieve-work-package:{package_id} -->" not in body:
+            payload = f"<!-- chainsieve-work-package:{package_id} -->\n{gap_header}{body.rstrip()}\n"
+        else:
+            payload = f"{gap_header}{body.rstrip()}\n"
         url = self._run(
             ["gh", "issue", "create", "--repo", self.repo, "--title", title, "--body-file", "-"],
             input_text=payload,
