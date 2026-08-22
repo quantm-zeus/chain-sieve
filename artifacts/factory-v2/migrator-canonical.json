@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-08-22T04:55:13.516815Z",
+  "source": "/home/minhquan_eth/.local/state/chainsieve-factory/state.json",
+  "source_hash": "9db84137df36688a",
+  "v1_event_count": 20769,
+  "milestone": "g3-model-assisted-research",
+  "packages_total": 4,
+  "mapping": [
+    {
+      "package_id": "g3-model-assisted-research--g3-agent-runtime-core",
+      "gapKey": "GAP-G3_AGENT_RUNTIME_CORE-0da270af3a3e",
+      "workId": "WORK-G3_AGENT_RUNTIME_CORE-0da270af3a3e",
+      "issue_number": 175,
+      "pr_number": 180,
+      "branch": "factory/g3-model-assisted-research--g3-agent-runtime-core",
+      "head_sha": "4c1fa704f31d1d4b9e0c4333cf3653ccb3e80330",
+      "ao_session": null,
+      "exact_head": "4c1fa704f31d1d4b9e0c4333cf3653ccb3e80330",
+      "v1_status": "OPEN"
+    },
+    {
+      "package_id": "g3-model-assisted-research--g3-bounded-execution-controls",
+      "gapKey": "GAP-G3_BOUNDED_EXECUTION_CONTROLS-2866e462832e",
+      "workId": "WORK-G3_BOUNDED_EXECUTION_CONTROLS-2866e462832e",
+      "issue_number": 176,
+      "pr_number": null,
+      "branch": null,
+      "head_sha": null,
+      "ao_session": null,
+      "exact_head": null,
+      "v1_status": null
+    },
+    {
+      "package_id": "g3-model-assisted-research--g3-evidence-validator-skeptic",
+      "gapKey": "GAP-G3_EVIDENCE_VALIDATOR_SKEPTIC-532e5cf141b7",
+      "workId": "WORK-G3_EVIDENCE_VALIDATOR_SKEPTIC-532e5cf141b7",
+      "issue_number": 177,
+      "pr_number": null,
+      "branch": null,
+      "head_sha": null,
+      "ao_session": null,
+      "exact_head": null,
+      "v1_status": null
+    },
+    {
+      "package_id": "g3-model-assisted-research--g3-workbench-abstention-lineage",
+      "gapKey": "GAP-G3_WORKBENCH_ABSTENTION_LINEAGE-9917069eb060",
+      "workId": "WORK-G3_WORKBENCH_ABSTENTION_LINEAGE-9917069eb060",
+      "issue_number": 178,
+      "pr_number": null,
+      "branch": null,
+      "head_sha": null,
+      "ao_session": null,
+      "exact_head": null,
+      "v1_status": null
+    }
+  ],
+  "dry_run": true,
+  "canonical_hash": "6cafa3c9c735c8c0"
+}

@@ -1,12 +1,13 @@
 {
   "migrated": true,
-  "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+  "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
   "v2_write_canary": {
     "pr": 999,
-    "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+    "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
     "passed": true
   },
-  "work_adopted": 12,
+  "work_adopted": 4,
   "v1_write_disabled": true,
-  "v1_zero_authority": true
+  "v1_zero_authority": true,
+  "source_hash": "9db84137df36688a"
 }

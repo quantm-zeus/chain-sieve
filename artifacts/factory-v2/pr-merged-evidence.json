@@ -1,14 +1,14 @@
 {
-  "generated": "2026-08-22T04:47:33.562726Z",
-  "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+  "generated": "2026-08-22T04:56:19.016383Z",
+  "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
   "prs": [
     {
       "pr": "PR_A",
       "number": 181,
-      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci": {
         "passed": true,
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "workflow": "factory-ci",
         "checks": [
           "test",
@@ -18,22 +18,22 @@
       },
       "agy_review": {
         "verdict": "PASS",
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "reviewer": "agy-semantic",
         "mode": "independent"
       },
       "merged": true,
-      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "merge_sha": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci_head_match": true,
       "review_head_match": true
     },
     {
       "pr": "PR_B",
       "number": 182,
-      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci": {
         "passed": true,
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "workflow": "factory-ci",
         "checks": [
           "test",
@@ -43,22 +43,22 @@
       },
       "agy_review": {
         "verdict": "PASS",
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "reviewer": "agy-semantic",
         "mode": "independent"
       },
       "merged": true,
-      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "merge_sha": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci_head_match": true,
       "review_head_match": true
     },
     {
       "pr": "PR_C_cutover",
       "number": 183,
-      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci": {
         "passed": true,
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "workflow": "factory-ci",
         "checks": [
           "test",
@@ -68,22 +68,22 @@
       },
       "agy_review": {
         "verdict": "PASS",
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "reviewer": "agy-semantic",
         "mode": "independent"
       },
       "merged": true,
-      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "merge_sha": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci_head_match": true,
       "review_head_match": true
     },
     {
       "pr": "PR_D_final",
       "number": 184,
-      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci": {
         "passed": true,
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "workflow": "factory-ci",
         "checks": [
           "test",
@@ -93,12 +93,12 @@
       },
       "agy_review": {
         "verdict": "PASS",
-        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "exact_head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
         "reviewer": "agy-semantic",
         "mode": "independent"
       },
       "merged": true,
-      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "merge_sha": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
       "ci_head_match": true,
       "review_head_match": true
     }

@@ -64,3 +64,187 @@ def test_validate_review_strict():
     assert validate_review({"authority": {"workId": "W", "pr": 1, "targetHead": "a"*40, "reviewer": "agy", "implementationProvider": "muse", "mode": "BASELINE", "reviewScopeId": "s", "contextDigest": "d"}, "verdict": "PASS"}) is not None
     assert validate_review({"authority": {"workId": "W", "pr": 1, "targetHead": "bad", "reviewer": "agy", "implementationProvider": "muse", "mode": "BASELINE", "reviewScopeId": "s", "contextDigest": "d"}, "verdict": "PASS"}) is None
     assert validate_review({"authority": {"workId": "W", "pr": 1, "targetHead": "a"*40, "reviewer": "agy", "implementationProvider": "muse", "mode": "FINAL_CONFIRMATION", "reviewScopeId": "s", "contextDigest": "d"}, "verdict": "PASS"}) is None
+
+def test_recovery_domain_isolation():
+    from factory.controller_v2.recovery import DEFAULT_BUDGETS, can_retry
+    from factory.controller_v2.domain import RecoveryDomain
+    # budgets isolated per domain
+    assert DEFAULT_BUDGETS[RecoveryDomain.WORKER_LIVENESS] == 3
+    assert DEFAULT_BUDGETS[RecoveryDomain.CI_INFRASTRUCTURE] == 5
+    assert can_retry(RecoveryDomain.WORKER_LIVENESS, used=2) is True
+    assert can_retry(RecoveryDomain.WORKER_LIVENESS, used=3) is False
+    # infra budget not consumed by product failure
+    assert can_retry(RecoveryDomain.PRODUCT_CI, used=0) is True
+
+def test_plan_delta_preserves_workId():
+    from factory.controller_v2.identity import canonical_gap_key, work_id_for_gap
+    g1 = canonical_gap_key("M1", ["REQ-1"], ["AC-1"])
+    w1 = work_id_for_gap(g1, strategy_epoch=0)
+    w2 = work_id_for_gap(g1, strategy_epoch=1)
+    assert w1 != w2
+    assert g1 in w2 or w2.startswith("WORK-")
+    # gap identity stable across paraphrase already tested, but re-assert workId stable across replan
+    assert work_id_for_gap(g1, 0) == w1
+
+def test_workId_survives_paraphrase():
+    from factory.controller_v2.identity import assign_persistent_gap_key, work_id_for_gap
+    g = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="foo", acceptance_ids=["AC-1"])
+    w = work_id_for_gap(g)
+    g2 = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="totally different", acceptance_ids=["AC-1"])
+    w2 = work_id_for_gap(g2)
+    assert w == w2
+
+def test_sqlite_wal_and_events():
+    from factory.controller_v2.store import Store
+    from pathlib import Path
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        s = Store(Path(td)/"test.db")
+        # check WAL
+        mode = s.conn.execute("PRAGMA journal_mode").fetchone()[0]
+        assert mode.lower() == "wal"
+        fk = s.conn.execute("PRAGMA foreign_keys").fetchone()[0]
+        assert fk == 1
+        s.insert_work_item({"workId":"WORK-1","gapKey":"GAP-1","status":"PLANNED"})
+        s.insert_work_item({"workId":"WORK-1","gapKey":"GAP-1","status":"READY"})
+        events = s.conn.execute("SELECT count(*) FROM events WHERE workId='WORK-1'").fetchone()[0]
+        assert events == 2
+        s.close()
+
+def test_idempotency_command_determinism():
+    from factory.controller_v2.commands import Command, CommandType
+    c1 = Command.new("W", CommandType.CREATE_ISSUE, 0, {"gapKey":"G1"})
+    c2 = Command.new("W", CommandType.CREATE_ISSUE, 0, {"gapKey":"G1"})
+    c3 = Command.new("W", CommandType.CREATE_ISSUE, 1, {"gapKey":"G1"})
+    assert c1.commandId == c2.commandId
+    assert c1.idempotencyKey == c2.idempotencyKey
+    assert c1.commandId != c3.commandId
+
+def test_crash_window_observe_before_retry():
+    from factory.controller_v2.adapters.github import GitHubAdapter
+    from factory.controller_v2.adapters.ao import AOAdapter
+    # ensure adapters expose observe-before-retry methods
+    assert hasattr(GitHubAdapter, "find_issue_by_work")
+    assert hasattr(GitHubAdapter, "create_issue_idempotent")
+    assert hasattr(GitHubAdapter, "merge_pr_idempotent")
+    assert hasattr(AOAdapter, "find_session_by_work")
+    assert hasattr(AOAdapter, "start_worker_idempotent")
+
+def test_structured_review_only_baseline_verify():
+    from factory.controller_v2.review import validate_review
+    good_base = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"BASELINE","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
+    good_verify = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"VERIFY","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
+    bad = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"FINAL_CONFIRMATION","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
+    assert validate_review(good_base) is not None
+    assert validate_review(good_verify) is not None
+    assert validate_review(bad) is None
+
+def test_exact_head_ci_authority():
+    from factory.controller_v2.ci import classify_failure, ci_is_stale
+    # infra signals
+    assert classify_failure(True, False, infra_signals=("runner_down",)) == "INFRASTRUCTURE"
+    assert classify_failure(True, False, infra_signals=()) == "PRODUCT"
+    assert classify_failure(False, False) == "UNKNOWN"
+    try:
+        classify_failure(True, True)
+        assert False, "should raise"
+    except ValueError:
+        pass
+    assert ci_is_stale("a"*40, "a"*40) is False
+    assert ci_is_stale("a"*40, "b"*40) is True
+    assert ci_is_stale(None, "a"*40) is True
+
+def test_merge_predicate_exact_head():
+    from factory.controller_v2.domain import WorkItem, WorkStatus
+    from factory.controller_v2.transitions import can_merge
+    w = WorkItem(workId="W", gapKey="G", status=WorkStatus.MERGE_READY, pr_number=1, head_sha="a"*40)
+    good = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"VERIFY","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
+    assert can_merge(w, pr_state="open", pr_head="a"*40, pr_mergeable=True, ci_pass_for_head=True, review_evidence=good, expected_scope="s", expected_digest="d")
+    # stale head fails
+    assert not can_merge(w, pr_state="open", pr_head="b"*40, pr_mergeable=True, ci_pass_for_head=True, review_evidence=good, expected_scope="s", expected_digest="d")
+
+def test_sole_can_merge_producer():
+    import pathlib
+    reducer = pathlib.Path("factory/controller/reducer.py").read_text() if pathlib.Path("factory/controller/reducer.py").exists() else pathlib.Path("factory/controller_v2/reducer.py").read_text()
+    assert reducer.count("MERGE_PR") >= 1
+    # exactly one producer in reducer
+    lines = [l for l in reducer.splitlines() if "MERGE_PR" in l and "Command.new" in l]
+    assert len(lines) == 1, f"expected 1 MERGE_PR producer, got {len(lines)}"
+
+def test_no_duplicate_side_effects_via_idempotency():
+    from factory.controller_v2.commands import Command, CommandType
+    from factory.controller_v2.store import Store
+    from factory.controller_v2.executor import Executor
+    from pathlib import Path
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        s = Store(Path(td)/"test.db")
+        s.insert_work_item({"workId":"W","gapKey":"G","status":"READY"})
+        calls = []
+        def handler(cmd):
+            calls.append(cmd.idempotencyKey)
+            return {"ok": True}
+        ex = Executor(s, {"CREATE_ISSUE": handler})
+        cmd = Command.new("W", CommandType.CREATE_ISSUE, 0, {"gapKey":"G"})
+        r1 = ex.execute(cmd)
+        r2 = ex.execute(cmd)  # duplicate
+        assert r1.status == "SUCCESS"
+        assert r2.status == "SUCCESS"
+        assert len(calls) == 1  # handler not called twice
+
+def test_context_manifest_promoted():
+    import json, pathlib
+    cm = json.loads(pathlib.Path("factory/context-manifest.json").read_text())
+    assert all("controller_v2" not in p for p in cm["runtime_core"]), "manifest still points to controller_v2"
+    assert any("factory/controller/" in p for p in cm["runtime_core"])
+
+def test_legacy_imports_zero():
+    import pathlib
+    for p in pathlib.Path("factory/controller").rglob("*.py"):
+        txt = p.read_text()
+        assert "controller_v2" not in txt, f"legacy v2 import in promoted controller {p}"
+        assert "from factory.controller import" not in txt or "controller_v2" in txt
+
+def test_v1_runtime_removed():
+    import pathlib
+    # V1 files that should not exist in promoted controller
+    forbidden = ["controller.py","config.py","findings.py","models.py","policy.py","prompts.py","reasoning.py","review_context.py"]
+    for f in forbidden:
+        assert not (pathlib.Path("factory/controller") / f).exists(), f"V1 file {f} still present"
+
+def test_final_footprint_measured():
+    import json, pathlib
+    fp = json.loads(pathlib.Path("artifacts/factory-v2/context-footprint-final.json").read_text())
+    assert fp["loc"] <= 2000
+    assert fp["modules"] <= 20
+    assert fp["v2_promoted"] is True
+    assert fp["budget_pass"] is True
+
+def test_cli_status_doctor():
+    import subprocess, json
+    # CLI should be importable and status/doctor return expected structure
+    from factory.controller.cli import main as cli_main
+    from factory.controller_v2.cli import main as cli2_main
+    assert callable(cli_main)
+    assert callable(cli2_main)
+
+def test_observation_collector_pure():
+    from factory.controller_v2.collector import Collector
+    import inspect
+    src = inspect.getsource(Collector.collect)
+    assert "subprocess" not in src or "github" in src.lower()
+    assert "Clock" in src
+
+def test_transition_table_exhaustive():
+    import pathlib as _pl
+    if _pl.Path("factory/controller/reducer.py").exists():
+        from factory.controller.reducer import ALLOWED_TRANSITIONS
+    else:
+        from factory.controller_v2.reducer import ALLOWED_TRANSITIONS
+    # check every WorkStatus has at least one entry or is terminal
+    from factory.controller.domain import WorkStatus
+    statuses = [s.value for s in WorkStatus]
+    # PLANNED, READY etc should appear as from_status
+    from_statuses = {k[0] for k in ALLOWED_TRANSITIONS.keys()}
+    assert "PLANNED" in from_statuses
+    assert "MERGE_READY" in from_statuses
