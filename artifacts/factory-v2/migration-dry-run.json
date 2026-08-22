@@ -1,6 +1,7 @@
 {
-  "run1": "947144b95ef56814",
-  "run2": "947144b95ef56814",
+  "run1": "6cafa3c9c735c8c0",
+  "run2": "6cafa3c9c735c8c0",
   "identical": true,
-  "head": "5eb6481de2b361836692cb371f62354f9994a4fa"
+  "source_hash": "9db84137df36688a",
+  "packages": 4
 }

@@ -136,21 +136,21 @@
     },
     {
       "id": "G23_REAL_HISTORICAL_REPLAY_PASS",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260044Z"
+      "status": "PASS",
+      "evidence": "tools/factory-v2-replay/replay.py real replay with sources v1_state 9db84137 v1_events 20769 v2_db 1bb2b239, 5 incidents derived from real V1 packages keys, V2 reducer/identity, all impossible true",
+      "timestamp": "2026-08-22T04:55:20.886173Z"
     },
     {
       "id": "G24_REAL_MIGRATOR_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260054Z"
+      "status": "PASS",
+      "evidence": "tools/factory-v1-to-v2/migrate.py deterministic canonical_gap mapping 4 packages hash 6cafa3c9c735c8c0 source 9db84137",
+      "timestamp": "2026-08-22T04:55:20.886173Z"
     },
     {
       "id": "G25_REAL_MIGRATION_DRY_RUN_PASS",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260062Z"
+      "status": "PASS",
+      "evidence": "artifacts/factory-v2/migration-dry-run.json run1==run2 6cafa3c9c735c8c0 identical true, no manual SQLite edits, sorted mapping",
+      "timestamp": "2026-08-22T04:55:20.886173Z"
     },
     {
       "id": "G26_LIVE_SHADOW_PASS",
