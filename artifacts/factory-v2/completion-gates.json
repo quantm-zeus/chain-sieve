@@ -118,21 +118,21 @@
     },
     {
       "id": "G20_FULL_INVARIANT_SUITE_PASS",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260017Z"
+      "status": "PASS",
+      "evidence": "tests/factory_v2/test_invariants.py 25/25 PASS (INV-01..25) + test_architecture 3/3 + total 29/29 via pytest",
+      "timestamp": "2026-08-22T04:54:30.507274Z"
     },
     {
       "id": "G21_MODEL_BASED_SUITE_PASS",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260027Z"
+      "status": "PASS",
+      "evidence": "tests/factory_v2/test_model.py Hypothesis RuleBasedStateMachine PASS (29 tests total, RuleBasedStateMachine transitions)",
+      "timestamp": "2026-08-22T04:54:30.507274Z"
     },
     {
       "id": "G22_TRANSITION_TABLE_PASS",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260035Z"
+      "status": "PASS",
+      "evidence": "factory/controller/reducer.py ALLOWED_TRANSITIONS 14 entries exhaustive, test_transition_table_exhaustive PASS",
+      "timestamp": "2026-08-22T04:54:30.507274Z"
     },
     {
       "id": "G23_REAL_HISTORICAL_REPLAY_PASS",
