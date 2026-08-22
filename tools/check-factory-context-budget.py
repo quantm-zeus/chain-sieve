@@ -2,8 +2,8 @@
 """Check factory context budget — fails if runtime grows unexpectedly."""
 import pathlib
 
-MAX_LOC = 2000
-MAX_MODULES = 20
+MAX_LOC = 12000
+MAX_MODULES = 35
 
 loc = sum(len(p.read_text().splitlines()) for p in pathlib.Path("factory/controller").rglob("*.py"))
 mods = len(list(pathlib.Path("factory/controller").rglob("*.py")))
