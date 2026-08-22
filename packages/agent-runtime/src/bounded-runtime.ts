@@ -31,6 +31,7 @@ import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
 import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
+import type { StructuredOutputRepairHandler } from './output-repair.js';
 
 
 export interface ToolExecutionContext {
@@ -65,6 +66,11 @@ export interface AgentExecutionOptions {
   envelope: ToolAuthorizationEnvelope;
   budget: AgentBudget;
   signal?: AbortSignal | undefined;
+  timeoutMs?: number | undefined;
+  allowPartialResults?: boolean | undefined;
+  enableStructuredOutputRepair?: boolean | undefined;
+  repairHandler?: StructuredOutputRepairHandler | undefined;
+  hasCriticalRisk?: boolean | undefined;
   initialEvidence?: Record<string, unknown> | undefined;
   goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   deterministicSeedRef?: string | number | undefined;
@@ -156,7 +162,7 @@ export class BoundedAgentRuntime {
   public async execute(
     options: AgentExecutionOptions,
   ): Promise<AgentExecutionResult> {
-    const { candidate, profileId, profileVersion, envelope, budget, signal } =
+    const { candidate, profileId, profileVersion, envelope, budget, signal, timeoutMs, allowPartialResults } =
       options;
 
     // 1. Fail closed on unknown profile before any execution
@@ -169,8 +175,76 @@ export class BoundedAgentRuntime {
       tracker.checkStep(1);
     }
 
+    // Set up internal AbortController linked with external signal and wall-clock timeout
+    const abortController = new AbortController();
+    let timeoutTimer: NodeJS.Timeout | undefined;
+    let timedOut = false;
+
+    // Calculate effective timeout from timeoutMs and budget.deadlineAt
+    const now = Date.now();
+    let effectiveTimeoutMs = timeoutMs;
+    if (budget.deadlineAt) {
+      const deadlineMs = new Date(budget.deadlineAt).getTime();
+      const msUntilDeadline = deadlineMs - now;
+      if (effectiveTimeoutMs === undefined || msUntilDeadline < effectiveTimeoutMs) {
+        effectiveTimeoutMs = Math.max(0, msUntilDeadline);
+      }
+    }
+
+    if (effectiveTimeoutMs !== undefined && Number.isFinite(effectiveTimeoutMs)) {
+      if (effectiveTimeoutMs <= 0) {
+        timedOut = true;
+        abortController.abort();
+      } else {
+        timeoutTimer = setTimeout(() => {
+          timedOut = true;
+          abortController.abort();
+        }, effectiveTimeoutMs);
+      }
+    }
+
+    let onExternalAbort: (() => void) | undefined;
+    if (signal) {
+      if (signal.aborted) {
+        abortController.abort();
+      } else {
+        onExternalAbort = () => abortController.abort();
+        signal.addEventListener('abort', onExternalAbort, { once: true });
+      }
+    }
+
+    const activeSignal = abortController.signal;
+
     // 3. Pre-flight cancellation check
-    if (signal?.aborted) {
+    if (activeSignal.aborted) {
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (signal && onExternalAbort) signal.removeEventListener('abort', onExternalAbort);
+
+      if (allowPartialResults) {
+        const emptyPlan = DeterministicPlanner.plan({
+          candidate,
+          profile,
+          envelope,
+          budget,
+          goal: options.goal,
+          initialEvidence: options.initialEvidence,
+          deterministicSeedRef: options.deterministicSeedRef,
+        });
+        return await this.buildPartialExecutionResult(
+          candidate,
+          profile,
+          emptyPlan,
+          [],
+          tracker,
+          0,
+          0,
+          timedOut ? 'BUDGET_EXCEEDED' : 'CANCELLED',
+          options,
+        );
+      }
+      if (timedOut) {
+        throw new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0);
+      }
       throw new AgentCancelledError();
     }
 
@@ -224,319 +298,412 @@ export class BoundedAgentRuntime {
       ...(options.initialEvidence ?? {}),
     };
 
-    // Synthesize baseline decision prior to evidence acquisition
-    const baselineDecision = this.synthesizeDecision(
-      candidate,
-      profile,
-      accumulatedEvidence,
-      [],
-    );
-
-    // Pre-execution VOI planning: evaluate EVOI and establish per-family acquisition plan
-    let initialVoiPlan: VoiPlanResult | undefined;
-    let voiPlanner: VoiPlanner | undefined;
-    if (options.enableVoi) {
-      voiPlanner = new VoiPlanner(options.voiPolicy);
-      initialVoiPlan = voiPlanner.planAcquisitions({
+    try {
+      // Synthesize baseline decision prior to evidence acquisition
+      const baselineDecision = await this.synthesizeDecision(
         candidate,
-        runId: plan.planId,
-        envelope,
-        budget,
         profile,
-        currentCandidateScore: options.candidateScore,
-        knownEvidence: accumulatedEvidence,
-        randomizationStratum: options.randomizationStratum,
-      });
-    }
+        accumulatedEvidence,
+        [],
+        options,
+      );
 
-    // 5. Bounded tool execution loop
-    for (const step of plan.steps) {
-      if (signal?.aborted) {
-        throw new AgentCancelledError();
+      // Pre-execution VOI planning: evaluate EVOI and establish per-family acquisition plan
+      let initialVoiPlan: VoiPlanResult | undefined;
+      let voiPlanner: VoiPlanner | undefined;
+      if (options.enableVoi) {
+        voiPlanner = new VoiPlanner(options.voiPolicy);
+        initialVoiPlan = voiPlanner.planAcquisitions({
+          candidate,
+          runId: plan.planId,
+          envelope,
+          budget,
+          profile,
+          currentCandidateScore: options.candidateScore,
+          knownEvidence: accumulatedEvidence,
+          randomizationStratum: options.randomizationStratum,
+        });
       }
 
-      // Check and record step limit
-      tracker.recordStep(1);
-      executedSteps++;
-
-      for (const call of step.toolCalls) {
-        if (signal?.aborted) {
+      // 5. Bounded tool execution loop
+      for (const step of plan.steps) {
+        if (activeSignal.aborted) {
+          if (timedOut) {
+            throw new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0);
+          }
           throw new AgentCancelledError();
         }
 
-        // Validate confinement before execution - fail closed on any broadening
-        ToolArgumentConfinementValidator.assertConforms(
-          call.toolName,
-          call.arguments,
-          envelope,
-          profile.declaredTools,
-        );
+        // Check and record step limit
+        tracker.recordStep(1);
+        executedSteps++;
 
-        // Pre-flight cost & token estimation
-        const inputTokens = 100;
-        const outputTokens = 150;
-        const estimatedCostUsd =
-          call.estimatedCostUsd ??
-          (inputTokens * (profile.costPerInputTokenUsd ?? 0.000001) +
-            outputTokens * (profile.costPerOutputTokenUsd ?? 0.000002));
-        const providerCostUnits = call.quotaCostUnits ?? 1;
+        for (const call of step.toolCalls) {
+          if (activeSignal.aborted) {
+            if (timedOut) {
+              throw new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0);
+            }
+            throw new AgentCancelledError();
+          }
 
-        // Pre-flight check: token & model cost quota before invoking tool
-        tracker.checkTokens(inputTokens, outputTokens, estimatedCostUsd);
-
-        // Pre-flight check & record provider cost units quota
-        tracker.recordProviderCostUnits(providerCostUnits);
-
-        // Enforce budget for tool call & provider call
-        tracker.recordToolCall(candidate.assetId, 1);
-        tracker.recordProviderCall(1);
-        executedToolCalls++;
-
-        const toolHandler = this.tools.get(call.toolName);
-        if (!toolHandler) {
-          throw new AgentRuntimeError(
-            `No handler registered for tool "${call.toolName}"`,
-            'MISSING_TOOL_HANDLER',
+          // Validate confinement before execution - fail closed on any broadening
+          ToolArgumentConfinementValidator.assertConforms(
+            call.toolName,
+            call.arguments,
+            envelope,
+            profile.declaredTools,
           );
-        }
 
-        const executionContext: ToolExecutionContext = {
-          candidate,
-          signal,
-          stepIndex: step.stepIndex,
-          callId: call.callId,
-          envelope,
-          profile,
-        };
+          // Pre-flight cost & token estimation
+          const inputTokens = 100;
+          const outputTokens = 150;
+          const estimatedCostUsd =
+            call.estimatedCostUsd ??
+            (inputTokens * (profile.costPerInputTokenUsd ?? 0.000001) +
+              outputTokens * (profile.costPerOutputTokenUsd ?? 0.000002));
+          const providerCostUnits = call.quotaCostUnits ?? 1;
 
-        const startMs = Date.now();
-        let output: unknown;
-        let callError: string | undefined;
-        let onAbort: (() => void) | undefined;
+          // Pre-flight check: token & model cost quota before invoking tool
+          tracker.checkTokens(inputTokens, outputTokens, estimatedCostUsd);
 
-        try {
-          if (signal) {
+          // Pre-flight check & record provider cost units quota
+          tracker.recordProviderCostUnits(providerCostUnits);
+
+          // Enforce budget for tool call & provider call
+          tracker.recordToolCall(candidate.assetId, 1);
+          tracker.recordProviderCall(1);
+          executedToolCalls++;
+
+          const toolHandler = this.tools.get(call.toolName);
+          if (!toolHandler) {
+            throw new AgentRuntimeError(
+              `No handler registered for tool "${call.toolName}"`,
+              'MISSING_TOOL_HANDLER',
+            );
+          }
+
+          const executionContext: ToolExecutionContext = {
+            candidate,
+            signal: activeSignal,
+            stepIndex: step.stepIndex,
+            callId: call.callId,
+            envelope,
+            profile,
+          };
+
+          const startMs = Date.now();
+          let output: unknown;
+          let callError: string | undefined;
+          let onAbort: (() => void) | undefined;
+
+          try {
             output = await Promise.race([
               toolHandler(call.arguments, executionContext),
               new Promise<never>((_, reject) => {
-                if (signal.aborted) {
-                  reject(new AgentCancelledError());
+                if (activeSignal.aborted) {
+                  if (timedOut) {
+                    reject(new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0));
+                  } else {
+                    reject(new AgentCancelledError());
+                  }
                   return;
                 }
-                onAbort = () => reject(new AgentCancelledError());
-                signal.addEventListener('abort', onAbort, { once: true });
+                onAbort = () => {
+                  if (timedOut) {
+                    reject(new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0));
+                  } else {
+                    reject(new AgentCancelledError());
+                  }
+                };
+                activeSignal.addEventListener('abort', onAbort, { once: true });
               }),
             ]);
-          } else {
-            output = await toolHandler(call.arguments, executionContext);
+
+            accumulatedEvidence[call.toolName] = output;
+          } catch (err) {
+            if (err instanceof BudgetExceededError || err instanceof ConfinementViolationError) {
+              throw err;
+            }
+            if (err instanceof AgentCancelledError || activeSignal.aborted) {
+              if (timedOut) {
+                throw new BudgetExceededError('DEADLINE', Date.now(), effectiveTimeoutMs ? Date.now() + effectiveTimeoutMs : Date.now(), 0);
+              }
+              throw new AgentCancelledError();
+            }
+            callError = err instanceof Error ? err.message : String(err);
+          } finally {
+            if (onAbort) {
+              activeSignal.removeEventListener('abort', onAbort);
+            }
           }
 
-          accumulatedEvidence[call.toolName] = output;
-        } catch (err) {
-          if (err instanceof BudgetExceededError || err instanceof ConfinementViolationError) {
-            throw err;
-          }
-          if (err instanceof AgentCancelledError || signal?.aborted) {
-            throw new AgentCancelledError();
-          }
-          callError = err instanceof Error ? err.message : String(err);
-        } finally {
-          if (signal && onAbort) {
-            signal.removeEventListener('abort', onAbort);
-          }
+          const latencyMs = Math.max(0, Date.now() - startMs);
+
+          // Account for actual tokens / cost
+          tracker.recordTokens(inputTokens, outputTokens, estimatedCostUsd);
+
+          toolRecords.push({
+            callId: call.callId,
+            stepIndex: step.stepIndex,
+            toolName: call.toolName,
+            arguments: call.arguments,
+            output,
+            error: callError,
+            latencyMs,
+            executedAt: new Date().toISOString(),
+          });
         }
 
-        const latencyMs = Math.max(0, Date.now() - startMs);
-
-        // Account for actual tokens / cost
-        tracker.recordTokens(inputTokens, outputTokens, estimatedCostUsd);
-
-        toolRecords.push({
-          callId: call.callId,
-          stepIndex: step.stepIndex,
-          toolName: call.toolName,
-          arguments: call.arguments,
-          output,
-          error: callError,
-          latencyMs,
-          executedAt: new Date().toISOString(),
-        });
+        if (step.isTerminal) break;
       }
 
-      if (step.isTerminal) break;
-    }
-
-    const decision = this.synthesizeDecision(
-      candidate,
-      profile,
-      accumulatedEvidence,
-      toolRecords,
-    );
-
-    let voiPlanResult: VoiPlanResult | undefined;
-    if (options.enableVoi) {
-      if (!voiPlanner) {
-        voiPlanner = new VoiPlanner(options.voiPolicy);
-      }
-      const planToReconcile = initialVoiPlan ?? voiPlanner.planAcquisitions({
+      const decision = await this.synthesizeDecision(
         candidate,
-        runId: plan.planId,
-        envelope,
-        budget,
         profile,
-        currentCandidateScore: options.candidateScore,
-        knownEvidence: accumulatedEvidence,
-        randomizationStratum: options.randomizationStratum,
-      });
-
-      const actualCostSnapshot = tracker.getSnapshot();
-      const actualCost = {
-        monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
-        quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
-      };
-
-      planToReconcile.decisions = voiPlanner.reconcileDecisions({
-        decisions: planToReconcile.decisions,
+        accumulatedEvidence,
         toolRecords,
-        previousDecision: baselineDecision,
-        finalDecision: decision,
-        actualCost,
-        completedAt: new Date().toISOString(),
-      });
-      voiPlanResult = planToReconcile;
-    }
+        options,
+      );
 
-    let skepticResult: SkepticExecutionResult | undefined;
-    if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
-      const skepticPolicy = options.skepticTriggerPolicy ?? new SkepticTriggerPolicy();
-      const skepticTriggerContext = {
-        candidateScore: options.candidateScore,
-        ...(options.skepticTriggerContext ?? {}),
-      };
-      // Pre-evaluate trigger so error fallbacks preserve actual policy evaluation and audit metrics
-      const triggerEval = skepticPolicy.evaluate({
-        candidate,
-        parentDecision: decision,
-        ...skepticTriggerContext,
-      });
-
-      try {
-        const skepticAgent = new ConditionalSkepticAgent(
-          skepticPolicy,
-          this.registry,
-        );
-        for (const [name, handler] of this.tools.entries()) {
-          skepticAgent.registerTool(name, handler);
+      let voiPlanResult: VoiPlanResult | undefined;
+      if (options.enableVoi) {
+        if (!voiPlanner) {
+          voiPlanner = new VoiPlanner(options.voiPolicy);
         }
-        skepticResult = await skepticAgent.execute({
+        const planToReconcile = initialVoiPlan ?? voiPlanner.planAcquisitions({
           candidate,
-          parentDecision: decision,
-          parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
           runId: plan.planId,
           envelope,
-          skepticBudget: options.skepticBudget,
-          triggerContext: skepticTriggerContext,
-          triggerPolicy: skepticPolicy,
-          signal,
+          budget,
+          profile,
+          currentCandidateScore: options.candidateScore,
+          knownEvidence: accumulatedEvidence,
+          randomizationStratum: options.randomizationStratum,
         });
-      } catch (err) {
-        if (err instanceof AgentCancelledError || signal?.aborted) {
-          throw new AgentCancelledError();
-        }
-        // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
-        const errMsg = err instanceof Error ? err.message : String(err);
-        const parentDecisionId = `dec_${candidate.assetId}_${plan.planId}`;
-        const artifactId = `skeptic_${candidate.assetId}_${plan.planId}_failed_closed`;
-        const asOf = new Date().toISOString();
-        const rawArtifact = {
-          id: artifactId,
-          parentDecisionId,
-          candidateId: candidate.assetId,
-          runId: plan.planId,
-          policyVersion: triggerEval.policyVersion,
-          triggered: triggerEval.triggered,
-          triggerReasons: triggerEval.triggerReasons,
-          triggerMetrics: triggerEval.triggerMetrics,
-          profileId: profile.id,
-          profileVersion: profile.version,
-          status: 'SKIPPED_POLICY' as const,
-          verdict: 'INSUFFICIENT_EVIDENCE' as const,
-          confidence: 'LOW' as const,
-          challengeFindings: [`Skeptic runtime execution error: ${errMsg}`],
-          counterThesis: `Skeptic evaluation failed closed: ${errMsg}`,
-          invalidationConditions: decision.thesisInvalidationConditions ?? [],
-          suggestedDecision: decision.decision,
-          suggestedRiskLevel: decision.riskRecommendation,
-          decisionChanged: false,
-          evidenceIds: [] as string[],
-          executedToolRecords: [],
-          budgetUsage: {},
-          createdAt: asOf,
+
+        const actualCostSnapshot = tracker.getSnapshot();
+        const actualCost = {
+          monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
+          quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
         };
 
-        const canonicalize = (val: unknown): unknown => {
-          if (val === null || val === undefined) return val;
-          if (Array.isArray(val)) return val.map(canonicalize);
-          if (typeof val === 'object') {
-            return Object.fromEntries(
-              Object.entries(val as Record<string, unknown>)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([k, v]) => [k, canonicalize(v)]),
-            );
+        planToReconcile.decisions = voiPlanner.reconcileDecisions({
+          decisions: planToReconcile.decisions,
+          toolRecords,
+          previousDecision: baselineDecision,
+          finalDecision: decision,
+          actualCost,
+          completedAt: new Date().toISOString(),
+        });
+        voiPlanResult = planToReconcile;
+      }
+
+      let skepticResult: SkepticExecutionResult | undefined;
+      if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
+        const skepticPolicy = options.skepticTriggerPolicy ?? new SkepticTriggerPolicy();
+        const skepticTriggerContext = {
+          candidateScore: options.candidateScore,
+          ...(options.skepticTriggerContext ?? {}),
+        };
+        // Pre-evaluate trigger so error fallbacks preserve actual policy evaluation and audit metrics
+        const triggerEval = skepticPolicy.evaluate({
+          candidate,
+          parentDecision: decision,
+          ...skepticTriggerContext,
+        });
+
+        try {
+          const skepticAgent = new ConditionalSkepticAgent(
+            skepticPolicy,
+            this.registry,
+          );
+          for (const [name, handler] of this.tools.entries()) {
+            skepticAgent.registerTool(name, handler);
           }
-          return val;
-        };
-        const sha256 = createHash('sha256')
-          .update(JSON.stringify(canonicalize(rawArtifact)))
-          .digest('hex');
+          skepticResult = await skepticAgent.execute({
+            candidate,
+            parentDecision: decision,
+            parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
+            runId: plan.planId,
+            envelope,
+            skepticBudget: options.skepticBudget,
+            triggerContext: skepticTriggerContext,
+            triggerPolicy: skepticPolicy,
+            signal: activeSignal,
+          });
+        } catch (err) {
+          if (err instanceof AgentCancelledError || activeSignal.aborted) {
+            throw new AgentCancelledError();
+          }
+          // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
+          const errMsg = err instanceof Error ? err.message : String(err);
+          const parentDecisionId = `dec_${candidate.assetId}_${plan.planId}`;
+          const artifactId = `skeptic_${candidate.assetId}_${plan.planId}_failed_closed`;
+          const asOf = new Date().toISOString();
+          const rawArtifact = {
+            id: artifactId,
+            parentDecisionId,
+            candidateId: candidate.assetId,
+            runId: plan.planId,
+            policyVersion: triggerEval.policyVersion,
+            triggered: triggerEval.triggered,
+            triggerReasons: triggerEval.triggerReasons,
+            triggerMetrics: triggerEval.triggerMetrics,
+            profileId: profile.id,
+            profileVersion: profile.version,
+            status: 'SKIPPED_POLICY' as const,
+            verdict: 'INSUFFICIENT_EVIDENCE' as const,
+            confidence: 'LOW' as const,
+            challengeFindings: [`Skeptic runtime execution error: ${errMsg}`],
+            counterThesis: `Skeptic evaluation failed closed: ${errMsg}`,
+            invalidationConditions: decision.thesisInvalidationConditions ?? [],
+            suggestedDecision: decision.decision,
+            suggestedRiskLevel: decision.riskRecommendation,
+            decisionChanged: false,
+            evidenceIds: [] as string[],
+            executedToolRecords: [],
+            budgetUsage: {},
+            createdAt: asOf,
+          };
 
-        const fallbackArtifact: SkepticArtifact = {
-          ...rawArtifact,
-          sha256,
-        };
+          const canonicalize = (val: unknown): unknown => {
+            if (val === null || val === undefined) return val;
+            if (Array.isArray(val)) return val.map(canonicalize);
+            if (typeof val === 'object') {
+              return Object.fromEntries(
+                Object.entries(val as Record<string, unknown>)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([k, v]) => [k, canonicalize(v)]),
+              );
+            }
+            return val;
+          };
+          const sha256 = createHash('sha256')
+            .update(JSON.stringify(canonicalize(rawArtifact)))
+            .digest('hex');
 
-        skepticResult = {
-          artifact: fallbackArtifact,
-          status: 'SKIPPED_POLICY',
-          toolRecords: [],
-        };
+          const fallbackArtifact: SkepticArtifact = {
+            ...rawArtifact,
+            sha256,
+          };
+
+          skepticResult = {
+            artifact: fallbackArtifact,
+            status: 'SKIPPED_POLICY',
+            toolRecords: [],
+          };
+        }
+      }
+
+      if (options.persistenceRepository) {
+        try {
+          if (voiPlanResult) {
+            await options.persistenceRepository.saveVoiPlan(voiPlanResult);
+          }
+          if (skepticResult) {
+            await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
+          }
+        } catch {
+          // Isolate persistence write-through failures
+        }
+      }
+
+      return {
+        plan,
+        status: 'SUCCESS',
+        decision,
+        toolRecords,
+        budgetUsage: tracker.getSnapshot(),
+        executedSteps,
+        executedToolCalls,
+        completedAt: new Date().toISOString(),
+        voiPlanResult,
+        skepticResult,
+      };
+    } catch (err) {
+      if (err instanceof ConfinementViolationError) {
+        throw err;
+      }
+      if (allowPartialResults) {
+        const executionStatus =
+          err instanceof BudgetExceededError
+            ? 'BUDGET_EXCEEDED'
+            : err instanceof AgentCancelledError
+              ? 'CANCELLED'
+              : 'FAILED';
+        return await this.buildPartialExecutionResult(
+          candidate,
+          profile,
+          plan,
+          toolRecords,
+          tracker,
+          executedSteps,
+          executedToolCalls,
+          executionStatus,
+          options,
+        );
+      }
+      throw err;
+    } finally {
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+      if (signal && onExternalAbort) {
+        signal.removeEventListener('abort', onExternalAbort);
       }
     }
+  }
 
-    if (options.persistenceRepository) {
-      try {
-        if (voiPlanResult) {
-          await options.persistenceRepository.saveVoiPlan(voiPlanResult);
-        }
-        if (skepticResult) {
-          await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
-        }
-      } catch {
-        // Isolate persistence write-through failures to prevent transient database unavailability
-        // from aborting successful parent research decision execution.
-      }
-    }
+  private async buildPartialExecutionResult(
+    candidate: CandidateTarget,
+    profile: ModelProfile,
+    plan: DeterministicPlan,
+    toolRecords: ToolExecutionRecord[],
+    tracker: AgentBudgetTracker,
+    executedSteps: number,
+    executedToolCalls: number,
+    status: 'BUDGET_EXCEEDED' | 'CANCELLED' | 'FAILED',
+    options?: AgentExecutionOptions,
+  ): Promise<AgentExecutionResult> {
+    const decision = await this.synthesizeDecision(
+      candidate,
+      profile,
+      {},
+      toolRecords,
+      options,
+    );
+
+    // Partial results must abstain (INSUFFICIENT_DATA)
+    const partialDecision: AgentDecision = {
+      ...decision,
+      decision: 'INSUFFICIENT_DATA',
+      alertClassRecommendation: undefined,
+      abstentionReason: `Execution terminated early (${status})`,
+      missingData: [
+        ...(decision.missingData ?? []),
+        { field: 'execution_completeness', reason: `Execution terminated early: ${status}`, severity: 'HIGH' },
+      ],
+    };
 
     return {
       plan,
-      status: 'SUCCESS',
-      decision,
+      status,
+      decision: partialDecision,
       toolRecords,
       budgetUsage: tracker.getSnapshot(),
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
-      voiPlanResult,
-      skepticResult,
     };
   }
 
-  private synthesizeDecision(
+  private async synthesizeDecision(
     candidate: CandidateTarget,
     profile: ModelProfile,
     _evidence: Record<string, unknown>,
     toolRecords: readonly ToolExecutionRecord[],
-  ): AgentDecision {
+    options?: AgentExecutionOptions,
+  ): Promise<AgentDecision> {
     // Build deterministic EvidenceRecord map from toolRecords (each successful tool call is evidence)
     const nowIso = new Date().toISOString();
     const evidenceById = new Map<string, EvidenceRecord>();
@@ -544,6 +711,7 @@ export class BoundedAgentRuntime {
     const riskSignals: string[] = [];
     let hasPairs = false;
     let hasAudit = false;
+    let criticalRiskDetected = options?.hasCriticalRisk === true;
 
     for (const record of toolRecords) {
       if (record.error) {
@@ -551,10 +719,26 @@ export class BoundedAgentRuntime {
         continue;
       }
 
+      // Detect critical security risks from tool outputs (AC-031)
+      if (record.output && typeof record.output === 'object') {
+        const out = record.output as Record<string, unknown>;
+        if (out['isHoneypot'] === true || out['is_honeypot'] === true || out['honeypot'] === true) {
+          criticalRiskDetected = true;
+          riskSignals.push('HONEYPOT_DETECTED');
+        }
+        if (out['risk'] === 'CRITICAL' || out['criticalRisk'] === true) {
+          criticalRiskDetected = true;
+          riskSignals.push('CRITICAL_SECURITY_RISK');
+        }
+        if (out['isBlacklisted'] === true || out['is_blacklisted'] === true) {
+          criticalRiskDetected = true;
+          riskSignals.push('BLACKLISTED_ADDRESS');
+        }
+      }
+
       // Isolate untrusted tool output as data
       const rawOutput = typeof record.output === 'string' ? record.output : JSON.stringify(record.output ?? {});
       const isolated = UntrustedContentIsolator.isolate(rawOutput, `tool:${record.toolName}`);
-      // Use safeData only for logging/thesis; evidence stores normalized fields from original output (sanitized claim)
       void isolated;
 
       if (record.toolName === 'dex.pairs' || record.toolName === 'token.profile') hasPairs = true;
@@ -571,7 +755,7 @@ export class BoundedAgentRuntime {
         candidateId: candidate.assetId,
         provider: 'synthetic',
         operation: record.toolName,
-        independenceGroup: record.toolName, // each tool is its own group for determinism
+        independenceGroup: record.toolName,
         availableAt: record.executedAt,
         fetchedAt: record.executedAt,
         normalizedFields,
@@ -592,55 +776,64 @@ export class BoundedAgentRuntime {
         ? 'INSUFFICIENT_DATA'
         : hasErrors
           ? 'WATCH'
-          : 'ALERT';
+          : criticalRiskDetected
+            ? 'REJECT'
+            : 'ALERT';
 
     // Use StructuredDecisionEngine to enforce abstention gates deterministically
-    const engineResult = StructuredDecisionEngine.decide({
-      candidate: {
-        assetId: candidate.assetId,
-        chainId: candidate.chainId,
-        contractAddress: candidate.contractAddress,
-        symbol: candidate.symbol,
-      },
-      profileId: profile.id,
-      proposedDecision: {
-        decision: proposedDecisionType,
-        thesis: `Deterministic bounded evaluation for ${candidate.assetId}`,
-        counterThesis: 'Potential latent liquidity or contract vulnerability',
-        lifecycleRecommendation: 'QUALIFIED',
-        riskRecommendation: hasErrors ? 'MEDIUM' : 'LOW',
-        observedFacts,
-        derivedFacts: [],
-        inferences: [],
-        hypotheses: [],
-        positiveSignals: hasPairs ? ['VERIFIED_LIQUIDITY_PAIRS'] : [],
-        riskSignals,
-        missingData:
-          proposedDecisionType === 'INSUFFICIENT_DATA'
-            ? [{ field: 'market_data', reason: 'No evidence gathered', severity: 'HIGH' }]
-            : [],
-        providerConflicts: [],
-        thesisInvalidationConditions: ['Liquidity dropped below 10k', 'Ownership renouncement revoked'],
-        reasoningAssessment: 'HIGH',
-        costPolicyResult: 'PASS',
-      },
-      evidenceById,
-      validatorOptions: {
-        decisionTimeIso: nowIso,
-        candidateId: candidate.assetId,
-        entityId: candidate.assetId,
-      },
-      gateConfig: {
-        minObservedFacts: 1,
-        minEvidenceCount: 1,
-        minIndependenceGroups: 1,
-      },
-      hasCriticalRisk: false,
-      executionTradabilityPass: true,
-    });
+    const proposedDecision = {
+      decision: proposedDecisionType,
+      thesis: `Deterministic bounded evaluation for ${candidate.assetId}`,
+      counterThesis: 'Potential latent liquidity or contract vulnerability',
+      lifecycleRecommendation: 'QUALIFIED' as const,
+      riskRecommendation: (criticalRiskDetected ? 'CRITICAL' : hasErrors ? 'MEDIUM' : 'LOW') as AgentDecision['riskRecommendation'],
+      observedFacts,
+      derivedFacts: [],
+      inferences: [],
+      hypotheses: [],
+      positiveSignals: hasPairs && !criticalRiskDetected ? ['VERIFIED_LIQUIDITY_PAIRS'] : [],
+      riskSignals: criticalRiskDetected ? [...new Set([...riskSignals, 'CRITICAL_SECURITY_RISK'])] : riskSignals,
+      missingData:
+        proposedDecisionType === 'INSUFFICIENT_DATA'
+          ? [{ field: 'market_data', reason: 'No evidence gathered', severity: 'HIGH' as const }]
+          : [],
+      providerConflicts: [],
+      thesisInvalidationConditions: ['Liquidity dropped below 10k', 'Ownership renouncement revoked'],
+      reasoningAssessment: 'HIGH' as const,
+      costPolicyResult: 'PASS' as const,
+    };
 
-    // Structured engine already implements abstention — return its decision
-    // Ensure evidence lineage is preserved: if validator failed, decision is INSUFFICIENT_DATA (never forces ranking)
+    const engineResult = await StructuredDecisionEngine.decideWithRepair(
+      {
+        candidate: {
+          assetId: candidate.assetId,
+          chainId: candidate.chainId,
+          contractAddress: candidate.contractAddress,
+          symbol: candidate.symbol,
+        },
+        profileId: profile.id,
+        proposedDecision,
+        evidenceById,
+        validatorOptions: {
+          decisionTimeIso: nowIso,
+          candidateId: candidate.assetId,
+          entityId: candidate.assetId,
+        },
+        gateConfig: {
+          minObservedFacts: 1,
+          minEvidenceCount: 1,
+          minIndependenceGroups: 1,
+          criticalRiskBlocksAlert: true,
+        },
+        hasCriticalRisk: criticalRiskDetected,
+        executionTradabilityPass: true,
+      },
+      {
+        enableRepair: options?.enableStructuredOutputRepair,
+        repairHandler: options?.repairHandler,
+      },
+    );
+
     return engineResult.decision;
   }
 }

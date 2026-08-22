@@ -1,9 +1,12 @@
 import type { AgentDecision } from '@ciag/shared-schemas';
 import { EvidenceValidator, type EvidenceRecord, type ValidatorOptions } from './evidence-validator.js';
+import { SingleAttemptOutputRepairer, type StructuredOutputRepairHandler } from './output-repair.js';
 
 /**
  * FR-AGT-003 Structured decision with abstention
  * Emits typed verdict with INSUFFICIENT_DATA abstention path and never forces ranking when evidence gates fail.
+ * AC-030: Invalid structured output receives at most one repair attempt and never causes an unsupported alert.
+ * AC-031: Critical security risk blocks opportunity alert deterministically.
  */
 
 export interface DecisionGateConfig {
@@ -122,8 +125,21 @@ export class StructuredDecisionEngine {
       abstentionReasons.push(`VALIDATOR_FAILED:${codes}`);
     }
 
-    // Gate 5: critical risk blocks alert (not necessarily all decisions, but alert requires pass)
-    const criticalRiskPass = !(gateConfig.criticalRiskBlocksAlert && input.hasCriticalRisk);
+    // Gate 5: critical risk blocks alert (AC-031)
+    const isCriticalRisk =
+      input.hasCriticalRisk === true ||
+      proposed.riskRecommendation === 'CRITICAL' ||
+      proposed.failureHazardState === 'CRITICAL' ||
+      proposed.multiViewState === 'CRITICAL_CONTRADICTION' ||
+      (proposed.riskSignals ?? []).some((s) => /HONEYPOT|CRITICAL|MALICIOUS|BLACKLIST/i.test(s));
+
+    const proposedIsOpportunityAlert =
+      proposed.decision === 'ALERT' ||
+      proposed.alertClassRecommendation === 'CONFIRMED_OPPORTUNITY' ||
+      proposed.alertClassRecommendation === 'EARLY_WATCH' ||
+      proposed.alertClassRecommendation === 'THESIS_STRENGTHENING';
+
+    const criticalRiskPass = !(gateConfig.criticalRiskBlocksAlert && isCriticalRisk && proposedIsOpportunityAlert);
     if (!criticalRiskPass) abstentionReasons.push('CRITICAL_RISK_BLOCKS_ALERT');
 
     // Gate 6: tradability (if expected to alert)
@@ -143,12 +159,12 @@ export class StructuredDecisionEngine {
       finalAlertClass = undefined;
       // Abstention preserves lifecycle/risk as-is but forces no ranking
       lifecycle = proposed.lifecycleRecommendation;
-      risk = proposed.riskRecommendation;
+      risk = isCriticalRisk ? 'CRITICAL' : proposed.riskRecommendation;
     } else {
       finalDecision = (proposed.decision as AgentDecision['decision']) ?? 'WATCH';
       finalAlertClass = proposed.alertClassRecommendation;
       lifecycle = proposed.lifecycleRecommendation;
-      risk = proposed.riskRecommendation;
+      risk = isCriticalRisk ? 'CRITICAL' : proposed.riskRecommendation;
     }
 
     const decision: AgentDecision = {
@@ -254,5 +270,56 @@ export class StructuredDecisionEngine {
       abstained: e.result.abstained,
       reasons: e.result.abstentionReasons,
     }));
+  }
+
+  /**
+   * AC-030: Evaluates decision and executes at most one structured-output repair attempt if initial output is invalid.
+   * Never causes an unsupported alert.
+   */
+  public static async decideWithRepair(
+    input: StructuredDecisionInput,
+    options?: {
+      repairHandler?: StructuredOutputRepairHandler | undefined;
+      repairProfileId?: string | undefined;
+      enableRepair?: boolean | undefined;
+    },
+  ): Promise<StructuredDecisionResult> {
+    const initialResult = StructuredDecisionEngine.decide(input);
+    if (!initialResult.abstained || options?.enableRepair === false) {
+      return initialResult;
+    }
+
+    const repairResult = await SingleAttemptOutputRepairer.repair({
+      candidate: {
+        assetId: input.candidate.assetId,
+        chainId: input.candidate.chainId,
+        contractAddress: input.candidate.contractAddress,
+        symbol: input.candidate.symbol,
+      },
+      originalOutput: input.proposedDecision,
+      profileId: input.profileId,
+      repairProfileId: options?.repairProfileId,
+      validationFailures: initialResult.validatorResult.failures,
+      schemaErrors: initialResult.abstentionReasons,
+      evidenceById: input.evidenceById,
+      validatorOptions: input.validatorOptions,
+      attemptCount: 0,
+      repairHandler: options?.repairHandler,
+      hasCriticalRisk: input.hasCriticalRisk,
+    });
+
+    if (repairResult.status === 'REPAIRED') {
+      return StructuredDecisionEngine.decide({
+        ...input,
+        proposedDecision: repairResult.decision,
+      });
+    }
+
+    return {
+      ...initialResult,
+      decision: repairResult.decision,
+      abstained: true,
+      abstentionReasons: [...initialResult.abstentionReasons, repairResult.reason ?? 'REPAIR_FAILED'],
+    };
   }
 }

@@ -9,6 +9,8 @@ import {
   BudgetExceededError,
   ConfinementViolationError,
   AgentCancelledError,
+  SingleAttemptOutputRepairer,
+  StructuredDecisionEngine,
 } from '@ciag/agent-runtime';
 import type {
   AgentBudget,
@@ -1088,6 +1090,394 @@ describe('Bounded Agent Runtime (FR-AGT-001, FR-AGT-002, FR-AGT-006, FR-AGT-012)
           sampleEnvelope,
         ),
       ).toThrow(ConfinementViolationError);
+    });
+  });
+
+  describe('FR-AGT-006: Hard timeouts and deterministic cancellation with partial results', () => {
+    it('enforces hard wall-clock timeoutMs aborting slow tool execution deterministically', async () => {
+      const runtime = new BoundedAgentRuntime();
+
+      runtime.registerTool('dex.pairs', async () => {
+        // Simulate a slow/hanging tool call
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return { pairs: ['SOL-USDC'] };
+      });
+
+      await expect(
+        runtime.execute({
+          candidate: sampleCandidate,
+          profileId: 'fast-triage-v1',
+          envelope: sampleEnvelope,
+          budget: sampleBudget,
+          timeoutMs: 50, // Short hard timeout
+        }),
+      ).rejects.toThrow(BudgetExceededError);
+    });
+
+    it('handles partial results on wall-clock timeout when allowPartialResults is true', async () => {
+      const runtime = new BoundedAgentRuntime();
+
+      let step1Executed = false;
+      runtime.registerTool('dex.pairs', async () => {
+        step1Executed = true;
+        return { pairs: ['SOL-USDC'] };
+      });
+
+      runtime.registerTool('token.profile', async () => {
+        // Hang on 2nd tool
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return { name: 'Solana' };
+      });
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        timeoutMs: 80,
+        allowPartialResults: true,
+      });
+
+      expect(step1Executed).toBe(true);
+      expect(result.status).toBe('BUDGET_EXCEEDED');
+      expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(result.decision.alertClassRecommendation).toBeUndefined();
+      expect(result.decision.abstentionReason).toContain('Execution terminated early');
+      expect(result.toolRecords.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('handles partial results on deterministic AbortSignal cancellation when allowPartialResults is true', async () => {
+      const runtime = new BoundedAgentRuntime();
+      const controller = new AbortController();
+
+      runtime.registerTool('dex.pairs', async () => {
+        // Abort mid-flight
+        controller.abort();
+        return { pairs: ['SOL-USDC'] };
+      });
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        signal: controller.signal,
+        allowPartialResults: true,
+      });
+
+      expect(result.status).toBe('CANCELLED');
+      expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(result.decision.abstentionReason).toContain('CANCELLED');
+    });
+
+    it('handles partial results on budget exhaustion when allowPartialResults is true', async () => {
+      const runtime = new BoundedAgentRuntime();
+
+      let step1Ran = false;
+      runtime.registerTool('dex.pairs', async () => {
+        step1Ran = true;
+        // Tool execution triggers mid-flight budget exhaustion
+        throw new BudgetExceededError('MODEL_COST_USD', 2.0, 1.0);
+      });
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        envelope: sampleEnvelope,
+        budget: sampleBudget,
+        allowPartialResults: true,
+      });
+
+      expect(step1Ran).toBe(true);
+      expect(result.status).toBe('BUDGET_EXCEEDED');
+      expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(result.decision.abstentionReason).toContain('BUDGET_EXCEEDED');
+    });
+  });
+
+  describe('AC-030: Single structured-output repair attempt (FR-AGT-003)', () => {
+    it('repairs invalid structured output missing required fields in a single attempt', async () => {
+      const invalidOutput = {
+        candidate: sampleCandidate,
+        // missing thesis, counterThesis, lifecycleRecommendation, observedFacts, etc.
+        decision: 'WATCH',
+      };
+
+      const repairResult = await SingleAttemptOutputRepairer.repair({
+        candidate: sampleCandidate,
+        originalOutput: invalidOutput,
+        profileId: 'repair-v1',
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        attemptCount: 0,
+      });
+
+      expect(repairResult.status).toBe('REPAIRED');
+      expect(repairResult.attemptsUsed).toBe(1);
+      expect(repairResult.decision.thesis).toBeDefined();
+      expect(repairResult.decision.counterThesis).toBeDefined();
+      expect(repairResult.decision.lifecycleRecommendation).toBe('QUALIFIED');
+      expect(AgentDecisionSchema.safeParse(repairResult.decision).success).toBe(true);
+    });
+
+    it('cleanses prohibited financial phrases in single repair attempt', async () => {
+      const prohibitedOutput = {
+        candidate: sampleCandidate,
+        decision: 'ALERT',
+        thesis: 'This token will moon and has guaranteed profit buy now!',
+        counterThesis: 'No risk, completely secure and 100x guaranteed',
+        lifecycleRecommendation: 'QUALIFIED',
+        riskRecommendation: 'LOW',
+        observedFacts: [],
+        derivedFacts: [],
+        inferences: [],
+        hypotheses: [],
+        positiveSignals: [],
+        riskSignals: [],
+        missingData: [],
+        providerConflicts: [],
+        thesisInvalidationConditions: [],
+        reasoningAssessment: 'HIGH',
+        costPolicyResult: 'PASS',
+      };
+
+      const repairResult = await SingleAttemptOutputRepairer.repair({
+        candidate: sampleCandidate,
+        originalOutput: prohibitedOutput,
+        profileId: 'repair-v1',
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        attemptCount: 0,
+      });
+
+      expect(repairResult.status).toBe('REPAIRED');
+      expect(repairResult.decision.thesis).not.toContain('guaranteed profit');
+      expect(repairResult.decision.thesis).not.toContain('will moon');
+      expect(repairResult.decision.counterThesis).not.toContain('no risk');
+    });
+
+    it('strictly limits repair to max 1 attempt and rejects second attempt (AC-030)', async () => {
+      const invalidOutput = { decision: 'INVALID_ENUM_VALUE' };
+
+      // Attempt with attemptCount = 1 (already attempted 1 repair)
+      const secondAttemptResult = await SingleAttemptOutputRepairer.repair({
+        candidate: sampleCandidate,
+        originalOutput: invalidOutput,
+        profileId: 'repair-v1',
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        attemptCount: 1, // Second attempt forbidden
+      });
+
+      expect(secondAttemptResult.status).toBe('EXCEEDED_MAX_ATTEMPTS');
+      expect(secondAttemptResult.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(secondAttemptResult.decision.abstentionReason).toContain('MAX_REPAIR_ATTEMPTS_EXCEEDED');
+      // Must NEVER emit an ALERT
+      expect(secondAttemptResult.decision.decision).not.toBe('ALERT');
+    });
+
+    it('failed repair attempt falls back to INSUFFICIENT_DATA and never produces an unsupported alert (AC-030)', async () => {
+      const invalidOutput = { decision: 'ALERT' };
+
+      // Handler that returns corrupted / unparseable output
+      const failingHandler = async () => 'not-valid-json{{{';
+
+      const repairResult = await SingleAttemptOutputRepairer.repair({
+        candidate: sampleCandidate,
+        originalOutput: invalidOutput,
+        profileId: 'repair-v1',
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        attemptCount: 0,
+        repairHandler: failingHandler,
+      });
+
+      expect(repairResult.status).toBe('FAILED');
+      expect(repairResult.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(repairResult.decision.decision).not.toBe('ALERT');
+      expect(repairResult.decision.abstentionReason).toBeDefined();
+    });
+
+    it('StructuredDecisionEngine.decideWithRepair performs single repair and preserves abstention on failure', async () => {
+      const initialInput = {
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        proposedDecision: {
+          decision: 'ALERT' as const,
+          thesis: 'Unverified token with guaranteed profit', // prohibited phrase
+          counterThesis: 'None',
+          lifecycleRecommendation: 'QUALIFIED' as const,
+          riskRecommendation: 'LOW' as const,
+          reasoningAssessment: 'HIGH' as const,
+          observedFacts: [{ claim: 'Price went up', evidenceIds: ['non-existent-evidence-id'] }],
+        },
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+      };
+
+      const result = await StructuredDecisionEngine.decideWithRepair(initialInput, {
+        enableRepair: true,
+      });
+
+      // After repair, claims are cleansed and mapped to valid evidence; if no evidence exists, abstains safely
+      expect(result.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(result.decision.decision).not.toBe('ALERT');
+      expect(result.decision.thesis).not.toContain('guaranteed profit');
+    });
+  });
+
+  describe('AC-031: Critical security risk blocks opportunity alert deterministically (FR-AGT-003)', () => {
+    it('blocks opportunity alert when hasCriticalRisk is explicitly true', async () => {
+      const evidenceMap = new Map();
+      evidenceMap.set('ev-1', {
+        id: 'ev-1',
+        entityId: sampleCandidate.assetId,
+        candidateId: sampleCandidate.assetId,
+        provider: 'helius',
+        operation: 'dex.pairs',
+        independenceGroup: 'helius',
+        availableAt: new Date().toISOString(),
+        fetchedAt: new Date().toISOString(),
+        normalizedFields: { liquidityUsd: 500000 },
+        qualityCodes: ['VALID'],
+      });
+
+      const decisionResult = StructuredDecisionEngine.decide({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        proposedDecision: {
+          decision: 'ALERT',
+          alertClassRecommendation: 'CONFIRMED_OPPORTUNITY',
+          thesis: 'High liquidity pool identified',
+          counterThesis: 'Smart contract vulnerability present',
+          lifecycleRecommendation: 'QUALIFIED',
+          riskRecommendation: 'CRITICAL',
+          reasoningAssessment: 'HIGH',
+          observedFacts: [{ claim: 'Verified liquidity pool', evidenceIds: ['ev-1'] }],
+        },
+        evidenceById: evidenceMap,
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        hasCriticalRisk: true,
+      });
+
+      expect(decisionResult.abstained).toBe(true);
+      expect(decisionResult.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(decisionResult.decision.alertClassRecommendation).toBeUndefined();
+      expect(decisionResult.decision.riskRecommendation).toBe('CRITICAL');
+      expect(decisionResult.abstentionReasons).toContain('CRITICAL_RISK_BLOCKS_ALERT');
+    });
+
+    it('blocks opportunity alert when riskRecommendation is CRITICAL', async () => {
+      const decisionResult = StructuredDecisionEngine.decide({
+        candidate: sampleCandidate,
+        profileId: 'fast-triage-v1',
+        proposedDecision: {
+          decision: 'ALERT',
+          alertClassRecommendation: 'EARLY_WATCH',
+          thesis: 'Early momentum detected',
+          counterThesis: 'Ownership renouncement revoked',
+          lifecycleRecommendation: 'DISCOVERED',
+          riskRecommendation: 'CRITICAL',
+          reasoningAssessment: 'HIGH',
+          observedFacts: [],
+        },
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+      });
+
+      expect(decisionResult.abstained).toBe(true);
+      expect(decisionResult.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(decisionResult.decision.alertClassRecommendation).toBeUndefined();
+      expect(decisionResult.abstentionReasons).toContain('CRITICAL_RISK_BLOCKS_ALERT');
+    });
+
+    it('runtime detects honeypot output and deterministically blocks opportunity alert', async () => {
+      const runtime = new BoundedAgentRuntime();
+
+      runtime.registerTool('dex.pairs', async () => ({
+        pairs: ['SOL-USDC'],
+        liquidityUsd: 1000000,
+      }));
+
+      runtime.registerTool('contract.audit', async () => ({
+        isHoneypot: true,
+        risk: 'CRITICAL',
+        blacklist: true,
+      }));
+
+      const result = await runtime.execute({
+        candidate: sampleCandidate,
+        profileId: 'deep-research-v1',
+        envelope: {
+          ...sampleEnvelope,
+          allowedTools: ['dex.pairs', 'contract.audit'],
+        },
+        budget: sampleBudget,
+      });
+
+      expect(result.status).toBe('SUCCESS');
+      // Honeypot presence forces decision away from ALERT to REJECT / INSUFFICIENT_DATA
+      expect(result.decision.decision).toBe('REJECT');
+      expect(result.decision.riskRecommendation).toBe('CRITICAL');
+      expect(result.decision.riskSignals).toContain('CRITICAL_SECURITY_RISK');
+    });
+
+    it('repair attempt with critical risk blocks proposed ALERT from being emitted', async () => {
+      const repairResult = await SingleAttemptOutputRepairer.repair({
+        candidate: sampleCandidate,
+        originalOutput: {
+          decision: 'ALERT',
+          alertClassRecommendation: 'CONFIRMED_OPPORTUNITY',
+          thesis: 'Valid thesis without prohibited language',
+          counterThesis: 'Critical security risk present',
+          lifecycleRecommendation: 'QUALIFIED',
+          riskRecommendation: 'CRITICAL',
+          reasoningAssessment: 'HIGH',
+        },
+        profileId: 'repair-v1',
+        evidenceById: new Map(),
+        validatorOptions: {
+          decisionTimeIso: new Date().toISOString(),
+          candidateId: sampleCandidate.assetId,
+          entityId: sampleCandidate.assetId,
+        },
+        hasCriticalRisk: true,
+      });
+
+      expect(repairResult.status).toBe('REPAIRED');
+      // AC-031: Opportunity alert blocked on critical risk
+      expect(repairResult.decision.decision).toBe('INSUFFICIENT_DATA');
+      expect(repairResult.decision.alertClassRecommendation).toBeUndefined();
+      expect(repairResult.decision.riskRecommendation).toBe('CRITICAL');
+      expect(repairResult.decision.abstentionReason).toBe('CRITICAL_RISK_BLOCKS_ALERT');
     });
   });
 });
