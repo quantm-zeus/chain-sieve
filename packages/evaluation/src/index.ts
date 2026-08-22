@@ -14,6 +14,8 @@ export * from './outcomes.js';
 export * from './metrics.js';
 export * from './report.js';
 export * from './corpus.js';
+export * from './design-estimators.js';
+export * from './agent-selection-evaluation.js';
 
 // Backward compatibility helpers
 import type { Outcome } from './types.js';
