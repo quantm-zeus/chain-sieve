@@ -2,9 +2,9 @@
 from hypothesis import given, strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, rule, invariant
 
-from factory.controller_v2.domain import WorkItem, WorkStatus
-from factory.controller_v2.observations import Observations, Clock, PROBS, CIObservation, ReviewObservation
-from factory.controller_v2.reducer import reduce_state
+from factory.controller.domain import WorkItem, WorkStatus
+from factory.controller.observations import Observations, Clock, PROBS, CIObservation, ReviewObservation
+from factory.controller.reducer import reduce_state
 
 
 class FactoryMachine(RuleBasedStateMachine):

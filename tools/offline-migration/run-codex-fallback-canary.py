@@ -7,13 +7,10 @@ import subprocess
 import time
 from pathlib import Path
 
-# V2 canonical: this canary now uses V2 runtime (historical V1 logic archived to tools/offline-migration)
-from factory.controller.store import Store
-from factory.controller.runtime import tick_once
-from factory.controller.collector import Collector
-from factory.controller.adapters.github import GitHubAdapter
-from factory.controller.adapters.ao import AOAdapter
-from factory.controller.adapters.git import GitAdapter
+from factory.controller.commands import CommandRunner
+from factory.controller.config import FactoryConfig
+from factory.controller.reasoning import ReasoningRunner
+from factory.controller.store import StateStore
 
 
 def main() -> int:

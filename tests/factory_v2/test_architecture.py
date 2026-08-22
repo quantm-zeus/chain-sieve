@@ -5,7 +5,7 @@ import pathlib
 def test_reducer_is_pure():
     """Pure reducer modules cannot import subprocess, GitHub adapter, AO adapter, requests."""
     forbidden = {"subprocess", "requests", "factory.controller.ao", "factory.controller.github", "factory.controller_v2.adapters.github", "factory.controller_v2.adapters.ao"}
-    for path in pathlib.Path("factory/controller_v2").glob("*.py"):
+    for path in pathlib.Path("factory/controller").glob("*.py"):
         if path.name in ("executor.py",):
             continue  # executor is allowed to use store
         tree = ast.parse(path.read_text())
@@ -26,17 +26,17 @@ def test_reducer_is_pure():
 def test_one_merge_pr_producer():
     """Exactly one MERGE_PR producer site — reducer only."""
     import pathlib
-    count = pathlib.Path("factory/controller_v2/reducer.py").read_text().count("Command.new(work.workId, CommandType.MERGE_PR")
+    count = pathlib.Path("factory/controller/reducer.py").read_text().count("Command.new(work.workId, CommandType.MERGE_PR")
     # fallback generic count if formatting differs
     if count == 0:
-        count = pathlib.Path("factory/controller_v2/reducer.py").read_text().count("MERGE_PR")
+        count = pathlib.Path("factory/controller/reducer.py").read_text().count("MERGE_PR")
         # filter to Command.new lines only
-        count = sum(1 for l in pathlib.Path("factory/controller_v2/reducer.py").read_text().splitlines() if "MERGE_PR" in l and "Command.new" in l)
+        count = sum(1 for l in pathlib.Path("factory/controller/reducer.py").read_text().splitlines() if "MERGE_PR" in l and "Command.new" in l)
     assert count == 1, f"expected exactly 1 MERGE_PR producer in reducer, got {count}"
 
 
 def test_no_legacy_import_in_runtime():
-    for p in pathlib.Path("factory/controller_v2").rglob("*.py"):
+    for p in pathlib.Path("factory/controller").rglob("*.py"):
         text = p.read_text()
         assert "factory.controller " not in text or "factory.controller_v2" in text, f"legacy import in {p}"
         assert "from factory.controller import" not in text, f"legacy import in {p}"

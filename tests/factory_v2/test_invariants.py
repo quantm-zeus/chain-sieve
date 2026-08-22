@@ -1,10 +1,10 @@
 """Invariant tests — sample of INV-01..25."""
-from factory.controller_v2.domain import WorkItem, WorkStatus
-from factory.controller_v2.observations import Observations, Clock, PROBS, CIObservation, ReviewObservation
-from factory.controller_v2.reducer import reduce_state
-from factory.controller_v2.identity import canonical_gap_key
-from factory.controller_v2.review import validate_review
-from factory.controller_v2.transitions import can_merge
+from factory.controller.domain import WorkItem, WorkStatus
+from factory.controller.observations import Observations, Clock, PROBS, CIObservation, ReviewObservation
+from factory.controller.reducer import reduce_state
+from factory.controller.identity import canonical_gap_key
+from factory.controller.review import validate_review
+from factory.controller.transitions import can_merge
 
 
 def _obs(**kwargs):
@@ -20,7 +20,7 @@ def test_no_merge_without_ci_pass():
 
 
 def test_stale_cointroduction_makes_ci_stale():
-    from factory.controller_v2.ci import ci_is_stale
+    from factory.controller.ci import ci_is_stale
     assert ci_is_stale("a"*40, "b"*40)
     assert not ci_is_stale("a"*40, "a"*40)
 
@@ -30,7 +30,7 @@ def test_gap_identity_paraphrase_invariant():
     k2 = canonical_gap_key("M1", ["REQ-1"], ["AC-1"])
     assert k1 == k2
     # paraphrasing objective must not create new key — we ignore objective entirely
-    from factory.controller_v2.identity import assign_persistent_gap_key
+    from factory.controller.identity import assign_persistent_gap_key
     a = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="Fix the foo", acceptance_ids=["AC-1"])
     b = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="Totally different wording for same gap", acceptance_ids=["AC-1"])
     assert a == b == k1
@@ -66,8 +66,8 @@ def test_validate_review_strict():
     assert validate_review({"authority": {"workId": "W", "pr": 1, "targetHead": "a"*40, "reviewer": "agy", "implementationProvider": "muse", "mode": "FINAL_CONFIRMATION", "reviewScopeId": "s", "contextDigest": "d"}, "verdict": "PASS"}) is None
 
 def test_recovery_domain_isolation():
-    from factory.controller_v2.recovery import DEFAULT_BUDGETS, can_retry
-    from factory.controller_v2.domain import RecoveryDomain
+    from factory.controller.recovery import DEFAULT_BUDGETS, can_retry
+    from factory.controller.domain import RecoveryDomain
     # budgets isolated per domain
     assert DEFAULT_BUDGETS[RecoveryDomain.WORKER_LIVENESS] == 3
     assert DEFAULT_BUDGETS[RecoveryDomain.CI_INFRASTRUCTURE] == 5
@@ -77,7 +77,7 @@ def test_recovery_domain_isolation():
     assert can_retry(RecoveryDomain.PRODUCT_CI, used=0) is True
 
 def test_plan_delta_preserves_workId():
-    from factory.controller_v2.identity import canonical_gap_key, work_id_for_gap
+    from factory.controller.identity import canonical_gap_key, work_id_for_gap
     g1 = canonical_gap_key("M1", ["REQ-1"], ["AC-1"])
     w1 = work_id_for_gap(g1, strategy_epoch=0)
     w2 = work_id_for_gap(g1, strategy_epoch=1)
@@ -87,7 +87,7 @@ def test_plan_delta_preserves_workId():
     assert work_id_for_gap(g1, 0) == w1
 
 def test_workId_survives_paraphrase():
-    from factory.controller_v2.identity import assign_persistent_gap_key, work_id_for_gap
+    from factory.controller.identity import assign_persistent_gap_key, work_id_for_gap
     g = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="foo", acceptance_ids=["AC-1"])
     w = work_id_for_gap(g)
     g2 = assign_persistent_gap_key("M1", ["REQ-1"], generated_objective="totally different", acceptance_ids=["AC-1"])
@@ -95,7 +95,7 @@ def test_workId_survives_paraphrase():
     assert w == w2
 
 def test_sqlite_wal_and_events():
-    from factory.controller_v2.store import Store
+    from factory.controller.store import Store
     from pathlib import Path
     import tempfile
     with tempfile.TemporaryDirectory() as td:
@@ -112,7 +112,7 @@ def test_sqlite_wal_and_events():
         s.close()
 
 def test_idempotency_command_determinism():
-    from factory.controller_v2.commands import Command, CommandType
+    from factory.controller.commands import Command, CommandType
     c1 = Command.new("W", CommandType.CREATE_ISSUE, 0, {"gapKey":"G1"})
     c2 = Command.new("W", CommandType.CREATE_ISSUE, 0, {"gapKey":"G1"})
     c3 = Command.new("W", CommandType.CREATE_ISSUE, 1, {"gapKey":"G1"})
@@ -121,8 +121,8 @@ def test_idempotency_command_determinism():
     assert c1.commandId != c3.commandId
 
 def test_crash_window_observe_before_retry():
-    from factory.controller_v2.adapters.github import GitHubAdapter
-    from factory.controller_v2.adapters.ao import AOAdapter
+    from factory.controller.adapters.github import GitHubAdapter
+    from factory.controller.adapters.ao import AOAdapter
     # ensure adapters expose observe-before-retry methods
     assert hasattr(GitHubAdapter, "find_issue_by_work")
     assert hasattr(GitHubAdapter, "create_issue_idempotent")
@@ -131,7 +131,7 @@ def test_crash_window_observe_before_retry():
     assert hasattr(AOAdapter, "start_worker_idempotent")
 
 def test_structured_review_only_baseline_verify():
-    from factory.controller_v2.review import validate_review
+    from factory.controller.review import validate_review
     good_base = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"BASELINE","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
     good_verify = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"VERIFY","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
     bad = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"FINAL_CONFIRMATION","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
@@ -140,7 +140,7 @@ def test_structured_review_only_baseline_verify():
     assert validate_review(bad) is None
 
 def test_exact_head_ci_authority():
-    from factory.controller_v2.ci import classify_failure, ci_is_stale
+    from factory.controller.ci import classify_failure, ci_is_stale
     # infra signals
     assert classify_failure(True, False, infra_signals=("runner_down",)) == "INFRASTRUCTURE"
     assert classify_failure(True, False, infra_signals=()) == "PRODUCT"
@@ -155,8 +155,8 @@ def test_exact_head_ci_authority():
     assert ci_is_stale(None, "a"*40) is True
 
 def test_merge_predicate_exact_head():
-    from factory.controller_v2.domain import WorkItem, WorkStatus
-    from factory.controller_v2.transitions import can_merge
+    from factory.controller.domain import WorkItem, WorkStatus
+    from factory.controller.transitions import can_merge
     w = WorkItem(workId="W", gapKey="G", status=WorkStatus.MERGE_READY, pr_number=1, head_sha="a"*40)
     good = {"authority":{"workId":"W","pr":1,"targetHead":"a"*40,"reviewer":"agy","implementationProvider":"muse","mode":"VERIFY","reviewScopeId":"s","contextDigest":"d"},"verdict":"PASS"}
     assert can_merge(w, pr_state="open", pr_head="a"*40, pr_mergeable=True, ci_pass_for_head=True, review_evidence=good, expected_scope="s", expected_digest="d")
@@ -165,16 +165,16 @@ def test_merge_predicate_exact_head():
 
 def test_sole_can_merge_producer():
     import pathlib
-    reducer = pathlib.Path("factory/controller/reducer.py").read_text() if pathlib.Path("factory/controller/reducer.py").exists() else pathlib.Path("factory/controller_v2/reducer.py").read_text()
+    reducer = pathlib.Path("factory/controller/reducer.py").read_text() if pathlib.Path("factory/controller/reducer.py").exists() else pathlib.Path("factory/controller/reducer.py").read_text()
     assert reducer.count("MERGE_PR") >= 1
     # exactly one producer in reducer
     lines = [l for l in reducer.splitlines() if "MERGE_PR" in l and "Command.new" in l]
     assert len(lines) == 1, f"expected 1 MERGE_PR producer, got {len(lines)}"
 
 def test_no_duplicate_side_effects_via_idempotency():
-    from factory.controller_v2.commands import Command, CommandType
-    from factory.controller_v2.store import Store
-    from factory.controller_v2.executor import Executor
+    from factory.controller.commands import Command, CommandType
+    from factory.controller.store import Store
+    from factory.controller.executor import Executor
     from pathlib import Path
     import tempfile
     with tempfile.TemporaryDirectory() as td:
@@ -224,12 +224,12 @@ def test_cli_status_doctor():
     import subprocess, json
     # CLI should be importable and status/doctor return expected structure
     from factory.controller.cli import main as cli_main
-    from factory.controller_v2.cli import main as cli2_main
+    from factory.controller.cli import main as cli2_main
     assert callable(cli_main)
     assert callable(cli2_main)
 
 def test_observation_collector_pure():
-    from factory.controller_v2.collector import Collector
+    from factory.controller.collector import Collector
     import inspect
     src = inspect.getsource(Collector.collect)
     assert "subprocess" not in src or "github" in src.lower()
@@ -240,7 +240,7 @@ def test_transition_table_exhaustive():
     if _pl.Path("factory/controller/reducer.py").exists():
         from factory.controller.reducer import ALLOWED_TRANSITIONS
     else:
-        from factory.controller_v2.reducer import ALLOWED_TRANSITIONS
+        from factory.controller.reducer import ALLOWED_TRANSITIONS
     # check every WorkStatus has at least one entry or is terminal
     from factory.controller.domain import WorkStatus
     statuses = [s.value for s in WorkStatus]
