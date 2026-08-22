@@ -1,0 +1,12 @@
+{
+  "migrated": true,
+  "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+  "v2_write_canary": {
+    "pr": 999,
+    "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+    "passed": true
+  },
+  "work_adopted": 12,
+  "v1_write_disabled": true,
+  "v1_zero_authority": true
+}

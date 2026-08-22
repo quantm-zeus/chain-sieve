@@ -20,3 +20,4 @@ artifacts/test-output/
 __pycache__/
 *.py[cod]
 .tmp/
+.venv/

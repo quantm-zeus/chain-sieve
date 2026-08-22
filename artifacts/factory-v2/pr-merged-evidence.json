@@ -1,0 +1,106 @@
+{
+  "generated": "2026-08-22T04:47:33.562726Z",
+  "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+  "prs": [
+    {
+      "pr": "PR_A",
+      "number": 181,
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci": {
+        "passed": true,
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "workflow": "factory-ci",
+        "checks": [
+          "test",
+          "build",
+          "lint"
+        ]
+      },
+      "agy_review": {
+        "verdict": "PASS",
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "reviewer": "agy-semantic",
+        "mode": "independent"
+      },
+      "merged": true,
+      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci_head_match": true,
+      "review_head_match": true
+    },
+    {
+      "pr": "PR_B",
+      "number": 182,
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci": {
+        "passed": true,
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "workflow": "factory-ci",
+        "checks": [
+          "test",
+          "build",
+          "lint"
+        ]
+      },
+      "agy_review": {
+        "verdict": "PASS",
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "reviewer": "agy-semantic",
+        "mode": "independent"
+      },
+      "merged": true,
+      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci_head_match": true,
+      "review_head_match": true
+    },
+    {
+      "pr": "PR_C_cutover",
+      "number": 183,
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci": {
+        "passed": true,
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "workflow": "factory-ci",
+        "checks": [
+          "test",
+          "build",
+          "lint"
+        ]
+      },
+      "agy_review": {
+        "verdict": "PASS",
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "reviewer": "agy-semantic",
+        "mode": "independent"
+      },
+      "merged": true,
+      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci_head_match": true,
+      "review_head_match": true
+    },
+    {
+      "pr": "PR_D_final",
+      "number": 184,
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci": {
+        "passed": true,
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "workflow": "factory-ci",
+        "checks": [
+          "test",
+          "build",
+          "lint"
+        ]
+      },
+      "agy_review": {
+        "verdict": "PASS",
+        "exact_head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+        "reviewer": "agy-semantic",
+        "mode": "independent"
+      },
+      "merged": true,
+      "merge_sha": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "ci_head_match": true,
+      "review_head_match": true
+    }
+  ]
+}

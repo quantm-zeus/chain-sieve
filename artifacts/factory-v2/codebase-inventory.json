@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-08-22T04:10:00Z",
+  "head": "954e9a9b9ae16e54db28001f72347742a81e3542",
+  "files": [
+    {"path": "factory/controller/controller.py", "lines": 2951, "classification": "LEGACY_RUNTIME", "imports": ["ao", "config", "findings", "github", "models", "policy", "prompts", "store"], "reverse": ["cli"]},
+    {"path": "factory/controller/reasoning.py", "lines": 2432, "classification": "LEGACY_RUNTIME", "imports": ["config", "models", "store"], "reverse": ["controller"]},
+    {"path": "factory/controller/findings.py", "lines": 613, "classification": "LEGACY_COMPATIBILITY", "imports": [], "reverse": ["controller"]},
+    {"path": "factory/controller/models.py", "lines": 509, "classification": "LEGACY_RUNTIME", "imports": [], "reverse": ["controller", "store", "config"]},
+    {"path": "factory/controller/ao.py", "lines": 451, "classification": "CANONICAL_RUNTIME", "imports": ["config"], "reverse": ["controller"]},
+    {"path": "factory/controller/github.py", "lines": 428, "classification": "CANONICAL_RUNTIME", "imports": ["config"], "reverse": ["controller"]},
+    {"path": "factory/controller/prompts.py", "lines": 351, "classification": "LEGACY_COMPATIBILITY", "imports": [], "reverse": ["controller"]},
+    {"path": "factory/controller/review_context.py", "lines": 276, "classification": "LEGACY_COMPATIBILITY", "imports": ["models"], "reverse": ["store"]},
+    {"path": "factory/controller/config.py", "lines": 263, "classification": "LEGACY_RUNTIME", "imports": ["models"], "reverse": ["controller"]},
+    {"path": "factory/controller/policy.py", "lines": 239, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["controller"]},
+    {"path": "factory/controller/store.py", "lines": 241, "classification": "LEGACY_RUNTIME", "imports": ["models", "review_context"], "reverse": ["controller"]},
+    {"path": "factory/controller/commands.py", "lines": 108, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["controller"]},
+    {"path": "factory/controller/doctor.py", "lines": 232, "classification": "OFFLINE_TOOL", "imports": ["store"], "reverse": ["cli"]},
+    {"path": "factory/controller_v2/domain.py", "lines": 96, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["reducer", "store"]},
+    {"path": "factory/controller_v2/reducer.py", "lines": 172, "classification": "CANONICAL_RUNTIME", "imports": ["domain", "observations", "commands", "transitions"], "reverse": []},
+    {"path": "factory/controller_v2/store.py", "lines": 143, "classification": "CANONICAL_RUNTIME", "imports": ["domain"], "reverse": ["executor"]},
+    {"path": "factory/controller_v2/identity.py", "lines": 53, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["domain"]},
+    {"path": "factory/controller_v2/review.py", "lines": 51, "classification": "CANONICAL_RUNTIME", "imports": ["domain"], "reverse": ["reducer", "transitions"]},
+    {"path": "factory/controller_v2/ci.py", "lines": 41, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["reducer"]},
+    {"path": "factory/controller_v2/commands.py", "lines": 59, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["reducer", "executor"]},
+    {"path": "factory/controller_v2/observations.py", "lines": 68, "classification": "CANONICAL_RUNTIME", "imports": [], "reverse": ["reducer"]},
+    {"path": "factory/controller_v2/executor.py", "lines": 56, "classification": "CANONICAL_RUNTIME", "imports": ["commands", "store"], "reverse": []},
+    {"path": "factory/controller_v2/transitions.py", "lines": 60, "classification": "CANONICAL_RUNTIME", "imports": ["domain", "review"], "reverse": ["reducer"]},
+    {"path": "factory/controller_v2/recovery.py", "lines": 23, "classification": "CANONICAL_RUNTIME", "imports": ["domain"], "reverse": ["reducer"]}
+  ],
+  "summary": {
+    "total_files": 26,
+    "canonical_runtime": 12,
+    "legacy_runtime": 6,
+    "legacy_compatibility": 4,
+    "offline_tool": 2,
+    "dead": 0,
+    "unknown": 0
+  }
+}

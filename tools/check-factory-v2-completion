@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+"""Machine-verifiable completion checker — exits non-zero if any required gate not PASS."""
+import json, pathlib, sys
+p = pathlib.Path("artifacts/factory-v2/completion-gates.json")
+if not p.exists():
+    print("FAIL: artifacts/factory-v2/completion-gates.json missing")
+    sys.exit(2)
+data = json.loads(p.read_text())
+gates = data.get("gates", [])
+total = len(gates)
+passing = sum(1 for g in gates if g.get("status") == "PASS")
+pending = sum(1 for g in gates if g.get("status") == "PENDING")
+failed = sum(1 for g in gates if g.get("status") == "FAIL")
+print(f"REQUIRED GATES: {passing}/{total} PASS")
+print(f"PENDING: {pending}")
+print(f"FAILED: {failed}")
+# Evidence checks for gates marked PASS where machine evidence available
+# G01/G02 need manifest
+if pathlib.Path("factory/controller/domain.py").exists():
+    # G38 controller promotion check
+    files = list(pathlib.Path("factory/controller").rglob("*.py"))
+    if len(files) == 0:
+        print("FAIL: G38 factory/controller has zero runtime files")
+        sys.exit(4)
+    if pathlib.Path("factory/controller_v2").exists() and len(list(pathlib.Path("factory/controller_v2").rglob("*.py"))) > 0:
+        # allow mirror for now but warn if context-manifest still points to v2
+        if "controller_v2" in pathlib.Path("factory/context-manifest.json").read_text():
+            print("FAIL: context-manifest still points to controller_v2 after promotion")
+            sys.exit(5)
+if passing >= 2:
+    import hashlib
+    m1 = pathlib.Path("artifacts/factory-v2/foundation-manifest.json")
+    if not m1.exists():
+        print("FAIL: G01 evidence missing foundation-manifest.json")
+        sys.exit(3)
+    # G49 check example: main clean
+    # not enforced yet since PRs pending
+# Overall
+if passing == total and failed == 0 and pending == 0:
+    print("FACTORY V2 COMPLETION: PASS")
+    sys.exit(0)
+else:
+    print("FACTORY V2 COMPLETION: INCOMPLETE")
+    for g in gates:
+        if g["status"] != "PASS":
+            print(f"  {g['id']}: {g['status']} — {g['evidence'][:90]}")
+    sys.exit(1)

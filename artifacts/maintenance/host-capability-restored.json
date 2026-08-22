@@ -1,0 +1,14 @@
+{
+  "event": "HOST_CAPABILITY_RESTORED",
+  "timestamp": "2026-08-22T04:36:00Z",
+  "checks": {
+    "writable": true,
+    "git_writable": true,
+    "git_fetch": "ok",
+    "systemd_factory": "active",
+    "systemd_ao": "active",
+    "head": "954e9a9b9ae16e54db28001f72347742a81e3542",
+    "origin_main": "954e9a9b9ae16e54db28001f72347742a81e3542"
+  },
+  "note": "Previous EROFS blocker resolved; host systemd accessible"
+}

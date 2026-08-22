@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-08-22T04:10:00Z",
+  "modules": {
+    "factory.controller_v2.domain": ["enum", "dataclass"],
+    "factory.controller_v2.observations": ["domain"],
+    "factory.controller_v2.commands": [],
+    "factory.controller_v2.ci": [],
+    "factory.controller_v2.review": ["domain"],
+    "factory.controller_v2.recovery": ["domain"],
+    "factory.controller_v2.transitions": ["domain", "review"],
+    "factory.controller_v2.identity": [],
+    "factory.controller_v2.store": ["sqlite3"],
+    "factory.controller_v2.executor": ["store", "commands"],
+    "factory.controller_v2.reducer": ["domain", "observations", "commands", "transitions"],
+    "factory.controller_v2.adapters.github": [],
+    "factory.controller_v2.adapters.ao": [],
+    "factory.controller_v2.adapters.git": []
+  },
+  "entrypoints": {
+    "reducer": ["domain", "observations", "commands", "transitions", "review", "ci"],
+    "executor": ["store", "commands"],
+    "store": ["sqlite3"]
+  },
+  "strongly_connected_components": [],
+  "cycles": 0,
+  "migration_only": ["tools/factory-v1-to-v2", "tools/factory-v2-replay"],
+  "legacy_reason": {
+    "findings.py": "historical Markdown parsing — moved to tools/factory-v2-replay",
+    "review_context.py": "digest compatibility — offline migration only",
+    "reasoning.py": "LLM prose authority — replaced by structured delta ops"
+  }
+}
