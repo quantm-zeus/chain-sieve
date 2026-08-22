@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-22T04:55:13.516815Z",
+  "generated_at": "2026-08-22T05:19:17.407031Z",
   "source": "/home/minhquan_eth/.local/state/chainsieve-factory/state.json",
-  "source_hash": "9db84137df36688a",
-  "v1_event_count": 20769,
+  "source_hash": "b5f626133590f7c2",
+  "v1_event_count": 20803,
   "milestone": "g3-model-assisted-research",
   "packages_total": 4,
   "mapping": [
@@ -55,6 +55,6 @@
       "v1_status": null
     }
   ],
-  "dry_run": true,
+  "dry_run": false,
   "canonical_hash": "6cafa3c9c735c8c0"
 }
