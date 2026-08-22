@@ -16,6 +16,17 @@ print(f"PENDING: {pending}")
 print(f"FAILED: {failed}")
 # Evidence checks for gates marked PASS where machine evidence available
 # G01/G02 need manifest
+if pathlib.Path("factory/controller/domain.py").exists():
+    # G38 controller promotion check
+    files = list(pathlib.Path("factory/controller").rglob("*.py"))
+    if len(files) == 0:
+        print("FAIL: G38 factory/controller has zero runtime files")
+        sys.exit(4)
+    if pathlib.Path("factory/controller_v2").exists() and len(list(pathlib.Path("factory/controller_v2").rglob("*.py"))) > 0:
+        # allow mirror for now but warn if context-manifest still points to v2
+        if "controller_v2" in pathlib.Path("factory/context-manifest.json").read_text():
+            print("FAIL: context-manifest still points to controller_v2 after promotion")
+            sys.exit(5)
 if passing >= 2:
     import hashlib
     m1 = pathlib.Path("artifacts/factory-v2/foundation-manifest.json")

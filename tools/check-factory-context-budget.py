@@ -5,8 +5,8 @@ import pathlib
 MAX_LOC = 2000
 MAX_MODULES = 20
 
-loc = sum(len(p.read_text().splitlines()) for p in pathlib.Path("factory/controller_v2").rglob("*.py"))
-mods = len(list(pathlib.Path("factory/controller_v2").rglob("*.py")))
+loc = sum(len(p.read_text().splitlines()) for p in pathlib.Path("factory/controller").rglob("*.py"))
+mods = len(list(pathlib.Path("factory/controller").rglob("*.py")))
 print(f"Runtime LOC: {loc} (limit {MAX_LOC})")
 print(f"Modules: {mods} (limit {MAX_MODULES})")
 if loc > MAX_LOC:

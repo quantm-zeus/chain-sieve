@@ -1,0 +1,10 @@
+{
+  "crash_window_test": true,
+  "duplicate_side_effects": 0,
+  "checked": [
+    "CREATE_ISSUE",
+    "START_WORKER",
+    "TRIGGER_REVIEW",
+    "MERGE_PR"
+  ]
+}

@@ -1,24 +1,40 @@
 {
   "version": 1,
-  "normative": ["docs/factory/control-plane-v2.md", "docs/factory/agent-context.md", "factory/constitution.md"],
-  "runtime_core": [
-    "factory/controller_v2/domain.py",
-    "factory/controller_v2/reducer.py",
-    "factory/controller_v2/transitions.py",
-    "factory/controller_v2/observations.py",
-    "factory/controller_v2/commands.py",
-    "factory/controller_v2/store.py",
-    "factory/controller_v2/identity.py",
-    "factory/controller_v2/review.py",
-    "factory/controller_v2/ci.py",
-    "factory/controller_v2/recovery.py",
-    "factory/controller_v2/executor.py",
-    "factory/controller_v2/adapters/github.py",
-    "factory/controller_v2/adapters/ao.py",
-    "factory/controller_v2/adapters/git.py"
+  "normative": [
+    "docs/factory/control-plane-v2.md",
+    "docs/factory/agent-context.md",
+    "factory/constitution.md"
   ],
-  "schemas": ["factory/schemas/milestone-plan.schema.json", "factory/schemas/convergence.schema.json"],
-  "tests": ["tests/factory_v2/test_architecture.py", "tests/factory_v2/test_invariants.py"],
-  "operational": ["factory/deployment/systemd/chainsieve-factory.service"],
-  "excluded": ["tools/factory-v2-replay", "tools/factory-v1-to-v2", "artifacts/factory-v2/historical-replay-report.json"]
+  "runtime_core": [
+    "factory/controller/domain.py",
+    "factory/controller/reducer.py",
+    "factory/controller/transitions.py",
+    "factory/controller/observations.py",
+    "factory/controller/commands.py",
+    "factory/controller/store.py",
+    "factory/controller/identity.py",
+    "factory/controller/review.py",
+    "factory/controller/ci.py",
+    "factory/controller/recovery.py",
+    "factory/controller/executor.py",
+    "factory/controller/adapters/github.py",
+    "factory/controller/adapters/ao.py",
+    "factory/controller/adapters/git.py"
+  ],
+  "schemas": [
+    "factory/schemas/milestone-plan.schema.json",
+    "factory/schemas/convergence.schema.json"
+  ],
+  "tests": [
+    "tests/factory_v2/test_architecture.py",
+    "tests/factory_v2/test_invariants.py"
+  ],
+  "operational": [
+    "factory/deployment/systemd/chainsieve-factory.service"
+  ],
+  "excluded": [
+    "tools/factory-v2-replay",
+    "tools/factory-v1-to-v2",
+    "artifacts/factory-v2/historical-replay-report.json"
+  ]
 }

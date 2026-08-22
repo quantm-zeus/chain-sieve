@@ -1,0 +1,14 @@
+{
+  "generated": "2026-08-22T04:47:33.564560Z",
+  "source": "/home/minhquan_eth/.local/state/chainsieve-factory/state.db",
+  "dry_run_hashes": [
+    "947144b95ef56814",
+    "947144b95ef56814"
+  ],
+  "deterministic": true,
+  "work_preserved": 12,
+  "issues_adopted": 5,
+  "prs_adopted": 4,
+  "ao_sessions_adopted": 6,
+  "repeat_runs_identical": true
+}

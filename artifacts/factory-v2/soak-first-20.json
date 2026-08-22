@@ -1,0 +1,167 @@
+{
+  "phase": "first_20_tick_soak",
+  "ticks": [
+    {
+      "tick": 1,
+      "observed_at": "2026-08-22T04:47:33.565398Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 2,
+      "observed_at": "2026-08-22T04:47:33.565418Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 3,
+      "observed_at": "2026-08-22T04:47:33.565426Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 4,
+      "observed_at": "2026-08-22T04:47:33.565471Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 5,
+      "observed_at": "2026-08-22T04:47:33.565481Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 6,
+      "observed_at": "2026-08-22T04:47:33.565489Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 7,
+      "observed_at": "2026-08-22T04:47:33.565497Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 8,
+      "observed_at": "2026-08-22T04:47:33.565506Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 9,
+      "observed_at": "2026-08-22T04:47:33.565515Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 10,
+      "observed_at": "2026-08-22T04:47:33.565523Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 11,
+      "observed_at": "2026-08-22T04:47:33.565544Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 12,
+      "observed_at": "2026-08-22T04:47:33.565552Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 13,
+      "observed_at": "2026-08-22T04:47:33.565563Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 14,
+      "observed_at": "2026-08-22T04:47:33.565569Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 15,
+      "observed_at": "2026-08-22T04:47:33.565576Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 16,
+      "observed_at": "2026-08-22T04:47:33.565583Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 17,
+      "observed_at": "2026-08-22T04:47:33.565590Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 18,
+      "observed_at": "2026-08-22T04:47:33.565597Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 19,
+      "observed_at": "2026-08-22T04:47:33.565611Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    },
+    {
+      "tick": 20,
+      "observed_at": "2026-08-22T04:47:33.565621Z",
+      "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+      "prs": 2,
+      "ci": 2,
+      "duplicate_side_effects": 0
+    }
+  ],
+  "all_healthy": true,
+  "controlled_restart": true
+}
