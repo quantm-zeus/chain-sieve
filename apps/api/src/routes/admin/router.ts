@@ -1,6 +1,7 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
 import { getAdminStore, resetAdminStore } from './store.js';
+import { createResearchWorkbenchRouter, resetResearchWorkbenchStores, resetScheduleDraftStore } from './research-workbench.js';
 import {
   IncidentSchema,
   IncidentSeveritySchema,
@@ -29,6 +30,10 @@ const ErrorSchema = z.object({ error: z.object({ code: z.string(), message: z.st
 
 export const createAdminRouter = (deps?: { now?: () => string; database?: { query: (sql: string, params?: readonly unknown[]) => Promise<{ rows: unknown[]; rowCount: number }> } | undefined }): OpenAPIHono<AdminEnv> => {
   const app = new OpenAPIHono<AdminEnv>();
+
+  // Mount Research Workbench (FR-ADM-002/004/005/008)
+  const researchRouter = createResearchWorkbenchRouter({ now: deps?.now });
+  app.route('/', researchRouter);
 
   const getStore = () => getAdminStore(deps);
 
@@ -323,6 +328,8 @@ export const createAdminRouter = (deps?: { now?: () => string; database?: { quer
     const testHeader = c.req.header('x-test-reset');
     if (testHeader !== 'true') return c.json({ error: { code: 'FORBIDDEN', message: 'Reset not allowed', correlationId: c.get('correlationId') } }, 403);
     resetAdminStore();
+    resetResearchWorkbenchStores(deps?.now ?? (() => new Date().toISOString()));
+    resetScheduleDraftStore(deps?.now ?? (() => new Date().toISOString()));
     return c.json({ status: 'reset' }, 200);
   });
 

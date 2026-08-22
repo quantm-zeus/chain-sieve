@@ -12,6 +12,12 @@
   <p class="eyebrow">ADMIN / OBSERVABILITY</p>
   <h1>Operational overview</h1>
   <p>System mode, kill switches, incidents, schedules, workflows and backup — refreshed from local cache only.</p>
+  <nav class="subnav" aria-label="Workbench sections">
+    <a href="/admin/workbench">Workbench</a>
+    <a href="/admin/runs">Frozen Runs</a>
+    <a href="/admin/candidates">Candidate Radar</a>
+    <a href="/admin/schedule-drafts">Schedule Drafts</a>
+  </nav>
   <a class="back" href="/">← Bootstrap</a>
 </section>
 

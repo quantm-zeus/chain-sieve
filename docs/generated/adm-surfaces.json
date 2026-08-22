@@ -1,0 +1,26 @@
+{
+  "task": "T-G3-ADM",
+  "requirements": ["FR-ADM-002", "FR-ADM-004", "FR-ADM-005", "FR-ADM-008"],
+  "surfaces": [
+    { "method": "POST", "path": "/api/v1/admin/agent/sessions", "requirement": "FR-ADM-002", "description": "Create workbench session with streaming timeline" },
+    { "method": "GET", "path": "/api/v1/admin/agent/sessions", "requirement": "FR-ADM-002" },
+    { "method": "GET", "path": "/api/v1/admin/agent/sessions/:id", "requirement": "FR-ADM-002", "description": "Get session with event-time ordered tool timeline, evidence links" },
+    { "method": "GET", "path": "/api/v1/admin/agent/sessions/:id/events", "requirement": "FR-ADM-002", "description": "Streaming events ordered by eventTime with sequence, abort/cancellation visibility" },
+    { "method": "POST", "path": "/api/v1/admin/agent/sessions/:id/cancel", "requirement": "FR-ADM-002" },
+    { "method": "POST", "path": "/api/v1/admin/agent/sessions/:id/abort", "requirement": "FR-ADM-002" },
+    { "method": "POST", "path": "/api/v1/admin/runs", "requirement": "FR-ADM-004" },
+    { "method": "GET", "path": "/api/v1/admin/runs/:id", "requirement": "FR-ADM-004", "description": "Frozen immutable snapshot (planner envelope, validated claims, evidence IDs, budgets)" },
+    { "method": "GET", "path": "/api/v1/admin/runs/:id/investigation", "requirement": "FR-ADM-004" },
+    { "method": "POST", "path": "/api/v1/admin/runs/:id/re-evaluate", "requirement": "FR-ADM-004", "description": "Current re-evaluation diff without mutating frozen snapshot" },
+    { "method": "GET", "path": "/api/v1/admin/candidates", "requirement": "FR-ADM-005" },
+    { "method": "GET", "path": "/api/v1/admin/candidates/:id", "requirement": "FR-ADM-005" },
+    { "method": "GET", "path": "/api/v1/admin/candidates/:id/why-not-alerted", "requirement": "FR-ADM-005", "description": "Gating reason / missing evidence / risk block / insufficient data with point-in-time references" },
+    { "method": "POST", "path": "/api/v1/admin/schedule-drafts", "requirement": "FR-ADM-008", "description": "Admin chat creates only validated schedule draft" },
+    { "method": "GET", "path": "/api/v1/admin/schedule-drafts/:id/resolved-config", "requirement": "FR-ADM-008" },
+    { "method": "POST", "path": "/api/v1/admin/schedule-drafts/:id/review", "requirement": "FR-ADM-008" },
+    { "method": "POST", "path": "/api/v1/admin/schedule-drafts/:id/capacity-forecast", "requirement": "FR-ADM-008", "description": "30-day Sustainable Capacity Contract forecast" },
+    { "method": "POST", "path": "/api/v1/admin/schedule-drafts/:id/approve", "requirement": "FR-ADM-008", "description": "Explicit approval with re-authentication" },
+    { "method": "POST", "path": "/api/v1/admin/schedule-drafts/:id/activate", "requirement": "FR-ADM-008", "description": "Immutable version creation" }
+  ],
+  "dashboard": ["/admin/workbench", "/admin/runs", "/admin/candidates", "/admin/schedule-drafts"]
+}
