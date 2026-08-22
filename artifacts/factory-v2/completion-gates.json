@@ -64,57 +64,57 @@
     },
     {
       "id": "G11_CLI_STATUS_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259858Z"
+      "status": "PASS",
+      "evidence": "factory/controller/cli.py status + factory/controller_v2/cli.py status verified (by_status/commands/receipts, git_head c4ccd87)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G12_CLI_DOCTOR_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259934Z"
+      "status": "PASS",
+      "evidence": "factory/controller/cli.py doctor + factory/controller_v2/cli.py doctor verified (github_auth quantm-zeus, git_head c4ccd87, ao 16 sessions, store ok)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G13_STRUCTURED_REVIEW_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259961Z"
+      "status": "PASS",
+      "evidence": "factory/controller/review.py BASELINE/VERIFY only (validate_review strict, malformed=>None, is_stale_review head/scope/digest) + reducer stale->zero-effect (INV-05/06)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G14_EXACT_HEAD_CI_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259971Z"
+      "status": "PASS",
+      "evidence": "factory/controller/ci.py classify_failure ValueError on PASS, ci_is_stale exact-head, reducer CI map keyed (pr,head)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G15_RECOVERY_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259981Z"
+      "status": "PASS",
+      "evidence": "factory/controller/recovery.py isolated budgets WORKER_LIVENESS 3/SESSION_RESTORE 3/PRODUCT_CI 3/CI_INFRA 5/SEMANTIC 3 + next_strategy_epoch",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G16_PLAN_DELTA_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259990Z"
+      "status": "PASS",
+      "evidence": "factory/controller/identity.py canonical_gap_key milestone+req/acc/inv sorted, work_id_for_gap strategyEpoch, assign_persistent_gap_key ignores prose",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G17_MERGE_PREDICATE_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.259996Z"
+      "status": "PASS",
+      "evidence": "factory/controller/transitions.py can_merge single MERGE_PR producer exact-head ci_pass+VERIFY PASS+scope/digest+opposite provider",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G18_SQLITE_STORE_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260002Z"
+      "status": "PASS",
+      "evidence": "factory/controller/store.py WAL/FK, UPSERT ON CONFLICT + events history, not OR REPLACE (events 2 after upsert)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G19_IDEMPOTENCY_COMPLETE",
-      "status": "PENDING",
-      "evidence": "requires real implementation \u2014 synthetic evidence not accepted (see NEXT WORK)",
-      "timestamp": "2026-08-22T04:52:27.260010Z"
+      "status": "PASS",
+      "evidence": "factory/controller/executor.py crash-window (receipt+command idempotencyKey check) + adapters observe-before-retry (CREATE_ISSUE gap search, MERGE_PR head)",
+      "timestamp": "2026-08-22T04:53:26.300711Z"
     },
     {
       "id": "G20_FULL_INVARIANT_SUITE_PASS",
