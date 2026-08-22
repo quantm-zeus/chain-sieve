@@ -19,15 +19,7 @@ except Exception as e:
     HAS_V2 = False
     _v2_import_error = e
 
-# Legacy V1 fallback (should not be used after promotion, but keep for safety)
-try:
-    from .controller.ao import AgentOrchestrator as V1AO
-    from .controller.commands import CommandRunner
-    from .controller.config import FactoryConfig as V1Config
-    from .controller.controller import FactoryController as V1Controller
-    HAS_V1 = True
-except Exception:
-    HAS_V1 = False
+# V1 fallback removed — V2 is sole canonical (factory/controller), no V1 runtime imports
 
 def root_path() -> Path:
     return Path(__file__).resolve().parents[1]
@@ -105,33 +97,9 @@ def main(argv=None) -> int:
                 res = tick_once(store, collector, executor)
                 print(json.dumps(res, indent=2))
                 return 0
-    # Fallback to V1 for legacy commands if V1 still present (should not be after detox, but keep)
-    if HAS_V1 and args.command in ("history","sync-issues","reconcile","converge","final-audit"):
-        # Try to use V1 controller if still available (detox will remove, then these become no-ops)
-        try:
-            from .controller.config import FactoryConfig
-            from .controller.store import StateStore
-            from .controller.commands import CommandRunner
-            from .controller.github import GitHub as V1GitHub
-            from .controller.ao import AgentOrchestrator
-            from .controller.controller import FactoryController
-            root = root_path()
-            config_path = Path(os.environ.get("CHAINSIEVE_FACTORY_CONFIG", root / "factory" / "config.json"))
-            config = FactoryConfig.load(root, config_path)
-            store = StateStore(config.state_dir)
-            runner = CommandRunner(root)
-            github = V1GitHub(runner, config.repo, config.integration_branch)
-            ao = AgentOrchestrator(runner, config.project_id)
-            controller = FactoryController(root, config, store, github, ao)
-            if args.command == "history":
-                events = store.history(50)
-                print(json.dumps(events, indent=2))
-                return 0
-            # other legacy no-ops
-            print(f"legacy command {args.command} not supported in V2 canonical mode", file=sys.stderr)
-            return 2
-        except Exception as e:
-            print(f"legacy command failed: {e}", file=sys.stderr)
-            return 1
+    # Legacy V1 commands removed — V2 canonical only, legacy commands not supported
+    if args.command in ("history","sync-issues","reconcile","converge","final-audit"):
+        print(f"legacy command {args.command} removed — use V2 run/status/doctor", file=sys.stderr)
+        return 2
     print(f"unknown command {args.command}", file=sys.stderr)
     return 2

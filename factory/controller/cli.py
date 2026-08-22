@@ -21,7 +21,7 @@ def main(argv=None):
     # repo from env or default
     import os
     repo = os.environ.get("GITHUB_REPOSITORY", "quantm-zeus/chain-sieve")
-    sp = Path(os.environ.get("CHAINSIEVE_STATE_DIR", str(Path.home() / ".local/state/chainsieve-factory-v2/state.db")))
+    sp = Path(os.environ.get("CHAINSIEVE_FACTORY_STATE_DIR", str(Path.home() / ".local/state/chainsieve-factory-v2/state.db")))
     store = Store(sp)
     github = GitHubAdapter(repo)
     ao = AOAdapter()
