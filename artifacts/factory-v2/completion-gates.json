@@ -1,0 +1,306 @@
+{
+  "generated_at": "2026-08-22T04:21:40Z",
+  "total_gates": 50,
+  "gates": [
+    {
+      "id": "G01_FOUNDATION_ADOPTED",
+      "status": "PASS",
+      "evidence": "artifacts/factory-v2/foundation-manifest.json + /tmp/chainsieve-v2-foundation-20260822T041936Z/manifest.json (30 files, 67873 bytes, hash verified)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G02_UNTRACKED_FOUNDATION_HASH_VERIFIED",
+      "status": "PASS",
+      "evidence": "hash verified source vs /tmp backup, deterministic commands verified (see audit)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G03_ARCHITECTURE_SPEC_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G04_KERNEL_FEATURE_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G05_REAL_GITHUB_ADAPTER_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G06_REAL_AO_ADAPTER_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G07_REAL_GIT_ADAPTER_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G08_OBSERVATION_COLLECTOR_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G09_EXECUTOR_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G10_RUNTIME_ENTRYPOINT_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G11_CLI_STATUS_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G12_CLI_DOCTOR_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G13_STRUCTURED_REVIEW_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G14_EXACT_HEAD_CI_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G15_RECOVERY_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G16_PLAN_DELTA_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G17_MERGE_PREDICATE_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G18_SQLITE_STORE_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G19_IDEMPOTENCY_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G20_FULL_INVARIANT_SUITE_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G21_MODEL_BASED_SUITE_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G22_TRANSITION_TABLE_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G23_REAL_HISTORICAL_REPLAY_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G24_REAL_MIGRATOR_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G25_REAL_MIGRATION_DRY_RUN_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G26_LIVE_SHADOW_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G27_SHADOW_RESTART_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G28_PR_A_MERGED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G29_PR_B_MERGED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G30_CUTOVER_PR_MERGED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G31_PRODUCTION_MIGRATION_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G32_V2_WRITE_CANARY_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G33_EXISTING_WORK_ADOPTED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G34_V1_WRITE_AUTHORITY_DISABLED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G35_FIRST_20_TICK_SOAK_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G36_CONTROLLED_RESTART_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G37_LEGACY_DETOX_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G38_CONTROLLER_V2_PROMOTED_TO_CONTROLLER",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G39_V1_RUNTIME_REMOVED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G40_LEGACY_RUNTIME_IMPORTS_ZERO",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G41_CONTEXT_FOOTPRINT_REMEASURED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G42_FINAL_CONTEXT_BUDGET_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G43_FINAL_AGY_SEMANTIC_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G44_FINAL_CLEANUP_PR_MERGED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G45_FINAL_PRODUCTION_DEPLOY_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G46_FINAL_20_TICK_SOAK_PASS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G47_PRODUCT_AUTONOMY_RESUMED",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G48_NO_DUPLICATE_SIDE_EFFECTS",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G49_MAIN_WORKTREE_CLEAN",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    },
+    {
+      "id": "G50_COMPLETION_REPORT_EVIDENCE_COMPLETE",
+      "status": "PENDING",
+      "evidence": "requires git write / host systemd / live adapters \u2014 blocked EROFS on .git (see INCOMPLETE report)",
+      "timestamp": "2026-08-22T04:21:40Z"
+    }
+  ]
+}

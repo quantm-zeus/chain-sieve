@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-08-22T04:10:00Z",
+  "runtime_loc_before": 9095,
+  "runtime_loc_after": 846,
+  "reduction_abs": 8249,
+  "reduction_pct": 90.7,
+  "modules_before": 14,
+  "modules_after": 12,
+  "files_before": 14,
+  "files_after": 12,
+  "state_fields_before": 68,
+  "state_fields_after": 14,
+  "config_fields_before": 34,
+  "config_fields_after": 8,
+  "transitive_runtime_files_before": 14,
+  "transitive_runtime_files_after": 12,
+  "estimated_tokens_before": 36000,
+  "estimated_tokens_after": 3400,
+  "note": "V2 runtime is 846 LOC vs 9095 LOC before. State fields collapsed from 68 boolean sprawl to 14 typed fields. Config not yet finalized. Token estimate uses ~4 chars/token ~ ~4 bytes/token approximation."
+}

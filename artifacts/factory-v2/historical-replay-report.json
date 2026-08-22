@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-08-22T04:20:00Z",
+  "incidents": [
+    {
+      "incident": "correction-budget poisoning",
+      "v1_bad": "infra failure decremented product_corrections_used",
+      "v2_state": "CI_WAIT",
+      "v2_commands": [
+        "RETRY_CI_INFRA"
+      ],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "causal CI dependency closure",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "semantic review endless goalpost expansion",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "stale review resolver",
+      "v1_bad": "stale review triggered product correction",
+      "v2_state": "REVIEW_BASELINE_WAIT",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "product-worktree authority shadowing",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "approved review positive bullets interpreted as blockers",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "same-head review-mode digest transition",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "plan-generation identity explosion",
+      "v1_bad": "LLM paraphrase minted new gap fingerprint",
+      "v2_state": "GAP-REQ-1-3dde9a45af59",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    },
+    {
+      "incident": "duplicate Issues",
+      "v1_bad": "see history",
+      "v2_state": "PLANNED",
+      "v2_commands": [],
+      "violated_transition_now_impossible": true
+    }
+  ]
+}

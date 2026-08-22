@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-08-22T03:56:41Z",
+  "production_head": "954e9a9b9ae16e54db28001f72347742a81e3542",
+  "origin_main": "954e9a9b9ae16e54db28001f72347742a81e3542",
+  "factory_status": "capture_attempted_fetch_readonly",
+  "factory_service": "unknown_sandbox_no_systemctl",
+  "ao_service": "unknown_sandbox",
+  "workdir": "/home/minhquan_eth/chain-sieve",
+  "runtime_loc": {
+    "controller_python": 9095,
+    "factory_top_python": 225,
+    "schemas": 258,
+    "prompts": 85,
+    "total_factory_control_plane": 9663
+  },
+  "breakdown_controller": {
+    "controller.py": 2951,
+    "reasoning.py": 2432,
+    "findings.py": 613,
+    "models.py": 509,
+    "ao.py": 451,
+    "github.py": 428,
+    "prompts.py": 351,
+    "review_context.py": 276,
+    "config.py": 263,
+    "policy.py": 239,
+    "doctor.py": 232,
+    "store.py": 241,
+    "commands.py": 108,
+    "__init__.py": 1
+  },
+  "file_counts": {
+    "controller_py_modules": 14,
+    "factory_schemas": 7,
+    "factory_prompts": 6,
+    "tests_factory": 26,
+    "total_factory_files": 33
+  },
+  "state_fields_approx": {
+    "PackageRecord_fields": 68,
+    "note": "counted from models.py PackageRecord dataclass; includes ~30 authority/recovery counters listed in task"
+  },
+  "config_fields": 34,
+  "note": "Before-measurement prior to V2 detox. Full artifact at artifacts/factory-v2/context-footprint-before.json"
+}

@@ -1,0 +1,158 @@
+{
+  "generated_at": "20260822T041936Z",
+  "backup_root": "/tmp/chainsieve-v2-foundation-20260822T041936Z",
+  "total_files": 30,
+  "total_bytes": 67873,
+  "files": [
+    {
+      "path": "artifacts/factory-v2/codebase-inventory.json",
+      "bytes": 3993,
+      "sha256": "f2d4d67314700729f7af1093b4a5eb4f242c42a7d136990b26fad30bb22de01f"
+    },
+    {
+      "path": "artifacts/factory-v2/codebase-inventory.md",
+      "bytes": 5827,
+      "sha256": "1cd8790ec111423c4cfcf907a70275ea91d9c1e37fa8f11e14b1d5440c4987ed"
+    },
+    {
+      "path": "artifacts/factory-v2/context-footprint-after.json",
+      "bytes": 723,
+      "sha256": "089e5984ee4db497df06cbe49ffc4d91864733836df5d5c9cd30506ceb5ff09d"
+    },
+    {
+      "path": "artifacts/factory-v2/context-footprint-before.json",
+      "bytes": 1372,
+      "sha256": "9787cb84a6b4f6b8d000dce8a003bf204cd19c58c5e2fe2dd9669667920a29c2"
+    },
+    {
+      "path": "artifacts/factory-v2/control-plane-dependency-graph.json",
+      "bytes": 1370,
+      "sha256": "51a41c17f194174df5739342f5fb5d8041e8fa0f330c2eca57ea7884346852c0"
+    },
+    {
+      "path": "artifacts/factory-v2/historical-replay-report.json",
+      "bytes": 2045,
+      "sha256": "eab3778e87385ec1d4d24e68841cc68db8135296eba71cb72fa8a21fdde56f4e"
+    },
+    {
+      "path": "docs/factory/agent-context.md",
+      "bytes": 1019,
+      "sha256": "0e6a85503f1a0ce4e3ce60c8562f8b64aa46fdbbec13fcbf63981371aa3c99a8"
+    },
+    {
+      "path": "docs/factory/control-plane-v2.md",
+      "bytes": 6326,
+      "sha256": "9665a7d1e85feb09f1d10de7694f2932709f7804d696f30f75357f491936102a"
+    },
+    {
+      "path": "factory/context-manifest.json",
+      "bytes": 1133,
+      "sha256": "3639aa1e7efaaca686c6a2769aef20372bda3b5aeda27a3641519cb7b77dcb25"
+    },
+    {
+      "path": "factory/controller_v2/__init__.py",
+      "bytes": 121,
+      "sha256": "db76d0884de6b049104196364c5694662f197b09163fc39f67ca76cb8586bb39"
+    },
+    {
+      "path": "factory/controller_v2/adapters/__init__.py",
+      "bytes": 359,
+      "sha256": "27af4850510fdd4a8455918eafe3f511ef60a05a1142593fc4df3ac1b2cdd8b4"
+    },
+    {
+      "path": "factory/controller_v2/adapters/ao.py",
+      "bytes": 103,
+      "sha256": "fe232d3f65dcb5f96ab66b086d7870cc9485f8083a1ed7203df4c70c307100bf"
+    },
+    {
+      "path": "factory/controller_v2/adapters/git.py",
+      "bytes": 54,
+      "sha256": "177400e7aebf11f1d3678f7ffab03d42ac975c23aa229b8507244d1574b35286"
+    },
+    {
+      "path": "factory/controller_v2/adapters/github.py",
+      "bytes": 269,
+      "sha256": "5ebc865fd20912a81aa7004b82a6c64b0de8b72efa4af0b0d006b1fde002212e"
+    },
+    {
+      "path": "factory/controller_v2/ci.py",
+      "bytes": 1316,
+      "sha256": "71268bc2e271b6c9d793009dde8bfb476826c91bd839dcc7356007fe9805a1e6"
+    },
+    {
+      "path": "factory/controller_v2/commands.py",
+      "bytes": 1665,
+      "sha256": "7809888ea9e87fdaa68b9232729fe56e1b88ce5cdda8b5ef7f82233a0d6cedb1"
+    },
+    {
+      "path": "factory/controller_v2/domain.py",
+      "bytes": 3008,
+      "sha256": "fc784023e856bcf4885f756419784503d97429ef1d59180aacb33e40128fb140"
+    },
+    {
+      "path": "factory/controller_v2/executor.py",
+      "bytes": 2549,
+      "sha256": "ee0b52001b16410d3ac86a7a215ebccc46baab27d7ccf1e03dde8bbd7c1b2c91"
+    },
+    {
+      "path": "factory/controller_v2/identity.py",
+      "bytes": 2022,
+      "sha256": "02149a1955806551cb9c664e1d95eb7499d3d216aeb515027cbbb7a8dfc6f502"
+    },
+    {
+      "path": "factory/controller_v2/observations.py",
+      "bytes": 1534,
+      "sha256": "221e6471f85fbd2aa5b98b149d74e3ebfc9d1891a08be8b1e7e3cdebbbdeec82"
+    },
+    {
+      "path": "factory/controller_v2/recovery.py",
+      "bytes": 708,
+      "sha256": "ee2dcb46bf4b45769b6dc2f63eb529ff068533911c28e24ad7454b846c2995ea"
+    },
+    {
+      "path": "factory/controller_v2/reducer.py",
+      "bytes": 9215,
+      "sha256": "7c1271be18c57896bf3eb55cc8d545db3ede676616b86347efb53858c46d7a98"
+    },
+    {
+      "path": "factory/controller_v2/review.py",
+      "bytes": 1919,
+      "sha256": "c3180780748f2909bb5c5ac255e49c99847ee35087891973a457ed4659b81b29"
+    },
+    {
+      "path": "factory/controller_v2/store.py",
+      "bytes": 4101,
+      "sha256": "bef11343da1d5a596e4900b4e69d4a10d645a7dd1729113cfbab62db972d0a43"
+    },
+    {
+      "path": "factory/controller_v2/transitions.py",
+      "bytes": 2023,
+      "sha256": "4c4fd02e461561f181c419b1bb2bae1e7c654fd54cdc274a99f09e08337e9b76"
+    },
+    {
+      "path": "tests/factory_v2/test_architecture.py",
+      "bytes": 2227,
+      "sha256": "315316e142ae7557667086ecfa5480f7f7f66f1bb2c233fe622ed6aa67addc09"
+    },
+    {
+      "path": "tests/factory_v2/test_invariants.py",
+      "bytes": 3921,
+      "sha256": "e25c909dbe8155617e5cf5959f855699c0a8d229fe62bf73a9acd95a1b931965"
+    },
+    {
+      "path": "tests/factory_v2/test_model.py",
+      "bytes": 2780,
+      "sha256": "99096e0cf5dc72f0508cefb34a23edc85b4a6aeef52c5d916a9e934fb5bebcf7"
+    },
+    {
+      "path": "tools/check-factory-context-budget.py",
+      "bytes": 648,
+      "sha256": "c5c3acdb230ed2ffafbbbe4c49ca0e5d4dd69e2543f8e4558bcea54a07b32d87"
+    },
+    {
+      "path": "tools/factory-v2-replay/replay.py",
+      "bytes": 3523,
+      "sha256": "c6e9d90194702ae3438bb9060cbabdb8ec00536a587f2701c6c3b3d55e884227"
+    }
+  ]
+}
