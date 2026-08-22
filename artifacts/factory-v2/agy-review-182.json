@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "summary": "Independent Agy semantic review of PR 182 head 87824f93: factory/controller is sole canonical (V2 core 14 modules + 11 V1 legacy for tests/factory), factory/controller_v2 removed, cli.py dispatches V2 sole canonical with auto-migration, install-ubuntu.sh defaults to chainsieve-factory-v2, no V1 runtime imports in cli.py/runtime.py, 408 factory + 29 factory_v2 PASS, external verifier 6/6 PASS, deployment.env updated to V2 and controlled restart verified active. Existing Issues/PRs/AO sessions preserved (7 sessions, 4 V1 packages migrated to V2 SQLite WAL with 8 events). No material findings.",
+  "reviewer": "agy",
+  "head": "87824f93cb8e8e79df75ba72a4451bd5b8ba8ee1",
+  "pr": 182,
+  "mode": "independent"
+}

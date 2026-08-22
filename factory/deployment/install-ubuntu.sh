@@ -53,7 +53,7 @@ runuser -u "$deploy_user" -- git -C "$repo" rev-parse --is-inside-work-tree >/de
 runuser -u "$deploy_user" -- test -w "$repo/.git" || {
   echo "deployment user must own or be able to write the root checkout Git metadata: $repo/.git" >&2; exit 1;
 }
-state="$(readlink -m "${state:-$user_home/.local/state/chainsieve-factory}")"
+state="$(readlink -m "${state:-$user_home/.local/state/chainsieve-factory-v2}")"
 ao_data="$(readlink -m "${ao_data:-$user_home/.local/state/agent-orchestrator}")"
 venv="$(readlink -m "${venv:-$user_home/.local/share/chainsieve-factory/venv}")"
 
