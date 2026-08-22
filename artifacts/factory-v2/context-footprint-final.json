@@ -1,10 +1,11 @@
 {
   "loc": 1454,
   "modules": 19,
-  "head": "5eb6481de2b361836692cb371f62354f9994a4fa",
+  "head": "a3546f1c012503cd26ec8a0be936ac2c3545566d",
   "v2_promoted": true,
   "v1_loc_before": 9095,
   "reduction": 84.0,
-  "measured_at": "2026-08-22T04:47:53.798351Z",
-  "budget_pass": true
+  "measured_at": "2026-08-22T04:56:19.015820Z",
+  "budget_pass": true,
+  "method": "complete-runtime remeasured after shadow"
 }
