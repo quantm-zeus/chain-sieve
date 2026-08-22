@@ -1,9 +1,12 @@
 /**
  * @requirement FR-AGT-009 - Value-of-information planner that persists per-family request/skip decisions with explicit reasons.
+ * @requirement FR-AGT-010 - Bounded stratified randomized evidence probe allocation.
+ * @requirement FR-AGT-012 - Deterministic planner authorization envelope foundation.
  * @requirement AC-242 - Evidence not requested by policy is stored as NOT_REQUESTED_BY_POLICY, not RETURNED_EMPTY, PROVIDER_UNAVAILABLE, or a negative feature value.
  * @requirement AC-243 - Randomized evidence probe stores eligibility stratum, nonzero assignment probability, seed provenance, selection timestamp, requested fields, and final decision impact.
  * @requirement FR-DATA-011 - Acquisition states remain distinct from substantive negative evidence.
  * @requirement FR-DATA-012 - Store policy version, candidate state, requested fields, expected value of information, estimated/actual cost, timestamps, result state, evidence IDs, and whether evidence changed final decision.
+ * @requirement INV-022 - Distinct from unavailable or negative evidence.
  */
 
 import { createHash } from 'node:crypto';
@@ -14,11 +17,19 @@ import type {
   ModelProfile,
   ToolAuthorizationEnvelope,
 } from '@ciag/shared-schemas';
-import type { CandidateTarget } from './deterministic-planner.js';
+import {
+  DeterministicPlanner,
+  type CandidateTarget,
+  type DeterministicPlan,
+} from './deterministic-planner.js';
 import {
   EvidenceFamilyRegistry,
   type EvidenceFamilyDefinition,
 } from './evidence-families.js';
+import {
+  type EvidenceAcquisitionStore,
+  getEvidenceAcquisitionStore,
+} from './acquisition-state.js';
 
 export interface VoiPolicy {
   policyVersion: string;
@@ -40,23 +51,41 @@ export const DEFAULT_VOI_POLICY: VoiPolicy = {
   randomizationSeedRef: 'voi-probe-seed-v1',
 };
 
+export interface RandomProbeConfig {
+  enabled: boolean;
+  stratum: string;
+  inclusionProbability: number; // in (0, 1]
+  seedRef: string;
+}
+
 export interface VoiPlanInput {
-  candidate: CandidateTarget;
-  runId: string;
+  candidate: CandidateTarget & { lifecycle?: string | undefined; risk?: string | undefined };
+  goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
+  runId?: string | undefined;
   envelope: ToolAuthorizationEnvelope;
   budget: AgentBudget;
   profile: ModelProfile;
+  plan?: DeterministicPlan | undefined;
+  policyVersion?: string | undefined;
   currentCandidateScore?: number | undefined;
   currentRiskState?: string | undefined;
   currentLifecycleState?: string | undefined;
   knownEvidence?: Record<string, unknown> | undefined;
+  initialEvidence?: Record<string, unknown> | undefined;
   hardRejectionProven?: boolean | undefined;
   alertThresholdUnreachable?: boolean | undefined;
   randomizationStratum?: string | undefined;
+  randomProbeConfig?: RandomProbeConfig | undefined;
   policy?: Partial<VoiPolicy> | undefined;
   registry?: EvidenceFamilyRegistry | undefined;
+  eligibleEvidenceFamilies?: readonly EvidenceFamilyDefinition[] | readonly string[] | undefined;
+  minVoiThreshold?: number | undefined;
+  store?: EvidenceAcquisitionStore | undefined;
+  deterministicSeedRef?: string | number | undefined;
   asOf?: string | undefined;
 }
+
+export type VoiPlannerInput = VoiPlanInput;
 
 export interface VoiPlanResult {
   policyVersion: string;
@@ -65,10 +94,17 @@ export interface VoiPlanResult {
   decisions: EvidenceAcquisitionDecision[];
   requestedFamilies: string[];
   skippedFamilies: string[];
+  blockedFamilies: string[];
   totalEstimatedMonetaryCostUsd: number;
+  totalEstimatedCostUsd: number;
   totalEstimatedQuotaUnits: number;
+  totalQuotaUnits: number;
   plannedAt: string;
+  plan: DeterministicPlan;
+  envelope: ToolAuthorizationEnvelope;
 }
+
+export type VoiPlannerResult = VoiPlanResult;
 
 export interface ReconcileExecutionOptions {
   decisions: readonly EvidenceAcquisitionDecision[];
@@ -77,6 +113,23 @@ export interface ReconcileExecutionOptions {
   finalDecision: AgentDecision;
   actualCost?: { monetaryCostUsd?: number; quotaCostUnits?: number } | undefined;
   completedAt?: string | undefined;
+}
+
+function stableHash(value: unknown): string {
+  const canonicalize = (val: unknown): unknown => {
+    if (val === null || val === undefined) return val;
+    if (Array.isArray(val)) return val.map(canonicalize);
+    if (typeof val === 'object') {
+      return Object.fromEntries(
+        Object.entries(val as Record<string, unknown>)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([k, v]) => [k, canonicalize(v)]),
+      );
+    }
+    return val;
+  };
+  const json = JSON.stringify(canonicalize(value));
+  return createHash('sha256').update(json).digest('hex');
 }
 
 export class VoiPlanner {
@@ -95,10 +148,13 @@ export class VoiPlanner {
    * Plans evidence acquisition decisions for every eligible evidence family.
    * Persists an explicit decision record (requested or skipped with reason) for every optional family.
    */
-  public planAcquisitions(input: VoiPlanInput): VoiPlanResult {
+  public plan(input: VoiPlanInput): VoiPlanResult {
     const policy = { ...this.policy, ...(input.policy ?? {}) };
     const registry = input.registry ?? this.registry;
-    const { candidate, runId, envelope, budget, profile } = input;
+    const { candidate, envelope, budget, profile } = input;
+    const goal = input.goal ?? (profile.modelClass as VoiPlanInput['goal']) ?? 'TRIAGE';
+    const policyVersion = input.policyVersion ?? policy.policyVersion ?? profile.version;
+    const store = input.store ?? getEvidenceAcquisitionStore();
     const asOf = input.asOf ?? envelope.timeRange?.maxTimestamp ?? new Date().toISOString();
 
     const candidateScore = input.currentCandidateScore ?? 0.5;
@@ -106,33 +162,55 @@ export class VoiPlanner {
     const isHardRejected = input.hardRejectionProven === true;
     const isUnreachable = input.alertThresholdUnreachable === true;
 
+    // Resolve eligible families
+    const eligibleFamilies: EvidenceFamilyDefinition[] = this.resolveEligibleFamilies(
+      input.eligibleEvidenceFamilies,
+      registry,
+    );
+
     // Prioritize mandatory core families first, then optional families by defaultPriority
-    const families = [...registry.list()].sort((a, b) => {
+    const families = [...eligibleFamilies].sort((a, b) => {
       if (!a.isOptional && b.isOptional) return -1;
       if (a.isOptional && !b.isOptional) return 1;
-      return b.defaultPriority - a.defaultPriority;
+      return (b.defaultPriority ?? 5) - (a.defaultPriority ?? 5);
     });
+
+    // Temporary runId to construct decisions (resolved with planId below)
+    const provisionalRunId =
+      input.runId ??
+      `run_${candidate.assetId}_${stableHash({ candidate: candidate.assetId, profile: profile.id, seed: input.deterministicSeedRef }).slice(0, 12)}`;
+
     const decisions: EvidenceAcquisitionDecision[] = [];
 
     let accumulatedEstimatedCostUsd = 0;
     let accumulatedQuotaUnits = 0;
+    let accumulatedToolCalls = 0;
+
+    const maxCalls = budget.maxToolCalls;
+    const maxCostUsd = budget.maxModelCostUsd ?? envelope.maxCostUsd;
+    const maxQuotaUnits = budget.maxProviderCostUnits;
 
     for (const family of families) {
-      const decisionId = `voi_${candidate.assetId}_${family.familyId}_${runId}`;
+      const familyId = family.familyId ?? family.id ?? 'UNKNOWN';
+      const estimatedCostUsd = family.monetaryCostUsd ?? family.defaultMonetaryCostUsd ?? 0.0001;
+      const quotaCostUnits = family.providerQuotaCost ?? family.defaultQuotaUnits ?? 1;
       const estimatedCost = {
-        monetaryCostUsd: family.monetaryCostUsd,
-        quotaCostUnits: family.providerQuotaCost,
+        monetaryCostUsd: estimatedCostUsd,
+        quotaCostUnits,
       };
 
       // 1. Check tool authorization and profile declared tools
-      const toolsInEnvelope = family.tools.filter((t) => envelope.allowedTools.includes(t));
-      const toolsInProfile = family.tools.filter((t) => profile.declaredTools.includes(t));
+      const tools = family.tools ?? family.associatedTools ?? [];
+      const toolsInEnvelope = tools.filter((t) => envelope.allowedTools.includes(t));
+      const toolsInProfile = tools.filter((t) => profile.declaredTools.includes(t));
       const isProfileSupported = toolsInProfile.length > 0;
       const isRightsAuthorized = toolsInEnvelope.length > 0;
 
       // 2. Check if evidence is already known
-      const hasKnownEvidence = family.fieldsProduced.some(
-        (field) => input.knownEvidence && input.knownEvidence[field] !== undefined,
+      const fields = family.fieldsProduced ?? family.standardFields ?? [];
+      const hasKnownEvidence = fields.some(
+        (field) => (input.knownEvidence && input.knownEvidence[field] !== undefined) ||
+                   (input.initialEvidence && input.initialEvidence[field] !== undefined),
       );
 
       // 3. Compute Expected Value of Information (EVOI)
@@ -147,8 +225,9 @@ export class VoiPlanner {
         costWeight: policy.costWeight,
       });
 
-      // 4. Randomized probe check using explicit eligibility stratum (AC-243)
+      // 4. Randomized probe check using explicit eligibility stratum (AC-243 / FR-AGT-010)
       const stratum =
+        input.randomProbeConfig?.stratum ??
         input.randomizationStratum ??
         (isNearAlert
           ? 'NEAR_ALERT'
@@ -158,12 +237,14 @@ export class VoiPlanner {
               ? `LIFECYCLE_${input.currentLifecycleState}`
               : 'GENERAL_ELIGIBLE');
 
-      const probeCheck = this.evaluateRandomizedProbe(
-        candidate.assetId,
-        family.familyId,
-        policy,
-        stratum,
-      );
+      const probeCheck = input.randomProbeConfig?.enabled
+        ? {
+            selected: this.sampleProbe(input.randomProbeConfig.seedRef, candidate.assetId, familyId, input.randomProbeConfig.inclusionProbability),
+            probability: String(input.randomProbeConfig.inclusionProbability),
+            stratum: input.randomProbeConfig.stratum,
+            seedRef: input.randomProbeConfig.seedRef,
+          }
+        : this.evaluateRandomizedProbe(candidate.assetId, familyId, policy, stratum);
 
       // 5. Decision state & reason resolution
       let state: EvidenceAcquisitionDecision['state'];
@@ -171,6 +252,22 @@ export class VoiPlanner {
       let requestReason: string | undefined;
       const reasonCodes: string[] = [];
       let expectedDecisionImpact = `Information value: ${evoi.toFixed(3)}`;
+
+      // Envelope checks
+      const isChainAllowed =
+        !envelope.allowedChains ||
+        envelope.allowedChains.length === 0 ||
+        envelope.allowedChains.map((c) => c.toLowerCase()).includes(candidate.chainId.toLowerCase());
+
+      const isAddressAllowed =
+        !envelope.allowedAddresses ||
+        envelope.allowedAddresses.length === 0 ||
+        envelope.allowedAddresses.includes(candidate.contractAddress);
+
+      const isEntityAllowed =
+        !envelope.allowedEntities ||
+        envelope.allowedEntities.length === 0 ||
+        envelope.allowedEntities.includes(candidate.assetId);
 
       if (isHardRejected && family.isOptional) {
         state = 'NOT_REQUESTED_BY_POLICY';
@@ -182,38 +279,43 @@ export class VoiPlanner {
         reasonCodes.push('ALERT_THRESHOLD_UNREACHABLE', 'POLICY_STOP_CONDITION');
       } else if (!isProfileSupported) {
         state = 'UNSUPPORTED';
-        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not declared in model profile ${profile.id}`;
-        reasonCodes.push('TOOL_NOT_SUPPORTED_IN_PROFILE');
-      } else if (!isRightsAuthorized) {
+        skipReason = `Tools for family ${familyId} (${tools.join(', ')}) are not declared in model profile ${profile.id}`;
+        reasonCodes.push('TOOL_NOT_SUPPORTED_IN_PROFILE', 'TOOL_NOT_IN_ENVELOPE');
+      } else if (!isRightsAuthorized || !isChainAllowed || !isAddressAllowed || !isEntityAllowed) {
         state = 'RIGHTS_BLOCKED';
-        skipReason = `Tools for family ${family.familyId} (${family.tools.join(', ')}) are not permitted by authorization envelope`;
+        skipReason = `Tools for family ${familyId} (${tools.join(', ')}) are not permitted by authorization envelope`;
         reasonCodes.push('TOOL_NOT_AUTHORIZED_IN_ENVELOPE', 'RIGHTS_BLOCKED_BY_POLICY');
       } else if (hasKnownEvidence) {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = 'Sufficient evidence for family already collected in run context';
         reasonCodes.push('EVIDENCE_ALREADY_KNOWN', 'DIMINISHING_MARGINAL_UTILITY');
       } else if (
-        budget.maxModelCostUsd !== undefined &&
-        accumulatedEstimatedCostUsd + family.monetaryCostUsd > budget.maxModelCostUsd
+        maxCostUsd !== undefined &&
+        accumulatedEstimatedCostUsd + estimatedCostUsd > maxCostUsd
       ) {
         state = 'COST_BLOCKED';
-        skipReason = `Estimated cost ($${family.monetaryCostUsd}) exceeds remaining model cost budget`;
+        skipReason = `Estimated cost ($${estimatedCostUsd}) exceeds remaining model cost budget`;
         reasonCodes.push('BUDGET_COST_EXCEEDED');
       } else if (
-        budget.maxProviderCostUnits !== undefined &&
-        accumulatedQuotaUnits + family.providerQuotaCost > budget.maxProviderCostUnits
+        maxQuotaUnits !== undefined &&
+        accumulatedQuotaUnits + quotaCostUnits > maxQuotaUnits
       ) {
         state = 'QUOTA_BLOCKED';
-        skipReason = `Provider quota cost (${family.providerQuotaCost} units) exceeds remaining provider quota budget`;
+        skipReason = `Provider quota cost (${quotaCostUnits} units) exceeds remaining provider quota budget`;
         reasonCodes.push('BUDGET_QUOTA_EXCEEDED');
+      } else if (accumulatedToolCalls + tools.length > maxCalls) {
+        state = 'COST_BLOCKED';
+        skipReason = `Tool call limit exceeded`;
+        reasonCodes.push('MAX_TOOL_CALLS_EXCEEDED');
       } else if (probeCheck.selected) {
         state = 'REQUESTED';
         requestReason = 'Selected under stratified randomized evidence probe policy';
-        reasonCodes.push('RANDOMIZED_EVIDENCE_PROBE');
+        reasonCodes.push('RANDOM_PROBE_INCLUSION', 'RANDOMIZED_EVIDENCE_PROBE');
         expectedDecisionImpact = 'Exploratory randomized probe measurement for selection-bias adjustment';
-        accumulatedEstimatedCostUsd += family.monetaryCostUsd;
-        accumulatedQuotaUnits += family.providerQuotaCost;
-      } else if (evoi >= policy.minExpectedInformationValue || !family.isOptional) {
+        accumulatedEstimatedCostUsd += estimatedCostUsd;
+        accumulatedQuotaUnits += quotaCostUnits;
+        accumulatedToolCalls += tools.length;
+      } else if (evoi >= (input.minVoiThreshold ?? policy.minExpectedInformationValue) || !family.isOptional) {
         state = 'REQUESTED';
         requestReason = !family.isOptional
           ? 'Mandatory core evidence family for initial candidate characterization'
@@ -223,32 +325,38 @@ export class VoiPlanner {
         if (!family.isOptional) {
           reasonCodes.push('MANDATORY_CORE_EVIDENCE');
         } else {
-          reasonCodes.push('VOI_THRESHOLD_SATISFIED');
+          reasonCodes.push('HIGH_EXPECTED_IMPACT', 'VOI_THRESHOLD_SATISFIED');
         }
-        accumulatedEstimatedCostUsd += family.monetaryCostUsd;
-        accumulatedQuotaUnits += family.providerQuotaCost;
+        accumulatedEstimatedCostUsd += estimatedCostUsd;
+        accumulatedQuotaUnits += quotaCostUnits;
+        accumulatedToolCalls += tools.length;
       } else {
         state = 'NOT_REQUESTED_BY_POLICY';
         skipReason = `Expected information value (${evoi.toFixed(3)}) below policy acquisition threshold (${policy.minExpectedInformationValue})`;
-        reasonCodes.push('DIMINISHING_MARGINAL_UTILITY', 'LOW_EXPECTED_VOI');
+        reasonCodes.push('DIMINISHING_MARGINAL_UTILITY', 'LOW_EXPECTED_VOI', 'VOI_BELOW_THRESHOLD', 'SKIPPED_BY_GOAL_POLICY');
       }
 
-      if (probeCheck.selected && !reasonCodes.includes('RANDOMIZED_EVIDENCE_PROBE')) {
-        reasonCodes.push('RANDOMIZED_EVIDENCE_PROBE');
+      if (probeCheck.selected) {
+        if (!reasonCodes.includes('RANDOMIZED_EVIDENCE_PROBE')) {
+          reasonCodes.push('RANDOMIZED_EVIDENCE_PROBE');
+        }
+        if (!reasonCodes.includes('RANDOM_PROBE_INCLUSION')) {
+          reasonCodes.push('RANDOM_PROBE_INCLUSION');
+        }
       }
 
       const decision: EvidenceAcquisitionDecision = {
-        id: decisionId,
+        id: `acq_${provisionalRunId}_${candidate.assetId}_${familyId}_${policyVersion}`,
         candidateId: candidate.assetId,
-        runId,
-        evidenceFamily: family.familyId,
-        policyVersion: policy.policyVersion,
+        runId: provisionalRunId,
+        evidenceFamily: familyId,
+        policyVersion,
         state,
-        requestedFields: state === 'REQUESTED' ? [...family.fieldsProduced] : [],
-        expectedDecisionImpact,
+        requestedFields: state === 'REQUESTED' ? [...fields] : [],
+        expectedDecisionImpact: family.defaultDecisionImpact ?? expectedDecisionImpact,
         expectedInformationValue: evoi,
         estimatedCost,
-        randomized: probeCheck.selected,
+        randomized: probeCheck.selected ?? false,
         assignmentProbability: probeCheck.probability,
         randomizationStratum: probeCheck.stratum,
         randomizationSeedRef: probeCheck.seedRef,
@@ -268,112 +376,109 @@ export class VoiPlanner {
     const skippedFamilies = decisions
       .filter((d) => d.state !== 'REQUESTED')
       .map((d) => d.evidenceFamily);
+    const blockedFamilies = decisions
+      .filter((d) => d.state === 'COST_BLOCKED' || d.state === 'QUOTA_BLOCKED' || d.state === 'RIGHTS_BLOCKED' || d.state === 'UNSUPPORTED')
+      .map((d) => d.evidenceFamily);
+
+    // Construct tool calls and steps only for REQUESTED evidence families
+    const activeTools = new Set<string>();
+    for (const famId of requestedFamilies) {
+      const fam = registry.get(famId);
+      if (fam) {
+        const tools = fam.tools ?? fam.associatedTools ?? [];
+        for (const tool of tools) {
+          if (envelope.allowedTools.includes(tool) && profile.declaredTools.includes(tool)) {
+            activeTools.add(tool);
+          }
+        }
+      }
+    }
+
+    // Generate deterministic plan with bounded active tools
+    const boundedEnvelope: ToolAuthorizationEnvelope = {
+      ...envelope,
+      allowedTools: Array.from(activeTools).sort((a, b) => a.localeCompare(b)),
+      allowedEntities: [candidate.assetId],
+      allowedAddresses: [candidate.contractAddress],
+      allowedChains: [candidate.chainId],
+      maxCostUsd: Math.min(accumulatedEstimatedCostUsd, envelope.maxCostUsd ?? accumulatedEstimatedCostUsd),
+    };
+
+    const plan =
+      input.plan ??
+      DeterministicPlanner.plan({
+        candidate,
+        profile,
+        envelope: boundedEnvelope,
+        budget,
+        goal,
+        initialEvidence: input.initialEvidence,
+        requestedEvidenceFamilies: requestedFamilies,
+        deterministicSeedRef: input.deterministicSeedRef,
+      });
+
+    const runId = input.runId ?? plan.planId;
+
+    // Harmonize final decision IDs and runId
+    const finalDecisions = decisions.map((d) => ({
+      ...d,
+      id: `acq_${runId}_${candidate.assetId}_${d.evidenceFamily}_${policyVersion}`,
+      runId,
+    }));
+
+    // Persist decisions to EvidenceAcquisitionStore before retrieval
+    try {
+      store.recordDecisions(finalDecisions);
+    } catch {
+      // Ignore conflict if re-planning same run
+    }
 
     return {
-      policyVersion: policy.policyVersion,
+      policyVersion,
       candidateId: candidate.assetId,
       runId,
-      decisions,
+      decisions: finalDecisions,
       requestedFamilies,
       skippedFamilies,
+      blockedFamilies,
       totalEstimatedMonetaryCostUsd: accumulatedEstimatedCostUsd,
+      totalEstimatedCostUsd: accumulatedEstimatedCostUsd,
       totalEstimatedQuotaUnits: accumulatedQuotaUnits,
+      totalQuotaUnits: accumulatedQuotaUnits,
       plannedAt: asOf,
+      plan,
+      envelope: boundedEnvelope,
     };
   }
 
-  /**
-   * Calculates Expected Value of Information for an evidence family.
-   */
-  private calculateExpectedInformationValue(params: {
-    family: EvidenceFamilyDefinition;
-    candidateScore: number;
-    currentRisk?: string | undefined;
-    isNearAlert: boolean;
-    hasKnownEvidence: boolean;
-    isHardRejected: boolean;
-    isUnreachable: boolean;
-    costWeight?: number | undefined;
-  }): number {
-    const { family, candidateScore, isNearAlert, hasKnownEvidence, isHardRejected, isUnreachable } = params;
+  public planAcquisitions(input: VoiPlanInput): VoiPlanResult {
+    return this.plan(input);
+  }
 
-    if (hasKnownEvidence || (family.isOptional && (isHardRejected || isUnreachable))) {
-      return 0.0;
+  private resolveEligibleFamilies(
+    explicit?: readonly EvidenceFamilyDefinition[] | readonly string[],
+    registry: EvidenceFamilyRegistry = this.registry,
+  ): EvidenceFamilyDefinition[] {
+    if (!explicit || explicit.length === 0) {
+      return registry.list();
     }
-
-    // Core families have baseline high value
-    let baseValue = family.isOptional ? 0.40 : 0.90;
-
-    // Uncertainty proximity: highest near 0.50 - 0.75 boundary
-    const uncertaintyFactor = 1.0 - Math.abs(candidateScore - 0.70) * 0.8;
-    baseValue *= Math.max(0.2, uncertaintyFactor);
-
-    // If near alert, high-priority families (security, liquidity lock, sell sim) receive substantial boost
-    if (isNearAlert) {
-      if (
-        family.familyId === 'CONTRACT_SECURITY' ||
-        family.familyId === 'LIQUIDITY_LOCK' ||
-        family.familyId === 'SELL_SIMULATION'
-      ) {
-        baseValue += 0.35;
-      } else if (family.familyId === 'HOLDER_DISTRIBUTION') {
-        baseValue += 0.20;
-      }
+    if (typeof explicit[0] === 'string') {
+      return (explicit as string[]).map((id) => registry.require(id));
     }
+    return explicit as EvidenceFamilyDefinition[];
+  }
 
-    // High risk elevates need for verification
-    if (params.currentRisk === 'HIGH' || params.currentRisk === 'UNKNOWN') {
-      if (family.familyId === 'CONTRACT_SECURITY' || family.familyId === 'SELL_SIMULATION') {
-        baseValue += 0.25;
-      }
-    }
-
-    // Cost penalty: penalize higher monetary cost and provider quota cost scaled by costWeight
-    const costWeight = params.costWeight ?? 5.0;
-    if (family.isOptional && costWeight > 0) {
-      const normalizedCost = (family.monetaryCostUsd * 2) + (family.providerQuotaCost * 0.001);
-      baseValue -= Math.min(0.20, costWeight * normalizedCost);
-    }
-
-    // Reliability weighting
-    baseValue *= family.reliability;
-
-    // Normalize between 0.0 and 1.0
-    return Math.max(0.0, Math.min(1.0, Number(baseValue.toFixed(4))));
+  private sampleProbe(seedRef: string, candidateId: string, familyId: string, probability: number): boolean {
+    const probeHash = stableHash(`${seedRef}:${candidateId}:${familyId}`);
+    const sampleVal = parseInt(probeHash.slice(0, 8), 16) / 0xffffffff;
+    return sampleVal <= probability;
   }
 
   /**
-   * Stratified randomized probe assignment calculation.
+   * Reconciles acquisition records post-execution with actual retrieval states, evidence IDs, and decision impact.
    */
-  private evaluateRandomizedProbe(
-    candidateId: string,
-    familyId: string,
-    policy: VoiPolicy,
-    stratum?: string,
-  ): {
-    selected: boolean;
-    probability?: string | undefined;
-    stratum?: string | undefined;
-    seedRef?: string | undefined;
-  } {
-    if (!policy.enableRandomizedProbes || !policy.randomizedProbeRate || policy.randomizedProbeRate <= 0) {
-      return { selected: false };
-    }
-
-    const seed = policy.randomizationSeedRef ?? 'voi-default-seed';
-    const hash = createHash('sha256')
-      .update(`${seed}:${candidateId}:${familyId}:${stratum ?? 'all'}`)
-      .digest('hex');
-
-    const sample = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
-    const selected = sample < policy.randomizedProbeRate;
-
-    return {
-      selected,
-      probability: String(policy.randomizedProbeRate),
-      stratum: stratum ?? 'GENERAL_ELIGIBLE',
-      seedRef: seed,
-    };
+  public reconcileExecution(options: ReconcileExecutionOptions): EvidenceAcquisitionDecision[] {
+    return this.reconcileDecisions(options);
   }
 
   /**
@@ -386,7 +491,7 @@ export class VoiPlanner {
 
     return decisions.map((decision) => {
       const family = this.registry.get(decision.evidenceFamily);
-      const relevantTools = family ? family.tools : [];
+      const relevantTools = family ? (family.tools ?? family.associatedTools ?? []) : [];
 
       // Collect evidence IDs generated by tools in this family
       const matchingToolRecords = toolRecords.filter((tr) =>
@@ -409,6 +514,10 @@ export class VoiPlanner {
         } else if (previousDecision.lifecycleRecommendation !== finalDecision.lifecycleRecommendation) {
           actualDecisionChange = 'LIFECYCLE';
         }
+      } else if (!previousDecision && decision.state === 'REQUESTED' && evidenceIds.length > 0) {
+        if (finalDecision.decision === 'ALERT') actualDecisionChange = 'ALERT';
+        else if (finalDecision.decision === 'INSUFFICIENT_DATA') actualDecisionChange = 'ABSTENTION';
+        else if (finalDecision.decision === 'REJECT') actualDecisionChange = 'LIFECYCLE';
       }
 
       // Update state if requested but execution failed
@@ -417,7 +526,17 @@ export class VoiPlanner {
         const anyFailed = matchingToolRecords.some((r) => r.error !== undefined);
         const allEmpty = matchingToolRecords.length > 0 && matchingToolRecords.every((r) => r.output === null || r.output === undefined);
         if (anyFailed) {
-          finalState = 'FAILED';
+          const firstError = matchingToolRecords.find((r) => r.error !== undefined)?.error ?? '';
+          if (
+            firstError.includes('503') ||
+            firstError.includes('UNAVAILABLE') ||
+            firstError.includes('TIMEOUT') ||
+            firstError.includes('ETIMEDOUT')
+          ) {
+            finalState = 'PROVIDER_UNAVAILABLE';
+          } else {
+            finalState = 'FAILED';
+          }
         } else if (allEmpty) {
           finalState = 'RETURNED_EMPTY';
         } else if (matchingToolRecords.length > 0) {
@@ -434,8 +553,8 @@ export class VoiPlanner {
         };
       } else if (family) {
         decisionActualCost = {
-          monetaryCostUsd: Number((matchingToolRecords.length * family.monetaryCostUsd).toFixed(6)),
-          quotaCostUnits: matchingToolRecords.length * family.providerQuotaCost,
+          monetaryCostUsd: Number((matchingToolRecords.length * (family.monetaryCostUsd ?? family.defaultMonetaryCostUsd ?? 0.0001)).toFixed(6)),
+          quotaCostUnits: matchingToolRecords.length * (family.providerQuotaCost ?? family.defaultQuotaUnits ?? 1),
         };
       } else if (actualCost) {
         decisionActualCost = actualCost;
@@ -526,7 +645,7 @@ export class VoiPlanner {
       // Find matching decision via explicit field/tool to family index
       const familyId = fieldToFamilyMap.get(featureKey) ??
         this.registry.findByField(featureKey)?.familyId ??
-        this.registry.findByTool(featureKey)[0]?.familyId;
+        this.registry.findByTool(featureKey)?.familyId;
       const decision = familyId ? decisionByFamily.get(familyId) : undefined;
       const acquisitionState = decision ? decision.state : 'NOT_REQUESTED_BY_POLICY';
 
@@ -570,4 +689,93 @@ export class VoiPlanner {
       evaluatedFeatures,
     };
   }
+
+  private calculateExpectedInformationValue(params: {
+    family: EvidenceFamilyDefinition;
+    candidateScore: number;
+    currentRisk?: string | undefined;
+    isNearAlert: boolean;
+    hasKnownEvidence: boolean;
+    isHardRejected: boolean;
+    isUnreachable: boolean;
+    costWeight?: number | undefined;
+  }): number {
+    const { family, candidateScore, isNearAlert, hasKnownEvidence, isHardRejected, isUnreachable } = params;
+
+    if (hasKnownEvidence || (family.isOptional && (isHardRejected || isUnreachable))) {
+      return 0.0;
+    }
+
+    // Core families have baseline high value
+    let baseValue = family.isOptional ? 0.40 : 0.90;
+
+    // Uncertainty proximity: highest near 0.50 - 0.75 boundary
+    const uncertaintyFactor = 1.0 - Math.abs(candidateScore - 0.70) * 0.8;
+    baseValue *= Math.max(0.2, uncertaintyFactor);
+
+    // If near alert, high-priority families (security, liquidity lock, sell sim) receive substantial boost
+    const famId = family.familyId ?? family.id;
+    if (isNearAlert) {
+      if (
+        famId === 'CONTRACT_SECURITY' ||
+        famId === 'LIQUIDITY_LOCK' ||
+        famId === 'SELL_SIMULATION'
+      ) {
+        baseValue += 0.35;
+      } else if (famId === 'HOLDER_DISTRIBUTION') {
+        baseValue += 0.20;
+      }
+    }
+
+    // High risk elevates need for verification
+    if (params.currentRisk === 'HIGH' || params.currentRisk === 'UNKNOWN') {
+      if (famId === 'CONTRACT_SECURITY' || famId === 'SELL_SIMULATION') {
+        baseValue += 0.25;
+      }
+    }
+
+    // Cost penalty: penalize higher monetary cost and provider quota cost scaled by costWeight
+    const costWeight = params.costWeight ?? 5.0;
+    if (family.isOptional && costWeight > 0) {
+      const normalizedCost =
+        (family.monetaryCostUsd ?? family.defaultMonetaryCostUsd ?? 0.0001) * 2 +
+        (family.providerQuotaCost ?? family.defaultQuotaUnits ?? 1) * 0.001;
+      baseValue -= Math.min(0.20, costWeight * normalizedCost);
+    }
+
+    // Reliability weighting
+    baseValue *= family.reliability ?? 0.95;
+
+    // Normalize between 0.0 and 1.0
+    return Math.max(0.0, Math.min(1.0, Number(baseValue.toFixed(4))));
+  }
+
+  private evaluateRandomizedProbe(
+    candidateId: string,
+    familyId: string,
+    policy: VoiPolicy,
+    stratum: string,
+  ): { selected: boolean; probability?: string | undefined; stratum?: string | undefined; seedRef?: string | undefined } {
+    if (!policy.enableRandomizedProbes || !policy.randomizedProbeRate || policy.randomizedProbeRate <= 0) {
+      return { selected: false };
+    }
+
+    const seedRef = policy.randomizationSeedRef ?? 'voi-probe-seed-default';
+    const hashInput = `${seedRef}:${stratum}:${candidateId}:${familyId}`;
+    const hash = createHash('sha256').update(hashInput).digest('hex');
+    const pseudoRandom = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
+
+    const selected = pseudoRandom < policy.randomizedProbeRate;
+    if (!selected) {
+      return { selected: false };
+    }
+    return {
+      selected: true,
+      probability: String(policy.randomizedProbeRate),
+      stratum,
+      seedRef,
+    };
+  }
 }
+
+export class VoiDecisionPlanner extends VoiPlanner {}

@@ -53,9 +53,12 @@ export type ConfinementViolationType =
   | 'URL_NOT_ALLOWED'
   | 'CHAIN_NOT_ALLOWED'
   | 'ADDRESS_NOT_ALLOWED'
+  | 'ENTITY_NOT_ALLOWED'
+  | 'FIELD_NOT_ALLOWED'
   | 'TIME_RANGE_NOT_ALLOWED'
   | 'OUTPUT_SIZE_NOT_ALLOWED'
   | 'COST_NOT_ALLOWED';
+
 
 export class ConfinementViolationError extends AgentRuntimeError {
   constructor(

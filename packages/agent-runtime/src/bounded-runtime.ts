@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type {
   AgentBudget,
   AgentDecision,
+  EvidenceAcquisitionDecision,
   ModelProfile,
   SkepticArtifact,
   ToolAuthorizationEnvelope,
@@ -13,6 +14,7 @@ import {
   type CandidateTarget,
   type DeterministicPlan,
 } from './deterministic-planner.js';
+
 import {
   AgentCancelledError,
   AgentRuntimeError,
@@ -20,7 +22,12 @@ import {
   ConfinementViolationError,
 } from './errors.js';
 import { ModelProfileRegistry } from './model-profiles.js';
-import { VoiPlanner, type VoiPlanResult, type VoiPolicy } from './voi-planner.js';
+import {
+  VoiPlanner,
+  type VoiPlanResult,
+  type VoiPolicy,
+  type RandomProbeConfig,
+} from './voi-planner.js';
 import {
   ConditionalSkepticAgent,
   SkepticTriggerPolicy,
@@ -30,6 +37,14 @@ import {
 import { StructuredDecisionEngine } from './decision-engine.js';
 import { type EvidenceRecord } from './evidence-validator.js';
 import { UntrustedContentIsolator } from './untrusted-isolation.js';
+import {
+  type EvidenceAcquisitionStore,
+  getEvidenceAcquisitionStore,
+} from './acquisition-state.js';
+import {
+  EvidenceFamilyRegistry,
+  type EvidenceFamilyDefinition,
+} from './evidence-families.js';
 import type { AgentRuntimePersistenceRepository } from './runtime-store.js';
 
 
@@ -68,6 +83,12 @@ export interface AgentExecutionOptions {
   initialEvidence?: Record<string, unknown> | undefined;
   goal?: 'TRIAGE' | 'DEEP_RESEARCH' | 'SKEPTIC' | 'ADMIN_CHAT' | 'REPAIR' | undefined;
   deterministicSeedRef?: string | number | undefined;
+  runId?: string | undefined;
+  policyVersion?: string | undefined;
+  randomProbeConfig?: RandomProbeConfig | undefined;
+  eligibleEvidenceFamilies?: readonly EvidenceFamilyDefinition[] | readonly string[] | undefined;
+  minVoiThreshold?: number | undefined;
+  acquisitionStore?: EvidenceAcquisitionStore | undefined;
   enableVoi?: boolean | undefined;
   voiPolicy?: Partial<VoiPolicy> | undefined;
   enableSkeptic?: boolean | undefined;
@@ -80,9 +101,11 @@ export interface AgentExecutionOptions {
 }
 
 export interface AgentExecutionResult {
+  runId: string;
   plan: DeterministicPlan;
   status: 'SUCCESS' | 'ABSTAINED' | 'BUDGET_EXCEEDED' | 'CANCELLED' | 'FAILED';
   decision: AgentDecision;
+  acquisitionDecisions: EvidenceAcquisitionDecision[];
   toolRecords: ToolExecutionRecord[];
   budgetUsage: BudgetUsageSnapshot;
   executedSteps: number;
@@ -206,8 +229,13 @@ export class BoundedAgentRuntime {
       }
     }
 
-    // 6. Generate deterministic plan
-    const plan = DeterministicPlanner.plan({
+    // 6. Generate deterministic VOI plan and persist initial acquisition decisions
+    const familyRegistry = new EvidenceFamilyRegistry();
+    const voiPlanner = new VoiPlanner(options.voiPolicy, familyRegistry);
+    const store = options.acquisitionStore ?? getEvidenceAcquisitionStore();
+    const policyVersion = options.policyVersion ?? profile.version;
+
+    const initialPlan = DeterministicPlanner.plan({
       candidate,
       profile,
       envelope,
@@ -217,6 +245,33 @@ export class BoundedAgentRuntime {
       deterministicSeedRef: options.deterministicSeedRef,
     });
 
+
+    const runId = options.runId ?? initialPlan.planId;
+
+    const voiResult = voiPlanner.plan({
+      candidate,
+      profile,
+      envelope,
+      budget,
+      goal: options.goal,
+      runId,
+      plan: initialPlan,
+      policyVersion,
+      eligibleEvidenceFamilies: options.eligibleEvidenceFamilies,
+      initialEvidence: options.initialEvidence,
+      currentCandidateScore: options.candidateScore,
+      randomProbeConfig: options.randomProbeConfig,
+      randomizationStratum: options.randomizationStratum,
+      minVoiThreshold: options.minVoiThreshold,
+      policy: options.voiPolicy,
+
+      store,
+      deterministicSeedRef: options.deterministicSeedRef,
+    });
+
+    const plan = voiResult.plan;
+
+
     const toolRecords: ToolExecutionRecord[] = [];
     let executedSteps = 0;
     let executedToolCalls = 0;
@@ -224,32 +279,7 @@ export class BoundedAgentRuntime {
       ...(options.initialEvidence ?? {}),
     };
 
-    // Synthesize baseline decision prior to evidence acquisition
-    const baselineDecision = this.synthesizeDecision(
-      candidate,
-      profile,
-      accumulatedEvidence,
-      [],
-    );
-
-    // Pre-execution VOI planning: evaluate EVOI and establish per-family acquisition plan
-    let initialVoiPlan: VoiPlanResult | undefined;
-    let voiPlanner: VoiPlanner | undefined;
-    if (options.enableVoi) {
-      voiPlanner = new VoiPlanner(options.voiPolicy);
-      initialVoiPlan = voiPlanner.planAcquisitions({
-        candidate,
-        runId: plan.planId,
-        envelope,
-        budget,
-        profile,
-        currentCandidateScore: options.candidateScore,
-        knownEvidence: accumulatedEvidence,
-        randomizationStratum: options.randomizationStratum,
-      });
-    }
-
-    // 5. Bounded tool execution loop
+    // 7. Bounded tool execution loop
     for (const step of plan.steps) {
       if (signal?.aborted) {
         throw new AgentCancelledError();
@@ -351,6 +381,46 @@ export class BoundedAgentRuntime {
         // Account for actual tokens / cost
         tracker.recordTokens(inputTokens, outputTokens, estimatedCostUsd);
 
+        // Update acquisition record outcome if this tool maps to an evidence family
+        const fam = familyRegistry.findByTool(call.toolName);
+        if (fam) {
+          const famId = fam.familyId ?? fam.id;
+          try {
+            if (callError) {
+              const isUnavailable =
+                callError.includes('503') ||
+                callError.includes('UNAVAILABLE') ||
+                callError.includes('TIMEOUT') ||
+                callError.includes('ETIMEDOUT');
+              store.updateOutcome({
+                runId,
+                candidateId: candidate.assetId,
+                evidenceFamily: famId,
+                policyVersion,
+                state: isUnavailable ? 'PROVIDER_UNAVAILABLE' : 'FAILED',
+                reasonCodes: [callError],
+              });
+            } else {
+              const isEmpty =
+                output === null ||
+                output === undefined ||
+                (Array.isArray(output) && output.length === 0) ||
+                (typeof output === 'object' && Object.keys(output as object).length === 0);
+
+              store.updateOutcome({
+                runId,
+                candidateId: candidate.assetId,
+                evidenceFamily: famId,
+                policyVersion,
+                state: isEmpty ? 'RETURNED_EMPTY' : 'RETURNED',
+                evidenceIds: isEmpty ? [] : [call.callId],
+              });
+            }
+          } catch {
+            // Already updated or blocked pre-flight
+          }
+        }
+
         toolRecords.push({
           callId: call.callId,
           stepIndex: step.stepIndex,
@@ -373,38 +443,21 @@ export class BoundedAgentRuntime {
       toolRecords,
     );
 
-    let voiPlanResult: VoiPlanResult | undefined;
-    if (options.enableVoi) {
-      if (!voiPlanner) {
-        voiPlanner = new VoiPlanner(options.voiPolicy);
-      }
-      const planToReconcile = initialVoiPlan ?? voiPlanner.planAcquisitions({
-        candidate,
-        runId: plan.planId,
-        envelope,
-        budget,
-        profile,
-        currentCandidateScore: options.candidateScore,
-        knownEvidence: accumulatedEvidence,
-        randomizationStratum: options.randomizationStratum,
-      });
+    const actualCostSnapshot = tracker.getSnapshot();
+    const actualCost = {
+      monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
+      quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
+    };
 
-      const actualCostSnapshot = tracker.getSnapshot();
-      const actualCost = {
-        monetaryCostUsd: Number(actualCostSnapshot.modelCostUsd.current.toFixed(6)),
-        quotaCostUnits: actualCostSnapshot.providerCostUnits.current ?? 0,
-      };
+    const reconciledDecisions = voiPlanner.reconcileExecution({
+      decisions: voiResult.decisions,
+      toolRecords,
+      finalDecision: decision,
+      actualCost,
+      completedAt: new Date().toISOString(),
+    });
 
-      planToReconcile.decisions = voiPlanner.reconcileDecisions({
-        decisions: planToReconcile.decisions,
-        toolRecords,
-        previousDecision: baselineDecision,
-        finalDecision: decision,
-        actualCost,
-        completedAt: new Date().toISOString(),
-      });
-      voiPlanResult = planToReconcile;
-    }
+    const acquisitionDecisions = store.listDecisionsForCandidateAndRun(runId, candidate.assetId);
 
     let skepticResult: SkepticExecutionResult | undefined;
     if (options.enableSkeptic && options.goal !== 'SKEPTIC') {
@@ -431,8 +484,8 @@ export class BoundedAgentRuntime {
         skepticResult = await skepticAgent.execute({
           candidate,
           parentDecision: decision,
-          parentDecisionId: `dec_${candidate.assetId}_${plan.planId}`,
-          runId: plan.planId,
+          parentDecisionId: `dec_${candidate.assetId}_${runId}`,
+          runId,
           envelope,
           skepticBudget: options.skepticBudget,
           triggerContext: skepticTriggerContext,
@@ -445,14 +498,14 @@ export class BoundedAgentRuntime {
         }
         // Fail-closed boundary isolation: generate auditable artifact without aborting parent research execution
         const errMsg = err instanceof Error ? err.message : String(err);
-        const parentDecisionId = `dec_${candidate.assetId}_${plan.planId}`;
-        const artifactId = `skeptic_${candidate.assetId}_${plan.planId}_failed_closed`;
+        const parentDecisionId = `dec_${candidate.assetId}_${runId}`;
+        const artifactId = `skeptic_${candidate.assetId}_${runId}_failed_closed`;
         const asOf = new Date().toISOString();
         const rawArtifact = {
           id: artifactId,
           parentDecisionId,
           candidateId: candidate.assetId,
-          runId: plan.planId,
+          runId,
           policyVersion: triggerEval.policyVersion,
           triggered: triggerEval.triggered,
           triggerReasons: triggerEval.triggerReasons,
@@ -503,11 +556,14 @@ export class BoundedAgentRuntime {
       }
     }
 
+    const finalVoiPlanResult: VoiPlanResult = {
+      ...voiResult,
+      decisions: reconciledDecisions,
+    };
+
     if (options.persistenceRepository) {
       try {
-        if (voiPlanResult) {
-          await options.persistenceRepository.saveVoiPlan(voiPlanResult);
-        }
+        await options.persistenceRepository.saveVoiPlan(finalVoiPlanResult);
         if (skepticResult) {
           await options.persistenceRepository.saveSkepticArtifact(skepticResult.artifact);
         }
@@ -518,15 +574,17 @@ export class BoundedAgentRuntime {
     }
 
     return {
+      runId,
       plan,
       status: 'SUCCESS',
       decision,
+      acquisitionDecisions: acquisitionDecisions.length > 0 ? acquisitionDecisions : reconciledDecisions,
       toolRecords,
       budgetUsage: tracker.getSnapshot(),
       executedSteps,
       executedToolCalls,
       completedAt: new Date().toISOString(),
-      voiPlanResult,
+      voiPlanResult: finalVoiPlanResult,
       skepticResult,
     };
   }

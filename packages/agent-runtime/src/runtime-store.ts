@@ -209,11 +209,36 @@ export class DatabaseAgentPersistenceRepository implements AgentRuntimePersisten
       decisions,
       requestedFamilies,
       skippedFamilies,
+      blockedFamilies: decisions
+        .filter((d) => d.state === 'COST_BLOCKED' || d.state === 'QUOTA_BLOCKED' || d.state === 'RIGHTS_BLOCKED' || d.state === 'UNSUPPORTED')
+        .map((d) => d.evidenceFamily),
       totalEstimatedMonetaryCostUsd: totalCost,
+      totalEstimatedCostUsd: totalCost,
       totalEstimatedQuotaUnits: totalQuota,
+      totalQuotaUnits: totalQuota,
       plannedAt: first.decidedAt,
+      plan: {
+
+        planId: runId,
+        candidateId: first.candidateId,
+        profileId: 'default',
+        profileVersion: first.policyVersion,
+        steps: [],
+        totalPlannedToolCalls: 0,
+        totalEstimatedCostUsd: totalCost,
+        envelope: {
+          allowedTools: requestedFamilies,
+        },
+        maxSteps: 10,
+        generatedAt: first.decidedAt,
+      },
+      envelope: {
+        allowedTools: requestedFamilies,
+      },
     };
   }
+
+
 
   public async getSkepticArtifact(runId: string): Promise<SkepticArtifact | null> {
     const result = await this.database.query<Record<string, unknown>>(
