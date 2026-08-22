@@ -10,7 +10,15 @@ from typing import Any
 
 from .commands import CommandResult, CommandRunner
 from .config import FactoryConfig
-from .models import Milestone, PackageRecord, PackageStatus, ReviewDispatchState, WorkPackage, work_key
+from .models import (
+    Milestone,
+    PackageRecord,
+    PackageStatus,
+    ReviewDispatchState,
+    WorkPackage,
+    generate_gap_fingerprint,
+    work_key,
+)
 from .store import StateStore
 
 
@@ -1202,13 +1210,15 @@ Produce a complete, valid milestone plan for `{target['id']}` matching the schem
         else:
             prompt = f"""You are the bounded ChainSieve deadlock replanner.
 
-Milestone `{milestone.id}` has exhausted safe implementation-provider handling for work package `{failed.id}`.
+Milestone `{milestone.id}` replan for work package `{failed.id}`.
 Evidence: {evidence}
 
 Return a schema-valid result. Use ARCHITECTURE_CONTRADICTION only for a genuine contradiction in authoritative product
 requirements that cannot be resolved by decomposition. Otherwise return REPLANNED with a complete deterministic plan for
-the same milestone. Do not reuse failed package ID `{failed.id}`. Do not authorize immutable control-plane paths. Do not
-modify files.
+the same milestone.
+Preserve every durable workPackageId that owns existing issue, session, branch, PR, or completion evidence.
+A new package ID may be introduced ONLY for a genuinely new product gap not already represented by durable work.
+Do not authorize immutable control-plane paths. Do not modify files.
 """
         return self._escalation_plan("replan", milestone, failed, prompt)
 
@@ -1217,8 +1227,9 @@ modify files.
 {contradiction}
 
 Return REPLANNED with a complete deterministic plan for the same milestone, or ARCHITECTURE_CONTRADICTION if authoritative
-requirements remain irreconcilable. Do not reuse failed package ID `{failed.id}`. Never weaken product authority or
-authorize immutable factory/control-plane paths. Do not modify files.
+requirements remain irreconcilable.
+Preserve every durable workPackageId that owns existing issue, session, branch, PR, or completion evidence.
+Never weaken product authority or authorize immutable factory/control-plane paths. Do not modify files.
 """
         return self._escalation_plan("emergency", milestone, failed, prompt)
 
@@ -1235,21 +1246,20 @@ authorize immutable factory/control-plane paths. Do not modify files.
         if value.get("recoveryPlan") and isinstance(value["recoveryPlan"], dict):
             return value
         if value.get("status") in {"REPLANNED", "RECOVERY_PLAN"} and isinstance(value.get("plan"), dict):
-            planned = Milestone.from_dict(value["plan"])
-            if planned.id != milestone.id:
-                raise RuntimeError(f"Codex {role} changed milestone identity")
-            if failed.id in {item.id for item in planned.packages}:
-                raise RuntimeError(f"Codex {role} reused exhausted work-package ID {failed.id!r}")
-            _validate_requirement_ids(self.root, planned)
-            active_path = self.config.state_dir / "active-milestone.json"
-            temporary = active_path.with_suffix(".json.tmp")
-            temporary.write_text(json.dumps(value["plan"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
-            temporary.chmod(0o640)
-            temporary.replace(active_path)
-            _write_planning_bundle(self.config.state_dir, planned)
+            planned_dict = value["plan"]
+            reconciled_milestone, delta_report = install_plan_delta(
+                self.config.state_dir,
+                milestone,
+                planned_dict,
+                root=self.root,
+                events_logger=self.store,
+            )
+            value["plan"] = reconciled_milestone.to_dict()
+            value["planDelta"] = delta_report
             return value
         if value.get("status") in {"REPLANNED", "RECOVERY_PLAN"}:
             return value
+        raise RuntimeError(f"Codex {role} returned no deterministic plan")
         raise RuntimeError(f"Codex {role} returned no deterministic plan")
 
     def _codex_budget(self, milestone_id: str, role: str) -> tuple[dict[str, Any], int]:
@@ -1779,6 +1789,175 @@ def audit_remediation(milestone: Milestone, audit: dict[str, Any], root: Path | 
     }
     return package_dict
 
+
+def install_plan_delta(
+    state_dir: Path,
+    current_milestone: Milestone,
+    proposed_plan: dict[str, Any] | Milestone,
+    root: Path | None = None,
+    events_logger: Any = None,
+) -> tuple[Milestone, dict[str, Any]]:
+    """Install a proposed plan delta transactionally while preserving all durable work identities."""
+    if isinstance(proposed_plan, dict):
+        proposed_milestone = Milestone.from_dict(proposed_plan)
+    else:
+        proposed_milestone = proposed_plan
+
+    if proposed_milestone.id != current_milestone.id:
+        raise ValueError(f"Replan changed milestone identity from {current_milestone.id} to {proposed_milestone.id}")
+
+    if root:
+        _validate_requirement_ids(root, proposed_milestone)
+
+    old_plan_dict = current_milestone.to_dict()
+    old_plan_digest = hashlib.sha256(json.dumps(old_plan_dict, sort_keys=True).encode()).hexdigest()
+
+    state_file = state_dir / "state.json"
+    records_dict: dict[str, Any] = {}
+    if state_file.is_file():
+        try:
+            state_data = json.loads(state_file.read_text(encoding="utf-8"))
+            records_dict = state_data.get("packages", {})
+        except Exception:
+            pass
+
+    current_pkgs_by_id = {p.id: p for p in current_milestone.packages}
+    current_pkgs_by_gap: dict[str, WorkPackage] = {}
+    for p in current_milestone.packages:
+        gap_fp = generate_gap_fingerprint(current_milestone.id, p.requirement_ids, p.acceptance, p.objective)
+        current_pkgs_by_gap[gap_fp] = p
+
+    durable_pkg_ids: set[str] = set()
+    for p_id, p in current_pkgs_by_id.items():
+        w_key = f"{current_milestone.id}--{p_id}"
+        rec = records_dict.get(w_key, {})
+        if (
+            rec.get("pr_number")
+            or rec.get("session_id")
+            or rec.get("issue_number")
+            or rec.get("status") in {"COMPLETE", "COMPLETED", "PR_WAITING", "CI", "REVIEW", "ACTIVE"}
+            or rec.get("head_sha")
+        ):
+            durable_pkg_ids.add(p_id)
+
+    reconciled_packages: list[WorkPackage] = []
+    seen_pkg_ids: set[str] = set()
+    kept_keys: list[str] = []
+    added_keys: list[str] = []
+    updated_keys: list[str] = []
+    explicit_supersessions: dict[str, str] = {}
+    rejected_duplicates: list[str] = []
+
+    for prop_pkg in proposed_milestone.packages:
+        prop_gap = generate_gap_fingerprint(
+            current_milestone.id, prop_pkg.requirement_ids, prop_pkg.acceptance, prop_pkg.objective
+        )
+        
+        if prop_pkg.id in current_pkgs_by_id:
+            target_id = prop_pkg.id
+            existing_pkg = current_pkgs_by_id[target_id]
+            updated_pkg = WorkPackage(
+                id=target_id,
+                objective=prop_pkg.objective or existing_pkg.objective,
+                acceptance=prop_pkg.acceptance or existing_pkg.acceptance,
+                dependencies=prop_pkg.dependencies if prop_pkg.dependencies else existing_pkg.dependencies,
+                parallelizable=prop_pkg.parallelizable,
+                preferred_provider=prop_pkg.preferred_provider,
+                risk=prop_pkg.risk,
+                requirement_ids=prop_pkg.requirement_ids or existing_pkg.requirement_ids,
+                authorized_protected_paths=prop_pkg.authorized_protected_paths or existing_pkg.authorized_protected_paths,
+                gap_fingerprint=prop_gap,
+                plan_epoch=max(existing_pkg.plan_epoch, prop_pkg.plan_epoch) + 1,
+                supersedes=prop_pkg.supersedes,
+                superseded_by=prop_pkg.superseded_by,
+            )
+            reconciled_packages.append(updated_pkg)
+            seen_pkg_ids.add(target_id)
+            updated_keys.append(f"{current_milestone.id}--{target_id}")
+            continue
+
+        if prop_gap in current_pkgs_by_gap:
+            matched_pkg = current_pkgs_by_gap[prop_gap]
+            target_id = matched_pkg.id
+            if target_id not in seen_pkg_ids:
+                updated_pkg = WorkPackage(
+                    id=target_id,
+                    objective=prop_pkg.objective or matched_pkg.objective,
+                    acceptance=prop_pkg.acceptance or matched_pkg.acceptance,
+                    dependencies=prop_pkg.dependencies if prop_pkg.dependencies else matched_pkg.dependencies,
+                    parallelizable=prop_pkg.parallelizable,
+                    preferred_provider=prop_pkg.preferred_provider,
+                    risk=prop_pkg.risk,
+                    requirement_ids=prop_pkg.requirement_ids or matched_pkg.requirement_ids,
+                    authorized_protected_paths=prop_pkg.authorized_protected_paths or matched_pkg.authorized_protected_paths,
+                    gap_fingerprint=prop_gap,
+                    plan_epoch=max(matched_pkg.plan_epoch, prop_pkg.plan_epoch) + 1,
+                    supersedes=prop_pkg.supersedes,
+                    superseded_by=prop_pkg.superseded_by,
+                )
+                reconciled_packages.append(updated_pkg)
+                seen_pkg_ids.add(target_id)
+                updated_keys.append(f"{current_milestone.id}--{target_id}")
+                rejected_duplicates.append(f"{prop_pkg.id} -> adopted {target_id}")
+            continue
+
+        target_id = prop_pkg.id
+        if target_id not in seen_pkg_ids:
+            reconciled_packages.append(prop_pkg)
+            seen_pkg_ids.add(target_id)
+            added_keys.append(f"{current_milestone.id}--{target_id}")
+
+    for p_id in durable_pkg_ids:
+        if p_id not in seen_pkg_ids:
+            existing_pkg = current_pkgs_by_id[p_id]
+            reconciled_packages.append(existing_pkg)
+            seen_pkg_ids.add(p_id)
+            kept_keys.append(f"{current_milestone.id}--{p_id}")
+
+    reconciled_milestone = Milestone(
+        id=current_milestone.id,
+        objective=current_milestone.objective,
+        packages=tuple(reconciled_packages),
+    )
+
+    new_plan_dict = reconciled_milestone.to_dict()
+    new_plan_digest = hashlib.sha256(json.dumps(new_plan_dict, sort_keys=True).encode()).hexdigest()
+
+    active_path = state_dir / "active-milestone.json"
+    temporary = active_path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(new_plan_dict, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.chmod(0o640)
+    temporary.replace(active_path)
+
+    _write_planning_bundle(state_dir, reconciled_milestone)
+
+    delta_report = {
+        "oldPlanDigest": old_plan_digest,
+        "newPlanDigest": new_plan_digest,
+        "keptWorkKeys": kept_keys,
+        "addedWorkKeys": added_keys,
+        "updatedWorkKeys": updated_keys,
+        "explicitSupersessions": explicit_supersessions,
+        "rejectedDuplicates": rejected_duplicates,
+    }
+
+    if events_logger:
+        try:
+            events_logger.event(
+                "PLAN_DELTA_APPLIED",
+                milestoneId=current_milestone.id,
+                oldPlanDigest=old_plan_digest,
+                newPlanDigest=new_plan_digest,
+                keptWorkKeys=kept_keys,
+                addedWorkKeys=added_keys,
+                updatedWorkKeys=updated_keys,
+                explicitSupersessions=explicit_supersessions,
+                rejectedDuplicates=rejected_duplicates,
+            )
+        except Exception:
+            pass
+
+    return reconciled_milestone, delta_report
 
 
 def reconcile_durable_state(

@@ -1,8 +1,47 @@
-from __future__ import annotations
-
+import hashlib
+import json
+import re
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any
+from typing import Any, Sequence
+
+
+GAP_STOPWORDS = {
+    "a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or", "with",
+    "by", "from", "is", "are", "was", "were", "be", "been", "being", "have",
+    "has", "had", "do", "does", "did", "not", "but", "if", "that", "this",
+    "it", "as", "into", "also", "issue", "issues", "problem", "problems",
+    "fix", "fixes", "fixed", "fixing", "handle", "handles", "handled", "handling",
+    "error", "errors", "bug", "bugs", "defect", "defects", "ensure", "ensures",
+    "when", "where", "should", "must", "could", "would",
+}
+
+
+def generate_gap_fingerprint(
+    milestone_id: str,
+    requirement_ids: Sequence[str],
+    acceptance: Sequence[str],
+    objective: str = "",
+    category: str = "GAP",
+) -> str:
+    """Generate canonical semantic product gap fingerprint invariant to formatting/minor wording."""
+    m_id = (milestone_id or "").strip().lower()
+    reqs = sorted({str(r).strip().upper() for r in requirement_ids if str(r).strip()})
+
+    acc_tokens: list[str] = []
+    for acc in acceptance:
+        cleaned = re.sub(r"[^a-zA-Z0-9_\-\.]", " ", str(acc).lower())
+        tokens = [t.strip("._-") for t in cleaned.split() if len(t.strip("._-")) > 1]
+        acc_tokens.extend(t for t in tokens if t not in GAP_STOPWORDS)
+    sorted_acc_tokens = sorted(set(acc_tokens))
+
+    obj_cleaned = re.sub(r"[^a-zA-Z0-9_\-\.]", " ", str(objective).lower())
+    obj_tokens = sorted({t.strip("._-") for t in obj_cleaned.split() if len(t.strip("._-")) > 1 and t not in GAP_STOPWORDS})
+
+    key_str = f"{m_id}|{','.join(reqs)}|{' '.join(sorted_acc_tokens)}|{' '.join(obj_tokens)}|{category.upper()}"
+    digest = hashlib.sha256(key_str.encode("utf-8")).hexdigest()[:16]
+    req_prefix = reqs[0] if reqs else category
+    return f"GAP-{req_prefix}-{digest}"
 
 
 class PackageStatus(StrEnum):
@@ -52,6 +91,10 @@ class WorkPackage:
     risk: str = "MEDIUM"
     requirement_ids: tuple[str, ...] = ()
     authorized_protected_paths: tuple[str, ...] = ()
+    gap_fingerprint: str = ""
+    plan_epoch: int = 0
+    supersedes: tuple[str, ...] = ()
+    superseded_by: str | None = None
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "WorkPackage":
@@ -73,6 +116,20 @@ class WorkPackage:
         for name, items in (("dependencies", dependencies), ("requirementIds", requirement_ids), ("authorizedProtectedPaths", authorized_paths)):
             if len(items) != len(set(items)):
                 raise ValueError(f"work package {package_id} has duplicate {name}")
+        
+        gap_fp = str(value.get("gapFingerprint") or value.get("gap_fingerprint") or "").strip()
+        if not gap_fp:
+            gap_fp = generate_gap_fingerprint(
+                str(value.get("milestoneId", "")),
+                requirement_ids,
+                acceptance,
+                objective=str(value.get("objective", "")),
+            )
+        
+        plan_epoch = int(value.get("planEpoch") or value.get("plan_epoch") or 0)
+        supersedes = tuple(str(item) for item in value.get("supersedes", []))
+        superseded_by = str(value.get("supersededBy") or value.get("superseded_by") or "") or None
+
         package = cls(
             id=package_id,
             objective=str(value["objective"]).strip(),
@@ -83,11 +140,34 @@ class WorkPackage:
             risk=risk,
             requirement_ids=requirement_ids,
             authorized_protected_paths=authorized_paths,
+            gap_fingerprint=gap_fp,
+            plan_epoch=plan_epoch,
+            supersedes=supersedes,
+            superseded_by=superseded_by,
         )
         from .policy import validate_path_authority
 
         validate_path_authority(package)
         return package
+
+    def to_dict(self) -> dict[str, Any]:
+        d: dict[str, Any] = {
+            "id": self.id,
+            "objective": self.objective,
+            "acceptance": list(self.acceptance),
+            "dependencies": list(self.dependencies),
+            "parallelizable": self.parallelizable,
+            "preferredProvider": self.preferred_provider,
+            "risk": self.risk,
+            "requirementIds": list(self.requirement_ids),
+            "authorizedProtectedPaths": list(self.authorized_protected_paths),
+            "gapFingerprint": self.gap_fingerprint,
+            "planEpoch": self.plan_epoch,
+            "supersedes": list(self.supersedes),
+        }
+        if self.superseded_by:
+            d["supersededBy"] = self.superseded_by
+        return d
 
 
 @dataclass(frozen=True)
@@ -101,7 +181,16 @@ class Milestone:
         milestone_id = str(value["id"]).strip()
         if not milestone_id or any(ch not in "abcdefghijklmnopqrstuvwxyz0123456789-" for ch in milestone_id):
             raise ValueError(f"invalid milestone id: {milestone_id!r}")
-        packages = tuple(WorkPackage.from_dict(item) for item in value.get("workPackages", []))
+        raw_packages = value.get("workPackages", [])
+        packages_list: list[WorkPackage] = []
+        for item in raw_packages:
+            if isinstance(item, dict) and "milestoneId" not in item:
+                item_copy = dict(item)
+                item_copy["milestoneId"] = milestone_id
+                packages_list.append(WorkPackage.from_dict(item_copy))
+            else:
+                packages_list.append(WorkPackage.from_dict(item))
+        packages = tuple(packages_list)
         ids = [item.id for item in packages]
         if len(ids) != len(set(ids)):
             raise ValueError("work-package IDs must be unique")
@@ -114,6 +203,13 @@ class Milestone:
                 raise ValueError(f"{package.id} depends on itself")
         _assert_acyclic(packages)
         return cls(id=milestone_id, objective=str(value["objective"]), packages=packages)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "objective": self.objective,
+            "workPackages": [p.to_dict() for p in self.packages],
+        }
 
 
 def work_key(milestone_id: str, package_id: str) -> str:
@@ -257,6 +353,10 @@ class PackageRecord:
     final_confirmation_used: bool = False
     updated_at: str | None = None
     authority_schema_version: int = 0
+    gap_fingerprint: str | None = None
+    plan_epoch: int = 0
+    supersedes: list[str] = field(default_factory=list)
+    superseded_by: str | None = None
 
     def __post_init__(self) -> None:
         # correction_attempts is telemetry-only: always derived from domain
@@ -356,6 +456,10 @@ class PackageRecord:
             "final_confirmation_used": self.final_confirmation_used,
             "updated_at": self.updated_at,
             "authority_schema_version": self.authority_schema_version,
+            "gap_fingerprint": self.gap_fingerprint,
+            "plan_epoch": self.plan_epoch,
+            "supersedes": list(self.supersedes),
+            "superseded_by": self.superseded_by,
         }
 
 

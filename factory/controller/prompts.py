@@ -334,7 +334,7 @@ def build_focused_worker_correction_prompt(
         finding_items.append(f"- [{fp}] [{req}] ({comp}): {summary}")
 
     findings_text = "\n".join(finding_items)
-    return f"""The independent {reviewer} review on PR #{pr_number} at {head_sha} requested changes for the following specific OPEN blockers:
+    return f"""The independent {reviewer} review rejected PR #{pr_number} at {head_sha} and requested changes for the following specific OPEN blockers:
 
 {findings_text}
 
